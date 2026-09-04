@@ -1,14 +1,14 @@
 import os
-import yfinance as yf
+import time
 import pandas as pd
 from datetime import datetime
 import zoneinfo
 from openai import OpenAI
 from typing import TypedDict
 from langgraph.graph import StateGraph, END
+import feedparser
 
 # ==== AMD Radeon Developer Cloud API ====
-# Anahtar GitHub Secret'ten gelir (koda gomulmez)
 AMD_API_KEY = os.environ.get("AMD_API_KEY", "")
 if not AMD_API_KEY:
     raise SystemExit("AMD_API_KEY ortam degiskeni ayarlanmamis!")
@@ -18,67 +18,142 @@ client = OpenAI(
     base_url="https://developer.amd.com.cn/radeon/api/v1"
 )
 
+# Takip edilen BIST30 hisseleri
+HISSELER = ["THYAO", "GARAN", "AKBNK", "EREGL", "KCHOL", "SISE", "BIMAS", "TUPRS", "ASELS", "SAHOL"]
+
+# Haber RSS kaynaklari
+HABER_KAYNAKLARI = {
+    "BloombergHT": "https://www.bloomberght.com/rss",
+    "CNN Turk": "https://www.cnnturk.com/feed/rss/ekonomi/news",
+    "Haberturk": "https://www.haberturk.com/rss",
+    "Ekonomim-Piyasa": "https://www.ekonomim.net/rss/piyasa-10",
+    "Ekonomim-Ekonomi": "https://www.ekonomim.net/rss/ekonomi-5",
+    "Ekonomim-Sirket": "https://www.ekonomim.net/rss/sirket-12",
+}
+
 class AgentState(TypedDict):
+    news_data: str
     tech_data: str
     fundamental_data: str
-    macro_data: str
     final_report: str
 
-def technical_agent(state: AgentState):
-    tickers = ["THYAO.IS", "GARAN.IS", "AKBNK.IS", "EREGL.IS", "KCHOL.IS", "SISE.IS", "BIMAS.IS", "TUPRS.IS"]
-    secilenler = []
-    for ticker in tickers:
+# ---------- HABER AJANI ----------
+def news_agent(state: AgentState):
+    print("[Haber Ajani] Finans haberleri toplaniyor...")
+    toplanan = []
+    for ad, url in HABER_KAYNAKLARI.items():
         try:
-            hisse = yf.Ticker(ticker)
-            hist = hisse.history(period="14d")
-            if hist.empty or len(hist) < 5:
-                continue
-            son = hist['Close'].iloc[-1]
-            once = hist['Close'].iloc[-5]
-            degisim = ((son - once) / once) * 100
-            secilenler.append({"Hisse": ticker.replace(".IS", ""), "Fiyat": round(son, 2), "5G_Degisim_%": round(degisim, 2)})
-        except:
+            f = feedparser.parse(url)
+            for e in f.entries[:5]:
+                toplanan.append(f"[{ad}] {e.title}")
+        except Exception:
             continue
-    df = pd.DataFrame(secilenler)
-    return {"tech_data": df.to_string(index=False) if not df.empty else "Veri alinamadi."}
+        time.sleep(1)
+    if not toplanan:
+        return {"news_data": "Haber verisi alinamadi."}
+    return {"news_data": "\n".join(toplanan[:25])}
 
+# ---------- TEKNIK AJAN (hisse fiyatlari) ----------
+def technical_agent(state: AgentState):
+    print("[Teknik Ajan] BIST30 hisse fiyatlari cekiliyor (Is Yatirim)...")
+    try:
+        from isyatirimhisse import fetch_stock_data
+    except Exception as e:
+        return {"tech_data": f"Hisse verisi alinamadi: {e}"}
+
+    satirlar = []
+    for hisse in HISSELER:
+        try:
+            df = fetch_stock_data(symbols=[hisse], start_date="01-08-2026", end_date="05-09-2026")
+            if df is None or df.empty:
+                continue
+            son = df.iloc[-1]
+            fiyat = son.get("HGDG_KAPANIS")
+            onceki = df.iloc[-6]["HGDG_KAPANIS"] if len(df) >= 6 else fiyat
+            if fiyat and onceki:
+                degisim = ((fiyat - onceki) / onceki) * 100
+                satirlar.append(f"{hisse}: {fiyat:.2f} TL (5 gunluk %{degisim:+.2f})")
+        except Exception:
+            pass
+        time.sleep(4)  # Is Yatirim sitesini zorlamamak icin
+
+    if not satirlar:
+        return {"tech_data": "Hisse verisi alinamadi."}
+    return {"tech_data": "\n".join(satirlar)}
+
+# ---------- TEMEL AJAN (finansal tablolar) ----------
 def fundamental_agent(state: AgentState):
-    return {"fundamental_data": "Bankacilik marjlari guclu, Havacilik ve Enerji maliyet takibinde, Savunma sektoru projeksiyonlari pozitif."}
+    print("[Temel Ajan] Sirket finansal verileri cekiliyor...")
+    try:
+        from isyatirimhisse import fetch_financials
+    except Exception as e:
+        return {"fundamental_data": f"Finansal veri alinamadi: {e}"}
 
-def macro_agent(state: AgentState):
-    return {"macro_data": "Kuresel merkez bankasi kararlari takip ediliyor, yerel piyasada secici ve temkinli risk istahi hakim."}
+    ozetler = []
+    for hisse in HISSELER[:6]:  # Hiz icin ilk 6 sirket
+        try:
+            fin = fetch_financials(symbols=[hisse], start_year=2025, end_year=2026, financial_group="1")
+            if fin is None or fin.empty:
+                continue
+            # Hasilat ve net donem kari satirlarini bul
+            satir = fin[fin["FINANCIAL_ITEM_CODE"].isin(["1A", "3A"])]
+            son_kolon = [c for c in fin.columns if str(c).startswith("2026")][-1] if any(str(c).startswith("2026") for c in fin.columns) else None
+            if son_kolon is None:
+                continue
+            ozet = f"{hisse}:"
+            for _, r in satir.iterrows():
+                deger = r.get(son_kolon)
+                if pd.notna(deger):
+                    ozet += f" {r['FINANCIAL_ITEM_NAME_TR']}={float(deger)/1e9:.2f} mlyr TL;"
+            ozetler.append(ozet)
+        except Exception:
+            pass
+        time.sleep(4)
 
+    if not ozetler:
+        return {"fundamental_data": "Finansal veri alinamadi."}
+    return {"fundamental_data": "\n".join(ozetler)}
+
+# ---------- BAS ANALIST (CIO) ----------
 def master_cio_agent(state: AgentState):
+    print("[Bas Analist] Rapor sentezleniyor (DeepSeek)...")
     prompt = f"""
-    Sen kidemli bir Hedge-Fund Portfoy Yoneticisisin. Asagidaki verileri kullanarak profesyonel bir BIST 30 Yatirim Raporu yaz.
+    Sen kidemli bir Hedge-Fund Portfoy Yoneticisisin. Asagidaki GERCEK verileri kullanarak profesyonel bir BIST 30 Yatirim Raporu yaz.
 
-    [TEKNIK VERILER]:
+    [GUNUN HABERLERI]:
+    {state['news_data']}
+
+    [TEKNIK VERILER (hisse fiyatlari)]:
     {state['tech_data']}
 
-    [TEMEL BILGILER]:
+    [TEMEL/FINANSAL VERILER]:
     {state['fundamental_data']}
 
-    [MAKRO DURUM]:
-    {state['macro_data']}
+    Raporu su basliklarla olustur:
+    1. Yonetici Ozeti
+    2. Haber ve Makro Degerlendirme
+    3. Teknik Degerlendirme (hisse bazli)
+    4. Sirket/Finansal Degerlendirme
+    5. Risk Yonetimi ve Strateji
 
-    Raporu su basliklarla olustur: Yonetici Ozeti, Teknik Degerlendirme, Sektorel Strateji ve Risk Yonetimi.
+    Verileri dogrudan kullan, uydurma veri ekleme. Raporu Turkce yaz.
     """
     response = client.chat.completions.create(
         model="DeepSeek-V4-Flash",
         messages=[{"role": "user", "content": prompt}],
-        temperature=0.2
+        temperature=0.3
     )
     return {"final_report": response.choices[0].message.content}
 
 workflow = StateGraph(AgentState)
+workflow.add_node("news", news_agent)
 workflow.add_node("technical", technical_agent)
 workflow.add_node("fundamental", fundamental_agent)
-workflow.add_node("macro", macro_agent)
 workflow.add_node("cio", master_cio_agent)
-workflow.set_entry_point("technical")
+workflow.set_entry_point("news")
+workflow.add_edge("news", "technical")
 workflow.add_edge("technical", "fundamental")
-workflow.add_edge("fundamental", "macro")
-workflow.add_edge("macro", "cio")
+workflow.add_edge("fundamental", "cio")
 workflow.add_edge("cio", END)
 app = workflow.compile()
 
@@ -119,14 +194,13 @@ body {{ margin:0; font-family:Georgia, 'Times New Roman', serif; background:#fff
 if __name__ == "__main__":
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     date_str = datetime.now(tz).strftime('%Y-%m-%d')
-    result = app.invoke({"tech_data": "", "fundamental_data": "", "macro_data": "", "final_report": ""})
+    result = app.invoke({"news_data": "", "tech_data": "", "fundamental_data": "", "final_report": ""})
     report = result["final_report"]
 
     os.makedirs("reports", exist_ok=True)
     with open(f"reports/{date_str}.html", "w", encoding="utf-8") as f:
         f.write(build_html(report, date_str))
 
-    # Arsiv index sayfasi
     files = sorted(os.listdir("reports"), reverse=True)
     items = "".join(
         f'<a class="card" href="reports/{fn}"><span class="date">{fn.replace(".html","")}</span><span class="sub">Gunluk raporu ac &rarr;</span></a>'
