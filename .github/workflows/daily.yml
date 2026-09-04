@@ -1,0 +1,33 @@
+name: Gunluk BIST 30 Raporu
+
+on:
+  schedule:
+    - cron: '0 5 * * *'   # 08:00 Türkiye saati (UTC+3) = 05:00 UTC
+  workflow_dispatch:       # Elle de çalıştırabilmek için
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Kutuphaneleri kur
+        run: pip install -r requirements.txt
+
+      - name: Botu calistir
+        env:
+          AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+        run: python bot.py
+
+      - name: Netlify'a yayinla
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          npx netlify-cli deploy --prod --dir=. --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN
