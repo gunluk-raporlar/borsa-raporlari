@@ -2,6 +2,7 @@ import os
 import yfinance as yf
 import pandas as pd
 from datetime import datetime
+import zoneinfo
 from openai import OpenAI
 from typing import TypedDict
 from langgraph.graph import StateGraph, END
@@ -116,7 +117,8 @@ body {{ margin:0; font-family:Georgia, 'Times New Roman', serif; background:#fff
 </body></html>"""
 
 if __name__ == "__main__":
-    date_str = datetime.now().strftime('%Y-%m-%d')
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    date_str = datetime.now(tz).strftime('%Y-%m-%d')
     result = app.invoke({"tech_data": "", "fundamental_data": "", "macro_data": "", "final_report": ""})
     report = result["final_report"]
 
@@ -127,7 +129,7 @@ if __name__ == "__main__":
     # Arsiv index sayfasi
     files = sorted(os.listdir("reports"), reverse=True)
     items = "".join(
-        f'<a class="card" href="{fn}"><span class="date">{fn.replace(".html","")}</span><span class="sub">Gunluk raporu ac &rarr;</span></a>'
+        f'<a class="card" href="reports/{fn}"><span class="date">{fn.replace(".html","")}</span><span class="sub">Gunluk raporu ac &rarr;</span></a>'
         for fn in files if fn.endswith(".html")
     )
     index = f"""<!DOCTYPE html>
