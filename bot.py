@@ -21,6 +21,35 @@ client = OpenAI(
 # Takip edilen BIST30 hisseleri
 HISSELER = ["THYAO", "GARAN", "AKBNK", "EREGL", "KCHOL", "SISE", "BIMAS", "TUPRS", "ASELS", "SAHOL"]
 
+# ---- YEREL VERI DEPOSU (hafiza katmani) ----
+DATA_DIR = "data"
+import json
+
+
+def save_daily(category, date_str, data):
+    """Veriyi data/<category>/<tarih>.json olarak kaydeder."""
+    klasor = os.path.join(DATA_DIR, category)
+    os.makedirs(klasor, exist_ok=True)
+    with open(os.path.join(klasor, f"{date_str}.json"), "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def load_recent(category, gun=30):
+    """Son N gunun verisini (en yeni once) listeler."""
+    klasor = os.path.join(DATA_DIR, category)
+    if not os.path.isdir(klasor):
+        return []
+    dosyalar = sorted([f for f in os.listdir(klasor) if f.endswith(".json")], reverse=True)
+    sonuc = []
+    for f in dosyalar[:gun]:
+        try:
+            with open(os.path.join(klasor, f), encoding="utf-8") as fh:
+                sonuc.append({"date": f.replace(".json", ""), "data": json.load(fh)})
+        except Exception:
+            continue
+    return sonuc
+
+
 # Haber RSS kaynaklari
 HABER_KAYNAKLARI = {
     "BloombergHT": "https://www.bloomberght.com/rss",
@@ -34,12 +63,15 @@ HABER_KAYNAKLARI = {
 class AgentState(TypedDict):
     news_data: str
     tech_data: str
+    tech_prices: dict
     fundamental_data: str
     final_report: str
 
 # ---------- HABER AJANI ----------
 def news_agent(state: AgentState):
     print("[Haber Ajani] Finans haberleri toplaniyor...")
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    bugun = datetime.now(tz).strftime("%Y-%m-%d")
     toplanan = []
     for ad, url in HABER_KAYNAKLARI.items():
         try:
@@ -49,9 +81,21 @@ def news_agent(state: AgentState):
         except Exception:
             continue
         time.sleep(1)
-    if not toplanan:
+    if toplanan:
+        save_daily("news", bugun, toplanan[:25])
+
+    # Gecmis haberleri de ekle (hafiza)
+    gecmis = load_recent("news", gun=7)
+    gecmis_metin = ""
+    if len(gecmis) > 1:
+        gecmis_metin = "\n[SON 7 GUNUN HABERLERI]\n"
+        for g in gecmis[1:]:
+            gecmis_metin += f"-- {g['date']}: " + " | ".join(g['data'][:5]) + "\n"
+
+    if not toplanan and not gecmis:
         return {"news_data": "Haber verisi alinamadi."}
-    return {"news_data": "\n".join(toplanan[:25])}
+    bugun_metin = "\n".join(toplanan[:25]) if toplanan else "(bugun haber alinamadi)"
+    return {"news_data": bugun_metin + gecmis_metin}
 
 # ---------- TEKNIK AJAN (hisse fiyatlari) ----------
 def technical_agent(state: AgentState):
@@ -61,7 +105,10 @@ def technical_agent(state: AgentState):
     except Exception as e:
         return {"tech_data": f"Hisse verisi alinamadi: {e}"}
 
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    bugun = datetime.now(tz).strftime("%Y-%m-%d")
     satirlar = []
+    bugun_fiyatlar = {}
     for hisse in HISSELER:
         try:
             df = fetch_stock_data(symbols=[hisse], start_date="01-08-2026", end_date="05-09-2026")
@@ -73,13 +120,26 @@ def technical_agent(state: AgentState):
             if fiyat and onceki:
                 degisim = ((fiyat - onceki) / onceki) * 100
                 satirlar.append(f"{hisse}: {fiyat:.2f} TL (5 gunluk %{degisim:+.2f})")
+                bugun_fiyatlar[hisse] = round(float(fiyat), 2)
         except Exception:
             pass
         time.sleep(4)  # Is Yatirim sitesini zorlamamak icin
 
+    if bugun_fiyatlar:
+        save_daily("prices", bugun, bugun_fiyatlar)
+
+    # Gecmis fiyatlar (aylik teknik analiz icin)
+    gecmis = load_recent("prices", gun=30)
+    gecmis_metin = ""
+    if len(gecmis) > 1:
+        gecmis_metin = "\n[SON 30 GUNUN FIYAT GECMISI]\n"
+        for g in gecmis[1:]:
+            ozet = ", ".join(f"{h}={v}" for h, v in list(g['data'].items())[:5])
+            gecmis_metin += f"-- {g['date']}: {ozet}\n"
+
     if not satirlar:
-        return {"tech_data": "Hisse verisi alinamadi."}
-    return {"tech_data": "\n".join(satirlar)}
+        return {"tech_data": "Hisse verisi alinamadi.", "tech_prices": {}}
+    return {"tech_data": "\n".join(satirlar) + gecmis_metin, "tech_prices": bugun_fiyatlar}
 
 # ---------- TEMEL AJAN (finansal tablolar) ----------
 def fundamental_agent(state: AgentState):
@@ -89,6 +149,8 @@ def fundamental_agent(state: AgentState):
     except Exception as e:
         return {"fundamental_data": f"Finansal veri alinamadi: {e}"}
 
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    bugun = datetime.now(tz).strftime("%Y-%m-%d")
     ozetler = []
     for hisse in HISSELER[:6]:  # Hiz icin ilk 6 sirket
         try:
@@ -109,6 +171,9 @@ def fundamental_agent(state: AgentState):
         except Exception:
             pass
         time.sleep(4)
+
+    if ozetler:
+        save_daily("financials", bugun, ozetler)
 
     if not ozetler:
         return {"fundamental_data": "Finansal veri alinamadi."}
@@ -135,6 +200,7 @@ def master_cio_agent(state: AgentState):
     3. Teknik Degerlendirme (hisse bazli)
     4. Sirket/Finansal Degerlendirme
     5. Risk Yonetimi ve Strateji
+    6. ONERILEN PORTFOY: Haftalik ve aylik olarak onerilen hisse dagilimi (yuzde olarak, ornegin THYAO %20, GARAN %15 gibi) ve kisa aciklama.
 
     Verileri dogrudan kullan, uydurma veri ekleme. Raporu Turkce yaz.
     """
@@ -145,16 +211,89 @@ def master_cio_agent(state: AgentState):
     )
     return {"final_report": response.choices[0].message.content}
 
+# ---------- DENEME PORTFOYU TAKIBI ----------
+PORTFOLYO_DOSYASI = "portfolio.json"
+BASLANGIC_SERMAYE = 100000.0
+
+
+def load_portfolio():
+    import json
+    if os.path.exists(PORTFOLYO_DOSYASI):
+        try:
+            with open(PORTFOLYO_DOSYASI, encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return None
+
+
+def save_portfolio(data):
+    import json
+    with open(PORTFOLYO_DOSYASI, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def portfolio_agent(state: AgentState):
+    print("[Portfoy Ajani] Deneme portfoyu guncelleniyor...")
+    import json
+
+    # Teknik ajandan gelen fiyatlari kullan (tekrar internetten cekme)
+    fiyatlar = state.get("tech_prices") or {}
+
+    if not fiyatlar:
+        return {"final_report": state.get("final_report", "")}
+
+    p = load_portfolio()
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    bugun = datetime.now(tz).strftime("%Y-%m-%d")
+
+    if p is None:
+        # Ilk gun: esit dagilimli portfoy kur
+        hisse_adedi = len(fiyatlar)
+        pay = BASLANGIC_SERMAYE / hisse_adedi
+        p = {
+            "start_date": bugun,
+            "initial_capital": BASLANGIC_SERMAYE,
+            "initial_prices": {h: fiyatlar[h] for h in fiyatlar},
+            "shares": {h: round(pay / fiyatlar[h], 2) for h in fiyatlar},
+            "history": [],
+        }
+
+    # Bugunku deger ve yuzde
+    toplam = sum(p["shares"][h] * fiyatlar[h] for h in p["shares"] if h in fiyatlar)
+    yuzde = ((toplam - BASLANGIC_SERMAYE) / BASLANGIC_SERMAYE) * 100
+
+    # Gunluk degisim (dun vs bugun)
+    dun = None
+    if p["history"]:
+        dun = p["history"][-1]["total"]
+    gunluk_yuzde = ((toplam - dun) / dun * 100) if dun else 0.0
+
+    p["history"].append({
+        "date": bugun,
+        "total": round(toplam, 2),
+        "pct": round(yuzde, 2),
+        "daily_pct": round(gunluk_yuzde, 2),
+        "prices": {h: fiyatlar[h] for h in fiyatlar},
+    })
+    save_portfolio(p)
+
+    # Portfoy ozeti (rapora eklenecek)
+    ozet = f"Deneme Portfoyu ({bugun}): Toplam {round(toplam,2):.2f} TL (baslangic {BASLANGIC_SERMAYE:.0f} TL, toplam %{yuzde:+.2f}, gunluk %{gunluk_yuzde:+.2f})"
+    return {"final_report": state.get("final_report", "") + "\n\n[PORTFOY OZETI]\n" + ozet}
+
 workflow = StateGraph(AgentState)
 workflow.add_node("news", news_agent)
 workflow.add_node("technical", technical_agent)
 workflow.add_node("fundamental", fundamental_agent)
 workflow.add_node("cio", master_cio_agent)
+workflow.add_node("portfolio", portfolio_agent)
 workflow.set_entry_point("news")
 workflow.add_edge("news", "technical")
 workflow.add_edge("technical", "fundamental")
 workflow.add_edge("fundamental", "cio")
-workflow.add_edge("cio", END)
+workflow.add_edge("cio", "portfolio")
+workflow.add_edge("portfolio", END)
 app = workflow.compile()
 
 def build_html(report, date_str):
@@ -194,7 +333,7 @@ body {{ margin:0; font-family:Georgia, 'Times New Roman', serif; background:#fff
 if __name__ == "__main__":
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     date_str = datetime.now(tz).strftime('%Y-%m-%d')
-    result = app.invoke({"news_data": "", "tech_data": "", "fundamental_data": "", "final_report": ""})
+    result = app.invoke({"news_data": "", "tech_data": "", "tech_prices": {}, "fundamental_data": "", "final_report": ""})
     report = result["final_report"]
 
     os.makedirs("reports", exist_ok=True)
@@ -230,7 +369,7 @@ body {{ margin:0; font-family:Georgia, 'Times New Roman', serif; background:#fff
 </style>
 </head>
 <body>
-<div class="header"><div class="inner"><span class="brand">BIST 30 Piyasa Raporlari</span><span class="tag">Gunluk analiz arsivi</span></div></div>
+<div class="header"><div class="inner"><span class="brand">BIST 30 Piyasa Raporlari</span><span class="tag"><a href="portfolio.html" style="color:#777;">Deneme Portfoyu</a></span></div></div>
 <div class="wrap">
 {"" if items else '<div class="empty">Henuz rapor yok.</div>'}
 <div class="grid">
@@ -241,5 +380,58 @@ body {{ margin:0; font-family:Georgia, 'Times New Roman', serif; background:#fff
 </body></html>"""
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(index)
+
+    # ---- Deneme Portfoyu sayfasi ----
+    p = load_portfolio()
+    if p:
+        satirlar = []
+        for h in p.get("shares", {}):
+            ilk = p["initial_prices"].get(h)
+            guncel = p["history"][-1]["prices"].get(h) if p["history"] else ilk
+            if ilk and guncel:
+                fark = ((guncel - ilk) / ilk) * 100
+                satirlar.append(
+                    f"<tr><td>{h}</td><td>{ilk:.2f}</td><td>{guncel:.2f}</td>"
+                    f"<td style='color:{'#0b6e4f' if fark>=0 else '#b00020'}'>{fark:+.2f}%</td></tr>"
+                )
+        tablo = "".join(satirlar)
+        son = p["history"][-1]
+        gecmis = "".join(
+            f"<tr><td>{g['date']}</td><td>{g['total']:.2f} TL</td><td>{g['pct']:+.2f}%</td><td>{g['daily_pct']:+.2f}%</td></tr>"
+            for g in reversed(p["history"])
+        )
+        portfolio_html = f"""<!DOCTYPE html>
+<html lang="tr">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deneme Portfoyu</title>
+<style>
+* {{ box-sizing:border-box; }}
+body {{ margin:0; font-family:Georgia, 'Times New Roman', serif; background:#fff; color:#111; line-height:1.6; }}
+.header {{ border-bottom:1px solid #e5e5e5; padding:18px 24px; }}
+.header .inner {{ max-width:760px; margin:0 auto; display:flex; justify-content:space-between; align-items:baseline; }}
+.header a {{ color:#111; text-decoration:none; }}
+.header .brand {{ font-size:20px; font-weight:bold; }}
+.wrap {{ max-width:760px; margin:0 auto; padding:40px 24px; }}
+h1 {{ font-size:26px; font-weight:normal; }}
+table {{ width:100%; border-collapse:collapse; margin-top:20px; }}
+th, td {{ text-align:left; padding:10px 12px; border-bottom:1px solid #eee; font-size:15px; }}
+th {{ color:#777; font-weight:normal; }}
+.footer {{ text-align:center; color:#999; font-size:12px; padding:30px; border-top:1px solid #eee; }}
+</style>
+</head>
+<body>
+<div class="header"><div class="inner"><a class="brand" href="index.html">BIST 30 Piyasa Raporlari</a><a href="index.html">Raporlar</a></div></div>
+<div class="wrap">
+<h1>Deneme Portfoyu</h1>
+<p>Baslangic: {p['start_date']} | Baslangic Sermayesi: {p['initial_capital']:.0f} TL | Gunluk: {son['daily_pct']:+.2f}% | Toplam: {son['pct']:+.2f}%</p>
+<h2>Hisse Performansi (ilk alim vs guncel)</h2>
+<table><tr><th>Hisse</th><th>Ilk Alim</th><th>Guncel</th><th>Yuzde</th></tr>{tablo}</table>
+<h2>Gunluk Gecmis</h2>
+<table><tr><th>Tarih</th><th>Toplam Deger</th><th>Toplam %</th><th>Gunluk %</th></tr>{gecmis}</table>
+</div>
+<div class="footer">Bilgilendirme amaciyla hazirlanmistir, yatirim tavsiyesi degildir.</div>
+</body></html>"""
+        with open("portfolio.html", "w", encoding="utf-8") as f:
+            f.write(portfolio_html)
 
     print("RAPOR OLUSTURULDU:", date_str)
