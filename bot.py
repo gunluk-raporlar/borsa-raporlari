@@ -1,7 +1,8 @@
 import os
+import json
 import time
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 import zoneinfo
 from openai import OpenAI
 from typing import TypedDict
@@ -24,7 +25,6 @@ HISSELER = ["THYAO", "GARAN", "AKBNK", "EREGL", "KCHOL", "SISE", "BIMAS", "TUPRS
 
 # ---- YEREL VERI DEPOSU (hafiza katmani) ----
 DATA_DIR = "data"
-import json
 
 
 def save_daily(category, date_str, data):
@@ -61,6 +61,13 @@ HABER_KAYNAKLARI = {
     "Ekonomim-Sirket": "https://www.ekonomim.net/rss/sirket-12",
 }
 
+# Finansla ilgisiz haber basliklarini elemek icin filtre
+FINANS_DISI_KELIMELER = [
+    "masterchef", "survivor", "on numara", "sayisal loto", "milli piyango",
+    "hava durumu", "magazin", "dizi", "burc", "futbol", "mac sonucu",
+]
+
+
 class AgentState(TypedDict):
     news_data: str
     tech_data: str
@@ -78,7 +85,10 @@ def news_agent(state: AgentState):
         try:
             f = feedparser.parse(url)
             for e in f.entries[:5]:
-                toplanan.append(f"[{ad}] {e.title}")
+                baslik = e.title
+                if any(k.lower() in baslik.lower() for k in FINANS_DISI_KELIMELER):
+                    continue
+                toplanan.append(f"[{ad}] {baslik}")
         except Exception:
             continue
         time.sleep(1)
@@ -107,12 +117,16 @@ def technical_agent(state: AgentState):
         return {"tech_data": f"Hisse verisi alinamadi: {e}"}
 
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
-    bugun = datetime.now(tz).strftime("%Y-%m-%d")
+    simdi = datetime.now(tz)
+    bugun = simdi.strftime("%Y-%m-%d")
+    # Son ~40 gunluk veri cek (5 gunluk degisim hesabi icin yeterli)
+    bitis = simdi.strftime("%d-%m-%Y")
+    baslangic = (simdi - timedelta(days=40)).strftime("%d-%m-%Y")
     satirlar = []
     bugun_fiyatlar = {}
     for hisse in HISSELER:
         try:
-            df = fetch_stock_data(symbols=[hisse], start_date="01-08-2026", end_date="05-09-2026")
+            df = fetch_stock_data(symbols=[hisse], start_date=baslangic, end_date=bitis)
             if df is None or df.empty:
                 continue
             son = df.iloc[-1]
@@ -153,14 +167,16 @@ def fundamental_agent(state: AgentState):
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     ozetler = []
+    bu_yil = datetime.now(tz).year
     for hisse in HISSELER[:6]:  # Hiz icin ilk 6 sirket
         try:
-            fin = fetch_financials(symbols=[hisse], start_year=2025, end_year=2026, financial_group="1")
+            fin = fetch_financials(symbols=[hisse], start_year=bu_yil - 1, end_year=bu_yil, financial_group="1")
             if fin is None or fin.empty:
                 continue
             # Hasilat ve net donem kari satirlarini bul
             satir = fin[fin["FINANCIAL_ITEM_CODE"].isin(["1A", "3A"])]
-            son_kolon = [c for c in fin.columns if str(c).startswith("2026")][-1] if any(str(c).startswith("2026") for c in fin.columns) else None
+            yil_kolonlari = [c for c in fin.columns if str(c).startswith(str(bu_yil))]
+            son_kolon = yil_kolonlari[-1] if yil_kolonlari else None
             if son_kolon is None:
                 continue
             ozet = f"{hisse}:"
@@ -183,9 +199,19 @@ def fundamental_agent(state: AgentState):
 # ---------- BAS ANALIST (CIO) ----------
 def master_cio_agent(state: AgentState):
     print("[Bas Analist] Rapor sentezleniyor (DeepSeek)...")
+
+    # Hafiza: onceki gunlerin analiz ozetleri
+    gecmis_ozetler = load_recent("summaries", gun=14)
+    hafiza_metni = ""
+    if gecmis_ozetler:
+        hafiza_metni = "\n[GECMIS GUNLERIN ANALIZ OZETLERI - HAFIZA]:\n"
+        for g in gecmis_ozetler:
+            hafiza_metni += f"-- {g['date']}: {g['data'].get('ozet', '')}\n"
+
     prompt = f"""
     Sen kidemli bir Hedge-Fund Portfoy Yoneticisisin. Asagidaki GERCEK verileri kullanarak profesyonel bir BIST 30 Yatirim Raporu yaz.
-
+    Onceki gunlere ait analiz ozetlerini de dikkate al; trend devam ediyor mu, onceki oneriler nasil performans gosterdi degerlendir.
+{hafiza_metni}
     [GUNUN HABERLERI]:
     {state['news_data']}
 
@@ -207,6 +233,28 @@ def master_cio_agent(state: AgentState):
     """
     response = llm_call(prompt)
     return {"final_report": response}
+
+
+# ---------- OZET AJANI (hafiza indeksleme) ----------
+def summary_agent(state: AgentState):
+    """Gunun raporunu kisa bir ozete donusturup data/summaries/ altina indeksler.
+    Boylece ertesi gunler bu ozetleri okuyarak gecmisi hatirlar."""
+    print("[Ozet Ajani] Gunun analizi hafizaya indeksleniyor...")
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    bugun = datetime.now(tz).strftime("%Y-%m-%d")
+    rapor = state.get("final_report", "")
+    if not rapor:
+        return {}
+    prompt = f"""
+    Asagidaki gunluk BIST 30 yatirim raporunu, ileride hafiza olarak kullanilmak uzere 5-8 maddelik kisa bir ozete indir.
+    Piyasa yonu, one cikan hisseler, portfoy onerisi (yuzdeler) ve temel riskleri mutlaka icersin. Turkce yaz.
+
+    [RAPOR]:
+    {rapor[:6000]}
+    """
+    ozet = llm_call(prompt)
+    save_daily("summaries", bugun, {"ozet": ozet})
+    return {}
 
 
 def llm_call(prompt, max_deneme=6):
@@ -281,7 +329,9 @@ def portfolio_agent(state: AgentState):
     toplam = sum(p["shares"][h] * fiyatlar[h] for h in p["shares"] if h in fiyatlar)
     yuzde = ((toplam - BASLANGIC_SERMAYE) / BASLANGIC_SERMAYE) * 100
 
-    # Gunluk degisim (dun vs bugun)
+    # Gunluk degisim (dun vs bugun) - ayni gun tekrar calisirsa son kayit guncellenir
+    if p["history"] and p["history"][-1]["date"] == bugun:
+        p["history"].pop()
     dun = None
     if p["history"]:
         dun = p["history"][-1]["total"]
@@ -305,12 +355,14 @@ workflow.add_node("news", news_agent)
 workflow.add_node("technical", technical_agent)
 workflow.add_node("fundamental", fundamental_agent)
 workflow.add_node("cio", master_cio_agent)
+workflow.add_node("summary", summary_agent)
 workflow.add_node("portfolio", portfolio_agent)
 workflow.set_entry_point("news")
 workflow.add_edge("news", "technical")
 workflow.add_edge("technical", "fundamental")
 workflow.add_edge("fundamental", "cio")
-workflow.add_edge("cio", "portfolio")
+workflow.add_edge("cio", "summary")
+workflow.add_edge("summary", "portfolio")
 workflow.add_edge("portfolio", END)
 app = workflow.compile()
 
