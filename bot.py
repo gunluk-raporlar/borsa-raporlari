@@ -7,6 +7,7 @@ from openai import OpenAI
 from typing import TypedDict
 from langgraph.graph import StateGraph, END
 import feedparser
+import markdown
 
 # ==== AMD Radeon Developer Cloud API ====
 AMD_API_KEY = os.environ.get("AMD_API_KEY", "")
@@ -314,6 +315,7 @@ workflow.add_edge("portfolio", END)
 app = workflow.compile()
 
 def build_html(report, date_str):
+    html_report = markdown.markdown(report, extensions=["tables", "fenced_code"])
     return f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -324,15 +326,23 @@ def build_html(report, date_str):
 * {{ box-sizing:border-box; }}
 body {{ margin:0; font-family:Georgia, 'Times New Roman', serif; background:#fff; color:#111; line-height:1.75; }}
 .header {{ border-bottom:1px solid #e5e5e5; padding:18px 24px; }}
-.header .inner {{ max-width:760px; margin:0 auto; display:flex; justify-content:space-between; align-items:baseline; }}
+.header .inner {{ max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:baseline; padding:0 24px; }}
 .header a {{ color:#111; text-decoration:none; font-size:14px; letter-spacing:.5px; }}
 .header .brand {{ font-size:20px; font-weight:bold; }}
-.wrap {{ max-width:760px; margin:0 auto; padding:40px 24px; }}
+.wrap {{ max-width:1100px; margin:0 auto; padding:40px 24px; }}
 .article h1 {{ font-size:30px; margin:0 0 8px; font-weight:normal; }}
 .article .meta {{ color:#777; font-size:13px; border-bottom:1px solid #eee; padding-bottom:18px; margin-bottom:24px; }}
 .content {{ font-size:16px; }}
-.content h1, .content h2, .content h3 {{ font-weight:normal; }}
+.content h1, .content h2, .content h3 {{ font-weight:normal; margin-top:28px; }}
+.content table {{ border-collapse:collapse; width:100%; margin:16px 0; font-size:15px; }}
+.content th, .content td {{ border:1px solid #e0e0e0; padding:10px 12px; text-align:left; }}
+.content th {{ background:#f7f7f7; }}
+.content strong {{ font-weight:bold; }}
 .footer {{ text-align:center; color:#999; font-size:12px; padding:30px; border-top:1px solid #eee; }}
+@media (max-width:600px) {{
+  .content table {{ font-size:13px; }}
+  .content th, .content td {{ padding:6px 8px; }}
+}}
 </style>
 </head>
 <body>
@@ -341,7 +351,7 @@ body {{ margin:0; font-family:Georgia, 'Times New Roman', serif; background:#fff
 <div class="article">
 <h1>Gunluk Piyasa Raporu</h1>
 <div class="meta">{date_str}</div>
-<div class="content">{report.replace(chr(10), '<br>')}</div>
+<div class="content">{html_report}</div>
 </div>
 </div>
 <div class="footer">Bilgilendirme amaciyla hazirlanmistir, yatirim tavsiyesi degildir.</div>
@@ -362,6 +372,27 @@ if __name__ == "__main__":
         f'<a class="card" href="reports/{fn}"><span class="date">{fn.replace(".html","")}</span><span class="sub">Gunluk raporu ac &rarr;</span></a>'
         for fn in files if fn.endswith(".html")
     )
+    # ---- Deneme Portfoyu verisi ----
+    p = load_portfolio()
+    portfoy_bolumu = ""
+    if p:
+        satirlar = []
+        for h in p.get("shares", {}):
+            ilk = p["initial_prices"].get(h)
+            guncel = p["history"][-1]["prices"].get(h) if p["history"] else ilk
+            if ilk and guncel:
+                fark = ((guncel - ilk) / ilk) * 100
+                satirlar.append(
+                    f"<tr><td>{h}</td><td>{ilk:.2f}</td><td>{guncel:.2f}</td>"
+                    f"<td style='color:{'#0b6e4f' if fark>=0 else '#b00020'}'>{fark:+.2f}%</td></tr>"
+                )
+        tablo = "".join(satirlar)
+        son = p["history"][-1]
+        portfoy_bolumu = f"""<h2>Deneme Portfoyu</h2>
+<p>Baslangic: {p['start_date']} | Sermaye: {p['initial_capital']:.0f} TL | Gunluk: {son['daily_pct']:+.2f}% | Toplam: {son['pct']:+.2f}%</p>
+<table><tr><th>Hisse</th><th>Ilk Alim</th><th>Guncel</th><th>Yuzde</th></tr>{tablo}</table>
+<a href="portfolio.html">Detayli portfoy gecmisi &rarr;</a>"""
+
     index = f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -372,26 +403,34 @@ if __name__ == "__main__":
 * {{ box-sizing:border-box; }}
 body {{ margin:0; font-family:Georgia, 'Times New Roman', serif; background:#fff; color:#111; line-height:1.6; }}
 .header {{ border-bottom:1px solid #e5e5e5; padding:18px 24px; }}
-.header .inner {{ max-width:760px; margin:0 auto; display:flex; justify-content:space-between; align-items:baseline; }}
+.header .inner {{ max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:baseline; padding:0 24px; }}
 .header .brand {{ font-size:20px; font-weight:bold; text-decoration:none; color:#111; }}
 .header .tag {{ color:#999; font-size:13px; }}
-.wrap {{ max-width:760px; margin:0 auto; padding:40px 24px; }}
+.wrap {{ max-width:1100px; margin:0 auto; padding:40px 24px; }}
 .grid {{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:20px; }}
 .card {{ border:1px solid #e5e5e5; padding:22px; text-decoration:none; color:#111; display:block; transition:.15s; }}
 .card:hover {{ border-color:#111; }}
 .card .date {{ font-size:18px; font-weight:bold; }}
 .card .sub {{ color:#777; font-size:13px; margin-top:6px; }}
 .empty {{ color:#999; text-align:center; padding:40px; }}
+.portfoy {{ margin-top:40px; border-top:1px solid #e5e5e5; padding-top:20px; }}
+.portfoy h2 {{ font-size:22px; font-weight:normal; }}
+.portfoy table {{ border-collapse:collapse; width:100%; margin:12px 0; }}
+.portfoy th, .portfoy td {{ border:1px solid #e0e0e0; padding:8px 10px; text-align:left; }}
+.portfoy th {{ background:#f7f7f7; }}
+.portfoy a {{ color:#111; }}
 .footer {{ text-align:center; color:#999; font-size:12px; padding:30px; border-top:1px solid #eee; }}
+@media (max-width:600px) {{ .portfoy table {{ font-size:13px; }} .portfoy th, .portfoy td {{ padding:6px 8px; }} }}
 </style>
 </head>
 <body>
-<div class="header"><div class="inner"><span class="brand">BIST 30 Piyasa Raporlari</span><span class="tag"><a href="portfolio.html" style="color:#777;">Deneme Portfoyu</a></span></div></div>
+<div class="header"><div class="inner"><span class="brand">BIST 30 Piyasa Raporlari</span><span class="tag">Gunluk analiz arsivi</span></div></div>
 <div class="wrap">
 {"" if items else '<div class="empty">Henuz rapor yok.</div>'}
 <div class="grid">
 {items}
 </div>
+{('<div class="portfoy">' + portfoy_bolumu + '</div>') if portfoy_bolumu else ''}
 </div>
 <div class="footer">Bilgilendirme amaciyla hazirlanmistir, yatirim tavsiyesi degildir.</div>
 </body></html>"""
@@ -399,7 +438,6 @@ body {{ margin:0; font-family:Georgia, 'Times New Roman', serif; background:#fff
         f.write(index)
 
     # ---- Deneme Portfoyu sayfasi ----
-    p = load_portfolio()
     if p:
         satirlar = []
         for h in p.get("shares", {}):
