@@ -46,14 +46,13 @@
     },
     {
       "date": "2026-09-05",
-      "total": 99998.76,
-      "pct": -0.0,
-      "daily_pct": -0.0,
+      "total": 89998.65,
+      "pct": -10.0,
+      "daily_pct": -10.0,
       "prices": {
         "THYAO": 296.0,
         "GARAN": 131.4,
         "AKBNK": 71.85,
-        "EREGL": 37.2,
         "KCHOL": 215.1,
         "SISE": 39.08,
         "BIMAS": 415.75,
