@@ -204,12 +204,29 @@ def master_cio_agent(state: AgentState):
 
     Verileri dogrudan kullan, uydurma veri ekleme. Raporu Turkce yaz.
     """
-    response = client.chat.completions.create(
-        model="DeepSeek-V4-Flash",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.3
-    )
-    return {"final_report": response.choices[0].message.content}
+    response = llm_call(prompt)
+    return {"final_report": response}
+
+
+def llm_call(prompt, max_deneme=6):
+    """API cagrisi; hiz siniri (429) olursa bekleyip tekrar dener."""
+    import openai
+    for deneme in range(max_deneme):
+        try:
+            resp = client.chat.completions.create(
+                model="DeepSeek-V4-Flash",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3
+            )
+            return resp.choices[0].message.content
+        except openai.RateLimitError as e:
+            bekle = 20 * (deneme + 1)  # 20sn, 40sn, 60sn... artarak bekle
+            print(f"[Uyari] API hiz siniri ({e}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme+1}/{max_deneme})...")
+            time.sleep(bekle)
+        except Exception as e:
+            print(f"[Hata] API cagrisi basarisiz: {e}")
+            time.sleep(10)
+    raise RuntimeError("API cagrisi maksimum deneme sayisinda da tamamlanamadi.")
 
 # ---------- DENEME PORTFOYU TAKIBI ----------
 PORTFOLYO_DOSYASI = "portfolio.json"
