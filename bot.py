@@ -366,48 +366,224 @@ workflow.add_edge("summary", "portfolio")
 workflow.add_edge("portfolio", END)
 app = workflow.compile()
 
-def build_html(report, date_str):
-    html_report = markdown.markdown(report, extensions=["tables", "fenced_code"])
+# ---------- ORTAK SITE TASARIMI ----------
+BASE_CSS = """
+:root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
+        --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:"Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+       background:var(--bg); color:var(--ink); line-height:1.65; }
+a { color:var(--accent); }
+.topbar { background:var(--ink); }
+.topbar .inner { max-width:1080px; margin:0 auto; padding:14px 20px; display:flex;
+                 justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+.topbar .brand { color:#fff; text-decoration:none; font-weight:700; font-size:18px; }
+.topbar nav a { color:#cbd5e1; text-decoration:none; margin-left:20px; font-size:14px; }
+.topbar nav a:hover, .topbar nav a.active { color:#fff; }
+.wrap { max-width:1080px; margin:0 auto; padding:32px 20px 48px; }
+.hero { margin-bottom:26px; }
+.hero h1 { margin:0 0 6px; font-size:27px; }
+.hero p { margin:0; color:var(--muted); font-size:14.5px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 24px; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:14px; margin:0 0 24px; }
+.stat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+.stat .label { font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; }
+.stat .value { font-size:20px; font-weight:700; margin-top:3px; }
+.pos { color:var(--pos); font-weight:600; }
+.neg { color:var(--neg); font-weight:600; }
+table { border-collapse:collapse; width:100%; font-size:14.5px; }
+th, td { border-bottom:1px solid var(--line); padding:9px 12px; text-align:left; }
+th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+tr:last-child td { border-bottom:none; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:14px; }
+.rcard { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px;
+         text-decoration:none; color:var(--ink); display:block; transition:border-color .15s, box-shadow .15s; }
+.rcard:hover { border-color:var(--accent); box-shadow:0 2px 10px rgba(15,23,42,.08); }
+.rcard .date { font-size:16.5px; font-weight:700; display:block; }
+.rcard .sub { color:var(--muted); font-size:13px; margin-top:4px; display:block; }
+.section-title { font-size:19px; margin:34px 0 14px; padding-left:12px; border-left:4px solid var(--accent); }
+.report { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:28px 36px; }
+.report h1, .report h2, .report h3 { padding-left:12px; border-left:4px solid var(--accent); line-height:1.35; }
+.report h1 { font-size:22px; margin:26px 0 10px; }
+.report h2 { font-size:19px; margin:26px 0 10px; }
+.report h3 { font-size:16.5px; margin:22px 0 8px; }
+.report table { margin:14px 0; border:1px solid var(--line); border-radius:8px; }
+.report th { background:#f8fafc; }
+.report td, .report th { border:1px solid var(--line); }
+.report hr { border:none; border-top:1px solid var(--line); margin:22px 0; }
+.report blockquote { margin:14px 0; padding:10px 16px; border-left:4px solid var(--line); color:var(--muted); }
+.badge { display:inline-block; background:var(--accent-bg); color:var(--accent); border:1px solid #99f6e4;
+         border-radius:999px; padding:3px 12px; font-size:12.5px; font-weight:600; }
+.meta { color:var(--muted); font-size:13.5px; margin:8px 0 22px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.footer { text-align:center; color:var(--muted); font-size:12.5px; padding:26px 20px;
+          border-top:1px solid var(--line); background:#fff; }
+.chart { width:100%; height:auto; display:block; }
+@media (max-width:640px) {
+  .report { padding:18px 16px; }
+  table { font-size:13px; }
+  th, td { padding:7px 8px; }
+}
+"""
+
+
+def _sayfa(title, icerik, aktif="raporlar", kok=""):
+    """Tum sayfalar icin ortak iskelet (ust menu + govde + altbilgi)."""
+    a_r = ' class="active"' if aktif == "raporlar" else ""
+    a_p = ' class="active"' if aktif == "portfoy" else ""
     return f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Piyasa Raporu - {date_str}</title>
-<style>
-* {{ box-sizing:border-box; }}
-body {{ margin:0; font-family:Georgia, 'Times New Roman', serif; background:#fff; color:#111; line-height:1.75; }}
-.header {{ border-bottom:1px solid #e5e5e5; padding:18px 24px; }}
-.header .inner {{ max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:baseline; padding:0 24px; }}
-.header a {{ color:#111; text-decoration:none; font-size:14px; letter-spacing:.5px; }}
-.header .brand {{ font-size:20px; font-weight:bold; }}
-.wrap {{ max-width:1100px; margin:0 auto; padding:40px 24px; }}
-.article h1 {{ font-size:30px; margin:0 0 8px; font-weight:normal; }}
-.article .meta {{ color:#777; font-size:13px; border-bottom:1px solid #eee; padding-bottom:18px; margin-bottom:24px; }}
-.content {{ font-size:16px; }}
-.content h1, .content h2, .content h3 {{ font-weight:normal; margin-top:28px; }}
-.content table {{ border-collapse:collapse; width:100%; margin:16px 0; font-size:15px; }}
-.content th, .content td {{ border:1px solid #e0e0e0; padding:10px 12px; text-align:left; }}
-.content th {{ background:#f7f7f7; }}
-.content strong {{ font-weight:bold; }}
-.footer {{ text-align:center; color:#999; font-size:12px; padding:30px; border-top:1px solid #eee; }}
-@media (max-width:600px) {{
-  .content table {{ font-size:13px; }}
-  .content th, .content td {{ padding:6px 8px; }}
-}}
-</style>
+<title>{title}</title>
+<style>{BASE_CSS}</style>
 </head>
 <body>
-<div class="header"><div class="inner"><a class="brand" href="index.html">BIST 30 Piyasa Raporlari</a><a href="index.html">Arsiv</a></div></div>
-<div class="wrap">
-<div class="article">
-<h1>Gunluk Piyasa Raporu</h1>
-<div class="meta">{date_str}</div>
-<div class="content">{html_report}</div>
-</div>
-</div>
-<div class="footer">Bilgilendirme amaciyla hazirlanmistir, yatirim tavsiyesi degildir.</div>
+<header class="topbar"><div class="inner">
+<a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
+<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a></nav>
+</div></header>
+<main class="wrap">
+{icerik}
+</main>
+<footer class="footer">Bilgilendirme amacıyla hazırlanmıştır, yatırım tavsiyesi değildir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
 </body></html>"""
+
+
+def _renk(deger):
+    return "pos" if deger >= 0 else "neg"
+
+
+def markdown_to_html(metin):
+    import re
+    # Paragraf icindeki "- " satirlarinin gercek liste olmasi icin bos satir ekle
+    metin = re.sub(r"(?<!\n)\n(\s*[-*] )", r"\n\n\1", metin)
+    return markdown.markdown(metin, extensions=["tables", "fenced_code", "sane_lists", "nl2br"])
+
+
+def rapor_sayfasi(html_icerik, date_str):
+    icerik = f"""
+<div class="hero">
+<h1>Günlük Piyasa Raporu</h1>
+<div class="meta"><span class="badge">{date_str}</span><span>BIST 30 &bull; Yapay zeka destekli günlük analiz</span></div>
+</div>
+<article class="report">{html_icerik}</article>
+<p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>"""
+    return _sayfa(f"Piyasa Raporu - {date_str}", icerik, "raporlar", kok="../")
+
+
+def build_html(report, date_str):
+    return rapor_sayfasi(markdown_to_html(report), date_str)
+
+
+def sparkline_svg(degerler, genislik=760, yukseklik=200):
+    """Portfoy gecmisinden basit SVG cizgi grafigi uretir."""
+    if len(degerler) < 2:
+        return ""
+    mn, mx = min(degerler), max(degerler)
+    fark = (mx - mn) or 1.0
+    sol, sag, ust, alt = 10, 14, 16, 28
+    iy = yukseklik - ust - alt
+    adim = (genislik - sol - sag) / (len(degerler) - 1)
+    pts = [(sol + i * adim, ust + (mx - v) / fark * iy) for i, v in enumerate(degerler)]
+    cizgi = " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
+    sx, sy = pts[-1]
+    renk = "#047857" if degerler[-1] >= degerler[0] else "#b91c1c"
+    return f"""<svg class="chart" viewBox="0 0 {genislik} {yukseklik}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Portfoy performans grafigi">
+<polyline points="{cizgi}" fill="none" stroke="{renk}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="{sx:.1f}" cy="{sy:.1f}" r="4.5" fill="{renk}"/>
+<text x="{sol}" y="{yukseklik - 8}" font-size="11" fill="#64748b">Min: {mn:,.0f} TL</text>
+<text x="{genislik - sag}" y="{yukseklik - 8}" font-size="11" fill="#64748b" text-anchor="end">Maks: {mx:,.0f} TL</text>
+</svg>"""
+
+
+def _portfoy_satirlari(p):
+    son = p["history"][-1]
+    satirlar = []
+    for h in p.get("shares", {}):
+        ilk = p["initial_prices"].get(h)
+        guncel = son["prices"].get(h, ilk)
+        if ilk and guncel:
+            fark = ((guncel - ilk) / ilk) * 100
+            satirlar.append(
+                f"<tr><td><strong>{h}</strong></td><td>{p['shares'][h]:,.2f}</td>"
+                f"<td>{ilk:.2f} TL</td><td>{guncel:.2f} TL</td>"
+                f"<td class='{_renk(fark)}'>{fark:+.2f}%</td></tr>"
+            )
+    return "".join(satirlar)
+
+
+def _portfoy_istatistikleri(p):
+    son = p["history"][-1]
+    return f"""
+<div class="stats">
+<div class="stat"><div class="label">Güncel Değer</div><div class="value">{son['total']:,.0f} TL</div></div>
+<div class="stat"><div class="label">Günlük Değişim</div><div class="value {_renk(son['daily_pct'])}">{son['daily_pct']:+.2f}%</div></div>
+<div class="stat"><div class="label">Toplam Getiri</div><div class="value {_renk(son['pct'])}">{son['pct']:+.2f}%</div></div>
+<div class="stat"><div class="label">Başlangıç</div><div class="value" style="font-size:16px">{p['start_date']}</div></div>
+</div>"""
+
+
+def build_index_html(p, rapor_dosyalari):
+    if rapor_dosyalari:
+        kartlar = "".join(
+            f'<a class="rcard" href="reports/{fn}"><span class="date">{fn[:-5]}</span>'
+            f'<span class="sub">Günlük raporu aç &rarr;</span></a>'
+            for fn in rapor_dosyalari
+        )
+    else:
+        kartlar = '<p style="color:var(--muted)">Henüz rapor yok.</p>'
+
+    portfoy_bolumu = ""
+    if p and p.get("history"):
+        grafik = sparkline_svg([g["total"] for g in p["history"]])
+        grafik_html = f'<div class="card" style="margin-bottom:14px">{grafik}</div>' if grafik else ""
+        portfoy_bolumu = f"""
+<h2 class="section-title">Deneme Portföyü</h2>
+{_portfoy_istatistikleri(p)}
+{grafik_html}
+<div class="card" style="padding:8px 24px 16px">
+<table><tr><th>Hisse</th><th>Adet</th><th>İlk Alım</th><th>Güncel</th><th>Getiri</th></tr>{_portfoy_satirlari(p)}</table>
+<p style="margin:12px 0 4px"><a href="portfolio.html">Detaylı portföy geçmişi &rarr;</a></p>
+</div>"""
+
+    icerik = f"""
+<div class="hero">
+<h1>BIST 30 Günlük Piyasa Raporları</h1>
+<p>Her sabah 08:00'de otomatik üretilen, yapay zeka destekli BIST 30 analizleri ve sanal portföy takibi.</p>
+</div>
+<h2 class="section-title">Rapor Arşivi</h2>
+<div class="grid">{kartlar}</div>
+{portfoy_bolumu}"""
+    return _sayfa("BIST 30 Günlük Raporlar", icerik, "raporlar")
+
+
+def build_portfolio_html(p):
+    son = p["history"][-1]
+    grafik = sparkline_svg([g["total"] for g in p["history"]])
+    grafik_html = f'<div class="card" style="margin-bottom:22px">{grafik}</div>' if grafik else ""
+    gecmis = "".join(
+        f"<tr><td>{g['date']}</td><td>{g['total']:,.2f} TL</td>"
+        f"<td class='{_renk(g['pct'])}'>{g['pct']:+.2f}%</td>"
+        f"<td class='{_renk(g['daily_pct'])}'>{g['daily_pct']:+.2f}%</td></tr>"
+        for g in reversed(p["history"])
+    )
+    icerik = f"""
+<div class="hero">
+<h1>Deneme Portföyü</h1>
+<p>10 BIST 30 hissesine eşit dağıtılmış {p['initial_capital']:,.0f} TL'lik sanal portföy. Alım-satım yapılmaz, sadece takip edilir.</p>
+</div>
+{_portfoy_istatistikleri(p)}
+{grafik_html}
+<h2 class="section-title">Hisse Performansı (ilk alım vs güncel)</h2>
+<div class="card" style="padding:8px 24px 16px">
+<table><tr><th>Hisse</th><th>Adet</th><th>İlk Alım</th><th>Güncel</th><th>Getiri</th></tr>{_portfoy_satirlari(p)}</table>
+</div>
+<h2 class="section-title">Günlük Geçmiş</h2>
+<div class="card" style="padding:8px 24px 16px">
+<table><tr><th>Tarih</th><th>Toplam Değer</th><th>Toplam %</th><th>Günlük %</th></tr>{gecmis}</table>
+</div>"""
+    return _sayfa("Deneme Portföyü", icerik, "portfoy")
 
 if __name__ == "__main__":
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
@@ -419,126 +595,12 @@ if __name__ == "__main__":
     with open(f"reports/{date_str}.html", "w", encoding="utf-8") as f:
         f.write(build_html(report, date_str))
 
-    files = sorted(os.listdir("reports"), reverse=True)
-    items = "".join(
-        f'<a class="card" href="reports/{fn}"><span class="date">{fn.replace(".html","")}</span><span class="sub">Gunluk raporu ac &rarr;</span></a>'
-        for fn in files if fn.endswith(".html")
-    )
-    # ---- Deneme Portfoyu verisi ----
+    raporlar = sorted((fn for fn in os.listdir("reports") if fn.endswith(".html")), reverse=True)
     p = load_portfolio()
-    portfoy_bolumu = ""
-    if p:
-        satirlar = []
-        for h in p.get("shares", {}):
-            ilk = p["initial_prices"].get(h)
-            guncel = p["history"][-1]["prices"].get(h) if p["history"] else ilk
-            if ilk and guncel:
-                fark = ((guncel - ilk) / ilk) * 100
-                satirlar.append(
-                    f"<tr><td>{h}</td><td>{ilk:.2f}</td><td>{guncel:.2f}</td>"
-                    f"<td style='color:{'#0b6e4f' if fark>=0 else '#b00020'}'>{fark:+.2f}%</td></tr>"
-                )
-        tablo = "".join(satirlar)
-        son = p["history"][-1]
-        portfoy_bolumu = f"""<h2>Deneme Portfoyu</h2>
-<p>Baslangic: {p['start_date']} | Sermaye: {p['initial_capital']:.0f} TL | Gunluk: {son['daily_pct']:+.2f}% | Toplam: {son['pct']:+.2f}%</p>
-<table><tr><th>Hisse</th><th>Ilk Alim</th><th>Guncel</th><th>Yuzde</th></tr>{tablo}</table>
-<a href="portfolio.html">Detayli portfoy gecmisi &rarr;</a>"""
-
-    index = f"""<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BIST 30 Piyasa Raporlari</title>
-<style>
-* {{ box-sizing:border-box; }}
-body {{ margin:0; font-family:Georgia, 'Times New Roman', serif; background:#fff; color:#111; line-height:1.6; }}
-.header {{ border-bottom:1px solid #e5e5e5; padding:18px 24px; }}
-.header .inner {{ max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:baseline; padding:0 24px; }}
-.header .brand {{ font-size:20px; font-weight:bold; text-decoration:none; color:#111; }}
-.header .tag {{ color:#999; font-size:13px; }}
-.wrap {{ max-width:1100px; margin:0 auto; padding:40px 24px; }}
-.grid {{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:20px; }}
-.card {{ border:1px solid #e5e5e5; padding:22px; text-decoration:none; color:#111; display:block; transition:.15s; }}
-.card:hover {{ border-color:#111; }}
-.card .date {{ font-size:18px; font-weight:bold; }}
-.card .sub {{ color:#777; font-size:13px; margin-top:6px; }}
-.empty {{ color:#999; text-align:center; padding:40px; }}
-.portfoy {{ margin-top:40px; border-top:1px solid #e5e5e5; padding-top:20px; }}
-.portfoy h2 {{ font-size:22px; font-weight:normal; }}
-.portfoy table {{ border-collapse:collapse; width:100%; margin:12px 0; }}
-.portfoy th, .portfoy td {{ border:1px solid #e0e0e0; padding:8px 10px; text-align:left; }}
-.portfoy th {{ background:#f7f7f7; }}
-.portfoy a {{ color:#111; }}
-.footer {{ text-align:center; color:#999; font-size:12px; padding:30px; border-top:1px solid #eee; }}
-@media (max-width:600px) {{ .portfoy table {{ font-size:13px; }} .portfoy th, .portfoy td {{ padding:6px 8px; }} }}
-</style>
-</head>
-<body>
-<div class="header"><div class="inner"><span class="brand">BIST 30 Piyasa Raporlari</span><span class="tag">Gunluk analiz arsivi</span></div></div>
-<div class="wrap">
-{"" if items else '<div class="empty">Henuz rapor yok.</div>'}
-<div class="grid">
-{items}
-</div>
-{('<div class="portfoy">' + portfoy_bolumu + '</div>') if portfoy_bolumu else ''}
-</div>
-<div class="footer">Bilgilendirme amaciyla hazirlanmistir, yatirim tavsiyesi degildir.</div>
-</body></html>"""
     with open("index.html", "w", encoding="utf-8") as f:
-        f.write(index)
-
-    # ---- Deneme Portfoyu sayfasi ----
+        f.write(build_index_html(p, raporlar))
     if p:
-        satirlar = []
-        for h in p.get("shares", {}):
-            ilk = p["initial_prices"].get(h)
-            guncel = p["history"][-1]["prices"].get(h) if p["history"] else ilk
-            if ilk and guncel:
-                fark = ((guncel - ilk) / ilk) * 100
-                satirlar.append(
-                    f"<tr><td>{h}</td><td>{ilk:.2f}</td><td>{guncel:.2f}</td>"
-                    f"<td style='color:{'#0b6e4f' if fark>=0 else '#b00020'}'>{fark:+.2f}%</td></tr>"
-                )
-        tablo = "".join(satirlar)
-        son = p["history"][-1]
-        gecmis = "".join(
-            f"<tr><td>{g['date']}</td><td>{g['total']:.2f} TL</td><td>{g['pct']:+.2f}%</td><td>{g['daily_pct']:+.2f}%</td></tr>"
-            for g in reversed(p["history"])
-        )
-        portfolio_html = f"""<!DOCTYPE html>
-<html lang="tr">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Deneme Portfoyu</title>
-<style>
-* {{ box-sizing:border-box; }}
-body {{ margin:0; font-family:Georgia, 'Times New Roman', serif; background:#fff; color:#111; line-height:1.6; }}
-.header {{ border-bottom:1px solid #e5e5e5; padding:18px 24px; }}
-.header .inner {{ max-width:760px; margin:0 auto; display:flex; justify-content:space-between; align-items:baseline; }}
-.header a {{ color:#111; text-decoration:none; }}
-.header .brand {{ font-size:20px; font-weight:bold; }}
-.wrap {{ max-width:760px; margin:0 auto; padding:40px 24px; }}
-h1 {{ font-size:26px; font-weight:normal; }}
-table {{ width:100%; border-collapse:collapse; margin-top:20px; }}
-th, td {{ text-align:left; padding:10px 12px; border-bottom:1px solid #eee; font-size:15px; }}
-th {{ color:#777; font-weight:normal; }}
-.footer {{ text-align:center; color:#999; font-size:12px; padding:30px; border-top:1px solid #eee; }}
-</style>
-</head>
-<body>
-<div class="header"><div class="inner"><a class="brand" href="index.html">BIST 30 Piyasa Raporlari</a><a href="index.html">Raporlar</a></div></div>
-<div class="wrap">
-<h1>Deneme Portfoyu</h1>
-<p>Baslangic: {p['start_date']} | Baslangic Sermayesi: {p['initial_capital']:.0f} TL | Gunluk: {son['daily_pct']:+.2f}% | Toplam: {son['pct']:+.2f}%</p>
-<h2>Hisse Performansi (ilk alim vs guncel)</h2>
-<table><tr><th>Hisse</th><th>Ilk Alim</th><th>Guncel</th><th>Yuzde</th></tr>{tablo}</table>
-<h2>Gunluk Gecmis</h2>
-<table><tr><th>Tarih</th><th>Toplam Deger</th><th>Toplam %</th><th>Gunluk %</th></tr>{gecmis}</table>
-</div>
-<div class="footer">Bilgilendirme amaciyla hazirlanmistir, yatirim tavsiyesi degildir.</div>
-</body></html>"""
         with open("portfolio.html", "w", encoding="utf-8") as f:
-            f.write(portfolio_html)
+            f.write(build_portfolio_html(p))
 
     print("RAPOR OLUSTURULDU:", date_str)

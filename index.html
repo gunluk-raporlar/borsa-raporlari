@@ -3,42 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BIST 30 Piyasa Raporlari</title>
+<title>BIST 30 Günlük Raporlar</title>
 <style>
+:root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
+        --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
 * { box-sizing:border-box; }
-body { margin:0; font-family:Georgia, 'Times New Roman', serif; background:#fff; color:#111; line-height:1.6; }
-.header { border-bottom:1px solid #e5e5e5; padding:18px 24px; }
-.header .inner { max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:baseline; padding:0 24px; }
-.header .brand { font-size:20px; font-weight:bold; text-decoration:none; color:#111; }
-.header .tag { color:#999; font-size:13px; }
-.wrap { max-width:1100px; margin:0 auto; padding:40px 24px; }
-.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:20px; }
-.card { border:1px solid #e5e5e5; padding:22px; text-decoration:none; color:#111; display:block; transition:.15s; }
-.card:hover { border-color:#111; }
-.card .date { font-size:18px; font-weight:bold; }
-.card .sub { color:#777; font-size:13px; margin-top:6px; }
-.empty { color:#999; text-align:center; padding:40px; }
-.portfoy { margin-top:40px; border-top:1px solid #e5e5e5; padding-top:20px; }
-.portfoy h2 { font-size:22px; font-weight:normal; }
-.portfoy table { border-collapse:collapse; width:100%; margin:12px 0; }
-.portfoy th, .portfoy td { border:1px solid #e0e0e0; padding:8px 10px; text-align:left; }
-.portfoy th { background:#f7f7f7; }
-.portfoy a { color:#111; }
-.footer { text-align:center; color:#999; font-size:12px; padding:30px; border-top:1px solid #eee; }
-@media (max-width:600px) { .portfoy table { font-size:13px; } .portfoy th, .portfoy td { padding:6px 8px; } }
+body { margin:0; font-family:"Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+       background:var(--bg); color:var(--ink); line-height:1.65; }
+a { color:var(--accent); }
+.topbar { background:var(--ink); }
+.topbar .inner { max-width:1080px; margin:0 auto; padding:14px 20px; display:flex;
+                 justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+.topbar .brand { color:#fff; text-decoration:none; font-weight:700; font-size:18px; }
+.topbar nav a { color:#cbd5e1; text-decoration:none; margin-left:20px; font-size:14px; }
+.topbar nav a:hover, .topbar nav a.active { color:#fff; }
+.wrap { max-width:1080px; margin:0 auto; padding:32px 20px 48px; }
+.hero { margin-bottom:26px; }
+.hero h1 { margin:0 0 6px; font-size:27px; }
+.hero p { margin:0; color:var(--muted); font-size:14.5px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 24px; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:14px; margin:0 0 24px; }
+.stat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+.stat .label { font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; }
+.stat .value { font-size:20px; font-weight:700; margin-top:3px; }
+.pos { color:var(--pos); font-weight:600; }
+.neg { color:var(--neg); font-weight:600; }
+table { border-collapse:collapse; width:100%; font-size:14.5px; }
+th, td { border-bottom:1px solid var(--line); padding:9px 12px; text-align:left; }
+th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+tr:last-child td { border-bottom:none; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:14px; }
+.rcard { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px;
+         text-decoration:none; color:var(--ink); display:block; transition:border-color .15s, box-shadow .15s; }
+.rcard:hover { border-color:var(--accent); box-shadow:0 2px 10px rgba(15,23,42,.08); }
+.rcard .date { font-size:16.5px; font-weight:700; display:block; }
+.rcard .sub { color:var(--muted); font-size:13px; margin-top:4px; display:block; }
+.section-title { font-size:19px; margin:34px 0 14px; padding-left:12px; border-left:4px solid var(--accent); }
+.report { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:28px 36px; }
+.report h1, .report h2, .report h3 { padding-left:12px; border-left:4px solid var(--accent); line-height:1.35; }
+.report h1 { font-size:22px; margin:26px 0 10px; }
+.report h2 { font-size:19px; margin:26px 0 10px; }
+.report h3 { font-size:16.5px; margin:22px 0 8px; }
+.report table { margin:14px 0; border:1px solid var(--line); border-radius:8px; }
+.report th { background:#f8fafc; }
+.report td, .report th { border:1px solid var(--line); }
+.report hr { border:none; border-top:1px solid var(--line); margin:22px 0; }
+.report blockquote { margin:14px 0; padding:10px 16px; border-left:4px solid var(--line); color:var(--muted); }
+.badge { display:inline-block; background:var(--accent-bg); color:var(--accent); border:1px solid #99f6e4;
+         border-radius:999px; padding:3px 12px; font-size:12.5px; font-weight:600; }
+.meta { color:var(--muted); font-size:13.5px; margin:8px 0 22px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.footer { text-align:center; color:var(--muted); font-size:12.5px; padding:26px 20px;
+          border-top:1px solid var(--line); background:#fff; }
+.chart { width:100%; height:auto; display:block; }
+@media (max-width:640px) {
+  .report { padding:18px 16px; }
+  table { font-size:13px; }
+  th, td { padding:7px 8px; }
+}
 </style>
 </head>
 <body>
-<div class="header"><div class="inner"><span class="brand">BIST 30 Piyasa Raporlari</span><span class="tag">Gunluk analiz arsivi</span></div></div>
-<div class="wrap">
+<header class="topbar"><div class="inner">
+<a class="brand" href="index.html">BIST 30 Günlük Raporlar</a>
+<nav><a href="index.html" class="active">Raporlar</a><a href="portfolio.html">Deneme Portföyü</a></nav>
+</div></header>
+<main class="wrap">
 
-<div class="grid">
-<a class="card" href="reports/2026-09-05.html"><span class="date">2026-09-05</span><span class="sub">Gunluk raporu ac &rarr;</span></a>
+<div class="hero">
+<h1>BIST 30 Günlük Piyasa Raporları</h1>
+<p>Her sabah 08:00'de otomatik üretilen, yapay zeka destekli BIST 30 analizleri ve sanal portföy takibi.</p>
 </div>
-<div class="portfoy"><h2>Deneme Portfoyu</h2>
-<p>Baslangic: 2026-09-05 | Sermaye: 100000 TL | Gunluk: -0.00% | Toplam: -0.00%</p>
-<table><tr><th>Hisse</th><th>Ilk Alim</th><th>Guncel</th><th>Yuzde</th></tr><tr><td>THYAO</td><td>296.00</td><td>296.00</td><td style='color:#0b6e4f'>+0.00%</td></tr><tr><td>GARAN</td><td>131.40</td><td>131.40</td><td style='color:#0b6e4f'>+0.00%</td></tr><tr><td>AKBNK</td><td>71.85</td><td>71.85</td><td style='color:#0b6e4f'>+0.00%</td></tr><tr><td>EREGL</td><td>37.20</td><td>37.20</td><td style='color:#0b6e4f'>+0.00%</td></tr><tr><td>KCHOL</td><td>215.10</td><td>215.10</td><td style='color:#0b6e4f'>+0.00%</td></tr><tr><td>SISE</td><td>39.08</td><td>39.08</td><td style='color:#0b6e4f'>+0.00%</td></tr><tr><td>BIMAS</td><td>415.75</td><td>415.75</td><td style='color:#0b6e4f'>+0.00%</td></tr><tr><td>TUPRS</td><td>388.50</td><td>388.50</td><td style='color:#0b6e4f'>+0.00%</td></tr><tr><td>ASELS</td><td>388.25</td><td>388.25</td><td style='color:#0b6e4f'>+0.00%</td></tr><tr><td>SAHOL</td><td>92.60</td><td>92.60</td><td style='color:#0b6e4f'>+0.00%</td></tr></table>
-<a href="portfolio.html">Detayli portfoy gecmisi &rarr;</a></div>
+<h2 class="section-title">Rapor Arşivi</h2>
+<div class="grid"><a class="rcard" href="reports/2026-09-05.html"><span class="date">2026-09-05</span><span class="sub">Günlük raporu aç &rarr;</span></a></div>
+
+<h2 class="section-title">Deneme Portföyü</h2>
+
+<div class="stats">
+<div class="stat"><div class="label">Güncel Değer</div><div class="value">99,999 TL</div></div>
+<div class="stat"><div class="label">Günlük Değişim</div><div class="value pos">-0.00%</div></div>
+<div class="stat"><div class="label">Toplam Getiri</div><div class="value pos">-0.00%</div></div>
+<div class="stat"><div class="label">Başlangıç</div><div class="value" style="font-size:16px">2026-09-05</div></div>
 </div>
-<div class="footer">Bilgilendirme amaciyla hazirlanmistir, yatirim tavsiyesi degildir.</div>
+<div class="card" style="margin-bottom:14px"><svg class="chart" viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Portfoy performans grafigi">
+<polyline points="10.0,16.0 746.0,16.0" fill="none" stroke="#047857" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="746.0" cy="16.0" r="4.5" fill="#047857"/>
+<text x="10" y="192" font-size="11" fill="#64748b">Min: 99,999 TL</text>
+<text x="746" y="192" font-size="11" fill="#64748b" text-anchor="end">Maks: 99,999 TL</text>
+</svg></div>
+<div class="card" style="padding:8px 24px 16px">
+<table><tr><th>Hisse</th><th>Adet</th><th>İlk Alım</th><th>Güncel</th><th>Getiri</th></tr><tr><td><strong>THYAO</strong></td><td>33.78</td><td>296.00 TL</td><td>296.00 TL</td><td class='pos'>+0.00%</td></tr><tr><td><strong>GARAN</strong></td><td>76.10</td><td>131.40 TL</td><td>131.40 TL</td><td class='pos'>+0.00%</td></tr><tr><td><strong>AKBNK</strong></td><td>139.18</td><td>71.85 TL</td><td>71.85 TL</td><td class='pos'>+0.00%</td></tr><tr><td><strong>EREGL</strong></td><td>268.82</td><td>37.20 TL</td><td>37.20 TL</td><td class='pos'>+0.00%</td></tr><tr><td><strong>KCHOL</strong></td><td>46.49</td><td>215.10 TL</td><td>215.10 TL</td><td class='pos'>+0.00%</td></tr><tr><td><strong>SISE</strong></td><td>255.89</td><td>39.08 TL</td><td>39.08 TL</td><td class='pos'>+0.00%</td></tr><tr><td><strong>BIMAS</strong></td><td>24.05</td><td>415.75 TL</td><td>415.75 TL</td><td class='pos'>+0.00%</td></tr><tr><td><strong>TUPRS</strong></td><td>25.74</td><td>388.50 TL</td><td>388.50 TL</td><td class='pos'>+0.00%</td></tr><tr><td><strong>ASELS</strong></td><td>25.76</td><td>388.25 TL</td><td>388.25 TL</td><td class='pos'>+0.00%</td></tr><tr><td><strong>SAHOL</strong></td><td>107.99</td><td>92.60 TL</td><td>92.60 TL</td><td class='pos'>+0.00%</td></tr></table>
+<p style="margin:12px 0 4px"><a href="portfolio.html">Detaylı portföy geçmişi &rarr;</a></p>
+</div>
+</main>
+<footer class="footer">Bilgilendirme amacıyla hazırlanmıştır, yatırım tavsiyesi değildir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
 </body></html>
