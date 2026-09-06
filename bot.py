@@ -173,7 +173,7 @@ def fundamental_agent(state: AgentState):
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     ozetler = []
     bu_yil = datetime.now(tz).year
-    for hisse in HISSELER[:6]:  # Hiz icin ilk 6 sirket
+    for hisse in HISSELER:
         try:
             fin = fetch_financials(symbols=[hisse], start_year=bu_yil - 1, end_year=bu_yil, financial_group="1")
             if fin is None or fin.empty:
