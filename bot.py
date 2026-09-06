@@ -18,6 +18,7 @@ socket.setdefaulttimeout(30)
 AMD_API_KEY = os.environ.get("AMD_API_KEY", "")
 if not AMD_API_KEY:
     raise SystemExit("AMD_API_KEY ortam degiskeni ayarlanmamis!")
+AMD_MODEL = os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")
 
 client = OpenAI(
     api_key=AMD_API_KEY,
@@ -288,9 +289,10 @@ def llm_call(prompt, max_deneme=3):
     for deneme in range(max_deneme):
         try:
             resp = client.chat.completions.create(
-                model="DeepSeek-V4-Flash",
+                model=AMD_MODEL,
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.3
+                temperature=0.3,
+                max_tokens=2500,
             )
             return resp.choices[0].message.content
         except openai.RateLimitError as e:
