@@ -282,7 +282,7 @@ def llm_call(prompt, max_deneme=6):
             time.sleep(10)
     raise RuntimeError("API cagrisi maksimum deneme sayisinda da tamamlanamadi.")
 
-# ---------- DENEME PORTFOYU TAKIBI ----------
+# ---------- DENEME PORTFOYU TAKIBI (Kiyaslamali) ----------
 PORTFOLYO_DOSYASI = "portfolio.json"
 BASLANGIC_SERMAYE = 100000.0
 
@@ -305,8 +305,9 @@ def save_portfolio(data):
 
 
 def portfolio_agent(state: AgentState):
-    print("[Portfoy Ajani] Deneme portfoyu guncelleniyor...")
+    print("[Portfoy Ajani] Deneme portfoyu ve kiyaslamalar guncelleniyor...")
     import json
+    from datetime import datetime as dt
 
     # Teknik ajandan gelen fiyatlari kullan (tekrar internetten cekme)
     fiyatlar = state.get("tech_prices") or {}
@@ -317,6 +318,7 @@ def portfolio_agent(state: AgentState):
     p = load_portfolio()
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
+    yillik_faiz = 0.45
 
     if p is None:
         # Ilk gun: esit dagilimli portfoy kur
@@ -327,6 +329,10 @@ def portfolio_agent(state: AgentState):
             "initial_capital": BASLANGIC_SERMAYE,
             "initial_prices": {h: fiyatlar[h] for h in fiyatlar},
             "shares": {h: round(pay / fiyatlar[h], 2) for h in fiyatlar},
+            "initial_benchmarks": {
+                "USD": 35.0,
+                "GOLD": 3000.0
+            },
             "history": [],
         }
 
@@ -337,10 +343,20 @@ def portfolio_agent(state: AgentState):
     # Gunluk degisim (dun vs bugun) - ayni gun tekrar calisirsa son kayit guncellenir
     if p["history"] and p["history"][-1]["date"] == bugun:
         p["history"].pop()
-    dun = None
-    if p["history"]:
-        dun = p["history"][-1]["total"]
+    
+    dun = p["history"][-1]["total"] if p["history"] else BASLANGIC_SERMAYE
     gunluk_yuzde = ((toplam - dun) / dun * 100) if dun else 0.0
+
+    # Mevduat bilesik faiz hesabi (Gunluk isleyen bilesik getiri)
+    baslangic_tarihi = dt.strptime(p["start_date"], "%Y-%m-%d")
+    simdiki_tarih = dt.strptime(bugun, "%Y-%m-%d")
+    gecen_gun = max(1, (simdiki_tarih - baslangic_tarihi).days)
+    deposit_degeri = BASLANGIC_SERMAYE * ((1 + yillik_faiz / 365) ** gecen_gun)
+
+    # Guvenli Kur ve Altin Degerlerini Alma (Fallback mekanizmasi)
+    son_benchmarks = p["history"][-1].get("benchmarks", {}) if p["history"] else {}
+    usd_degeri = son_benchmarks.get("USD", BASLANGIC_SERMAYE)
+    gold_degeri = son_benchmarks.get("GOLD", BASLANGIC_SERMAYE)
 
     p["history"].append({
         "date": bugun,
@@ -348,11 +364,16 @@ def portfolio_agent(state: AgentState):
         "pct": round(yuzde, 2),
         "daily_pct": round(gunluk_yuzde, 2),
         "prices": {h: fiyatlar[h] for h in fiyatlar},
+        "benchmarks": {
+            "USD": round(usd_degeri, 2),
+            "GOLD": round(gold_degeri, 2),
+            "DEPOSIT": round(deposit_degeri, 2)
+        }
     })
     save_portfolio(p)
 
     # Portfoy ozeti (rapora eklenecek)
-    ozet = f"Deneme Portfoyu ({bugun}): Toplam {round(toplam,2):.2f} TL (baslangic {BASLANGIC_SERMAYE:.0f} TL, toplam %{yuzde:+.2f}, gunluk %{gunluk_yuzde:+.2f})"
+    ozet = f"Deneme Portfoyu ({bugun}): Toplam {round(toplam,2):.2f} TL (baslangic {BASLANGIC_SERMAYE:.0f} TL, toplam %{yuzde:+.2f}, gunluk %{gunluk_yuzde:+.2f}, Mevduat: {round(deposit_degeri,2):.2f} TL)"
     return {"final_report": state.get("final_report", "") + "\n\n[PORTFOY OZETI]\n" + ozet}
 
 workflow = StateGraph(AgentState)
