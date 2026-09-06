@@ -495,10 +495,10 @@ def _sayfa(title, icerik, aktif="raporlar", kok=""):
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title>
 <!-- Google Tag Manager & Analytics -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+<script>(function(w,d,s,l,i){{w[l]=w[l]||[];w[l].push({{'gtm.start':
+new Date().getTime(),event:'gtm.js'}});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX';f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+}})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
 <style>{BASE_CSS}</style>
 </head>
 <body>
@@ -540,40 +540,40 @@ j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js
 
 <!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
 <script>
-    function updateClock() {
+    function updateClock() {{
         const now = new Date();
-        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        const options = {{ timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' }};
         document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
-    }
+    }}
     setInterval(updateClock, 1000);
     updateClock();
 
     fetch('https://wttr.in/Istanbul?format=j1')
         .then(response => response.json())
-        .then(data => {
+        .then(data => {{
             const current = data.current_condition[0];
             const temp = current.temp_C;
             const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
-            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
-        })
-        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${{temp}}°C, ${{desc}}`;
+        }})
+        .catch(err => {{
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
-        });
+        }});
 
-    function askGemini() {
+    function askGemini() {{
         const query = document.getElementById('ai-chat-input').value;
-        if(query.trim()) {
-            window.open(`https://gemini.google.com/app?q=${encodeURIComponent(query)}`, '_blank');
-        }
-    }
+        if(query.trim()) {{
+            window.open(`https://gemini.google.com/app?q=${{encodeURIComponent(query)}}`, '_blank');
+        }}
+    }}
 </script>
 <script type="text/javascript">
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({pageLanguage: 'tr', includedLanguages: 'en,de,fr,ar,ru', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
-    }
+    function googleTranslateElementInit() {{
+        new google.translate.TranslateElement({{pageLanguage: 'tr', includedLanguages: 'en,de,fr,ar,ru', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}}, 'google_translate_element');
+    }}
 </script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-</body></html>
+</body></html>"""
 
 
 def _renk(deger):
@@ -608,23 +608,44 @@ def get_pts(vals, sol, ust, iy, fark, mx, adim):
         for i, v in enumerate(vals)
     )
 
-# Örnek değişkenler (gerçek değerlerinizle değiştirin)
-# sol, ust, sag, alt, genislik, yukseklik, iy, fark, mx, mn, adim tanımlı olmalı
+def sparkline_svg(history):
+    """Portfoy gecmisini karsilastirmali SVG grafigine donusturur."""
+    if not history:
+        return ""
 
-stock_pts = get_pts(stocks, sol, ust, iy, fark, mx, adim)
-gold_pts  = get_pts(golds,  sol, ust, iy, fark, mx, adim)
-usd_pts   = get_pts(usds,   sol, ust, iy, fark, mx, adim)
-dep_pts   = get_pts(deposits, sol, ust, iy, fark, mx, adim)
+    stocks = [float(item.get("total", 0)) for item in history]
+    benchmarks = [item.get("benchmarks") or {} for item in history]
+    golds = [float(item.get("GOLD", stocks[i])) for i, item in enumerate(benchmarks)]
+    usds = [float(item.get("USD", stocks[i])) for i, item in enumerate(benchmarks)]
+    deposits = [float(item.get("DEPOSIT", stocks[i])) for i, item in enumerate(benchmarks)]
 
-# CSS ve lejantı normal string olarak tanımla (süslü parantez serbest)
-css_bolumu = (
-    "<style>\n"
-    "    .line-hover { transition: stroke-width 0.2s, opacity 0.2s; cursor: pointer; }\n"
-    "    .line-hover:hover { stroke-width: 4px; opacity: 1; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2)); }\n"
-    "</style>\n"
-)
+    all_values = stocks + golds + usds + deposits
+    mn = min(all_values)
+    mx = max(all_values)
+    fark = mx - mn or 1.0
 
-lejant = """
+    genislik = 720
+    yukseklik = 250
+    sol = 50
+    sag = 12
+    ust = 20
+    alt = 35
+    iy = yukseklik - ust - alt
+    adim = (genislik - sol - sag) / max(1, len(stocks) - 1)
+
+    stock_pts = get_pts(stocks, sol, ust, iy, fark, mx, adim)
+    gold_pts = get_pts(golds, sol, ust, iy, fark, mx, adim)
+    usd_pts = get_pts(usds, sol, ust, iy, fark, mx, adim)
+    dep_pts = get_pts(deposits, sol, ust, iy, fark, mx, adim)
+
+    css_bolumu = (
+        "<style>\n"
+        "    .line-hover { transition: stroke-width 0.2s, opacity 0.2s; cursor: pointer; }\n"
+        "    .line-hover:hover { stroke-width: 4px; opacity: 1; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2)); }\n"
+        "</style>\n"
+    )
+
+    lejant = """
 <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; font-size: 13px; font-weight: 600; align-items: center;">
     <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #047857; display: inline-block; border-radius: 3px;"></span> Deneme Portföyü (Hisseler)</span>
     <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #d97706; display: inline-block; border-radius: 3px;"></span> Altın</span>
@@ -633,13 +654,12 @@ lejant = """
 </div>
 """
 
-sag_sinir = genislik - sag
-orta_y = ust + iy / 2
-alt_y = ust + iy
-alt_text_y = yukseklik - 8
+    sag_sinir = genislik - sag
+    orta_y = ust + iy / 2
+    alt_y = ust + iy
+    alt_text_y = yukseklik - 8
 
-# SVG gövdesini normal string olarak oluştur ve .format() ile değişkenleri yerleştir
-svg_govde = f"""
+    svg_govde = f"""
 {lejant}
 <svg class="chart" viewBox="0 {genislik} {yukseklik}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Karsilastirmali portfoy performans grafigi" style="overflow: visible;">
 {css_bolumu}
@@ -666,7 +686,7 @@ svg_govde = f"""
 </svg>
 """
 
-return svg_govde
+    return svg_govde
 
 def _portfoy_satirlari(p):
     son = p["history"][-1]
