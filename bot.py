@@ -630,69 +630,53 @@ def sparkline_svg(history, genislik=760, yukseklik=220):
     usd_pts = get_pts(usds)
     dep_pts = get_pts(deposits)
 
-    # Başındaki 'f' harfi kaldırıldı, .format() eklendi
-    return """
-    <!-- Lejant (Renk Açıklamaları) -->
+    # CSS kısmını saf normal string yapıyoruz (f harfi yok, süslü parantez hatası riski yok)
+    css_bolumu = """
+    <style>
+        .line-hover { transition: stroke-width 0.2s, opacity 0.2s; cursor: pointer; }
+        .line-hover:hover { stroke-width: 4px; opacity: 1; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2)); }
+    </style>
+    """
+
+    lejant = """
     <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; font-size: 13px; font-weight: 600; align-items: center;">
         <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #047857; display: inline-block; border-radius: 3px;"></span> Deneme Portföyü (Hisseler)</span>
         <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #d97706; display: inline-block; border-radius: 3px;"></span> Altın</span>
         <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #2563eb; display: inline-block; border-radius: 3px;"></span> Dolar</span>
         <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #94a3b8; display: inline-block; border-radius: 3px;"></span> Mevduat</span>
     </div>
+    """
 
+    sag_sinir = genislik - sag
+    orta_y = ust + iy / 2
+    alt_y = ust + iy
+    alt_text_y = yukseklik - 8
+
+    # Sadece değişkenlerin basıldığı temiz SVG yapısı
+    svg_govde = f"""
+    {lejant}
     <svg class="chart" viewBox="0 0 {genislik} {yukseklik}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Karsilastirmali portfoy performans grafigi" style="overflow: visible;">
-    <style>
-        .line-hover {{ transition: stroke-width 0.2s, opacity 0.2s; cursor: pointer; }}
-        .line-hover:hover {{ stroke-width: 4px; opacity: 1; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2)); }}
-    </style>
+    {css_bolumu}
 
     <!-- Izgara Çizgileri -->
     <line x1="{sol}" y1="{ust}" x2="{sag_sinir}" y2="{ust}" stroke="#e2e8f0" stroke-dasharray="3"/>
     <line x1="{sol}" y1="{orta_y}" x2="{sag_sinir}" y2="{orta_y}" stroke="#e2e8f0" stroke-dasharray="3"/>
     <line x1="{sol}" y1="{alt_y}" x2="{sag_sinir}" y2="{alt_y}" stroke="#e2e8f0" stroke-dasharray="3"/>
 
-    <!-- Mevduat (Gri Kesikli) -->
-    <g>
-        <title>Mevduat Getirisi</title>
-        <polyline class="line-hover" points="{dep_pts}" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4" stroke-linejoin="round" stroke-linecap="round"/>
-    </g>
-    
-    <!-- Dolar (Mavi) -->
-    <g>
-        <title>Dolar Bazlı Performans</title>
-        <polyline class="line-hover" points="{usd_pts}" fill="none" stroke="#2563eb" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-    </g>
-    
-    <!-- Altın (Sari/Turuncu) -->
-    <g>
-        <title>Altın Bazlı Performans</title>
-        <polyline class="line-hover" points="{gold_pts}" fill="none" stroke="#d97706" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-    </g>
-    
-    <!-- Hisseler (Yesil) -->
-    <g>
-        <title>BIST 30 Deneme Portföyü</title>
-        <polyline class="line-hover" points="{stock_pts}" fill="none" stroke="#047857" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-    </g>
+    <!-- Mevduat -->
+    <g><title>Mevduat Getirisi</title><polyline class="line-hover" points="{dep_pts}" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4" stroke-linejoin="round" stroke-linecap="round"/></g>
+    <!-- Dolar -->
+    <g><title>Dolar Bazlı Performans</title><polyline class="line-hover" points="{usd_pts}" fill="none" stroke="#2563eb" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></g>
+    <!-- Altın -->
+    <g><title>Altın Bazlı Performans</title><polyline class="line-hover" points="{gold_pts}" fill="none" stroke="#d97706" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></g>
+    <!-- Hisseler -->
+    <g><title>BIST 30 Deneme Portföyü</title><polyline class="line-hover" points="{stock_pts}" fill="none" stroke="#047857" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></g>
     
     <text x="{sol}" y="{alt_text_y}" font-size="11" fill="#64748b" font-weight="500">Min: {mn:,.0f} TL</text>
     <text x="{sag_sinir}" y="{alt_text_y}" font-size="11" fill="#64748b" font-weight="500" text-anchor="end">Maks: {mx:,.0f} TL</text>
-    </svg>""".format(
-        genislik=genislik,
-        yukseklik=yukseklik,
-        sol=sol,
-        sag_sinir=genislik - sag,
-        ust=ust,
-        orta_y=ust + iy / 2,
-        alt_y=ust + iy,
-        alt_text_y=yukseklik - 8,
-        dep_pts=dep_pts,
-        usd_pts=usd_pts,
-        gold_pts=gold_pts,
-        stock_pts=stock_pts,
-        mn=mn,
-        mx=mx
-    )
+    </svg>
+    """
+    return svg_govde
 
 def _portfoy_satirlari(p):
     son = p["history"][-1]
