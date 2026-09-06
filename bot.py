@@ -21,7 +21,9 @@ if not AMD_API_KEY:
 
 client = OpenAI(
     api_key=AMD_API_KEY,
-    base_url="https://developer.amd.com.cn/radeon/api/v1"
+    base_url="https://developer.amd.com.cn/radeon/api/v1",
+    timeout=120.0,
+    max_retries=0,
 )
 
 # Takip edilen BIST30 hisseleri (Güncel liste)
@@ -293,10 +295,10 @@ def llm_call(prompt, max_deneme=3):
             return resp.choices[0].message.content
         except openai.RateLimitError as e:
             bekle = min(10 * (deneme + 1), 30)  # 10sn, 20sn, 30sn
-            print(f"[Uyari] API hiz siniri ({e}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme+1}/{max_deneme})...")
+            print(f"[Uyari] API hiz siniri ({type(e).__name__}: {e}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme+1}/{max_deneme})...", flush=True)
             time.sleep(bekle)
         except Exception as e:
-            print(f"[Hata] API cagrisi basarisiz: {e}")
+            print(f"[Hata] API cagrisi basarisiz ({type(e).__name__}): {e!r}", flush=True)
             time.sleep(10)
     raise RuntimeError("API cagrisi maksimum deneme sayisinda da tamamlanamadi.")
 
