@@ -18,7 +18,7 @@ socket.setdefaulttimeout(30)
 AMD_API_KEY = os.environ.get("AMD_API_KEY", "")
 if not AMD_API_KEY:
     raise SystemExit("AMD_API_KEY ortam degiskeni ayarlanmamis!")
-AMD_MODEL = os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")
+AMD_MODEL = os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash-0731")
 
 client = OpenAI(
     api_key=AMD_API_KEY,
