@@ -1,6 +1,7 @@
-import os
+mport os
 import json
 import time
+import socket
 import pandas as pd
 from datetime import datetime, timedelta
 import zoneinfo
@@ -9,6 +10,9 @@ from typing import TypedDict
 from langgraph.graph import StateGraph, END
 import feedparser
 import markdown
+
+# Ag takilmalarinda sonsuza kadar beklememek icin genel soket zaman asimi.
+socket.setdefaulttimeout(30)
 
 # ==== AMD Radeon Developer Cloud API ====
 AMD_API_KEY = os.environ.get("AMD_API_KEY", "")
@@ -82,11 +86,12 @@ class AgentState(TypedDict):
 
 # ---------- HABER AJANI ----------
 def news_agent(state: AgentState):
-    print("[Haber Ajani] Finans haberleri toplaniyor...")
+    print("[Haber Ajani] Finans haberleri toplaniyor...", flush=True)
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     toplanan = []
     for ad, url in HABER_KAYNAKLARI.items():
+        print(f"[Haber Ajani] Kaynak: {ad}", flush=True)
         try:
             f = feedparser.parse(url)
             for e in f.entries[:5]:
@@ -115,7 +120,7 @@ def news_agent(state: AgentState):
 
 # ---------- TEKNİK AJAN (hisse fiyatlari toplu çekim) ----------
 def technical_agent(state: AgentState):
-    print("[Teknik Ajan] BIST hisse fiyatlari toplu olarak cekiliyor (Is Yatirim)...")
+    print("[Teknik Ajan] BIST hisse fiyatlari toplu olarak cekiliyor (Is Yatirim)...", flush=True)
     try:
         from isyatirimhisse import fetch_stock_data
     except Exception as e:
@@ -175,7 +180,7 @@ def technical_agent(state: AgentState):
 
 # ---------- TEMEL AJAN (finansal tablolar) ----------
 def fundamental_agent(state: AgentState):
-    print("[Temel Ajan] Sirket finansal verileri cekiliyor...")
+    print("[Temel Ajan] Sirket finansal verileri cekiliyor...", flush=True)
     try:
         from isyatirimhisse import fetch_financials
     except Exception as e:
@@ -185,7 +190,8 @@ def fundamental_agent(state: AgentState):
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     ozetler = []
     bu_yil = datetime.now(tz).year
-    for hisse in HISSELER:
+    for sira, hisse in enumerate(HISSELER, 1):
+        print(f"[Temel Ajan] {sira}/{len(HISSELER)}: {hisse}", flush=True)
         try:
             fin = fetch_financials(symbols=[hisse], start_year=bu_yil - 1, end_year=bu_yil, financial_group="1")
             if fin is None or fin.empty:
@@ -215,7 +221,7 @@ def fundamental_agent(state: AgentState):
 
 # ---------- BAS ANALIST (CIO) ----------
 def master_cio_agent(state: AgentState):
-    print("[Bas Analist] Rapor sentezleniyor...")
+    print("[Bas Analist] Rapor sentezleniyor...", flush=True)
     gecmis_ozetler = load_recent("summaries", gun=14)
     hafiza_metni = ""
     if gecmis_ozetler:
@@ -256,7 +262,7 @@ Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek veril
 def summary_agent(state: AgentState):
     """Gunun raporunu kisa bir ozete donusturup data/summaries/ altina indeksler.
     Boylece ertesi gunler bu ozetleri okuyarak gecmisi hatirlar."""
-    print("[Ozet Ajani] Gunun analizi hafizaya indeksleniyor...")
+    print("[Ozet Ajani] Gunun analizi hafizaya indeksleniyor...", flush=True)
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     rapor = state.get("final_report", "")
@@ -274,7 +280,7 @@ def summary_agent(state: AgentState):
     return {}
 
 
-def llm_call(prompt, max_deneme=6):
+def llm_call(prompt, max_deneme=3):
     """API cagrisi; hiz siniri (429) olursa bekleyip tekrar dener."""
     import openai
     for deneme in range(max_deneme):
@@ -286,7 +292,7 @@ def llm_call(prompt, max_deneme=6):
             )
             return resp.choices[0].message.content
         except openai.RateLimitError as e:
-            bekle = 20 * (deneme + 1)  # 20sn, 40sn, 60sn... artarak bekle
+            bekle = min(10 * (deneme + 1), 30)  # 10sn, 20sn, 30sn
             print(f"[Uyari] API hiz siniri ({e}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme+1}/{max_deneme})...")
             time.sleep(bekle)
         except Exception as e:
@@ -317,7 +323,7 @@ def save_portfolio(data):
 
 
 def portfolio_agent(state: AgentState):
-    print("[Portfoy Ajani] Deneme portfoyu ve kiyaslamalar guncelleniyor...")
+    print("[Portfoy Ajani] Deneme portfoyu ve kiyaslamalar guncelleniyor...", flush=True)
     import json
     from datetime import datetime as dt
 
