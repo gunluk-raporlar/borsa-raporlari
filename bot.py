@@ -639,9 +639,9 @@ alt_y = ust + iy
 alt_text_y = yukseklik - 8
 
 # SVG gövdesini normal string olarak oluştur ve .format() ile değişkenleri yerleştir
-svg_govde = """
+svg_govde = f"""
 {lejant}
-<svg class="chart" viewBox="0 0 {genislik} {yukseklik}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Karsilastirmali portfoy performans grafigi" style="overflow: visible;">
+<svg class="chart" viewBox="0 {genislik} {yukseklik}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Karsilastirmali portfoy performans grafigi" style="overflow: visible;">
 {css_bolumu}
 
 <!-- Izgara Çizgileri -->
@@ -651,34 +651,20 @@ svg_govde = """
 
 <!-- Mevduat -->
 <g><title>Mevduat Getirisi</title><polyline class="line-hover" points="{dep_pts}" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4" stroke-linejoin="round" stroke-linecap="round"/></g>
+
 <!-- Dolar -->
 <g><title>Dolar Bazlı Performans</title><polyline class="line-hover" points="{usd_pts}" fill="none" stroke="#2563eb" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></g>
+
 <!-- Altın -->
 <g><title>Altın Bazlı Performans</title><polyline class="line-hover" points="{gold_pts}" fill="none" stroke="#d97706" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></g>
+
 <!-- Hisseler -->
 <g><title>BIST 30 Deneme Portföyü</title><polyline class="line-hover" points="{stock_pts}" fill="none" stroke="#047857" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></g>
 
 <text x="{sol}" y="{alt_text_y}" font-size="11" fill="#64748b" font-weight="500">Min: {mn:,.0f} TL</text>
 <text x="{sag_sinir}" y="{alt_text_y}" font-size="11" fill="#64748b" font-weight="500" text-anchor="end">Maks: {mx:,.0f} TL</text>
 </svg>
-""".format(
-    lejant=lejant,
-    css_bolumu=css_bolumu,
-    genislik=genislik,
-    yukseklik=yukseklik,
-    sol=sol,
-    ust=ust,
-    sag_sinir=sag_sinir,
-    orta_y=orta_y,
-    alt_y=alt_y,
-    alt_text_y=alt_text_y,
-    dep_pts=dep_pts,
-    usd_pts=usd_pts,
-    gold_pts=gold_pts,
-    stock_pts=stock_pts,
-    mn=mn,
-    mx=mx
-)
+"""
 
 return svg_govde
 
