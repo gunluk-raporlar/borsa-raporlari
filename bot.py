@@ -284,7 +284,10 @@ def summary_agent(state: AgentState):
 
 
 def llm_call(prompt, max_deneme=3):
-    """API cagrisi; hiz siniri (429) olursa bekleyip tekrar dener."""
+    """API cagrisi; hiz siniri (429) olursa bekleyip tekrar dener.
+    max_tokens yuksek tutuluyor cunku bu endpoint icin gercek maliyet
+    uretilen token sayisina gore hesaplaniyor, ust siniri yuksek tutmanin
+    ek bir bedeli yok - sadece yaniti erken kesilmekten koruyor."""
     import openai
     for deneme in range(max_deneme):
         try:
@@ -292,9 +295,12 @@ def llm_call(prompt, max_deneme=3):
                 model=AMD_MODEL,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.3,
-                max_tokens=2500,
+                max_tokens=50000,
             )
-            return resp.choices[0].message.content
+            secim = resp.choices[0]
+            if getattr(secim, "finish_reason", None) == "length":
+                print("[Uyari] Yanit token limitine takilip erken kesilmis olabilir.", flush=True)
+            return secim.message.content
         except openai.RateLimitError as e:
             bekle = min(10 * (deneme + 1), 30)  # 10sn, 20sn, 30sn
             print(f"[Uyari] API hiz siniri ({type(e).__name__}: {e}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme+1}/{max_deneme})...", flush=True)
@@ -351,14 +357,14 @@ def portfolio_agent(state: AgentState):
     guncel_gold = 3000.0
     if yf is not None:
         try:
-            df_bench = yf.download(["USDTRY=X", "GC=F"], period="2d", progress=False)["Close"]
-            if not df_bench.empty:
-                if "USDTRY=X" in df_bench.columns:
-                    guncel_usd = float(df_bench["USDTRY=X"].iloc[-1])
-                if "GC=F" in df_bench.columns and "USDTRY=X" in df_bench.columns:
-                    ons = float(df_bench["GC=F"].iloc[-1])
-                    dolar = float(df_bench["USDTRY=X"].iloc[-1])
-                    guncel_gold = round((ons * dolar) / 31.1035, 2)
+            # period 5 gune cikarildi ve ffill/dropna eklendi ki son gunun
+            # verisi henuz olusmamissa (NaN) bir onceki gecerli deger kullanilsin.
+            df_bench = yf.download(["USDTRY=X", "GC=F"], period="5d", progress=False)["Close"]
+            df_bench = df_bench.ffill().dropna(how="any")
+            if not df_bench.empty and "USDTRY=X" in df_bench.columns and "GC=F" in df_bench.columns:
+                guncel_usd = float(df_bench["USDTRY=X"].iloc[-1])
+                ons = float(df_bench["GC=F"].iloc[-1])
+                guncel_gold = round((ons * guncel_usd) / 31.1035, 2)
         except Exception as e:
             print(f"[Uyari] Kıyaslama kurları çekilemedi, son değerler kullanılacak: {e}")
 
@@ -675,9 +681,12 @@ def sparkline_svg(history):
     alt_y = ust + iy
     alt_text_y = yukseklik - 8
 
+    # NOT: viewBox 4 deger alir (min-x min-y width height).
+    # Onceki halinde "0 {genislik} {yukseklik}" seklinde 3 deger vardi,
+    # bu yuzden tarayici grafigi yanlis olcekliyordu. Duzeltildi.
     svg_govde = f"""
 {lejant}
-<svg class="chart" viewBox="0 {genislik} {yukseklik}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Karsilastirmali portfoy performans grafigi" style="overflow: visible;">
+<svg class="chart" viewBox="0 0 {genislik} {yukseklik}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Karsilastirmali portfoy performans grafigi" style="overflow: visible;">
 {css_bolumu}
 
 <!-- Izgara Çizgileri -->
