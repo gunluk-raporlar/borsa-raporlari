@@ -522,6 +522,7 @@ new Date().getTime(),event:'gtm.js'}});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX';f.parentNode.insertBefore(j,f);
 }})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
 <style>{BASE_CSS}</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
 <header class="topbar"><div class="inner">
@@ -624,94 +625,96 @@ def build_html(report, date_str):
     return rapor_sayfasi(markdown_to_html(report), date_str)
 
 
-def get_pts(vals, sol, ust, iy, fark, mx, adim):
-    return " ".join(
-        f"{sol + i * adim:.1f},{ust + (mx - v) / fark * iy:.1f}"
-        for i, v in enumerate(vals)
-    )
-
 def sparkline_svg(history):
-    """Portfoy gecmisini karsilastirmali SVG grafigine donusturur."""
+    """Portfoy gecmisini Chart.js ile karsilastirmali cizgi grafigine donusturur.
+
+    Onceki elle-cizilen SVG yerine hazir bir grafik kutuphanesi (Chart.js,
+    CDN uzerinden _sayfa()'nin <head> kismina ekleniyor) kullaniliyor.
+    Bunun getirdigi avantajlar:
+      - Excel/Office tarzi duzgun eksen, izgara ve yumusatilmis cizgiler.
+      - Dokunmatik ekranlarda (mobil) tooltip native olarak calisiyor;
+        Chart.js touchstart/touchmove olaylarini kendisi dinliyor, ozel
+        bir tiklama mantigi yazmaya gerek kalmadi.
+      - Tooltip icinde hem gunun degeri hem de baslangictan bugune %
+        degisim otomatik hesaplanip gosteriliyor.
+    """
     if not history:
         return ""
 
-    stocks = [float(item.get("total", 0)) for item in history]
+    etiketler = [item["date"] for item in history]
+    stocks = [round(float(item.get("total", 0)), 2) for item in history]
     benchmarks = [item.get("benchmarks") or {} for item in history]
-    golds = [float(item.get("GOLD", stocks[i])) for i, item in enumerate(benchmarks)]
-    usds = [float(item.get("USD", stocks[i])) for i, item in enumerate(benchmarks)]
-    deposits = [float(item.get("DEPOSIT", stocks[i])) for i, item in enumerate(benchmarks)]
+    golds = [round(float(item.get("GOLD", stocks[i])), 2) for i, item in enumerate(benchmarks)]
+    usds = [round(float(item.get("USD", stocks[i])), 2) for i, item in enumerate(benchmarks)]
+    deposits = [round(float(item.get("DEPOSIT", stocks[i])), 2) for i, item in enumerate(benchmarks)]
 
-    all_values = stocks + golds + usds + deposits
-    mn = min(all_values)
-    mx = max(all_values)
-    fark = mx - mn or 1.0
+    import random
+    import json as _json
+    grafik_id = f"portfoy-grafik-{random.randint(100000, 999999)}"
 
-    genislik = 720
-    yukseklik = 250
-    sol = 50
-    sag = 12
-    ust = 20
-    alt = 35
-    iy = yukseklik - ust - alt
-    adim = (genislik - sol - sag) / max(1, len(stocks) - 1)
+    veri = {
+        "labels": etiketler,
+        "datasets": [
+            {"label": "Deneme Portföyü (Hisseler)", "data": stocks, "borderColor": "#047857", "backgroundColor": "#047857"},
+            {"label": "Altın", "data": golds, "borderColor": "#d97706", "backgroundColor": "#d97706"},
+            {"label": "Dolar", "data": usds, "borderColor": "#2563eb", "backgroundColor": "#2563eb"},
+            {"label": "Mevduat", "data": deposits, "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]},
+        ],
+    }
+    veri_json = _json.dumps(veri, ensure_ascii=False)
 
-    stock_pts = get_pts(stocks, sol, ust, iy, fark, mx, adim)
-    gold_pts = get_pts(golds, sol, ust, iy, fark, mx, adim)
-    usd_pts = get_pts(usds, sol, ust, iy, fark, mx, adim)
-    dep_pts = get_pts(deposits, sol, ust, iy, fark, mx, adim)
-
-    css_bolumu = (
-        "<style>\n"
-        "    .line-hover { transition: stroke-width 0.2s, opacity 0.2s; cursor: pointer; }\n"
-        "    .line-hover:hover { stroke-width: 4px; opacity: 1; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2)); }\n"
-        "</style>\n"
-    )
-
-    lejant = """
-<div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; font-size: 13px; font-weight: 600; align-items: center;">
-    <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #047857; display: inline-block; border-radius: 3px;"></span> Deneme Portföyü (Hisseler)</span>
-    <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #d97706; display: inline-block; border-radius: 3px;"></span> Altın</span>
-    <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #2563eb; display: inline-block; border-radius: 3px;"></span> Dolar</span>
-    <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #94a3b8; display: inline-block; border-radius: 3px;"></span> Mevduat</span>
+    return f"""
+<div style="position:relative; height:340px;">
+<canvas id="{grafik_id}"></canvas>
 </div>
+<script>
+(function() {{
+    var veri = {veri_json};
+    var baslangiclar = veri.datasets.map(function(d) {{ return d.data[0]; }});
+    var ctx = document.getElementById('{grafik_id}').getContext('2d');
+    new Chart(ctx, {{
+        type: 'line',
+        data: {{
+            labels: veri.labels,
+            datasets: veri.datasets.map(function(d) {{
+                return Object.assign({{}}, d, {{
+                    borderWidth: 3,
+                    pointRadius: 2,
+                    pointHitRadius: 14,
+                    tension: 0.15,
+                    fill: false,
+                }});
+            }})
+        }},
+        options: {{
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {{ mode: 'nearest', intersect: false }},
+            plugins: {{
+                legend: {{ position: 'top', labels: {{ boxWidth: 12, font: {{ size: 12, weight: '600' }} }} }},
+                tooltip: {{
+                    callbacks: {{
+                        label: function(ctx2) {{
+                            var idx = ctx2.datasetIndex;
+                            var ilk = baslangiclar[idx];
+                            var son = ctx2.parsed.y;
+                            var yuzde = ilk ? ((son - ilk) / ilk * 100) : 0;
+                            var isaret = yuzde >= 0 ? '+' : '';
+                            var sonStr = son.toLocaleString('tr-TR', {{maximumFractionDigits: 2}});
+                            return ctx2.dataset.label + ': ' + sonStr + ' TL (' + isaret + yuzde.toFixed(2) + '%)';
+                        }}
+                    }}
+                }}
+            }},
+            scales: {{
+                y: {{ ticks: {{ callback: function(v) {{ return v.toLocaleString('tr-TR') + ' TL'; }} }} }},
+                x: {{ ticks: {{ maxRotation: 0, autoSkip: true, maxTicksLimit: 8 }} }}
+            }}
+        }}
+    }});
+}})();
+</script>
 """
-
-    sag_sinir = genislik - sag
-    orta_y = ust + iy / 2
-    alt_y = ust + iy
-    alt_text_y = yukseklik - 8
-
-    # NOT: viewBox 4 deger alir (min-x min-y width height).
-    # Onceki halinde "0 {genislik} {yukseklik}" seklinde 3 deger vardi,
-    # bu yuzden tarayici grafigi yanlis olcekliyordu. Duzeltildi.
-    svg_govde = f"""
-{lejant}
-<svg class="chart" viewBox="0 0 {genislik} {yukseklik}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Karsilastirmali portfoy performans grafigi" style="overflow: visible;">
-{css_bolumu}
-
-<!-- Izgara Çizgileri -->
-<line x1="{sol}" y1="{ust}" x2="{sag_sinir}" y2="{ust}" stroke="#e2e8f0" stroke-dasharray="3"/>
-<line x1="{sol}" y1="{orta_y}" x2="{sag_sinir}" y2="{orta_y}" stroke="#e2e8f0" stroke-dasharray="3"/>
-<line x1="{sol}" y1="{alt_y}" x2="{sag_sinir}" y2="{alt_y}" stroke="#e2e8f0" stroke-dasharray="3"/>
-
-<!-- Mevduat -->
-<g><title>Mevduat Getirisi</title><polyline class="line-hover" points="{dep_pts}" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4" stroke-linejoin="round" stroke-linecap="round"/></g>
-
-<!-- Dolar -->
-<g><title>Dolar Bazlı Performans</title><polyline class="line-hover" points="{usd_pts}" fill="none" stroke="#2563eb" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></g>
-
-<!-- Altın -->
-<g><title>Altın Bazlı Performans</title><polyline class="line-hover" points="{gold_pts}" fill="none" stroke="#d97706" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></g>
-
-<!-- Hisseler -->
-<g><title>BIST 30 Deneme Portföyü</title><polyline class="line-hover" points="{stock_pts}" fill="none" stroke="#047857" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></g>
-
-<text x="{sol}" y="{alt_text_y}" font-size="11" fill="#64748b" font-weight="500">Min: {mn:,.0f} TL</text>
-<text x="{sag_sinir}" y="{alt_text_y}" font-size="11" fill="#64748b" font-weight="500" text-anchor="end">Maks: {mx:,.0f} TL</text>
-</svg>
-"""
-
-    return svg_govde
 
 def _portfoy_satirlari(p):
     son = p["history"][-1]
