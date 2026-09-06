@@ -113,9 +113,9 @@ def news_agent(state: AgentState):
     bugun_metin = "\n".join(toplanan[:25]) if toplanan else "(bugun haber alinamadi)"
     return {"news_data": bugun_metin + gecmis_metin}
 
-# ---------- TEKNİK AJAN (hisse fiyatlari) ----------
+# ---------- TEKNİK AJAN (hisse fiyatlari toplu çekim) ----------
 def technical_agent(state: AgentState):
-    print("[Teknik Ajan] BIST30 hisse fiyatlari cekiliyor (Is Yatirim)...")
+    print("[Teknik Ajan] BIST hisse fiyatlari toplu olarak cekiliyor (Is Yatirim)...")
     try:
         from isyatirimhisse import fetch_stock_data
     except Exception as e:
@@ -130,46 +130,33 @@ def technical_agent(state: AgentState):
     satirlar = []
     bugun_fiyatlar = {}
     
-    # 30 hissenin tamamını tek tek ve güvenli bir şekilde işleyen yapı
-    for hisse in HISSELER:
-        try:
-            df = fetch_stock_data(symbols=[hisse], start_date=baslangic, end_date=bitis)
-            if df is None or df.empty:
-                print(f"[Uyari] {hisse} icin veri bos geldi.")
-                continue
-            
-            # Sütun adlarını garantiye al
+    try:
+        # Tüm hisselerin verisini tek seferde çekiyoruz
+        df = fetch_stock_data(start_date=baslangic, end_date=bitis)
+        if df is not None and not df.empty:
             df.columns = [str(c).upper() for c in df.columns]
             
-            # Farklı sütun ad ihtimallerine karşı esnek kontrol
-            kapanis_kolonu = None
-            for col in ["HGDG_KAPANIS", "KAPANIS", "CLOSE"]:
-                if col in df.columns:
-                    kapanis_kolonu = col
-                    break
+            kod_kolonu = next((col for col in ["HGDG_HS_KODU", "STOCK_CODE", "SYMBOL", "HIZ"] if col in df.columns), None)
+            kapanis_kolonu = next((col for col in ["HGDG_KAPANIS", "KAPANIS", "CLOSE"] if col in df.columns), None)
             
-            if not kapanis_kolonu:
-                continue
-                
-            son = df.iloc[-1]
-            fiyat = son.get(kapanis_kolonu)
-            onceki = df.iloc[-6][kapanis_kolonu] if len(df) >= 6 else fiyat
-            
-            if fiyat is not None and not pd.isna(fiyat):
-                fiyat_val = float(fiyat)
-                onceki_val = float(onceki) if onceki is not None and not pd.isna(onceki) else fiyat_val
-                
-                degisim = 0.0
-                if onceki_val > 0:
-                    degisim = ((fiyat_val - onceki_val) / onceki_val) * 100
+            if kod_kolonu and kapanis_kolonu:
+                for hisse in HISSELER:
+                    hisse_df = df[df[kod_kolonu] == hisse]
+                    if hisse_df.empty:
+                        continue
                     
-                satirlar.append(f"{hisse}: {fiyat_val:.2f} TL (5 gunluk %{degisim:+.2f})")
-                bugun_fiyatlar[hisse] = round(fiyat_val, 2)
-        except Exception as ex:
-            print(f"[Hata] {hisse} işlenirken hata oluştu: {ex}")
-            continue
-        
-        time.sleep(1)  # Sunucu limitlerine takılmamak için kısa bekleme
+                    son = hisse_df.iloc[-1]
+                    fiyat = son.get(kapanis_kolonu)
+                    onceki = hisse_df.iloc[-6][kapanis_kolonu] if len(hisse_df) >= 6 else fiyat
+                    
+                    if fiyat is not None and not pd.isna(fiyat):
+                        fiyat_val = float(fiyat)
+                        onceki_val = float(onceki) if onceki is not None and not pd.isna(onceki) else fiyat_val
+                        degisim = ((fiyat_val - onceki_val) / onceki_val) * 100 if onceki_val > 0 else 0.0
+                        satirlar.append(f"{hisse}: {fiyat_val:.2f} TL (5 gunluk %{degisim:+.2f})")
+                        bugun_fiyatlar[hisse] = round(fiyat_val, 2)
+    except Exception as ex:
+        print(f"[Teknik Ajan Hatasi] Toplu veri cekilemedi: {ex}")
 
     if bugun_fiyatlar:
         save_daily("prices", bugun, bugun_fiyatlar)
@@ -332,11 +319,10 @@ def save_portfolio(data):
 def portfolio_agent(state: AgentState):
     print("[Portfoy Ajani] Deneme portfoyu ve kiyaslamalar guncelleniyor...")
     import json
+    import yfinance as yf
     from datetime import datetime as dt
 
-    # Teknik ajandan gelen fiyatlari kullan (tekrar internetten cekme)
     fiyatlar = state.get("tech_prices") or {}
-
     if not fiyatlar:
         return {"final_report": state.get("final_report", "")}
 
@@ -345,8 +331,23 @@ def portfolio_agent(state: AgentState):
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     yillik_faiz = 0.45
 
+    # Güncel USD ve Gram Altın fiyatlarını yfinance ile çekelim
+    guncel_usd = 35.0
+    guncel_gold = 3000.0
+    try:
+        df_bench = yf.download(["USDTRY=X", "GC=F"], period="2d", progress=False)["Close"]
+        if not df_bench.empty:
+            if "USDTRY=X" in df_bench.columns:
+                guncel_usd = float(df_bench["USDTRY=X"].iloc[-1])
+            if "GC=F" in df_bench.columns and "USDTRY=X" in df_bench.columns:
+                ons = float(df_bench["GC=F"].iloc[-1])
+                dolar = float(df_bench["USDTRY=X"].iloc[-1])
+                guncel_gold = round((ons * dolar) / 31.1035, 2)
+    except Exception as e:
+        print(f"[Uyari] Kıyaslama kurları çekilemedi, son değerler kullanılacak: {e}")
+
     if p is None:
-        # Ilk gun: esit dagilimli portfoy kur
+        # Ilk gun: esit dagilimli portfoy kur ve baslangic kurlarini kaydet
         hisse_adedi = len(fiyatlar)
         pay = BASLANGIC_SERMAYE / hisse_adedi
         p = {
@@ -355,33 +356,34 @@ def portfolio_agent(state: AgentState):
             "initial_prices": {h: fiyatlar[h] for h in fiyatlar},
             "shares": {h: round(pay / fiyatlar[h], 2) for h in fiyatlar},
             "initial_benchmarks": {
-                "USD": 35.0,
-                "GOLD": 3000.0
+                "USD": guncel_usd,
+                "GOLD": guncel_gold
             },
             "history": [],
         }
 
-    # Bugunku deger ve yuzde
+    # Bugunku toplam hisse degeri ve yuzde
     toplam = sum(p["shares"][h] * fiyatlar[h] for h in p["shares"] if h in fiyatlar)
     yuzde = ((toplam - BASLANGIC_SERMAYE) / BASLANGIC_SERMAYE) * 100
 
-    # Gunluk degisim (dun vs bugun) - ayni gun tekrar calisirsa son kayit guncellenir
     if p["history"] and p["history"][-1]["date"] == bugun:
         p["history"].pop()
     
     dun = p["history"][-1]["total"] if p["history"] else BASLANGIC_SERMAYE
     gunluk_yuzde = ((toplam - dun) / dun * 100) if dun else 0.0
 
-    # Mevduat bilesik faiz hesabi (Gunluk isleyen bilesik getiri)
+    # Mevduat bilesik faiz hesabi
     baslangic_tarihi = dt.strptime(p["start_date"], "%Y-%m-%d")
     simdiki_tarih = dt.strptime(bugun, "%Y-%m-%d")
     gecen_gun = max(1, (simdiki_tarih - baslangic_tarihi).days)
     deposit_degeri = BASLANGIC_SERMAYE * ((1 + yillik_faiz / 365) ** gecen_gun)
 
-    # Guvenli Kur ve Altin Degerlerini Alma (Fallback mekanizmasi)
-    son_benchmarks = p["history"][-1].get("benchmarks", {}) if p["history"] else {}
-    usd_degeri = son_benchmarks.get("USD", BASLANGIC_SERMAYE)
-    gold_degeri = son_benchmarks.get("GOLD", BASLANGIC_SERMAYE)
+    # Başlangıçtaki kur oranlarına göre bugünkü USD ve Altın yatırımının TL karşılığı
+    ilk_usd_kuru = p.get("initial_benchmarks", {}).get("USD", guncel_usd)
+    ilk_gold_fiyati = p.get("initial_benchmarks", {}).get("GOLD", guncel_gold)
+    
+    usd_degeri = BASLANGIC_SERMAYE * (guncel_usd / ilk_usd_kuru)
+    gold_degeri = BASLANGIC_SERMAYE * (guncel_gold / ilk_gold_fiyati)
 
     p["history"].append({
         "date": bugun,
@@ -397,8 +399,7 @@ def portfolio_agent(state: AgentState):
     })
     save_portfolio(p)
 
-    # Portfoy ozeti (rapora eklenecek)
-    ozet = f"Deneme Portfoyu ({bugun}): Toplam {round(toplam,2):.2f} TL (baslangic {BASLANGIC_SERMAYE:.0f} TL, toplam %{yuzde:+.2f}, gunluk %{gunluk_yuzde:+.2f}, Mevduat: {round(deposit_degeri,2):.2f} TL)"
+    ozet = f"Deneme Portfoyu ({bugun}): Toplam {round(toplam,2):.2f} TL (Toplam %{yuzde:+.2f}, Mevduat: {round(deposit_degeri,2):.2f} TL, USD Karşılığı: {round(usd_degeri,2):.2f} TL, Altın Karşılığı: {round(gold_degeri,2):.2f} TL)"
     return {"final_report": state.get("final_report", "") + "\n\n[PORTFOY OZETI]\n" + ozet}
 
 workflow = StateGraph(AgentState)
