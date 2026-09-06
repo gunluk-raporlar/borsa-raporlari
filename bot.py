@@ -20,8 +20,13 @@ client = OpenAI(
     base_url="https://developer.amd.com.cn/radeon/api/v1"
 )
 
-# Takip edilen BIST30 hisseleri
-HISSELER = ["THYAO", "GARAN", "AKBNK", "EREGL", "KCHOL", "SISE", "BIMAS", "TUPRS", "ASELS", "SAHOL"]
+# Takip edilen BIST30 hisseleri (Güncel liste)
+HISSELER = [
+    "AEFES", "AKBNK", "ASELS", "ASTOR", "BIMAS", "DSTKF", "EKGYO", "ENKAI", 
+    "EREGL", "FROTO", "GARAN", "GUBRF", "ISCTR", "KCHOL", "KRDMD", "MGROS", 
+    "PETKM", "PGSUS", "SAHOL", "SASA", "SISE", "TAVHL", "TCELL", "THYAO", 
+    "TOASO", "TRALT", "TTKOM", "TUPRS", "VAKBN", "YKBNK"
+]
 
 # ---- YEREL VERI DEPOSU (hafiza katmani) ----
 DATA_DIR = "data"
