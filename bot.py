@@ -214,10 +214,8 @@ def fundamental_agent(state: AgentState):
     return {"fundamental_data": "\n".join(ozetler)}
 
 # ---------- BAS ANALIST (CIO) ----------
-def master_cio_agent(state: AgentState):
-    print("[Bas Analist] Rapor sentezleniyor (DeepSeek)...")
-
-    # Hafiza: onceki gunlerin analiz ozetleri
+ddef master_cio_agent(state: AgentState):
+    print("[Bas Analist] Rapor sentezleniyor...")
     gecmis_ozetler = load_recent("summaries", gun=14)
     hafiza_metni = ""
     if gecmis_ozetler:
@@ -225,34 +223,34 @@ def master_cio_agent(state: AgentState):
         for g in gecmis_ozetler:
             hafiza_metni += f"-- {g['date']}: {g['data'].get('ozet', '')}\n"
 
-   prompt = f"""
-    Sen kıdemli bir Hedge-Fund Portföy Yöneticisi ve Araştırma Direktörüsün. Aşağıdaki GERÇEK verileri kullanarak kurumsal yatırımcılara hitap eden, derinlemesine, profesyonel ve uzun bir BIST 30 Yatırım ve Strateji Raporu kaleme al.
-    Önceki günlere ait analiz özetlerini dikkatle incele; trendin devam edip etmediğini, önceki önerilerin performansını ve piyasa dinamiklerindeki değişimleri eleştirel bir gözle değerlendir.
+    prompt = f"""Sen kıdemli bir Hedge-Fund Portföy Yöneticisi ve Araştırma Direktörüsün. Aşağıdaki GERÇEK verileri kullanarak kurumsal yatırımcılara hitap eden, derinlemesine, profesyonel ve uzun bir BIST 30 Yatırım ve Strateji Raporu kaleme al.
+Önceki günlere ait analiz özetlerini dikkatle incele; trendin devam edip etmediğini, önceki önerilerin performansını ve piyasa dinamiklerindeki değişimleri eleştirel bir gözle değerlendir.
 
-    [GEÇMİŞ GÜNLERİN ANALİZ ÖZETLERİ - HAFIZA]:
-    {hafiza_metni}
+[GEÇMİŞ GÜNLERİN ANALİZ ÖZETLERİ - HAFIZA]:
+{hafiza_metni}
 
-    [GÜNÜN HABERLERİ]:
-    {state['news_data']}
+[GÜNÜN HABERLERİ]:
+{state['news_data']}
 
-    [TEKNİK VERİLER VE HİSSE FİYATLARI]:
-    {state['tech_data']}
+[TEKNİK VERİLER VE HİSSE FİYATLARI]:
+{state['tech_data']}
 
-    [TEMEL / FİNANSAL VERİLER]:
-    {state['fundamental_data']}
+[TEMEL / FİNANSAL VERİLER]:
+{state['fundamental_data']}
 
-    Raporu kesinlikle profesyonel bir finansal bülten formatında, her başlığı detaylı ve uzun cümlelerle açıklayarak şu alt başlıklar altında oluştur:
-    
-    1. YÖNETİCİ ÖZETİ VE PİYASA GENEL BAKIŞI: Günün en kritik gelişmeleri, endeksin genel yönü ve fon yönetiminin temel perspektifi.
-    2. HABER VE MAKROEKONOMİK DEĞERLENDİRME: Akışların BIST 30 şirketlerine yansımaları, enflasyon, kur ve faiz sarmalının yatırımcı psikolojisine etkisi.
-    3. TEKNİK DEĞERLENDİRME (Hisse Bazlı): En çok ayrışan, hacim kazanan veya direnç/destek noktalarını test eden lider hisselerin teknik anatomisi.
-    4. ŞİRKET VE FİNANSAL DEĞERLENDİRME: Temel veriler ışığında şirketlerin karlılık, bilanço yapıları ve rasyo bazlı öne çıkan detayları.
-    5. RİSK YÖNETİMİ VE STRATEJİ: Kısa vadeli olası aşağı/yukarı yönlü senaryolar ve portföyü koruma kalkanları.
-    6. ÖNERİLEN PORTFÖY VE TAKTİKSEL DAĞILIM: Haftalık ve aylık bazda model portföy için önerilen hisse ağırlıkları (Örn: THYAO %20, GARAN %15 gibi yüzdesel dağılım) ve bu dağılımın gerekçeleri.
+Raporu kesinlikle profesyonel bir finansal bülten formatında, her başlığı detaylı ve uzun cümlelerle açıklayarak şu alt başlıklar altında oluştur:
 
-    Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek verileri ve geçmiş hafızayı baz al. Raporu zengin finansal terimler kullanarak Türkçe kaleme al.
-    """
+1. YÖNETİCİ ÖZETİ VE PİYASA GENEL BAKIŞI: Günün en kritik gelişmeleri, endeksin genel yönü ve fon yönetiminin temel perspektifi.
+2. HABER VE MAKROEKONOMİK DEĞERLENDİRME: Akışların BIST 30 şirketlerine yansımaları, enflasyon, kur ve faiz sarmalının yatırımcı psikolojisine etkisi.
+3. TEKNİK DEĞERLENDİRME (Hisse Bazlı): En çok ayrışan, hacim kazanan veya direnç/destek noktalarını test eden lider hisselerin teknik anatomisi.
+4. ŞİRKET VE FİNANSAL DEĞERLENDİRME: Temel veriler ışığında şirketlerin karlılık, bilanço yapıları ve rasyo bazlı öne çıkan detayları.
+5. RİSK YÖNETİMİ VE STRATEJİ: Kısa vadeli olası aşağı/yukarı yönlü senaryolar ve portföyü koruma kalkanları.
+6. ÖNERİLEN PORTFÖY VE TAKTİKSEL DAĞILIM: Haftalık ve aylık bazda model portföy için önerilen hisse ağırlıkları ve bu dağılımın gerekçeleri.
 
+Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek verileri ve geçmiş hafızayı baz al. Raporu zengin finansal terimler kullanarak Türkçe kaleme al."""
+
+    response = llm_call(prompt)
+    return {"final_report": response}
 
 # ---------- OZET AJANI (hafiza indeksleme) ----------
 def summary_agent(state: AgentState):
