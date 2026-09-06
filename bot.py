@@ -214,7 +214,7 @@ def fundamental_agent(state: AgentState):
     return {"fundamental_data": "\n".join(ozetler)}
 
 # ---------- BAS ANALIST (CIO) ----------
-ddef master_cio_agent(state: AgentState):
+def master_cio_agent(state: AgentState):
     print("[Bas Analist] Rapor sentezleniyor...")
     gecmis_ozetler = load_recent("summaries", gun=14)
     hafiza_metni = ""
