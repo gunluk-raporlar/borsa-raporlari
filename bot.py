@@ -617,12 +617,12 @@ usd_pts   = get_pts(usds,   sol, ust, iy, fark, mx, adim)
 dep_pts   = get_pts(deposits, sol, ust, iy, fark, mx, adim)
 
 # CSS ve lejantı normal string olarak tanımla (süslü parantez serbest)
-css_bolumu = """
-<style>
-    .line-hover { transition: stroke-width 0.2s, opacity 0.2s; cursor: pointer; }
-    .line-hover:hover { stroke-width: 4px; opacity: 1; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2)); }
-</style>
-"""
+css_bolumu = (
+    "<style>\n"
+    "    .line-hover { transition: stroke-width 0.2s, opacity 0.2s; cursor: pointer; }\n"
+    "    .line-hover:hover { stroke-width: 4px; opacity: 1; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2)); }\n"
+    "</style>\n"
+)
 
 lejant = """
 <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; font-size: 13px; font-weight: 600; align-items: center;">
