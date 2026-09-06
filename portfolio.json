@@ -13,6 +13,10 @@
     "ASELS": 388.25,
     "SAHOL": 92.6
   },
+  "initial_benchmarks": {
+    "USD": 35.0,
+    "GOLD": 3000.0
+  },
   "shares": {
     "THYAO": 33.78,
     "GARAN": 76.1,
@@ -42,24 +46,11 @@
         "TUPRS": 388.5,
         "ASELS": 388.25,
         "SAHOL": 92.6
-      }
-    },
-    {
-      "date": "2026-09-05",
-      "total": 99998.76,
-      "pct": -0.0,
-      "daily_pct": -0.0,
-      "prices": {
-        "THYAO": 296.0,
-        "GARAN": 131.4,
-        "AKBNK": 71.85,
-        "EREGL": 37.2,
-        "KCHOL": 215.1,
-        "SISE": 39.08,
-        "BIMAS": 415.75,
-        "TUPRS": 388.5,
-        "ASELS": 388.25,
-        "SAHOL": 92.6
+      },
+      "benchmarks": {
+        "USD": 100000.0,
+        "GOLD": 100000.0,
+        "DEPOSIT": 100000.0
       }
     }
   ]
