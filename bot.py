@@ -132,7 +132,7 @@ def technical_agent(state: AgentState):
     
     try:
         # Tüm hisselerin verisini tek seferde çekiyoruz
-        df = fetch_stock_data(start_date=baslangic, end_date=bitis)
+        df = fetch_stock_data(HISSELER, start_date=baslangic, end_date=bitis)
         if df is not None and not df.empty:
             df.columns = [str(c).upper() for c in df.columns]
             
@@ -319,8 +319,13 @@ def save_portfolio(data):
 def portfolio_agent(state: AgentState):
     print("[Portfoy Ajani] Deneme portfoyu ve kiyaslamalar guncelleniyor...")
     import json
-    import yfinance as yf
     from datetime import datetime as dt
+
+    try:
+        import yfinance as yf
+    except ModuleNotFoundError:
+        yf = None
+        print("[Uyari] yfinance kurulu degil; varsayilan USD ve altin degerleri kullanilacak.")
 
     fiyatlar = state.get("tech_prices") or {}
     if not fiyatlar:
@@ -334,17 +339,18 @@ def portfolio_agent(state: AgentState):
     # Güncel USD ve Gram Altın fiyatlarını yfinance ile çekelim
     guncel_usd = 35.0
     guncel_gold = 3000.0
-    try:
-        df_bench = yf.download(["USDTRY=X", "GC=F"], period="2d", progress=False)["Close"]
-        if not df_bench.empty:
-            if "USDTRY=X" in df_bench.columns:
-                guncel_usd = float(df_bench["USDTRY=X"].iloc[-1])
-            if "GC=F" in df_bench.columns and "USDTRY=X" in df_bench.columns:
-                ons = float(df_bench["GC=F"].iloc[-1])
-                dolar = float(df_bench["USDTRY=X"].iloc[-1])
-                guncel_gold = round((ons * dolar) / 31.1035, 2)
-    except Exception as e:
-        print(f"[Uyari] Kıyaslama kurları çekilemedi, son değerler kullanılacak: {e}")
+    if yf is not None:
+        try:
+            df_bench = yf.download(["USDTRY=X", "GC=F"], period="2d", progress=False)["Close"]
+            if not df_bench.empty:
+                if "USDTRY=X" in df_bench.columns:
+                    guncel_usd = float(df_bench["USDTRY=X"].iloc[-1])
+                if "GC=F" in df_bench.columns and "USDTRY=X" in df_bench.columns:
+                    ons = float(df_bench["GC=F"].iloc[-1])
+                    dolar = float(df_bench["USDTRY=X"].iloc[-1])
+                    guncel_gold = round((ons * dolar) / 31.1035, 2)
+        except Exception as e:
+            print(f"[Uyari] Kıyaslama kurları çekilemedi, son değerler kullanılacak: {e}")
 
     if p is None:
         # Ilk gun: esit dagilimli portfoy kur ve baslangic kurlarini kaydet
