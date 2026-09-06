@@ -70,10 +70,12 @@
         "EREGL": 37.2,
         "FROTO": 77.2,
         "GARAN": 131.4,
+        "GUBRF": 478.75,
         "ISCTR": 13.01,
         "KCHOL": 215.1,
         "KRDMD": 43.52,
         "MGROS": 527.0,
+        "PETKM": 20.06,
         "PGSUS": 148.7,
         "SAHOL": 92.6,
         "SASA": 2.29,
@@ -89,8 +91,8 @@
         "YKBNK": 35.9
       },
       "benchmarks": {
-        "USD": 100000.0,
-        "GOLD": 100000.0,
+        "USD": 138356.57,
+        "GOLD": NaN,
         "DEPOSIT": 100123.29
       }
     }

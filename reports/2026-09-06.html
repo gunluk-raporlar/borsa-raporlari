@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Piyasa Raporu - 2026-09-06</title>
+<!-- Google Tag Manager & Analytics -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX';f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
 <style>
 :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
         --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
@@ -60,6 +65,12 @@ tr:last-child td { border-bottom:none; }
   table { font-size:13px; }
   th, td { padding:7px 8px; }
 }
+
+@media (max-width: 768px) {
+    .interactive-box {
+        grid-template-columns: 1fr !important;
+    }
+}
 </style>
 </head>
 <body>
@@ -67,121 +78,106 @@ tr:last-child td { border-bottom:none; }
 <a class="brand" href="../index.html">BIST 30 Günlük Raporlar</a>
 <nav><a href="../index.html" class="active">Raporlar</a><a href="../portfolio.html">Deneme Portföyü</a></nav>
 </div></header>
-<main class="wrap">
 
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve Google Çeviri) -->
+    <div class="site-widgets" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; background: #f8fafc; padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #475569; gap: 15px; border: 1px solid #e2e8f0;">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
+        </div>
+        <div id="google_translate_element"></div>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Google Arama ve Gemini Sohbet Kutusu) -->
+    <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <form method="get" action="https://www.google.com/search" target="_blank" style="display: flex; gap: 8px;">
+                <input type="hidden" name="q" value="site:borsa-raporlari.onrender.com">
+                <input type="text" name="q" placeholder="Google ile sitede ara..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;">
+                <button type="submit" style="background: #047857; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Ara</button>
+            </form>
+        </div>
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; gap: 8px;">
+            <input type="text" id="ai-chat-input" placeholder="Gemini'ye borsa hakkında sor..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') askGemini();">
+            <button onclick="askGemini()" style="background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Sor</button>
+        </div>
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
 <div class="hero">
 <h1>Günlük Piyasa Raporu</h1>
 <div class="meta"><span class="badge">2026-09-06</span><span>BIST 30 &bull; Yapay zeka destekli günlük analiz</span></div>
 </div>
-<article class="report"><p><strong>BIST 30 GÜNLÜK YATIRIM RAPORU</strong><br />
-<strong>Tarih:</strong> 7 Eylül 2026 (Pazartesi)<br />
-<strong>Hazırlayan:</strong> Kıdemli Portföy Yöneticisi</p>
+<article class="report"><h1>BIST 30 YATIRIM VE STRATEJİ RAPORU</h1>
+<p><strong>Tarih: 7 Eylül 2026 Pazar</strong><br />
+<strong>Hedge-Fund Portföy Yönetimi &amp; Araştırma Direktörlüğü</strong></p>
 <hr />
-<h3>1. Yönetici Özeti</h3>
-<p>BIST 30'da <strong>temkinli ve seçici</strong> duruşumuzu koruyoruz. Jeopolitik riskler (İran) ve küresel enerji şoku (doğal gaz 71 avro) satış baskısını sürdürüyor. Cuma günkü tepki alımları kalıcı trend dönüşümü sinyali değil; "Yukarı Adım Kuralı" düşüşü yavaşlatabilir ancak tek başına yön değiştirmez. Önceki günkü raporumuzda önerdiğimiz savunmacı portföy (KCHOL, BIMAS) endekse kıyasla pozitif ayrışarak doğru strateji olduğunu teyit etti. <strong>Yeni alım sinyali beklenmeli, panik satışı yapılmamalıdır.</strong></p>
+<h2>1. YÖNETİCİ ÖZETİ VE PİYASA GENEL BAKIŞI</h2>
+<p>Değerli yatırımcılar,</p>
+<p>Haftanın son işlem gününü geride bırakırken, BIST 30 endeksinde izlediğimiz temkinli ve seçici duruşumuzu koruyoruz. Geçtiğimiz hafta boyunca piyasaya yön veren temel dinamikler -İran kaynaklı jeopolitik gerilim, doğal gaz fiyatlarındaki 71 avro seviyesindeki kalıcı yükseklik ve küresel resesyon endişeleri- etkisini sürdürmekte. Cuma günü gözlemlediğimiz tepki alımları, teknik anlamda kalıcı bir trend dönüşümünün habercisi olmaktan ziyade, aşırı satım bölgesinde oluşan geçici bir soluklanma olarak değerlendirilmelidir.</p>
+<p>Borsa İstanbul'da uygulanmaya başlanan "Yukarı Adım Kuralı"nın piyasa mikro yapısına etkilerini yakından izliyoruz. Bu düzenleme, özellikle aşırı oynaklık dönemlerinde satış baskısını yavaşlatıcı bir mekanizma olarak işlev görebilir; ancak tek başına yön değiştirici bir katalizör olarak görülmemelidir. Fon yönetimimiz, mevcut konjonktürde net bir trend dönüşüm sinyali alana dek, pozisyon boyutlarını küçük tutma ve nakit oranını yüksek seviyelerde muhafaza etme stratejisini kararlılıkla sürdürmektedir.</p>
+<p>Haftalık bazda endekste belirgin bir negatif ayrışma göze çarpmakta; özellikle enerji yoğun sektörlerde faaliyet gösteren şirketlerin marj baskısı altında kaldığını, buna karşın iç talebe dayalı ve fiyatlama gücü yüksek şirketlerin görece dirençli bir tablo çizdiğini gözlemliyoruz. Bu ayrışma, portföy yapılandırmasında sektörel bazda seçici yaklaşımın önemini bir kez daha teyit etmektedir.</p>
 <hr />
-<h3>2. Haber ve Makro Değerlendirme</h3>
-<ul>
-<li>
-<p><strong>Jeopolitik Risk (Yüksek Öncelik):</strong> İran'dan gelen "ekonomik savaş" çıkışı ve kritik temaslar, enerji fiyatları üzerindeki baskıyı artırıyor. Bu durum, enerji yoğun sektörler (EREGL, SISE) ve havacılık (THYAO) için maliyet enflasyonu anlamına geliyor.</p>
-</li>
-<li>
-<p><strong>Küresel Görünüm:</strong> IMF Başkanı Georgieva'nın "küresel ekonomi enerji şokuna direniyor" açıklaması, resesyon endişelerini canlı tutuyor. New York borsasının düşüşle kapanması ve gözlerin ECB faiz kararı ile ABD enflasyon verilerine çevrilmesi, risk iştahını sınırlıyor.</p>
-</li>
-<li>
-<p><strong>Yurt İçi Gündem:</strong> Cevdet Yılmaz'ın OVP açıklaması ve Halkbank'a 1,1 milyar dolarlık ilave kaynak sağlanması olumlu ancak piyasada fiyatlanması için risk iştahının toparlanması gerekiyor. Otomotiv ihracatının 8 ayda 27,2 milyar dolara ulaşması (FROTO, TOASO için destekleyici) ve Almanya'ya ihracatın artması dikkat çekici.</p>
-</li>
-<li>
-<p><strong>Piyasa Mekanizması:</strong> "Yukarı Adım Kuralı"nın uygulanacak olması, aşırı satış baskısını yavaşlatabilir ancak kalıcı bir taban oluşturmak için yeterli değil.</p>
-</li>
-</ul>
+<h2>2. HABER VE MAKROEKONOMİK DEĞERLENDİRME</h2>
+<h3>2.1 Jeopolitik Riskler ve Enerji Şoku</h3>
+<p>İran'dan gelen "ekonomik savaş" çıkışı ve kritik iki temas haberleri, bölgesel gerilimin ekonomik boyutunun altını çizmektedir. Bu açıklamalar, enerji fiyatları üzerindeki yukarı yönlü baskıyı taze tutarken, doğal gaz fiyatlarının 71 avro seviyesinin üzerinde kalıcı olması durumunda Türkiye'nin cari açık dinamikleri ve enflasyon görünümü üzerinde olumsuz etkiler yaratabileceğini öngörüyoruz. Enerji maliyetlerindeki bu artış, özellikle EREGL, SISE ve TUPRS gibi enerji yoğun üretim yapan şirketlerin operasyonel marjlarını doğrudan baskılamaktadır.</p>
+<p>IMF Başkanı Georgieva'nın "küresel ekonomi enerji şokuna direniyor" açıklaması, uluslararası kuruluşların da bu tabloyu yakından izlediğini göstermektedir. Ancak bu direncin sınırları, önümüzdeki dönemde açıklanacak ABD enflasyon verileri ve ECB faiz kararı ile test edilecektir. Küresel piyasaların bu iki kritik veriye kilitlenmiş durumda olması, risk iştahının kırılgan olduğuna işaret etmektedir.</p>
+<h3>2.2 Yurt İçi Makroekonomik Görünüm</h3>
+<p>Cevdet Yılmaz'ın OVP açıklaması öncesinde piyasa katılımcıları, orta vadeli programın büyüme-enflasyon dengesine ilişkin ipuçlarını aramaktadır. Enflasyon oranının %28,4 olarak beklendiği yönündeki anket sonuçları, dezenflasyon sürecinin devam ettiğine dair iyimserliği desteklemekle birlikte, enerji maliyetlerindeki artışın bu süreci sekteye uğratma riski bulunmaktadır.</p>
+<p>Halkbank'a sağlanan 1,1 milyar dolarlık ilave kaynak, bankacılık sektörünün fonlama maliyetlerindeki baskıyı hafifletici bir gelişme olarak değerlendirilebilir. Bu durum, özellikle kamu bankalarının kredi mekanizmasını destekleyerek iç talebi canlı tutabilir. Ancak, bu kaynağın maliyetinin piyasa koşullarına göre avantajlı olup olmadığı, bankaların net faiz marjları üzerindeki etkisi açısından yakından izlenmelidir.</p>
+<h3>2.3 Dış Ticaret ve Cari Denge</h3>
+<p>Türkiye'nin AB ülkelerine ihracatının 72 milyar dolara yaklaşması ve Irak'ın petrol ihracatının 3 milyon varile çıkması, dış ticaret tarafında olumlu sinyaller olarak kaydedilmektedir. "Türkiye Ekonomisinin Dış Şoklara Karşı Dayanıklılığı Güçleniyor" başlıklı haber, ihracatçı firmaların kur avantajından faydalandığını ve pazar çeşitlendirmesinin olumlu sonuçlar verdiğini göstermektedir. TOASO ve FROTO gibi ihracat odaklı otomotiv şirketleri bu gelişmelerden görece olumlu etkilenmektedir.</p>
 <hr />
-<h3>3. Teknik Değerlendirme (Hisse Bazlı)</h3>
-<p><strong>Güçlü / Pozitif Ayrışanlar:</strong></p>
-<ul>
-<li>
-<p><strong>KCHOL (215,10 TL):</strong> 210 TL desteğini koruyor. Güvenli liman özelliği devam ediyor. 225 TL hedef direnç.</p>
-</li>
-<li>
-<p><strong>BIMAS (415,75 TL):</strong> 415 TL desteğinin hemen üzerinde tutunuyor. Enflasyona dayanıklı yapısıyla pozitif ayrışıyor. 430 TL hedef.</p>
-</li>
-<li>
-<p><strong>ISCTR (13,01 TL):</strong> Bankacılıkta direnç gösteriyor. 5 günlük %+1,72 ile endekse karşı en güçlü banka.</p>
-</li>
-<li>
-<p><strong>TOASO (274,25 TL):</strong> Otomotiv ihracat verilerinin desteğiyle %+0,83 ile pozitif bölgede.</p>
-</li>
-</ul>
-<p><strong>Zayıf / Negatif Ayrışanlar:</strong></p>
-<ul>
-<li>
-<p><strong>EREGL (37,20 TL):</strong> Çin talebi ve enerji maliyeti baskısıyla %-5,01 düşüşte. Zayıf görünüm sürüyor.</p>
-</li>
-<li>
-<p><strong>THYAO (296,00 TL):</strong> 300 TL direncini aşamadı. 290 TL stop-loss seviyesi kritik. Kapanış bu seviyenin altında olursa satış baskısı hızlanabilir.</p>
-</li>
-<li>
-<p><strong>ASELS (388,25 TL):</strong> Kar satışları devam ediyor. 380 TL desteği izlenmeli.</p>
-</li>
-<li>
-<p><strong>ASTOR (295,00 TL):</strong> Sert düşüşte (%-15,53). Toparlanma sinyali beklenmeli, yeni pozisyon açılmamalı.</p>
-</li>
-</ul>
-<hr />
-<h3>4. Şirket/Finansal Değerlendirme</h3>
-<ul>
-<li>
-<p><strong>Likidite Gücü:</strong> KCHOL (3.615 mlyr TL) ve SAHOL (2.790 mlyr TL) dönen varlıklarıyla belirsizlikte en güvenli limanlar. Bu holdinglerin bilanço gücü, piyasa oynaklığında koruma sağlıyor.</p>
-</li>
-<li>
-<p><strong>Sektörel Baskı:</strong> Enerji yoğun sektörler (EREGL, SISE) doğal gaz fiyatlarındaki artıştan olumsuz etkileniyor. Bu şirketlerin marjları baskı altında.</p>
-</li>
-<li>
-<p><strong>Dayanıklı Tüketim:</strong> BIMAS ve MGROS enflasyonist ortamda fiyatlama gücüne sahip. Ancak MGROS'un %-5,56 düşüşü, perakendede seçici olunması gerektiğini gösteriyor.</p>
-</li>
-<li>
-<p><strong>Halkbank:</strong> 1,1 milyar dolarlık ilave kaynak, bankacılık sektörü için olumlu ancak bu haberin fiyatlanması için genel risk iştahının toparlanması gerekiyor.</p>
-</li>
-</ul>
-<hr />
-<h3>5. Risk Yönetimi ve Strateji</h3>
-<ul>
-<li>
-<p><strong>Riskler:</strong></p>
-<ol>
-<li>İran kaynaklı jeopolitik gerilimin tırmanması (enerji fiyatlarını daha da yukarı taşıyabilir).</li>
-<li>ECB faiz kararı ve ABD enflasyon verilerinin kötü gelmesi (küresel resesyon endişelerini artırabilir).</li>
-<li>Doğal gaz fiyatlarının 71 avro üzerinde kalıcı olması (sanayi üretimini ve enerji yoğun sektörlerin marjlarını baskılar).</li>
-</ol>
-</li>
-<li>
-<p><strong>Strateji:</strong> Net trend dönüşümü beklenmeli. Panik satışı yapılmamalı, yeni alım için sinyal beklenmeli. Kaldıraçtan kaçınılmalı, pozisyon boyutları küçültülmeli.</p>
-</li>
-<li>
-<p><strong>Kritik Takip Seviyeleri:</strong> THYAO 290 TL, GARAN 130 TL, BIMAS 415 TL, KCHOL 210 TL. Bu seviyelerin günlük kapanışları izlenmeli.</p>
-</li>
-</ul>
-<hr />
-<h3>6. ÖNERİLEN PORTFÖY</h3>
-<p><strong>Haftalık Öneri (Savunmacı):</strong><br />
-| Hisse | Oran | Gerekçe |<br />
-| :--- | :--- | :--- |<br />
-| <strong>Nakit</strong> | <strong>%40</strong> | Oynaklığa karşı koruma, yeni alım için bekleme |<br />
-| <strong>KCHOL</strong> | <strong>%25</strong> | Güvenli liman, bilanço gücü, 210 TL destek |<br />
-| <strong>BIMAS</strong> | <strong>%20</strong> | Enflasyona dayanıklı, fiyatlama gücü yüksek |<br />
-| <strong>GARAN</strong> | <strong>%15</strong> | Temkinli; 130 TL altında kapanışta stop-loss uygulanmalı |</p>
-<p><strong>Aylık Öneri (Kademeli Alım İçin):</strong><br />
-| Hisse | Oran | Gerekçe |<br />
-| :--- | :--- | :--- |<br />
-| <strong>Nakit</strong> | <strong>%30</strong> | Kademeli alım için rezerv |<br />
-| <strong>KCHOL</strong> | <strong>%25</strong> | Çapa pozisyon, güvenli liman |<br />
-| <strong>BIMAS</strong> | <strong>%20</strong> | Dayanıklı tüketim, enflasyon koruması |<br />
-| <strong>ISCTR</strong> | <strong>%15</strong> | Bankacılıkta dirençli, 13 TL üzerinde tutunuyor |<br />
-| <strong>TOASO</strong> | <strong>%10</strong> | Otomotiv ihracat verileri güçlü, 274 TL destek |</p>
-<p><strong>Not:</strong> Aylık portföy, piyasa koşullarının iyileşmesi ve trend dönüşüm sinyallerinin gelmesi durumunda kademeli olarak uygulanmalıdır. THYAO 290 TL altında kapanış yaparsa, endekste satış baskısı artabilir ve portföydeki tüm pozisyonlar gözden geçirilmelidir.</p>
+<h2>3. TEKNİK DEĞERLENDİRME (Hisse Bazlı)</h2>
+<h3>3.1 Pozitif Ayrışan Hisseler</h3>
+<p><strong>KCHOL (215,10 TL; %+0,51):</strong> Haftalık bazda endekse karşı belirgin pozitif ayrışma sergileyen KCHOL, 210 TL destek seviyesinin üzerinde tutunmayı başarmıştır. Bu dirençlilik, holdingin enerji ve finans dışı sektörlerdeki çeşitlendirilmiş portföy yapısından kaynaklanmaktadır. Teknik olarak 215 TL üzerindeki kapanışlar, 225 TL hedef seviyesine doğru hareketin devamı için olumlu sinyal vermektedir. RSI göstergesi nötr bölgede seyretmekte olup, aşırı alım veya satım bölgesinde bulunmamaktadır.</p>
+<p><strong>BIMAS (415,75 TL; %+0,06):</strong> Perakende sektörünün enflasyona dayanıklı yapısı, BIMAS hissesini cari piyasa koşullarında güvenli liman konumuna taşımaktadır. 415 TL destek seviyesinin korunması, kısa vadeli görünüm açısından kritik önem taşımaktadır. Hissenin 430 TL direnç seviyesini test etmesi için hacim desteği gerekmektedir; mevcut hacim seviyeleri bu direncin aşılması için yetersiz kalmaktadır.</p>
+<p><strong>ISCTR (13,01 TL; %+1,72):</strong> Bankacılık sektöründe en dirençli görünümü sergileyen ISCTR, 13 TL psikolojik seviyesinin üzerinde tutunmayı başarmıştır. Özellikle yabancı yatırımcı ilgisinin yoğunlaştığı hissede, 13,50 TL direncinin aşılması durumunda 14 TL hedefi gündeme gelebilir. Bankanın güçlü özkaynak yapısı ve düşük takipteki alacak oranı, temel göstergeler açısından da olumlu bir tablo çizmektedir.</p>
+<h3>3.2 Negatif Ayrışan Hisseler</h3>
+<p><strong>EREGL (37,20 TL; %-5,01):</strong> Enerji maliyetlerindeki artışın doğrudan etkilediği EREGL, haftalık bazda endeksin en zayıf halkalarından biri olmuştur. 37 TL seviyesindeki destek, kısa vadede kritik önem taşımaktadır; bu seviyenin kırılması durumunda 35 TL bandına doğru satış baskısı derinleşebilir. Çelik sektöründeki küresel talep zayıflığı ve enerji maliyetlerindeki artış, hisse üzerinde çifte baskı oluşturmaktadır.</p>
+<p><strong>THYAO (296,00 TL; %-3,74):</strong> Havayolu sektörü, jeopolitik risklerden en olumsuz etkilenen se</p>
 <p>[PORTFOY OZETI]<br />
-Deneme Portfoyu (2026-09-06): Toplam 99998.76 TL (baslangic 100000 TL, toplam %-0.00, gunluk %-0.00, Mevduat: 100123.29 TL)</p></article>
+Deneme Portfoyu (2026-09-06): Toplam 99998.76 TL (Toplam %-0.00, Mevduat: 100123.29 TL, USD Karşılığı: 138356.57 TL, Altın Karşılığı: nan TL)</p></article>
 <p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>
 </main>
+
 <footer class="footer">Bilgilendirme amacıyla hazırlanmıştır, yatırım tavsiyesi değildir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+
+    function askGemini() {
+        const query = document.getElementById('ai-chat-input').value;
+        if(query.trim()) {
+            window.open(`https://gemini.google.com/app?q=${encodeURIComponent(query)}`, '_blank');
+        }
+    }
+</script>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'tr', includedLanguages: 'en,de,fr,ar,ru', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body></html>
