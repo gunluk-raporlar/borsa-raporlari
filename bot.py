@@ -678,7 +678,6 @@ def sparkline_svg(history, genislik=760, yukseklik=220):
     <text x="{genislik - sag}" y="{yukseklik - 8}" font-size="11" fill="#64748b" font-weight="500" text-anchor="end">Maks: {mx:,.0f} TL</text>
     </svg>"""
 
-
 def _portfoy_satirlari(p):
     son = p["history"][-1]
     satirlar = []
