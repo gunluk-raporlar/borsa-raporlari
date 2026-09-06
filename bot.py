@@ -502,25 +502,47 @@ def build_html(report, date_str):
     return rapor_sayfasi(markdown_to_html(report), date_str)
 
 
-def sparkline_svg(degerler, genislik=760, yukseklik=200):
-    """Portfoy gecmisinden basit SVG cizgi grafigi uretir."""
-    if len(degerler) < 2:
+def sparkline_svg(history, genislik=760, yukseklik=200):
+    """Portfoy gecmisinden karsilastirmali coklu SVG cizgi grafigi uretir."""
+    if not history:
         return ""
-    mn, mx = min(degerler), max(degerler)
-    fark = (mx - mn) or 1.0
+    
     sol, sag, ust, alt = 10, 14, 16, 28
     iy = yukseklik - ust - alt
-    adim = (genislik - sol - sag) / (len(degerler) - 1)
-    pts = [(sol + i * adim, ust + (mx - v) / fark * iy) for i, v in enumerate(degerler)]
-    cizgi = " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
-    sx, sy = pts[-1]
-    renk = "#047857" if degerler[-1] >= degerler[0] else "#b91c1c"
-    return f"""<svg class="chart" viewBox="0 0 {genislik} {yukseklik}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Portfoy performans grafigi">
-<polyline points="{cizgi}" fill="none" stroke="{renk}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="{sx:.1f}" cy="{sy:.1f}" r="4.5" fill="{renk}"/>
-<text x="{sol}" y="{yukseklik - 8}" font-size="11" fill="#64748b">Min: {mn:,.0f} TL</text>
-<text x="{genislik - sag}" y="{yukseklik - 8}" font-size="11" fill="#64748b" text-anchor="end">Maks: {mx:,.0f} TL</text>
-</svg>"""
+    
+    stocks = [g["total"] for g in history]
+    golds = [g.get("benchmarks", {}).get("GOLD", 100000) for g in history]
+    usds = [g.get("benchmarks", {}).get("USD", 100000) for g in history]
+    deposits = [g.get("benchmarks", {}).get("DEPOSIT", 100000) for g in history]
+    
+    all_values = stocks + golds + usds + deposits
+    mn, mx = min(all_values), max(all_values)
+    fark = (mx - mn) or 1.0
+    
+    n = len(history)
+    adim = (genislik - sol - sag) / max(1, n - 1)
+    
+    def get_pts(vals):
+        return " ".join(f"{sol + i * adim:.1f},{ust + (mx - v) / fark * iy:.1f}" for i, v in enumerate(vals))
+
+    stock_pts = get_pts(stocks)
+    gold_pts = get_pts(golds)
+    usd_pts = get_pts(usds)
+    dep_pts = get_pts(deposits)
+
+    return f"""<svg class="chart" viewBox="0 0 {genislik} {yukseklik}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Karsilastirmali portfoy performans grafigi">
+    <!-- Mevduat (Gri Kesikli) -->
+    <polyline points="{dep_pts}" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- Dolar (Mavi) -->
+    <polyline points="{usd_pts}" fill="none" stroke="#2563eb" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- Altin (Sari/Turuncu) -->
+    <polyline points="{gold_pts}" fill="none" stroke="#d97706" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- Hisseler (Yesil) -->
+    <polyline points="{stock_pts}" fill="none" stroke="#047857" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    
+    <text x="{sol}" y="{yukseklik - 8}" font-size="11" fill="#64748b">Min: {mn:,.0f} TL</text>
+    <text x="{genislik - sag}" y="{yukseklik - 8}" font-size="11" fill="#64748b" text-anchor="end">Maks: {mx:,.0f} TL</text>
+    </svg>"""
 
 
 def _portfoy_satirlari(p):
@@ -562,7 +584,7 @@ def build_index_html(p, rapor_dosyalari):
 
     portfoy_bolumu = ""
     if p and p.get("history"):
-        grafik = sparkline_svg([g["total"] for g in p["history"]])
+        grafik = sparkline_svg(p["history"])
         grafik_html = f'<div class="card" style="margin-bottom:14px">{grafik}</div>' if grafik else ""
         portfoy_bolumu = f"""
 <h2 class="section-title">Deneme Portföyü</h2>
@@ -586,7 +608,7 @@ def build_index_html(p, rapor_dosyalari):
 
 def build_portfolio_html(p):
     son = p["history"][-1]
-    grafik = sparkline_svg([g["total"] for g in p["history"]])
+    grafik = sparkline_svg(p["history"])
     grafik_html = f'<div class="card" style="margin-bottom:22px">{grafik}</div>' if grafik else ""
     gecmis = "".join(
         f"<tr><td>{g['date']}</td><td>{g['total']:,.2f} TL</td>"
@@ -597,7 +619,7 @@ def build_portfolio_html(p):
     icerik = f"""
 <div class="hero">
 <h1>Deneme Portföyü</h1>
-<p>10 BIST 30 hissesine eşit dağıtılmış {p['initial_capital']:,.0f} TL'lik sanal portföy. Alım-satım yapılmaz, sadece takip edilir.</p>
+<p>BIST 30 hisselerine eşit dağıtılmış {p['initial_capital']:,.0f} TL'lik sanal portföy. Alım-satım yapılmaz, sadece takip edilir.</p>
 </div>
 {_portfoy_istatistikleri(p)}
 {grafik_html}
@@ -610,7 +632,6 @@ def build_portfolio_html(p):
 <table><tr><th>Tarih</th><th>Toplam Değer</th><th>Toplam %</th><th>Günlük %</th></tr>{gecmis}</table>
 </div>"""
     return _sayfa("Deneme Portföyü", icerik, "portfoy")
-
 if __name__ == "__main__":
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     date_str = datetime.now(tz).strftime('%Y-%m-%d')
