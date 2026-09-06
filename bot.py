@@ -630,7 +630,8 @@ def sparkline_svg(history, genislik=760, yukseklik=220):
     usd_pts = get_pts(usds)
     dep_pts = get_pts(deposits)
 
-    return f"""
+    # Başındaki 'f' harfi kaldırıldı, .format() eklendi
+    return """
     <!-- Lejant (Renk Açıklamaları) -->
     <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; font-size: 13px; font-weight: 600; align-items: center;">
         <span style="display: flex; align-items: center; gap: 6px;"><span style="width: 12px; height: 12px; background: #047857; display: inline-block; border-radius: 3px;"></span> Deneme Portföyü (Hisseler)</span>
@@ -646,9 +647,9 @@ def sparkline_svg(history, genislik=760, yukseklik=220):
     </style>
 
     <!-- Izgara Çizgileri -->
-    <line x1="{sol}" y1="{ust}" x2="{genislik - sag}" y2="{ust}" stroke="#e2e8f0" stroke-dasharray="3"/>
-    <line x1="{sol}" y1="{ust + iy/2}" x2="{genislik - sag}" y2="{ust + iy/2}" stroke="#e2e8f0" stroke-dasharray="3"/>
-    <line x1="{sol}" y1="{ust + iy}" x2="{genislik - sag}" y2="{ust + iy}" stroke="#e2e8f0" stroke-dasharray="3"/>
+    <line x1="{sol}" y1="{ust}" x2="{sag_sinir}" y2="{ust}" stroke="#e2e8f0" stroke-dasharray="3"/>
+    <line x1="{sol}" y1="{orta_y}" x2="{sag_sinir}" y2="{orta_y}" stroke="#e2e8f0" stroke-dasharray="3"/>
+    <line x1="{sol}" y1="{alt_y}" x2="{sag_sinir}" y2="{alt_y}" stroke="#e2e8f0" stroke-dasharray="3"/>
 
     <!-- Mevduat (Gri Kesikli) -->
     <g>
@@ -674,9 +675,24 @@ def sparkline_svg(history, genislik=760, yukseklik=220):
         <polyline class="line-hover" points="{stock_pts}" fill="none" stroke="#047857" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
     </g>
     
-    <text x="{sol}" y="{yukseklik - 8}" font-size="11" fill="#64748b" font-weight="500">Min: {mn:,.0f} TL</text>
-    <text x="{genislik - sag}" y="{yukseklik - 8}" font-size="11" fill="#64748b" font-weight="500" text-anchor="end">Maks: {mx:,.0f} TL</text>
-    </svg>"""
+    <text x="{sol}" y="{alt_text_y}" font-size="11" fill="#64748b" font-weight="500">Min: {mn:,.0f} TL</text>
+    <text x="{sag_sinir}" y="{alt_text_y}" font-size="11" fill="#64748b" font-weight="500" text-anchor="end">Maks: {mx:,.0f} TL</text>
+    </svg>""".format(
+        genislik=genislik,
+        yukseklik=yukseklik,
+        sol=sol,
+        sag_sinir=genislik - sag,
+        ust=ust,
+        orta_y=ust + iy / 2,
+        alt_y=ust + iy,
+        alt_text_y=yukseklik - 8,
+        dep_pts=dep_pts,
+        usd_pts=usd_pts,
+        gold_pts=gold_pts,
+        stock_pts=stock_pts,
+        mn=mn,
+        mx=mx
+    )
 
 def _portfoy_satirlari(p):
     son = p["history"][-1]
