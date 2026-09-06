@@ -113,7 +113,7 @@ def news_agent(state: AgentState):
     bugun_metin = "\n".join(toplanan[:25]) if toplanan else "(bugun haber alinamadi)"
     return {"news_data": bugun_metin + gecmis_metin}
 
-# ---------- TEKNIK AJAN (hisse fiyatlari) ----------
+# ---------- TEKNİK AJAN (hisse fiyatlari) ----------
 def technical_agent(state: AgentState):
     print("[Teknik Ajan] BIST30 hisse fiyatlari cekiliyor (Is Yatirim)...")
     try:
@@ -124,31 +124,56 @@ def technical_agent(state: AgentState):
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     simdi = datetime.now(tz)
     bugun = simdi.strftime("%Y-%m-%d")
-    # Son ~40 gunluk veri cek (5 gunluk degisim hesabi icin yeterli)
     bitis = simdi.strftime("%d-%m-%Y")
     baslangic = (simdi - timedelta(days=40)).strftime("%d-%m-%Y")
+    
     satirlar = []
     bugun_fiyatlar = {}
+    
+    # 30 hissenin tamamını tek tek ve güvenli bir şekilde işleyen yapı
     for hisse in HISSELER:
         try:
             df = fetch_stock_data(symbols=[hisse], start_date=baslangic, end_date=bitis)
             if df is None or df.empty:
+                print(f"[Uyari] {hisse} icin veri bos geldi.")
                 continue
+            
+            # Sütun adlarını garantiye al
+            df.columns = [str(c).upper() for c in df.columns]
+            
+            # Farklı sütun ad ihtimallerine karşı esnek kontrol
+            kapanis_kolonu = None
+            for col in ["HGDG_KAPANIS", "KAPANIS", "CLOSE"]:
+                if col in df.columns:
+                    kapanis_kolonu = col
+                    break
+            
+            if not kapanis_kolonu:
+                continue
+                
             son = df.iloc[-1]
-            fiyat = son.get("HGDG_KAPANIS")
-            onceki = df.iloc[-6]["HGDG_KAPANIS"] if len(df) >= 6 else fiyat
-            if fiyat and onceki:
-                degisim = ((fiyat - onceki) / onceki) * 100
-                satirlar.append(f"{hisse}: {fiyat:.2f} TL (5 gunluk %{degisim:+.2f})")
-                bugun_fiyatlar[hisse] = round(float(fiyat), 2)
-        except Exception:
-            pass
-        time.sleep(4)  # Is Yatirim sitesini zorlamamak icin
+            fiyat = son.get(kapanis_kolonu)
+            onceki = df.iloc[-6][kapanis_kolonu] if len(df) >= 6 else fiyat
+            
+            if fiyat is not None and not pd.isna(fiyat):
+                fiyat_val = float(fiyat)
+                onceki_val = float(onceki) if onceki is not None and not pd.isna(onceki) else fiyat_val
+                
+                degisim = 0.0
+                if onceki_val > 0:
+                    degisim = ((fiyat_val - onceki_val) / onceki_val) * 100
+                    
+                satirlar.append(f"{hisse}: {fiyat_val:.2f} TL (5 gunluk %{degisim:+.2f})")
+                bugun_fiyatlar[hisse] = round(fiyat_val, 2)
+        except Exception as ex:
+            print(f"[Hata] {hisse} işlenirken hata oluştu: {ex}")
+            continue
+        
+        time.sleep(1)  # Sunucu limitlerine takılmamak için kısa bekleme
 
     if bugun_fiyatlar:
         save_daily("prices", bugun, bugun_fiyatlar)
 
-    # Gecmis fiyatlar (aylik teknik analiz icin)
     gecmis = load_recent("prices", gun=30)
     gecmis_metin = ""
     if len(gecmis) > 1:
