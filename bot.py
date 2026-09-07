@@ -23,7 +23,7 @@ AMD_MODEL = os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")
 client = OpenAI(
     api_key=AMD_API_KEY,
     base_url="https://developer.amd.com.cn/radeon/api/v1",
-    timeout=600.0,
+    timeout=240.0,
     max_retries=0,
 )
 
@@ -301,7 +301,7 @@ def llm_call(prompt, max_deneme=6):
                 model=AMD_MODEL,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.3,
-                max_tokens=50000,
+                max_tokens=8000,
             )
             secim = resp.choices[0]
             if getattr(secim, "finish_reason", None) == "length":
