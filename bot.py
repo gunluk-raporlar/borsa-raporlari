@@ -23,7 +23,7 @@ AMD_MODEL = os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")
 client = OpenAI(
     api_key=AMD_API_KEY,
     base_url="https://developer.amd.com.cn/radeon/api/v1",
-    timeout=300.0,
+    timeout=600.0,
     max_retries=0,
 )
 
