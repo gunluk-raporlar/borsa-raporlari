@@ -24,15 +24,16 @@ socket.setdefaulttimeout(30)
 # tukendiginde (veya hic anahtar verilmazsa) yedek devreye girer.
 AMD_API_KEY = os.environ.get("AMD_API_KEY", "")
 
-# Yedek saglayici varsayilani: Google AI Studio (Gemini) — ucretsiz katmani
-# genistir (250k token/dk, ~250 istek/gun) ve GitHub runner'larindan stabildir.
-# Ucretsiz anahtar: https://aistudio.google.com/apikey
+# Yedek saglayici varsayilani: Groq (ucretsiz katman: ~30 istek/dk, ~1.000 istek/gun;
+# model bazli dakikalik token siniri vardir — buyuk promptlar 429 alabilir, bu yuzden
+# yedek oncelikli olarak OZET gibi kucuk cagrilara ayrilir, ana rapor AMD'de kalir).
+# Ucretsiz anahtar: https://console.groq.com  (secret adi: GROQ_API_KEY veya ALT_API_KEY)
 # Alternatif saglayicilar (sadece env ile gec):
-#   Groq:      ALT_BASE_URL=https://api.groq.com/openai/v1        ALT_MODELS=llama-3.3-70b-versatile
-#   OpenRouter: ALT_BASE_URL=https://openrouter.ai/api/v1          ALT_MODELS=deepseek/deepseek-chat-v3.1:free
-ALT_API_KEY = os.environ.get("ALT_API_KEY", "")
-ALT_BASE_URL = os.environ.get("ALT_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/")
-ALT_MODELS = [m.strip() for m in os.environ.get("ALT_MODELS", "gemini-2.5-flash").split(",") if m.strip()]
+#   Google AI Studio: ALT_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/  ALT_MODELS=gemini-2.5-flash
+#   OpenRouter:       ALT_BASE_URL=https://openrouter.ai/api/v1        ALT_MODELS=deepseek/deepseek-chat-v3.1:free
+ALT_API_KEY = os.environ.get("ALT_API_KEY") or os.environ.get("GROQ_API_KEY", "")
+ALT_BASE_URL = os.environ.get("ALT_BASE_URL", "https://api.groq.com/openai/v1")
+ALT_MODELS = [m.strip() for m in os.environ.get("ALT_MODELS", "llama-3.3-70b-versatile").split(",") if m.strip()]
 
 if not AMD_API_KEY and not ALT_API_KEY:
     raise SystemExit("AMD_API_KEY veya ALT_API_KEY ortam degiskenlerinden en az biri ayarlanmali!")
@@ -320,7 +321,7 @@ def _contains_prompt_leak(prompt: str, yanit: str) -> bool:
     return any(t in yanit for t in kontrol)
 
 
-def llm_call(prompt, max_deneme=6, fallback_on_fail=True):
+def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
     """Daha saglam LLM cagrisi:
     - cok saglayicili: AMD modelleri + (tanimliysa) yedek saglayici modelleri
       sirayla denenir; bir saglayici tukendiginde digerine otomatik gecilir
@@ -345,14 +346,16 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True):
 
     max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "8000"))
 
-    # Deneme sirasi: AMD modelleri (tanimliysa) + yedek saglayici modelleri (tanimliysa)
+    # Deneme sirasi: once AMD modelleri, sonra yedek saglayici modelleri.
+    # sirasi=("YEDEK", "AMD") verilirse yedek oncelikli denenir (kucuk cagrilar icin).
+    sirasi = sirasi or ("AMD", "YEDEK")
+    havuzlar = {"AMD": (client, AMD_MODEL_LIST or [AMD_MODEL]), "YEDEK": (alt_client, ALT_MODELS)}
     istekler = []
-    if client is not None:
-        for m in (AMD_MODEL_LIST or [AMD_MODEL]):
-            istekler.append((client, m, "AMD"))
-    if alt_client is not None:
-        for m in ALT_MODELS:
-            istekler.append((alt_client, m, "YEDEK"))
+    for etiket in sirasi:
+        saglayici, modeller = havuzlar[etiket]
+        if saglayici is not None:
+            for m in modeller:
+                istekler.append((saglayici, m, etiket))
 
     if not istekler:
         logger.error("Kullanilabilir LLM saglayicisi yok (AMD_API_KEY / ALT_API_KEY tanimli degil).")
@@ -503,7 +506,9 @@ def summary_agent(state: AgentState):
    [RAPOR]:
    {rapor[:6000]}
    """
-    ozet = llm_call(prompt)
+    # Ozet kucuk bir cagri oldugu icin once yedek saglayici (Groq) kullanilir;
+    # boylece ana rapor icin AMD'nin gunluk kotasini tuketmez.
+    ozet = llm_call(prompt, sirasi=("YEDEK", "AMD"))
     save_daily("summaries", bugun, {"ozet": ozet})
     return {}
 
