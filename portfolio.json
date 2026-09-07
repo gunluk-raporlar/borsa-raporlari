@@ -126,6 +126,40 @@
         "GOLD": NaN,
         "DEPOSIT": 100246.73
       }
+    },
+    {
+      "date": "2026-09-08",
+      "total": 61400.52,
+      "pct": -38.6,
+      "daily_pct": -12.28,
+      "prices": {
+        "AEFES": 18.79,
+        "ASTOR": 301.0,
+        "BIMAS": 418.0,
+        "DSTKF": 2390.0,
+        "EREGL": 38.32,
+        "GUBRF": 491.25,
+        "KCHOL": 219.7,
+        "KRDMD": 45.2,
+        "MGROS": 528.0,
+        "PETKM": 22.06,
+        "PGSUS": 149.4,
+        "SASA": 2.51,
+        "SISE": 41.66,
+        "TAVHL": 269.75,
+        "TCELL": 99.05,
+        "THYAO": 296.75,
+        "TOASO": 288.0,
+        "TTKOM": 52.35,
+        "TUPRS": 394.25,
+        "VAKBN": 33.32,
+        "YKBNK": 36.26
+      },
+      "benchmarks": {
+        "USD": 138385.14,
+        "GOLD": 232367.33,
+        "DEPOSIT": 100370.32
+      }
     }
   ]
 }
