@@ -17,10 +17,25 @@ import logging
 # Ag takilmalarinda sonsuza kadar beklememek icin genel soket zaman asimi.
 socket.setdefaulttimeout(30)
 
-# ==== AMD Radeon Developer Cloud API ====
+# ==== LLM SAGLAYICILARI (ana + yedek) ====
+# Ana saglayici: AMD Radeon Developer Cloud (Cin'de barindirilir; GitHub
+# runner'larindan baglanti arada kopar). Bu yuzden OpenAI-uyumlu bir YEDEK
+# saglayici da desteklenir: ALT_API_KEY girilirse AMD'nin tum denemeleri
+# tukendiginde (veya hic anahtar verilmazsa) yedek devreye girer.
 AMD_API_KEY = os.environ.get("AMD_API_KEY", "")
-if not AMD_API_KEY:
-    raise SystemExit("AMD_API_KEY ortam degiskeni ayarlanmamis!")
+
+# Yedek saglayici varsayilani: Google AI Studio (Gemini) — ucretsiz katmani
+# genistir (250k token/dk, ~250 istek/gun) ve GitHub runner'larindan stabildir.
+# Ucretsiz anahtar: https://aistudio.google.com/apikey
+# Alternatif saglayicilar (sadece env ile gec):
+#   Groq:      ALT_BASE_URL=https://api.groq.com/openai/v1        ALT_MODELS=llama-3.3-70b-versatile
+#   OpenRouter: ALT_BASE_URL=https://openrouter.ai/api/v1          ALT_MODELS=deepseek/deepseek-chat-v3.1:free
+ALT_API_KEY = os.environ.get("ALT_API_KEY", "")
+ALT_BASE_URL = os.environ.get("ALT_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/")
+ALT_MODELS = [m.strip() for m in os.environ.get("ALT_MODELS", "gemini-2.5-flash").split(",") if m.strip()]
+
+if not AMD_API_KEY and not ALT_API_KEY:
+    raise SystemExit("AMD_API_KEY veya ALT_API_KEY ortam degiskenlerinden en az biri ayarlanmali!")
 
 # Varsayilan model: 1B parametrelik MiniCPM5-1B karmasik Turkce promptlarda Ingilizce
 # ic-konusma uretip talimatlari rapora sicrayabilir ve tekrar dongusune girebilir;
@@ -49,7 +64,14 @@ client = OpenAI(
     base_url="https://developer.amd.com.cn/radeon/api/v1",
     timeout=240.0,
     max_retries=0,
-)
+) if AMD_API_KEY else None
+
+alt_client = OpenAI(
+    api_key=ALT_API_KEY,
+    base_url=ALT_BASE_URL,
+    timeout=240.0,
+    max_retries=0,
+) if ALT_API_KEY else None
 
 # Takip edilen BIST30 hisseleri (Guncel liste)
 HISSELER = [
@@ -300,15 +322,18 @@ def _contains_prompt_leak(prompt: str, yanit: str) -> bool:
 
 def llm_call(prompt, max_deneme=6, fallback_on_fail=True):
     """Daha saglam LLM cagrisi:
+    - cok saglayicili: AMD modelleri + (tanimliysa) yedek saglayici modelleri
+      sirayla denenir; bir saglayici tukendiginde digerine otomatik gecilir
     - exponential backoff + jitter
-    - model fallback listesi (AMD_MODEL_LIST) ile concurrency/rate-limit durumunda diger modellere gecis
-    - VLM modelleri opsiyoneldir (AMD_INCLUDE_VLM ile kontrol edilir)
+    - concurrency/rate-limit durumunda siradaki modele gecis
+    - uretilen yanit tekrar dongusu ve prompt sizmasi acisindan dogrulanir; bozuksa
+      diger modele gecilir
     - tum denemeler basarisizsa opsiyonel kismi fallback string doner (raise yerine)
 
-    APIConnectionError (GitHub Actions runner'i ile .com.cn endpoint'i arasinda ara sira
-    yasanan gecici baglanti/routing sorunlari) ve APITimeoutError icin daha fazla deneme
-    ve daha uzun bekleme suresi kullaniliyor, cunku bunlar genelde birkac dakika icinde
-    kendiliginden duzelen gecici sorunlar.
+    APIConnectionError (GitHub Actions runner'i ile Cin'de barindirilan .com.cn
+    endpoint'i arasinda ara sira yasanan gecici baglanti/routing sorunlari) ve
+    APITimeoutError icin daha fazla deneme ve daha uzun bekleme suresi kullaniliyor,
+    cunku bunlar genelde birkac dakika icinde kendiliginden duzelen gecici sorunlar.
 
     max_tokens ust siniri yuksek tutuluyor cunku bu endpoint icin gercek maliyet
     uretilen token sayisina gore hesaplaniyor, ust siniri yuksek tutmanin ek bir
@@ -320,21 +345,27 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True):
 
     max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "8000"))
 
-    models = list(AMD_MODEL_LIST) if AMD_MODEL_LIST else [AMD_MODEL]
-    model_index = 0
+    # Deneme sirasi: AMD modelleri (tanimliysa) + yedek saglayici modelleri (tanimliysa)
+    istekler = []
+    if client is not None:
+        for m in (AMD_MODEL_LIST or [AMD_MODEL]):
+            istekler.append((client, m, "AMD"))
+    if alt_client is not None:
+        for m in ALT_MODELS:
+            istekler.append((alt_client, m, "YEDEK"))
+
+    if not istekler:
+        logger.error("Kullanilabilir LLM saglayicisi yok (AMD_API_KEY / ALT_API_KEY tanimli degil).")
+        if fallback_on_fail:
+            return "(LLM hizmetine ulaşılamadı — rapor şu an kısmi olarak oluşturuldu veya oluşturulamadı. Daha sonra tekrar deneyin.)"
+        raise RuntimeError("Kullanilabilir LLM saglayicisi yok.")
 
     for deneme in range(1, max_deneme + 1):
-        model = models[min(model_index, len(models) - 1)]
+        saglayici, model, etiket = istekler[(deneme - 1) % len(istekler)]
         try:
-            logger.info("LLM cagrisi: model=%s deneme=%d/%d", model, deneme, max_deneme)
+            logger.info("LLM cagrisi: %s model=%s deneme=%d/%d", etiket, model, deneme, max_deneme)
 
-            if _is_vlm_model(model) and not AMD_INCLUDE_VLM:
-                logger.info("Model %s VLM olarak algilandi; AMD_INCLUDE_VLM=0 oldugu icin atlanacak.", model)
-                model_index = (model_index + 1) % len(models)
-                time.sleep(1)
-                continue
-
-            resp = client.chat.completions.create(
+            resp = saglayici.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.3,
@@ -344,10 +375,8 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True):
             icerik = secim.message.content or ""
 
             if _looks_degenerate(icerik) or _contains_prompt_leak(prompt, icerik):
-                logger.warning("Model %s bozuk yanit uretti (tekrar dongusu veya prompt sizmasi); siradaki modele geciliyor.", model)
-                print(f"[Uyari] {model} bozuk yanit uretti (tekrar dongusu/prompt sizmasi), siradaki model deneniyor ({deneme}/{max_deneme})...", flush=True)
-                if len(models) > 1:
-                    model_index = (model_index + 1) % len(models)
+                logger.warning("%s/%s bozuk yanit uretti (tekrar dongusu veya prompt sizmasi); siradaki model denenecek.", etiket, model)
+                print(f"[Uyari] {etiket}/{model} bozuk yanit uretti (tekrar dongusu/prompt sizmasi), siradaki model deneniyor ({deneme}/{max_deneme})...", flush=True)
                 time.sleep(2)
                 continue
 
@@ -358,27 +387,21 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True):
 
         except openai.RateLimitError as e:
             bekle = min(10 * deneme, 30)  # 10sn, 20sn, 30sn
-            print(f"[Uyari] API hiz siniri ({type(e).__name__}: {e}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme}/{max_deneme})...", flush=True)
+            print(f"[Uyari] API hiz siniri ({etiket}/{model}, {type(e).__name__}: {e}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme}/{max_deneme})...", flush=True)
             time.sleep(bekle)
         except (openai.APIConnectionError, openai.APITimeoutError) as e:
             bekle = min(20 * deneme, 90)  # 20, 40, 60, 80, 90, 90 sn
             sebep = getattr(e, "__cause__", None) or e
-            print(f"[Uyari] Baglanti/zaman asimi sorunu ({type(e).__name__}: {sebep!r}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme}/{max_deneme})...", flush=True)
+            print(f"[Uyari] Baglanti/zaman asimi sorunu ({etiket}/{model}, {type(e).__name__}: {sebep!r}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme}/{max_deneme})...", flush=True)
             time.sleep(bekle)
         except Exception as e:
             emsg = str(e).lower()
 
-            # Concurrency/model-busy tespiti -> fallback modele gec
+            # Concurrency/model-busy tespiti -> yedek saglayici/modellere hizli gec
             if "concurrency" in emsg or "concurrent" in emsg:
-                if model_index < len(models) - 1:
-                    model_index += 1
-                    wait = min(10 * deneme, 60)
-                    logger.info("Fallback modele geciliyor: %s. Bekleniyor %s sn (+jitter)", models[model_index], wait)
-                    time.sleep(wait + random.uniform(0, 3))
-                else:
-                    wait = min(10 * deneme, 60)
-                    logger.info("Tum modeller mesgul olabilir, %s sn bekleniyor", wait)
-                    time.sleep(wait + random.uniform(0, 3))
+                wait = min(10 * deneme, 60)
+                logger.info("Model mesgul gorunuyor, %s sn beklenip siradaki saglayici/model denenecek", wait)
+                time.sleep(wait + random.uniform(0, 3))
                 continue
 
             # Baglanti/zaman asimi benzeri durumlar
