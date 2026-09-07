@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import socket
 import pandas as pd
 from datetime import datetime, timedelta
 import zoneinfo
@@ -9,22 +10,48 @@ from typing import TypedDict
 from langgraph.graph import StateGraph, END
 import feedparser
 import markdown
+import logging
+
+# Ag takilmalarinda sonsuza kadar beklememek icin genel soket zaman asimi.
+socket.setdefaulttimeout(30)
 
 # ==== AMD Radeon Developer Cloud API ====
 AMD_API_KEY = os.environ.get("AMD_API_KEY", "")
 if not AMD_API_KEY:
     raise SystemExit("AMD_API_KEY ortam degiskeni ayarlanmamis!")
 
+# Varsayilan olarak daha hafif bir text-model kullan; yogunluk/concurrency sorunlarini azaltmak icin
+AMD_MODEL = os.environ.get("AMD_MODEL", "MiniCPM5-1B")
+
+# Opsiyonel: virgulle ayrilmis fallback modeller (environment ile kontrol edilebilir)
+AMD_FALLBACK_MODELS = [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "DeepSeek-V4-Flash,Qwen3.8-Flash-Next").split(",") if m.strip()]
+
+# Eger VLM (vision-language) modellerini explicit olarak kullanmak isterseniz bu environment'i 1 yapin
+AMD_INCLUDE_VLM = os.environ.get("AMD_INCLUDE_VLM", "0") == "1"
+
+
+def _is_vlm_model(name: str) -> bool:
+    n = (name or "").lower()
+    return any(tok in n for tok in ("vision", "vlm", "image", "visual"))
+
+
+# Nihai model listesi: once ana model, sonra fallback modeller (VLM'ler opsiyonel olarak haric tutulur)
+AMD_MODEL_LIST = [AMD_MODEL] + [m for m in AMD_FALLBACK_MODELS if m != AMD_MODEL]
+if not AMD_INCLUDE_VLM:
+    AMD_MODEL_LIST = [m for m in AMD_MODEL_LIST if not _is_vlm_model(m)]
+
 client = OpenAI(
     api_key=AMD_API_KEY,
-    base_url="https://developer.amd.com.cn/radeon/api/v1"
+    base_url="https://developer.amd.com.cn/radeon/api/v1",
+    timeout=240.0,
+    max_retries=0,
 )
 
-# Takip edilen BIST30 hisseleri (Güncel liste)
+# Takip edilen BIST30 hisseleri (Guncel liste)
 HISSELER = [
-    "AEFES", "AKBNK", "ASELS", "ASTOR", "BIMAS", "DSTKF", "EKGYO", "ENKAI", 
-    "EREGL", "FROTO", "GARAN", "GUBRF", "ISCTR", "KCHOL", "KRDMD", "MGROS", 
-    "PETKM", "PGSUS", "SAHOL", "SASA", "SISE", "TAVHL", "TCELL", "THYAO", 
+    "AEFES", "AKBNK", "ASELS", "ASTOR", "BIMAS", "DSTKF", "EKGYO", "ENKAI",
+    "EREGL", "FROTO", "GARAN", "GUBRF", "ISCTR", "KCHOL", "KRDMD", "MGROS",
+    "PETKM", "PGSUS", "SAHOL", "SASA", "SISE", "TAVHL", "TCELL", "THYAO",
     "TOASO", "TRALT", "TTKOM", "TUPRS", "VAKBN", "YKBNK"
 ]
 
@@ -80,13 +107,22 @@ class AgentState(TypedDict):
     fundamental_data: str
     final_report: str
 
+
+# Configure basic logging
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+logger = logging.getLogger("bot")
+
+
 # ---------- HABER AJANI ----------
 def news_agent(state: AgentState):
-    print("[Haber Ajani] Finans haberleri toplaniyor...")
+    logger.info("[Haber Ajani] Finans haberleri toplaniyor...")
+    print("[Haber Ajani] Finans haberleri toplaniyor...", flush=True)
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     toplanan = []
     for ad, url in HABER_KAYNAKLARI.items():
+        logger.info("[Haber Ajani] Kaynak: %s", ad)
+        print(f"[Haber Ajani] Kaynak: {ad}", flush=True)
         try:
             f = feedparser.parse(url)
             for e in f.entries[:5]:
@@ -113,9 +149,11 @@ def news_agent(state: AgentState):
     bugun_metin = "\n".join(toplanan[:25]) if toplanan else "(bugun haber alinamadi)"
     return {"news_data": bugun_metin + gecmis_metin}
 
-# ---------- TEKNIK AJAN (hisse fiyatlari) ----------
+
+# ---------- TEKNIK AJAN (hisse fiyatlari toplu cekim) ----------
 def technical_agent(state: AgentState):
-    print("[Teknik Ajan] BIST30 hisse fiyatlari cekiliyor (Is Yatirim)...")
+    logger.info("[Teknik Ajan] BIST hisse fiyatlari toplu olarak cekiliyor (Is Yatirim)...")
+    print("[Teknik Ajan] BIST hisse fiyatlari toplu olarak cekiliyor (Is Yatirim)...", flush=True)
     try:
         from isyatirimhisse import fetch_stock_data
     except Exception as e:
@@ -124,31 +162,44 @@ def technical_agent(state: AgentState):
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     simdi = datetime.now(tz)
     bugun = simdi.strftime("%Y-%m-%d")
-    # Son ~40 gunluk veri cek (5 gunluk degisim hesabi icin yeterli)
     bitis = simdi.strftime("%d-%m-%Y")
     baslangic = (simdi - timedelta(days=40)).strftime("%d-%m-%Y")
+
     satirlar = []
     bugun_fiyatlar = {}
-    for hisse in HISSELER:
-        try:
-            df = fetch_stock_data(symbols=[hisse], start_date=baslangic, end_date=bitis)
-            if df is None or df.empty:
-                continue
-            son = df.iloc[-1]
-            fiyat = son.get("HGDG_KAPANIS")
-            onceki = df.iloc[-6]["HGDG_KAPANIS"] if len(df) >= 6 else fiyat
-            if fiyat and onceki:
-                degisim = ((fiyat - onceki) / onceki) * 100
-                satirlar.append(f"{hisse}: {fiyat:.2f} TL (5 gunluk %{degisim:+.2f})")
-                bugun_fiyatlar[hisse] = round(float(fiyat), 2)
-        except Exception:
-            pass
-        time.sleep(4)  # Is Yatirim sitesini zorlamamak icin
+
+    try:
+        # Tum hisselerin verisini tek seferde cekiyoruz
+        df = fetch_stock_data(HISSELER, start_date=baslangic, end_date=bitis)
+        if df is not None and not df.empty:
+            df.columns = [str(c).upper() for c in df.columns]
+
+            kod_kolonu = next((col for col in ["HGDG_HS_KODU", "STOCK_CODE", "SYMBOL", "HIZ"] if col in df.columns), None)
+            kapanis_kolonu = next((col for col in ["HGDG_KAPANIS", "KAPANIS", "CLOSE"] if col in df.columns), None)
+
+            if kod_kolonu and kapanis_kolonu:
+                for hisse in HISSELER:
+                    hisse_df = df[df[kod_kolonu] == hisse]
+                    if hisse_df.empty:
+                        continue
+
+                    son = hisse_df.iloc[-1]
+                    fiyat = son.get(kapanis_kolonu)
+                    onceki = hisse_df.iloc[-6][kapanis_kolonu] if len(hisse_df) >= 6 else fiyat
+
+                    if fiyat is not None and not pd.isna(fiyat):
+                        fiyat_val = float(fiyat)
+                        onceki_val = float(onceki) if onceki is not None and not pd.isna(onceki) else fiyat_val
+                        degisim = ((fiyat_val - onceki_val) / onceki_val) * 100 if onceki_val > 0 else 0.0
+                        satirlar.append(f"{hisse}: {fiyat_val:.2f} TL (5 gunluk %{degisim:+.2f})")
+                        bugun_fiyatlar[hisse] = round(fiyat_val, 2)
+    except Exception as ex:
+        logger.exception("[Teknik Ajan Hatasi] Toplu veri cekilemedi: %s", ex)
+        print(f"[Teknik Ajan Hatasi] Toplu veri cekilemedi: {ex}")
 
     if bugun_fiyatlar:
         save_daily("prices", bugun, bugun_fiyatlar)
 
-    # Gecmis fiyatlar (aylik teknik analiz icin)
     gecmis = load_recent("prices", gun=30)
     gecmis_metin = ""
     if len(gecmis) > 1:
@@ -161,9 +212,11 @@ def technical_agent(state: AgentState):
         return {"tech_data": "Hisse verisi alinamadi.", "tech_prices": {}}
     return {"tech_data": "\n".join(satirlar) + gecmis_metin, "tech_prices": bugun_fiyatlar}
 
+
 # ---------- TEMEL AJAN (finansal tablolar) ----------
 def fundamental_agent(state: AgentState):
-    print("[Temel Ajan] Sirket finansal verileri cekiliyor...")
+    logger.info("[Temel Ajan] Sirket finansal verileri cekiliyor...")
+    print("[Temel Ajan] Sirket finansal verileri cekiliyor...", flush=True)
     try:
         from isyatirimhisse import fetch_financials
     except Exception as e:
@@ -173,7 +226,9 @@ def fundamental_agent(state: AgentState):
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     ozetler = []
     bu_yil = datetime.now(tz).year
-    for hisse in HISSELER:
+    for sira, hisse in enumerate(HISSELER, 1):
+        logger.info("[Temel Ajan] %d/%d: %s", sira, len(HISSELER), hisse)
+        print(f"[Temel Ajan] {sira}/{len(HISSELER)}: {hisse}", flush=True)
         try:
             fin = fetch_financials(symbols=[hisse], start_year=bu_yil - 1, end_year=bu_yil, financial_group="1")
             if fin is None or fin.empty:
@@ -201,11 +256,110 @@ def fundamental_agent(state: AgentState):
         return {"fundamental_data": "Finansal veri alinamadi."}
     return {"fundamental_data": "\n".join(ozetler)}
 
+
+# ---------- LLM CAGRISI ----------
+def llm_call(prompt, max_deneme=6, fallback_on_fail=True):
+    """Daha saglam LLM cagrisi:
+    - exponential backoff + jitter
+    - model fallback listesi (AMD_MODEL_LIST) ile concurrency/rate-limit durumunda diger modellere gecis
+    - VLM modelleri opsiyoneldir (AMD_INCLUDE_VLM ile kontrol edilir)
+    - tum denemeler basarisizsa opsiyonel kismi fallback string doner (raise yerine)
+
+    APIConnectionError (GitHub Actions runner'i ile .com.cn endpoint'i arasinda ara sira
+    yasanan gecici baglanti/routing sorunlari) ve APITimeoutError icin daha fazla deneme
+    ve daha uzun bekleme suresi kullaniliyor, cunku bunlar genelde birkac dakika icinde
+    kendiliginden duzelen gecici sorunlar.
+
+    max_tokens ust siniri yuksek tutuluyor cunku bu endpoint icin gercek maliyet
+    uretilen token sayisina gore hesaplaniyor, ust siniri yuksek tutmanin ek bir
+    bedeli yok - sadece yaniti erken kesilmekten koruyor. Gerekirse AMD_MAX_TOKENS
+    ortam degiskeni ile daraltilabilir.
+    """
+    import openai
+    import random
+
+    max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "8000"))
+
+    models = list(AMD_MODEL_LIST) if AMD_MODEL_LIST else [AMD_MODEL]
+    model_index = 0
+
+    for deneme in range(1, max_deneme + 1):
+        model = models[min(model_index, len(models) - 1)]
+        try:
+            logger.info("LLM cagrisi: model=%s deneme=%d/%d", model, deneme, max_deneme)
+
+            if _is_vlm_model(model) and not AMD_INCLUDE_VLM:
+                logger.info("Model %s VLM olarak algilandi; AMD_INCLUDE_VLM=0 oldugu icin atlanacak.", model)
+                model_index = (model_index + 1) % len(models)
+                time.sleep(1)
+                continue
+
+            resp = client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3,
+                max_tokens=max_tokens,
+            )
+            secim = resp.choices[0]
+            if getattr(secim, "finish_reason", None) == "length":
+                logger.warning("Yanit token limitine takilip erken kesilmis olabilir.")
+                print("[Uyari] Yanit token limitine takilip erken kesilmis olabilir.", flush=True)
+            return secim.message.content
+
+        except openai.RateLimitError as e:
+            bekle = min(10 * deneme, 30)  # 10sn, 20sn, 30sn
+            print(f"[Uyari] API hiz siniri ({type(e).__name__}: {e}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme}/{max_deneme})...", flush=True)
+            time.sleep(bekle)
+        except (openai.APIConnectionError, openai.APITimeoutError) as e:
+            bekle = min(20 * deneme, 90)  # 20, 40, 60, 80, 90, 90 sn
+            sebep = getattr(e, "__cause__", None) or e
+            print(f"[Uyari] Baglanti/zaman asimi sorunu ({type(e).__name__}: {sebep!r}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme}/{max_deneme})...", flush=True)
+            time.sleep(bekle)
+        except Exception as e:
+            emsg = str(e).lower()
+
+            # Concurrency/model-busy tespiti -> fallback modele gec
+            if "concurrency" in emsg or "concurrent" in emsg:
+                if model_index < len(models) - 1:
+                    model_index += 1
+                    wait = min(10 * deneme, 60)
+                    logger.info("Fallback modele geciliyor: %s. Bekleniyor %s sn (+jitter)", models[model_index], wait)
+                    time.sleep(wait + random.uniform(0, 3))
+                else:
+                    wait = min(10 * deneme, 60)
+                    logger.info("Tum modeller mesgul olabilir, %s sn bekleniyor", wait)
+                    time.sleep(wait + random.uniform(0, 3))
+                continue
+
+            # Baglanti/zaman asimi benzeri durumlar
+            if "timeout" in emsg or "read timed out" in emsg or "disconnected" in emsg:
+                wait = min(15 * deneme, 120)
+                logger.warning("Baglanti/zaman asimi sorununa rastlandi: %s. %s sn bekleniyor, deneme %d/%d", e, wait, deneme, max_deneme)
+                time.sleep(wait + random.uniform(0, 5))
+                continue
+
+            # Rate limit ya da diger server hatalari
+            if "rate" in emsg or "429" in emsg or "rate_limit" in emsg:
+                wait = min(10 * deneme, 60)
+                logger.warning("Rate limit veya 429 alindi: %s. %s sn bekleniyor, deneme %d/%d", e, wait, deneme, max_deneme)
+                time.sleep(wait + random.uniform(0, 3))
+                continue
+
+            # Bilinmeyen hata, kaydet ve kisa bekle
+            logger.exception("Beklenmeyen hata LLM cagrisinda: %s", e)
+            time.sleep(min(10 * deneme, 60))
+
+    # Tum denemeler bitti
+    logger.error("LLM cagrisi maksimum deneme sayisinda tamamlanamadi.")
+    if fallback_on_fail:
+        return "(LLM hizmetine ulaşılamadı — rapor şu an kısmi olarak oluşturuldu veya oluşturulamadı. Daha sonra tekrar deneyin.)"
+    raise RuntimeError("API cagrisi maksimum deneme sayisinda da tamamlanamadi.")
+
+
 # ---------- BAS ANALIST (CIO) ----------
 def master_cio_agent(state: AgentState):
-    print("[Bas Analist] Rapor sentezleniyor (DeepSeek)...")
-
-    # Hafiza: onceki gunlerin analiz ozetleri
+    logger.info("[Bas Analist] Rapor sentezleniyor...")
+    print("[Bas Analist] Rapor sentezleniyor...", flush=True)
     gecmis_ozetler = load_recent("summaries", gun=14)
     hafiza_metni = ""
     if gecmis_ozetler:
@@ -213,83 +367,80 @@ def master_cio_agent(state: AgentState):
         for g in gecmis_ozetler:
             hafiza_metni += f"-- {g['date']}: {g['data'].get('ozet', '')}\n"
 
-    prompt = f"""
-    Sen kidemli bir Hedge-Fund Portfoy Yoneticisisin. Asagidaki GERCEK verileri kullanarak profesyonel bir BIST 30 Yatirim Raporu yaz.
-    Onceki gunlere ait analiz ozetlerini de dikkate al; trend devam ediyor mu, onceki oneriler nasil performans gosterdi degerlendir.
+    prompt = f"""Sen kıdemli bir Hedge-Fund Portföy Yöneticisi ve Araştırma Direktörüsün. Aşağıdaki GERÇEK verileri kullanarak kurumsal yatırımcılara hitap eden, derinlemesine, profesyonel ve uzun bir BIST 30 Yatırım ve Strateji Raporu kaleme al.
+Önceki günlere ait analiz özetlerini dikkatle incele; trendin devam edip etmediğini, önceki önerilerin performansını ve piyasa dinamiklerindeki değişimleri eleştirel bir gözle değerlendir.
+
+[GEÇMİŞ GÜNLERİN ANALİZ ÖZETLERİ - HAFIZA]:
 {hafiza_metni}
-    [GUNUN HABERLERI]:
-    {state['news_data']}
 
-    [TEKNIK VERILER (hisse fiyatlari)]:
-    {state['tech_data']}
+[GÜNÜN HABERLERİ]:
+{state['news_data']}
 
-    [TEMEL/FINANSAL VERILER]:
-    {state['fundamental_data']}
+[TEKNİK VERİLER VE HİSSE FİYATLARI]:
+{state['tech_data']}
 
-    Raporu su basliklarla olustur:
-    1. Yonetici Ozeti
-    2. Haber ve Makro Degerlendirme
-    3. Teknik Degerlendirme (hisse bazli)
-    4. Sirket/Finansal Degerlendirme
-    5. Risk Yonetimi ve Strateji
-    6. ONERILEN PORTFOY: Haftalik ve aylik olarak onerilen hisse dagilimi (yuzde olarak, ornegin THYAO %20, GARAN %15 gibi) ve kisa aciklama.
+[TEMEL / FİNANSAL VERİLER]:
+{state['fundamental_data']}
 
-    Verileri dogrudan kullan, uydurma veri ekleme. Raporu Turkce yaz.
-    """
-    response = llm_call(prompt)
+Raporu kesinlikle profesyonel bir finansal bülten formatında, her başlığı detaylı ve uzun cümlelerle açıklayarak şu alt başlıklar altında oluştur:
+
+1. YÖNETİCİ ÖZETİ VE PİYASA GENEL BAKIŞI: Günün en kritik gelişmeleri, endeksin genel yönü ve fon yönetiminin temel perspektifi.
+2. HABER VE MAKROEKONOMİK DEĞERLENDİRME: Akışların BIST 30 şirketlerine yansımaları, enflasyon, kur ve faiz sarmalının yatırımcı psikolojisine etkisi.
+3. TEKNİK DEĞERLENDİRME (Hisse Bazlı): En çok ayrışan, hacim kazanan veya direnç/destek noktalarını test eden lider hisselerin teknik anatomisi.
+4. ŞİRKET VE FİNANSAL DEĞERLENDİRME: Temel veriler ışığında şirketlerin karlılık, bilanço yapıları ve rasyo bazlı öne çıkan detayları.
+5. RİSK YÖNETİMİ VE STRATEJİ: Kısa vadeli olası aşağı/yukarı yönlü senaryolar ve portföyü koruma kalkanları.
+6. ÖNERİLEN PORTFÖY VE TAKTİKSEL DAĞILIM: Haftalık ve aylık bazda model portföy için önerilen hisse ağırlıkları ve bu dağılımın gerekçeleri.
+
+Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek verileri ve geçmiş hafızayı baz al. Raporu zengin finansal terimler kullanarak Türkçe kaleme al."""
+
+    try:
+        response = llm_call(prompt)
+    except Exception as e:
+        logger.exception("LLM call failed in master_cio_agent: %s", e)
+        response = "(LLM hizmetine ulaşılamadı — rapor şu an kısmi olarak oluşturuldu veya oluşturulamadı. Daha sonra tekrar deneyin.)"
+
+    # Eger llm_call fallback mesaji donduyse, LLM'e ulasilamadi demektir; makul bir ham-rapor uret
+    if isinstance(response, str) and response.startswith("(LLM hizmetine ulaşılamadı"):
+        logger.warning("LLM'e ulaşılamadi, kısmi ham rapor döndürülüyor.")
+        fallback_report = "GUNLUK RAPOR (LLM KULLANILAMADI)\n\n"
+        fallback_report += "HABERLER:\n" + state.get('news_data', '') + "\n\n"
+        fallback_report += "TEKNIK VE FIYATLAR:\n" + state.get('tech_data', '') + "\n\n"
+        fallback_report += "TEMEL/FINANSAL:\n" + state.get('fundamental_data', '') + "\n\n"
+        fallback_report += "(LLM'e ulaşılamadığı için rapor otomatik olarak bu ham verilerin birleşimidir.)"
+        return {"final_report": fallback_report}
+
     return {"final_report": response}
 
 
 # ---------- OZET AJANI (hafiza indeksleme) ----------
 def summary_agent(state: AgentState):
     """Gunun raporunu kisa bir ozete donusturup data/summaries/ altina indeksler.
-    Boylece ertesi gunler bu ozetleri okuyarak gecmisi hatirlar."""
-    print("[Ozet Ajani] Gunun analizi hafizaya indeksleniyor...")
+       Boylece ertesi gunler bu ozetleri okuyarak gecmisi hatirlar."""
+    logger.info("[Ozet Ajani] Gunun analizi hafizaya indeksleniyor...")
+    print("[Ozet Ajani] Gunun analizi hafizaya indeksleniyor...", flush=True)
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     rapor = state.get("final_report", "")
     if not rapor:
         return {}
     prompt = f"""
-    Asagidaki gunluk BIST 30 yatirim raporunu, ileride hafiza olarak kullanilmak uzere 5-8 maddelik kisa bir ozete indir.
-    Piyasa yonu, one cikan hisseler, portfoy onerisi (yuzdeler) ve temel riskleri mutlaka icersin. Turkce yaz.
+   Asagidaki gunluk BIST 30 yatirim raporunu, ileride hafiza olarak kullanilmak uzere 5-8 maddelik kisa bir ozete indir.
+   Piyasa yonu, one cikan hisseler, portfoy onerisi (yuzdeler) ve temel riskleri mutlaka icersin. Turkce yaz.
 
-    [RAPOR]:
-    {rapor[:6000]}
-    """
+   [RAPOR]:
+   {rapor[:6000]}
+   """
     ozet = llm_call(prompt)
     save_daily("summaries", bugun, {"ozet": ozet})
     return {}
 
 
-def llm_call(prompt, max_deneme=6):
-    """API cagrisi; hiz siniri (429) olursa bekleyip tekrar dener."""
-    import openai
-    for deneme in range(max_deneme):
-        try:
-            resp = client.chat.completions.create(
-                model="DeepSeek-V4-Flash",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.3
-            )
-            return resp.choices[0].message.content
-        except openai.RateLimitError as e:
-            bekle = 20 * (deneme + 1)  # 20sn, 40sn, 60sn... artarak bekle
-            print(f"[Uyari] API hiz siniri ({e}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme+1}/{max_deneme})...")
-            time.sleep(bekle)
-        except Exception as e:
-            print(f"[Hata] API cagrisi basarisiz: {e}")
-            time.sleep(10)
-    raise RuntimeError("API cagrisi maksimum deneme sayisinda da tamamlanamadi.")
-
-# ---------- DENEME PORTFOYU TAKIBI ----------
 # ---------- DENEME PORTFOYU TAKIBI (Kiyaslamali) ----------
 PORTFOLYO_DOSYASI = "portfolio.json"
 BASLANGIC_SERMAYE = 100000.0
 
 
 def load_portfolio():
-    import json
     if os.path.exists(PORTFOLYO_DOSYASI):
         try:
             with open(PORTFOLYO_DOSYASI, encoding="utf-8") as f:
@@ -300,20 +451,22 @@ def load_portfolio():
 
 
 def save_portfolio(data):
-    import json
     with open(PORTFOLYO_DOSYASI, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
 def portfolio_agent(state: AgentState):
-    print("[Portfoy Ajani] Deneme portfoyu guncelleniyor...")
-    print("[Portfoy Ajani] Deneme portfoyu ve kiyaslamalar guncelleniyor...")
-    import json
-    from datetime import datetime as dt
+    logger.info("[Portfoy Ajani] Deneme portfoyu ve kiyaslamalar guncelleniyor...")
+    print("[Portfoy Ajani] Deneme portfoyu ve kiyaslamalar guncelleniyor...", flush=True)
 
-    # Teknik ajandan gelen fiyatlari kullan (tekrar internetten cekme)
+    try:
+        import yfinance as yf
+    except ModuleNotFoundError:
+        yf = None
+        logger.warning("[Uyari] yfinance kurulu degil; varsayilan USD ve altin degerleri kullanilacak.")
+        print("[Uyari] yfinance kurulu degil; varsayilan USD ve altin degerleri kullanilacak.")
+
     fiyatlar = state.get("tech_prices") or {}
-
     if not fiyatlar:
         return {"final_report": state.get("final_report", "")}
 
@@ -322,8 +475,25 @@ def portfolio_agent(state: AgentState):
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     yillik_faiz = 0.45
 
+    # Guncel USD ve Gram Altin fiyatlarini yfinance ile cekelim
+    guncel_usd = 35.0
+    guncel_gold = 3000.0
+    if yf is not None:
+        try:
+            # period 5 gune cikarildi ve ffill/dropna eklendi ki son gunun
+            # verisi henuz olusmamissa (NaN) bir onceki gecerli deger kullanilsin.
+            df_bench = yf.download(["USDTRY=X", "GC=F"], period="5d", progress=False)["Close"]
+            df_bench = df_bench.ffill().dropna(how="any")
+            if not df_bench.empty and "USDTRY=X" in df_bench.columns and "GC=F" in df_bench.columns:
+                guncel_usd = float(df_bench["USDTRY=X"].iloc[-1])
+                ons = float(df_bench["GC=F"].iloc[-1])
+                guncel_gold = round((ons * guncel_usd) / 31.1035, 2)
+        except Exception as e:
+            logger.warning("[Uyari] Kiyaslama kurlari cekilemedi, son degerler kullanilacak: %s", e)
+            print(f"[Uyari] Kiyaslama kurları çekilemedi, son değerler kullanılacak: {e}")
+
     if p is None:
-        # Ilk gun: esit dagilimli portfoy kur
+        # Ilk gun: esit dagilimli portfoy kur ve baslangic kurlarini kaydet
         hisse_adedi = len(fiyatlar)
         pay = BASLANGIC_SERMAYE / hisse_adedi
         p = {
@@ -332,36 +502,34 @@ def portfolio_agent(state: AgentState):
             "initial_prices": {h: fiyatlar[h] for h in fiyatlar},
             "shares": {h: round(pay / fiyatlar[h], 2) for h in fiyatlar},
             "initial_benchmarks": {
-                "USD": 35.0,
-                "GOLD": 3000.0
+                "USD": guncel_usd,
+                "GOLD": guncel_gold
             },
             "history": [],
         }
 
-    # Bugunku deger ve yuzde
+    # Bugunku toplam hisse degeri ve yuzde
     toplam = sum(p["shares"][h] * fiyatlar[h] for h in p["shares"] if h in fiyatlar)
     yuzde = ((toplam - BASLANGIC_SERMAYE) / BASLANGIC_SERMAYE) * 100
 
-    # Gunluk degisim (dun vs bugun) - ayni gun tekrar calisirsa son kayit guncellenir
     if p["history"] and p["history"][-1]["date"] == bugun:
         p["history"].pop()
-    dun = None
-    if p["history"]:
-        dun = p["history"][-1]["total"]
-    
+
     dun = p["history"][-1]["total"] if p["history"] else BASLANGIC_SERMAYE
     gunluk_yuzde = ((toplam - dun) / dun * 100) if dun else 0.0
 
-    # Mevduat bilesik faiz hesabi (Gunluk isleyen bilesik getiri)
-    baslangic_tarihi = dt.strptime(p["start_date"], "%Y-%m-%d")
-    simdiki_tarih = dt.strptime(bugun, "%Y-%m-%d")
+    # Mevduat bilesik faiz hesabi
+    baslangic_tarihi = datetime.strptime(p["start_date"], "%Y-%m-%d")
+    simdiki_tarih = datetime.strptime(bugun, "%Y-%m-%d")
     gecen_gun = max(1, (simdiki_tarih - baslangic_tarihi).days)
     deposit_degeri = BASLANGIC_SERMAYE * ((1 + yillik_faiz / 365) ** gecen_gun)
 
-    # Guvenli Kur ve Altin Degerlerini Alma (Fallback mekanizmasi)
-    son_benchmarks = p["history"][-1].get("benchmarks", {}) if p["history"] else {}
-    usd_degeri = son_benchmarks.get("USD", BASLANGIC_SERMAYE)
-    gold_degeri = son_benchmarks.get("GOLD", BASLANGIC_SERMAYE)
+    # Baslangictaki kur oranlarina gore bugunku USD ve Altin yatiriminin TL karsiligi
+    ilk_usd_kuru = p.get("initial_benchmarks", {}).get("USD", guncel_usd)
+    ilk_gold_fiyati = p.get("initial_benchmarks", {}).get("GOLD", guncel_gold)
+
+    usd_degeri = BASLANGIC_SERMAYE * (guncel_usd / ilk_usd_kuru)
+    gold_degeri = BASLANGIC_SERMAYE * (guncel_gold / ilk_gold_fiyati)
 
     p["history"].append({
         "date": bugun,
@@ -377,10 +545,9 @@ def portfolio_agent(state: AgentState):
     })
     save_portfolio(p)
 
-    # Portfoy ozeti (rapora eklenecek)
-    ozet = f"Deneme Portfoyu ({bugun}): Toplam {round(toplam,2):.2f} TL (baslangic {BASLANGIC_SERMAYE:.0f} TL, toplam %{yuzde:+.2f}, gunluk %{gunluk_yuzde:+.2f})"
-    ozet = f"Deneme Portfoyu ({bugun}): Toplam {round(toplam,2):.2f} TL (baslangic {BASLANGIC_SERMAYE:.0f} TL, toplam %{yuzde:+.2f}, gunluk %{gunluk_yuzde:+.2f}, Mevduat: {round(deposit_degeri,2):.2f} TL)"
+    ozet = f"Deneme Portfoyu ({bugun}): Toplam {round(toplam,2):.2f} TL (Toplam %{yuzde:+.2f}, Mevduat: {round(deposit_degeri,2):.2f} TL, USD Karşılığı: {round(usd_degeri,2):.2f} TL, Altın Karşılığı: {round(gold_degeri,2):.2f} TL)"
     return {"final_report": state.get("final_report", "") + "\n\n[PORTFOY OZETI]\n" + ozet}
+
 
 workflow = StateGraph(AgentState)
 workflow.add_node("news", news_agent)
@@ -401,10 +568,10 @@ app = workflow.compile()
 # ---------- ORTAK SITE TASARIMI ----------
 BASE_CSS = """
 :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
-        --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
+       --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
 * { box-sizing:border-box; }
 body { margin:0; font-family:"Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
-       background:var(--bg); color:var(--ink); line-height:1.65; }
+      background:var(--bg); color:var(--ink); line-height:1.65; }
 a { color:var(--accent); }
 .topbar { background:var(--ink); }
 .topbar .inner { max-width:1080px; margin:0 auto; padding:14px 20px; display:flex;
@@ -455,6 +622,12 @@ tr:last-child td { border-bottom:none; }
   table { font-size:13px; }
   th, td { padding:7px 8px; }
 }
+
+@media (max-width: 768px) {
+    .interactive-box {
+        grid-template-columns: 1fr !important;
+    }
+}
 """
 
 
@@ -468,17 +641,86 @@ def _sayfa(title, icerik, aktif="raporlar", kok=""):
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title>
+<!-- Google Tag Manager & Analytics -->
+<script>(function(w,d,s,l,i){{w[l]=w[l]||[];w[l].push({{'gtm.start':
+new Date().getTime(),event:'gtm.js'}});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX';f.parentNode.insertBefore(j,f);
+}})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
 <style>{BASE_CSS}</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
 <nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a></nav>
 </div></header>
+
 <main class="wrap">
-{icerik}
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve Google Çeviri) -->
+    <div class="site-widgets" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; background: #f8fafc; padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #475569; gap: 15px; border: 1px solid #e2e8f0;">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
+        </div>
+        <div id="google_translate_element"></div>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Google Arama ve Gemini Sohbet Kutusu) -->
+    <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <form method="get" action="https://www.google.com/search" target="_blank" style="display: flex; gap: 8px;">
+                <input type="hidden" name="q" value="site:borsa-raporlari.onrender.com">
+                <input type="text" name="q" placeholder="Google ile sitede ara..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;">
+                <button type="submit" style="background: #047857; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Ara</button>
+            </form>
+        </div>
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; gap: 8px;">
+            <input type="text" id="ai-chat-input" placeholder="Gemini'ye borsa hakkında sor..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') askGemini();">
+            <button onclick="askGemini()" style="background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Sor</button>
+        </div>
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    {icerik}
 </main>
+
 <footer class="footer">Bilgilendirme amacıyla hazırlanmıştır, yatırım tavsiyesi değildir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {{
+        const now = new Date();
+        const options = {{ timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' }};
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }}
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {{
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${{temp}}°C, ${{desc}}`;
+        }})
+        .catch(err => {{
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        }});
+
+    function askGemini() {{
+        const query = document.getElementById('ai-chat-input').value;
+        if(query.trim()) {{
+            window.open(`https://gemini.google.com/app?q=${{encodeURIComponent(query)}}`, '_blank');
+        }}
+    }}
+</script>
+<script type="text/javascript">
+    function googleTranslateElementInit() {{
+        new google.translate.TranslateElement({{pageLanguage: 'tr', includedLanguages: 'en,de,fr,ar,ru', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}}, 'google_translate_element');
+    }}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body></html>"""
 
 
@@ -508,25 +750,96 @@ def build_html(report, date_str):
     return rapor_sayfasi(markdown_to_html(report), date_str)
 
 
-def sparkline_svg(degerler, genislik=760, yukseklik=200):
-    """Portfoy gecmisinden basit SVG cizgi grafigi uretir."""
-    if len(degerler) < 2:
+def sparkline_svg(history):
+    """Portfoy gecmisini Chart.js ile karsilastirmali cizgi grafige donusturur.
+
+    Onceki elle-cizilen SVG yerine hazir bir grafik kutuphanesi (Chart.js,
+    CDN uzerinden _sayfa()'nin <head> kismina ekleniyor) kullaniliyor.
+    Bunun getirdigi avantajlar:
+      - Excel/Office tarzi duzgun eksen, izgara ve yumusatilmis cizgiler.
+      - Dokunmatik ekranlarda (mobil) tooltip native olarak calisiyor;
+        Chart.js touchstart/touchmove olaylarini kendisi dinliyor, ozel
+        bir tiklama mantigi yazmaya gerek kalmadi.
+      - Tooltip icinde hem gunun degeri hem de baslangictan bugune %
+        degisim otomatik hesaplanip gosteriliyor.
+    """
+    if not history:
         return ""
-    mn, mx = min(degerler), max(degerler)
-    fark = (mx - mn) or 1.0
-    sol, sag, ust, alt = 10, 14, 16, 28
-    iy = yukseklik - ust - alt
-    adim = (genislik - sol - sag) / (len(degerler) - 1)
-    pts = [(sol + i * adim, ust + (mx - v) / fark * iy) for i, v in enumerate(degerler)]
-    cizgi = " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
-    sx, sy = pts[-1]
-    renk = "#047857" if degerler[-1] >= degerler[0] else "#b91c1c"
-    return f"""<svg class="chart" viewBox="0 0 {genislik} {yukseklik}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Portfoy performans grafigi">
-<polyline points="{cizgi}" fill="none" stroke="{renk}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="{sx:.1f}" cy="{sy:.1f}" r="4.5" fill="{renk}"/>
-<text x="{sol}" y="{yukseklik - 8}" font-size="11" fill="#64748b">Min: {mn:,.0f} TL</text>
-<text x="{genislik - sag}" y="{yukseklik - 8}" font-size="11" fill="#64748b" text-anchor="end">Maks: {mx:,.0f} TL</text>
-</svg>"""
+
+    etiketler = [item["date"] for item in history]
+    stocks = [round(float(item.get("total", 0)), 2) for item in history]
+    benchmarks = [item.get("benchmarks") or {} for item in history]
+    golds = [round(float(item.get("GOLD", stocks[i])), 2) for i, item in enumerate(benchmarks)]
+    usds = [round(float(item.get("USD", stocks[i])), 2) for i, item in enumerate(benchmarks)]
+    deposits = [round(float(item.get("DEPOSIT", stocks[i])), 2) for i, item in enumerate(benchmarks)]
+
+    import random
+    import json as _json
+    grafik_id = f"portfoy-grafik-{random.randint(100000, 999999)}"
+
+    veri = {
+        "labels": etiketler,
+        "datasets": [
+            {"label": "Deneme Portföyü (Hisseler)", "data": stocks, "borderColor": "#047857", "backgroundColor": "#047857"},
+            {"label": "Altın", "data": golds, "borderColor": "#d97706", "backgroundColor": "#d97706"},
+            {"label": "Dolar", "data": usds, "borderColor": "#2563eb", "backgroundColor": "#2563eb"},
+            {"label": "Mevduat", "data": deposits, "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]},
+        ],
+    }
+    veri_json = _json.dumps(veri, ensure_ascii=False)
+
+    return f"""
+<div style="position:relative; height:340px;">
+<canvas id="{grafik_id}"></canvas>
+</div>
+<script>
+(function() {{
+    var veri = {veri_json};
+    var baslangiclar = veri.datasets.map(function(d) {{ return d.data[0]; }});
+    var ctx = document.getElementById('{grafik_id}').getContext('2d');
+    new Chart(ctx, {{
+        type: 'line',
+        data: {{
+            labels: veri.labels,
+            datasets: veri.datasets.map(function(d) {{
+                return Object.assign({{}}, d, {{
+                    borderWidth: 3,
+                    pointRadius: 2,
+                    pointHitRadius: 14,
+                    tension: 0.15,
+                    fill: false,
+                }});
+            }})
+        }},
+        options: {{
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {{ mode: 'nearest', intersect: false }},
+            plugins: {{
+                legend: {{ position: 'top', labels: {{ boxWidth: 12, font: {{ size: 12, weight: '600' }} }} }},
+                tooltip: {{
+                    callbacks: {{
+                        label: function(ctx2) {{
+                            var idx = ctx2.datasetIndex;
+                            var ilk = baslangiclar[idx];
+                            var son = ctx2.parsed.y;
+                            var yuzde = ilk ? ((son - ilk) / ilk * 100) : 0;
+                            var isaret = yuzde >= 0 ? '+' : '';
+                            var sonStr = son.toLocaleString('tr-TR', {{maximumFractionDigits: 2}});
+                            return ctx2.dataset.label + ': ' + sonStr + ' TL (' + isaret + yuzde.toFixed(2) + '%)';
+                        }}
+                    }}
+                }}
+            }},
+            scales: {{
+                y: {{ ticks: {{ callback: function(v) {{ return v.toLocaleString('tr-TR') + ' TL'; }} }} }},
+                x: {{ ticks: {{ maxRotation: 0, autoSkip: true, maxTicksLimit: 8 }} }}
+            }}
+        }}
+    }});
+}})();
+</script>
+"""
 
 
 def _portfoy_satirlari(p):
@@ -568,7 +881,7 @@ def build_index_html(p, rapor_dosyalari):
 
     portfoy_bolumu = ""
     if p and p.get("history"):
-        grafik = sparkline_svg([g["total"] for g in p["history"]])
+        grafik = sparkline_svg(p["history"])
         grafik_html = f'<div class="card" style="margin-bottom:14px">{grafik}</div>' if grafik else ""
         portfoy_bolumu = f"""
 <h2 class="section-title">Deneme Portföyü</h2>
@@ -592,7 +905,7 @@ def build_index_html(p, rapor_dosyalari):
 
 def build_portfolio_html(p):
     son = p["history"][-1]
-    grafik = sparkline_svg([g["total"] for g in p["history"]])
+    grafik = sparkline_svg(p["history"])
     grafik_html = f'<div class="card" style="margin-bottom:22px">{grafik}</div>' if grafik else ""
     gecmis = "".join(
         f"<tr><td>{g['date']}</td><td>{g['total']:,.2f} TL</td>"
@@ -603,7 +916,7 @@ def build_portfolio_html(p):
     icerik = f"""
 <div class="hero">
 <h1>Deneme Portföyü</h1>
-<p>10 BIST 30 hissesine eşit dağıtılmış {p['initial_capital']:,.0f} TL'lik sanal portföy. Alım-satım yapılmaz, sadece takip edilir.</p>
+<p>BIST 30 hisselerine eşit dağıtılmış {p['initial_capital']:,.0f} TL'lik sanal portföy. Alım-satım yapılmaz, sadece takip edilir.</p>
 </div>
 {_portfoy_istatistikleri(p)}
 {grafik_html}
@@ -616,6 +929,7 @@ def build_portfolio_html(p):
 <table><tr><th>Tarih</th><th>Toplam Değer</th><th>Toplam %</th><th>Günlük %</th></tr>{gecmis}</table>
 </div>"""
     return _sayfa("Deneme Portföyü", icerik, "portfoy")
+
 
 if __name__ == "__main__":
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
@@ -631,7 +945,7 @@ if __name__ == "__main__":
     p = load_portfolio()
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(build_index_html(p, raporlar))
-    if p:
+    if p and p.get("history"):
         with open("portfolio.html", "w", encoding="utf-8") as f:
             f.write(build_portfolio_html(p))
 
