@@ -2,6 +2,8 @@ import os
 import json
 import time
 import socket
+import re
+from collections import Counter
 import pandas as pd
 from datetime import datetime, timedelta
 import zoneinfo
@@ -20,11 +22,13 @@ AMD_API_KEY = os.environ.get("AMD_API_KEY", "")
 if not AMD_API_KEY:
     raise SystemExit("AMD_API_KEY ortam degiskeni ayarlanmamis!")
 
-# Varsayilan olarak daha hafif bir text-model kullan; yogunluk/concurrency sorunlarini azaltmak icin
-AMD_MODEL = os.environ.get("AMD_MODEL", "MiniCPM5-1B")
+# Varsayilan model: 1B parametrelik MiniCPM5-1B karmasik Turkce promptlarda Ingilizce
+# ic-konusma uretip talimatlari rapora sicrayabilir ve tekrar dongusune girebilir;
+# bu yuzden varsayilan daha guclu bir model. Hafif model gerekirse AMD_MODEL ile secilebilir.
+AMD_MODEL = os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")
 
 # Opsiyonel: virgulle ayrilmis fallback modeller (environment ile kontrol edilebilir)
-AMD_FALLBACK_MODELS = [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "DeepSeek-V4-Flash,Qwen3.8-Flash-Next").split(",") if m.strip()]
+AMD_FALLBACK_MODELS = [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "Qwen3.8-Flash-Next,MiniCPM5-1B").split(",") if m.strip()]
 
 # Eger VLM (vision-language) modellerini explicit olarak kullanmak isterseniz bu environment'i 1 yapin
 AMD_INCLUDE_VLM = os.environ.get("AMD_INCLUDE_VLM", "0") == "1"
@@ -258,6 +262,42 @@ def fundamental_agent(state: AgentState):
 
 
 # ---------- LLM CAGRISI ----------
+def _looks_degenerate(metin: str) -> bool:
+    """Modelin tekrar dongusune girdigi yanitlari yakalamak icin basit sezgisel test.
+
+    Kucuk modeller bazen yanitin sonunda ayni kisa parcayi (orn. "18.45, ") yuzlerce
+    kez tekrar ederek token limitine kadar takilir; boyle raporlar elenmelidir.
+    """
+    if not metin or not metin.strip():
+        return True
+    kuyruk = metin[-4000:]
+    # Ayni 3-40 karakterlik parcanin 15'ten fazla kez ART ARDA gelmesi
+    if re.search(r"(.{3,40}?)\1{15,}", kuyruk, re.DOTALL):
+        return True
+    # Ayni uzun satirin 30'dan fazla kez gecmesi
+    satirlar = [s.strip() for s in metin.splitlines() if len(s.strip()) >= 8]
+    if satirlar:
+        if Counter(satirlar).most_common(1)[0][1] > 30:
+            return True
+    return False
+
+
+def _contains_prompt_leak(prompt: str, yanit: str) -> bool:
+    """Yanitin icinde prompt'un talimat satirlarindan biri BIREBIR geciyorsa True.
+
+    Kucuk modeller bazen verilen talimati ("Raporu kesinlikle profesyonel...")
+    yanita kopyalar; talimat satirlari veri satirlarindan ayird edilerek sadece
+    belirleyici olanlar (ilk iki ve son) kontrol edilir.
+    """
+    if not yanit:
+        return False
+    talimatlar = [s.strip() for s in prompt.splitlines() if len(s.strip()) >= 40]
+    if not talimatlar:
+        return False
+    kontrol = talimatlar[:2] + talimatlar[-1:]
+    return any(t in yanit for t in kontrol)
+
+
 def llm_call(prompt, max_deneme=6, fallback_on_fail=True):
     """Daha saglam LLM cagrisi:
     - exponential backoff + jitter
@@ -301,10 +341,20 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True):
                 max_tokens=max_tokens,
             )
             secim = resp.choices[0]
+            icerik = secim.message.content or ""
+
+            if _looks_degenerate(icerik) or _contains_prompt_leak(prompt, icerik):
+                logger.warning("Model %s bozuk yanit uretti (tekrar dongusu veya prompt sizmasi); siradaki modele geciliyor.", model)
+                print(f"[Uyari] {model} bozuk yanit uretti (tekrar dongusu/prompt sizmasi), siradaki model deneniyor ({deneme}/{max_deneme})...", flush=True)
+                if len(models) > 1:
+                    model_index = (model_index + 1) % len(models)
+                time.sleep(2)
+                continue
+
             if getattr(secim, "finish_reason", None) == "length":
                 logger.warning("Yanit token limitine takilip erken kesilmis olabilir.")
                 print("[Uyari] Yanit token limitine takilip erken kesilmis olabilir.", flush=True)
-            return secim.message.content
+            return icerik
 
         except openai.RateLimitError as e:
             bekle = min(10 * deneme, 30)  # 10sn, 20sn, 30sn
@@ -508,12 +558,21 @@ def portfolio_agent(state: AgentState):
             "history": [],
         }
 
-    # Bugunku toplam hisse degeri ve yuzde
-    toplam = sum(p["shares"][h] * fiyatlar[h] for h in p["shares"] if h in fiyatlar)
-    yuzde = ((toplam - BASLANGIC_SERMAYE) / BASLANGIC_SERMAYE) * 100
-
+    # Ayni gun tekrar calisilirsa son kaydi guncelle (uzerine yaz)
     if p["history"] and p["history"][-1]["date"] == bugun:
         p["history"].pop()
+
+    # Son bilinen fiyatlar: bugun cesitli sebeplerle (kismi API yaniti, tatil gunu vb.)
+    # fiyat gelmeyen hisseler 0 sayilip portfoy degeri sahte bir yokusa dusmesin;
+    # bu hisseler icin gecmisten son gecerli fiyat kullanilir.
+    son_fiyatlar = dict(p.get("initial_prices", {}))
+    for g in p.get("history", []):
+        son_fiyatlar.update({h: v for h, v in g.get("prices", {}).items()})
+    guncel_fiyatlar = {h: fiyatlar.get(h, son_fiyatlar[h]) for h in p["shares"] if son_fiyatlar.get(h)}
+
+    # Bugunku toplam hisse degeri ve yuzde
+    toplam = sum(p["shares"][h] * guncel_fiyatlar[h] for h in guncel_fiyatlar)
+    yuzde = ((toplam - BASLANGIC_SERMAYE) / BASLANGIC_SERMAYE) * 100
 
     dun = p["history"][-1]["total"] if p["history"] else BASLANGIC_SERMAYE
     gunluk_yuzde = ((toplam - dun) / dun * 100) if dun else 0.0
@@ -536,7 +595,7 @@ def portfolio_agent(state: AgentState):
         "total": round(toplam, 2),
         "pct": round(yuzde, 2),
         "daily_pct": round(gunluk_yuzde, 2),
-        "prices": {h: fiyatlar[h] for h in fiyatlar},
+        "prices": guncel_fiyatlar,
         "benchmarks": {
             "USD": round(usd_degeri, 2),
             "GOLD": round(gold_degeri, 2),
