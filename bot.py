@@ -469,6 +469,10 @@ def _sayfa(title, icerik, aktif="raporlar", kok=""):
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title>
 <style>{BASE_CSS}</style>
+<script>
+  window.va = window.va || function () {{ (window.vaq = window.vaq || []).push(arguments); }};
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <header class="topbar"><div class="inner">
