@@ -19,9 +19,10 @@ socket.setdefaulttimeout(30)
 AMD_API_KEY = os.environ.get("AMD_API_KEY", "")
 if not AMD_API_KEY:
     raise SystemExit("AMD_API_KEY ortam degiskeni ayarlanmamis!")
-AMD_MODEL = os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")
+# Varsayi olarak daha hafif bir text-model kullan; yoğunluk/koncurrency sorunlarini azaltmak icin
+AMD_MODEL = os.environ.get("AMD_MODEL", "MiniCPM5-1B")
 # Opsiyonel: virgulle ayrilmis fallback modeller (environment ile kontrol edilebilir)
-AMD_FALLBACK_MODELS = [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "MiniCPM5-1B").split(",") if m.strip()]
+AMD_FALLBACK_MODELS = [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "DeepSeek-V4-Flash,Qwen3.8-Flash-Next").split(",") if m.strip()]
 # Eğer VLM (vision-language) modellerini explicit olarak kullanmak isterseniz bu environment'i 1 yapin
 AMD_INCLUDE_VLM = os.environ.get("AMD_INCLUDE_VLM", "0") == "1"
 
@@ -37,7 +38,7 @@ if not AMD_INCLUDE_VLM:
 client = OpenAI(
     api_key=AMD_API_KEY,
     base_url="https://developer.amd.com.cn/radeon/api/v1",
-    timeout=240.0,
+    timeout=120.0,
     max_retries=0,
 )
 
@@ -251,7 +252,6 @@ def master_cio_agent(state: AgentState):
             hafiza_metni += f"-- {g['date']}: {g['data'].get('ozet', '')}\n"
 
     prompt = f"""Sen kıdemli bir Hedge-Fund Portföy Yöneticisi ve Araştırma Direktörüsün. Aşağıdaki GERÇEK verileri kullanarak kurumsal yatırımcılara hitap eden, derinlemesine, pro[...]
-Önceki günlere ait analiz özetlerini dikkatle incele; trendin devam edip etmediğini, önceki önerilerin performansını ve piyasa dinamiklerindeki değişimleri eleştirel bir gözle değerl[...]
 
 [GEÇMİŞ GÜNLERİN ANALİZ ÖZETLERİ - HAFIZA]:
 {hafiza_metni}
@@ -276,7 +276,12 @@ Raporu kesinlikle profesyonel bir finansal bülten formatında, her başlığı 
 
 Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek verileri ve geçmiş hafızayı baz al. Raporu zengin finansal terimler kullanarak Türkçe kaleme al."""
 
-    response = llm_call(prompt)
+    try:
+        response = llm_call(prompt)
+    except Exception as e:
+        logger.exception("LLM call failed in master_cio_agent: %s", e)
+        response = "(LLM hizmetine ulaşılamadı — rapor şu an kısmi olarak oluşturuldu veya oluşturulamadı. Daha sonra tekrar deneyin.)"
+
     # Eğer llm_call fallback mesajı döndüyse, LLM'e ulasilamadi demektir; makul bir ham-rapor üret
     if isinstance(response, str) and response.startswith("(LLM hizmetine ulaşılamadı"):
         logger.warning("LLM'e ulaşılamadi, kısmi ham rapor döndürülüyor.")
@@ -321,7 +326,7 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True):
     import openai, random
 
     # Küçük ama makul token limitiyle başlayalım; sağlayıcınızın limitlerini kontrol edin.
-    max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "20000"))
+    max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "4000"))
 
     models = list(AMD_MODEL_LIST) if AMD_MODEL_LIST else [AMD_MODEL]
     model_index = 0
