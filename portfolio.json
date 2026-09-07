@@ -166,12 +166,12 @@
     },
     {
       "date": "2026-09-08",
-      "total": 102262.26,
-      "pct": 2.26,
-      "daily_pct": 2.25,
+      "total": 102352.27,
+      "pct": 2.35,
+      "daily_pct": 2.34,
       "prices": {
         "AEFES": 18.79,
-        "AKBNK": 71.85,
+        "AKBNK": 73.05,
         "ASELS": 392.5,
         "ASTOR": 301.0,
         "BIMAS": 418.0,
@@ -187,11 +187,11 @@
         "KRDMD": 45.2,
         "MGROS": 528.0,
         "PETKM": 22.06,
-        "PGSUS": 148.7,
+        "PGSUS": 149.4,
         "SAHOL": 94.05,
         "SASA": 2.51,
         "SISE": 41.66,
-        "TAVHL": 268.25,
+        "TAVHL": 269.75,
         "TCELL": 99.05,
         "THYAO": 296.75,
         "TOASO": 288.0,
@@ -201,14 +201,14 @@
         "VAKBN": 33.32,
         "YKBNK": 36.26
       },
-      "benchmarks": {
-        "USD": 100406.16,
-        "GOLD": 100941.08,
-        "DEPOSIT": 100246.73
-      },
       "rates": {
-        "USD": 48.4285,
+        "USD": 48.3465,
         "GOLD": 6933.99
+      },
+      "benchmarks": {
+        "USD": 100236.15,
+        "GOLD": 100940.99,
+        "DEPOSIT": 100246.73
       }
     }
   ]
