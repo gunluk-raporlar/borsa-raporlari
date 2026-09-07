@@ -505,16 +505,62 @@ def save_portfolio(data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
+def _benchmarks_cek():
+    """Kiyaslama icin guncel USDTRY ve gram altin fiyatini birden fazla kaynaktan ceker.
+
+    Donus: (usdtry, gram_altin, kaynak_aciklamasi); alinamayan degerler None doner,
+    cagiran taraf son bilinen kur ile tamamlar. Actions runner'larinda Yahoo sik
+    engellendigi icin tek kaynaga bagli kalmak yerine TCMB (USD) ve gold-api (ons)
+    yedekleri kullanilir; hepsi basarisiz olursa portfoydaki son bilinen kur devreye girer.
+    """
+    usd = None
+    gram = None
+    kaynaklar = []
+    try:
+        import yfinance as yf
+        # period 5 gunde + ffill/dropna: son gunun verisi henuz olusmamissa (NaN)
+        # bir onceki gecerli deger kullanilir.
+        df_bench = yf.download(["USDTRY=X", "GC=F"], period="5d", progress=False)["Close"]
+        df_bench = df_bench.ffill().dropna(how="any")
+        if not df_bench.empty and "USDTRY=X" in df_bench.columns and "GC=F" in df_bench.columns:
+            usd = float(df_bench["USDTRY=X"].iloc[-1])
+            ons = float(df_bench["GC=F"].iloc[-1])
+            gram = (ons * usd) / 31.1035
+            kaynaklar.append("yfinance")
+    except Exception as e:
+        logger.warning("[Uyari] yfinance kurlari cekilemedi: %s", e)
+
+    if usd is None or gram is None:
+        import urllib.request
+        import xml.etree.ElementTree as ET
+        if usd is None:
+            try:
+                with urllib.request.urlopen("https://www.tcmb.gov.tr/kurlar/today.xml", timeout=20) as r:
+                    kok = ET.fromstring(r.read())
+                for c in kok.findall("Currency"):
+                    if (c.get("Kod") or c.get("CurrencyCode")) == "USD":
+                        usd = float(c.findtext("ForexBuying"))
+                        break
+                if usd:
+                    kaynaklar.append("TCMB(USD)")
+            except Exception as e:
+                logger.warning("[Uyari] TCMB kurlari cekilemedi: %s", e)
+        if gram is None and usd:
+            try:
+                req = urllib.request.Request("https://api.gold-api.com/price/XAU", headers={"User-Agent": "Mozilla/5.0"})
+                with urllib.request.urlopen(req, timeout=20) as r:
+                    ons = json.load(r).get("price")
+                if ons:
+                    gram = (float(ons) * usd) / 31.1035
+                    kaynaklar.append("gold-api(ons)")
+            except Exception as e:
+                logger.warning("[Uyari] gold-api cekilemedi: %s", e)
+    return usd, gram, ("+".join(kaynaklar) if kaynaklar else "yok")
+
+
 def portfolio_agent(state: AgentState):
     logger.info("[Portfoy Ajani] Deneme portfoyu ve kiyaslamalar guncelleniyor...")
     print("[Portfoy Ajani] Deneme portfoyu ve kiyaslamalar guncelleniyor...", flush=True)
-
-    try:
-        import yfinance as yf
-    except ModuleNotFoundError:
-        yf = None
-        logger.warning("[Uyari] yfinance kurulu degil; varsayilan USD ve altin degerleri kullanilacak.")
-        print("[Uyari] yfinance kurulu degil; varsayilan USD ve altin degerleri kullanilacak.")
 
     fiyatlar = state.get("tech_prices") or {}
     if not fiyatlar:
@@ -525,22 +571,24 @@ def portfolio_agent(state: AgentState):
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     yillik_faiz = 0.45
 
-    # Guncel USD ve Gram Altin fiyatlarini yfinance ile cekelim
-    guncel_usd = 35.0
-    guncel_gold = 3000.0
-    if yf is not None:
-        try:
-            # period 5 gune cikarildi ve ffill/dropna eklendi ki son gunun
-            # verisi henuz olusmamissa (NaN) bir onceki gecerli deger kullanilsin.
-            df_bench = yf.download(["USDTRY=X", "GC=F"], period="5d", progress=False)["Close"]
-            df_bench = df_bench.ffill().dropna(how="any")
-            if not df_bench.empty and "USDTRY=X" in df_bench.columns and "GC=F" in df_bench.columns:
-                guncel_usd = float(df_bench["USDTRY=X"].iloc[-1])
-                ons = float(df_bench["GC=F"].iloc[-1])
-                guncel_gold = round((ons * guncel_usd) / 31.1035, 2)
-        except Exception as e:
-            logger.warning("[Uyari] Kiyaslama kurlari cekilemedi, son degerler kullanilacak: %s", e)
-            print(f"[Uyari] Kiyaslama kurları çekilemedi, son değerler kullanılacak: {e}")
+    # Guncel USD ve Gram Altin fiyatlarini cok kaynakli cekelim; alinamazsa
+    # portfoydaki son bilinen kur (o da yoksa varsayilan) kullanilir.
+    guncel_usd, guncel_gold, kur_kaynagi = _benchmarks_cek()
+    if guncel_usd is None or guncel_gold is None:
+        son_kur = {}
+        if p:
+            for g in reversed(p.get("history", [])):
+                if g.get("rates"):
+                    son_kur = g["rates"]
+                    break
+            if not son_kur:
+                son_kur = p.get("initial_benchmarks", {})
+        if guncel_usd is None:
+            guncel_usd = son_kur.get("USD") or 35.0
+        if guncel_gold is None:
+            guncel_gold = son_kur.get("GOLD") or 3000.0
+        kur_kaynagi += "+son-bilinen"
+    print(f"[Bilgi] Benchmark kurlari (kaynak: {kur_kaynagi}): USDTRY={guncel_usd}, gram altin={guncel_gold}", flush=True)
 
     if p is None:
         # Ilk gun: esit dagilimli portfoy kur ve baslangic kurlarini kaydet
@@ -596,6 +644,7 @@ def portfolio_agent(state: AgentState):
         "pct": round(yuzde, 2),
         "daily_pct": round(gunluk_yuzde, 2),
         "prices": guncel_fiyatlar,
+        "rates": {"USD": round(float(guncel_usd), 4), "GOLD": round(float(guncel_gold), 4)},
         "benchmarks": {
             "USD": round(usd_degeri, 2),
             "GOLD": round(gold_degeri, 2),
