@@ -23,7 +23,7 @@ AMD_MODEL = os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")
 client = OpenAI(
     api_key=AMD_API_KEY,
     base_url="https://developer.amd.com.cn/radeon/api/v1",
-    timeout=240.0,
+    timeout=300.0,
     max_retries=0,
 )
 
@@ -283,7 +283,7 @@ def summary_agent(state: AgentState):
     return {}
 
 
-def llm_call(prompt, max_deneme=6):
+def llm_call(prompt, max_deneme=8):
     """API cagrisi; hiz siniri (429) olursa bekleyip tekrar dener.
     max_tokens yuksek tutuluyor cunku bu endpoint icin gercek maliyet
     uretilen token sayisina gore hesaplaniyor, ust siniri yuksek tutmanin
@@ -293,7 +293,7 @@ def llm_call(prompt, max_deneme=6):
     arasinda ara sira yasanan gecici baglanti/routing sorunlari) ve
     APITimeoutError icin daha fazla deneme ve daha uzun bekleme suresi
     kullaniliyor, cunku bunlar genelde birkac dakika icinde kendiliginden
-    duzelen gecici sorunlar."""
+    duzelen gecici sorunlar (ozellikle AMD'nin ucretsiz endpoint'i yogunken)."""
     import openai
     for deneme in range(max_deneme):
         try:
@@ -308,11 +308,11 @@ def llm_call(prompt, max_deneme=6):
                 print("[Uyari] Yanit token limitine takilip erken kesilmis olabilir.", flush=True)
             return secim.message.content
         except openai.RateLimitError as e:
-            bekle = min(10 * (deneme + 1), 30)  # 10sn, 20sn, 30sn
+            bekle = min(20 * (deneme + 1), 60)
             print(f"[Uyari] API hiz siniri ({type(e).__name__}: {e}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme+1}/{max_deneme})...", flush=True)
             time.sleep(bekle)
         except (openai.APIConnectionError, openai.APITimeoutError) as e:
-            bekle = min(20 * (deneme + 1), 90)  # 20, 40, 60, 80, 90, 90 sn
+            bekle = min(30 * (deneme + 1), 150)
             sebep = getattr(e, "__cause__", None) or e
             print(f"[Uyari] Baglanti/zaman asimi sorunu ({type(e).__name__}: {sebep!r}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme+1}/{max_deneme})...", flush=True)
             time.sleep(bekle)
