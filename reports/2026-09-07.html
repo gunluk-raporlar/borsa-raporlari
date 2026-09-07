@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Piyasa Raporu - 2026-09-07</title>
+<style>
+:root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
+        --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:"Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+       background:var(--bg); color:var(--ink); line-height:1.65; }
+a { color:var(--accent); }
+.topbar { background:var(--ink); }
+.topbar .inner { max-width:1080px; margin:0 auto; padding:14px 20px; display:flex;
+                 justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+.topbar .brand { color:#fff; text-decoration:none; font-weight:700; font-size:18px; }
+.topbar nav a { color:#cbd5e1; text-decoration:none; margin-left:20px; font-size:14px; }
+.topbar nav a:hover, .topbar nav a.active { color:#fff; }
+.wrap { max-width:1080px; margin:0 auto; padding:32px 20px 48px; }
+.hero { margin-bottom:26px; }
+.hero h1 { margin:0 0 6px; font-size:27px; }
+.hero p { margin:0; color:var(--muted); font-size:14.5px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 24px; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:14px; margin:0 0 24px; }
+.stat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+.stat .label { font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; }
+.stat .value { font-size:20px; font-weight:700; margin-top:3px; }
+.pos { color:var(--pos); font-weight:600; }
+.neg { color:var(--neg); font-weight:600; }
+table { border-collapse:collapse; width:100%; font-size:14.5px; }
+th, td { border-bottom:1px solid var(--line); padding:9px 12px; text-align:left; }
+th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+tr:last-child td { border-bottom:none; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:14px; }
+.rcard { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px;
+         text-decoration:none; color:var(--ink); display:block; transition:border-color .15s, box-shadow .15s; }
+.rcard:hover { border-color:var(--accent); box-shadow:0 2px 10px rgba(15,23,42,.08); }
+.rcard .date { font-size:16.5px; font-weight:700; display:block; }
+.rcard .sub { color:var(--muted); font-size:13px; margin-top:4px; display:block; }
+.section-title { font-size:19px; margin:34px 0 14px; padding-left:12px; border-left:4px solid var(--accent); }
+.report { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:28px 36px; }
+.report h1, .report h2, .report h3 { padding-left:12px; border-left:4px solid var(--accent); line-height:1.35; }
+.report h1 { font-size:22px; margin:26px 0 10px; }
+.report h2 { font-size:19px; margin:26px 0 10px; }
+.report h3 { font-size:16.5px; margin:22px 0 8px; }
+.report table { margin:14px 0; border:1px solid var(--line); border-radius:8px; }
+.report th { background:#f8fafc; }
+.report td, .report th { border:1px solid var(--line); }
+.report hr { border:none; border-top:1px solid var(--line); margin:22px 0; }
+.report blockquote { margin:14px 0; padding:10px 16px; border-left:4px solid var(--line); color:var(--muted); }
+.badge { display:inline-block; background:var(--accent-bg); color:var(--accent); border:1px solid #99f6e4;
+         border-radius:999px; padding:3px 12px; font-size:12.5px; font-weight:600; }
+.meta { color:var(--muted); font-size:13.5px; margin:8px 0 22px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.footer { text-align:center; color:var(--muted); font-size:12.5px; padding:26px 20px;
+          border-top:1px solid var(--line); background:#fff; }
+.chart { width:100%; height:auto; display:block; }
+@media (max-width:640px) {
+  .report { padding:18px 16px; }
+  table { font-size:13px; }
+  th, td { padding:7px 8px; }
+}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<a class="brand" href="../index.html">BIST 30 Günlük Raporlar</a>
+<nav><a href="../index.html" class="active">Raporlar</a><a href="../portfolio.html">Deneme Portföyü</a></nav>
+</div></header>
+<main class="wrap">
+
+<div class="hero">
+<h1>Günlük Piyasa Raporu</h1>
+<div class="meta"><span class="badge">2026-09-07</span><span>BIST 30 &bull; Yapay zeka destekli günlük analiz</span></div>
+</div>
+<article class="report"><p><strong>BIST 30 HAFTALIK YATIRIM RAPORU</strong><br />
+<strong>Tarih:</strong> 7 Eylül 2026 (Pazartesi Açılış Öncesi)<br />
+<strong>Analist:</strong> Kıdemli Portföy Yöneticisi, Hedge-Fund</p>
+<hr />
+<h3>1. Yönetici Özeti</h3>
+<p>Geçtiğimiz hafta boyunca koruduğumuz <strong>"Temkinli ve Seçici"</strong> duruşumuzu bu hafta da sürdürüyoruz. Piyasa, jeopolitik riskler (İran) ve enerji maliyetlerindeki artışın (doğal gaz) baskısı altında. Cuma günü yaşanan tepki alımları, endekste kalıcı bir trend dönüşümü sinyali vermekten uzaktır; bu hareketi aşırı satım bölgesinde teknik bir düzeltme olarak değerlendiriyoruz.</p>
+<p><strong>Önceki Haftanın Performans Değerlendirmesi:</strong><br />
+Önerdiğimiz güvenli liman hisseleri (KCHOL, BIMAS) endekse kıyasla pozitif ayrışarak portföyü korumuştur. KCHOL %+0,51 ve BIMAS %+0,06 getiri ile satış baskısına rağmen yatay kalmayı başarmıştır. ISCTR hissesi %+1,72 ile bankacılık sektöründe pozitif ayrışarak beklentimizi karşılamıştır. Kaçınılmasını önerdiğimiz EREGL (%-5,01) ve THYAO (%-3,74) ciddi değer kayıpları yaşamış, risk yönetimi stratejimizin doğruluğunu teyit etmiştir.</p>
+<p><strong>Mevcut Durum:</strong> Endeksin yönü için net bir sinyal bulunmamakla birlikte, aşağı yönlü riskler hala canlıdır. Bu nedenle <strong>nakit oranının yüksek tutulması, pozisyon boyutlarının küçültülmesi ve yalnızca dirençli hisselerde kalınması</strong> ana stratejimiz olmaya devam etmektedir.</p>
+<hr />
+<h3>2. Haber ve Makro Değerlendirme</h3>
+<p>Makroekonomik tablo, piyasa üzerinde çift yönlü baskı oluşturmaya devam ediyor:</p>
+<ul>
+<li>
+<p><strong>Jeopolitik Risk (Yüksek Öncelik):</strong> İran'dan gelen "ekonomik savaş" söylemleri ve kritik temaslar, enerji arz güvenliğine ilişkin endişeleri artırıyor. Bu durum, risk primini yükselterek yabancı sermaye girişlerini yavaşlatabilir ve TL varlıkları üzerinde baskı oluşturabilir.</p>
+</li>
+<li>
+<p><strong>Enerji Şoku:</strong> IMF Başkanı Georgieva'nın "küresel ekonomi enerji şokuna direniyor" açıklaması, doğal gaz fiyatlarının 71 avro üzerinde kalıcı olmasının yarattığı tehdidi doğruluyor. Bu durum, Türkiye gibi enerji ithalatçısı ülkeler için cari açık ve enflasyon üzerinde yukarı yönlü risk demektir. Enerji yoğun sektörlerin (EREGL, SISE, TUPRS) marjları baskılanmaya devam edecektir.</p>
+</li>
+<li>
+<p><strong>Destekleyici Gelişmeler:</strong> Halkbank'a sağlanan 1,1 milyar dolarlık ilave kaynak, bankacılık sektörünün likiditesini destekleyen olumlu bir gelişme olarak öne çıkıyor. Ayrıca, Cevdet Yılmaz'ın pazar günü açıklayacağı OVP (Orta Vadeli Program) beklentisi, piyasanın yön bulması açısından kritik bir katalizör olacaktır. OVP'de açıklanacak mali disiplin ve yapısal reform taahhütleri, orta vadede güveni artırabilir.</p>
+</li>
+</ul>
+<p><strong>Değerlendirme:</strong> Haber akışı, kısa vadede risk iştahını artıracak güçlü bir pozitif katalizör sunmuyor. OVP açıklaması ve olası olumlu sürprizler, endekste tepki alımlarını tetikleyebilir ancak kalıcı bir yükseliş için jeopolitik gerilimlerin azalması ve enerji fiyatlarının kontrol altına alınması gerekmektedir.</p>
+<hr />
+<h3>3. Teknik Değerlendirme (Hisse Bazlı)</h3>
+<p>Verileri incelediğimizde, piyasada seçici davranmanın önemi bir kez daha ortaya çıkıyor.</p>
+<ul>
+<li>
+<p><strong>Pozitif Ayrışanlar / Güvenli Limanlar:</strong></p>
+<ul>
+<li>
+<p><strong>KCHOL (215,10 TL):</strong> 215 TL üzerinde tutunmayı başarmıştır. Bu seviye, kısa vadeli destek olarak çalışmaya devam ediyor. Endeksteki düşüşe rağmen yatay kalabilmesi, hisseye olan güveni gösteriyor. <strong>Hedef: 225 TL.</strong></p>
+</li>
+<li>
+<p><strong>BIMAS (415,75 TL):</strong> Enflasyona dayanıklı yapısı ve fiyatlama gücü sayesinde yatırımcısına koruma sağlıyor. 415 TL desteği üzerinde kaldığı sürece güvenli liman özelliğini koruyacaktır. <strong>Hedef: 430 TL.</strong></p>
+</li>
+<li>
+<p><strong>ISCTR (13,01 TL):</strong> Bankacılık sektöründeki negatif ayrışmaya rağmen pozitif kapanış yapması olumlu. 13 TL üzerinde tutunması halinde 13,50 TL direncini test edebilir. <strong>Hedef: 13,50 TL.</strong></p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Negatif Ayrışanlar / Kaçınılması Gerekenler:</strong></p>
+<ul>
+<li>
+<p><strong>EREGL (37,20 TL):</strong> Enerji maliyetlerindeki artışın en büyük kurbanlarından. 37 TL desteğinin kırılması durumunda düşüş ivme kazanabilir. <strong>Aşağı yönlü hedef: 35 TL.</strong></p>
+</li>
+<li>
+<p><strong>THYAO (296,00 TL):</strong> Jeopolitik risklerden en olumsuz etkilenen hisselerden biri. 300 TL direncini aşamayarak satış baskısına maruz kalmıştır. 290 TL altında kapanış, düşüşü hızlandırabilir.</p>
+</li>
+<li>
+<p><strong>ASTOR (295,00 TL):</strong> Son 5 günde %-15,53 değer kaybederek endeksin en zayıf halkası olmuştur. Yükseliş trendi ciddi şekilde hasar görmüştür, yeni alım için sinyal beklenmelidir.</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>4. Şirket/Finansal Değerlendirme</h3>
+<p>Finansal tablolardaki likidite oranlarına baktığımızda, şirketlerin genel olarak güçlü dönen varlık yapılarına sahip olduğunu görüyoruz. Ancak bu durum, hisse performanslarını doğrudan desteklememektedir.</p>
+<ul>
+<li>
+<p><strong>SAHOL (Dönen Varlık: 2.790 mlyr TL):</strong> Holding yapısı itibarıyla en yüksek dönen varlığa sahiptir. Ancak hisse, son 5 günde %-1,12 değer kaybetmiştir. Bu, holding şirketlerinin piyasa değerinin, varlık büyüklüğünden ziyade operasyonel karlılık ve sektörel görünüme bağlı olduğunu göstermektedir.</p>
+</li>
+<li>
+<p><strong>THYAO (Dönen Varlık: 512,19 mlyr TL):</strong> Yüksek likiditeye rağmen jeopolitik riskler hisseyi baskılamaktadır. Bu durum, finansal gücün tek başına hisse performansını garantilemediğini, makro risklerin ön planda olduğunu teyit ediyor.</p>
+</li>
+<li>
+<p><strong>EREGL (Dönen Varlık: 265,47 mlyr TL):</strong> Güçlü bilanço yapısına rağmen enerji maliyetlerindeki artış, şirketin karlılık marjlarını tehdit etmektedir. Bu nedenle finansal güç, hisse senedi fiyatını desteklemekte yetersiz kalmaktadır.</p>
+</li>
+</ul>
+<p><strong>Sonuç:</strong> Mevcut konjonktürde, bilanço büyüklüğünden ziyade <strong>sektörel dinamikler ve makro risklere dayanıklılık</strong> hisse seçiminde belirleyici olmalıdır.</p>
+<hr />
+<h3>5. Risk Yönetimi ve Strateji</h3>
+<p>Piyasa, "Yukarı Adım Kuralı" gibi teknik düzenlemelerin etkisiyle aşağı yönlü hareketini yavaşlatmış olsa da, ana riskler devam etmektedir.</p>
+<ul>
+<li>
+<p><strong>Ana Riskler:</strong></p>
+<ol>
+<li>İran kaynaklı jeopolitik gerilimin tırmanması (enerji fiyatları ve risk primi).</li>
+<li>Doğal gaz fiyatlarının 71 avro üzerinde kalıcı olması (cari açık ve enflasyon).</li>
+<li>OVP açıklamasının beklentileri karşılamaması durumunda piyasa güveninin zedelenmesi.</li>
+</ol>
+</li>
+<li>
+<p><strong>Stratejik Yaklaşım:</strong></p>
+<ul>
+<li>
+<p><strong>Nakit Oranı:</strong> Yüksek tutulmaya devam edilecek. Oynaklığın arttığı bu dönemde nakit, en iyi koruma aracıdır.</p>
+</li>
+<li>
+<p><strong>Pozisyon Boyutları:</strong> Küçük ve seçici olunacak. Yeni alım sinyali gelmeden mevcut pozisyonlar artırılmayacak.</p>
+</li>
+<li>
+<p><strong>Stop-Loss Disiplini:</strong> Önerilen hisseler için belirlenen kritik destek seviyelerinin altında kapanış olması durumunda, zarar kesme emirleri derhal devreye sokulmalıdır.</p>
+</li>
+<li>
+<p><strong>Kaldıraç:</strong> Kesinlikle kullanılmamalıdır.</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h3>6. ÖNERİLEN PORTFÖY</h3>
+<p>Mevcut piyasa koşullarında, aşağıdaki dağılımın hem haftalık hem de aylık perspektif için uygun olduğunu değerlendiriyoruz. Dağılım, düşük riskli ve dirençli hisselere odaklanmaktadır.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Hisse</th>
+<th style="text-align: center;">Haftalık Öneri (%)</th>
+<th style="text-align: center;">Aylık Öneri (%)</th>
+<th style="text-align: left;">Gerekçe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Nakit</strong></td>
+<td style="text-align: center;"><strong>%40</strong></td>
+<td style="text-align: center;"><strong>%30</strong></td>
+<td style="text-align: left;">Oynaklığa karşı koruma sağlar. OVP sonrası oluşacak fırsatlar için "silah" görevi görür.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>KCHOL</strong></td>
+<td style="text-align: center;"><strong>%25</strong></td>
+<td style="text-align: center;"><strong>%25</strong></td>
+<td style="text-align: left;">İstikrarlı duruşu ve holding yapısının sağladığı çeşitlendirme ile güvenli liman özelliğini koruyor.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>BIMAS</strong></td>
+<td style="text-align: center;"><strong>%20</strong></td>
+<td style="text-align: center;"><strong>%20</strong></td>
+<td style="text-align: left;">Enflasyonist ortamda fiyatlama gücü yüksek, iç talebe dayalı iş modeli ile savunmacı bir duruş sergiliyor.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>ISCTR</strong></td>
+<td style="text-align: center;"><strong>%15</strong></td>
+<td style="text-align: center;"><strong>%15</strong></td>
+<td style="text-align: left;">Bankacılık sektöründe pozitif ayrışan hisse olarak öne çıkıyor. Halkbank'a sağlanan kaynak sektöre olumlu yansıyabilir.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>GARAN</strong></td>
+<td style="text-align: center;"><strong>%0</strong></td>
+<td style="text-align: center;"><strong>%10</strong></td>
+<td style="text-align: left;">Haftalık perspektifte riskli bulunuyor. Ancak OVP sonrası oluşacak olumlu senaryoda, aylık vadede bankacılık hisselerine dönüş için ilk tercih olabilir.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Not:</strong> Bu portföy, yatırımcının risk toleransına göre uyarlanmalıdır. Piyasa koşulları değiştikçe (OVP açıklaması, jeopolitik gelişmeler) bu dağılım güncellenecektir.</p>
+<p>[PORTFOY OZETI]<br />
+Deneme Portfoyu (2026-09-07): Toplam 99998.76 TL (baslangic 100000 TL, toplam %-0.00, gunluk %-0.00, Mevduat: 100246.73 TL)</p></article>
+<p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>
+</main>
+<footer class="footer">Bilgilendirme amacıyla hazırlanmıştır, yatırım tavsiyesi değildir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
+</body></html>
