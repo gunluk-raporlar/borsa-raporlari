@@ -283,11 +283,17 @@ def summary_agent(state: AgentState):
     return {}
 
 
-def llm_call(prompt, max_deneme=3):
+def llm_call(prompt, max_deneme=6):
     """API cagrisi; hiz siniri (429) olursa bekleyip tekrar dener.
     max_tokens yuksek tutuluyor cunku bu endpoint icin gercek maliyet
     uretilen token sayisina gore hesaplaniyor, ust siniri yuksek tutmanin
-    ek bir bedeli yok - sadece yaniti erken kesilmekten koruyor."""
+    ek bir bedeli yok - sadece yaniti erken kesilmekten koruyor.
+
+    APIConnectionError (GitHub Actions runner'i ile .com.cn endpoint'i
+    arasinda ara sira yasanan gecici baglanti/routing sorunlari) ve
+    APITimeoutError icin daha fazla deneme ve daha uzun bekleme suresi
+    kullaniliyor, cunku bunlar genelde birkac dakika icinde kendiliginden
+    duzelen gecici sorunlar."""
     import openai
     for deneme in range(max_deneme):
         try:
@@ -305,10 +311,16 @@ def llm_call(prompt, max_deneme=3):
             bekle = min(10 * (deneme + 1), 30)  # 10sn, 20sn, 30sn
             print(f"[Uyari] API hiz siniri ({type(e).__name__}: {e}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme+1}/{max_deneme})...", flush=True)
             time.sleep(bekle)
+        except (openai.APIConnectionError, openai.APITimeoutError) as e:
+            bekle = min(20 * (deneme + 1), 90)  # 20, 40, 60, 80, 90, 90 sn
+            sebep = getattr(e, "__cause__", None) or e
+            print(f"[Uyari] Baglanti/zaman asimi sorunu ({type(e).__name__}: {sebep!r}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme+1}/{max_deneme})...", flush=True)
+            time.sleep(bekle)
         except Exception as e:
             print(f"[Hata] API cagrisi basarisiz ({type(e).__name__}): {e!r}", flush=True)
             time.sleep(10)
     raise RuntimeError("API cagrisi maksimum deneme sayisinda da tamamlanamadi.")
+
 
 # ---------- DENEME PORTFOYU TAKIBI (Kiyaslamali) ----------
 PORTFOLYO_DOSYASI = "portfolio.json"
