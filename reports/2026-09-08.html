@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Deneme Portföyü</title>
+<title>Piyasa Raporu - 2026-09-08</title>
 <!-- Google Tag Manager & Analytics -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -76,8 +76,8 @@ tr:last-child td { border-bottom:none; }
 </head>
 <body>
 <header class="topbar"><div class="inner">
-<a class="brand" href="index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="index.html">Raporlar</a><a href="portfolio.html" class="active">Deneme Portföyü</a></nav>
+<a class="brand" href="../index.html">BIST 30 Günlük Raporlar</a>
+<nav><a href="../index.html" class="active">Raporlar</a><a href="../portfolio.html">Deneme Portföyü</a></nav>
 </div></header>
 
 <main class="wrap">
@@ -108,76 +108,101 @@ tr:last-child td { border-bottom:none; }
     <!-- Asıl Sayfa İçeriği -->
     
 <div class="hero">
-<h1>Deneme Portföyü</h1>
-<p>BIST 30 hisselerine eşit dağıtılmış 100,000 TL'lik sanal portföy. Alım-satım yapılmaz, sadece takip edilir.</p>
+<h1>Günlük Piyasa Raporu</h1>
+<div class="meta"><span class="badge">2026-09-08</span><span>BIST 30 &bull; Yapay zeka destekli günlük analiz</span></div>
 </div>
-
-<div class="stats">
-<div class="stat"><div class="label">Güncel Değer</div><div class="value">102,262 TL</div></div>
-<div class="stat"><div class="label">Günlük Değişim</div><div class="value pos">+2.25%</div></div>
-<div class="stat"><div class="label">Toplam Getiri</div><div class="value pos">+2.26%</div></div>
-<div class="stat"><div class="label">Başlangıç</div><div class="value" style="font-size:16px">2026-09-06</div></div>
-</div>
-<div class="card" style="margin-bottom:22px">
-<div style="position:relative; height:340px;">
-<canvas id="portfoy-grafik-414408"></canvas>
-</div>
-<script>
-(function() {
-    var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102262.26], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100000.0, 231412.0], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100000.0, 138419.15], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}]};
-    var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
-    var ctx = document.getElementById('portfoy-grafik-414408').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: veri.labels,
-            datasets: veri.datasets.map(function(d) {
-                return Object.assign({}, d, {
-                    borderWidth: 3,
-                    pointRadius: 2,
-                    pointHitRadius: 14,
-                    tension: 0.15,
-                    fill: false,
-                });
-            })
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: { mode: 'nearest', intersect: false },
-            plugins: {
-                legend: { position: 'top', labels: { boxWidth: 12, font: { size: 12, weight: '600' } } },
-                tooltip: {
-                    callbacks: {
-                        label: function(ctx2) {
-                            var idx = ctx2.datasetIndex;
-                            var ilk = baslangiclar[idx];
-                            var son = ctx2.parsed.y;
-                            var yuzde = ilk ? ((son - ilk) / ilk * 100) : 0;
-                            var isaret = yuzde >= 0 ? '+' : '';
-                            var sonStr = son.toLocaleString('tr-TR', {maximumFractionDigits: 2});
-                            return ctx2.dataset.label + ': ' + sonStr + ' TL (' + isaret + yuzde.toFixed(2) + '%)';
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: { ticks: { callback: function(v) { return v.toLocaleString('tr-TR') + ' TL'; } } },
-                x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } }
-            }
-        }
-    });
-})();
-</script>
-</div>
-<h2 class="section-title">Hisse Performansı (ilk alım vs güncel)</h2>
-<div class="card" style="padding:8px 24px 16px">
-<table><tr><th>Hisse</th><th>Adet</th><th>İlk Alım</th><th>Güncel</th><th>Getiri</th></tr><tr><td><strong>AEFES</strong></td><td>180.67</td><td>18.45 TL</td><td>18.79 TL</td><td class='pos'>+1.84%</td></tr><tr><td><strong>AKBNK</strong></td><td>46.39</td><td>71.85 TL</td><td>71.85 TL</td><td class='pos'>+0.00%</td></tr><tr><td><strong>ASELS</strong></td><td>8.59</td><td>388.25 TL</td><td>392.50 TL</td><td class='pos'>+1.09%</td></tr><tr><td><strong>ASTOR</strong></td><td>11.30</td><td>295.00 TL</td><td>301.00 TL</td><td class='pos'>+2.03%</td></tr><tr><td><strong>BIMAS</strong></td><td>8.02</td><td>415.75 TL</td><td>418.00 TL</td><td class='pos'>+0.54%</td></tr><tr><td><strong>DSTKF</strong></td><td>1.44</td><td>2320.00 TL</td><td>2390.00 TL</td><td class='pos'>+3.02%</td></tr><tr><td><strong>EKGYO</strong></td><td>171.47</td><td>19.44 TL</td><td>19.96 TL</td><td class='pos'>+2.67%</td></tr><tr><td><strong>ENKAI</strong></td><td>38.20</td><td>87.25 TL</td><td>89.00 TL</td><td class='pos'>+2.01%</td></tr><tr><td><strong>EREGL</strong></td><td>89.61</td><td>37.20 TL</td><td>38.32 TL</td><td class='pos'>+3.01%</td></tr><tr><td><strong>FROTO</strong></td><td>43.18</td><td>77.20 TL</td><td>79.65 TL</td><td class='pos'>+3.17%</td></tr><tr><td><strong>GARAN</strong></td><td>25.37</td><td>131.40 TL</td><td>133.50 TL</td><td class='pos'>+1.60%</td></tr><tr><td><strong>GUBRF</strong></td><td>6.96</td><td>478.75 TL</td><td>491.25 TL</td><td class='pos'>+2.61%</td></tr><tr><td><strong>ISCTR</strong></td><td>256.21</td><td>13.01 TL</td><td>13.05 TL</td><td class='pos'>+0.31%</td></tr><tr><td><strong>KCHOL</strong></td><td>15.50</td><td>215.10 TL</td><td>219.70 TL</td><td class='pos'>+2.14%</td></tr><tr><td><strong>KRDMD</strong></td><td>76.59</td><td>43.52 TL</td><td>45.20 TL</td><td class='pos'>+3.86%</td></tr><tr><td><strong>MGROS</strong></td><td>6.33</td><td>527.00 TL</td><td>528.00 TL</td><td class='pos'>+0.19%</td></tr><tr><td><strong>PETKM</strong></td><td>166.17</td><td>20.06 TL</td><td>22.06 TL</td><td class='pos'>+9.97%</td></tr><tr><td><strong>PGSUS</strong></td><td>22.42</td><td>148.70 TL</td><td>148.70 TL</td><td class='pos'>+0.00%</td></tr><tr><td><strong>SAHOL</strong></td><td>36.00</td><td>92.60 TL</td><td>94.05 TL</td><td class='pos'>+1.57%</td></tr><tr><td><strong>SASA</strong></td><td>1,455.60</td><td>2.29 TL</td><td>2.51 TL</td><td class='pos'>+9.61%</td></tr><tr><td><strong>SISE</strong></td><td>85.30</td><td>39.08 TL</td><td>41.66 TL</td><td class='pos'>+6.60%</td></tr><tr><td><strong>TAVHL</strong></td><td>12.43</td><td>268.25 TL</td><td>268.25 TL</td><td class='pos'>+0.00%</td></tr><tr><td><strong>TCELL</strong></td><td>33.96</td><td>98.15 TL</td><td>99.05 TL</td><td class='pos'>+0.92%</td></tr><tr><td><strong>THYAO</strong></td><td>11.26</td><td>296.00 TL</td><td>296.75 TL</td><td class='pos'>+0.25%</td></tr><tr><td><strong>TOASO</strong></td><td>12.15</td><td>274.25 TL</td><td>288.00 TL</td><td class='pos'>+5.01%</td></tr><tr><td><strong>TRALT</strong></td><td>65.62</td><td>50.80 TL</td><td>51.30 TL</td><td class='pos'>+0.98%</td></tr><tr><td><strong>TTKOM</strong></td><td>64.23</td><td>51.90 TL</td><td>52.35 TL</td><td class='pos'>+0.87%</td></tr><tr><td><strong>TUPRS</strong></td><td>8.58</td><td>388.50 TL</td><td>394.25 TL</td><td class='pos'>+1.48%</td></tr><tr><td><strong>VAKBN</strong></td><td>99.15</td><td>33.62 TL</td><td>33.32 TL</td><td class='neg'>-0.89%</td></tr><tr><td><strong>YKBNK</strong></td><td>92.85</td><td>35.90 TL</td><td>36.26 TL</td><td class='pos'>+1.00%</td></tr></table>
-</div>
-<h2 class="section-title">Günlük Geçmiş</h2>
-<div class="card" style="padding:8px 24px 16px">
-<table><tr><th>Tarih</th><th>Toplam Değer</th><th>Toplam %</th><th>Günlük %</th></tr><tr><td>2026-09-08</td><td>102,262.26 TL</td><td class='pos'>+2.26%</td><td class='pos'>+2.25%</td></tr><tr><td>2026-09-07</td><td>100,013.04 TL</td><td class='pos'>+0.01%</td><td class='pos'>+0.00%</td></tr><tr><td>2026-09-06</td><td>100,013.04 TL</td><td class='pos'>+0.01%</td><td class='pos'>+0.01%</td></tr></table>
-</div>
+<article class="report"><p>GUNLUK RAPOR (LLM KULLANILAMADI)</p>
+<p>HABERLER:<br />
+[BloombergHT] OpenAI'da yaprak dökümü sürüyor: Bir yönetici daha ayrıldı<br />
+[BloombergHT] İran'dan kritik iki temas<br />
+[BloombergHT] Halkbank'a 1,1 milyar dolarlık ilave kaynak<br />
+[BloombergHT] IMF Başkanı Georgieva: Küresel ekonomi enerji şokuna direniyor<br />
+[BloombergHT] İran'dan ekonomik savaş çıkışı<br />
+[CNN Turk] Yeni haftada altın fiyatı ne olacak?<br />
+[CNN Turk] Yarısı Bizden Kampanyası ne zaman bitecek? Yarısı Bizden Kampanyası başvuruları nereden ve nasıl yapılır?<br />
+[CNN Turk] EYLÜL EMEKLİ PROMOSYON TUTARI 2026: Emeklilere ne kadar promosyon ödeniyor? Garanti, Akbank, Ziraat Bankası emekli promosyon ödeme tutarları Eylül 2026<br />
+[CNN Turk] SON DAKİKA HABERİ: Borsa günü yükselişle tamamladı<br />
+[Haberturk] Resmi Gazete kararları yayımlandı!<br />
+[Haberturk] El Nino Türkiye’ye gelecek mi?<br />
+[Haberturk] 13. Yargı Paketi maddeleri<br />
+[Ekonomim-Piyasa] Enflasyon oranının 28,4 olmasını bekliyoruz<br />
+[Ekonomim-Piyasa] Küresel piyasalar enflasyon ve ECB'nin faiz kararına odaklandı<br />
+[Ekonomim-Piyasa] Borsada yukarı adım kuralı uygulanacak<br />
+[Ekonomim-Piyasa] New York borsası düşüşle kapandı<br />
+[Ekonomim-Piyasa] Borsa İstanbul'da gong İntetra Teknoloji için çaldı<br />
+[Ekonomim-Ekonomi] Avro Bölgesi'nde yatırımcı güveni en yüksek seviyede<br />
+[Ekonomim-Ekonomi] AB, Kısa Süreli Kiralamaları Sınırlayacak<br />
+[Ekonomim-Ekonomi] Yeni OVP ile dezenflasyon sürecinin devamı hedefleniyor<br />
+[Ekonomim-Ekonomi] Kakao fiyatları yükselişini altıncı aya taşıdı<br />
+[Ekonomim-Ekonomi] İstihdamı artıracak yeni formüller devreye alınacak<br />
+[Ekonomim-Sirket] Jaguar Land Rover 4 bin kişiyi işten çıkarmaya hazırlanıyor<br />
+[Ekonomim-Sirket] Volkswagen, Osnabrück fabrikasını İsrailli şirkete devredecek<br />
+[Ekonomim-Sirket] Tuna Portföy faaliyet izninin ardından fon kuruluş süreçlerini yürütüyor<br />
+[SON 7 GUNUN HABERLERI]<br />
+-- 2026-09-07: [BloombergHT] OpenAI'da yaprak dökümü sürüyor: Bir yönetici daha ayrıldı | [BloombergHT] İran'dan kritik iki temas | [BloombergHT] Halkbank'a 1,1 milyar dolarlık ilave kaynak | [BloombergHT] IMF Başkanı Georgieva: Küresel ekonomi enerji şokuna direniyor | [BloombergHT] İran'dan ekonomik savaş çıkışı<br />
+-- 2026-09-06: [BloombergHT] OpenAI'da yaprak dökümü sürüyor: Bir yönetici daha ayrıldı | [BloombergHT] İran'dan kritik iki temas | [BloombergHT] Halkbank'a 1,1 milyar dolarlık ilave kaynak | [BloombergHT] IMF Başkanı Georgieva: Küresel ekonomi enerji şokuna direniyor | [BloombergHT] İran'dan ekonomik savaş çıkışı<br />
+-- 2026-09-05: [BloombergHT] OpenAI'da yaprak dökümü sürüyor: Bir yönetici daha ayrıldı | [BloombergHT] İran'dan kritik iki temas | [BloombergHT] Halkbank'a 1,1 milyar dolarlık ilave kaynak | [BloombergHT] IMF Başkanı Georgieva: Küresel ekonomi enerji şokuna direniyor | [BloombergHT] İran'dan ekonomik savaş çıkışı</p>
+<p>TEKNIK VE FIYATLAR:<br />
+AEFES: 18.79 TL (5 gunluk %+5.33)<br />
+ASELS: 392.50 TL (5 gunluk %+1.62)<br />
+ASTOR: 301.00 TL (5 gunluk %-7.60)<br />
+BIMAS: 418.00 TL (5 gunluk %+3.08)<br />
+DSTKF: 2390.00 TL (5 gunluk %+14.85)<br />
+EKGYO: 19.96 TL (5 gunluk %-0.20)<br />
+ENKAI: 89.00 TL (5 gunluk %+1.83)<br />
+EREGL: 38.32 TL (5 gunluk %-1.19)<br />
+FROTO: 79.65 TL (5 gunluk %+3.51)<br />
+GARAN: 133.50 TL (5 gunluk %+1.99)<br />
+GUBRF: 491.25 TL (5 gunluk %+1.97)<br />
+ISCTR: 13.05 TL (5 gunluk %+3.24)<br />
+KCHOL: 219.70 TL (5 gunluk %+2.23)<br />
+KRDMD: 45.20 TL (5 gunluk %-4.60)<br />
+MGROS: 528.00 TL (5 gunluk %-1.03)<br />
+PETKM: 22.06 TL (5 gunluk %+9.97)<br />
+SAHOL: 94.05 TL (5 gunluk %+0.91)<br />
+SASA: 2.51 TL (5 gunluk %+6.81)<br />
+SISE: 41.66 TL (5 gunluk %+5.15)<br />
+TCELL: 99.05 TL (5 gunluk %+4.21)<br />
+THYAO: 296.75 TL (5 gunluk %-1.82)<br />
+TOASO: 288.00 TL (5 gunluk %+6.18)<br />
+TRALT: 51.30 TL (5 gunluk %-3.02)<br />
+TTKOM: 52.35 TL (5 gunluk %+2.45)<br />
+TUPRS: 394.25 TL (5 gunluk %-1.50)<br />
+VAKBN: 33.32 TL (5 gunluk %+4.98)<br />
+YKBNK: 36.26 TL (5 gunluk %-0.71)<br />
+[SON 30 GUNUN FIYAT GECMISI]<br />
+-- 2026-09-07: AEFES=18.45, ASELS=388.25, EKGYO=19.44, EREGL=37.2, GARAN=131.4<br />
+-- 2026-09-06: AEFES=18.45, AKBNK=71.85, ASELS=388.25, ASTOR=295.0, BIMAS=415.75<br />
+-- 2026-09-05: THYAO=296.0, GARAN=131.4, AKBNK=71.85, EREGL=37.2, KCHOL=215.1</p>
+<p>TEMEL/FINANSAL:<br />
+AEFES: Dönen Varlıklar=149.31 mlyr TL;<br />
+ASELS: Dönen Varlıklar=248.77 mlyr TL;<br />
+ASTOR: Dönen Varlıklar=47.91 mlyr TL;<br />
+BIMAS: Dönen Varlıklar=152.41 mlyr TL;<br />
+EKGYO: Dönen Varlıklar=387.01 mlyr TL;<br />
+ENKAI: Dönen Varlıklar=248.56 mlyr TL;<br />
+EREGL: Dönen Varlıklar=265.47 mlyr TL;<br />
+FROTO: Dönen Varlıklar=238.89 mlyr TL;<br />
+GUBRF: Dönen Varlıklar=44.72 mlyr TL;<br />
+KCHOL: Dönen Varlıklar=3615.15 mlyr TL;<br />
+KRDMD: Dönen Varlıklar=32.40 mlyr TL;<br />
+MGROS: Dönen Varlıklar=88.38 mlyr TL;<br />
+PETKM: Dönen Varlıklar=41.74 mlyr TL;<br />
+PGSUS: Dönen Varlıklar=91.42 mlyr TL;<br />
+SAHOL: Dönen Varlıklar=2790.07 mlyr TL;<br />
+SASA: Dönen Varlıklar=42.00 mlyr TL;<br />
+SISE: Dönen Varlıklar=151.30 mlyr TL;<br />
+TAVHL: Dönen Varlıklar=47.61 mlyr TL;<br />
+TCELL: Dönen Varlıklar=180.56 mlyr TL;<br />
+THYAO: Dönen Varlıklar=512.19 mlyr TL;<br />
+TOASO: Dönen Varlıklar=152.29 mlyr TL;<br />
+TRALT: Dönen Varlıklar=24.88 mlyr TL;<br />
+TTKOM: Dönen Varlıklar=109.44 mlyr TL;<br />
+TUPRS: Dönen Varlıklar=439.48 mlyr TL;</p>
+<p>(LLM'e ulaşılamadığı için rapor otomatik olarak bu ham verilerin birleşimidir.)</p>
+<p>[PORTFOY OZETI]<br />
+Deneme Portfoyu (2026-09-08): Toplam 102262.26 TL (Toplam %+2.26, Mevduat: 100246.73 TL, USD Karşılığı: 138419.15 TL, Altın Karşılığı: 231412.00 TL)</p></article>
+<p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>
 </main>
 
 <footer class="footer">Bilgilendirme amacıyla hazırlanmıştır, yatırım tavsiyesi değildir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
