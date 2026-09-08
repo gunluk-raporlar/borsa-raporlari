@@ -31,5 +31,5 @@ jobs:
             exit 0
           fi
           git commit -m "Teknik tarama guncellemesi"
-          git pull --rebase origin main
+          git pull --rebase -X theirs origin main
           git push origin main

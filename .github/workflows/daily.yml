@@ -48,7 +48,7 @@ jobs:
           git add -A
           git diff --cached --quiet || git commit -m "Gunluk rapor ve portfoy guncellemesi"
           # Insan veya diger isler araya commit atarsa (fetch first) cakismasin:
-          git pull --rebase origin main
+          git pull --rebase -X theirs origin main
           git push origin main
       - name: Netlify'a yayinla
         continue-on-error: true   # Netlify erisimi koparsa is bozuk rapor yerine hatayla bitmesin; rapor zaten repoya commitlenmistir
