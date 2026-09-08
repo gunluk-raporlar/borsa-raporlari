@@ -85,12 +85,26 @@ body { overflow-x: hidden; }
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/assets/v0.0.25/search-modal-snippet.css" />
+<script type="module" src="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/assets/v0.0.25/search-modal-snippet.js"></script>
 </head>
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="../index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="../index.html" class="active">Raporlar</a><a href="../portfolio.html">Deneme Portföyü</a></nav>
+<nav><a href="../index.html" class="active">Raporlar</a><a href="../derin-analiz.html">Derin Analiz</a><a href="../teknik-analiz.html">Teknik Tarama</a><a href="../borsapy-analiz.html">Borsapy Sinyal</a><a href="../portfolio.html">Deneme Portföyü</a></nav>
 </div></header>
+<div class="tradingview-widget-container tv-ticker-bant" style="margin:0 0 18px; width:100%;">
+<div class="tradingview-widget-container__widget"></div>
+<script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+{
+"symbols": [{"proName":"BIST:AEFES","title":"AEFES"}, {"proName":"BIST:AKBNK","title":"AKBNK"}, {"proName":"BIST:ASELS","title":"ASELS"}, {"proName":"BIST:ASTOR","title":"ASTOR"}, {"proName":"BIST:BIMAS","title":"BIMAS"}, {"proName":"BIST:DSTKF","title":"DSTKF"}, {"proName":"BIST:EKGYO","title":"EKGYO"}, {"proName":"BIST:ENKAI","title":"ENKAI"}, {"proName":"BIST:EREGL","title":"EREGL"}, {"proName":"BIST:FROTO","title":"FROTO"}, {"proName":"BIST:GARAN","title":"GARAN"}, {"proName":"BIST:GUBRF","title":"GUBRF"}, {"proName":"BIST:ISCTR","title":"ISCTR"}, {"proName":"BIST:KCHOL","title":"KCHOL"}, {"proName":"BIST:KRDMD","title":"KRDMD"}, {"proName":"BIST:MGROS","title":"MGROS"}, {"proName":"BIST:PETKM","title":"PETKM"}, {"proName":"BIST:PGSUS","title":"PGSUS"}, {"proName":"BIST:SAHOL","title":"SAHOL"}, {"proName":"BIST:SASA","title":"SASA"}, {"proName":"BIST:SISE","title":"SISE"}, {"proName":"BIST:TAVHL","title":"TAVHL"}, {"proName":"BIST:TCELL","title":"TCELL"}, {"proName":"BIST:THYAO","title":"THYAO"}, {"proName":"BIST:TOASO","title":"TOASO"}, {"proName":"BIST:TRALT","title":"TRALT"}, {"proName":"BIST:TTKOM","title":"TTKOM"}, {"proName":"BIST:TUPRS","title":"TUPRS"}, {"proName":"BIST:VAKBN","title":"VAKBN"}, {"proName":"BIST:YKBNK","title":"YKBNK"}],
+"showSymbolLogo": false,
+"isTransparent": true,
+"displayMode": "adaptive",
+"locale": "tr"
+}
+</script>
+</div>
 
 <main class="wrap">
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve Google Çeviri) -->
@@ -102,20 +116,74 @@ body { overflow-x: hidden; }
         <div id="google_translate_element"></div>
     </div>
 
-    <!-- Etkileşimli Araçlar (Google Arama ve Gemini Sohbet Kutusu) -->
+    <!-- Etkileşimli Araçlar (Google Arama ve BIST AI Asistan) -->
     <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <form method="get" action="https://www.google.com/search" target="_blank" style="display: flex; gap: 8px;">
-                <input type="hidden" name="q" value="site:borsa-raporlari.onrender.com">
-                <input type="text" name="q" placeholder="Google ile sitede ara..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;">
-                <button type="submit" style="background: #047857; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Ara</button>
-            </form>
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; min-height: 52px;">
+            <search-modal-snippet api-url="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/" placeholder="Borsa raporları hakkında ara ve sor..."></search-modal-snippet>
         </div>
-        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; gap: 8px;">
-            <input type="text" id="ai-chat-input" placeholder="Gemini'ye borsa hakkında sor..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') askGemini();">
-            <button onclick="askGemini()" style="background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Sor</button>
+
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="ai-input" placeholder="BIST AI asistanına sorun..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') aiSor();">
+                <button onclick="aiSor()" id="ai-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Sor</button>
+            </div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">
+                <span class="ai-chip" onclick="aiChip(this)">Piyasa özeti ne?</span>
+                <span class="ai-chip" onclick="aiChip(this)">RSI ve MACD nedir?</span>
+                <span class="ai-chip" onclick="aiChip(this)">Destek ve direnç nedir?</span>
+            </div>
         </div>
     </div>
+
+<div id="ai-panel" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; font-size: 14px; line-height: 1.6;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <strong style="color: #0f766e;">🤖 BIST AI Asistan</strong>
+        <a href="javascript:void(0)" onclick="document.getElementById('ai-panel').style.display='none'" style="color: #64748b; text-decoration: none; font-size: 18px; line-height: 1;">&times;</a>
+    </div>
+    <div id="ai-answer"></div>
+    <div style="margin-top: 8px; color: #64748b; font-size: 12px;">Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir. Model: GLM-Flash (Z.ai, Puter.js üzerinden — ilk kullanımda Puter oturumu isteyebilir).</div>
+</div>
+<style>
+.ai-chip { background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; border-radius: 999px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
+.ai-chip:hover { border-color: #0f766e; color: #0f766e; }
+</style>
+<script src="https://js.puter.com/v2/"></script>
+<script>
+function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
+async function aiSor() {
+    var giris = document.getElementById('ai-input');
+    var soru = (giris.value || '').trim();
+    if (!soru) return;
+    var btn = document.getElementById('ai-btn');
+    var cevap = document.getElementById('ai-answer');
+    var panel = document.getElementById('ai-panel');
+    panel.style.display = 'block';
+    cevap.innerHTML = '<em>Yanıt hazırlanıyor...</em>';
+    btn.disabled = true; giris.disabled = true;
+    var sistem = 'Sen "BIST 30 Günlük Raporlar" sitesinin Türkçe yapay zeka asistanısın. Görevin: Borsa İstanbul, makroekonomi ve teknik analiz (EMA, RSI, MACD, Wave Trend, destek/direnç vb.) konularında eğitici, kısa ve anlaşılır yanıtlar vermek. Canlı piyasa verine erişimin yok; güncel veriler için kullanıcıyı sitedeki Teknik Tarama, Borsapy Sinyal ve Günlük Rapor sayfalarına yönlendir. Kesin alım-satım tavsiyesi verme; bilgilendir. Yanıtlarını madde işaretleriyle yaz, en fazla 200 kelime tut.';
+    var modeller = ['z-ai/glm-4.7-flash', 'infron:z-ai/glm-4.7-flash', 'z-ai/glm-4.5-flash', 'infron:z-ai/glm-4.5-flash'];
+    var sonHata = '';
+    for (var i = 0; i < modeller.length; i++) {
+        try {
+            var r = await puter.ai.chat(
+                [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
+                { model: modeller[i] }
+            );
+            var metin = (r && r.message && r.message.content) || (typeof r === 'string' ? r : '') || '';
+            if (!metin) { sonHata = 'Boş yanıt'; continue; }
+            metin = String(metin).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            cevap.innerHTML = metin.replace(/\n/g, '<br>');
+            giris.disabled = false; btn.disabled = false; giris.value = '';
+            return;
+        } catch (e) {
+            sonHata = (e && e.message) ? e.message : 'Bilinmeyen hata';
+            if (sonHata.indexOf('auth') !== -1 || sonHata.indexOf('permission') !== -1) break;
+        }
+    }
+    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + '). Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin veya sonra tekrar deneyin.</span>';
+    giris.disabled = false; btn.disabled = false;
+}
+</script>
 
     <!-- Asıl Sayfa İçeriği -->
     
@@ -123,21 +191,197 @@ body { overflow-x: hidden; }
 <h1>Günlük Piyasa Raporu</h1>
 <div class="meta"><span class="badge">2026-09-08</span><span>BIST 30 &bull; Yapay zeka destekli günlük analiz</span></div>
 </div>
-<article class="report"><p><strong>BIST 30 Yatırım ve Strateji Raporu</strong></p>
-<p><strong>1. YÖNETİCİ ÖZETİ VE PİYASA GENEL BAKIŞI</strong></p>
-<p>Günün en kritik gelişmeleri, endeksin genel yönü ve fon yönetiminin temel perspektifini değerlendirdiğimizde, BIST 30 endeksinin temkinli ve seçici bir seyir izlediğini gözlemlemekteyiz. Jeopolitik gerilimlerin (İran) ve yüksek küresel enerji fiyatlarının satış baskısı yaratması, "Yukarı Adım Kuralı"nın kısa vadeli düşüşü yavaşlattığı ancak net bir trend dönüşü henüz netleşmediği görülmektedir. Bu bağlamda, fon yönetiminin temel perspektifi, nakit oranını yüksek tutarak portföyü korumak ve sadece temel ve enflasyona dayanıklı hisselerde seçici alımlar yapmak yönündedir.</p>
-<p><strong>2. HABER VE MAKROEKONOMİK DEĞERLENDİRME</strong></p>
-<p>Akışların BIST 30 şirketlerine yansımaları, enflasyon, kur ve faiz sarmalının yatırımcı psikolojisine etkisi değerlendirildiğinde, İran'dan gelen ekonomik savaş çıkışı ve jeopolitik gerilimin tırmanması enerji fiyatlarını daha da yukarı taşıyabileceği görülmektedir. Ayrıca, küresel resesyon endişeleri ve ECB faiz kararı küresel risk iştahını olumsuz etkileyebilir. Enflasyon beklentisinin %28,4 seviyesinde olması reel getirileri eritebilir ve faiz-enflasyon sarmalı yatırımcı psikolojisini zorlayabilir. Bu nedenle, yatırımcıların temkinli bir yaklaşım benimsemesi ve portföylerini korumaya yönelik stratejiler geliştirmesi önerilmektedir.</p>
-<p><strong>3. TEKNİK DEĞERLENDİRME (Hisse Bazlı)</strong></p>
-<p>En çok ayrışan, hacim kazanan veya direnç/destek noktalarını test eden lider hisselerin teknik anatomisi incelendiğinde, KCHOL ve BIMAS hisselerinin endekse karşı dirençli olduğu, EREGL ve THYAO hisselerinin ise negatif ayrıştığı görülmektedir. KCHOL hissesi 215 TL üzerinde tutunuyor ve 225 TL hedefi belirginleşirken, BIMAS hissesi enflasyona dayanıklı ve güvenli liman olarak görülmektedir. EREGL hissesi enerji maliyetleri baskısı altında kalırken, THYAO hissesi jeopolitik risklerden olumsuz etkilenmektedir.</p>
-<p><strong>4. ŞİRKET VE FİNANSAL DEĞERLENDİRME</strong></p>
-<p>Temel veriler ışığında şirketlerin karlılık, bilanço yapıları ve rasyo bazlı öne çıkan detayları incelendiğinde, KCHOL'un güçlü bilançosu ve yüksek dönen varlık oranı dikkat çekmektedir. BIMAS'ın enflasyona dayanıklı ve fiyatlama gücü yüksek olması, EREGL'in enerji maliyetleri baskısı altında kalması ve THYAO'nun jeopolitik risklerden olumsuz etkilenmesi şirketlerin finansal performanslarını etkileyen faktörler olarak görülmektedir.</p>
-<p><strong>5. RİSK YÖNETİMİ VE STRATEJİ</strong></p>
-<p>Kısa vadeli olası aşağı/yukarı yönlü senaryolar ve portföyü koruma kalkanları değerlendirildiğinde, nakit oranının yüksek tutulması ve sadece temel ve enflasyona dayanıklı hisselerde seçici alımlar yapılması önerilmektedir. Stop-loss seviyeleri belirlenerek pozisyon boyutları küçültülmesi ve kaldıraçtan kaçınılması önerilmektedir. Olası düzeltmede alım fırsatları için nakit hazır tutulması ve panik satışı yapılmaması önerilmektedir.</p>
-<p><strong>6. ÖNERİLEN PORTFÖY VE TAKTİKSEL DAĞILIM</strong></p>
-<p>Haftalık ve aylık bazda model portföy için önerilen hisse ağırlıkları ve bu dağılımın gerekçeleri incelendiğinde, nakit oranının %40, KCHOL'un %25, BIMAS'ın %20, GARAN'ın %15 olarak belirlenmesi önerilmektedir. Bu dağılım, temkinli bir yaklaşım benimsemeyi ve portföyü korumaya yönelik stratejiler geliştirmeyi amaçlamaktadır. Seçici alımlarla korumacı bir yapı hedeflenmektedir.</p>
+<article class="report"><p><strong>BIST 30 YATIRIM VE STRATEJİ RAPORU</strong><br />
+<strong>Tarih:</strong> 2026-09-09<br />
+<strong>Yayıncı:</strong> [Hedge-Fund Yönetimi]<br />
+<strong>Konu:</strong> Piyasa Dinamikleri, Makro Analiz ve Model Portföy Önerisi</p>
+<hr />
+<h3>1. YÖNETİCİ ÖZETİ VE PİYASA GENEL BAKIŞI</h3>
+<p>Güçlü bir temkinli ve seçici seyir izleyen BIST 30 endeksi, geçtiğimiz hafta boyunca sürdürdüğü "Yukarı Adım Kuralı" etkisiyle kısa vadeli bir soluklanma yaşarken, makroekonomik belirsizliklerin yarattığı temel baskıyı tamamen ortadan kaldıramadı. Endeks, jeopolitik risklerin (İran kaynaklı gerilimler) ve küresel enerji şoku (doğal gaz fiyatlarının 71 avronun üzerinde seyretmesi) nedeniyle hala aşırı satım bölgesi sınırları içinde hareket etmektedir.</p>
+<p>Geçmiş analizlerde vurguladığımız üzere, cuma günü gerçekleşen tepki alımları kalıcı bir trend dönüşümü sinyali değil; sadece oynaklığın arttığı ve yatırımcıların nakit konumlarını değerlendirmeye çalıştığı bir "soluklanma" süreci olarak değerlendirilmektedir. Mevcut piyasa dinamiklerinde, yatırımcı psikolojisi "kayıp korkusu" ile "fırsat arayışı" arasında gidip geliyor. Fon yönetimi perspektifinden bakıldığında, endeksin 4.200 seviyelerinin altında kalması ve enerji yoğun sektörlerin (EREGL, TUPRS) hala negatif ayrışması, genel piyasayı "güvenli liman" arayışına itmektedir.</p>
+<p><strong>Temel Perspektif:</strong> Piyasa, net bir makro sinyali (ECB faiz kararı ve ABD enflasyon verileri) ve endeksin üst direnç seviyelerini (4.200-4.250) aşması gerekmektedir. Bu aşamaya gelinmeden, portföy yapısında "nakit koruma" ve "temel bileşenlere (FMCG, İçerik, Güvenli Bankalar) odaklanma" stratejisi en güvenli koruma kalkanıdır.</p>
+<h3>2. HABER VE MAKROEKONOMİK DEĞERLENDİRME</h3>
+<p><strong>Jeopolitik ve Enerji Gündemi:</strong><br />
+İran kaynaklı gerilimlerin tırmanması ve "ekonomik savaş" söylemleri, küresel risk iştahını olumsuz etkilemeye devam ediyor. Bu durum, özellikle enerji yoğun üretim ve nakliye sektörlerini (EREGL, TUPRS, TOASO) baskı altında tutuyor. Ancak, Irak petrol ihracatındaki artış ve AB ihracatının 72 milyar dolar seviyesine yaklaşması, dış dengeyi olumlu yönde etkileyerek borsa üzerindeki negatif havayı hafifletme potansiyeli taşıyor.</p>
+<p><strong>Makroekonomik Sarmal ve Enflasyon:</strong><br />
+Yurt içi makro veriler, yatırımcıları endişelendirmeye devam ediyor. Enflasyon beklentisinin %28,4 seviyesinde seyretmesi, reel getirilerin erimesine ve yatırımcıların nakit varlıklarını tercih etmesine neden oluyor. ABD enflasyon verileri ve ECB faiz kararı, önümüzdeki hafta kritik bir test noktası olacak. Eğer küresel merkezler faiz artışına giderse, BIST üzerinde dış kaynaklı bir satış baskısı oluşabilir.</p>
+<p><strong>Haber Akışı ve Yatırımcı Psikolojisi:</strong><br />
+Halkbank'a sağlanan 1,1 milyar dolarlık kaynak, bankacılık sektörüne kısa vadeli destek sağlasa da, bu destekin kalıcı bir dönüş sinyali olup olmadığı tartışmalı. OpenAI'deki yönetici ayrılıkları ve küresel teknoloji şirketlerindeki dalgalanmalar, risk iştahını sınırlı tutuyor. Yatırımcılar, reel getirinin yüksek olduğu "kültür ürünleri" (BIMAS, KCHOL) ve "altın" gibi güvenli limanlara yöneliyor.</p>
+<h3>3. TEKNİK DEĞERLENDİRME (Hisse Bazlı)</h3>
+<p>Teknik analiz çerçevesinde, endeks genelinde net bir güçlü alım sinyali yok. Ancak, belirli hisseler endeksten ayrışarak "Güvenli Liman" (Safe Haven) konumuna yerleşiyor. Osilatör verileri ve kanal analizleri, aşağıdaki lider hisselerde pozitif ayrışma sinyalleri üretmektedir:</p>
+<ul>
+<li>
+<p><strong>KCHOL (Holding):</strong> Son fiyat 218.5 TL. 60 günlük trendinde güçlü bir yükseliş var (%+11.0). RSI (61.08) ve MACD pozitif. Kısa, orta ve uzun vadeli sinyaller AL seviyesinde. Kanalın %64'ünde yer alarak güçlü bir çapa pozisyonu oluşturuyor. <strong>(Sinyal: GÜÇLÜ AL)</strong></p>
+</li>
+<li>
+<p><strong>BIMAS (Perakende):</strong> Son fiyat 414.25 TL. Enflasyona dayanıklılığıyla öne çıkan hisse. RSI (58.17) ve StochK (73.72) al bölgesinde. 60 günlük trend %+5.7 ile pozitif. <strong>(Sinyal: GÜÇLÜ AL)</strong></p>
+</li>
+<li>
+<p><strong>GUBRF (Kimya &amp; Gübre):</strong> Son fiyat 496.5 TL. RSI (62.21) ve MACD (13.44) güçlü al sinyalleri veriyor. Kanalın %84'ünde (yukarı bant) konumlanarak momentum kazanıyor. <strong>(Sinyal: GÜÇLÜ AL)</strong></p>
+</li>
+<li>
+<p><strong>TRALT (Sanayi):</strong> Son fiyat 52.4 TL. 60 günlük trend %+12.6 ile en güçlü yükselen hisselerden. RSI (53.52) al bölgesinde. <strong>(Sinyal: AL)</strong></p>
+</li>
+<li>
+<p><strong>PETKM (Enerji):</strong> Son fiyat 22.8 TL. RSI (68.72) ve CCI20 (320.38) aşırı alım bölgesinde ancak 60 günlük trend %+17.8 ile en yüksek getiri sağlayan hisse. <strong>(Sinyal: AL)</strong></p>
+</li>
+</ul>
+<p>Diğer tarafta, havacılık (THYAO, TAVHL), telekom (TTKOM, TCELL) ve gayrimenkul (EKGYO) hisseleri güçlü sat sinyalleri vermektedir. Özellikle EKGYO'nun RSI (54.46) ve kanal konumu, negatif ayrışma riskini artırmaktadır.</p>
+<h3>4. ŞİRKET VE FİNANSAL DEĞERLENDİRME</h3>
+<p>Şirket bazlı finansal veriler, seçici yaklaşımın önemini vurgulamaktadır:</p>
+<ul>
+<li>
+<p><strong>KCHOL:</strong> Dönen varlıkları 3.615 milyar TL ile sektör liderliğinde. Yüksek dönen varlık ve güçlü bilanço yapısı, fiyatların 215 TL desteğini aşmasında temel faktördür.</p>
+</li>
+<li>
+<p><strong>BIMAS:</strong> Dönen varlıklar 152.41 milyar TL. Enflasyona dayanıklılığı ve yüksek fiyatlama gücü, kar marjlarını korumaya devam etmektedir.</p>
+</li>
+<li>
+<p><strong>EREGL:</strong> Dönen varlıklar 265.47 milyar TL. Enerji maliyetleri baskısı altında kalarak, karlılığını korumakta zorlanmaktadır. Teknik olarak 37.2 TL desteğinin korunması kritiktir.</p>
+</li>
+<li>
+<p><strong>THYAO:</strong> Dönen varlıklar 512.19 milyar TL. Jeopolitik riskler ve yüksek yakıt maliyetleri, karlılık oranlarını olumsuz etkilemektedir.</p>
+</li>
+</ul>
+<h3>5. RİSK YÖNETİMİ VE STRATEJİ</h3>
+<p><strong>Riskler:</strong><br />
+1.  <strong>Küresel Resesyon Endişesi:</strong> ECB faiz kararı ve ABD verileri, risk iştahını tamamen kesebilir.<br />
+2.  <strong>Jeopolitik Darbe:</strong> İran gerilimlerinin tırmanması ve enerji fiyatlarının artması, sanayi üretimini baskılayabilir.<br />
+3.  <strong>Stop-Loss Düzeltmeleri:</strong> THYAO (290 TL), KCHOL (210 TL) ve EREGL (37 TL) seviyelerinin kırılması durumunda oluşacak oynaklık, portföy değerini sarsabilir.</p>
+<p><strong>Stratejik Yaklaşım:</strong></p>
+<ul>
+<li>
+<p><strong>Kaldıraçtan Kaçınma:</strong> Mevcut belirsizliklerde yüksek kaldıraçlı pozisyonlardan kaçınılmalıdır.</p>
+</li>
+<li>
+<p><strong>Nakit Konumu:</strong> Yüksek nakit oranını (%40) korumak, oynaklık anlarında likiditeyi elinde tutmak için kritiktir.</p>
+</li>
+<li>
+<p><strong>Seçici Alım:</strong> Sadece teknik ve temel analizlerde güçlü ayrışma gösteren "Güvenli Liman" hisselerde pozisyon tutulmalıdır.</p>
+</li>
+</ul>
+<h3>6. ÖNERİLEN MODEL PORTFÖY</h3>
+<p>Yukarıdaki teknik sinyaller, makro veriler ve risk yönetimi kriterleri ışığında hazırlanan model portföy aşağıdadır. Tablo, sadece GÜÇLÜ AL ve AL sinyali veren hisseleri içermektedir.</p>
+<table>
+<thead>
+<tr>
+<th>Hisse</th>
+<th>Sektör</th>
+<th>Ağırlık (%)</th>
+<th>İşlem</th>
+<th>Giriş Bölgesi</th>
+<th>Hedef-1</th>
+<th>Hedef-2 (3 Ay)</th>
+<th>Stop</th>
+<th>Gerekçe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>KCHOL</strong></td>
+<td>Holding</td>
+<td>25</td>
+<td>AL</td>
+<td>215.00 - 218.50</td>
+<td>225.00</td>
+<td>240.00</td>
+<td>210.00</td>
+<td>60 günlük trend %+11, RSI 61, MACD pozitif, güçlü çapa.</td>
+</tr>
+<tr>
+<td><strong>BIMAS</strong></td>
+<td>Perakende</td>
+<td>20</td>
+<td>AL</td>
+<td>410.00 - 414.25</td>
+<td>430.00</td>
+<td>450.00</td>
+<td>405.00</td>
+<td>Enflasyona dayanıklı, RSI 58, StochK al bölgesi, güvenli liman.</td>
+</tr>
+<tr>
+<td><strong>GUBRF</strong></td>
+<td>Kimya &amp; Gübre</td>
+<td>15</td>
+<td>AL</td>
+<td>490.00 - 496.50</td>
+<td>520.00</td>
+<td>550.00</td>
+<td>480.00</td>
+<td>Kanalın %84'ünde, RSI 62, MACD güçlü al, momentum yüksek.</td>
+</tr>
+<tr>
+<td><strong>TRALT</strong></td>
+<td>Sanayi (Diğer)</td>
+<td>10</td>
+<td>AL</td>
+<td>50.00 - 52.40</td>
+<td>55.00</td>
+<td>60.00</td>
+<td>48.00</td>
+<td>60 günlük en güçlü yükselen (%+12.6), RSI 53.</td>
+</tr>
+<tr>
+<td><strong>PETKM</strong></td>
+<td>Enerji &amp; Petrokimya</td>
+<td>10</td>
+<td>AL</td>
+<td>21.50 - 22.80</td>
+<td>24.00</td>
+<td>26.00</td>
+<td>20.00</td>
+<td>60 günlük en yüksek getiri (%+17.8), RSI 68 (al bölgesi).</td>
+</tr>
+<tr>
+<td><strong>VAKBN</strong></td>
+<td>Bankacılık</td>
+<td>10</td>
+<td>AL</td>
+<td>32.50 - 33.50</td>
+<td>35.00</td>
+<td>38.00</td>
+<td>31.00</td>
+<td>RSI 59, MACD pozitif, güvenli bankacılık bileşeni.</td>
+</tr>
+<tr>
+<td><strong>SAHOL</strong></td>
+<td>Holding</td>
+<td>5</td>
+<td>AL</td>
+<td>90.00 - 93.40</td>
+<td>98.00</td>
+<td>105.00</td>
+<td>88.00</td>
+<td>RSI 58, kanalın %80'inde, stabil büyüme.</td>
+</tr>
+<tr>
+<td><strong>AKBNK</strong></td>
+<td>Bankacılık</td>
+<td>5</td>
+<td>AL</td>
+<td>71.00 - 72.40</td>
+<td>75.00</td>
+<td>80.00</td>
+<td>69.00</td>
+<td>RSI 57, kanalın %80'inde, likidite sağlayıcı.</td>
+</tr>
+<tr>
+<td><strong>NAKİT</strong></td>
+<td>Nakit</td>
+<td>0</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>Oynaklık karşısında likidite koruması.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Toplam:</strong> %100</p>
+<p><em>Not: Bu rapor yatırım tavsiyesi niteliğinde değildir. Sadece kurumsal yatırımcılara sunulan bir strateji belgesidir. Yatırımcılar kendi risk profillerine göre hareket etmelidir.</em></p>
 <p>[PORTFOY OZETI]<br />
-Deneme Portfoyu (2026-09-08): Toplam 102352.27 TL (Toplam %+2.35, Mevduat: 100246.73 TL, USD Karşılığı: 100469.19 TL, Altın Karşılığı: 100469.15 TL)</p></article>
+Deneme Portfoyu (2026-09-08): Toplam 102352.27 TL (Toplam %+2.35, Mevduat: 100246.73 TL, USD Karşılığı: 100459.02 TL, Altın Karşılığı: 100819.58 TL)</p></article>
 <p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>
 </main>
 
@@ -164,13 +408,6 @@ Deneme Portfoyu (2026-09-08): Toplam 102352.27 TL (Toplam %+2.35, Mevduat: 10024
         .catch(err => {
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
         });
-
-    function askGemini() {
-        const query = document.getElementById('ai-chat-input').value;
-        if(query.trim()) {
-            window.open(`https://gemini.google.com/app?q=${encodeURIComponent(query)}`, '_blank');
-        }
-    }
 </script>
 <script type="text/javascript">
     function googleTranslateElementInit() {

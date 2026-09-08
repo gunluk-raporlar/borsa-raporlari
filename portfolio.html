@@ -85,7 +85,8 @@ body { overflow-x: hidden; }
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<script type="module" src="https://3163e358-b6cf-4a3e-835f-da3e39314317.search.ai.cloudflare.com/assets/v0.0.25/search-snippet.es.js"></script>
+<link rel="stylesheet" href="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/assets/v0.0.25/search-modal-snippet.css" />
+<script type="module" src="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/assets/v0.0.25/search-modal-snippet.js"></script>
 </head>
 <body>
 <header class="topbar"><div class="inner">
@@ -118,7 +119,7 @@ body { overflow-x: hidden; }
     <!-- Etkileşimli Araçlar (Google Arama ve BIST AI Asistan) -->
     <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
         <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; min-height: 52px;">
-            <search-modal-snippet api-url="https://3163e358-b6cf-4a3e-835f-da3e39314317.search.ai.cloudflare.com/" placeholder="Borsa raporları hakkında ara ve sor..."></search-modal-snippet>
+            <search-modal-snippet api-url="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/" placeholder="Borsa raporları hakkında ara ve sor..."></search-modal-snippet>
         </div>
 
         <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
@@ -199,13 +200,13 @@ async function aiSor() {
 </div>
 <div class="card" style="margin-bottom:22px">
 <div style="position:relative; height:340px;">
-<canvas id="portfoy-grafik-353948"></canvas>
+<canvas id="portfoy-grafik-249298"></canvas>
 </div>
 <script>
 (function() {
-    var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100469.15], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100469.19], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}]};
+    var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100819.58], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100459.02], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}]};
     var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
-    var ctx = document.getElementById('portfoy-grafik-353948').getContext('2d');
+    var ctx = document.getElementById('portfoy-grafik-249298').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
