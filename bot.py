@@ -570,6 +570,47 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
 
 
 # ---------- BAS ANALIST (CIO) ----------
+# ---------- Z.AI CAGIRICI (gunluk rapor icin buyuk GLM modeli) ----------
+def _zai_call(prompt):
+    """Kullanicinin ZAI_API_KEY secret'iyla GLM'i cagirir; kaliteli/uzun
+    gunluk rapor bu saglayicidan yazilir. Anahtar yoksa veya iki model de
+    basarisiz olursa None doner (cagiran taraf mevcut llm_call zincirine duser).
+    Cikti degenerasyon ve prompt sizmasi acisindan da dogrulanir."""
+    anahtar = os.environ.get("ZAI_API_KEY", "")
+    if not anahtar:
+        return None
+    client = OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/paas/v4/",
+                    timeout=300.0, max_retries=1)
+    modeller = [(os.environ.get("ZAI_MODEL") or "glm-4.7-flash"), "glm-4.5-flash"]
+    son_hata = None
+    for mdl in modeller:
+        try:
+            logger.info("[Z.ai] rapor cagrisi: %s", mdl)
+            resp = client.chat.completions.create(
+                model=mdl,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.4,
+                max_tokens=8000,
+                extra_body={"thinking": {"type": "disabled"}},
+            )
+            icerik = resp.choices[0].message.content or ""
+            if not icerik.strip():
+                son_hata = "bos yanit"
+                continue
+            if _looks_degenerate(icerik) or _contains_prompt_leak(prompt, icerik) or _dil_karismis(icerik):
+                son_hata = "bozuk yanit (dongu/sizma/dil)"
+                logger.warning("[Z.ai] %s bozuk yanit uretti; siradaki deneniyor.", mdl)
+                continue
+            logger.info("[Z.ai] rapor alindi (%s): %d karakter", mdl, len(icerik))
+            return icerik
+        except Exception as e:
+            son_hata = str(e)[:200]
+            logger.warning("[Z.ai] %s basarisiz: %s", mdl, son_hata)
+            time.sleep(2)
+    logger.warning("[Z.ai] anahtarli cagri basarisiz (%s); yedek zincire dusuluyor.", son_hata)
+    return None
+
+
 def master_cio_agent(state: AgentState):
     logger.info("[Bas Analist] Rapor sentezleniyor...")
     print("[Bas Analist] Rapor sentezleniyor...", flush=True)
@@ -599,18 +640,50 @@ Raporu kesinlikle profesyonel bir finansal bülten formatında, her başlığı 
 
 1. YÖNETİCİ ÖZETİ VE PİYASA GENEL BAKIŞI: Günün en kritik gelişmeleri, endeksin genel yönü ve fon yönetiminin temel perspektifi.
 2. HABER VE MAKROEKONOMİK DEĞERLENDİRME: Akışların BIST 30 şirketlerine yansımaları, enflasyon, kur ve faiz sarmalının yatırımcı psikolojisine etkisi.
-3. TEKNİK DEĞERLENDİRME (Hisse Bazlı): En çok ayrışan, hacim kazanan veya direnç/destek noktalarını test eden lider hisselerin teknik anatomisi.
+3. TEKNİK DEĞERLENDİRME (Hisse Bazlı): En çok ayrışan, hacim kazanan veya direnç/destek noktalarını test eden lider hisselerin teknik anatomisi. Aşağıdaki SİNYAL TABLOSU verilerini mutlaka kullan.
 4. ŞİRKET VE FİNANSAL DEĞERLENDİRME: Temel veriler ışığında şirketlerin karlılık, bilanço yapıları ve rasyo bazlı öne çıkan detayları.
 5. RİSK YÖNETİMİ VE STRATEJİ: Kısa vadeli olası aşağı/yukarı yönlü senaryolar ve portföyü koruma kalkanları.
-6. ÖNERİLEN PORTFÖY VE TAKTİKSEL DAĞILIM: Haftalık ve aylık bazda model portföy için önerilen hisse ağırlıkları ve bu dağılımın gerekçeleri.
+6. ÖNERİLEN MODEL PORTFÖY: Raporun SONUNDA, yukarıdaki sinyal ve analizlere DAYANARAK kendinin kurduğu somut bir model portföyü tablosu oluştur. Tablo şu sütunlarla olmalı:
+
+| Hisse | Sektör | Ağırlık (%) | İşlem | Giriş Bölgesi | Hedef-1 | Hedef-2 (3 Ay) | Stop | Gerekçe |
+|-------|--------|-------------|-------|---------------|---------|----------------|------|---------|
+
+Tablo kuralları: En fazla 8 hisse pozisyonu + bir "NAKİT" satırı ekle; ağırlıklar %100'ü tamamlamalı (nakit dahil). Sadece AL/GÜÇLÜ AL sinyali veren ve gerekçesi verilerle desteklenen hisseleri seç; ağırlığı sinyal gücü, Pearson (r) ve kanal konumuna göre belirle. Giriş bölgesi, hedefler ve stop seviyelerini SADECE sağlanan gerçek fiyatlardan türet (kanal bantları ve son fiyat baz alın); dışarıdan hiçbir veri ekleme. Her satırın gerekçesi teknik + osilatör gerekçelerini birleştirsin.
 
 Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek verileri ve geçmiş hafızayı baz al. Raporu zengin finansal terimler kullanarak Türkçe kaleme al."""
 
+    # Gunun sinyal tablolari (master_cio calismadan once taze taramalar alinir)
     try:
-        response = llm_call(prompt)
+        t_satirlar = teknik_tarama_yap()
+        b_satirlar = borsapy_analiz_yap()
     except Exception as e:
-        logger.exception("LLM call failed in master_cio_agent: %s", e)
-        response = "(LLM hizmetine ulaşılamadı — rapor şu an kısmi olarak oluşturuldu veya oluşturulamadı. Daha sonra tekrar deneyin.)"
+        logger.warning("[Bas Analist] sinyal taramalari alinamadi: %s", e)
+        t_satirlar, b_satirlar = [], []
+    sinyaller = ""
+    if t_satirlar:
+        sinyaller += "\n[TEKNIK TARAMA SINYALLERI - BUGUN]\n" + "\n".join(
+            f"{s['hisse']} ({s['sektor']}): son {s['son']} TL, gunluk {s['gunluk']:+.2f}%, 60g {s['deg60']:+.1f}%, "
+            f"kisa={s['kisa']} orta={s['orta']} uzun={s['uzun']}, WT={s['wt']}, kanal %{s['konum']:.0f}, "
+            f"r={s['r']:.2f}, genel={s['genel']}"
+            for s in t_satirlar
+        )
+    if b_satirlar:
+        sinyaller += "\n\n[TRADINGVIEW OSILATOR OYLERI - BUGUN]\n" + "\n".join(
+            f"{s['hisse']}: oneri={s['oneri']} (al={s['al']}/sat={s['sat']}/notr={s['notr']}), RSI={s['rsi']}, "
+            f"MACD={s['macd']}, StochK={s['stoch']}, CCI20={s['cci']}, ADX={s['adx']}"
+            for s in b_satirlar
+        )
+    if sinyaller:
+        prompt = prompt.replace("Kurallar: Asla uydurma", sinyaller + "\n\nKurallar: Asla uydurma")
+
+    # once kullanici Z.ai anahtari (buyuk GLM modeli), olmazsa yedek zincir
+    response = _zai_call(prompt)
+    if not response:
+        try:
+            response = llm_call(prompt)
+        except Exception as e:
+            logger.exception("LLM call failed in master_cio_agent: %s", e)
+            response = "(LLM hizmetine ulaşılamadı — rapor şu an kısmi olarak oluşturuldu veya oluşturulamadı. Daha sonra tekrar deneyin.)"
 
     # Eger llm_call fallback mesaji donduyse, LLM'e ulasilamadi demektir; makul bir ham-rapor uret
     if isinstance(response, str) and response.startswith("(LLM hizmetine ulaşılamadı"):
@@ -1492,6 +1565,10 @@ def _wave_trend(kapanis):
     return wt1, wt2
 
 
+_SON_TEKNIK = []
+_SON_BORSPY = []
+
+
 def teknik_tarama_yap():
     """BIST 30 icin teknik tarama tablosunu uretir; satir listesi (dict) doner."""
     try:
@@ -1638,6 +1715,8 @@ def teknik_tarama_yap():
     # Guclu AL'ler one, iclerinde trend gucu (Pearson) yuksek olanlar basta
     satirlar.sort(key=lambda s: (s["puan"], s["r"]), reverse=True)
     save_daily("teknik", bugun, satirlar)
+    global _SON_TEKNIK
+    _SON_TEKNIK = satirlar
     logger.info("[Teknik Tarama] %d hisse tarandi; guclu AL: %d", len(satirlar),
                 sum(1 for s in satirlar if s["genel"] in ("GÜÇLÜ AL", "AL")))
     print(f"[Teknik Tarama] {len(satirlar)} hisse tarandi.", flush=True)
@@ -1812,6 +1891,8 @@ def borsapy_analiz_yap():
     siralama = {"GÜÇLÜ AL": 0, "AL": 1, "NÖTR": 2, "SAT": 3, "GÜÇLÜ SAT": 4}
     satirlar.sort(key=lambda s: (siralama.get(s["oneri"], 9), -(s["rsi"] or 0)))
     logger.info("[Borsapy] %d hisse tarandi", len(satirlar))
+    global _SON_BORSPY
+    _SON_BORSPY = satirlar
     return satirlar
 
 
@@ -1912,9 +1993,9 @@ if __name__ == "__main__":
     # Teknik tarama: LLM'den bagimsiz, saf matematik; basarisiz olursa diger
     # sayfalarin uretimini bozmamasi icin ayri try/except icinde.
     teknik_oneriler = []
-    teknik_satirlar = []
+    teknik_satirlar = _SON_TEKNIK
     try:
-        teknik_satirlar = teknik_tarama_yap()
+        teknik_satirlar = teknik_satirlar or teknik_tarama_yap()
         if teknik_satirlar:
             with open("teknik-analiz.html", "w", encoding="utf-8") as f:
                 f.write(build_teknik_html(teknik_satirlar, date_str))
@@ -1923,9 +2004,9 @@ if __name__ == "__main__":
         logger.exception("[Teknik Tarama] sayfa uretilemedi; rapor uretimini etkilemez.")
 
     # Borsapy (TradingView) sinyalleri + derin analiz icin toplanir.
-    borsapy_satirlar = []
+    borsapy_satirlar = _SON_BORSPY
     try:
-        borsapy_satirlar = borsapy_analiz_yap()
+        borsapy_satirlar = borsapy_satirlar or borsapy_analiz_yap()
         if borsapy_satirlar:
             with open("borsapy-analiz.html", "w", encoding="utf-8") as f:
                 f.write(build_borsapy_html(borsapy_satirlar, date_str))
