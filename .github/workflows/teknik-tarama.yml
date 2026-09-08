@@ -20,7 +20,6 @@ jobs:
       - name: Kutuphaneleri kur
         run: pip install -r requirements.txt
       - name: Taramayi calistir
-        env:
         run: python -u teknik_tarama.py
       - name: Degisiklikleri yayinla
         run: |
