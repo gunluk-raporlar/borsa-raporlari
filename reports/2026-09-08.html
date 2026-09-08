@@ -71,6 +71,18 @@ tr:last-child td { border-bottom:none; }
         grid-template-columns: 1fr !important;
     }
 }
+
+/* ---- Mobil tasima duzeltmeleri ---- */
+body { overflow-x: hidden; }
+.tv-ticker-bant { max-width: 100%; overflow: hidden; }
+.tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tbl-wrap table { min-width: 760px; }   /* genis tablolar kart icinde yatay kayar */
+.report table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 640px) {
+  .topbar .inner { padding: 10px 12px; }
+  .topbar nav { display: flex; flex-wrap: wrap; gap: 4px 2px; }
+  .topbar nav a { margin-left: 10px; font-size: 12.5px; }
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>

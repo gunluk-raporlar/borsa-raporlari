@@ -71,6 +71,18 @@ tr:last-child td { border-bottom:none; }
         grid-template-columns: 1fr !important;
     }
 }
+
+/* ---- Mobil tasima duzeltmeleri ---- */
+body { overflow-x: hidden; }
+.tv-ticker-bant { max-width: 100%; overflow: hidden; }
+.tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tbl-wrap table { min-width: 760px; }   /* genis tablolar kart icinde yatay kayar */
+.report table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 640px) {
+  .topbar .inner { padding: 10px 12px; }
+  .topbar nav { display: flex; flex-wrap: wrap; gap: 4px 2px; }
+  .topbar nav a { margin-left: 10px; font-size: 12.5px; }
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script type="module" src="https://3163e358-b6cf-4a3e-835f-da3e39314317.search.ai.cloudflare.com/assets/v0.0.25/search-snippet.es.js"></script>
@@ -80,7 +92,7 @@ tr:last-child td { border-bottom:none; }
 <a class="brand" href="index.html">BIST 30 Günlük Raporlar</a>
 <nav><a href="index.html" class="active">Raporlar</a><a href="derin-analiz.html">Derin Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="portfolio.html">Deneme Portföyü</a></nav>
 </div></header>
-<div class="tradingview-widget-container" style="margin:0 0 18px">
+<div class="tradingview-widget-container tv-ticker-bant" style="margin:0 0 18px; width:100%;">
 <div class="tradingview-widget-container__widget"></div>
 <script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
 {
@@ -195,13 +207,13 @@ async function aiSor() {
 </div>
 <div class="card" style="margin-bottom:14px">
 <div style="position:relative; height:340px;">
-<canvas id="portfoy-grafik-945362"></canvas>
+<canvas id="portfoy-grafik-659032"></canvas>
 </div>
 <script>
 (function() {
     var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100469.15], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100469.19], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}]};
     var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
-    var ctx = document.getElementById('portfoy-grafik-945362').getContext('2d');
+    var ctx = document.getElementById('portfoy-grafik-659032').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -246,7 +258,9 @@ async function aiSor() {
 </script>
 </div>
 <div class="card" style="padding:8px 24px 16px">
+<div class="tbl-wrap">
 <table><tr><th>Hisse</th><th>Adet</th><th>İlk Alım</th><th>Güncel</th><th>Getiri</th></tr><tr><td><strong>AEFES</strong></td><td>180.67</td><td>18.45 TL</td><td>18.79 TL</td><td class='pos'>+1.84%</td></tr><tr><td><strong>AKBNK</strong></td><td>46.39</td><td>71.85 TL</td><td>73.05 TL</td><td class='pos'>+1.67%</td></tr><tr><td><strong>ASELS</strong></td><td>8.59</td><td>388.25 TL</td><td>392.50 TL</td><td class='pos'>+1.09%</td></tr><tr><td><strong>ASTOR</strong></td><td>11.30</td><td>295.00 TL</td><td>301.00 TL</td><td class='pos'>+2.03%</td></tr><tr><td><strong>BIMAS</strong></td><td>8.02</td><td>415.75 TL</td><td>418.00 TL</td><td class='pos'>+0.54%</td></tr><tr><td><strong>DSTKF</strong></td><td>1.44</td><td>2320.00 TL</td><td>2390.00 TL</td><td class='pos'>+3.02%</td></tr><tr><td><strong>EKGYO</strong></td><td>171.47</td><td>19.44 TL</td><td>19.96 TL</td><td class='pos'>+2.67%</td></tr><tr><td><strong>ENKAI</strong></td><td>38.20</td><td>87.25 TL</td><td>89.00 TL</td><td class='pos'>+2.01%</td></tr><tr><td><strong>EREGL</strong></td><td>89.61</td><td>37.20 TL</td><td>38.32 TL</td><td class='pos'>+3.01%</td></tr><tr><td><strong>FROTO</strong></td><td>43.18</td><td>77.20 TL</td><td>79.65 TL</td><td class='pos'>+3.17%</td></tr><tr><td><strong>GARAN</strong></td><td>25.37</td><td>131.40 TL</td><td>133.50 TL</td><td class='pos'>+1.60%</td></tr><tr><td><strong>GUBRF</strong></td><td>6.96</td><td>478.75 TL</td><td>491.25 TL</td><td class='pos'>+2.61%</td></tr><tr><td><strong>ISCTR</strong></td><td>256.21</td><td>13.01 TL</td><td>13.05 TL</td><td class='pos'>+0.31%</td></tr><tr><td><strong>KCHOL</strong></td><td>15.50</td><td>215.10 TL</td><td>219.70 TL</td><td class='pos'>+2.14%</td></tr><tr><td><strong>KRDMD</strong></td><td>76.59</td><td>43.52 TL</td><td>45.20 TL</td><td class='pos'>+3.86%</td></tr><tr><td><strong>MGROS</strong></td><td>6.33</td><td>527.00 TL</td><td>528.00 TL</td><td class='pos'>+0.19%</td></tr><tr><td><strong>PETKM</strong></td><td>166.17</td><td>20.06 TL</td><td>22.06 TL</td><td class='pos'>+9.97%</td></tr><tr><td><strong>PGSUS</strong></td><td>22.42</td><td>148.70 TL</td><td>149.40 TL</td><td class='pos'>+0.47%</td></tr><tr><td><strong>SAHOL</strong></td><td>36.00</td><td>92.60 TL</td><td>94.05 TL</td><td class='pos'>+1.57%</td></tr><tr><td><strong>SASA</strong></td><td>1,455.60</td><td>2.29 TL</td><td>2.51 TL</td><td class='pos'>+9.61%</td></tr><tr><td><strong>SISE</strong></td><td>85.30</td><td>39.08 TL</td><td>41.66 TL</td><td class='pos'>+6.60%</td></tr><tr><td><strong>TAVHL</strong></td><td>12.43</td><td>268.25 TL</td><td>269.75 TL</td><td class='pos'>+0.56%</td></tr><tr><td><strong>TCELL</strong></td><td>33.96</td><td>98.15 TL</td><td>99.05 TL</td><td class='pos'>+0.92%</td></tr><tr><td><strong>THYAO</strong></td><td>11.26</td><td>296.00 TL</td><td>296.75 TL</td><td class='pos'>+0.25%</td></tr><tr><td><strong>TOASO</strong></td><td>12.15</td><td>274.25 TL</td><td>288.00 TL</td><td class='pos'>+5.01%</td></tr><tr><td><strong>TRALT</strong></td><td>65.62</td><td>50.80 TL</td><td>51.30 TL</td><td class='pos'>+0.98%</td></tr><tr><td><strong>TTKOM</strong></td><td>64.23</td><td>51.90 TL</td><td>52.35 TL</td><td class='pos'>+0.87%</td></tr><tr><td><strong>TUPRS</strong></td><td>8.58</td><td>388.50 TL</td><td>394.25 TL</td><td class='pos'>+1.48%</td></tr><tr><td><strong>VAKBN</strong></td><td>99.15</td><td>33.62 TL</td><td>33.32 TL</td><td class='neg'>-0.89%</td></tr><tr><td><strong>YKBNK</strong></td><td>92.85</td><td>35.90 TL</td><td>36.26 TL</td><td class='pos'>+1.00%</td></tr></table>
+</div>
 <p style="margin:12px 0 4px"><a href="portfolio.html">Detaylı portföy geçmişi &rarr;</a></p>
 </div>
 </main>

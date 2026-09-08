@@ -1021,6 +1021,18 @@ tr:last-child td { border-bottom:none; }
         grid-template-columns: 1fr !important;
     }
 }
+
+/* ---- Mobil tasima duzeltmeleri ---- */
+body { overflow-x: hidden; }
+.tv-ticker-bant { max-width: 100%; overflow: hidden; }
+.tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tbl-wrap table { min-width: 760px; }   /* genis tablolar kart icinde yatay kayar */
+.report table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 640px) {
+  .topbar .inner { padding: 10px 12px; }
+  .topbar nav { display: flex; flex-wrap: wrap; gap: 4px 2px; }
+  .topbar nav a { margin-left: 10px; font-size: 12.5px; }
+}
 """
 
 
@@ -1103,7 +1115,7 @@ def _tv_ticker_tape():
     """TradingView canlı ticker şeridi: istemci tarafında çalışan, anahtarsız
     resmi widget — fiyatlar piyasa açıkken gerçek zamanlı yeşil/kırmızı akar."""
     semboller = ", ".join('{"proName":"BIST:%s","title":"%s"}' % (h, h) for h in HISSELER)
-    return f"""<div class="tradingview-widget-container" style="margin:0 0 18px">
+    return f"""<div class="tradingview-widget-container tv-ticker-bant" style="margin:0 0 18px; width:100%;">
 <div class="tradingview-widget-container__widget"></div>
 <script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
 {{
@@ -1381,7 +1393,9 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
 {_portfoy_istatistikleri(p)}
 {grafik_html}
 <div class="card" style="padding:8px 24px 16px">
+<div class="tbl-wrap">
 <table><tr><th>Hisse</th><th>Adet</th><th>İlk Alım</th><th>Güncel</th><th>Getiri</th></tr>{_portfoy_satirlari(p)}</table>
+</div>
 <p style="margin:12px 0 4px"><a href="portfolio.html">Detaylı portföy geçmişi &rarr;</a></p>
 </div>"""
 
@@ -1416,11 +1430,15 @@ def build_portfolio_html(p):
 {grafik_html}
 <h2 class="section-title">Hisse Performansı (ilk alım vs güncel)</h2>
 <div class="card" style="padding:8px 24px 16px">
+<div class="tbl-wrap">
 <table><tr><th>Hisse</th><th>Adet</th><th>İlk Alım</th><th>Güncel</th><th>Getiri</th></tr>{_portfoy_satirlari(p)}</table>
+</div>
 </div>
 <h2 class="section-title">Günlük Geçmiş</h2>
 <div class="card" style="padding:8px 24px 16px">
+<div class="tbl-wrap">
 <table><tr><th>Tarih</th><th>Toplam Değer</th><th>Toplam %</th><th>Günlük %</th></tr>{gecmis}</table>
+</div>
 </div>"""
     return _sayfa("Deneme Portföyü", icerik, "portfoy")
 
@@ -1704,10 +1722,12 @@ Pearson (r) trendin gücünü gösterir. Piyasa saatlerinde (hafta içi 10:00-18
 </div>
 {_sektor_isi_haritasi(satirlar)}
 <div class="card" style="padding:8px 24px 16px">
+<div class="tbl-wrap">
 <table>
 <tr><th>Hisse</th><th>Son</th><th>Gün</th><th>60G %</th><th>Kısa Vade</th><th>Orta Vade</th><th>Uzun Vade</th><th>Wave Trend</th><th>Kanal</th><th>Pearson</th><th>Genel</th></tr>
 {satir_html}
 </table>
+</div>
 <p style="margin:12px 0 4px; color:var(--muted); font-size:13px">Bugün {len(satirlar)} hisse tarandı; {guclu} hisse GÜÇLÜ AL sinyalinde. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
 </div>
 {_tv_modal_js()}"""
@@ -1835,10 +1855,12 @@ Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.
 </div>
 {grafik}
 <div class="card" style="padding:8px 24px 16px">
+<div class="tbl-wrap">
 <table>
 <tr><th>Hisse</th><th>Öneri</th><th>Al/Sat/Nötür</th><th>RSI</th><th>MACD</th><th>Stoch %K</th><th>CCI20</th><th>ADX</th></tr>
 {hucreler}
 </table>
+</div>
 <p style="margin:12px 0 4px; color:var(--muted); font-size:13px">{len(satirlar)} hisse sorgulandı; {guclu} hisse GÜÇLÜ AL. RSI &ge;70 aşırı alım, &le;30 aşırı satım bölgesidir. ADX &gt;25 güçlü trend gösterir. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
 </div>
 {_tv_modal_js()}"""
