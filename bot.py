@@ -33,7 +33,10 @@ AMD_API_KEY = os.environ.get("AMD_API_KEY", "")
 #   OpenRouter:       ALT_BASE_URL=https://openrouter.ai/api/v1        ALT_MODELS=deepseek/deepseek-chat-v3.1:free
 ALT_API_KEY = os.environ.get("ALT_API_KEY") or os.environ.get("GROQ_API_KEY", "")
 ALT_BASE_URL = os.environ.get("ALT_BASE_URL", "https://api.groq.com/openai/v1")
-ALT_MODELS = [m.strip() for m in os.environ.get("ALT_MODELS", "llama-3.3-70b-versatile").split(",") if m.strip()]
+# Bos birakilirsa (varsayilan) saglayicinin /models listesinden otomatik secilir:
+# Groq 2026'da llama-3.3-70b-versatile'i emekli ettigi icin sabit model adi
+# "model_not_found" hatasi veriyordu. Tercih sirasi asagida tanimlidir.
+ALT_MODELS = [m.strip() for m in os.environ.get("ALT_MODELS", "").split(",") if m.strip()]
 
 # Ikinci yedek: Cloudflare Workers AI (ucretsiz katman: gunluk 10.000 neuron;
 # Groq'un dar dakikalik token siniri yoktur, bu yuzden buyuk rapor promptu icin
@@ -41,7 +44,12 @@ ALT_MODELS = [m.strip() for m in os.environ.get("ALT_MODELS", "llama-3.3-70b-ver
 # (Workers AI izinli olmali). Gerekli secret'lar: CF_API_KEY ve CF_ACCOUNT_ID.
 CF_API_KEY = os.environ.get("CF_API_KEY") or os.environ.get("CLOUDFLARE_API_KEY") or os.environ.get("CLOUDFLARE_API_TOKEN", "")
 CF_ACCOUNT_ID = os.environ.get("CF_ACCOUNT_ID", "")
-CF_MODELS = [m.strip() for m in os.environ.get("CF_MODELS", "@cf/meta/llama-3.3-70b-instruct-fp8-fast").split(",") if m.strip()]
+CF_MODELS = [m.strip() for m in os.environ.get("CF_MODELS", "").split(",") if m.strip()]
+
+# Model emekleme durumlarina karsi otomatik secim icin tercih siralari
+# (icerik eslesmesiyle bulunur; saglayici tam adlandirmayi degistirse de calisir).
+GROQ_MODEL_TERCIH = ["gpt-oss-120b", "llama-4-scout", "llama-4-maverick", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
+CF_MODEL_TERCIH = ["llama-3.3-70b-instruct-fp8-fast", "llama-4-scout", "llama-3.3-70b-instruct", "llama-3.1-8b-instruct"]
 
 if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY:
     raise SystemExit("AMD_API_KEY, ALT_API_KEY veya CF_API_KEY'den en az biri ayarlanmali!")
@@ -349,6 +357,29 @@ def _dil_karismis(metin: str) -> bool:
     return ing >= 8 and ing > turkce * 2
 
 
+def _havuz_modelleri(saglayici, env_listesi, tercih, etiket):
+    """Saglayicinin kullanilabilir modellerini belirler.
+
+    env_listesi doluysa (ALT_MODELS / CF_MODELS ile acik verilmisse) oldugu
+    kullanilir; bos ise saglayicinin /models listesi sorgulanir ve tercih
+    sirasindaki ilk mevcut modeller secilir — boylece saglayici bir modeli
+    emekli ettiginde isim degisikligini elle yapmak gerekmez. Liste de
+    alinamazsa tercih sirasi dogrudan denenir.
+    """
+    if env_listesi:
+        return env_listesi
+    try:
+        mevcut = [m.id for m in saglayici.models.list()]
+        secilen = [t for t in tercih if any(t in m for m in mevcut)]
+        if secilen:
+            logger.info("%s icin mevcut modellerden secilenler: %s", etiket, secilen)
+            return secilen
+        logger.warning("%s /models listesi bos; tercih sirasi dogrudan denenecek.", etiket)
+    except Exception as e:
+        logger.warning("[Uyari] %s model listesi alinamadi, tercih sirasiyla denenecek: %s", etiket, e)
+    return tercih
+
+
 def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
     """Daha saglam LLM cagrisi:
     - cok saglayicili: AMD modelleri + (tanimliysa) yedek saglayici modelleri
@@ -381,8 +412,8 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
     sirasi = sirasi or ("AMD", "CF", "YEDEK")
     havuzlar = {
         "AMD": (client, AMD_MODEL_LIST or [AMD_MODEL]),
-        "CF": (cf_client, CF_MODELS),
-        "YEDEK": (alt_client, ALT_MODELS),
+        "CF": (cf_client, _havuz_modelleri(cf_client, CF_MODELS, CF_MODEL_TERCIH, "Cloudflare") if cf_client else CF_MODELS),
+        "YEDEK": (alt_client, _havuz_modelleri(alt_client, ALT_MODELS, GROQ_MODEL_TERCIH, "Groq") if alt_client else ALT_MODELS),
     }
     istekler = []
     for etiket in sirasi:

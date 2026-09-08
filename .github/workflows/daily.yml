@@ -47,6 +47,7 @@ jobs:
           git diff --cached --quiet || git commit -m "Gunluk rapor ve portfoy guncellemesi"
           git push origin main
       - name: Netlify'a yayinla
+        continue-on-error: true   # Netlify erisimi koparsa is bozuk rapor yerine hatayla bitmesin; rapor zaten repoya commitlenmistir
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
