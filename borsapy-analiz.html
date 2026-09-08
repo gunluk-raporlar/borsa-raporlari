@@ -102,20 +102,21 @@ tr:last-child td { border-bottom:none; }
         <div id="google_translate_element"></div>
     </div>
 
-    <!-- Etkileşimli Araçlar (Google Arama ve Gemini Sohbet Kutusu) -->
+    <!-- Etkileşimli Araçlar (Google Arama ve BIST AI Asistan) -->
     <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <form method="get" action="https://www.google.com/search" target="_blank" style="display: flex; gap: 8px;">
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; gap: 8px;">
+            <form method="get" action="https://www.google.com/search" target="_blank" style="display: flex; gap: 8px; flex: 1;">
                 <input type="hidden" name="q" value="site:borsa-raporlari.onrender.com">
                 <input type="text" name="q" placeholder="Google ile sitede ara..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;">
                 <button type="submit" style="background: #047857; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Ara</button>
             </form>
         </div>
-        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; gap: 8px;">
-            <input type="text" id="ai-chat-input" placeholder="Gemini'ye borsa hakkında sor..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') askGemini();">
-            <button onclick="askGemini()" style="background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Sor</button>
+
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center;">
+            <span style="color: #64748b; font-size: 13px;">🤖 BIST AI Asistan yapılandırılıyor...</span>
         </div>
     </div>
+
 
     <!-- Asıl Sayfa İçeriği -->
     
@@ -129,7 +130,7 @@ Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.</p>
 <div class="card" style="margin-bottom:20px">
 <h3 style="margin:4px 0 10px">RSI (14) — Aşırı Alım/Satım Haritası</h3>
 <div style="position:relative; height:540px">
-<canvas id="borsapy-rsi-723660"></canvas>
+<canvas id="borsapy-rsi-686200"></canvas>
 </div>
 </div>
 <script>
@@ -140,7 +141,7 @@ Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.</p>
         if (v <= 30) return '#047857';
         return '#94a3b8';
     });
-    new Chart(document.getElementById('borsapy-rsi-723660'), {
+    new Chart(document.getElementById('borsapy-rsi-686200'), {
         type: 'bar',
         data: { labels: veri.labels, datasets: [{ label: 'RSI (14)', data: veri.degerler, backgroundColor: renkler }] },
         options: {
@@ -189,13 +190,6 @@ Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.</p>
         .catch(err => {
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
         });
-
-    function askGemini() {
-        const query = document.getElementById('ai-chat-input').value;
-        if(query.trim()) {
-            window.open(`https://gemini.google.com/app?q=${encodeURIComponent(query)}`, '_blank');
-        }
-    }
 </script>
 <script type="text/javascript">
     function googleTranslateElementInit() {

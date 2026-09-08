@@ -102,20 +102,21 @@ tr:last-child td { border-bottom:none; }
         <div id="google_translate_element"></div>
     </div>
 
-    <!-- Etkileşimli Araçlar (Google Arama ve Gemini Sohbet Kutusu) -->
+    <!-- Etkileşimli Araçlar (Google Arama ve BIST AI Asistan) -->
     <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <form method="get" action="https://www.google.com/search" target="_blank" style="display: flex; gap: 8px;">
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; gap: 8px;">
+            <form method="get" action="https://www.google.com/search" target="_blank" style="display: flex; gap: 8px; flex: 1;">
                 <input type="hidden" name="q" value="site:borsa-raporlari.onrender.com">
                 <input type="text" name="q" placeholder="Google ile sitede ara..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;">
                 <button type="submit" style="background: #047857; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Ara</button>
             </form>
         </div>
-        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; gap: 8px;">
-            <input type="text" id="ai-chat-input" placeholder="Gemini'ye borsa hakkında sor..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') askGemini();">
-            <button onclick="askGemini()" style="background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Sor</button>
+
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center;">
+            <span style="color: #64748b; font-size: 13px;">🤖 BIST AI Asistan yapılandırılıyor...</span>
         </div>
     </div>
+
 
     <!-- Asıl Sayfa İçeriği -->
     
@@ -127,7 +128,7 @@ tr:last-child td { border-bottom:none; }
 <div class="grid"><a class="rcard" href="reports/2026-09-08.html"><span class="date">2026-09-08</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-07.html"><span class="date">2026-09-07</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-06.html"><span class="date">2026-09-06</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-05.html"><span class="date">2026-09-05</span><span class="sub">Günlük raporu aç &rarr;</span></a></div>
 
 <h2 class="section-title">Teknik Taramada Öne Çıkanlar</h2>
-<div class="grid"><a class="rcard" href="teknik-analiz.html"><span class="date">KCHOL</span><span class="sub">GÜÇLÜ AL &bull; 219.70 TL &bull; kanal %73 &bull; r=0.80</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">VAKBN</span><span class="sub">GÜÇLÜ AL &bull; 33.32 TL &bull; kanal %92 &bull; r=-0.34</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">TUPRS</span><span class="sub">AL &bull; 394.25 TL &bull; kanal %27 &bull; r=0.97</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">PETKM</span><span class="sub">AL &bull; 22.06 TL &bull; kanal %101 &bull; r=0.13</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">GUBRF</span><span class="sub">AL &bull; 491.25 TL &bull; kanal %83 &bull; r=-0.10</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">SAHOL</span><span class="sub">AL &bull; 94.05 TL &bull; kanal %86 &bull; r=-0.50</span></a></div>
+<div class="grid"><a class="rcard" href="teknik-analiz.html"><span class="date">KCHOL</span><span class="sub">GÜÇLÜ AL &bull; 219.70 TL &bull; kanal %73 &bull; r=0.80</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">BIMAS</span><span class="sub">GÜÇLÜ AL &bull; 418.00 TL &bull; kanal %70 &bull; r=0.71</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">VAKBN</span><span class="sub">GÜÇLÜ AL &bull; 33.32 TL &bull; kanal %92 &bull; r=-0.34</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">TUPRS</span><span class="sub">AL &bull; 394.25 TL &bull; kanal %27 &bull; r=0.97</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">PETKM</span><span class="sub">AL &bull; 22.06 TL &bull; kanal %101 &bull; r=0.13</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">GUBRF</span><span class="sub">AL &bull; 491.25 TL &bull; kanal %83 &bull; r=-0.10</span></a></div>
 <p style="margin:10px 0 0"><a href="teknik-analiz.html">Tüm teknik tarama tablosu &rarr;</a></p>
 
 <h2 class="section-title">Deneme Portföyü</h2>
@@ -140,13 +141,13 @@ tr:last-child td { border-bottom:none; }
 </div>
 <div class="card" style="margin-bottom:14px">
 <div style="position:relative; height:340px;">
-<canvas id="portfoy-grafik-865407"></canvas>
+<canvas id="portfoy-grafik-151930"></canvas>
 </div>
 <script>
 (function() {
     var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100469.15], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100469.19], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}]};
     var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
-    var ctx = document.getElementById('portfoy-grafik-865407').getContext('2d');
+    var ctx = document.getElementById('portfoy-grafik-151930').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -219,13 +220,6 @@ tr:last-child td { border-bottom:none; }
         .catch(err => {
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
         });
-
-    function askGemini() {
-        const query = document.getElementById('ai-chat-input').value;
-        if(query.trim()) {
-            window.open(`https://gemini.google.com/app?q=${encodeURIComponent(query)}`, '_blank');
-        }
-    }
 </script>
 <script type="text/javascript">
     function googleTranslateElementInit() {

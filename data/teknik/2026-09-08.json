@@ -14,6 +14,20 @@
     "genel": "GÜÇLÜ AL"
   },
   {
+    "hisse": "BIMAS",
+    "son": 418.0,
+    "deg60": 10.57,
+    "kisa": "AL",
+    "orta": "AL",
+    "uzun": "AL",
+    "wt": "AL",
+    "wt1": 33.8,
+    "konum": 70.0,
+    "r": 0.71,
+    "puan": 4,
+    "genel": "GÜÇLÜ AL"
+  },
+  {
     "hisse": "VAKBN",
     "son": 33.32,
     "deg60": 2.15,
@@ -150,6 +164,20 @@
     "wt1": 11.0,
     "konum": 64.0,
     "r": 0.16,
+    "puan": 2,
+    "genel": "NÖTR"
+  },
+  {
+    "hisse": "EREGL",
+    "son": 38.32,
+    "deg60": -2.64,
+    "kisa": "BEKLE",
+    "orta": "SAT",
+    "uzun": "AL",
+    "wt": "AL",
+    "wt1": -26.5,
+    "konum": 49.0,
+    "r": -0.5,
     "puan": 2,
     "genel": "NÖTR"
   },
