@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BIST 30 Günlük Raporlar</title>
+<title>Teknik Tarama - 2026-09-08</title>
 <!-- Google Tag Manager & Analytics -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -77,7 +77,7 @@ tr:last-child td { border-bottom:none; }
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="index.html" class="active">Raporlar</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="portfolio.html">Deneme Portföyü</a></nav>
+<nav><a href="index.html">Raporlar</a><a href="teknik-analiz.html" class="active">Teknik Tarama</a><a href="portfolio.html">Deneme Portföyü</a></nav>
 </div></header>
 
 <main class="wrap">
@@ -108,79 +108,17 @@ tr:last-child td { border-bottom:none; }
     <!-- Asıl Sayfa İçeriği -->
     
 <div class="hero">
-<h1>BIST 30 Günlük Piyasa Raporları</h1>
-<p>Her sabah 08:00'de otomatik üretilen, yapay zeka destekli BIST 30 analizleri ve sanal portföy takibi.</p>
-</div>
-<h2 class="section-title">Rapor Arşivi</h2>
-<div class="grid"><a class="rcard" href="reports/2026-09-08.html"><span class="date">2026-09-08</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-07.html"><span class="date">2026-09-07</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-06.html"><span class="date">2026-09-06</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-05.html"><span class="date">2026-09-05</span><span class="sub">Günlük raporu aç &rarr;</span></a></div>
-
-<h2 class="section-title">Teknik Taramada Öne Çıkanlar</h2>
-<div class="grid"><a class="rcard" href="teknik-analiz.html"><span class="date">KCHOL</span><span class="sub">GÜÇLÜ AL &bull; 219.70 TL &bull; kanal %73 &bull; r=0.80</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">VAKBN</span><span class="sub">GÜÇLÜ AL &bull; 33.32 TL &bull; kanal %92 &bull; r=-0.34</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">TUPRS</span><span class="sub">AL &bull; 394.25 TL &bull; kanal %27 &bull; r=0.97</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">PETKM</span><span class="sub">AL &bull; 22.06 TL &bull; kanal %101 &bull; r=0.13</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">GUBRF</span><span class="sub">AL &bull; 491.25 TL &bull; kanal %83 &bull; r=-0.10</span></a></div>
-<p style="margin:10px 0 0"><a href="teknik-analiz.html">Tüm teknik tarama tablosu &rarr;</a></p>
-
-<h2 class="section-title">Deneme Portföyü</h2>
-
-<div class="stats">
-<div class="stat"><div class="label">Güncel Değer</div><div class="value">102,352 TL</div></div>
-<div class="stat"><div class="label">Günlük Değişim</div><div class="value pos">+2.34%</div></div>
-<div class="stat"><div class="label">Toplam Getiri</div><div class="value pos">+2.35%</div></div>
-<div class="stat"><div class="label">Başlangıç</div><div class="value" style="font-size:16px">2026-09-06</div></div>
-</div>
-<div class="card" style="margin-bottom:14px">
-<div style="position:relative; height:340px;">
-<canvas id="portfoy-grafik-903514"></canvas>
-</div>
-<script>
-(function() {
-    var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100469.15], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100469.19], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}]};
-    var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
-    var ctx = document.getElementById('portfoy-grafik-903514').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: veri.labels,
-            datasets: veri.datasets.map(function(d) {
-                return Object.assign({}, d, {
-                    borderWidth: 3,
-                    pointRadius: 2,
-                    pointHitRadius: 14,
-                    tension: 0.15,
-                    fill: false,
-                });
-            })
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: { mode: 'nearest', intersect: false },
-            plugins: {
-                legend: { position: 'top', labels: { boxWidth: 12, font: { size: 12, weight: '600' } } },
-                tooltip: {
-                    callbacks: {
-                        label: function(ctx2) {
-                            var idx = ctx2.datasetIndex;
-                            var ilk = baslangiclar[idx];
-                            var son = ctx2.parsed.y;
-                            var yuzde = ilk ? ((son - ilk) / ilk * 100) : 0;
-                            var isaret = yuzde >= 0 ? '+' : '';
-                            var sonStr = son.toLocaleString('tr-TR', {maximumFractionDigits: 2});
-                            return ctx2.dataset.label + ': ' + sonStr + ' TL (' + isaret + yuzde.toFixed(2) + '%)';
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: { ticks: { callback: function(v) { return v.toLocaleString('tr-TR') + ' TL'; } } },
-                x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } }
-            }
-        }
-    });
-})();
-</script>
+<h1>Teknik Tarama</h1>
+<p>BIST 30 hisseleri icin otomatik teknik tarama: EMA dizilim sinyalleri (kısa 5-8-13-21, orta 34-55, uzun 89-144),
+Wave Trend osilatörü ve 60 günlük regresyon kanalı konumu. Kanal konumu %0=alt bant, %100=üst bant;
+Pearson (r) trendin gücünü gösterir. Her gün raporla birlikte otomatik güncellenir.</p>
 </div>
 <div class="card" style="padding:8px 24px 16px">
-<table><tr><th>Hisse</th><th>Adet</th><th>İlk Alım</th><th>Güncel</th><th>Getiri</th></tr><tr><td><strong>AEFES</strong></td><td>180.67</td><td>18.45 TL</td><td>18.79 TL</td><td class='pos'>+1.84%</td></tr><tr><td><strong>AKBNK</strong></td><td>46.39</td><td>71.85 TL</td><td>73.05 TL</td><td class='pos'>+1.67%</td></tr><tr><td><strong>ASELS</strong></td><td>8.59</td><td>388.25 TL</td><td>392.50 TL</td><td class='pos'>+1.09%</td></tr><tr><td><strong>ASTOR</strong></td><td>11.30</td><td>295.00 TL</td><td>301.00 TL</td><td class='pos'>+2.03%</td></tr><tr><td><strong>BIMAS</strong></td><td>8.02</td><td>415.75 TL</td><td>418.00 TL</td><td class='pos'>+0.54%</td></tr><tr><td><strong>DSTKF</strong></td><td>1.44</td><td>2320.00 TL</td><td>2390.00 TL</td><td class='pos'>+3.02%</td></tr><tr><td><strong>EKGYO</strong></td><td>171.47</td><td>19.44 TL</td><td>19.96 TL</td><td class='pos'>+2.67%</td></tr><tr><td><strong>ENKAI</strong></td><td>38.20</td><td>87.25 TL</td><td>89.00 TL</td><td class='pos'>+2.01%</td></tr><tr><td><strong>EREGL</strong></td><td>89.61</td><td>37.20 TL</td><td>38.32 TL</td><td class='pos'>+3.01%</td></tr><tr><td><strong>FROTO</strong></td><td>43.18</td><td>77.20 TL</td><td>79.65 TL</td><td class='pos'>+3.17%</td></tr><tr><td><strong>GARAN</strong></td><td>25.37</td><td>131.40 TL</td><td>133.50 TL</td><td class='pos'>+1.60%</td></tr><tr><td><strong>GUBRF</strong></td><td>6.96</td><td>478.75 TL</td><td>491.25 TL</td><td class='pos'>+2.61%</td></tr><tr><td><strong>ISCTR</strong></td><td>256.21</td><td>13.01 TL</td><td>13.05 TL</td><td class='pos'>+0.31%</td></tr><tr><td><strong>KCHOL</strong></td><td>15.50</td><td>215.10 TL</td><td>219.70 TL</td><td class='pos'>+2.14%</td></tr><tr><td><strong>KRDMD</strong></td><td>76.59</td><td>43.52 TL</td><td>45.20 TL</td><td class='pos'>+3.86%</td></tr><tr><td><strong>MGROS</strong></td><td>6.33</td><td>527.00 TL</td><td>528.00 TL</td><td class='pos'>+0.19%</td></tr><tr><td><strong>PETKM</strong></td><td>166.17</td><td>20.06 TL</td><td>22.06 TL</td><td class='pos'>+9.97%</td></tr><tr><td><strong>PGSUS</strong></td><td>22.42</td><td>148.70 TL</td><td>149.40 TL</td><td class='pos'>+0.47%</td></tr><tr><td><strong>SAHOL</strong></td><td>36.00</td><td>92.60 TL</td><td>94.05 TL</td><td class='pos'>+1.57%</td></tr><tr><td><strong>SASA</strong></td><td>1,455.60</td><td>2.29 TL</td><td>2.51 TL</td><td class='pos'>+9.61%</td></tr><tr><td><strong>SISE</strong></td><td>85.30</td><td>39.08 TL</td><td>41.66 TL</td><td class='pos'>+6.60%</td></tr><tr><td><strong>TAVHL</strong></td><td>12.43</td><td>268.25 TL</td><td>269.75 TL</td><td class='pos'>+0.56%</td></tr><tr><td><strong>TCELL</strong></td><td>33.96</td><td>98.15 TL</td><td>99.05 TL</td><td class='pos'>+0.92%</td></tr><tr><td><strong>THYAO</strong></td><td>11.26</td><td>296.00 TL</td><td>296.75 TL</td><td class='pos'>+0.25%</td></tr><tr><td><strong>TOASO</strong></td><td>12.15</td><td>274.25 TL</td><td>288.00 TL</td><td class='pos'>+5.01%</td></tr><tr><td><strong>TRALT</strong></td><td>65.62</td><td>50.80 TL</td><td>51.30 TL</td><td class='pos'>+0.98%</td></tr><tr><td><strong>TTKOM</strong></td><td>64.23</td><td>51.90 TL</td><td>52.35 TL</td><td class='pos'>+0.87%</td></tr><tr><td><strong>TUPRS</strong></td><td>8.58</td><td>388.50 TL</td><td>394.25 TL</td><td class='pos'>+1.48%</td></tr><tr><td><strong>VAKBN</strong></td><td>99.15</td><td>33.62 TL</td><td>33.32 TL</td><td class='neg'>-0.89%</td></tr><tr><td><strong>YKBNK</strong></td><td>92.85</td><td>35.90 TL</td><td>36.26 TL</td><td class='pos'>+1.00%</td></tr></table>
-<p style="margin:12px 0 4px"><a href="portfolio.html">Detaylı portföy geçmişi &rarr;</a></p>
+<table>
+<tr><th>Hisse</th><th>Son</th><th>60G %</th><th>Kısa Vade</th><th>Orta Vade</th><th>Uzun Vade</th><th>Wave Trend</th><th>Kanal</th><th>Pearson</th><th>Genel</th></tr>
+<tr><td><strong>KCHOL</strong></td><td>219.70 TL</td><td class='pos'>+17.2%</td><td class='pos'>AL</td><td class='pos'>AL</td><td class='pos'>AL</td><td class='pos'>AL</td><td>73%</td><td>0.80</td><td class='pos'>GÜÇLÜ AL</td></tr><tr><td><strong>VAKBN</strong></td><td>33.32 TL</td><td class='pos'>+2.1%</td><td class='pos'>AL</td><td class='pos'>AL</td><td class='pos'>AL</td><td class='pos'>AL</td><td>92%</td><td>-0.34</td><td class='pos'>GÜÇLÜ AL</td></tr><tr><td><strong>TUPRS</strong></td><td>394.25 TL</td><td class='pos'>+68.6%</td><td class='pos'>AL</td><td class='pos'>AL</td><td class='pos'>AL</td><td class='neg'>SAT</td><td>27%</td><td>0.97</td><td class='pos'>AL</td></tr><tr><td><strong>PETKM</strong></td><td>22.06 TL</td><td class='pos'>+13.8%</td><td class='pos'>AL</td><td class=''>BEKLE</td><td class='pos'>AL</td><td class='pos'>AL</td><td>101%</td><td>0.13</td><td class='pos'>AL</td></tr><tr><td><strong>GUBRF</strong></td><td>491.25 TL</td><td class='pos'>+2.6%</td><td class='pos'>AL</td><td class=''>BEKLE</td><td class='pos'>AL</td><td class='pos'>AL</td><td>83%</td><td>-0.10</td><td class='pos'>AL</td></tr><tr><td><strong>TRALT</strong></td><td>51.30 TL</td><td class='pos'>+18.4%</td><td class=''>BEKLE</td><td class='pos'>AL</td><td class='pos'>AL</td><td class='neg'>SAT</td><td>50%</td><td>0.31</td><td class=''>NÖTR</td></tr><tr><td><strong>TOASO</strong></td><td>288.00 TL</td><td class='neg'>-2.5%</td><td class=''>BEKLE</td><td class=''>BEKLE</td><td class='pos'>AL</td><td class='pos'>AL</td><td>116%</td><td>-0.85</td><td class=''>NÖTR</td></tr><tr><td><strong>SASA</strong></td><td>2.51 TL</td><td class='neg'>-3.5%</td><td class=''>BEKLE</td><td class=''>BEKLE</td><td class=''>BEKLE</td><td class='pos'>AL</td><td>92%</td><td>-0.60</td><td class='neg'>SAT</td></tr><tr><td><strong>AEFES</strong></td><td>18.79 TL</td><td class='neg'>-7.9%</td><td class=''>BEKLE</td><td class='neg'>SAT</td><td class=''>BEKLE</td><td class='pos'>AL</td><td>44%</td><td>-0.65</td><td class='neg'>SAT</td></tr><tr><td><strong>TCELL</strong></td><td>99.05 TL</td><td class='neg'>-10.5%</td><td class=''>BEKLE</td><td class='neg'>SAT</td><td class='neg'>SAT</td><td class='pos'>DİPTE AL</td><td>52%</td><td>-0.86</td><td class='neg'>SAT</td></tr><tr><td><strong>TTKOM</strong></td><td>52.35 TL</td><td class='neg'>-18.3%</td><td class=''>BEKLE</td><td class='neg'>SAT</td><td class='neg'>SAT</td><td class='pos'>AL</td><td>76%</td><td>-0.89</td><td class='neg'>SAT</td></tr><tr><td><strong>MGROS</strong></td><td>528.00 TL</td><td class='neg'>-21.5%</td><td class='neg'>SAT</td><td class='neg'>SAT</td><td class='neg'>SAT</td><td class='pos'>DİPTE AL</td><td>40%</td><td>-0.92</td><td class='neg'>SAT</td></tr><tr><td><strong>PGSUS</strong></td><td>149.40 TL</td><td class='neg'>-13.1%</td><td class=''>BEKLE</td><td class='neg'>SAT</td><td class='neg'>SAT</td><td class='pos'>AL</td><td>96%</td><td>-0.95</td><td class='neg'>SAT</td></tr><tr><td><strong>TAVHL</strong></td><td>269.75 TL</td><td class='neg'>-1.3%</td><td class=''>BEKLE</td><td class='neg'>SAT</td><td class='neg'>SAT</td><td class='neg'>SAT</td><td>51%</td><td>-0.34</td><td class='neg'>GÜÇLÜ SAT</td></tr><tr><td><strong>YKBNK</strong></td><td>36.26 TL</td><td class='neg'>-4.8%</td><td class=''>BEKLE</td><td class=''>BEKLE</td><td class=''>BEKLE</td><td class='neg'>SAT</td><td>76%</td><td>-0.55</td><td class='neg'>GÜÇLÜ SAT</td></tr><tr><td><strong>THYAO</strong></td><td>296.75 TL</td><td class='neg'>-3.6%</td><td class=''>BEKLE</td><td class='neg'>SAT</td><td class=''>BEKLE</td><td class='neg'>SAT</td><td>49%</td><td>-0.84</td><td class='neg'>GÜÇLÜ SAT</td></tr>
+</table>
+<p style="margin:12px 0 4px; color:var(--muted); font-size:13px">Bugün 16 hisse tarandi; 2 hisse GÜÇLÜ AL sinyalinde. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
 </div>
 </main>
 

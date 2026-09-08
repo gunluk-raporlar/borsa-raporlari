@@ -909,6 +909,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok=""):
     """Tum sayfalar icin ortak iskelet (ust menu + govde + altbilgi)."""
     a_r = ' class="active"' if aktif == "raporlar" else ""
     a_p = ' class="active"' if aktif == "portfoy" else ""
+    a_t = ' class="active"' if aktif == "teknik" else ""
     return f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -926,7 +927,7 @@ j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a></nav>
+<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a></nav>
 </div></header>
 
 <main class="wrap">
@@ -1143,7 +1144,7 @@ def _portfoy_istatistikleri(p):
 </div>"""
 
 
-def build_index_html(p, rapor_dosyalari):
+def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     if rapor_dosyalari:
         kartlar = "".join(
             f'<a class="rcard" href="reports/{fn}"><span class="date">{fn[:-5]}</span>'
@@ -1152,6 +1153,18 @@ def build_index_html(p, rapor_dosyalari):
         )
     else:
         kartlar = '<p style="color:var(--muted)">Henüz rapor yok.</p>'
+
+    teknik_bolumu = ""
+    if teknik_oneriler:
+        kart = "".join(
+            f'<a class="rcard" href="teknik-analiz.html"><span class="date">{s["hisse"]}</span>'
+            f'<span class="sub">{s["genel"]} &bull; {s["son"]:,.2f} TL &bull; kanal %{s["konum"]:.0f} &bull; r={s["r"]:.2f}</span></a>'
+            for s in teknik_oneriler
+        )
+        teknik_bolumu = f"""
+<h2 class="section-title">Teknik Taramada Öne Çıkanlar</h2>
+<div class="grid">{kart}</div>
+<p style="margin:10px 0 0"><a href="teknik-analiz.html">Tüm teknik tarama tablosu &rarr;</a></p>"""
 
     portfoy_bolumu = ""
     if p and p.get("history"):
@@ -1173,6 +1186,7 @@ def build_index_html(p, rapor_dosyalari):
 </div>
 <h2 class="section-title">Rapor Arşivi</h2>
 <div class="grid">{kartlar}</div>
+{teknik_bolumu}
 {portfoy_bolumu}"""
     return _sayfa("BIST 30 Günlük Raporlar", icerik, "raporlar")
 
@@ -1205,6 +1219,166 @@ def build_portfolio_html(p):
     return _sayfa("Deneme Portföyü", icerik, "portfoy")
 
 
+# ---------- TEKNIK TARAMA (EMA / Wave Trend / Regresyon Kanali) ----------
+# kursatsenturk.com Python serisindeki stratejilerin BIST 30 uyarlamasi:
+#   - EMA dizilimi sinyalleri: kisa (5-8-13-21), orta (34-55), uzun (89-144)
+#   - Wave Trend osilatoru: WT1/WT2 kesisimi, asiri alim/satim (+/-53)
+#   - Son 60 gun lineer regresyon kanali + Pearson korelasyonu (trend gucu)
+# Tamamen matematikseldir; LLM kullanmaz ve her gun otomatik guncellenir.
+
+def _ema(seri, periyot):
+    return seri.ewm(span=periyot, adjust=False).mean()
+
+
+def _wave_trend(kapanis):
+    """Wave Trend osilatoru: ESA=EMA(k,10), CI=(k-ESA)/(0.015*D), WT1=EMA(CI,21), WT2=SMA(WT1,4)."""
+    esa = _ema(kapanis, 10)
+    d = (kapanis - esa).abs().ewm(span=10, adjust=False).mean()
+    ci = (kapanis - esa) / (0.015 * d)
+    wt1 = ci.ewm(span=21, adjust=False).mean()
+    wt2 = wt1.rolling(4).mean()
+    return wt1, wt2
+
+
+def teknik_tarama_yap():
+    """BIST 30 icin teknik tarama tablosunu uretir; satir listesi (dict) doner."""
+    try:
+        from isyatirimhisse import fetch_stock_data
+    except Exception as e:
+        logger.warning("[Teknik Tarama] isyatirimhisse yok: %s", e)
+        return []
+
+    import numpy as np
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    simdi = datetime.now(tz)
+    bugun = simdi.strftime("%Y-%m-%d")
+    bitis = simdi.strftime("%d-%m-%Y")
+    baslangic = (simdi - timedelta(days=300)).strftime("%d-%m-%Y")  # EMA144 + regresyon icin ~200 is gunu
+
+    logger.info("[Teknik Tarama] %d hisse icin 300 gunluk veri cekiliyor...", len(HISSELER))
+    print(f"[Teknik Tarama] {len(HISSELER)} hisse icin 300 gunluk veri cekiliyor...", flush=True)
+    try:
+        df = fetch_stock_data(HISSELER, start_date=baslangic, end_date=bitis)
+    except Exception as e:
+        logger.warning("[Teknik Tarama] Veri cekilemedi: %s", e)
+        return []
+    if df is None or df.empty:
+        return []
+
+    df.columns = [str(c).upper() for c in df.columns]
+    kod_kolonu = next((c for c in ["HGDG_HS_KODU", "STOCK_CODE", "SYMBOL", "HIZ"] if c in df.columns), None)
+    kapanis_kolonu = next((c for c in ["HGDG_KAPANIS", "KAPANIS", "CLOSE"] if c in df.columns), None)
+    if not kod_kolonu or not kapanis_kolonu:
+        return []
+
+    satirlar = []
+    for sira, hisse in enumerate(HISSELER, 1):
+        seri = df[df[kod_kolonu] == hisse][kapanis_kolonu].astype(float).dropna()
+        if len(seri) < 145:  # EMA144 anlamlı olsun
+            logger.info("[Teknik Tarama] %d/%d %s: yetersiz gecmis (%d gun), atlandi", sira, len(HISSELER), hisse, len(seri))
+            continue
+        son = float(seri.iloc[-1])
+        emalar = {p: _ema(seri, p) for p in (5, 8, 13, 21, 34, 55, 89, 144)}
+        e = {p: float(emalar[p].iloc[-1]) for p in emalar}
+
+        # Kisa vade: 5>8>13>21 dizilimi + fiyatin EMA5 ustunde olmasi
+        if son > e[5] > e[8] > e[13] > e[21]:
+            kisa = "AL"
+        elif son < e[5] < e[8] < e[13] < e[21]:
+            kisa = "SAT"
+        else:
+            kisa = "BEKLE"
+        # Orta/uzun vade: EMA cifti yonu + fiyatin hizali EMA'nin tarafinda olmasi
+        orta = "AL" if (e[34] > e[55] and son > e[34]) else ("SAT" if (e[34] < e[55] and son < e[34]) else "BEKLE")
+        uzun = "AL" if (e[89] > e[144] and son > e[89]) else ("SAT" if (e[89] < e[144] and son < e[89]) else "BEKLE")
+
+        wt1, wt2 = _wave_trend(seri)
+        w1, w2 = float(wt1.iloc[-1]), float(wt2.iloc[-1])
+        if pd.isna(w1) or pd.isna(w2):
+            wt_sinyal = "BEKLE"  # duz/yetersiz seride CI 0/0 olabilir
+        elif w1 < -53 and w1 > w2:
+            wt_sinyal = "DİPTE AL"
+        elif w1 > 53 and w1 < w2:
+            wt_sinyal = "TEPEDE SAT"
+        elif w1 > w2:
+            wt_sinyal = "AL"
+        else:
+            wt_sinyal = "SAT"
+
+        # Son 60 gun lineer regresyon kanali (±2 std) + Pearson
+        son60 = seri.iloc[-60:]
+        x = np.arange(len(son60))
+        egim, kesim = np.polyfit(x, son60.values, 1)
+        orta_cizgi = egim * x + kesim
+        std = float((son60.values - orta_cizgi).std())
+        ust, alt = orta_cizgi[-1] + 2 * std, orta_cizgi[-1] - 2 * std
+        konum = ((son - alt) / (ust - alt) * 100) if ust > alt else 50.0
+        r = float(np.corrcoef(x, son60.values)[0, 1]) if son60.std() > 0 else 0.0
+        deg60 = (son / float(seri.iloc[-61]) - 1) * 100 if len(seri) >= 61 else 0.0
+
+        # Genel degerlendirme: yonlu sinyal sayisi (kisa/orta/uzun/WT)
+        puansay = sum(1 for s in (kisa, orta, uzun) if s == "AL") + (1 if wt_sinyal in ("AL", "DİPTE AL") else 0)
+        if puansay >= 4:
+            genel = "GÜÇLÜ AL"
+        elif puansay == 3:
+            genel = "AL"
+        elif puansay == 2:
+            genel = "NÖTR"
+        elif puansay == 1:
+            genel = "SAT"
+        else:
+            genel = "GÜÇLÜ SAT"
+
+        satirlar.append({
+            "hisse": hisse, "son": round(son, 2), "deg60": round(deg60, 2),
+            "kisa": kisa, "orta": orta, "uzun": uzun,
+            "wt": wt_sinyal, "wt1": round(w1, 1),
+            "konum": round(konum, 0), "r": round(r, 2),
+            "puan": puansay, "genel": genel,
+        })
+
+    # Guclu AL'ler one, iclerinde trend gucu (Pearson) yuksek olanlar basta
+    satirlar.sort(key=lambda s: (s["puan"], s["r"]), reverse=True)
+    save_daily("teknik", bugun, satirlar)
+    logger.info("[Teknik Tarama] %d hisse tarandi; guclu AL: %d", len(satirlar),
+                sum(1 for s in satirlar if s["genel"] in ("GÜÇLÜ AL", "AL")))
+    print(f"[Teknik Tarama] {len(satirlar)} hisse tarandi.", flush=True)
+    return satirlar
+
+
+def _teknik_sinyal_hucre(sinyal):
+    sinif = "pos" if sinyal in ("AL", "GÜÇLÜ AL", "DİPTE AL") else ("neg" if sinyal in ("SAT", "GÜÇLÜ SAT", "TEPEDE SAT") else "")
+    return f"<td class='{sinif}'>{sinyal}</td>"
+
+
+def build_teknik_html(satirlar, date_str):
+    satir_html = "".join(
+        f"<tr><td><strong>{s['hisse']}</strong></td><td>{s['son']:,.2f} TL</td>"
+        f"<td class='{_renk(s['deg60'])}'>{s['deg60']:+.1f}%</td>"
+        f"{_teknik_sinyal_hucre(s['kisa'])}{_teknik_sinyal_hucre(s['orta'])}{_teknik_sinyal_hucre(s['uzun'])}"
+        f"{_teknik_sinyal_hucre(s['wt'])}"
+        f"<td>{s['konum']:.0f}%</td><td>{s['r']:.2f}</td>"
+        f"{_teknik_sinyal_hucre(s['genel'])}</tr>"
+        for s in satirlar
+    )
+    guclu = sum(1 for s in satirlar if s["genel"] == "GÜÇLÜ AL")
+    icerik = f"""
+<div class="hero">
+<h1>Teknik Tarama</h1>
+<p>BIST 30 hisseleri icin otomatik teknik tarama: EMA dizilim sinyalleri (kısa 5-8-13-21, orta 34-55, uzun 89-144),
+Wave Trend osilatörü ve 60 günlük regresyon kanalı konumu. Kanal konumu %0=alt bant, %100=üst bant;
+Pearson (r) trendin gücünü gösterir. Her gün raporla birlikte otomatik güncellenir.</p>
+</div>
+<div class="card" style="padding:8px 24px 16px">
+<table>
+<tr><th>Hisse</th><th>Son</th><th>60G %</th><th>Kısa Vade</th><th>Orta Vade</th><th>Uzun Vade</th><th>Wave Trend</th><th>Kanal</th><th>Pearson</th><th>Genel</th></tr>
+{satir_html}
+</table>
+<p style="margin:12px 0 4px; color:var(--muted); font-size:13px">Bugün {len(satirlar)} hisse tarandi; {guclu} hisse GÜÇLÜ AL sinyalinde. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
+</div>"""
+    return _sayfa(f"Teknik Tarama - {date_str}", icerik, "teknik")
+
+
 if __name__ == "__main__":
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     date_str = datetime.now(tz).strftime('%Y-%m-%d')
@@ -1216,9 +1390,22 @@ if __name__ == "__main__":
         f.write(build_html(report, date_str))
 
     raporlar = sorted((fn for fn in os.listdir("reports") if fn.endswith(".html")), reverse=True)
+
+    # Teknik tarama: LLM'den bagimsiz, saf matematik; basarisiz olursa diger
+    # sayfalarin uretimini bozmamasi icin ayri try/except icinde.
+    teknik_oneriler = []
+    try:
+        t_satirlar = teknik_tarama_yap()
+        if t_satirlar:
+            with open("teknik-analiz.html", "w", encoding="utf-8") as f:
+                f.write(build_teknik_html(t_satirlar, date_str))
+            teknik_oneriler = [s for s in t_satirlar if s["genel"] in ("GÜÇLÜ AL", "AL")][:6]
+    except Exception:
+        logger.exception("[Teknik Tarama] sayfa uretilemedi; rapor uretimini etkilemez.")
+
     p = load_portfolio()
     with open("index.html", "w", encoding="utf-8") as f:
-        f.write(build_index_html(p, raporlar))
+        f.write(build_index_html(p, raporlar, teknik_oneriler))
     if p and p.get("history"):
         with open("portfolio.html", "w", encoding="utf-8") as f:
             f.write(build_portfolio_html(p))
