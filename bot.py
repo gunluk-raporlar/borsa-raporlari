@@ -1248,7 +1248,7 @@ def _kendi_ticker(kok=""):
   }}
   yukle();
   setInterval(yukle, 5 * 60 * 1000);
-}});
+}})();  // IIFE: tanimlandigi anda calistir
 </script>"""
 
 
