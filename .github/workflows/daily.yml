@@ -24,6 +24,7 @@ jobs:
           ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
           CF_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           for deneme in 1 2 3; do
             echo "=== Bot calistirma denemesi: $deneme/3 ==="

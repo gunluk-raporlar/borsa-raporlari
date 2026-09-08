@@ -46,13 +46,20 @@ CF_API_KEY = os.environ.get("CF_API_KEY") or os.environ.get("CLOUDFLARE_API_KEY"
 CF_ACCOUNT_ID = os.environ.get("CF_ACCOUNT_ID", "")
 CF_MODELS = [m.strip() for m in os.environ.get("CF_MODELS", "").split(",") if m.strip()]
 
+# Ucuncu yedek: OpenRouter (ucretsiz modeller ":free" ekli olur; fonlansiz
+# hesapta ~50 istek/gun). Anahtar: https://openrouter.ai/settings/keys
+OR_API_KEY = os.environ.get("OR_API_KEY") or os.environ.get("OPENROUTER_API_KEY", "")
+OR_BASE_URL = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1")
+OR_MODELS = [m.strip() for m in os.environ.get("OR_MODELS", "").split(",") if m.strip()]
+
 # Model emekleme durumlarina karsi otomatik secim icin tercih siralari
 # (icerik eslesmesiyle bulunur; saglayici tam adlandirmayi degistirse de calisir).
 GROQ_MODEL_TERCIH = ["gpt-oss-120b", "llama-4-scout", "llama-4-maverick", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
 CF_MODEL_TERCIH = ["llama-3.3-70b-instruct-fp8-fast", "llama-4-scout", "llama-3.3-70b-instruct", "llama-3.1-8b-instruct"]
+OR_MODEL_TERCIH = ["deepseek-chat", "llama-3.3-70b", "qwen3-235b", "qwen3-32b", "gpt-oss-120b"]
 
-if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY:
-    raise SystemExit("AMD_API_KEY, ALT_API_KEY veya CF_API_KEY'den en az biri ayarlanmali!")
+if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY and not OR_API_KEY:
+    raise SystemExit("AMD_API_KEY, ALT_API_KEY, CF_API_KEY veya OR_API_KEY'den en az biri ayarlanmali!")
 
 # Varsayilan model: 1B parametrelik MiniCPM5-1B karmasik Turkce promptlarda Ingilizce
 # ic-konusma uretip talimatlari rapora sicrayabilir ve tekrar dongusune girebilir;
@@ -96,6 +103,13 @@ cf_client = OpenAI(
     timeout=240.0,
     max_retries=0,
 ) if CF_API_KEY and CF_ACCOUNT_ID else None
+
+or_client = OpenAI(
+    api_key=OR_API_KEY,
+    base_url=OR_BASE_URL,
+    timeout=240.0,
+    max_retries=0,
+) if OR_API_KEY else None
 
 # Takip edilen BIST30 hisseleri (Guncel liste)
 HISSELER = [
@@ -357,24 +371,28 @@ def _dil_karismis(metin: str) -> bool:
     return ing >= 8 and ing > turkce * 2
 
 
-def _havuz_modelleri(saglayici, env_listesi, tercih, etiket):
+def _havuz_modelleri(saglayici, env_listesi, tercih, etiket, suzgec=None):
     """Saglayicinin kullanilabilir modellerini belirler.
 
-    env_listesi doluysa (ALT_MODELS / CF_MODELS ile acik verilmisse) oldugu
-    kullanilir; bos ise saglayicinin /models listesi sorgulanir ve tercih
-    sirasindaki ilk mevcut modeller secilir — boylece saglayici bir modeli
-    emekli ettiginde isim degisikligini elle yapmak gerekmez. Liste de
-    alinamazsa tercih sirasi dogrudan denenir.
+    env_listesi doluysa (ALT_MODELS / CF_MODELS / OR_MODELS ile acik
+    verilmisse) oldugu kullanilir; bos ise saglayicinin /models listesi
+    sorgulanir ve tercih sirasindaki ilk mevcut modeller secilir — boylece
+    saglayici bir modeli emekli ettiginde isim degisikligini elle yapmak
+    gerekmez. Liste de alinamazsa tercih sirasi dogrudan denenir.
+    suzgec: model kimligine uygulanacak ek filtre (orn. OpenRouter'da yalnizca
+    ":free" ekli modeller).
     """
     if env_listesi:
         return env_listesi
     try:
         mevcut = [m.id for m in saglayici.models.list()]
+        if suzgec:
+            mevcut = [m for m in mevcut if suzgec(m)]
         secilen = [t for t in tercih if any(t in m for m in mevcut)]
         if secilen:
             logger.info("%s icin mevcut modellerden secilenler: %s", etiket, secilen)
             return secilen
-        logger.warning("%s /models listesi bos; tercih sirasi dogrudan denenecek.", etiket)
+        logger.warning("%s /models listesi bos veya tercihlerle eslesmedi; tercih sirasi dogrudan denenecek.", etiket)
     except Exception as e:
         logger.warning("[Uyari] %s model listesi alinamadi, tercih sirasiyla denenecek: %s", etiket, e)
     return tercih
@@ -409,11 +427,13 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
     # once gelir cunku Groq'un ucretsiz katmanindaki dar dakikalik token siniri
     # buyuk promptlarda 429 verir; ozette ise Groq oncelidir (kucuk cagri).
     # sirasi parametresiyle oncelik degistirilebilir.
-    sirasi = sirasi or ("AMD", "CF", "YEDEK")
+    sirasi = sirasi or ("AMD", "CF", "YEDEK", "OR")
     havuzlar = {
         "AMD": (client, AMD_MODEL_LIST or [AMD_MODEL]),
         "CF": (cf_client, _havuz_modelleri(cf_client, CF_MODELS, CF_MODEL_TERCIH, "Cloudflare") if cf_client else CF_MODELS),
         "YEDEK": (alt_client, _havuz_modelleri(alt_client, ALT_MODELS, GROQ_MODEL_TERCIH, "Groq") if alt_client else ALT_MODELS),
+        "OR": (or_client, _havuz_modelleri(or_client, OR_MODELS, OR_MODEL_TERCIH, "OpenRouter",
+                                           suzgec=lambda m: m.endswith(":free")) if or_client else OR_MODELS),
     }
     istekler = []
     for etiket in sirasi:
@@ -572,9 +592,10 @@ def summary_agent(state: AgentState):
    [RAPOR]:
    {rapor[:6000]}
    """
-    # Ozet kucuk bir cagri oldugu icin once ucretsiz yedekler (Groq -> Cloudflare)
-    # kullanilir; boylece ana rapor icin AMD'nin gunluk kotasini tuketmez.
-    ozet = llm_call(prompt, sirasi=("YEDEK", "CF", "AMD"))
+    # Ozet kucuk bir cagri oldugu icin once ucretsiz yedekler (Groq ->
+    # Cloudflare -> OpenRouter) kullanilir; boylece ana rapor icin AMD'nin
+    # gunluk kotasini tuketmez.
+    ozet = llm_call(prompt, sirasi=("YEDEK", "CF", "OR", "AMD"))
     save_daily("summaries", bugun, {"ozet": ozet})
     return {}
 
