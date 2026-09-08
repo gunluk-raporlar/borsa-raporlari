@@ -1232,7 +1232,8 @@ j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js
 }})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
 <style>{BASE_CSS}</style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<script type="module" src="https://3163e358-b6cf-4a3e-835f-da3e39314317.search.ai.cloudflare.com/assets/v0.0.25/search-snippet.es.js"></script>
+<link rel="stylesheet" href="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/assets/v0.0.25/search-modal-snippet.css" />
+<script type="module" src="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/assets/v0.0.25/search-modal-snippet.js"></script>
 </head>
 <body>
 <header class="topbar"><div class="inner">
@@ -1254,7 +1255,7 @@ j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js
     <!-- Etkileşimli Araçlar (Google Arama ve BIST AI Asistan) -->
     <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
         <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; min-height: 52px;">
-            <search-modal-snippet api-url="https://3163e358-b6cf-4a3e-835f-da3e39314317.search.ai.cloudflare.com/" placeholder="Borsa raporları hakkında ara ve sor..."></search-modal-snippet>
+            <search-modal-snippet api-url="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/" placeholder="Borsa raporları hakkında ara ve sor..."></search-modal-snippet>
         </div>
 {_ai_kutu()}
     </div>
