@@ -52,6 +52,11 @@ OR_API_KEY = os.environ.get("OR_API_KEY") or os.environ.get("OPENROUTER_API_KEY"
 OR_BASE_URL = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1")
 OR_MODELS = [m.strip() for m in os.environ.get("OR_MODELS", "").split(",") if m.strip()]
 
+# Sitedeki AI asistan widget'i icin Z.ai anahtari (ucretsiz GLM-Flash modelleri).
+# DIKKAT: Anahtar HTML'e gomulur — bunun icin ozel/alinabilir bir ucretsiz
+# anahtar kullanin (ZAI_API_KEY secret'i). Sizilirsa yalnizca ucretsiz kota yanar.
+WIDGET_AI_KEY = os.environ.get("WIDGET_AI_KEY", "")
+
 # Model emekleme durumlarina karsi otomatik secim icin tercih siralari
 # (icerik eslesmesiyle bulunur; saglayici tam adlandirmayi degistirse de calisir).
 GROQ_MODEL_TERCIH = ["gpt-oss-120b", "llama-4-scout", "llama-4-maverick", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
@@ -905,6 +910,92 @@ tr:last-child td { border-bottom:none; }
 """
 
 
+def _ai_kutu():
+    """AI asistan soru kutusu (interactive-box'in sag sutunu)."""
+    if not WIDGET_AI_KEY:
+        return """
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center;">
+            <span style="color: #64748b; font-size: 13px;">🤖 BIST AI Asistan yapılandırılıyor...</span>
+        </div>"""
+    return """
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="ai-input" placeholder="BIST AI asistanına sorun..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') aiSor();">
+                <button onclick="aiSor()" id="ai-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Sor</button>
+            </div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">
+                <span class="ai-chip" onclick="aiChip(this)">Piyasa özeti ne?</span>
+                <span class="ai-chip" onclick="aiChip(this)">RSI ve MACD nedir?</span>
+                <span class="ai-chip" onclick="aiChip(this)">Destek ve direnç nedir?</span>
+            </div>
+        </div>"""
+
+
+def _ai_panel():
+    """AI asistan yanit paneli + GLM Flash cagrisi yapan JavaScript.
+
+    Anahtar tarayiciya gomulur; ucretsiz Flash modelleri kullanilir
+    (glm-4.7-flash -> glm-4.5-flash yedegi)."""
+    if not WIDGET_AI_KEY:
+        return ""
+    return """
+<div id="ai-panel" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; font-size: 14px; line-height: 1.6;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <strong style="color: #0f766e;">🤖 BIST AI Asistan</strong>
+        <a href="javascript:void(0)" onclick="document.getElementById('ai-panel').style.display='none'" style="color: #64748b; text-decoration: none; font-size: 18px; line-height: 1;">&times;</a>
+    </div>
+    <div id="ai-answer"></div>
+    <div style="margin-top: 8px; color: #64748b; font-size: 12px;">Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir. Model: GLM-Flash (Z.ai)</div>
+</div>
+<style>
+.ai-chip { background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; border-radius: 999px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
+.ai-chip:hover { border-color: #0f766e; color: #0f766e; }
+</style>
+<script>
+var AI_KEY = "__AI_KEY__";
+function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
+async function aiSor() {
+    var giris = document.getElementById('ai-input');
+    var soru = (giris.value || '').trim();
+    if (!soru) return;
+    var btn = document.getElementById('ai-btn');
+    var cevap = document.getElementById('ai-answer');
+    var panel = document.getElementById('ai-panel');
+    panel.style.display = 'block';
+    cevap.innerHTML = '<em>Yanıt hazırlanıyor...</em>';
+    btn.disabled = true; giris.disabled = true;
+    var sistem = 'Sen "BIST 30 Günlük Raporlar" sitesinin Türkçe yapay zeka asistanısın. Görevin: Borsa İstanbul, makroekonomi ve teknik analiz (EMA, RSI, MACD, Wave Trend, destek/direnç vb.) konularında eğitici, kısa ve anlaşılır yanıtlar vermek. Canlı piyasa verine erişimin yok; güncel veriler için kullanıcıyı sitedeki Teknik Tarama, Borsapy Sinyal ve Günlük Rapor sayfalarına yönlendir. Kesin alım-satım tavsiyesi verme; bilgilendir. Yanıtlarını madde işaretleriyle yaz, en fazla 200 kelime tut.';
+    var modeller = ['glm-4.7-flash', 'glm-4.5-flash'];
+    var sonHata = '';
+    for (var i = 0; i < modeller.length; i++) {
+        try {
+            var r = await fetch('https://api.z.ai/api/paas/v4/chat/completions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + AI_KEY },
+                body: JSON.stringify({
+                    model: modeller[i],
+                    messages: [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
+                    temperature: 0.5,
+                    max_tokens: 700,
+                    thinking: { type: 'disabled' }
+                })
+            });
+            if (!r.ok) { sonHata = 'Hata ' + r.status; continue; }
+            var j = await r.json();
+            var metin = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '';
+            if (!metin) { sonHata = 'Boş yanıt'; continue; }
+            metin = metin.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            cevap.innerHTML = metin.replace(/\\n/g, '<br>');
+            giris.disabled = false; btn.disabled = false; giris.value = '';
+            return;
+        } catch (e) { sonHata = 'Bağlantı hatası'; }
+    }
+    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + '). Lütfen sonra tekrar deneyin.</span>';
+    giris.disabled = false; btn.disabled = false;
+}
+</script>""".replace("__AI_KEY__", WIDGET_AI_KEY)
+
+
 def _tv_ticker_tape():
     """TradingView canlı ticker şeridi: istemci tarafında çalışan, anahtarsız
     resmi widget — fiyatlar piyasa açıkken gerçek zamanlı yeşil/kırmızı akar."""
@@ -960,20 +1051,18 @@ j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js
         <div id="google_translate_element"></div>
     </div>
 
-    <!-- Etkileşimli Araçlar (Google Arama ve Gemini Sohbet Kutusu) -->
+    <!-- Etkileşimli Araçlar (Google Arama ve BIST AI Asistan) -->
     <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <form method="get" action="https://www.google.com/search" target="_blank" style="display: flex; gap: 8px;">
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; gap: 8px;">
+            <form method="get" action="https://www.google.com/search" target="_blank" style="display: flex; gap: 8px; flex: 1;">
                 <input type="hidden" name="q" value="site:borsa-raporlari.onrender.com">
                 <input type="text" name="q" placeholder="Google ile sitede ara..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;">
                 <button type="submit" style="background: #047857; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Ara</button>
             </form>
         </div>
-        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; gap: 8px;">
-            <input type="text" id="ai-chat-input" placeholder="Gemini'ye borsa hakkında sor..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') askGemini();">
-            <button onclick="askGemini()" style="background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Sor</button>
-        </div>
+{_ai_kutu()}
     </div>
+{_ai_panel()}
 
     <!-- Asıl Sayfa İçeriği -->
     {icerik}
@@ -1002,13 +1091,6 @@ j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js
         .catch(err => {{
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
         }});
-
-    function askGemini() {{
-        const query = document.getElementById('ai-chat-input').value;
-        if(query.trim()) {{
-            window.open(`https://gemini.google.com/app?q=${{encodeURIComponent(query)}}`, '_blank');
-        }}
-    }}
 </script>
 <script type="text/javascript">
     function googleTranslateElementInit() {{

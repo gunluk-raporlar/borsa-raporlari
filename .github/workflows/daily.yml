@@ -25,6 +25,7 @@ jobs:
           CF_API_KEY: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          WIDGET_AI_KEY: ${{ secrets.ZAI_API_KEY }}
         run: |
           for deneme in 1 2 3; do
             echo "=== Bot calistirma denemesi: $deneme/3 ==="

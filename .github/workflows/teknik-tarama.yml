@@ -20,6 +20,8 @@ jobs:
       - name: Kutuphaneleri kur
         run: pip install -r requirements.txt
       - name: Taramayi calistir
+        env:
+          WIDGET_AI_KEY: ${{ secrets.ZAI_API_KEY }}
         run: python -u teknik_tarama.py
       - name: Degisiklikleri yayinla
         run: |
