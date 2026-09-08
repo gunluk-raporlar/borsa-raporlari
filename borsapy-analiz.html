@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Borsapy Sinyalleri - 2026-09-08</title>
+<!-- Google Tag Manager & Analytics -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX';f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+<style>
+:root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
+       --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:"Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+      background:var(--bg); color:var(--ink); line-height:1.65; }
+a { color:var(--accent); }
+.topbar { background:var(--ink); }
+.topbar .inner { max-width:1080px; margin:0 auto; padding:14px 20px; display:flex;
+                 justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+.topbar .brand { color:#fff; text-decoration:none; font-weight:700; font-size:18px; }
+.topbar nav a { color:#cbd5e1; text-decoration:none; margin-left:20px; font-size:14px; }
+.topbar nav a:hover, .topbar nav a.active { color:#fff; }
+.wrap { max-width:1080px; margin:0 auto; padding:32px 20px 48px; }
+.hero { margin-bottom:26px; }
+.hero h1 { margin:0 0 6px; font-size:27px; }
+.hero p { margin:0; color:var(--muted); font-size:14.5px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 24px; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:14px; margin:0 0 24px; }
+.stat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+.stat .label { font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; }
+.stat .value { font-size:20px; font-weight:700; margin-top:3px; }
+.pos { color:var(--pos); font-weight:600; }
+.neg { color:var(--neg); font-weight:600; }
+table { border-collapse:collapse; width:100%; font-size:14.5px; }
+th, td { border-bottom:1px solid var(--line); padding:9px 12px; text-align:left; }
+th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+tr:last-child td { border-bottom:none; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:14px; }
+.rcard { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px;
+         text-decoration:none; color:var(--ink); display:block; transition:border-color .15s, box-shadow .15s; }
+.rcard:hover { border-color:var(--accent); box-shadow:0 2px 10px rgba(15,23,42,.08); }
+.rcard .date { font-size:16.5px; font-weight:700; display:block; }
+.rcard .sub { color:var(--muted); font-size:13px; margin-top:4px; display:block; }
+.section-title { font-size:19px; margin:34px 0 14px; padding-left:12px; border-left:4px solid var(--accent); }
+.report { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:28px 36px; }
+.report h1, .report h2, .report h3 { padding-left:12px; border-left:4px solid var(--accent); line-height:1.35; }
+.report h1 { font-size:22px; margin:26px 0 10px; }
+.report h2 { font-size:19px; margin:26px 0 10px; }
+.report h3 { font-size:16.5px; margin:22px 0 8px; }
+.report table { margin:14px 0; border:1px solid var(--line); border-radius:8px; }
+.report th { background:#f8fafc; }
+.report td, .report th { border:1px solid var(--line); }
+.report hr { border:none; border-top:1px solid var(--line); margin:22px 0; }
+.report blockquote { margin:14px 0; padding:10px 16px; border-left:4px solid var(--line); color:var(--muted); }
+.badge { display:inline-block; background:var(--accent-bg); color:var(--accent); border:1px solid #99f6e4;
+         border-radius:999px; padding:3px 12px; font-size:12.5px; font-weight:600; }
+.meta { color:var(--muted); font-size:13.5px; margin:8px 0 22px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.footer { text-align:center; color:var(--muted); font-size:12.5px; padding:26px 20px;
+          border-top:1px solid var(--line); background:#fff; }
+.chart { width:100%; height:auto; display:block; }
+@media (max-width:640px) {
+  .report { padding:18px 16px; }
+  table { font-size:13px; }
+  th, td { padding:7px 8px; }
+}
+
+@media (max-width: 768px) {
+    .interactive-box {
+        grid-template-columns: 1fr !important;
+    }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<a class="brand" href="index.html">BIST 30 Günlük Raporlar</a>
+<nav><a href="index.html">Raporlar</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="borsapy-analiz.html" class="active">Borsapy Sinyal</a><a href="portfolio.html">Deneme Portföyü</a></nav>
+</div></header>
+<div class="tradingview-widget-container" style="margin:0 0 18px">
+<div class="tradingview-widget-container__widget"></div>
+<script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+{
+"symbols": [{"proName":"BIST:AEFES","title":"AEFES"}, {"proName":"BIST:AKBNK","title":"AKBNK"}, {"proName":"BIST:ASELS","title":"ASELS"}, {"proName":"BIST:ASTOR","title":"ASTOR"}, {"proName":"BIST:BIMAS","title":"BIMAS"}, {"proName":"BIST:DSTKF","title":"DSTKF"}, {"proName":"BIST:EKGYO","title":"EKGYO"}, {"proName":"BIST:ENKAI","title":"ENKAI"}, {"proName":"BIST:EREGL","title":"EREGL"}, {"proName":"BIST:FROTO","title":"FROTO"}, {"proName":"BIST:GARAN","title":"GARAN"}, {"proName":"BIST:GUBRF","title":"GUBRF"}, {"proName":"BIST:ISCTR","title":"ISCTR"}, {"proName":"BIST:KCHOL","title":"KCHOL"}, {"proName":"BIST:KRDMD","title":"KRDMD"}, {"proName":"BIST:MGROS","title":"MGROS"}, {"proName":"BIST:PETKM","title":"PETKM"}, {"proName":"BIST:PGSUS","title":"PGSUS"}, {"proName":"BIST:SAHOL","title":"SAHOL"}, {"proName":"BIST:SASA","title":"SASA"}, {"proName":"BIST:SISE","title":"SISE"}, {"proName":"BIST:TAVHL","title":"TAVHL"}, {"proName":"BIST:TCELL","title":"TCELL"}, {"proName":"BIST:THYAO","title":"THYAO"}, {"proName":"BIST:TOASO","title":"TOASO"}, {"proName":"BIST:TRALT","title":"TRALT"}, {"proName":"BIST:TTKOM","title":"TTKOM"}, {"proName":"BIST:TUPRS","title":"TUPRS"}, {"proName":"BIST:VAKBN","title":"VAKBN"}, {"proName":"BIST:YKBNK","title":"YKBNK"}],
+"showSymbolLogo": false,
+"isTransparent": true,
+"displayMode": "adaptive",
+"locale": "tr"
+}
+</script>
+</div>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve Google Çeviri) -->
+    <div class="site-widgets" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; background: #f8fafc; padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #475569; gap: 15px; border: 1px solid #e2e8f0;">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
+        </div>
+        <div id="google_translate_element"></div>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Google Arama ve Gemini Sohbet Kutusu) -->
+    <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <form method="get" action="https://www.google.com/search" target="_blank" style="display: flex; gap: 8px;">
+                <input type="hidden" name="q" value="site:borsa-raporlari.onrender.com">
+                <input type="text" name="q" placeholder="Google ile sitede ara..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;">
+                <button type="submit" style="background: #047857; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Ara</button>
+            </form>
+        </div>
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; gap: 8px;">
+            <input type="text" id="ai-chat-input" placeholder="Gemini'ye borsa hakkında sor..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') askGemini();">
+            <button onclick="askGemini()" style="background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Sor</button>
+        </div>
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>Borsapy Sinyalleri</h1>
+<p>TradingView teknik analiz göstergelerinin BIST 30 özeti (borsapy kütüphanesiyle çekilir):
+toplam osilatör + hareketli ortalama oylarına göre genel öneri, RSI, MACD, Stokastik %K, CCI ve ADX.
+Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.</p>
+</div>
+
+<div class="card" style="margin-bottom:20px">
+<h3 style="margin:4px 0 10px">RSI (14) — Aşırı Alım/Satım Haritası</h3>
+<div style="position:relative; height:540px">
+<canvas id="borsapy-rsi-843372"></canvas>
+</div>
+</div>
+<script>
+(function() {
+    var veri = {"labels": ["PETKM", "TUPRS", "KCHOL", "SAHOL", "AKBNK", "BIMAS", "TOASO", "GUBRF", "DSTKF", "VAKBN", "GARAN", "ENKAI", "KRDMD", "ASELS", "SASA", "ISCTR", "SISE", "YKBNK", "EKGYO", "FROTO", "TRALT", "EREGL", "TAVHL", "TTKOM", "AEFES", "PGSUS", "TCELL", "ASTOR", "THYAO", "MGROS"], "degerler": [65.19, 65.16, 63.13, 61.79, 61.37, 61.14, 60.96, 60.17, 59.16, 58.54, 56.83, 56.16, 55.35, 54.83, 58.25, 57.26, 57.0, 54.37, 54.26, 53.11, 50.93, 47.74, 46.69, 44.26, 43.61, 43.04, 42.9, 42.32, 40.64, 33.82]};
+    var renkler = veri.degerler.map(function(v) {
+        if (v >= 70) return '#b91c1c';
+        if (v <= 30) return '#047857';
+        return '#94a3b8';
+    });
+    new Chart(document.getElementById('borsapy-rsi-843372'), {
+        type: 'bar',
+        data: { labels: veri.labels, datasets: [{ label: 'RSI (14)', data: veri.degerler, backgroundColor: renkler }] },
+        options: {
+            indexAxis: 'y',
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { min: 0, max: 100,
+                     grid: { color: '#e2e8f0' },
+                     ticks: { stepSize: 10 } },
+                y: { ticks: { font: { size: 11 } } }
+            }
+        }
+    });
+})();
+</script>
+<div class="card" style="padding:8px 24px 16px">
+<table>
+<tr><th>Hisse</th><th>Öneri</th><th>Al/Sat/Nötür</th><th>RSI</th><th>MACD</th><th>Stoch %K</th><th>CCI20</th><th>ADX</th></tr>
+<tr><td><strong>PETKM</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>20</span> / <span class='neg'>1</span> / 7</td><td>65.19</td><td>0.24</td><td>68.04</td><td>185.91</td><td>14.07</td></tr><tr><td><strong>TUPRS</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>18</span> / <span class='neg'>1</span> / 9</td><td>65.16</td><td>21.13</td><td>51.26</td><td>54.81</td><td>46.81</td></tr><tr><td><strong>KCHOL</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>18</span> / <span class='neg'>1</span> / 9</td><td>63.13</td><td>4.22</td><td>56.1</td><td>73.33</td><td>29.94</td></tr><tr><td><strong>SAHOL</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>18</span> / <span class='neg'>1</span> / 9</td><td>61.79</td><td>1.04</td><td>61.72</td><td>56.64</td><td>18.47</td></tr><tr><td><strong>AKBNK</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>16</span> / <span class='neg'>2</span> / 10</td><td>61.37</td><td>1.03</td><td>64.6</td><td>71.35</td><td>18.29</td></tr><tr><td><strong>BIMAS</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>20</span> / <span class='neg'>0</span> / 8</td><td>61.14</td><td>7.36</td><td>78.69</td><td>72.75</td><td>25.85</td></tr><tr><td><strong>TOASO</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>17</span> / <span class='neg'>2</span> / 9</td><td>60.96</td><td>-1.51</td><td>56.78</td><td>184.26</td><td>17.74</td></tr><tr><td><strong>GUBRF</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>18</span> / <span class='neg'>1</span> / 9</td><td>60.17</td><td>12.67</td><td>72.43</td><td>70.05</td><td>29.07</td></tr><tr><td><strong>DSTKF</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>18</span> / <span class='neg'>4</span> / 6</td><td>59.16</td><td>25.99</td><td>80.32</td><td>110.82</td><td>22.19</td></tr><tr><td><strong>VAKBN</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>17</span> / <span class='neg'>3</span> / 8</td><td>58.54</td><td>0.72</td><td>73.77</td><td>74.76</td><td>26.03</td></tr><tr><td><strong>GARAN</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>17</span> / <span class='neg'>2</span> / 9</td><td>56.83</td><td>0.86</td><td>44.98</td><td>58.69</td><td>16.47</td></tr><tr><td><strong>ENKAI</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>17</span> / <span class='neg'>3</span> / 8</td><td>56.16</td><td>0.15</td><td>76.91</td><td>91.41</td><td>21.24</td></tr><tr><td><strong>KRDMD</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>19</span> / <span class='neg'>1</span> / 8</td><td>55.35</td><td>0.76</td><td>28.18</td><td>15.13</td><td>21.02</td></tr><tr><td><strong>ASELS</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>17</span> / <span class='neg'>1</span> / 10</td><td>54.83</td><td>4.65</td><td>35.22</td><td>18.74</td><td>19.22</td></tr><tr><td><strong>SASA</strong></td><td class='pos'>AL</td><td><span class='pos'>15</span> / <span class='neg'>5</span> / 8</td><td>58.25</td><td>-0.03</td><td>46.67</td><td>118.78</td><td>15.12</td></tr><tr><td><strong>ISCTR</strong></td><td class='pos'>AL</td><td><span class='pos'>14</span> / <span class='neg'>7</span> / 7</td><td>57.26</td><td>0.01</td><td>64.23</td><td>128.79</td><td>22.59</td></tr><tr><td><strong>SISE</strong></td><td class='pos'>AL</td><td><span class='pos'>15</span> / <span class='neg'>6</span> / 7</td><td>57.0</td><td>-0.58</td><td>45.19</td><td>117.25</td><td>20.43</td></tr><tr><td><strong>YKBNK</strong></td><td class='pos'>AL</td><td><span class='pos'>14</span> / <span class='neg'>5</span> / 9</td><td>54.37</td><td>0.38</td><td>43.6</td><td>20.84</td><td>15.71</td></tr><tr><td><strong>EKGYO</strong></td><td class='pos'>AL</td><td><span class='pos'>12</span> / <span class='neg'>6</span> / 10</td><td>54.26</td><td>0.2</td><td>47.73</td><td>21.14</td><td>18.96</td></tr><tr><td><strong>FROTO</strong></td><td class='pos'>AL</td><td><span class='pos'>12</span> / <span class='neg'>7</span> / 9</td><td>53.11</td><td>-0.8</td><td>33.33</td><td>44.94</td><td>26.66</td></tr><tr><td><strong>TRALT</strong></td><td class='pos'>AL</td><td><span class='pos'>13</span> / <span class='neg'>5</span> / 10</td><td>50.93</td><td>0.58</td><td>39.91</td><td>-9.05</td><td>16.11</td></tr><tr><td><strong>EREGL</strong></td><td class='pos'>AL</td><td><span class='pos'>12</span> / <span class='neg'>7</span> / 9</td><td>47.74</td><td>-0.65</td><td>27.69</td><td>6.15</td><td>15.29</td></tr><tr><td><strong>TAVHL</strong></td><td class='neg'>SAT</td><td><span class='pos'>4</span> / <span class='neg'>15</span> / 9</td><td>46.69</td><td>-2.06</td><td>33.56</td><td>-75.33</td><td>13.71</td></tr><tr><td><strong>TTKOM</strong></td><td class='neg'>SAT</td><td><span class='pos'>6</span> / <span class='neg'>12</span> / 10</td><td>44.26</td><td>-1.04</td><td>33.11</td><td>-71.59</td><td>16.07</td></tr><tr><td><strong>AEFES</strong></td><td class='neg'>SAT</td><td><span class='pos'>7</span> / <span class='neg'>12</span> / 9</td><td>43.61</td><td>-0.61</td><td>39.75</td><td>-31.75</td><td>30.21</td></tr><tr><td><strong>PGSUS</strong></td><td class='neg'>SAT</td><td><span class='pos'>4</span> / <span class='neg'>14</span> / 10</td><td>43.04</td><td>-2.45</td><td>26.1</td><td>-79.11</td><td>16.02</td></tr><tr><td><strong>TCELL</strong></td><td class='neg'>SAT</td><td><span class='pos'>4</span> / <span class='neg'>15</span> / 9</td><td>42.9</td><td>-2.02</td><td>35.75</td><td>-69.99</td><td>26.56</td></tr><tr><td><strong>ASTOR</strong></td><td class='neg'>SAT</td><td><span class='pos'>9</span> / <span class='neg'>13</span> / 6</td><td>42.32</td><td>-1.72</td><td>8.09</td><td>-132.09</td><td>17.58</td></tr><tr><td><strong>THYAO</strong></td><td class='neg'>SAT</td><td><span class='pos'>5</span> / <span class='neg'>15</span> / 8</td><td>40.64</td><td>-4.62</td><td>23.66</td><td>-125.39</td><td>15.99</td></tr><tr><td><strong>MGROS</strong></td><td class='neg'>SAT</td><td><span class='pos'>5</span> / <span class='neg'>17</span> / 6</td><td>33.82</td><td>-24.29</td><td>15.76</td><td>-111.76</td><td>38.59</td></tr>
+</table>
+<p style="margin:12px 0 4px; color:var(--muted); font-size:13px">30 hisse sorgulandı; 14 hisse GÜÇLÜ AL. RSI &ge;70 aşırı alım, &le;30 aşırı satım bölgesidir. ADX &gt;25 güçlü trend gösterir. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
+</div>
+</main>
+
+<footer class="footer">Bilgilendirme amacıyla hazırlanmıştır, yatırım tavsiyesi değildir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+
+    function askGemini() {
+        const query = document.getElementById('ai-chat-input').value;
+        if(query.trim()) {
+            window.open(`https://gemini.google.com/app?q=${encodeURIComponent(query)}`, '_blank');
+        }
+    }
+</script>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'tr', includedLanguages: 'en,de,fr,ar,ru', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body></html>

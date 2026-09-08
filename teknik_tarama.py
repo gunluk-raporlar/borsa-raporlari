@@ -34,6 +34,15 @@ def main():
     with open("teknik-analiz.html", "w", encoding="utf-8") as f:
         f.write(bot.build_teknik_html(satirlar, date_str))
 
+    # Borsapy (TradingView) sinyal sayfasi: hatasi teknik sayfayi etkilemesin.
+    try:
+        bs_satirlar = bot.borsapy_analiz_yap()
+        if bs_satirlar:
+            with open("borsapy-analiz.html", "w", encoding="utf-8") as f:
+                f.write(bot.build_borsapy_html(bs_satirlar, date_str))
+    except Exception:
+        logger.exception("borsapy-analiz.html uretilemedi; teknik sayfa etkilenmez.")
+
     raporlar = sorted((fn for fn in os.listdir("reports") if fn.endswith(".html")), reverse=True)
     p = bot.load_portfolio()
     oneriler = [s for s in satirlar if s["genel"] in ("GÜÇLÜ AL", "AL")][:6]

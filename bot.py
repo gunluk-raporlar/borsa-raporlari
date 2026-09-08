@@ -905,11 +905,30 @@ tr:last-child td { border-bottom:none; }
 """
 
 
+def _tv_ticker_tape():
+    """TradingView canlı ticker şeridi: istemci tarafında çalışan, anahtarsız
+    resmi widget — fiyatlar piyasa açıkken gerçek zamanlı yeşil/kırmızı akar."""
+    semboller = ", ".join('{"proName":"BIST:%s","title":"%s"}' % (h, h) for h in HISSELER)
+    return f"""<div class="tradingview-widget-container" style="margin:0 0 18px">
+<div class="tradingview-widget-container__widget"></div>
+<script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+{{
+"symbols": [{semboller}],
+"showSymbolLogo": false,
+"isTransparent": true,
+"displayMode": "adaptive",
+"locale": "tr"
+}}
+</script>
+</div>"""
+
+
 def _sayfa(title, icerik, aktif="raporlar", kok=""):
     """Tum sayfalar icin ortak iskelet (ust menu + govde + altbilgi)."""
     a_r = ' class="active"' if aktif == "raporlar" else ""
     a_p = ' class="active"' if aktif == "portfoy" else ""
     a_t = ' class="active"' if aktif == "teknik" else ""
+    a_b = ' class="active"' if aktif == "borsapy" else ""
     return f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -927,8 +946,9 @@ j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a></nav>
+<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a></nav>
 </div></header>
+{_tv_ticker_tape()}
 
 <main class="wrap">
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve Google Çeviri) -->
@@ -1271,6 +1291,24 @@ def teknik_tarama_yap():
     if not kod_kolonu or not kapanis_kolonu:
         return []
 
+    # 30/30 kapsam hedefi: kutuphanenin dahili 10 sn zaman asimina takilan
+    # semboller icin iki ek deneme turu yapilir ve sonuclar birlestirilir.
+    for ek_deneme in range(2):
+        mevcut = set(df[kod_kolonu].astype(str).str.upper().unique())
+        eksikler = [h for h in HISSELER if h not in mevcut]
+        if not eksikler:
+            break
+        logger.info("[Teknik Tarama] %d hisse icin ek deneme (%d): %s", len(eksikler), ek_deneme + 1, ", ".join(eksikler))
+        print(f"[Teknik Tarama] {len(eksikler)} hisse icin ek deneme: {', '.join(eksikler)}", flush=True)
+        try:
+            df2 = fetch_stock_data(eksikler, start_date=baslangic, end_date=bitis)
+            if df2 is not None and not df2.empty:
+                df2.columns = [str(c).upper() for c in df2.columns]
+                df = pd.concat([df, df2], ignore_index=True)
+        except Exception as e:
+            logger.warning("[Teknik Tarama] Ek deneme basarisiz: %s", e)
+            time.sleep(3)
+
     satirlar = []
     for sira, hisse in enumerate(HISSELER, 1):
         seri = df[df[kod_kolonu] == hisse][kapanis_kolonu].astype(float).dropna()
@@ -1377,6 +1415,135 @@ Pearson (r) trendin gücünü gösterir. Piyasa saatlerinde (hafta içi 10:00-18
 <p style="margin:12px 0 4px; color:var(--muted); font-size:13px">Bugün {len(satirlar)} hisse tarandi; {guclu} hisse GÜÇLÜ AL sinyalinde. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
 </div>"""
     return _sayfa(f"Teknik Tarama - {date_str}", icerik, "teknik")
+
+
+# ---------- BORSAPY SINYALLERI (TradingView teknik analizi) ----------
+def borsapy_analiz_yap():
+    """borsapy kutuphanesi uzerinden TradingView'un hisse basina teknik
+    analiz ozetini (oneri + osilator degerleri) BIST 30 icin toplar.
+
+    Donus: satir listesi; her satir {hisse, oneri, al/sat/notr sayilari,
+    rsi, macd, stoch, cci, adx}. Kismi sonuc dondurulebilir (tek hisse
+    hatasi tum taramayi bozmaz)."""
+    try:
+        import borsapy as bp
+    except Exception as e:
+        logger.warning("[Borsapy] kutuphane kurulu degil: %s", e)
+        return []
+
+    ceviri = {"STRONG_BUY": "GÜÇLÜ AL", "BUY": "AL", "NEUTRAL": "NÖTR",
+              "SELL": "SAT", "STRONG_SELL": "GÜÇLÜ SAT"}
+    satirlar = []
+    for i, hisse in enumerate(HISSELER, 1):
+        try:
+            s = bp.Ticker(hisse).ta_signals()
+            ozet = s.get("summary") or {}
+            degerler = (s.get("oscillators") or {}).get("values") or {}
+            rec = ozet.get("recommendation", "NEUTRAL")
+
+            def _say(anahtar):
+                v = degerler.get(anahtar)
+                return round(float(v), 2) if isinstance(v, (int, float)) else None
+
+            satirlar.append({
+                "hisse": hisse,
+                "oneri": ceviri.get(rec, rec),
+                "al": int(ozet.get("buy") or 0),
+                "sat": int(ozet.get("sell") or 0),
+                "notr": int(ozet.get("neutral") or 0),
+                "rsi": _say("RSI"),
+                "macd": _say("MACD.macd"),
+                "stoch": _say("Stoch.K"),
+                "cci": _say("CCI20"),
+                "adx": _say("ADX"),
+            })
+            logger.info("[Borsapy] %d/%d %s: %s", i, len(HISSELER), hisse, satirlar[-1]["oneri"])
+        except Exception as e:
+            logger.info("[Borsapy] %s alinamadi: %s", hisse, str(e)[:100])
+        time.sleep(0.3)  # TradingView rate limit'e karsi
+
+    siralama = {"GÜÇLÜ AL": 0, "AL": 1, "NÖTR": 2, "SAT": 3, "GÜÇLÜ SAT": 4}
+    satirlar.sort(key=lambda s: (siralama.get(s["oneri"], 9), -(s["rsi"] or 0)))
+    logger.info("[Borsapy] %d hisse tarandi", len(satirlar))
+    return satirlar
+
+
+def build_borsapy_html(satirlar, date_str):
+    import random
+    import json as _json
+
+    hucreler = "".join(
+        f"<tr><td><strong>{s['hisse']}</strong></td>"
+        f"{_teknik_sinyal_hucre(s['oneri'])}"
+        f"<td><span class='pos'>{s['al']}</span> / <span class='neg'>{s['sat']}</span> / {s['notr']}</td>"
+        f"<td>{s['rsi'] if s['rsi'] is not None else '-'}</td>"
+        f"<td>{s['macd'] if s['macd'] is not None else '-'}</td>"
+        f"<td>{s['stoch'] if s['stoch'] is not None else '-'}</td>"
+        f"<td>{s['cci'] if s['cci'] is not None else '-'}</td>"
+        f"<td>{s['adx'] if s['adx'] is not None else '-'}</td></tr>"
+        for s in satirlar
+    )
+
+    # RSI grafigi: >70 asiri alim (kirmizi), <30 asiri satim (yesil)
+    rsi_veri = [s for s in satirlar if isinstance(s.get("rsi"), (int, float))]
+    grafik = ""
+    if rsi_veri:
+        veri = {
+            "labels": [s["hisse"] for s in rsi_veri],
+            "degerler": [s["rsi"] for s in rsi_veri],
+        }
+        veri_json = _json.dumps(veri, ensure_ascii=False)
+        grafik_id = f"borsapy-rsi-{random.randint(100000, 999999)}"
+        grafik = f"""
+<div class="card" style="margin-bottom:20px">
+<h3 style="margin:4px 0 10px">RSI (14) — Aşırı Alım/Satım Haritası</h3>
+<div style="position:relative; height:{max(340, 18 * len(rsi_veri))}px">
+<canvas id="{grafik_id}"></canvas>
+</div>
+</div>
+<script>
+(function() {{
+    var veri = {veri_json};
+    var renkler = veri.degerler.map(function(v) {{
+        if (v >= 70) return '#b91c1c';
+        if (v <= 30) return '#047857';
+        return '#94a3b8';
+    }});
+    new Chart(document.getElementById('{grafik_id}'), {{
+        type: 'bar',
+        data: {{ labels: veri.labels, datasets: [{{ label: 'RSI (14)', data: veri.degerler, backgroundColor: renkler }}] }},
+        options: {{
+            indexAxis: 'y',
+            maintainAspectRatio: false,
+            plugins: {{ legend: {{ display: false }} }},
+            scales: {{
+                x: {{ min: 0, max: 100,
+                     grid: {{ color: '#e2e8f0' }},
+                     ticks: {{ stepSize: 10 }} }},
+                y: {{ ticks: {{ font: {{ size: 11 }} }} }}
+            }}
+        }}
+    }});
+}})();
+</script>"""
+
+    guclu = sum(1 for s in satirlar if s["oneri"] == "GÜÇLÜ AL")
+    icerik = f"""
+<div class="hero">
+<h1>Borsapy Sinyalleri</h1>
+<p>TradingView teknik analiz göstergelerinin BIST 30 özeti (borsapy kütüphanesiyle çekilir):
+toplam osilatör + hareketli ortalama oylarına göre genel öneri, RSI, MACD, Stokastik %K, CCI ve ADX.
+Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.</p>
+</div>
+{grafik}
+<div class="card" style="padding:8px 24px 16px">
+<table>
+<tr><th>Hisse</th><th>Öneri</th><th>Al/Sat/Nötür</th><th>RSI</th><th>MACD</th><th>Stoch %K</th><th>CCI20</th><th>ADX</th></tr>
+{hucreler}
+</table>
+<p style="margin:12px 0 4px; color:var(--muted); font-size:13px">{len(satirlar)} hisse sorgulandı; {guclu} hisse GÜÇLÜ AL. RSI &ge;70 aşırı alım, &le;30 aşırı satım bölgesidir. ADX &gt;25 güçlü trend gösterir. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
+</div>"""
+    return _sayfa(f"Borsapy Sinyalleri - {date_str}", icerik, "borsapy")
 
 
 if __name__ == "__main__":
