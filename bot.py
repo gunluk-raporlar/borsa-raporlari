@@ -1111,6 +1111,13 @@ body { overflow-x: hidden; }
 .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .tbl-wrap table { min-width: 760px; }   /* genis tablolar kart icinde yatay kayar */
 .report table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.ticker-bant { background: var(--ink); overflow: hidden; white-space: nowrap; }
+.ticker-iz { display: inline-block; padding: 8px 0; animation: ticker-kaydir 75s linear infinite; }
+.ticker-bant:hover .ticker-iz { animation-play-state: paused; }
+@keyframes ticker-kaydir { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.ticker-oge { display: inline-block; margin: 0 16px; color: #cbd5e1; font-size: 13px; }
+.ticker-oge b { color: #fff; letter-spacing: .3px; }
+.ticker-saat { color: #64748b; font-size: 11.5px; }
 @media (max-width: 640px) {
   .topbar .inner { padding: 10px 12px; }
   .topbar nav { display: flex; flex-wrap: wrap; gap: 4px 2px; }
@@ -1194,22 +1201,55 @@ async function aiSor() {
 </script>"""
 
 
-def _tv_ticker_tape():
-    """TradingView canlı ticker şeridi: istemci tarafında çalışan, anahtarsız
-    resmi widget — fiyatlar piyasa açıkken gerçek zamanlı yeşil/kırmızı akar."""
-    semboller = ", ".join('{"proName":"BIST:%s","title":"%s"}' % (h, h) for h in HISSELER)
-    return f"""<div class="tradingview-widget-container tv-ticker-bant" style="margin:0 0 18px; width:100%;">
-<div class="tradingview-widget-container__widget"></div>
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-{{
-"symbols": [{semboller}],
-"showSymbolLogo": false,
-"isTransparent": true,
-"displayMode": "adaptive",
-"locale": "tr"
-}}
-</script>
-</div>"""
+def ticker_json_yaz(satirlar):
+    """Canli ticker seridi icin ticker.json uretir; tum sayfalar istemci
+    tarafinda bu dosyayi cekip seridi render eder (sayfalar statik olsa bile
+    JSON her 30 dakikada bir yenilendigi icin veri tazedir)."""
+    veri = {
+        "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M"),
+        "hisseler": [
+            {"h": s["hisse"], "f": s["son"], "d": s["gunluk"]}
+            for s in satirlar
+        ],
+    }
+    with open("ticker.json", "w", encoding="utf-8") as f:
+        json.dump(veri, f, ensure_ascii=False)
+
+
+def _kendi_ticker(kok=""):
+    """Kendi kayan hisse seridimiz: TradingView'in ucretsiz widget'i BIST
+    verisini hic vermedigi icin (isim + kirmizi unlem gorunuyordu) kendi
+    verimizle (borsapy/TradingView, ~15 dk gecikmeli) CSS marquee kurduk.
+    Veri ticker.json'dan okunur; sayfa acikken 5 dk'da bir tazelenir."""
+    return f"""
+<div class="ticker-bant" id="ticker-bant" data-kok="{kok}" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Fiyatlar yükleniyor...</span></div>
+</div>
+<script>
+(function() {{
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {{
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {{
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {{minimumFractionDigits: 2}}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }}).join('');
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ~15 dk gecikmeli</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }}
+  function yukle() {{
+    fetch(kok + 'ticker.json?t=' + Date.now())
+      .then(function(r) {{ return r.json(); }})
+      .then(ciz)
+      .catch(function() {{}});
+  }}
+  yukle();
+  setInterval(yukle, 5 * 60 * 1000);
+}});
+</script>"""
 
 
 def _sayfa(title, icerik, aktif="raporlar", kok=""):
@@ -1240,7 +1280,7 @@ j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js
 <a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
 <nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a></nav>
 </div></header>
-{_tv_ticker_tape()}
+{_kendi_ticker(kok)}
 
 <main class="wrap">
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve Google Çeviri) -->
@@ -2009,6 +2049,7 @@ if __name__ == "__main__":
             with open("teknik-analiz.html", "w", encoding="utf-8") as f:
                 f.write(build_teknik_html(teknik_satirlar, date_str))
             teknik_oneriler = [s for s in teknik_satirlar if s["genel"] in ("GÜÇLÜ AL", "AL")][:6]
+            ticker_json_yaz(teknik_satirlar)
     except Exception:
         logger.exception("[Teknik Tarama] sayfa uretilemedi; rapor uretimini etkilemez.")
 

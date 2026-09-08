@@ -33,6 +33,7 @@ def main():
 
     with open("teknik-analiz.html", "w", encoding="utf-8") as f:
         f.write(bot.build_teknik_html(satirlar, date_str))
+    bot.ticker_json_yaz(satirlar)
 
     # Borsapy (TradingView) sinyal sayfasi: hatasi teknik sayfayi etkilemesin.
     try:
