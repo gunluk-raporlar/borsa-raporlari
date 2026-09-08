@@ -4,11 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Borsapy Sinyalleri - 2026-09-08</title>
-<!-- Google Tag Manager & Analytics -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX';f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+<meta name="description" content="TradingView göstergelerinden BIST 30 osilatör özeti: AL/SAT/NÖTR oyları, RSI, MACD, Stokastik %K, CCI ve ADX değerleri. 30 dakikada bir güncellenir.">
+<link rel="canonical" href="https://borsa-raporlari.onrender.com/borsapy-analiz.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Günlük Raporlar">
+<meta property="og:title" content="Borsapy Sinyalleri - 2026-09-08">
+<meta property="og:description" content="TradingView göstergelerinden BIST 30 osilatör özeti: AL/SAT/NÖTR oyları, RSI, MACD, Stokastik %K, CCI ve ADX değerleri. 30 dakikada bir güncellenir.">
+<meta property="og:url" content="https://borsa-raporlari.onrender.com/borsapy-analiz.html">
+<meta property="og:image" content="https://borsa-raporlari.onrender.com/og-cover.svg">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Borsapy Sinyalleri - 2026-09-08">
+<meta name="twitter:description" content="TradingView göstergelerinden BIST 30 osilatör özeti: AL/SAT/NÖTR oyları, RSI, MACD, Stokastik %K, CCI ve ADX değerleri. 30 dakikada bir güncellenir.">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Borsapy Sinyalleri - 2026-09-08", "description": "TradingView göstergelerinden BIST 30 osilatör özeti: AL/SAT/NÖTR oyları, RSI, MACD, Stokastik %K, CCI ve ADX değerleri. 30 dakikada bir güncellenir.", "url": "https://borsa-raporlari.onrender.com/borsapy-analiz.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.onrender.com/"}}</script>
 <style>
 :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
        --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
@@ -87,8 +96,8 @@ body { overflow-x: hidden; }
 .ticker-saat { color: #64748b; font-size: 11.5px; }
 @media (max-width: 640px) {
   .topbar .inner { padding: 10px 12px; }
-  .topbar nav { display: flex; flex-wrap: wrap; gap: 4px 2px; }
-  .topbar nav a { margin-left: 10px; font-size: 12.5px; }
+  .topbar nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
+  .topbar nav a { margin-left: 0; font-size: 13px; padding: 4px 0; }
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
@@ -174,6 +183,12 @@ body { overflow-x: hidden; }
 <script src="https://js.puter.com/v2/"></script>
 <script>
 function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
+function aiZamanAsimi(promise, ms) {
+    return Promise.race([
+        promise,
+        new Promise(function(_, reject) { setTimeout(function() { reject(new Error('yanıt zaman aşımı')); }, ms); })
+    ]);
+}
 async function aiSor() {
     var giris = document.getElementById('ai-input');
     var soru = (giris.value || '').trim();
@@ -182,17 +197,18 @@ async function aiSor() {
     var cevap = document.getElementById('ai-answer');
     var panel = document.getElementById('ai-panel');
     panel.style.display = 'block';
-    cevap.innerHTML = '<em>Yanıt hazırlanıyor...</em>';
+    cevap.innerHTML = '<em>Yanıt hazırlanıyor... (ilk kullanımda birkaç saniye sürebilir)</em>';
     btn.disabled = true; giris.disabled = true;
     var sistem = 'Sen "BIST 30 Günlük Raporlar" sitesinin Türkçe yapay zeka asistanısın. Görevin: Borsa İstanbul, makroekonomi ve teknik analiz (EMA, RSI, MACD, Wave Trend, destek/direnç vb.) konularında eğitici, kısa ve anlaşılır yanıtlar vermek. Canlı piyasa verine erişimin yok; güncel veriler için kullanıcıyı sitedeki Teknik Tarama, Borsapy Sinyal ve Günlük Rapor sayfalarına yönlendir. Kesin alım-satım tavsiyesi verme; bilgilendir. Yanıtlarını madde işaretleriyle yaz, en fazla 200 kelime tut.';
     var modeller = ['z-ai/glm-4.7-flash', 'infron:z-ai/glm-4.7-flash', 'z-ai/glm-4.5-flash', 'infron:z-ai/glm-4.5-flash'];
     var sonHata = '';
+    var zamanasimiSayisi = 0;
     for (var i = 0; i < modeller.length; i++) {
         try {
-            var r = await puter.ai.chat(
+            var r = await aiZamanAsimi(puter.ai.chat(
                 [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
                 { model: modeller[i] }
-            );
+            ), 20000);
             var metin = (r && r.message && r.message.content) || (typeof r === 'string' ? r : '') || '';
             if (!metin) { sonHata = 'Boş yanıt'; continue; }
             metin = String(metin).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -201,10 +217,18 @@ async function aiSor() {
             return;
         } catch (e) {
             sonHata = (e && e.message) ? e.message : 'Bilinmeyen hata';
+            if (sonHata.indexOf('zaman aşımı') !== -1) {
+                zamanasimiSayisi++;
+                // Art arda 2 kez zaman aşımı = Puter erişilemiyor; diger
+                // modelleri denemek bekletir, hata mesajina gec.
+                if (zamanasimiSayisi >= 2) break;
+            }
             if (sonHata.indexOf('auth') !== -1 || sonHata.indexOf('permission') !== -1) break;
         }
     }
-    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + '). Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin veya sonra tekrar deneyin.</span>';
+    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + ').</span> ' +
+        '<a href="javascript:void(0)" onclick="aiSor()" style="text-decoration:underline">Tekrar dene</a>' +
+        '<div style="margin-top:6px;color:#475569;font-size:12.5px">Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin (asistan, ücretsiz Puter kotanızı kullanır). Sorunuz tarayıcı sekmesinde korunuyor.</div>';
     giris.disabled = false; btn.disabled = false;
 }
 </script>
@@ -222,7 +246,7 @@ Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.
 <div class="card" style="margin-bottom:20px">
 <h3 style="margin:4px 0 10px">RSI (14) — Aşırı Alım/Satım Haritası</h3>
 <div style="position:relative; height:540px">
-<canvas id="borsapy-rsi-122339"></canvas>
+<canvas id="borsapy-rsi-738193"></canvas>
 </div>
 </div>
 <script>
@@ -233,27 +257,55 @@ Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.
         if (v <= 30) return '#047857';
         return '#94a3b8';
     });
-    new Chart(document.getElementById('borsapy-rsi-122339'), {
+    // 30/70 esik cizgileri + bar uclarina RSI degeri yazan mini eklenti
+    var esikVeDegerler = {
+        id: 'esikVeDegerler',
+        afterDatasetsDraw: function(chart) {
+            var ctx = chart.ctx, alan = chart.chartArea, xScale = chart.scales.x;
+            [70, 30].forEach(function(esik) {
+                var px = xScale.getPixelForValue(esik);
+                ctx.save();
+                ctx.strokeStyle = esik === 70 ? 'rgba(185,28,28,.5)' : 'rgba(4,120,87,.5)';
+                ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.moveTo(px, alan.top); ctx.lineTo(px, alan.bottom); ctx.stroke();
+                ctx.fillStyle = esik === 70 ? '#b91c1c' : '#047857';
+                ctx.font = '600 11px sans-serif';
+                var etiket = 'RSI ' + esik + (esik === 70 ? ' (aşırı alım)' : ' (aşırı satım)');
+                ctx.fillText(etiket, Math.min(px + 5, alan.right - 110), alan.top + 12);
+                ctx.restore();
+            });
+            chart.getDatasetMeta(0).data.forEach(function(bar, i) {
+                var v = veri.degerler[i];
+                ctx.save();
+                ctx.fillStyle = '#334155';
+                ctx.font = '10.5px sans-serif';
+                ctx.fillText(String(v), Math.min(bar.x + 6, alan.right - 22), bar.y + 3.5);
+                ctx.restore();
+            });
+        }
+    };
+    new Chart(document.getElementById('borsapy-rsi-738193'), {
         type: 'bar',
         data: { labels: veri.labels, datasets: [{ label: 'RSI (14)', data: veri.degerler, backgroundColor: renkler }] },
         options: {
             indexAxis: 'y',
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return 'RSI: ' + c.parsed.x; } } } },
             scales: {
                 x: { min: 0, max: 100,
                      grid: { color: '#e2e8f0' },
                      ticks: { stepSize: 10 } },
                 y: { ticks: { font: { size: 11 } } }
             }
-        }
+        },
+        plugins: [esikVeDegerler]
     });
 })();
 </script>
 <div class="card" style="padding:8px 24px 16px">
 <div class="tbl-wrap">
 <table>
-<tr><th>Hisse</th><th>Öneri</th><th>Al/Sat/Nötür</th><th>RSI</th><th>MACD</th><th>Stoch %K</th><th>CCI20</th><th>ADX</th></tr>
+<tr><th>Hisse</th><th>Öneri</th><th>Al/Sat/Nötr</th><th>RSI</th><th>MACD</th><th>Stoch %K</th><th>CCI20</th><th>ADX</th></tr>
 <tr style='cursor:pointer' onclick="tvAc('ISCTR')"><td><strong>ISCTR</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>20</span> / <span class='neg'>2</span> / 6</td><td>75.15</td><td>0.14</td><td>77.69</td><td>318.85</td><td>24.61</td></tr><tr style='cursor:pointer' onclick="tvAc('PETKM')"><td><strong>PETKM</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>19</span> / <span class='neg'>2</span> / 7</td><td>74.1</td><td>0.53</td><td>81.62</td><td>361.59</td><td>17.05</td></tr><tr style='cursor:pointer' onclick="tvAc('SISE')"><td><strong>SISE</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>19</span> / <span class='neg'>2</span> / 7</td><td>71.64</td><td>-0.07</td><td>70.42</td><td>311.04</td><td>21.91</td></tr><tr style='cursor:pointer' onclick="tvAc('VAKBN')"><td><strong>VAKBN</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>20</span> / <span class='neg'>2</span> / 6</td><td>70.44</td><td>0.98</td><td>81.28</td><td>193.73</td><td>27.32</td></tr><tr style='cursor:pointer' onclick="tvAc('SASA')"><td><strong>SASA</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>18</span> / <span class='neg'>1</span> / 9</td><td>68.5</td><td>0.01</td><td>78.33</td><td>323.7</td><td>16.68</td></tr><tr style='cursor:pointer' onclick="tvAc('SAHOL')"><td><strong>SAHOL</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>19</span> / <span class='neg'>1</span> / 8</td><td>68.39</td><td>1.24</td><td>73.5</td><td>104.91</td><td>18.56</td></tr><tr style='cursor:pointer' onclick="tvAc('KCHOL')"><td><strong>KCHOL</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>20</span> / <span class='neg'>1</span> / 7</td><td>67.18</td><td>4.65</td><td>65.71</td><td>121.03</td><td>30.75</td></tr><tr style='cursor:pointer' onclick="tvAc('AKBNK')"><td><strong>AKBNK</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>19</span> / <span class='neg'>1</span> / 8</td><td>66.68</td><td>1.21</td><td>78.46</td><td>111.22</td><td>18.7</td></tr><tr style='cursor:pointer' onclick="tvAc('TUPRS')"><td><strong>TUPRS</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>18</span> / <span class='neg'>1</span> / 9</td><td>64.16</td><td>19.97</td><td>50.72</td><td>48.46</td><td>45.94</td></tr><tr style='cursor:pointer' onclick="tvAc('GUBRF')"><td><strong>GUBRF</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>20</span> / <span class='neg'>0</span> / 8</td><td>63.12</td><td>13.72</td><td>78.71</td><td>99.66</td><td>29.74</td></tr><tr style='cursor:pointer' onclick="tvAc('YKBNK')"><td><strong>YKBNK</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>19</span> / <span class='neg'>0</span> / 9</td><td>62.08</td><td>0.46</td><td>57.8</td><td>95.83</td><td>15.64</td></tr><tr style='cursor:pointer' onclick="tvAc('TOASO')"><td><strong>TOASO</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>18</span> / <span class='neg'>3</span> / 7</td><td>62.01</td><td>-0.01</td><td>85.91</td><td>207.31</td><td>18.22</td></tr><tr style='cursor:pointer' onclick="tvAc('BIMAS')"><td><strong>BIMAS</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>19</span> / <span class='neg'>1</span> / 8</td><td>61.97</td><td>7.53</td><td>80.81</td><td>70.64</td><td>26.02</td></tr><tr style='cursor:pointer' onclick="tvAc('GARAN')"><td><strong>GARAN</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>19</span> / <span class='neg'>2</span> / 7</td><td>61.62</td><td>1.11</td><td>60.3</td><td>138.66</td><td>16.52</td></tr><tr style='cursor:pointer' onclick="tvAc('DSTKF')"><td><strong>DSTKF</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>19</span> / <span class='neg'>3</span> / 6</td><td>61.36</td><td>43.44</td><td>90.02</td><td>133.24</td><td>20.99</td></tr><tr style='cursor:pointer' onclick="tvAc('EKGYO')"><td><strong>EKGYO</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>19</span> / <span class='neg'>1</span> / 8</td><td>58.21</td><td>0.24</td><td>52.98</td><td>64.01</td><td>19.08</td></tr><tr style='cursor:pointer' onclick="tvAc('KRDMD')"><td><strong>KRDMD</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>19</span> / <span class='neg'>1</span> / 8</td><td>56.86</td><td>0.79</td><td>41.14</td><td>42.71</td><td>20.92</td></tr><tr style='cursor:pointer' onclick="tvAc('EREGL')"><td><strong>EREGL</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>18</span> / <span class='neg'>2</span> / 8</td><td>56.08</td><td>-0.45</td><td>54.6</td><td>160.21</td><td>15.76</td></tr><tr style='cursor:pointer' onclick="tvAc('TRALT')"><td><strong>TRALT</strong></td><td class='pos'>GÜÇLÜ AL</td><td><span class='pos'>19</span> / <span class='neg'>1</span> / 8</td><td>54.88</td><td>0.65</td><td>42.66</td><td>29.16</td><td>15.86</td></tr><tr style='cursor:pointer' onclick="tvAc('FROTO')"><td><strong>FROTO</strong></td><td class='pos'>AL</td><td><span class='pos'>15</span> / <span class='neg'>5</span> / 8</td><td>61.18</td><td>-0.4</td><td>64.86</td><td>154.61</td><td>25.7</td></tr><tr style='cursor:pointer' onclick="tvAc('ENKAI')"><td><strong>ENKAI</strong></td><td class='pos'>AL</td><td><span class='pos'>16</span> / <span class='neg'>4</span> / 8</td><td>57.64</td><td>0.34</td><td>83.57</td><td>95.06</td><td>20.75</td></tr><tr style='cursor:pointer' onclick="tvAc('TTKOM')"><td><strong>TTKOM</strong></td><td class='pos'>AL</td><td><span class='pos'>12</span> / <span class='neg'>6</span> / 10</td><td>53.33</td><td>-0.81</td><td>52.78</td><td>22.31</td><td>15.68</td></tr><tr style='cursor:pointer' onclick="tvAc('PGSUS')"><td><strong>PGSUS</strong></td><td class='pos'>AL</td><td><span class='pos'>12</span> / <span class='neg'>7</span> / 9</td><td>52.62</td><td>-1.94</td><td>44.34</td><td>102.2</td><td>16.07</td></tr><tr style='cursor:pointer' onclick="tvAc('ASELS')"><td><strong>ASELS</strong></td><td class='pos'>AL</td><td><span class='pos'>12</span> / <span class='neg'>6</span> / 10</td><td>52.52</td><td>4.27</td><td>42.35</td><td>-43.18</td><td>18.02</td></tr><tr style='cursor:pointer' onclick="tvAc('THYAO')"><td><strong>THYAO</strong></td><td class='pos'>AL</td><td><span class='pos'>11</span> / <span class='neg'>7</span> / 10</td><td>49.84</td><td>-3.9</td><td>41.94</td><td>-6.32</td><td>14.87</td></tr><tr style='cursor:pointer' onclick="tvAc('AEFES')"><td><strong>AEFES</strong></td><td class='pos'>AL</td><td><span class='pos'>12</span> / <span class='neg'>7</span> / 9</td><td>49.24</td><td>-0.52</td><td>58.59</td><td>37.94</td><td>28.49</td></tr><tr style='cursor:pointer' onclick="tvAc('TAVHL')"><td><strong>TAVHL</strong></td><td class=''>NÖTR</td><td><span class='pos'>8</span> / <span class='neg'>10</span> / 10</td><td>51.03</td><td>-1.64</td><td>40.89</td><td>-29.39</td><td>13.02</td></tr><tr style='cursor:pointer' onclick="tvAc('TCELL')"><td><strong>TCELL</strong></td><td class='neg'>SAT</td><td><span class='pos'>8</span> / <span class='neg'>11</span> / 9</td><td>48.86</td><td>-1.74</td><td>48.39</td><td>-31.13</td><td>26.1</td></tr><tr style='cursor:pointer' onclick="tvAc('ASTOR')"><td><strong>ASTOR</strong></td><td class='neg'>SAT</td><td><span class='pos'>8</span> / <span class='neg'>14</span> / 6</td><td>42.13</td><td>-2.87</td><td>13.36</td><td>-133.37</td><td>17.6</td></tr><tr style='cursor:pointer' onclick="tvAc('MGROS')"><td><strong>MGROS</strong></td><td class='neg'>SAT</td><td><span class='pos'>5</span> / <span class='neg'>14</span> / 9</td><td>38.77</td><td>-22.83</td><td>27.13</td><td>-76.84</td><td>38.62</td></tr>
 </table>
 </div>

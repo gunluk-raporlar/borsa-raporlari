@@ -170,6 +170,7 @@ class AgentState(TypedDict):
     tech_prices: dict
     fundamental_data: str
     final_report: str
+    portfoy_ozet: str
 
 
 # Configure basic logging
@@ -619,6 +620,84 @@ def _zai_call(prompt):
     return None
 
 
+# ---------- RAPOR SON ISLEMCISI ----------
+# LLM cikisinda tekrar tekrar gorulen sorunlari otomatik duzeltir:
+#   1. Rapor basina eklenen "Tarih:/Yayinci:/Konu:" kimlik satirlari (site
+#      sablonu tarihi zaten gosteriyor; LLM'nin uydurdugu tarih yanlis olabiliyor).
+#   2. Koseli parantezli yer tutucular: [Hedge-Fund Yonetimi], [PORTFOY OZETI]...
+#   3. Numarali BUYUK HARF bolum basliklarinin markdown ## basligina cevrilmesi
+#      (gunluk rapor sayfalarinda h2 yapisi boyle olusur).
+#   4. ASCII'ye dusmus Turkce kelimeler (Ozeti -> Ozeti degil, Özeti) ve
+#      sik yazim hatalari (sinyiller -> sinyaller).
+_TR_DUZELTME = {
+    # bolum basligi kelimeleri (ASCII -> dogru Turkce)
+    "Ozeti": "Özeti", "Bakis": "Bakış", "Sektor": "Sektör", "Bazli": "Bazlı",
+    "Degerlendirme": "Değerlendirme", "Gorsel": "Görsel", "Osilator": "Osilatör",
+    "Okumalari": "Okumaları", "Haritasi": "Haritası", "Gunun": "Günün",
+    "Onerilen": "Önerilen", "Giris": "Giriş", "Bolgesi": "Bölgesi",
+    "Gerekce": "Gerekçe", "Asiri": "Aşırı", "Alim": "Alım", "Satim": "Satım",
+    "Yatirim": "Yatırım", "Portfoy": "Portföy", "Portfoyu": "Portföyü",
+    # sik tekrarlayan yazim hatalari (LLM cikisi)
+    "sinyiller": "sinyaller", "Sinyiller": "Sinyaller", "sinyil": "sinyal",
+    "Ayrisan": "Ayrışan", "ayrisan": "ayrışan", "Nötür": "Nötr",
+    "GÜCLÜ": "GÜÇLÜ", "güclü": "güçlü",
+}
+
+
+def _turkce_karakter_duzelt(metin: str) -> str:
+    for yanlis, dogru in _TR_DUZELTME.items():
+        if yanlis == dogru:
+            continue
+        metin = re.sub(r"\b" + re.escape(yanlis) + r"\b", dogru, metin)
+    return metin
+
+
+def rapor_son_islem(metin: str) -> str:
+    """Yayina girmeden once LLM raporunu temizler (bkz. yukaridaki liste)."""
+    if not metin:
+        return metin
+    satirlar = metin.split("\n")
+    temiz = []
+    for i, satir in enumerate(satirlar):
+        s = satir.strip()
+        ust = "\n".join(x.strip() for x in satirlar[max(0, i - 2):i])
+        # Kimlik satirlari: raporun ilk ~6 satirindaki Tarih/Yayinci/Konu/rapor-adi
+        if re.match(r"^(Tarih|Yayıncı|Yayınlayan|Konu|Hazırlayan)\s*[:：]", s):
+            if "YÖNETİCİ" not in ust and "1." not in ust.split("\n")[-1:]:
+                temiz.append(None)
+                continue
+        if re.match(r"^BIST\s*30\s+(YATIRIM|GÜNLÜK|RAPOR)", s, re.IGNORECASE) and len(s) < 60:
+            if not any("##" in t for t in temiz if t):
+                temiz.append(None)
+                continue
+        # Koseli parantezli yer tutucu bloklari ([PORTFOY OZETI], [Hedge-Fund ...] satiri vb.)
+        if re.match(r"^\[.+\]$", s) or re.match(r"^\[(PORTFOY|PORTFÖY|HEDGE|NOT|KAYNAK)", s, re.IGNORECASE):
+            # [...] etiketinin hemen ardindaki ham pipeline satiri da (varsa) birlikte dusur
+            j = i + 1
+            while j < len(satirlar) and not satirlar[j].strip():
+                j += 1
+            if j < len(satirlar) and re.match(r"^Deneme\s+Portf[öo]y[üu]?\s*\(20\d\d", satirlar[j].strip()):
+                satirlar[j] = ""
+            temiz.append(None)
+            continue
+        temiz.append(satir)
+    metin = "\n".join(t for t in temiz if t is not None)
+    # Ardik bos satirlari tek bos satira indir
+    metin = re.sub(r"\n{3,}", "\n\n", metin)
+    # Numarali BUYUK HARF bolumleri (harf icermeyen kucuk harf satirlari) ## basligi yap
+    def _baslik_yap(m):
+        baslik = m.group(0).strip()
+        return "## " + baslik
+    metin = re.sub(
+        r"^\s*\d+\.\s+[A-ZÇĞİÖŞÜ0-9][A-ZÇĞİÖŞÜ0-9\s&/().,:'-]+$",
+        _baslik_yap,
+        metin,
+        flags=re.MULTILINE,
+    )
+    metin = _turkce_karakter_duzelt(metin)
+    return metin.strip()
+
+
 def master_cio_agent(state: AgentState):
     logger.info("[Bas Analist] Rapor sentezleniyor...")
     print("[Bas Analist] Rapor sentezleniyor...", flush=True)
@@ -629,7 +708,7 @@ def master_cio_agent(state: AgentState):
         for g in gecmis_ozetler:
             hafiza_metni += f"-- {g['date']}: {g['data'].get('ozet', '')}\n"
 
-    prompt = f"""Sen kıdemli bir Hedge-Fund Portföy Yöneticisi ve Araştırma Direktörüsün. Aşağıdaki GERÇEK verileri kullanarak kurumsal yatırımcılara hitap eden, derinlemesine, profesyonel ve uzun bir BIST 30 Yatırım ve Strateji Raporu kaleme al.
+    prompt = f"""Sen kıdemli bir Hedge-Fund Portföy Yöneticisi ve Araştırma Direktörüsün. Aşağıdaki GERÇEK verileri kullanarak profesyonel okuyucuya hitap eden, derinlemesine ve uzun bir BIST 30 Yatırım ve Strateji Raporu kaleme al.
 Önceki günlere ait analiz özetlerini dikkatle incele; trendin devam edip etmediğini, önceki önerilerin performansını ve piyasa dinamiklerindeki değişimleri eleştirel bir gözle değerlendir.
 
 [GEÇMİŞ GÜNLERİN ANALİZ ÖZETLERİ - HAFIZA]:
@@ -644,19 +723,25 @@ def master_cio_agent(state: AgentState):
 [TEMEL / FİNANSAL VERİLER]:
 {state['fundamental_data']}
 
-Raporu kesinlikle profesyonel bir finansal bülten formatında, her başlığı detaylı ve uzun cümlelerle açıklayarak şu alt başlıklar altında oluştur:
+Raporu kesinlikle profesyonel bir finansal bülten formatında, her başlığı detaylı ve uzun cümlelerle açıklayarak şu alt başlıklar altında oluştur (her başlık "## " ile başlayan markdown başlığı olarak yazılacak):
 
-1. YÖNETİCİ ÖZETİ VE PİYASA GENEL BAKIŞI: Günün en kritik gelişmeleri, endeksin genel yönü ve fon yönetiminin temel perspektifi.
-2. HABER VE MAKROEKONOMİK DEĞERLENDİRME: Akışların BIST 30 şirketlerine yansımaları, enflasyon, kur ve faiz sarmalının yatırımcı psikolojisine etkisi.
-3. TEKNİK DEĞERLENDİRME (Hisse Bazlı): En çok ayrışan, hacim kazanan veya direnç/destek noktalarını test eden lider hisselerin teknik anatomisi. Aşağıdaki SİNYAL TABLOSU verilerini mutlaka kullan.
-4. ŞİRKET VE FİNANSAL DEĞERLENDİRME: Temel veriler ışığında şirketlerin karlılık, bilanço yapıları ve rasyo bazlı öne çıkan detayları.
-5. RİSK YÖNETİMİ VE STRATEJİ: Kısa vadeli olası aşağı/yukarı yönlü senaryolar ve portföyü koruma kalkanları.
-6. ÖNERİLEN MODEL PORTFÖY: Raporun SONUNDA, yukarıdaki sinyal ve analizlere DAYANARAK kendinin kurduğu somut bir model portföyü tablosu oluştur. Tablo şu sütunlarla olmalı:
+## 1. Yönetici Özeti ve Piyasa Genel Bakışı: Günün en kritik gelişmeleri, endeksin genel yönü ve fon yönetiminin temel perspektifi.
+## 2. Haber ve Makroekonomik Değerlendirme: Akışların BIST 30 şirketlerine yansımaları, enflasyon, kur ve faiz sarmalının yatırımcı psikolojisine etkisi.
+## 3. Teknik Değerlendirme (Hisse Bazlı): En çok ayrışan, hacim kazanan veya direnç/destek noktalarını test eden lider hisselerin teknik anatomisi. Aşağıdaki SİNYAL TABLOSU verilerini mutlaka kullan.
+## 4. Şirket ve Finansal Değerlendirme: Temel veriler ışığında şirketlerin karlılık, bilanço yapıları ve rasyo bazlı öne çıkan detayları.
+## 5. Risk Yönetimi ve Strateji: Kısa vadeli olası aşağı/yukarı yönlü senaryolar ve portföyü koruma kalkanları.
+## 6. Önerilen Model Portföy: Raporun SONUNDA, yukarıdaki sinyal ve analizlere DAYANARAK kendinin kurduğu somut bir model portföyü tablosu oluştur. Tablo şu sütunlarla olmalı:
 
 | Hisse | Sektör | Ağırlık (%) | İşlem | Giriş Bölgesi | Hedef-1 | Hedef-2 (3 Ay) | Stop | Gerekçe |
 |-------|--------|-------------|-------|---------------|---------|----------------|------|---------|
 
 Tablo kuralları: En fazla 8 hisse pozisyonu + bir "NAKİT" satırı ekle; ağırlıklar %100'ü tamamlamalı (nakit dahil). Sadece AL/GÜÇLÜ AL sinyali veren ve gerekçesi verilerle desteklenen hisseleri seç; ağırlığı sinyal gücü, Pearson (r) ve kanal konumuna göre belirle. Giriş bölgesi, hedefler ve stop seviyelerini SADECE sağlanan gerçek fiyatlardan türet (kanal bantları ve son fiyat baz alın); dışarıdan hiçbir veri ekleme. Her satırın gerekçesi teknik + osilatör gerekçelerini birleştirsin.
+
+Biçim kuralları (zorunlu):
+- Rapor doğrudan "## 1." başlığıyla başlayacak; RAPOR ADI, Tarih, Yayıncı, Konu gibi kimlik satırları EKLEME (site şablonu tarihi zaten gösteriyor, yanlış tarihe düşme riski yaratma).
+- Metinde köşeli parantezli [...] yer tutucu veya iç not kullanma.
+- TÜM metinde doğru Türkçe karakterler kullan (ç, ğ, ı, i, ö, ş, ü); "sinyal" gibi kelimeleri yanlış yazma ("sinyil" DEĞİL).
+- 5. bölümdeki nakit/likidite önerisi ile 6. bölümdeki NAKİT satırının ağırlığı ÇELİŞMEMELİ (örn. "%40 nakit tutun" deyip %0 nakitlik portföy verme).
 
 Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek verileri ve geçmiş hafızayı baz al. Raporu zengin finansal terimler kullanarak Türkçe kaleme al."""
 
@@ -703,6 +788,9 @@ Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek veril
         fallback_report += "(LLM'e ulaşılamadığı için rapor otomatik olarak bu ham verilerin birleşimidir.)"
         return {"final_report": fallback_report}
 
+    # Yayin onesi otomatik temizlik: uydurulmus tarih/yayinci satirlari,
+    # koseli parantezli yer tutucular, eksik h2 yapisi, ASCII Turkce...
+    response = rapor_son_islem(response)
     return {"final_report": response}
 
 
@@ -918,8 +1006,11 @@ def portfolio_agent(state: AgentState):
     })
     save_portfolio(p)
 
-    ozet = f"Deneme Portfoyu ({bugun}): Toplam {round(toplam,2):.2f} TL (Toplam %{yuzde:+.2f}, Mevduat: {round(deposit_degeri,2):.2f} TL, USD Karşılığı: {round(usd_degeri,2):.2f} TL, Altın Karşılığı: {round(gold_degeri,2):.2f} TL)"
-    return {"final_report": state.get("final_report", "") + "\n\n[PORTFOY OZETI]\n" + ozet}
+    ozet = f"Deneme Portföyü ({bugun}): Toplam {round(toplam,2):.2f} TL (Toplam %{yuzde:+.2f}, Mevduat: {round(deposit_degeri,2):.2f} TL, USD Karşılığı: {round(usd_degeri,2):.2f} TL, Altın Karşılığı: {round(gold_degeri,2):.2f} TL)"
+    # Ozet artik final_report'a EKLENMEZ: portfoy verisi kendi sayfasinda
+    # (portfolio.html) zaten yayinlaniyor; rapora gomulmesi "[PORTFOY OZETI]"
+    # gibi ham pipeline ciktisinin sayfaya sizmasina yol aciyordu.
+    return {"portfoy_ozet": ozet}
 
 
 # ---------- DERIN ANALIZ (Z.ai GLM ile gunluk derin rapor) ----------
@@ -955,35 +1046,35 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
         portfoy = (f"Deneme portfoyu: toplam {son['total']} TL (%{son['pct']:+.2f}), "
                    f"gunluk %{son['daily_pct']:+.2f}, kiyaslamalar: {son.get('benchmarks')}")
 
-    prompt = f"""Sen kidemli bir hedge-fund arastirma direktoru ve portfoy yoneticisisin. Asagidaki BIST 30 verilerini kullanarak kurumsal yatirimcilara hitap eden, DERINLEMESINE ve UZUN (en az 1200 kelime) bir gunluk analiz raporu yaz. Rapor Turkce olacak.
+    prompt = f"""Sen kıdemli bir hedge-fund araştırma direktörü ve portföy yöneticisisin. Aşağıdaki BIST 30 verilerini kullanarak profesyonel okuyucuya hitap eden, DERİNLEMESİNE ve UZUN (en az 1200 kelime) bir günlük analiz raporu yaz. Rapor Türkçe olacak ve TÜM metinde doğru Türkçe karakterler (ç, ğ, ı, ö, ş, ü) kullanılacak; "sinyal" gibi kelimeler yanlış yazılmayacak.
 
-Yanitini su yapida olustur:
+Yanıtını şu yapıda oluştur (başlıklar aynen bu şekilde, "## " ile):
 
-## 1. Piyasa Ozeti ve Genel Bakis
-(Gunun genel havasi, sektor donusumleri, endeks yorumu)
+## 1. Piyasa Özeti ve Genel Bakış
+(Günün genel havası, sektör dönüşümleri, endeks yorumu)
 
-## 2. Sektor Bazli Degerlendirme
-(Isı haritasi verilerine ve sinyal yogunluguna gore guclu/zayif sektorler)
+## 2. Sektör Bazlı Değerlendirme
+(Isı haritası verilerine ve sinyal yoğunluğuna göre güçlü/zayıf sektörler)
 
-## 3. Teknik Gorsel Analiz
-(EMA dizilimleri, Wave Trend, regresyon kanali konumlari ve Pearson degerlerinin birlikte yorumu; ayrisan hisseler)
+## 3. Teknik Görsel Analiz
+(EMA dizilimleri, Wave Trend, regresyon kanalı konumları ve Pearson değerlerinin birlikte yorumu; ayrışan hisseler)
 
-## 4. Osilator ve Momentum Okumalari
-(RSI/MACD/Stochastic/CCI/ADX degerlerinin uyarilari; asiri alim/satim bolgelerindeki hisseler)
+## 4. Osilatör ve Momentum Okumaları
+(RSI/MACD/Stochastic/CCI/ADX değerlerinin uyarıları; aşırı alım/satım bölgelerindeki hisseler)
 
-## 5. Risk Haritasi ve Senaryolar
-(Yukari/asagi senaryolar, bolunme stratejileri, dikkat edilecek seviyeler)
+## 5. Risk Haritası ve Senaryolar
+(Yukarı/aşağı senaryolar, bölünme stratejileri, dikkat edilecek seviyeler)
 
-## 6. Gunun Onerilen Hisseleri
-Raporun SONUNDA asagidaki basliklarla tam bir tablo olustur:
+## 6. Günün Önerilen Hisseleri
+Raporun SONUNDA aşağıdaki başlıklarla tam bir tablo oluştur:
 
-| Hisse | Sinyal | Giris Bolgesi | Hedef | Stop | Gerekce |
+| Hisse | Sinyal | Giriş Bölgesi | Hedef | Stop | Gerekçe |
 |-------|--------|---------------|-------|------|---------|
 | ... | ... | ... | ... | ... | ... |
 
-Tabloda SADECE teknik ve osilator verilerine gore AL/GÜCLÜ AL sinyali veren hisseleri listeleyip her biri icin gerekce yaz. Rakamlari yalnizca verilen fiyatlardan turet, asla disaridan veri ekleme.
+Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren hisseleri listeleyip her biri için gerekçe yaz. Rakamları yalnızca verilen fiyatlardan türet, asla dışarıdan veri ekleme. Metinde köşeli parantezli [...] yer tutucu kullanma; rapor doğrudan "## 1." başlığıyla başlasın (Tarih/Yayıncı gibi kimlik satırları ekleme).
 
-### VERILER
+### VERİLER
 
 [TEKNIK TARAMA SINYALLERI]
 {teknik_ozet}
@@ -1015,7 +1106,7 @@ Tabloda SADECE teknik ve osilator verilerine gore AL/GÜCLÜ AL sinyali veren hi
             )
             icerik = resp.choices[0].message.content or ""
             if icerik.strip():
-                return icerik
+                return rapor_son_islem(icerik)
             son_hata = "bos yanit"
         except Exception as e:
             son_hata = str(e)[:200]
@@ -1042,6 +1133,9 @@ workflow.add_edge("portfolio", END)
 app = workflow.compile()
 
 # ---------- ORTAK SITE TASARIMI ----------
+SITE_URL = "https://borsa-raporlari.onrender.com/"
+SITE_ADI = "BIST 30 Günlük Raporlar"
+
 BASE_CSS = """
 :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
        --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
@@ -1120,8 +1214,8 @@ body { overflow-x: hidden; }
 .ticker-saat { color: #64748b; font-size: 11.5px; }
 @media (max-width: 640px) {
   .topbar .inner { padding: 10px 12px; }
-  .topbar nav { display: flex; flex-wrap: wrap; gap: 4px 2px; }
-  .topbar nav a { margin-left: 10px; font-size: 12.5px; }
+  .topbar nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
+  .topbar nav a { margin-left: 0; font-size: 13px; padding: 4px 0; }
 }
 """
 
@@ -1165,6 +1259,12 @@ def _ai_panel():
 <script src="https://js.puter.com/v2/"></script>
 <script>
 function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
+function aiZamanAsimi(promise, ms) {
+    return Promise.race([
+        promise,
+        new Promise(function(_, reject) { setTimeout(function() { reject(new Error('yanıt zaman aşımı')); }, ms); })
+    ]);
+}
 async function aiSor() {
     var giris = document.getElementById('ai-input');
     var soru = (giris.value || '').trim();
@@ -1173,17 +1273,18 @@ async function aiSor() {
     var cevap = document.getElementById('ai-answer');
     var panel = document.getElementById('ai-panel');
     panel.style.display = 'block';
-    cevap.innerHTML = '<em>Yanıt hazırlanıyor...</em>';
+    cevap.innerHTML = '<em>Yanıt hazırlanıyor... (ilk kullanımda birkaç saniye sürebilir)</em>';
     btn.disabled = true; giris.disabled = true;
     var sistem = 'Sen "BIST 30 Günlük Raporlar" sitesinin Türkçe yapay zeka asistanısın. Görevin: Borsa İstanbul, makroekonomi ve teknik analiz (EMA, RSI, MACD, Wave Trend, destek/direnç vb.) konularında eğitici, kısa ve anlaşılır yanıtlar vermek. Canlı piyasa verine erişimin yok; güncel veriler için kullanıcıyı sitedeki Teknik Tarama, Borsapy Sinyal ve Günlük Rapor sayfalarına yönlendir. Kesin alım-satım tavsiyesi verme; bilgilendir. Yanıtlarını madde işaretleriyle yaz, en fazla 200 kelime tut.';
     var modeller = ['z-ai/glm-4.7-flash', 'infron:z-ai/glm-4.7-flash', 'z-ai/glm-4.5-flash', 'infron:z-ai/glm-4.5-flash'];
     var sonHata = '';
+    var zamanasimiSayisi = 0;
     for (var i = 0; i < modeller.length; i++) {
         try {
-            var r = await puter.ai.chat(
+            var r = await aiZamanAsimi(puter.ai.chat(
                 [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
                 { model: modeller[i] }
-            );
+            ), 20000);
             var metin = (r && r.message && r.message.content) || (typeof r === 'string' ? r : '') || '';
             if (!metin) { sonHata = 'Boş yanıt'; continue; }
             metin = String(metin).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -1192,10 +1293,18 @@ async function aiSor() {
             return;
         } catch (e) {
             sonHata = (e && e.message) ? e.message : 'Bilinmeyen hata';
+            if (sonHata.indexOf('zaman aşımı') !== -1) {
+                zamanasimiSayisi++;
+                // Art arda 2 kez zaman aşımı = Puter erişilemiyor; diger
+                // modelleri denemek bekletir, hata mesajina gec.
+                if (zamanasimiSayisi >= 2) break;
+            }
             if (sonHata.indexOf('auth') !== -1 || sonHata.indexOf('permission') !== -1) break;
         }
     }
-    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + '). Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin veya sonra tekrar deneyin.</span>';
+    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + ').</span> ' +
+        '<a href="javascript:void(0)" onclick="aiSor()" style="text-decoration:underline">Tekrar dene</a>' +
+        '<div style="margin-top:6px;color:#475569;font-size:12.5px">Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin (asistan, ücretsiz Puter kotanızı kullanır). Sorunuz tarayıcı sekmesinde korunuyor.</div>';
     giris.disabled = false; btn.disabled = false;
 }
 </script>"""
@@ -1252,24 +1361,48 @@ def _kendi_ticker(kok=""):
 </script>"""
 
 
-def _sayfa(title, icerik, aktif="raporlar", kok=""):
-    """Tum sayfalar icin ortak iskelet (ust menu + govde + altbilgi)."""
+def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None):
+    """Tum sayfalar icin ortak iskelet (ust menu + govde + altbilgi).
+
+    aciklama: <meta name="description"> ve og:description icin kisa ozet.
+    yol: sayfanin site kokune gore yolu (canonical + og:url icin; or.
+    "teknik-analiz.html", "reports/2026-09-08.html", "" = ana sayfa)."""
     a_r = ' class="active"' if aktif == "raporlar" else ""
     a_p = ' class="active"' if aktif == "portfoy" else ""
     a_t = ' class="active"' if aktif == "teknik" else ""
     a_b = ' class="active"' if aktif == "borsapy" else ""
     a_d = ' class="active"' if aktif == "derin" else ""
+    tam_url = SITE_URL + (yol.lstrip("/") if yol else "")
+    if not aciklama:
+        aciklama = "Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi."
+    favicon = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E"
+               "%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E"
+               "%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E")
+    ld_json = json.dumps({
+        "@context": "https://schema.org", "@type": "WebPage", "name": title,
+        "description": aciklama, "url": tam_url, "inLanguage": "tr",
+        "isPartOf": {"@type": "WebSite", "name": SITE_ADI, "url": SITE_URL},
+    }, ensure_ascii=False)
     return f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title>
-<!-- Google Tag Manager & Analytics -->
-<script>(function(w,d,s,l,i){{w[l]=w[l]||[];w[l].push({{'gtm.start':
-new Date().getTime(),event:'gtm.js'}});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX';f.parentNode.insertBefore(j,f);
-}})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+<meta name="description" content="{aciklama}">
+<link rel="canonical" href="{tam_url}">
+<link rel="icon" href="{favicon}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{SITE_ADI}">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{aciklama}">
+<meta property="og:url" content="{tam_url}">
+<meta property="og:image" content="{SITE_URL}og-cover.svg">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{aciklama}">
+<script type="application/ld+json">{ld_json}</script>
 <style>{BASE_CSS}</style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/assets/v0.0.25/search-modal-snippet.css" />
@@ -1349,15 +1482,23 @@ def markdown_to_html(metin):
     return markdown.markdown(metin, extensions=["tables", "fenced_code", "sane_lists", "nl2br"])
 
 
-def rapor_sayfasi(html_icerik, date_str):
+def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
+                  alt_baslik="BIST 30 &bull; Yapay zeka destekli günlük analiz",
+                  kok_yol=None, aciklama=None):
+    if kok_yol is None:
+        kok_yol = f"reports/{date_str}.html"
+    if aciklama is None:
+        aciklama = (f"{date_str} tarihli BIST 30 {baslik.lower()}: yönetici özeti, haber ve makro "
+                    f"değerlendirme, hisse bazlı teknik analiz ve model portföy önerisi.")
     icerik = f"""
 <div class="hero">
-<h1>Günlük Piyasa Raporu</h1>
-<div class="meta"><span class="badge">{date_str}</span><span>BIST 30 &bull; Yapay zeka destekli günlük analiz</span></div>
+<h1>{baslik}</h1>
+<div class="meta"><span class="badge">{date_str}</span><span>{alt_baslik}</span></div>
 </div>
 <article class="report">{html_icerik}</article>
 <p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>"""
-    return _sayfa(f"Piyasa Raporu - {date_str}", icerik, "raporlar", kok="../")
+    return _sayfa(f"{baslik} - {date_str}", icerik, "raporlar", kok="../",
+                  aciklama=aciklama, yol=kok_yol)
 
 
 def build_html(report, date_str):
@@ -1459,7 +1600,9 @@ def sparkline_svg(history):
 """
 
 
-def _portfoy_satirlari(p):
+def _portfoy_satirlari(p, limit=None, en_iyi=False):
+    """Portfoy tablosu satirlari. en_iyi=True ise getirisi en yuksek
+    hisselerden siralar (ana sayfadaki 'en iyi 8' ozeti icin)."""
     son = p["history"][-1]
     satirlar = []
     for h in p.get("shares", {}):
@@ -1467,12 +1610,18 @@ def _portfoy_satirlari(p):
         guncel = son["prices"].get(h, ilk)
         if ilk and guncel:
             fark = ((guncel - ilk) / ilk) * 100
-            satirlar.append(
-                f"<tr><td><strong>{h}</strong></td><td>{p['shares'][h]:,.2f}</td>"
-                f"<td>{ilk:.2f} TL</td><td>{guncel:.2f} TL</td>"
-                f"<td class='{_renk(fark)}'>{fark:+.2f}%</td></tr>"
-            )
-    return "".join(satirlar)
+            satirlar.append((h, fark))
+    if en_iyi:
+        satirlar.sort(key=lambda x: x[1], reverse=True)
+    if limit:
+        satirlar = satirlar[:limit]
+    return "".join(
+        f"<tr><td><strong>{h}</strong></td><td>{p['shares'][h]:,.2f}</td>"
+        f"<td>{p['initial_prices'].get(h, 0):.2f} TL</td>"
+        f"<td>{son['prices'].get(h, p['initial_prices'].get(h, 0)):.2f} TL</td>"
+        f"<td class='{_renk(fark)}'>{fark:+.2f}%</td></tr>"
+        for h, fark in satirlar
+    )
 
 
 def _portfoy_istatistikleri(p):
@@ -1486,10 +1635,25 @@ def _portfoy_istatistikleri(p):
 </div>"""
 
 
+# Turkce tarih bicimi (locale bagimliligi olmadan): "8 Eylul 2026, Sali"
+_AYLAR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+          "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
+_GUN_ADLARI = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
+
+
+def _tr_tarih(iso_tarih):
+    """'2026-09-08' -> '8 Eylül 2026, Salı' (bozuk formatta None doner)."""
+    try:
+        d = datetime.strptime(iso_tarih, "%Y-%m-%d")
+        return f"{d.day} {_AYLAR[d.month - 1]} {d.year}, {_GUN_ADLARI[d.weekday()]}"
+    except (ValueError, TypeError):
+        return iso_tarih
+
+
 def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     if rapor_dosyalari:
         kartlar = "".join(
-            f'<a class="rcard" href="reports/{fn}"><span class="date">{fn[:-5]}</span>'
+            f'<a class="rcard" href="reports/{fn}"><span class="date">{_tr_tarih(fn[:-5])}</span>'
             f'<span class="sub">Günlük raporu aç &rarr;</span></a>'
             for fn in rapor_dosyalari
         )
@@ -1512,15 +1676,20 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     if p and p.get("history"):
         grafik = sparkline_svg(p["history"])
         grafik_html = f'<div class="card" style="margin-bottom:14px">{grafik}</div>' if grafik else ""
+        hisse_sayisi = len(p.get("shares", {}))
+        gosterilen = min(8, hisse_sayisi)
         portfoy_bolumu = f"""
 <h2 class="section-title">Deneme Portföyü</h2>
 {_portfoy_istatistikleri(p)}
 {grafik_html}
 <div class="card" style="padding:8px 24px 16px">
+<p style="margin:10px 0 4px; color:var(--muted); font-size:13px">Getirisi en yüksek {gosterilen} hisse:</p>
 <div class="tbl-wrap">
-<table><tr><th>Hisse</th><th>Adet</th><th>İlk Alım</th><th>Güncel</th><th>Getiri</th></tr>{_portfoy_satirlari(p)}</table>
+<table><tr><th>Hisse</th><th>Adet</th><th>İlk Alım</th><th>Güncel</th><th>Getiri</th></tr>{_portfoy_satirlari(p, limit=8, en_iyi=True)}</table>
 </div>
-<p style="margin:12px 0 4px"><a href="portfolio.html">Detaylı portföy geçmişi &rarr;</a></p>
+<p style="margin:12px 0 4px"><a href="portfolio.html">Detaylı portföy geçmişi &rarr;</a>
+<span style="color:var(--muted); font-size:12.5px">({hisse_sayisi} hissenin tamamı portföy sayfasında)</span></p>
+<p style="margin:0 0 6px; color:var(--muted); font-size:12.5px">Portföy fiyatları gün sonu verisidir; canlı fiyatlar için üstteki fiyat şeridine bakınız.</p>
 </div>"""
 
     icerik = f"""
@@ -1532,7 +1701,10 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
 <div class="grid">{kartlar}</div>
 {teknik_bolumu}
 {portfoy_bolumu}"""
-    return _sayfa("BIST 30 Günlük Raporlar", icerik, "raporlar")
+    return _sayfa(
+        "BIST 30 Günlük Raporlar", icerik, "raporlar", yol="",
+        aciklama="BIST 30'un yapay zeka destekli günlük raporları, teknik tarama ve osilatör sinyalleri, model portföy önerileri ve 100.000 TL'lik sanal deneme portföyünün takibi.",
+    )
 
 
 def build_portfolio_html(p):
@@ -1563,8 +1735,12 @@ def build_portfolio_html(p):
 <div class="tbl-wrap">
 <table><tr><th>Tarih</th><th>Toplam Değer</th><th>Toplam %</th><th>Günlük %</th></tr>{gecmis}</table>
 </div>
-</div>"""
-    return _sayfa("Deneme Portföyü", icerik, "portfoy")
+</div>
+<p style="margin:10px 0 0; color:var(--muted); font-size:12.5px">Portföy fiyatları gün sonu kapanış verisidir; canlı fiyatlar için üstteki fiyat şeridine bakınız.</p>"""
+    return _sayfa(
+        "Deneme Portföyü", icerik, "portfoy", yol="portfolio.html",
+        aciklama="100.000 TL sermayeyle BIST 30 hisselerine eşit dağıtılmış sanal deneme portföyü: günlük değer takibi, hisse performansı ve altın/dolar/mevduat karşılaştırması.",
+    )
 
 
 # ---------- TEKNIK TARAMA (EMA / Wave Trend / Regresyon Kanali) ----------
@@ -1889,7 +2065,10 @@ Pearson (r) trendin gücünü gösterir. <strong>Son güncelleme: {simdi} (İsta
 <p style="margin:12px 0 4px; color:var(--muted); font-size:13px">Bugün {len(satirlar)} hisse tarandı; {guclu} hisse GÜÇLÜ AL sinyalinde. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
 </div>
 {_tv_modal_js()}"""
-    return _sayfa(f"Teknik Tarama - {date_str}", icerik, "teknik")
+    return _sayfa(
+        f"Teknik Tarama - {date_str}", icerik, "teknik", yol="teknik-analiz.html",
+        aciklama="BIST 30 teknik tarama tablosu: EMA dizilim sinyalleri, Wave Trend osilatörü, regresyon kanalı konumu ve Pearson korelasyonu. Piyasa saatlerinde 30 dakikada bir güncellenir.",
+    )
 
 
 # ---------- BORSAPY SINYALLERI (TradingView teknik analizi) ----------
@@ -1986,20 +2165,48 @@ def build_borsapy_html(satirlar, date_str):
         if (v <= 30) return '#047857';
         return '#94a3b8';
     }});
+    // 30/70 esik cizgileri + bar uclarina RSI degeri yazan mini eklenti
+    var esikVeDegerler = {{
+        id: 'esikVeDegerler',
+        afterDatasetsDraw: function(chart) {{
+            var ctx = chart.ctx, alan = chart.chartArea, xScale = chart.scales.x;
+            [70, 30].forEach(function(esik) {{
+                var px = xScale.getPixelForValue(esik);
+                ctx.save();
+                ctx.strokeStyle = esik === 70 ? 'rgba(185,28,28,.5)' : 'rgba(4,120,87,.5)';
+                ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.moveTo(px, alan.top); ctx.lineTo(px, alan.bottom); ctx.stroke();
+                ctx.fillStyle = esik === 70 ? '#b91c1c' : '#047857';
+                ctx.font = '600 11px sans-serif';
+                var etiket = 'RSI ' + esik + (esik === 70 ? ' (aşırı alım)' : ' (aşırı satım)');
+                ctx.fillText(etiket, Math.min(px + 5, alan.right - 110), alan.top + 12);
+                ctx.restore();
+            }});
+            chart.getDatasetMeta(0).data.forEach(function(bar, i) {{
+                var v = veri.degerler[i];
+                ctx.save();
+                ctx.fillStyle = '#334155';
+                ctx.font = '10.5px sans-serif';
+                ctx.fillText(String(v), Math.min(bar.x + 6, alan.right - 22), bar.y + 3.5);
+                ctx.restore();
+            }});
+        }}
+    }};
     new Chart(document.getElementById('{grafik_id}'), {{
         type: 'bar',
         data: {{ labels: veri.labels, datasets: [{{ label: 'RSI (14)', data: veri.degerler, backgroundColor: renkler }}] }},
         options: {{
             indexAxis: 'y',
             maintainAspectRatio: false,
-            plugins: {{ legend: {{ display: false }} }},
+            plugins: {{ legend: {{ display: false }}, tooltip: {{ callbacks: {{ label: function(c) {{ return 'RSI: ' + c.parsed.x; }} }} }} }},
             scales: {{
                 x: {{ min: 0, max: 100,
                      grid: {{ color: '#e2e8f0' }},
                      ticks: {{ stepSize: 10 }} }},
                 y: {{ ticks: {{ font: {{ size: 11 }} }} }}
             }}
-        }}
+        }},
+        plugins: [esikVeDegerler]
     }});
 }})();
 </script>"""
@@ -2017,14 +2224,54 @@ Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.
 <div class="card" style="padding:8px 24px 16px">
 <div class="tbl-wrap">
 <table>
-<tr><th>Hisse</th><th>Öneri</th><th>Al/Sat/Nötür</th><th>RSI</th><th>MACD</th><th>Stoch %K</th><th>CCI20</th><th>ADX</th></tr>
+<tr><th>Hisse</th><th>Öneri</th><th>Al/Sat/Nötr</th><th>RSI</th><th>MACD</th><th>Stoch %K</th><th>CCI20</th><th>ADX</th></tr>
 {hucreler}
 </table>
 </div>
 <p style="margin:12px 0 4px; color:var(--muted); font-size:13px">{len(satirlar)} hisse sorgulandı; {guclu} hisse GÜÇLÜ AL. RSI &ge;70 aşırı alım, &le;30 aşırı satım bölgesidir. ADX &gt;25 güçlü trend gösterir. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
 </div>
 {_tv_modal_js()}"""
-    return _sayfa(f"Borsapy Sinyalleri - {date_str}", icerik, "borsapy")
+    return _sayfa(
+        f"Borsapy Sinyalleri - {date_str}", icerik, "borsapy", yol="borsapy-analiz.html",
+        aciklama="TradingView göstergelerinden BIST 30 osilatör özeti: AL/SAT/NÖTR oyları, RSI, MACD, Stokastik %K, CCI ve ADX değerleri. 30 dakikada bir güncellenir.",
+    )
+
+
+def sitemap_ve_robots_yaz(rapor_dosyalari):
+    """Arama motorlari icin robots.txt ve sitemap.xml uretir.
+    Ana sayfalarin lastmod'u en son bot kosusunun tarihi olur; raporlarin
+    lastmod'u dosyanin son degisiklik zamanindan okunur."""
+    statik = [
+        ("index.html", "daily"),
+        ("derin-analiz.html", "daily"),
+        ("teknik-analiz.html", "hourly"),
+        ("borsapy-analiz.html", "hourly"),
+        ("portfolio.html", "daily"),
+    ]
+    bugun = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%Y-%m-%d")
+    url_blokleri = []
+    for yol, frekans in statik:
+        url_blokleri.append(
+            f"  <url><loc>{SITE_URL}{yol}</loc><lastmod>{bugun}</lastmod>"
+            f"<changefreq>{frekans}</changefreq><priority>{'1.0' if yol == 'index.html' else '0.8'}</priority></url>"
+        )
+    for fn in rapor_dosyalari:
+        try:
+            lm = datetime.fromtimestamp(os.path.getmtime(os.path.join("reports", fn))).strftime("%Y-%m-%d")
+        except OSError:
+            lm = bugun
+        url_blokleri.append(
+            f"  <url><loc>{SITE_URL}reports/{fn}</loc><lastmod>{lm}</lastmod>"
+            f"<changefreq>monthly</changefreq><priority>0.6</priority></url>"
+        )
+    with open("sitemap.xml", "w", encoding="utf-8") as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+                + "\n".join(url_blokleri) + "\n</urlset>\n")
+    with open("robots.txt", "w", encoding="utf-8") as f:
+        f.write("User-agent: *\nAllow: /\n\n"
+                f"Sitemap: {SITE_URL}sitemap.xml\n")
+    logger.info("[SEO] sitemap.xml (%d URL) ve robots.txt yazildi", len(url_blokleri))
 
 
 if __name__ == "__main__":
@@ -2069,7 +2316,13 @@ if __name__ == "__main__":
         derin = derin_analiz_yap(result, teknik_satirlar, borsapy_satirlar)
         if derin:
             with open("derin-analiz.html", "w", encoding="utf-8") as f:
-                f.write(rapor_sayfasi(markdown_to_html(derin), date_str + " — Derin Analiz"))
+                f.write(rapor_sayfasi(
+                    markdown_to_html(derin), date_str,
+                    baslik="Derin Analiz",
+                    alt_baslik="BIST 30 &bull; Yapay zeka destekli derinlemesine analiz",
+                    kok_yol="derin-analiz.html",
+                    aciklama="BIST 30'un günlük derinlemesine analizi: sektör değerlendirmesi, EMA ve Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları.",
+                ))
             print("[Derin Analiz] sayfa uretildi.", flush=True)
     except Exception:
         logger.exception("[Derin Analiz] sayfa uretilemedi; diger sayfalar etkilenmez.")
@@ -2080,5 +2333,11 @@ if __name__ == "__main__":
     if p and p.get("history"):
         with open("portfolio.html", "w", encoding="utf-8") as f:
             f.write(build_portfolio_html(p))
+
+    # SEO: arama motorlari dosyalari her kosuda taze lastmod ile yeniden yazilir
+    try:
+        sitemap_ve_robots_yaz(raporlar)
+    except Exception:
+        logger.exception("[SEO] sitemap/robots uretilemedi; rapor uretimini etkilemez.")
 
     print("RAPOR OLUSTURULDU:", date_str)

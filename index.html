@@ -4,11 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BIST 30 Günlük Raporlar</title>
-<!-- Google Tag Manager & Analytics -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX';f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+<meta name="description" content="BIST 30'un yapay zeka destekli günlük raporları, teknik tarama ve osilatör sinyalleri, model portföy önerileri ve 100.000 TL'lik sanal deneme portföyünün takibi.">
+<link rel="canonical" href="https://borsa-raporlari.onrender.com/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Günlük Raporlar">
+<meta property="og:title" content="BIST 30 Günlük Raporlar">
+<meta property="og:description" content="BIST 30'un yapay zeka destekli günlük raporları, teknik tarama ve osilatör sinyalleri, model portföy önerileri ve 100.000 TL'lik sanal deneme portföyünün takibi.">
+<meta property="og:url" content="https://borsa-raporlari.onrender.com/">
+<meta property="og:image" content="https://borsa-raporlari.onrender.com/og-cover.svg">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BIST 30 Günlük Raporlar">
+<meta name="twitter:description" content="BIST 30'un yapay zeka destekli günlük raporları, teknik tarama ve osilatör sinyalleri, model portföy önerileri ve 100.000 TL'lik sanal deneme portföyünün takibi.">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "BIST 30 Günlük Raporlar", "description": "BIST 30'un yapay zeka destekli günlük raporları, teknik tarama ve osilatör sinyalleri, model portföy önerileri ve 100.000 TL'lik sanal deneme portföyünün takibi.", "url": "https://borsa-raporlari.onrender.com/", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.onrender.com/"}}</script>
 <style>
 :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
        --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
@@ -87,8 +96,8 @@ body { overflow-x: hidden; }
 .ticker-saat { color: #64748b; font-size: 11.5px; }
 @media (max-width: 640px) {
   .topbar .inner { padding: 10px 12px; }
-  .topbar nav { display: flex; flex-wrap: wrap; gap: 4px 2px; }
-  .topbar nav a { margin-left: 10px; font-size: 12.5px; }
+  .topbar nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
+  .topbar nav a { margin-left: 0; font-size: 13px; padding: 4px 0; }
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
@@ -174,6 +183,12 @@ body { overflow-x: hidden; }
 <script src="https://js.puter.com/v2/"></script>
 <script>
 function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
+function aiZamanAsimi(promise, ms) {
+    return Promise.race([
+        promise,
+        new Promise(function(_, reject) { setTimeout(function() { reject(new Error('yanıt zaman aşımı')); }, ms); })
+    ]);
+}
 async function aiSor() {
     var giris = document.getElementById('ai-input');
     var soru = (giris.value || '').trim();
@@ -182,17 +197,18 @@ async function aiSor() {
     var cevap = document.getElementById('ai-answer');
     var panel = document.getElementById('ai-panel');
     panel.style.display = 'block';
-    cevap.innerHTML = '<em>Yanıt hazırlanıyor...</em>';
+    cevap.innerHTML = '<em>Yanıt hazırlanıyor... (ilk kullanımda birkaç saniye sürebilir)</em>';
     btn.disabled = true; giris.disabled = true;
     var sistem = 'Sen "BIST 30 Günlük Raporlar" sitesinin Türkçe yapay zeka asistanısın. Görevin: Borsa İstanbul, makroekonomi ve teknik analiz (EMA, RSI, MACD, Wave Trend, destek/direnç vb.) konularında eğitici, kısa ve anlaşılır yanıtlar vermek. Canlı piyasa verine erişimin yok; güncel veriler için kullanıcıyı sitedeki Teknik Tarama, Borsapy Sinyal ve Günlük Rapor sayfalarına yönlendir. Kesin alım-satım tavsiyesi verme; bilgilendir. Yanıtlarını madde işaretleriyle yaz, en fazla 200 kelime tut.';
     var modeller = ['z-ai/glm-4.7-flash', 'infron:z-ai/glm-4.7-flash', 'z-ai/glm-4.5-flash', 'infron:z-ai/glm-4.5-flash'];
     var sonHata = '';
+    var zamanasimiSayisi = 0;
     for (var i = 0; i < modeller.length; i++) {
         try {
-            var r = await puter.ai.chat(
+            var r = await aiZamanAsimi(puter.ai.chat(
                 [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
                 { model: modeller[i] }
-            );
+            ), 20000);
             var metin = (r && r.message && r.message.content) || (typeof r === 'string' ? r : '') || '';
             if (!metin) { sonHata = 'Boş yanıt'; continue; }
             metin = String(metin).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -201,10 +217,18 @@ async function aiSor() {
             return;
         } catch (e) {
             sonHata = (e && e.message) ? e.message : 'Bilinmeyen hata';
+            if (sonHata.indexOf('zaman aşımı') !== -1) {
+                zamanasimiSayisi++;
+                // Art arda 2 kez zaman aşımı = Puter erişilemiyor; diger
+                // modelleri denemek bekletir, hata mesajina gec.
+                if (zamanasimiSayisi >= 2) break;
+            }
             if (sonHata.indexOf('auth') !== -1 || sonHata.indexOf('permission') !== -1) break;
         }
     }
-    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + '). Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin veya sonra tekrar deneyin.</span>';
+    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + ').</span> ' +
+        '<a href="javascript:void(0)" onclick="aiSor()" style="text-decoration:underline">Tekrar dene</a>' +
+        '<div style="margin-top:6px;color:#475569;font-size:12.5px">Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin (asistan, ücretsiz Puter kotanızı kullanır). Sorunuz tarayıcı sekmesinde korunuyor.</div>';
     giris.disabled = false; btn.disabled = false;
 }
 </script>
@@ -216,7 +240,7 @@ async function aiSor() {
 <p>Her sabah 08:00'de otomatik üretilen, yapay zeka destekli BIST 30 analizleri ve sanal portföy takibi.</p>
 </div>
 <h2 class="section-title">Rapor Arşivi</h2>
-<div class="grid"><a class="rcard" href="reports/2026-09-08.html"><span class="date">2026-09-08</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-07.html"><span class="date">2026-09-07</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-06.html"><span class="date">2026-09-06</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-05.html"><span class="date">2026-09-05</span><span class="sub">Günlük raporu aç &rarr;</span></a></div>
+<div class="grid"><a class="rcard" href="reports/2026-09-08.html"><span class="date">8 Eylül 2026, Salı</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-07.html"><span class="date">7 Eylül 2026, Pazartesi</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-06.html"><span class="date">6 Eylül 2026, Pazar</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-05.html"><span class="date">5 Eylül 2026, Cumartesi</span><span class="sub">Günlük raporu aç &rarr;</span></a></div>
 
 <h2 class="section-title">Teknik Taramada Öne Çıkanlar</h2>
 <div class="grid"><a class="rcard" href="teknik-analiz.html"><span class="date">KCHOL</span><span class="sub">GÜÇLÜ AL &bull; 224.10 TL &bull; kanal %86 &bull; r=0.82</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">BIMAS</span><span class="sub">GÜÇLÜ AL &bull; 419.75 TL &bull; kanal %70 &bull; r=0.75</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">KRDMD</span><span class="sub">GÜÇLÜ AL &bull; 45.66 TL &bull; kanal %57 &bull; r=0.73</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">TRALT</span><span class="sub">GÜÇLÜ AL &bull; 52.95 TL &bull; kanal %65 &bull; r=0.30</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">PETKM</span><span class="sub">GÜÇLÜ AL &bull; 24.26 TL &bull; kanal %139 &bull; r=0.21</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">GUBRF</span><span class="sub">GÜÇLÜ AL &bull; 502.00 TL &bull; kanal %88 &bull; r=0.01</span></a></div>
@@ -232,13 +256,13 @@ async function aiSor() {
 </div>
 <div class="card" style="margin-bottom:14px">
 <div style="position:relative; height:340px;">
-<canvas id="portfoy-grafik-452582"></canvas>
+<canvas id="portfoy-grafik-260851"></canvas>
 </div>
 <script>
 (function() {
     var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100819.58], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100459.02], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}, {"label": "BIST 100 Endeksi", "data": [100000.0, 100000.0, 99549.87], "borderColor": "#7c3aed", "backgroundColor": "#7c3aed", "borderDash": [2, 2]}]};
     var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
-    var ctx = document.getElementById('portfoy-grafik-452582').getContext('2d');
+    var ctx = document.getElementById('portfoy-grafik-260851').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -283,10 +307,13 @@ async function aiSor() {
 </script>
 </div>
 <div class="card" style="padding:8px 24px 16px">
+<p style="margin:10px 0 4px; color:var(--muted); font-size:13px">Getirisi en yüksek 8 hisse:</p>
 <div class="tbl-wrap">
-<table><tr><th>Hisse</th><th>Adet</th><th>İlk Alım</th><th>Güncel</th><th>Getiri</th></tr><tr><td><strong>AEFES</strong></td><td>180.67</td><td>18.45 TL</td><td>18.79 TL</td><td class='pos'>+1.84%</td></tr><tr><td><strong>AKBNK</strong></td><td>46.39</td><td>71.85 TL</td><td>73.05 TL</td><td class='pos'>+1.67%</td></tr><tr><td><strong>ASELS</strong></td><td>8.59</td><td>388.25 TL</td><td>392.50 TL</td><td class='pos'>+1.09%</td></tr><tr><td><strong>ASTOR</strong></td><td>11.30</td><td>295.00 TL</td><td>301.00 TL</td><td class='pos'>+2.03%</td></tr><tr><td><strong>BIMAS</strong></td><td>8.02</td><td>415.75 TL</td><td>418.00 TL</td><td class='pos'>+0.54%</td></tr><tr><td><strong>DSTKF</strong></td><td>1.44</td><td>2320.00 TL</td><td>2390.00 TL</td><td class='pos'>+3.02%</td></tr><tr><td><strong>EKGYO</strong></td><td>171.47</td><td>19.44 TL</td><td>19.96 TL</td><td class='pos'>+2.67%</td></tr><tr><td><strong>ENKAI</strong></td><td>38.20</td><td>87.25 TL</td><td>89.00 TL</td><td class='pos'>+2.01%</td></tr><tr><td><strong>EREGL</strong></td><td>89.61</td><td>37.20 TL</td><td>38.32 TL</td><td class='pos'>+3.01%</td></tr><tr><td><strong>FROTO</strong></td><td>43.18</td><td>77.20 TL</td><td>79.65 TL</td><td class='pos'>+3.17%</td></tr><tr><td><strong>GARAN</strong></td><td>25.37</td><td>131.40 TL</td><td>133.50 TL</td><td class='pos'>+1.60%</td></tr><tr><td><strong>GUBRF</strong></td><td>6.96</td><td>478.75 TL</td><td>491.25 TL</td><td class='pos'>+2.61%</td></tr><tr><td><strong>ISCTR</strong></td><td>256.21</td><td>13.01 TL</td><td>13.05 TL</td><td class='pos'>+0.31%</td></tr><tr><td><strong>KCHOL</strong></td><td>15.50</td><td>215.10 TL</td><td>219.70 TL</td><td class='pos'>+2.14%</td></tr><tr><td><strong>KRDMD</strong></td><td>76.59</td><td>43.52 TL</td><td>45.20 TL</td><td class='pos'>+3.86%</td></tr><tr><td><strong>MGROS</strong></td><td>6.33</td><td>527.00 TL</td><td>528.00 TL</td><td class='pos'>+0.19%</td></tr><tr><td><strong>PETKM</strong></td><td>166.17</td><td>20.06 TL</td><td>22.06 TL</td><td class='pos'>+9.97%</td></tr><tr><td><strong>PGSUS</strong></td><td>22.42</td><td>148.70 TL</td><td>149.40 TL</td><td class='pos'>+0.47%</td></tr><tr><td><strong>SAHOL</strong></td><td>36.00</td><td>92.60 TL</td><td>94.05 TL</td><td class='pos'>+1.57%</td></tr><tr><td><strong>SASA</strong></td><td>1,455.60</td><td>2.29 TL</td><td>2.51 TL</td><td class='pos'>+9.61%</td></tr><tr><td><strong>SISE</strong></td><td>85.30</td><td>39.08 TL</td><td>41.66 TL</td><td class='pos'>+6.60%</td></tr><tr><td><strong>TAVHL</strong></td><td>12.43</td><td>268.25 TL</td><td>269.75 TL</td><td class='pos'>+0.56%</td></tr><tr><td><strong>TCELL</strong></td><td>33.96</td><td>98.15 TL</td><td>99.05 TL</td><td class='pos'>+0.92%</td></tr><tr><td><strong>THYAO</strong></td><td>11.26</td><td>296.00 TL</td><td>296.75 TL</td><td class='pos'>+0.25%</td></tr><tr><td><strong>TOASO</strong></td><td>12.15</td><td>274.25 TL</td><td>288.00 TL</td><td class='pos'>+5.01%</td></tr><tr><td><strong>TRALT</strong></td><td>65.62</td><td>50.80 TL</td><td>51.30 TL</td><td class='pos'>+0.98%</td></tr><tr><td><strong>TTKOM</strong></td><td>64.23</td><td>51.90 TL</td><td>52.35 TL</td><td class='pos'>+0.87%</td></tr><tr><td><strong>TUPRS</strong></td><td>8.58</td><td>388.50 TL</td><td>394.25 TL</td><td class='pos'>+1.48%</td></tr><tr><td><strong>VAKBN</strong></td><td>99.15</td><td>33.62 TL</td><td>33.32 TL</td><td class='neg'>-0.89%</td></tr><tr><td><strong>YKBNK</strong></td><td>92.85</td><td>35.90 TL</td><td>36.26 TL</td><td class='pos'>+1.00%</td></tr></table>
+<table><tr><th>Hisse</th><th>Adet</th><th>İlk Alım</th><th>Güncel</th><th>Getiri</th></tr><tr><td><strong>PETKM</strong></td><td>166.17</td><td>20.06 TL</td><td>22.06 TL</td><td class='pos'>+9.97%</td></tr><tr><td><strong>SASA</strong></td><td>1,455.60</td><td>2.29 TL</td><td>2.51 TL</td><td class='pos'>+9.61%</td></tr><tr><td><strong>SISE</strong></td><td>85.30</td><td>39.08 TL</td><td>41.66 TL</td><td class='pos'>+6.60%</td></tr><tr><td><strong>TOASO</strong></td><td>12.15</td><td>274.25 TL</td><td>288.00 TL</td><td class='pos'>+5.01%</td></tr><tr><td><strong>KRDMD</strong></td><td>76.59</td><td>43.52 TL</td><td>45.20 TL</td><td class='pos'>+3.86%</td></tr><tr><td><strong>FROTO</strong></td><td>43.18</td><td>77.20 TL</td><td>79.65 TL</td><td class='pos'>+3.17%</td></tr><tr><td><strong>DSTKF</strong></td><td>1.44</td><td>2320.00 TL</td><td>2390.00 TL</td><td class='pos'>+3.02%</td></tr><tr><td><strong>EREGL</strong></td><td>89.61</td><td>37.20 TL</td><td>38.32 TL</td><td class='pos'>+3.01%</td></tr></table>
 </div>
-<p style="margin:12px 0 4px"><a href="portfolio.html">Detaylı portföy geçmişi &rarr;</a></p>
+<p style="margin:12px 0 4px"><a href="portfolio.html">Detaylı portföy geçmişi &rarr;</a>
+<span style="color:var(--muted); font-size:12.5px">(30 hissenin tamamı portföy sayfasında)</span></p>
+<p style="margin:0 0 6px; color:var(--muted); font-size:12.5px">Portföy fiyatları gün sonu verisidir; canlı fiyatlar için üstteki fiyat şeridine bakınız.</p>
 </div>
 </main>
 

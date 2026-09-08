@@ -4,11 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Deneme Portföyü</title>
-<!-- Google Tag Manager & Analytics -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX';f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+<meta name="description" content="100.000 TL sermayeyle BIST 30 hisselerine eşit dağıtılmış sanal deneme portföyü: günlük değer takibi, hisse performansı ve altın/dolar/mevduat karşılaştırması.">
+<link rel="canonical" href="https://borsa-raporlari.onrender.com/portfolio.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Günlük Raporlar">
+<meta property="og:title" content="Deneme Portföyü">
+<meta property="og:description" content="100.000 TL sermayeyle BIST 30 hisselerine eşit dağıtılmış sanal deneme portföyü: günlük değer takibi, hisse performansı ve altın/dolar/mevduat karşılaştırması.">
+<meta property="og:url" content="https://borsa-raporlari.onrender.com/portfolio.html">
+<meta property="og:image" content="https://borsa-raporlari.onrender.com/og-cover.svg">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Deneme Portföyü">
+<meta name="twitter:description" content="100.000 TL sermayeyle BIST 30 hisselerine eşit dağıtılmış sanal deneme portföyü: günlük değer takibi, hisse performansı ve altın/dolar/mevduat karşılaştırması.">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Deneme Portföyü", "description": "100.000 TL sermayeyle BIST 30 hisselerine eşit dağıtılmış sanal deneme portföyü: günlük değer takibi, hisse performansı ve altın/dolar/mevduat karşılaştırması.", "url": "https://borsa-raporlari.onrender.com/portfolio.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.onrender.com/"}}</script>
 <style>
 :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
        --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
@@ -78,10 +87,17 @@ body { overflow-x: hidden; }
 .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .tbl-wrap table { min-width: 760px; }   /* genis tablolar kart icinde yatay kayar */
 .report table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.ticker-bant { background: var(--ink); overflow: hidden; white-space: nowrap; }
+.ticker-iz { display: inline-block; padding: 8px 0; animation: ticker-kaydir 75s linear infinite; }
+.ticker-bant:hover .ticker-iz { animation-play-state: paused; }
+@keyframes ticker-kaydir { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.ticker-oge { display: inline-block; margin: 0 16px; color: #cbd5e1; font-size: 13px; }
+.ticker-oge b { color: #fff; letter-spacing: .3px; }
+.ticker-saat { color: #64748b; font-size: 11.5px; }
 @media (max-width: 640px) {
   .topbar .inner { padding: 10px 12px; }
-  .topbar nav { display: flex; flex-wrap: wrap; gap: 4px 2px; }
-  .topbar nav a { margin-left: 10px; font-size: 12.5px; }
+  .topbar nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
+  .topbar nav a { margin-left: 0; font-size: 13px; padding: 4px 0; }
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
@@ -93,18 +109,35 @@ body { overflow-x: hidden; }
 <a class="brand" href="index.html">BIST 30 Günlük Raporlar</a>
 <nav><a href="index.html">Raporlar</a><a href="derin-analiz.html">Derin Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="portfolio.html" class="active">Deneme Portföyü</a></nav>
 </div></header>
-<div class="tradingview-widget-container tv-ticker-bant" style="margin:0 0 18px; width:100%;">
-<div class="tradingview-widget-container__widget"></div>
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-{
-"symbols": [{"proName":"BIST:AEFES","title":"AEFES"}, {"proName":"BIST:AKBNK","title":"AKBNK"}, {"proName":"BIST:ASELS","title":"ASELS"}, {"proName":"BIST:ASTOR","title":"ASTOR"}, {"proName":"BIST:BIMAS","title":"BIMAS"}, {"proName":"BIST:DSTKF","title":"DSTKF"}, {"proName":"BIST:EKGYO","title":"EKGYO"}, {"proName":"BIST:ENKAI","title":"ENKAI"}, {"proName":"BIST:EREGL","title":"EREGL"}, {"proName":"BIST:FROTO","title":"FROTO"}, {"proName":"BIST:GARAN","title":"GARAN"}, {"proName":"BIST:GUBRF","title":"GUBRF"}, {"proName":"BIST:ISCTR","title":"ISCTR"}, {"proName":"BIST:KCHOL","title":"KCHOL"}, {"proName":"BIST:KRDMD","title":"KRDMD"}, {"proName":"BIST:MGROS","title":"MGROS"}, {"proName":"BIST:PETKM","title":"PETKM"}, {"proName":"BIST:PGSUS","title":"PGSUS"}, {"proName":"BIST:SAHOL","title":"SAHOL"}, {"proName":"BIST:SASA","title":"SASA"}, {"proName":"BIST:SISE","title":"SISE"}, {"proName":"BIST:TAVHL","title":"TAVHL"}, {"proName":"BIST:TCELL","title":"TCELL"}, {"proName":"BIST:THYAO","title":"THYAO"}, {"proName":"BIST:TOASO","title":"TOASO"}, {"proName":"BIST:TRALT","title":"TRALT"}, {"proName":"BIST:TTKOM","title":"TTKOM"}, {"proName":"BIST:TUPRS","title":"TUPRS"}, {"proName":"BIST:VAKBN","title":"VAKBN"}, {"proName":"BIST:YKBNK","title":"YKBNK"}],
-"showSymbolLogo": false,
-"isTransparent": true,
-"displayMode": "adaptive",
-"locale": "tr"
-}
-</script>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Fiyatlar yükleniyor...</span></div>
 </div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ~15 dk gecikmeli</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle() {
+    fetch(kok + 'ticker.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(ciz)
+      .catch(function() {});
+  }
+  yukle();
+  setInterval(yukle, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
 
 <main class="wrap">
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve Google Çeviri) -->
@@ -150,6 +183,12 @@ body { overflow-x: hidden; }
 <script src="https://js.puter.com/v2/"></script>
 <script>
 function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
+function aiZamanAsimi(promise, ms) {
+    return Promise.race([
+        promise,
+        new Promise(function(_, reject) { setTimeout(function() { reject(new Error('yanıt zaman aşımı')); }, ms); })
+    ]);
+}
 async function aiSor() {
     var giris = document.getElementById('ai-input');
     var soru = (giris.value || '').trim();
@@ -158,17 +197,18 @@ async function aiSor() {
     var cevap = document.getElementById('ai-answer');
     var panel = document.getElementById('ai-panel');
     panel.style.display = 'block';
-    cevap.innerHTML = '<em>Yanıt hazırlanıyor...</em>';
+    cevap.innerHTML = '<em>Yanıt hazırlanıyor... (ilk kullanımda birkaç saniye sürebilir)</em>';
     btn.disabled = true; giris.disabled = true;
     var sistem = 'Sen "BIST 30 Günlük Raporlar" sitesinin Türkçe yapay zeka asistanısın. Görevin: Borsa İstanbul, makroekonomi ve teknik analiz (EMA, RSI, MACD, Wave Trend, destek/direnç vb.) konularında eğitici, kısa ve anlaşılır yanıtlar vermek. Canlı piyasa verine erişimin yok; güncel veriler için kullanıcıyı sitedeki Teknik Tarama, Borsapy Sinyal ve Günlük Rapor sayfalarına yönlendir. Kesin alım-satım tavsiyesi verme; bilgilendir. Yanıtlarını madde işaretleriyle yaz, en fazla 200 kelime tut.';
     var modeller = ['z-ai/glm-4.7-flash', 'infron:z-ai/glm-4.7-flash', 'z-ai/glm-4.5-flash', 'infron:z-ai/glm-4.5-flash'];
     var sonHata = '';
+    var zamanasimiSayisi = 0;
     for (var i = 0; i < modeller.length; i++) {
         try {
-            var r = await puter.ai.chat(
+            var r = await aiZamanAsimi(puter.ai.chat(
                 [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
                 { model: modeller[i] }
-            );
+            ), 20000);
             var metin = (r && r.message && r.message.content) || (typeof r === 'string' ? r : '') || '';
             if (!metin) { sonHata = 'Boş yanıt'; continue; }
             metin = String(metin).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -177,10 +217,18 @@ async function aiSor() {
             return;
         } catch (e) {
             sonHata = (e && e.message) ? e.message : 'Bilinmeyen hata';
+            if (sonHata.indexOf('zaman aşımı') !== -1) {
+                zamanasimiSayisi++;
+                // Art arda 2 kez zaman aşımı = Puter erişilemiyor; diger
+                // modelleri denemek bekletir, hata mesajina gec.
+                if (zamanasimiSayisi >= 2) break;
+            }
             if (sonHata.indexOf('auth') !== -1 || sonHata.indexOf('permission') !== -1) break;
         }
     }
-    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + '). Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin veya sonra tekrar deneyin.</span>';
+    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + ').</span> ' +
+        '<a href="javascript:void(0)" onclick="aiSor()" style="text-decoration:underline">Tekrar dene</a>' +
+        '<div style="margin-top:6px;color:#475569;font-size:12.5px">Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin (asistan, ücretsiz Puter kotanızı kullanır). Sorunuz tarayıcı sekmesinde korunuyor.</div>';
     giris.disabled = false; btn.disabled = false;
 }
 </script>
@@ -200,13 +248,13 @@ async function aiSor() {
 </div>
 <div class="card" style="margin-bottom:22px">
 <div style="position:relative; height:340px;">
-<canvas id="portfoy-grafik-488497"></canvas>
+<canvas id="portfoy-grafik-834233"></canvas>
 </div>
 <script>
 (function() {
     var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100819.58], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100459.02], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}, {"label": "BIST 100 Endeksi", "data": [100000.0, 100000.0, 99549.87], "borderColor": "#7c3aed", "backgroundColor": "#7c3aed", "borderDash": [2, 2]}]};
     var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
-    var ctx = document.getElementById('portfoy-grafik-488497').getContext('2d');
+    var ctx = document.getElementById('portfoy-grafik-834233').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -262,6 +310,7 @@ async function aiSor() {
 <table><tr><th>Tarih</th><th>Toplam Değer</th><th>Toplam %</th><th>Günlük %</th></tr><tr><td>2026-09-08</td><td>102,352.27 TL</td><td class='pos'>+2.35%</td><td class='pos'>+2.34%</td></tr><tr><td>2026-09-07</td><td>100,013.04 TL</td><td class='pos'>+0.01%</td><td class='pos'>+0.00%</td></tr><tr><td>2026-09-06</td><td>100,013.04 TL</td><td class='pos'>+0.01%</td><td class='pos'>+0.01%</td></tr></table>
 </div>
 </div>
+<p style="margin:10px 0 0; color:var(--muted); font-size:12.5px">Portföy fiyatları gün sonu kapanış verisidir; canlı fiyatlar için üstteki fiyat şeridine bakınız.</p>
 </main>
 
 <footer class="footer">Bilgilendirme amacıyla hazırlanmıştır, yatırım tavsiyesi değildir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>

@@ -3,12 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Piyasa Raporu - 2026-09-08 — Derin Analiz</title>
-<!-- Google Tag Manager & Analytics -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX';f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+<title>Derin Analiz - 2026-09-08</title>
+<meta name="description" content="BIST 30'un günlük derinlemesine analizi: sektör değerlendirmesi, EMA ve Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları.">
+<link rel="canonical" href="https://borsa-raporlari.onrender.com/derin-analiz.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Günlük Raporlar">
+<meta property="og:title" content="Derin Analiz - 2026-09-08">
+<meta property="og:description" content="BIST 30'un günlük derinlemesine analizi: sektör değerlendirmesi, EMA ve Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları.">
+<meta property="og:url" content="https://borsa-raporlari.onrender.com/derin-analiz.html">
+<meta property="og:image" content="https://borsa-raporlari.onrender.com/og-cover.svg">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Derin Analiz - 2026-09-08">
+<meta name="twitter:description" content="BIST 30'un günlük derinlemesine analizi: sektör değerlendirmesi, EMA ve Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları.">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Derin Analiz - 2026-09-08", "description": "BIST 30'un günlük derinlemesine analizi: sektör değerlendirmesi, EMA ve Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları.", "url": "https://borsa-raporlari.onrender.com/derin-analiz.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.onrender.com/"}}</script>
 <style>
 :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
        --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
@@ -78,10 +87,17 @@ body { overflow-x: hidden; }
 .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .tbl-wrap table { min-width: 760px; }   /* genis tablolar kart icinde yatay kayar */
 .report table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.ticker-bant { background: var(--ink); overflow: hidden; white-space: nowrap; }
+.ticker-iz { display: inline-block; padding: 8px 0; animation: ticker-kaydir 75s linear infinite; }
+.ticker-bant:hover .ticker-iz { animation-play-state: paused; }
+@keyframes ticker-kaydir { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.ticker-oge { display: inline-block; margin: 0 16px; color: #cbd5e1; font-size: 13px; }
+.ticker-oge b { color: #fff; letter-spacing: .3px; }
+.ticker-saat { color: #64748b; font-size: 11.5px; }
 @media (max-width: 640px) {
   .topbar .inner { padding: 10px 12px; }
-  .topbar nav { display: flex; flex-wrap: wrap; gap: 4px 2px; }
-  .topbar nav a { margin-left: 10px; font-size: 12.5px; }
+  .topbar nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
+  .topbar nav a { margin-left: 0; font-size: 13px; padding: 4px 0; }
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
@@ -93,18 +109,35 @@ body { overflow-x: hidden; }
 <a class="brand" href="../index.html">BIST 30 Günlük Raporlar</a>
 <nav><a href="../index.html" class="active">Raporlar</a><a href="../derin-analiz.html">Derin Analiz</a><a href="../teknik-analiz.html">Teknik Tarama</a><a href="../borsapy-analiz.html">Borsapy Sinyal</a><a href="../portfolio.html">Deneme Portföyü</a></nav>
 </div></header>
-<div class="tradingview-widget-container tv-ticker-bant" style="margin:0 0 18px; width:100%;">
-<div class="tradingview-widget-container__widget"></div>
-<script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-{
-"symbols": [{"proName":"BIST:AEFES","title":"AEFES"}, {"proName":"BIST:AKBNK","title":"AKBNK"}, {"proName":"BIST:ASELS","title":"ASELS"}, {"proName":"BIST:ASTOR","title":"ASTOR"}, {"proName":"BIST:BIMAS","title":"BIMAS"}, {"proName":"BIST:DSTKF","title":"DSTKF"}, {"proName":"BIST:EKGYO","title":"EKGYO"}, {"proName":"BIST:ENKAI","title":"ENKAI"}, {"proName":"BIST:EREGL","title":"EREGL"}, {"proName":"BIST:FROTO","title":"FROTO"}, {"proName":"BIST:GARAN","title":"GARAN"}, {"proName":"BIST:GUBRF","title":"GUBRF"}, {"proName":"BIST:ISCTR","title":"ISCTR"}, {"proName":"BIST:KCHOL","title":"KCHOL"}, {"proName":"BIST:KRDMD","title":"KRDMD"}, {"proName":"BIST:MGROS","title":"MGROS"}, {"proName":"BIST:PETKM","title":"PETKM"}, {"proName":"BIST:PGSUS","title":"PGSUS"}, {"proName":"BIST:SAHOL","title":"SAHOL"}, {"proName":"BIST:SASA","title":"SASA"}, {"proName":"BIST:SISE","title":"SISE"}, {"proName":"BIST:TAVHL","title":"TAVHL"}, {"proName":"BIST:TCELL","title":"TCELL"}, {"proName":"BIST:THYAO","title":"THYAO"}, {"proName":"BIST:TOASO","title":"TOASO"}, {"proName":"BIST:TRALT","title":"TRALT"}, {"proName":"BIST:TTKOM","title":"TTKOM"}, {"proName":"BIST:TUPRS","title":"TUPRS"}, {"proName":"BIST:VAKBN","title":"VAKBN"}, {"proName":"BIST:YKBNK","title":"YKBNK"}],
-"showSymbolLogo": false,
-"isTransparent": true,
-"displayMode": "adaptive",
-"locale": "tr"
-}
-</script>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Fiyatlar yükleniyor...</span></div>
 </div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ~15 dk gecikmeli</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle() {
+    fetch(kok + 'ticker.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(ciz)
+      .catch(function() {});
+  }
+  yukle();
+  setInterval(yukle, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
 
 <main class="wrap">
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve Google Çeviri) -->
@@ -150,6 +183,12 @@ body { overflow-x: hidden; }
 <script src="https://js.puter.com/v2/"></script>
 <script>
 function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
+function aiZamanAsimi(promise, ms) {
+    return Promise.race([
+        promise,
+        new Promise(function(_, reject) { setTimeout(function() { reject(new Error('yanıt zaman aşımı')); }, ms); })
+    ]);
+}
 async function aiSor() {
     var giris = document.getElementById('ai-input');
     var soru = (giris.value || '').trim();
@@ -158,17 +197,18 @@ async function aiSor() {
     var cevap = document.getElementById('ai-answer');
     var panel = document.getElementById('ai-panel');
     panel.style.display = 'block';
-    cevap.innerHTML = '<em>Yanıt hazırlanıyor...</em>';
+    cevap.innerHTML = '<em>Yanıt hazırlanıyor... (ilk kullanımda birkaç saniye sürebilir)</em>';
     btn.disabled = true; giris.disabled = true;
     var sistem = 'Sen "BIST 30 Günlük Raporlar" sitesinin Türkçe yapay zeka asistanısın. Görevin: Borsa İstanbul, makroekonomi ve teknik analiz (EMA, RSI, MACD, Wave Trend, destek/direnç vb.) konularında eğitici, kısa ve anlaşılır yanıtlar vermek. Canlı piyasa verine erişimin yok; güncel veriler için kullanıcıyı sitedeki Teknik Tarama, Borsapy Sinyal ve Günlük Rapor sayfalarına yönlendir. Kesin alım-satım tavsiyesi verme; bilgilendir. Yanıtlarını madde işaretleriyle yaz, en fazla 200 kelime tut.';
     var modeller = ['z-ai/glm-4.7-flash', 'infron:z-ai/glm-4.7-flash', 'z-ai/glm-4.5-flash', 'infron:z-ai/glm-4.5-flash'];
     var sonHata = '';
+    var zamanasimiSayisi = 0;
     for (var i = 0; i < modeller.length; i++) {
         try {
-            var r = await puter.ai.chat(
+            var r = await aiZamanAsimi(puter.ai.chat(
                 [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
                 { model: modeller[i] }
-            );
+            ), 20000);
             var metin = (r && r.message && r.message.content) || (typeof r === 'string' ? r : '') || '';
             if (!metin) { sonHata = 'Boş yanıt'; continue; }
             metin = String(metin).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -177,10 +217,18 @@ async function aiSor() {
             return;
         } catch (e) {
             sonHata = (e && e.message) ? e.message : 'Bilinmeyen hata';
+            if (sonHata.indexOf('zaman aşımı') !== -1) {
+                zamanasimiSayisi++;
+                // Art arda 2 kez zaman aşımı = Puter erişilemiyor; diger
+                // modelleri denemek bekletir, hata mesajina gec.
+                if (zamanasimiSayisi >= 2) break;
+            }
             if (sonHata.indexOf('auth') !== -1 || sonHata.indexOf('permission') !== -1) break;
         }
     }
-    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + '). Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin veya sonra tekrar deneyin.</span>';
+    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + ').</span> ' +
+        '<a href="javascript:void(0)" onclick="aiSor()" style="text-decoration:underline">Tekrar dene</a>' +
+        '<div style="margin-top:6px;color:#475569;font-size:12.5px">Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin (asistan, ücretsiz Puter kotanızı kullanır). Sorunuz tarayıcı sekmesinde korunuyor.</div>';
     giris.disabled = false; btn.disabled = false;
 }
 </script>
@@ -188,15 +236,15 @@ async function aiSor() {
     <!-- Asıl Sayfa İçeriği -->
     
 <div class="hero">
-<h1>Günlük Piyasa Raporu</h1>
-<div class="meta"><span class="badge">2026-09-08 — Derin Analiz</span><span>BIST 30 &bull; Yapay zeka destekli günlük analiz</span></div>
+<h1>Derin Analiz</h1>
+<div class="meta"><span class="badge">2026-09-08</span><span>BIST 30 &bull; Yapay zeka destekli derinlemesine analiz</span></div>
 </div>
-<article class="report"><h2><strong>1. Piyasa Ozeti ve Genel Bakis</strong></h2>
-<p>Kurumsal Yatırımcılar,</p>
+<article class="report"><h2>1. Piyasa Özeti ve Genel Bakış</h2>
+<p>Değerli Okur,</p>
 <p>Bugün Borsa İstanbul (BIST 30) endeksi, küresel ve yerel makroekonomik belirsizliklerin hâkim olduğu bir ortamda, dalgalı ve temkinli bir seyir izledi. Endeks, geçtiğimiz hafta boyunca sürdürdüğü "Yukarı Adım Kuralı" etkisiyle kısa vadeli bir soluklanma yaşarken, makroekonomik verilerin ve jeopolitik risklerin yarattığı temel baskıyı tamamen ortadan kaldıramadı. Bu durum, piyasada "kayıp korkusu" ile "fırsat arayışı" arasında gidip gelen bir yatırımcı psikolojisi yarattı.</p>
 <p>Jeopolitik riskler, özellikle İran kaynaklı gerilimlerin tırmanması ve "ekonomik savaş" söylemleri, küresel risk iştahını olumsuz etkilemeye devam ediyor. Bu durum, özellikle enerji yoğun üretim ve nakliye sektörlerini (EREGL, TUPRS, TOASO) baskı altında tutuyor. Ancak, Irak petrol ihracatındaki artış ve AB ihracatının 72 milyar dolar seviyesine yaklaşması, dış dengeyi olumlu yönde etkileyerek borsa üzerindeki negatif havayı hafifletme potansiyeli taşıyor. Diğer yandan, IMF Başkanı'nın "küresel ekonomi enerji şokuna direniyor" açıklaması, makroekonomik tabloya dair bir umut ışığı sunsa da, enflasyon beklentisinin %28,4 seviyesinde seyretmesi gibi somut veriler, yatırımcıların reel getirilerini koruma endişesini bir hayli artırmaktadır.</p>
 <p>Bu çerçevede, BIST 30 endeksinin 4.200 seviyelerinin altında kalması ve enerji yoğun sektörlerin hala negatif ayrışması, genel piyasayı "güvenli liman" arayışına itmektedir. Bu güvenli limanlar, genellikle enflasyona karşı dayanıklılığı yüksek olan tüketim (FMCG) ve içerik sektörleri ile temel finansal istikrarı koruyan bankalar olarak öne çıkmaktadır. Piyasa, net bir makro sinyali (ECB faiz kararı ve ABD enflasyon verileri) ve endeksin üst direnç seviyelerini (4.200-4.250) aşması gerekmektedir. Bu aşamaya gelinmeden, portföy yapısında "nakit koruma" ve "temel bileşenlere odaklanma" stratejisi en güvenli kalkan olacaktır.</p>
-<h2><strong>2. Sektor Bazli Degerlendirme</strong></h2>
+<h2>2. Sektör Bazlı Değerlendirme</h2>
 <p>Isı haritası ve sinyal yoğunluğu perspektifinden bakıldığında, BIST 30'da belirgin bir sektörler bazlı ayrışma gözlemlenmektedir. Piyasa, belirsizliklere karşı savunma pozisyonuna geçerken, bazı sektörler bu dalgalanmadan olumsuz etkilenirken, bazıları ise "güvenli liman" olarak göçülmektedir.</p>
 <p><strong>Güçlü Sektörler (Isı Haritasında Kırmızı - Al Sinyali Yoğunluğu Yüksek):</strong></p>
 <ul>
@@ -222,26 +270,26 @@ async function aiSor() {
 <p><strong>Gayrimenkul (EKGYO):</strong> Faiz artışı beklentileri ve yavaşlayan konut talebi, gayrimenkul sektörünü zorluyor. EKGYO, teknik analizde "GÜÇLÜ SAT" notu taşıyor ve osilatörleri de zayıf bir seyir izliyor. Bu sektör, önümüzdaki dönemde en dikkatli takip edilmesi gereken alanlardan biri olacak.</p>
 </li>
 </ul>
-<h2><strong>3. Teknik Gorsel Analiz</strong></h2>
+<h2>3. Teknik Görsel Analiz</h2>
 <p>Teknik analiz çerçevesinde, endeks genelinde net bir güçlü alım sinyali gözlemlenmemekle birlikte, belirli hisseler endeksten ayrışarak "güvenli liman" konumuna yerleşiyor. EMA dizilimleri, Wave Trend (WT) sinyalleri, regresyon kanal konumları ve Pearson korelasyon değerleri birlikte yorumlandığında, aşağıdaki tablo ortaya çıkmaktadır:</p>
 <ul>
 <li>
 <p><strong>KCHOL (Holding):</strong> Son fiyat 218.5 TL. 60 günlük trendinde güçlü bir yükseliş var (%+11.0). Kısa, orta ve uzun vadeli sinyaller AL seviyesinde. Wave Trend (WT) AL sinyali veriyor ve kanalın %64'ünde yer alarak güçlü bir çapa pozisyonu oluşturuyor. Pearson korelasyon değeri (0.82) ile fiyat hareketi ile teknik indikatörler arasında yüksek bir uyum söz konusu. Bu, yükseliş trendinin sağlam temellere dayandığını gösteriyor. <strong>(Sinyal: GÜÇLÜ AL)</strong></p>
 </li>
 <li>
-<p><strong>BIMAS (Perakende):</strong> Son fiyat 414.25 TL. Enflasyona dayanıklılığıyla öne çıkan hisse. Kısa, orta ve uzun vadeli sinyiller AL seviyesinde. WT AL sinyali veriyor. Kanalın %59'unda yer alıyor. Pearson değeri (0.75) yine pozitif ve güçlü bir korelasyon işaret ediyor. <strong>(Sinyal: GÜÇLÜ AL)</strong></p>
+<p><strong>BIMAS (Perakende):</strong> Son fiyat 414.25 TL. Enflasyona dayanıklılığıyla öne çıkan hisse. Kısa, orta ve uzun vadeli sinyaller AL seviyesinde. WT AL sinyali veriyor. Kanalın %59'unda yer alıyor. Pearson değeri (0.75) yine pozitif ve güçlü bir korelasyon işaret ediyor. <strong>(Sinyal: GÜÇLÜ AL)</strong></p>
 </li>
 <li>
-<p><strong>GUBRF (Kimya &amp; Gübre):</strong> Son fiyat 496.5 TL. Kısa, orta ve uzun vadeli sinyiller AL seviyesinde. WT AL sinyali veriyor. Kanalın %84'ünde (yukarı bant) konumlanarak momentum kazanıyor. Pearson değeri (0.01) ise teknik indikatörler ile fiyat arasında zayıf bir ilişki olduğunu gösteriyor. Bu, momentumun biraz rastgele veya kısa vadeli bir patlama olabileceği ihtimalini de beraberinde getiriyor. <strong>(Sinyal: GÜÇLÜ AL)</strong></p>
+<p><strong>GUBRF (Kimya &amp; Gübre):</strong> Son fiyat 496.5 TL. Kısa, orta ve uzun vadeli sinyaller AL seviyesinde. WT AL sinyali veriyor. Kanalın %84'ünde (yukarı bant) konumlanarak momentum kazanıyor. Pearson değeri (0.01) ise teknik indikatörler ile fiyat arasında zayıf bir ilişki olduğunu gösteriyor. Bu, momentumun biraz rastgele veya kısa vadeli bir patlama olabileceği ihtimalini de beraberinde getiriyor. <strong>(Sinyal: GÜÇLÜ AL)</strong></p>
 </li>
 <li>
-<p><strong>TRALT (Sanayi):</strong> Son fiyat 52.4 TL. 60 günlük trend %+12.6 ile en güçlü yükselen hisselerden. Kısa ve uzun vadeli sinyiller AL, orta vadeli sinyal BEKLE. WT AL sinyali veriyor. Kanalın %60'ında yer alıyor. Pearson değeri (0.30) ortalama bir korelasyon gösteriyor. <strong>(Sinyal: AL)</strong></p>
+<p><strong>TRALT (Sanayi):</strong> Son fiyat 52.4 TL. 60 günlük trend %+12.6 ile en güçlü yükselen hisselerden. Kısa ve uzun vadeli sinyaller AL, orta vadeli sinyal BEKLE. WT AL sinyali veriyor. Kanalın %60'ında yer alıyor. Pearson değeri (0.30) ortalama bir korelasyon gösteriyor. <strong>(Sinyal: AL)</strong></p>
 </li>
 <li>
-<p><strong>PETKM (Enerji):</strong> Son fiyat 22.8 TL. 60 günlük trend %+17.8 ile en yüksek getiri sağlayan hisse. Kısa ve uzun vadeli sinyiller AL, orta vadeli sinyil BEKLE. WT AL sinyali veriyor. Kanalın %112'sinde yer alması, fiyatın regresyon kanalının çok üzerinde, aşırı yükselmiş bir konumda olduğunu gösteriyor. Pearson değeri (0.19) zayıf bir korelasyon işaret ediyor. Bu, teknik bir düzeltme riskine karşı dikkatli olunması gerektiğini düşündürüyor. <strong>(Sinyal: AL)</strong></p>
+<p><strong>PETKM (Enerji):</strong> Son fiyat 22.8 TL. 60 günlük trend %+17.8 ile en yüksek getiri sağlayan hisse. Kısa ve uzun vadeli sinyaller AL, orta vadeli sinyal BEKLE. WT AL sinyali veriyor. Kanalın %112'sinde yer alması, fiyatın regresyon kanalının çok üzerinde, aşırı yükselmiş bir konumda olduğunu gösteriyor. Pearson değeri (0.19) zayıf bir korelasyon işaret ediyor. Bu, teknik bir düzeltme riskine karşı dikkatli olunması gerektiğini düşündürüyor. <strong>(Sinyal: AL)</strong></p>
 </li>
 </ul>
-<p><strong>Ayrisan Hisseler:</strong></p>
+<p><strong>Ayrışan Hisseler:</strong></p>
 <ul>
 <li>
 <p><strong>VAKBN (Bankacılık):</strong> Teknik analiz genel "AL" sinyali verirken, osilatörlerde (WT=SAT) bir çelişki var. Pearson değeri (-0.26) negatif, yani fiyat ile teknik indikatörler arasında ters yönlü bir hareket var. Bu, bankacılık sektöründeki temel baskıların teknik alım sinyallerini gölgede bıraktığını gösteriyor.</p>
@@ -250,7 +298,7 @@ async function aiSor() {
 <p><strong>DSTKF (Finans):</strong> Benzer şekilde, teknik analiz "AL" sinyali verirken, Pearson değeri (-0.69) çok negatif. Bu, hissenin tekniksel olarak yükselmesinin temel verilerle desteklenmediğini, dolayısıyla bir "ayrışma" riski taşıdığını gösteriyor.</p>
 </li>
 </ul>
-<h2><strong>4. Osilator ve Momentum Okumalari</strong></h2>
+<h2>4. Osilatör ve Momentum Okumaları</h2>
 <p>Osilatör ve momentum okumaları, mevcut piyasa koşullarında "aşırı alım" bölgelerine dikkat çekerek risk yönetimi açısından kritik bir rol oynuyor.</p>
 <ul>
 <li>
@@ -296,7 +344,7 @@ async function aiSor() {
 </ul>
 </li>
 </ul>
-<h2><strong>5. Risk Haritasi ve Senaryolar</strong></h2>
+<h2>5. Risk Haritası ve Senaryolar</h2>
 <p><strong>Yukarı Senaryo (Bullish Case):</strong></p>
 <ul>
 <li>
@@ -345,16 +393,16 @@ async function aiSor() {
 <p><strong>Hisse Desteği/Kırılma Seviyeleri:</strong> KCHOL (210 TL), BIMAS (410 TL), PETKM (21 TL), GUBRF (480 TL), THYAO (290 TL).</p>
 </li>
 </ul>
-<h2><strong>6. Gunun Onerilen Hisseleri</strong></h2>
+<h2>6. Günün Önerilen Hisseleri</h2>
 <table>
 <thead>
 <tr>
 <th>Hisse</th>
 <th>Sinyal</th>
-<th>Giris Bolgesi</th>
+<th>Giriş Bölgesi</th>
 <th>Hedef</th>
 <th>Stop</th>
-<th>Gerekce</th>
+<th>Gerekçe</th>
 </tr>
 </thead>
 <tbody>

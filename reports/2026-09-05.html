@@ -3,12 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Piyasa Raporu - 2026-09-05</title>
-<!-- Google Tag Manager & Analytics -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX';f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+<title>Günlük Piyasa Raporu - 2026-09-05</title>
+<meta name="description" content="2026-09-05 tarihli BIST 30 günlük piyasa raporu: yönetici özeti, haber ve makro değerlendirme, hisse bazlı teknik analiz ve model portföy önerisi.">
+<link rel="canonical" href="https://borsa-raporlari.onrender.com/reports/2026-09-05.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Günlük Raporlar">
+<meta property="og:title" content="Günlük Piyasa Raporu - 2026-09-05">
+<meta property="og:description" content="2026-09-05 tarihli BIST 30 günlük piyasa raporu: yönetici özeti, haber ve makro değerlendirme, hisse bazlı teknik analiz ve model portföy önerisi.">
+<meta property="og:url" content="https://borsa-raporlari.onrender.com/reports/2026-09-05.html">
+<meta property="og:image" content="https://borsa-raporlari.onrender.com/og-cover.svg">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Günlük Piyasa Raporu - 2026-09-05">
+<meta name="twitter:description" content="2026-09-05 tarihli BIST 30 günlük piyasa raporu: yönetici özeti, haber ve makro değerlendirme, hisse bazlı teknik analiz ve model portföy önerisi.">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Günlük Piyasa Raporu - 2026-09-05", "description": "2026-09-05 tarihli BIST 30 günlük piyasa raporu: yönetici özeti, haber ve makro değerlendirme, hisse bazlı teknik analiz ve model portföy önerisi.", "url": "https://borsa-raporlari.onrender.com/reports/2026-09-05.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.onrender.com/"}}</script>
 <style>
 :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
        --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
@@ -87,8 +96,8 @@ body { overflow-x: hidden; }
 .ticker-saat { color: #64748b; font-size: 11.5px; }
 @media (max-width: 640px) {
   .topbar .inner { padding: 10px 12px; }
-  .topbar nav { display: flex; flex-wrap: wrap; gap: 4px 2px; }
-  .topbar nav a { margin-left: 10px; font-size: 12.5px; }
+  .topbar nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
+  .topbar nav a { margin-left: 0; font-size: 13px; padding: 4px 0; }
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
@@ -174,6 +183,12 @@ body { overflow-x: hidden; }
 <script src="https://js.puter.com/v2/"></script>
 <script>
 function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
+function aiZamanAsimi(promise, ms) {
+    return Promise.race([
+        promise,
+        new Promise(function(_, reject) { setTimeout(function() { reject(new Error('yanıt zaman aşımı')); }, ms); })
+    ]);
+}
 async function aiSor() {
     var giris = document.getElementById('ai-input');
     var soru = (giris.value || '').trim();
@@ -182,17 +197,18 @@ async function aiSor() {
     var cevap = document.getElementById('ai-answer');
     var panel = document.getElementById('ai-panel');
     panel.style.display = 'block';
-    cevap.innerHTML = '<em>Yanıt hazırlanıyor...</em>';
+    cevap.innerHTML = '<em>Yanıt hazırlanıyor... (ilk kullanımda birkaç saniye sürebilir)</em>';
     btn.disabled = true; giris.disabled = true;
     var sistem = 'Sen "BIST 30 Günlük Raporlar" sitesinin Türkçe yapay zeka asistanısın. Görevin: Borsa İstanbul, makroekonomi ve teknik analiz (EMA, RSI, MACD, Wave Trend, destek/direnç vb.) konularında eğitici, kısa ve anlaşılır yanıtlar vermek. Canlı piyasa verine erişimin yok; güncel veriler için kullanıcıyı sitedeki Teknik Tarama, Borsapy Sinyal ve Günlük Rapor sayfalarına yönlendir. Kesin alım-satım tavsiyesi verme; bilgilendir. Yanıtlarını madde işaretleriyle yaz, en fazla 200 kelime tut.';
     var modeller = ['z-ai/glm-4.7-flash', 'infron:z-ai/glm-4.7-flash', 'z-ai/glm-4.5-flash', 'infron:z-ai/glm-4.5-flash'];
     var sonHata = '';
+    var zamanasimiSayisi = 0;
     for (var i = 0; i < modeller.length; i++) {
         try {
-            var r = await puter.ai.chat(
+            var r = await aiZamanAsimi(puter.ai.chat(
                 [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
                 { model: modeller[i] }
-            );
+            ), 20000);
             var metin = (r && r.message && r.message.content) || (typeof r === 'string' ? r : '') || '';
             if (!metin) { sonHata = 'Boş yanıt'; continue; }
             metin = String(metin).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -201,10 +217,18 @@ async function aiSor() {
             return;
         } catch (e) {
             sonHata = (e && e.message) ? e.message : 'Bilinmeyen hata';
+            if (sonHata.indexOf('zaman aşımı') !== -1) {
+                zamanasimiSayisi++;
+                // Art arda 2 kez zaman aşımı = Puter erişilemiyor; diger
+                // modelleri denemek bekletir, hata mesajina gec.
+                if (zamanasimiSayisi >= 2) break;
+            }
             if (sonHata.indexOf('auth') !== -1 || sonHata.indexOf('permission') !== -1) break;
         }
     }
-    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + '). Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin veya sonra tekrar deneyin.</span>';
+    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + ').</span> ' +
+        '<a href="javascript:void(0)" onclick="aiSor()" style="text-decoration:underline">Tekrar dene</a>' +
+        '<div style="margin-top:6px;color:#475569;font-size:12.5px">Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin (asistan, ücretsiz Puter kotanızı kullanır). Sorunuz tarayıcı sekmesinde korunuyor.</div>';
     giris.disabled = false; btn.disabled = false;
 }
 </script>
@@ -218,7 +242,7 @@ async function aiSor() {
 <article class="report"><h1>BIST 30 HAFTALIK YATIRIM RAPORU</h1>
 <p><strong>Tarih: 7 Eylül 2026 | Analist: Kıdemli Portföy Yöneticisi</strong></p>
 <hr />
-<h2>1. YÖNETİCİ ÖZETİ</h2>
+<h2>1. Yönetici Özeti</h2>
 <p>Piyasa, geçtiğimiz hafta boyunca <strong>jeopolitik risklerin</strong> (İran kaynaklı gerilim) ve <strong>küresel enerji şokunun</strong> (doğal gaz 71 avro) etkisi altında satış baskısı yaşamıştır. Cuma günü gelen tepki alımlarına rağmen, bu hareketin kalıcı bir trend dönüşümü sinyali olmadığını değerlendiriyoruz. Borsa İstanbul'da uygulanmaya başlanan <strong>"Yukarı Adım Kuralı"</strong> aşağı yönlü hareketleri yavaşlatabilir ancak tek başına yön değişimi için yeterli değildir.</p>
 <p><strong>Önceki Hafta Önerilerimizin Performansı:</strong></p>
 <ul>
@@ -234,8 +258,8 @@ async function aiSor() {
 </ul>
 <p><strong>Görünüm: SEÇİCİ VE TEMKİNLİ</strong></p>
 <hr />
-<h2>2. HABER VE MAKRO DEĞERLENDİRME</h2>
-<h3>2.1 Jeopolitik Riskler (Ana Gündem)</h3>
+<h2>2. Haber ve Makro Değerlendirme</h2>
+<h2>2.1 Jeopolitik Riskler (Ana Gündem)</h2>
 <ul>
 <li>
 <p><strong>İran kaynaklı gerilim</strong> devam ediyor. İran'dan gelen "ekonomik savaş" açıklamaları ve kritik iki temas haberi, piyasalarda belirsizliği artırıyor.</p>
@@ -244,7 +268,7 @@ async function aiSor() {
 <p>Bu durum, enerji fiyatları üzerinde yukarı yönlü baskı oluşturuyor.</p>
 </li>
 </ul>
-<h3>2.2 Enerji Piyasaları</h3>
+<h2>2.2 Enerji Piyasaları</h2>
 <ul>
 <li>
 <p><strong>Avrupa'da doğal gaz fiyatları 71 avroyu aştı.</strong> Bu seviye, üretim maliyetlerini artıracak ve enerji yoğun sektörler (kimya, demir-çelik, çimento) üzerinde marj baskısı yaratacaktır.</p>
@@ -253,7 +277,7 @@ async function aiSor() {
 <p><strong>El Nino etkisi:</strong> Elektrik talebi ve LNG rekabeti artabilir. Bu durum, enerji sektöründe maliyet/fiyat ayrışmasını derinleştirebilir.</p>
 </li>
 </ul>
-<h3>2.3 Yurt İçi Gündem</h3>
+<h2>2.3 Yurt İçi Gündem</h2>
 <ul>
 <li>
 <p><strong>Halkbank'a 1,1 milyar dolarlık ilave kaynak</strong> sağlanması bankacılık sektörü için sınırlı pozitif bir gelişme olarak değerlendirilebilir.</p>
@@ -268,7 +292,7 @@ async function aiSor() {
 <p><strong>Para piyasası fonlarında stopaj oranı %10'a yükseltildi.</strong> Bu düzenleme, mevduat ve para piyasası fonları arasındaki rekabeti etkileyebilir.</p>
 </li>
 </ul>
-<h3>2.4 Küresel Piyasalar</h3>
+<h2>2.4 Küresel Piyasalar</h2>
 <ul>
 <li>
 <p><strong>New York borsası düşüşle kapandı.</strong> Küresel piyasalar, enflasyon verileri ve <strong>ECB'nin faiz kararına</strong> odaklanmış durumda.</p>
@@ -278,7 +302,7 @@ async function aiSor() {
 </li>
 </ul>
 <hr />
-<h2>3. TEKNİK DEĞERLENDİRME (Hisse Bazlı)</h2>
+<h2>3. Teknik Değerlendirme (Hisse Bazlı)</h2>
 <table>
 <thead>
 <tr>
@@ -345,7 +369,7 @@ async function aiSor() {
 </tr>
 </tbody>
 </table>
-<h3>Öne Çıkan Teknik Seviyeler:</h3>
+<h2>Öne Çıkan Teknik Seviyeler:</h2>
 <ul>
 <li>
 <p><strong>THYAO:</strong> 300 TL direnç / 290 TL stop-loss</p>
@@ -361,8 +385,8 @@ async function aiSor() {
 </li>
 </ul>
 <hr />
-<h2>4. ŞİRKET/FİNANSAL DEĞERLENDİRME</h2>
-<h3>4.1 Likidite ve Dönen Varlık Analizi</h3>
+<h2>4. Şirket/finansal Değerlendirme</h2>
+<h2>4.1 Likidite ve Dönen Varlık Analizi</h2>
 <table>
 <thead>
 <tr>
@@ -394,7 +418,7 @@ async function aiSor() {
 </tr>
 </tbody>
 </table>
-<h3>4.2 Sektörel Değerlendirme</h3>
+<h2>4.2 Sektörel Değerlendirme</h2>
 <ul>
 <li>
 <p><strong>Bankacılık:</strong> Halkbank'a sağlanan kaynak sektöre sınırlı pozitif. Ancak TCMB faiz politikası belirsizliği marjları baskılıyor.</p>
@@ -410,15 +434,15 @@ async function aiSor() {
 </li>
 </ul>
 <hr />
-<h2>5. RİSK YÖNETİMİ VE STRATEJİ</h2>
-<h3>5.1 Ana Riskler</h3>
+<h2>5. Risk Yönetimi ve Strateji</h2>
+<h2>5.1 Ana Riskler</h2>
 <ol>
 <li><strong>Jeopolitik riskler:</strong> İran kaynaklı gerilimin tırmanması, enerji fiyatlarını daha da yukarı taşıyabilir.</li>
 <li><strong>Küresel resesyon endişeleri:</strong> ECB faiz kararı ve ABD enflasyon verileri risk iştahını belirleyecek.</li>
 <li><strong>Enerji maliyetleri:</strong> Doğal gaz fiyatlarının 71 avro üzerinde kalıcı olması, sanayi üretimini olumsuz etkileyebilir.</li>
 <li><strong>Kur riski:</strong> Döviz kuru oynaklığı, ithalatçı şirketlerin maliyetlerini artırabilir.</li>
 </ol>
-<h3>5.2 Stratejik Yaklaşım</h3>
+<h2>5.2 Stratejik Yaklaşım</h2>
 <ul>
 <li>
 <p><strong>Net trend dönüşümü beklenmeli.</strong> Panik satışı yapılmamalı, ancak yeni alım pozisyonları için sinyal beklenmeli.</p>
@@ -434,8 +458,8 @@ async function aiSor() {
 </li>
 </ul>
 <hr />
-<h2>6. ÖNERİLEN PORTFÖY</h2>
-<h3>6.1 Haftalık Portföy Önerisi (7-11 Eylül 2026)</h3>
+<h2>6. Önerilen Portföy</h2>
+<h2>6.1 Haftalık Portföy Önerisi (7-11 Eylül 2026)</h2>
 <table>
 <thead>
 <tr>
@@ -482,7 +506,7 @@ async function aiSor() {
 </tr>
 </tbody>
 </table>
-<h3>6.2 Aylık Portföy Önerisi (Eylül 2026)</h3>
+<h2>6.2 Aylık Portföy Önerisi (Eylül 2026)</h2>
 <table>
 <thead>
 <tr>
@@ -529,7 +553,7 @@ async function aiSor() {
 </tr>
 </tbody>
 </table>
-<h3>6.3 Portföy Stratejisi Özeti</h3>
+<h2>6.3 Portföy Stratejisi Özeti</h2>
 <ul>
 <li>
 <p><strong>Yüksek nakit oranı</strong> korunuyor. Jeopolitik risklerin azalması ve trend dönüşümü sinyali alınması durumunda nakit oranı kademeli olarak düşürülecek.</p>
@@ -546,9 +570,7 @@ async function aiSor() {
 </ul>
 <hr />
 <p><strong>ÖNEMLİ NOT:</strong> Bu rapor, yatırım danışmanlığı kapsamında değildir. Yatırımcılar, kendi risk toleranslarına ve yatırım hedeflerine göre karar vermelidir. Piyasa koşulları hızla değişebilir; güncel gelişmeler takip edilmelidir.</p>
-<p><strong>Kaynak:</strong> BloombergHT, CNN Türk, Ekonomim, Habertürk | <strong>Veri Tarihi:</strong> 7 Eylül 2026</p>
-<p>[PORTFOY OZETI]<br />
-Deneme Portfoyu (2026-09-05): Toplam 99998.76 TL (baslangic 100000 TL, toplam %-0.00, gunluk %-0.00)</p></article>
+<p><strong>Kaynak:</strong> BloombergHT, CNN Türk, Ekonomim, Habertürk | <strong>Veri Tarihi:</strong> 7 Eylül 2026</p></article>
 <p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>
 </main>
 
