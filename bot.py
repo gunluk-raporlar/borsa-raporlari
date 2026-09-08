@@ -404,7 +404,12 @@ def _cf_havuz():
     if CF_MODELS:
         return CF_MODELS
     mevcut = _cf_modelleri()
-    secilen = list(dict.fromkeys(m for m in mevcut if any(t in m for t in CF_MODEL_TERCIH)))
+    # Tercih SIRASINA gore diz: (models/search listesi gelisiguzel sirali gelir;
+    # 70B modellerin 8B'lerin onune gecmesi icin tercih döngusu ile kur)
+    secilen = []
+    for t in CF_MODEL_TERCIH:
+        secilen.extend(m for m in mevcut if t in m)
+    secilen = list(dict.fromkeys(secilen))
     if secilen:
         logger.info("Cloudflare icin mevcut modellerden secilenler: %s", secilen)
         return secilen
