@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Piyasa Raporu - 2026-09-08 — Derin Analiz</title>
+<!-- Google Tag Manager & Analytics -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX';f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+<style>
+:root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
+       --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:"Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+      background:var(--bg); color:var(--ink); line-height:1.65; }
+a { color:var(--accent); }
+.topbar { background:var(--ink); }
+.topbar .inner { max-width:1080px; margin:0 auto; padding:14px 20px; display:flex;
+                 justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+.topbar .brand { color:#fff; text-decoration:none; font-weight:700; font-size:18px; }
+.topbar nav a { color:#cbd5e1; text-decoration:none; margin-left:20px; font-size:14px; }
+.topbar nav a:hover, .topbar nav a.active { color:#fff; }
+.wrap { max-width:1080px; margin:0 auto; padding:32px 20px 48px; }
+.hero { margin-bottom:26px; }
+.hero h1 { margin:0 0 6px; font-size:27px; }
+.hero p { margin:0; color:var(--muted); font-size:14.5px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 24px; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:14px; margin:0 0 24px; }
+.stat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+.stat .label { font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; }
+.stat .value { font-size:20px; font-weight:700; margin-top:3px; }
+.pos { color:var(--pos); font-weight:600; }
+.neg { color:var(--neg); font-weight:600; }
+table { border-collapse:collapse; width:100%; font-size:14.5px; }
+th, td { border-bottom:1px solid var(--line); padding:9px 12px; text-align:left; }
+th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+tr:last-child td { border-bottom:none; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:14px; }
+.rcard { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px;
+         text-decoration:none; color:var(--ink); display:block; transition:border-color .15s, box-shadow .15s; }
+.rcard:hover { border-color:var(--accent); box-shadow:0 2px 10px rgba(15,23,42,.08); }
+.rcard .date { font-size:16.5px; font-weight:700; display:block; }
+.rcard .sub { color:var(--muted); font-size:13px; margin-top:4px; display:block; }
+.section-title { font-size:19px; margin:34px 0 14px; padding-left:12px; border-left:4px solid var(--accent); }
+.report { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:28px 36px; }
+.report h1, .report h2, .report h3 { padding-left:12px; border-left:4px solid var(--accent); line-height:1.35; }
+.report h1 { font-size:22px; margin:26px 0 10px; }
+.report h2 { font-size:19px; margin:26px 0 10px; }
+.report h3 { font-size:16.5px; margin:22px 0 8px; }
+.report table { margin:14px 0; border:1px solid var(--line); border-radius:8px; }
+.report th { background:#f8fafc; }
+.report td, .report th { border:1px solid var(--line); }
+.report hr { border:none; border-top:1px solid var(--line); margin:22px 0; }
+.report blockquote { margin:14px 0; padding:10px 16px; border-left:4px solid var(--line); color:var(--muted); }
+.badge { display:inline-block; background:var(--accent-bg); color:var(--accent); border:1px solid #99f6e4;
+         border-radius:999px; padding:3px 12px; font-size:12.5px; font-weight:600; }
+.meta { color:var(--muted); font-size:13.5px; margin:8px 0 22px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.footer { text-align:center; color:var(--muted); font-size:12.5px; padding:26px 20px;
+          border-top:1px solid var(--line); background:#fff; }
+.chart { width:100%; height:auto; display:block; }
+@media (max-width:640px) {
+  .report { padding:18px 16px; }
+  table { font-size:13px; }
+  th, td { padding:7px 8px; }
+}
+
+@media (max-width: 768px) {
+    .interactive-box {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ---- Mobil tasima duzeltmeleri ---- */
+body { overflow-x: hidden; }
+.tv-ticker-bant { max-width: 100%; overflow: hidden; }
+.tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tbl-wrap table { min-width: 760px; }   /* genis tablolar kart icinde yatay kayar */
+.report table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 640px) {
+  .topbar .inner { padding: 10px 12px; }
+  .topbar nav { display: flex; flex-wrap: wrap; gap: 4px 2px; }
+  .topbar nav a { margin-left: 10px; font-size: 12.5px; }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script type="module" src="https://3163e358-b6cf-4a3e-835f-da3e39314317.search.ai.cloudflare.com/assets/v0.0.25/search-snippet.es.js"></script>
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<a class="brand" href="../index.html">BIST 30 Günlük Raporlar</a>
+<nav><a href="../index.html" class="active">Raporlar</a><a href="../derin-analiz.html">Derin Analiz</a><a href="../teknik-analiz.html">Teknik Tarama</a><a href="../borsapy-analiz.html">Borsapy Sinyal</a><a href="../portfolio.html">Deneme Portföyü</a></nav>
+</div></header>
+<div class="tradingview-widget-container tv-ticker-bant" style="margin:0 0 18px; width:100%;">
+<div class="tradingview-widget-container__widget"></div>
+<script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+{
+"symbols": [{"proName":"BIST:AEFES","title":"AEFES"}, {"proName":"BIST:AKBNK","title":"AKBNK"}, {"proName":"BIST:ASELS","title":"ASELS"}, {"proName":"BIST:ASTOR","title":"ASTOR"}, {"proName":"BIST:BIMAS","title":"BIMAS"}, {"proName":"BIST:DSTKF","title":"DSTKF"}, {"proName":"BIST:EKGYO","title":"EKGYO"}, {"proName":"BIST:ENKAI","title":"ENKAI"}, {"proName":"BIST:EREGL","title":"EREGL"}, {"proName":"BIST:FROTO","title":"FROTO"}, {"proName":"BIST:GARAN","title":"GARAN"}, {"proName":"BIST:GUBRF","title":"GUBRF"}, {"proName":"BIST:ISCTR","title":"ISCTR"}, {"proName":"BIST:KCHOL","title":"KCHOL"}, {"proName":"BIST:KRDMD","title":"KRDMD"}, {"proName":"BIST:MGROS","title":"MGROS"}, {"proName":"BIST:PETKM","title":"PETKM"}, {"proName":"BIST:PGSUS","title":"PGSUS"}, {"proName":"BIST:SAHOL","title":"SAHOL"}, {"proName":"BIST:SASA","title":"SASA"}, {"proName":"BIST:SISE","title":"SISE"}, {"proName":"BIST:TAVHL","title":"TAVHL"}, {"proName":"BIST:TCELL","title":"TCELL"}, {"proName":"BIST:THYAO","title":"THYAO"}, {"proName":"BIST:TOASO","title":"TOASO"}, {"proName":"BIST:TRALT","title":"TRALT"}, {"proName":"BIST:TTKOM","title":"TTKOM"}, {"proName":"BIST:TUPRS","title":"TUPRS"}, {"proName":"BIST:VAKBN","title":"VAKBN"}, {"proName":"BIST:YKBNK","title":"YKBNK"}],
+"showSymbolLogo": false,
+"isTransparent": true,
+"displayMode": "adaptive",
+"locale": "tr"
+}
+</script>
+</div>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve Google Çeviri) -->
+    <div class="site-widgets" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; background: #f8fafc; padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #475569; gap: 15px; border: 1px solid #e2e8f0;">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
+        </div>
+        <div id="google_translate_element"></div>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Google Arama ve BIST AI Asistan) -->
+    <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; min-height: 52px;">
+            <search-modal-snippet api-url="https://3163e358-b6cf-4a3e-835f-da3e39314317.search.ai.cloudflare.com/" placeholder="Borsa raporları hakkında ara ve sor..."></search-modal-snippet>
+        </div>
+
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="ai-input" placeholder="BIST AI asistanına sorun..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') aiSor();">
+                <button onclick="aiSor()" id="ai-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Sor</button>
+            </div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">
+                <span class="ai-chip" onclick="aiChip(this)">Piyasa özeti ne?</span>
+                <span class="ai-chip" onclick="aiChip(this)">RSI ve MACD nedir?</span>
+                <span class="ai-chip" onclick="aiChip(this)">Destek ve direnç nedir?</span>
+            </div>
+        </div>
+    </div>
+
+<div id="ai-panel" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; font-size: 14px; line-height: 1.6;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <strong style="color: #0f766e;">🤖 BIST AI Asistan</strong>
+        <a href="javascript:void(0)" onclick="document.getElementById('ai-panel').style.display='none'" style="color: #64748b; text-decoration: none; font-size: 18px; line-height: 1;">&times;</a>
+    </div>
+    <div id="ai-answer"></div>
+    <div style="margin-top: 8px; color: #64748b; font-size: 12px;">Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir. Model: GLM-Flash (Z.ai, Puter.js üzerinden — ilk kullanımda Puter oturumu isteyebilir).</div>
+</div>
+<style>
+.ai-chip { background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; border-radius: 999px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
+.ai-chip:hover { border-color: #0f766e; color: #0f766e; }
+</style>
+<script src="https://js.puter.com/v2/"></script>
+<script>
+function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
+async function aiSor() {
+    var giris = document.getElementById('ai-input');
+    var soru = (giris.value || '').trim();
+    if (!soru) return;
+    var btn = document.getElementById('ai-btn');
+    var cevap = document.getElementById('ai-answer');
+    var panel = document.getElementById('ai-panel');
+    panel.style.display = 'block';
+    cevap.innerHTML = '<em>Yanıt hazırlanıyor...</em>';
+    btn.disabled = true; giris.disabled = true;
+    var sistem = 'Sen "BIST 30 Günlük Raporlar" sitesinin Türkçe yapay zeka asistanısın. Görevin: Borsa İstanbul, makroekonomi ve teknik analiz (EMA, RSI, MACD, Wave Trend, destek/direnç vb.) konularında eğitici, kısa ve anlaşılır yanıtlar vermek. Canlı piyasa verine erişimin yok; güncel veriler için kullanıcıyı sitedeki Teknik Tarama, Borsapy Sinyal ve Günlük Rapor sayfalarına yönlendir. Kesin alım-satım tavsiyesi verme; bilgilendir. Yanıtlarını madde işaretleriyle yaz, en fazla 200 kelime tut.';
+    var modeller = ['z-ai/glm-4.7-flash', 'infron:z-ai/glm-4.7-flash', 'z-ai/glm-4.5-flash', 'infron:z-ai/glm-4.5-flash'];
+    var sonHata = '';
+    for (var i = 0; i < modeller.length; i++) {
+        try {
+            var r = await puter.ai.chat(
+                [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
+                { model: modeller[i] }
+            );
+            var metin = (r && r.message && r.message.content) || (typeof r === 'string' ? r : '') || '';
+            if (!metin) { sonHata = 'Boş yanıt'; continue; }
+            metin = String(metin).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            cevap.innerHTML = metin.replace(/\n/g, '<br>');
+            giris.disabled = false; btn.disabled = false; giris.value = '';
+            return;
+        } catch (e) {
+            sonHata = (e && e.message) ? e.message : 'Bilinmeyen hata';
+            if (sonHata.indexOf('auth') !== -1 || sonHata.indexOf('permission') !== -1) break;
+        }
+    }
+    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + '). Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin veya sonra tekrar deneyin.</span>';
+    giris.disabled = false; btn.disabled = false;
+}
+</script>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>Günlük Piyasa Raporu</h1>
+<div class="meta"><span class="badge">2026-09-08 — Derin Analiz</span><span>BIST 30 &bull; Yapay zeka destekli günlük analiz</span></div>
+</div>
+<article class="report"><h2>1. Piyasa Ozeti ve Genel Bakis</h2>
+<p>Kurumsal Yatırımcılar,</p>
+<p>Bugün Borsa İstanbul (BIST 100) endeksi, küresel piyasalardaki dalgalanmalara rağmen iç dinamikleri destekleyici bir seyirle günü %0.92 yükselişle 5.435 puandan tamamladı. Endeksin günlük performansı, özellikle enerji ve finansal hisseler öncülüğündeki yükselişlerin bankacılık ve perakende sektöründeki zayıflıkları dengelediğini göstermektedir. Piyasalardaki ana tema, enflasyon verileri ve küresel merkez bankalarının para politikaları üzerine odaklanmış durumda. IMF Başkanı'nın enerji şokuna dirençli küresel ekonomi yorumu ve Türkiye'deki bankacılık sektörüne yönelik likidite destekleri (Halkbank), risk iştahını olumuz etkileyen temel faktörler olarak öne çıkmaktadır.</p>
+<p>Sektörel bazda günün en belirgin özelliği, enerji grubunun öncülüğündeki yükselişlerdir. PETKM ve TUPRS gibi hisseler, hem teknik göstergeler hem de osilator sinyalleri açısından dikkat çekici bir performans sergilemiştir. Öte yandan, perakende (MGROS) ve havacılık (TAVHL, THYAO) sektörleri, tüketici talebindeki zayıflık ve seyahat sektörüne ilişkin endişelerle günü zayıf kapamıştır. Bu durum, portföy yönetimi açısından önemli bir sektörler arası dönüşüm sinyali olarak değerlendirilmelidir. Genel olarak piyasa, kısa vadeli volatiliteye rağmen orta vadeli yükseliş trendini korumaya çalışmaktadır. Ancak bu trendin sürekliliği, kritik direnç seviyelerinin test edilmesine bağlı olacaktır.</p>
+<h2>2. Sektor Bazli Degerlendirme</h2>
+<p>Isı haritası ve sinyal yoğunluğu perspektifinden değerlendirildiğinde, BIST 30'da net bir şekilde güçlü ve zayıf sektörel bloklar oluşmaktadır.</p>
+<p><strong>Güçlü Sektörler:</strong></p>
+<ul>
+<li>
+<p><strong>Enerji &amp; Petrokimya:</strong> Bu sektör, günün en parlak performansını sergilemiştir. PETKM, TUPRS ve GUBRF gibi hisseler, hem teknik taramada "AL" veya "GÜÇLÜ AL" sinyalleri taşımakta hem de osilatorlarda "GÜÇLÜ AL" tavsiyeleri almaktadır. Özellikle PETKM'ın %9.97'lik günluk yükselişi ve TUPRS'ın 60 günlük %68.6'lık getirisine rağmen devam eden alış baskısı, sektördeki güçlü momentumu kanıtlamaktadır. Bu performansın ardında, küresel enerji fiyatlarındaki dalgalanmalar ve şirketlerin bilançolarındaki güçlü kârlılık yatmaktadır. Sinyal yoğunluğu açısından bu sektör, portföyde ağırlık kazandırılması gereken en önemli bölge konumundadır.</p>
+</li>
+<li>
+<p><strong>Bankacılık:</strong> Bankacılık sektörü, genel olarak "NÖTR" veya "AL" sinyalleri ile nitelendirilse de, VAKBN ve AKBNK gibi hisseler teknik ve osilatoryon göstergelerde "GÜÇLÜ AL" sinyalleri ile dikkat çekmektedir. Halkbank'a yönelik 1,1 milyar dolarlık ilave kaynak haberi, sektör likiditesine dair endişeleri azaltarak banka hisselerini desteklemektedir. Ancak, bazı hisselerde (ISCTR, GARAN) 60 günlük getirilerin negatif olması ve osilator sinyallerinin zayıf olması, sektör içinde bir ayrışma olduğunu göstermektedir. Bu ayrışma, yatırımcıların seçici olmasını gerektirmektedir.</p>
+</li>
+<li>
+<p><strong>Holdingler:</strong> KCHOL ve SAHOL gibi holding hisseleri, teknik taramada "GÜÇLÜ AL" ve "AL" sinyalleri ile öne çıkmaktadır. Özellikle KCHOL'un 60 günlük %17.2'lik getirisinin ve osilatorlardan gelen güçlü alış sinyallerinin, bu grup için pozitif bir tablo çizdiği söylenebilir.</p>
+</li>
+</ul>
+<p><strong>Zayıf Sektörler:</strong></p>
+<ul>
+<li>
+<p><strong>Perakende:</strong> MGROS, günün en zayıf performansını sergileyen hisselerden olmuştur. Hem teknik taramada "SAT" sinyali hem de osilatörlerde "SAT" tavsiyesi alması, tüketici talebinin zayıfladığı ve sektörün durgun bir seyir izlediği yönündeki endişeleri pekiştirmektedir. 60 günlük %21.5'lik negatif getiri, sektördeki ciddi bir baskı olduğunu göstermektedir.</p>
+</li>
+<li>
+<p><strong>Havacılık &amp; Ulaştırma:</strong> TAVHL ve THYAO, teknik ve osilatoryon göstergelerde "GÜÇLÜ SAT" sinyalleri ile kapanmıştır. Bu hisseler, hem teknik analizde hem de osilatörlerde en zayıf sinyalleri alan gruplar arasında yer almaktadır. Seyahat talebindeki yavaşlama ve yüksek maliyetler gibi temel faktörler, bu sektörün performansını olumsuz etkilemeye devam etmektedir.</p>
+</li>
+<li>
+<p><strong>Telekom:</strong> TCELL ve TTKOM, hem teknik taramada "SAT" sinyalleri hem de osilatörlerde "SAT" tavsiyeleri ile dikkat çekmektedir. Bu sektör, hem kısa vadeli hem de uzun vadeli trendler açısından en zayıf sektörel bloklar arasında yer almaktadır.</p>
+</li>
+</ul>
+<h2>3. Teknik Gorsel Analiz</h2>
+<p>Teknik analizde, EMA dizilimleri, Wave Trend (WT) göstergesi, regresyon kanal konumları ve Pearson korelasyon katsayıları bir arada değerlendirildiğinde piyasanın karmaşık ve dinamik yapısı ortaya çıkmaktadır.</p>
+<p><strong>EMA Dizilimi ve Kanal Konumları:</strong> Çoğu hisse, kısa vadeli EMA'ları (örneğin 20 günlük) yukarı keserek yükseliş sinyali vermektedir. Ancak bu sinyallerin gücü, hisselerin regresyon kanalındaki konumlarıyla ilişkilidir. PETKM kanalın %101'inde, TUPRS %27'sinde, GUBRF %83'ünde yer almaktadır. PETKM gibi kanalın en üst bölgesinde bulunan hisseler, yükselişin aşırılaşma riski taşırken, TUPRS gibi kanalın alt bölgesinde bulunan hisseler ise potansiyel bir toparlanma senaryosu sunmaktadır. Pearson korelasyon katsayıları (r), hisse senedinin fiyat hareketi ile regresyon kanalındaki konumu arasındaki ilişkiyi göstermektedir. PETRS'de r=0.97 (yüksek pozitif korelasyon, kanala yakın seyretme eğilimi), VAKBN'de r=-0.34 (düşük negatif korelasyon, kanala bağımsız hareket etme) gibi değerler, hisselerin davranış biçimlerini anlamak için kritik öneme sahiptir.</p>
+<p><strong>Wave Trend (WT) Göstergesi:</strong> WT göstergesi, mevcut momentumun yönünü ve gücünü gösteren önemli bir araçtır. Günümüzde PETKM, GUBRF, VAKBN gibi hisselerde "AL" sinyali alırken, TUPRS, KRDMD, TRALT gibi hisselerde "SAT" sinyali alınmaktadır. Bu durum, teknik analizde bir "ayrışma" yaşandığını göstermektedir. Özellikle TUPRS'ın 60 günlük %68.6'lık muazzam bir getiriye rağmen WT göstergesinde "SAT" sinyali alması, bu yükselişin tükendiğini ve bir düzeltme veya konsolidasyon beklentisi olduğunu işaret etmektedir. Bu tür ayrışmalar, yatırımcıların dikkatli olmasını ve sadece fiyat yükselişine değil, aynı zamanda momentum göstergelerindeki değişimlere de odaklanmasını gerektirir.</p>
+<p><strong>Ayırışan Hisseler:</strong> Teknik analizde en önemli sinyallerden biri, fiyatın göstergeleri aşırı yukarı veya aşağı çektiği "ayırışma" (divergence) durumudur. Örneğin, MGROS hissesinde fiyat 60 günde %21.5 düştüğü halosilatörlerde "DİPTE AL" sinyali alınması, potansiyel bir dip formasyonu ve toparlanma beklentisi olduğunu göstermektedir. Benzer şekilde, TCELL'de de benzer bir tablo gözlemlenmektedir. Bu ayırışmalar, zayıf sektörel hisselerde kısa vadeli alım fırsatları sunarken, yüksek momentumlu hisselerde (TUPRS) kar realizasyonu ihtimaline karşı uyarı niteliğindedir.</p>
+<h2>4. Osilator ve Momentum Okumalari</h2>
+<p>Osilator ve momentum göstergeleri, mevcut piyasa koşullarını ve potansiyel geri dönüş noktalarını anlamak için kullanılır.</p>
+<ul>
+<li>
+<p><strong>RSI (Göreceli Güç Endeksi):</strong> RSI, bir hissenin aşırı alım (genellikle 70+ veya 80+) veya aşırı satım (genellikle 30- veya 20-) bölgesine girdiğini gösterir. PETKM (71.15), SASA (65.45) ve TUPRS (65.34) gibi hisseler RSI'da aşırı alım bölgesine girmiştir. Bu, bu hisselerde kısa vadene bir kar realizasyonu veya konsolidasyon beklentisi olduğunu, ancak güçlü bir trendin devam edebileceğini (özellikle TUPRS gibi yüksek momentumlu hisselerde) göstermektedir. Öte yandan, MGROS (33.68), TCELL (43.2) ve THYAO (43.41) gibi hisseler RSI'da aşırı satım bölgesine yakın seyretmektedir. Bu durum, bu hisselerde bir dip yapılabileceği ve toparlanma potansiyeli taşıdığına dair işaretlerdir.</p>
+</li>
+<li>
+<p><strong>MACD (Hareketli Ortalama Yakınlaşma Iraksama):</strong> MACD, iki hareketli ortalamanın farkını gösteren bir momentum göstergesidir. PETKM, TUPRS ve GUBRF gibi hisselerde MACD'nin pozitif ve yükselen bir seyir izlemesi, güçlü bir alış momentumu olduğunu kanıtlamaktadır. Özellikle TUPRS'taki MACD (20.13) değeri, trendin ne kadar güçlü olduğunu göstermektedir. Aksine, MGROS (-23.67), ASTOR (-2.83) ve THYAO (-4.34) gibi hisselerde MACD'nin negatif ve genişlemesi, satış baskısının devam ettiğini ve trendin zayıf olduğunu göstermektedir.</p>
+</li>
+<li>
+<p><strong>Stochastic ve CCI:</strong> Bu iki göstergesi, RSI ve MACD ile birlikte yorumlandığında sinyallerin doğrulanması açısından önemlidir. PETKM ve GUBRF gibi hisselerde hem RSI aşırı alımda hem de Stochastic ve CCI'nın yükseliş sinyalleri vermesi, alış baskısının gerçek olduğunu göstermektedir. Öte yandan, MGROS'ta RSI aşırı satımda iken Stochastic ve CCI'nın da dip bölgesine yakın olması, bu hissede toparlanma beklentisinin güçlü olduğunu desteklemektedir.</p>
+</li>
+<li>
+<p><strong>ADX (Ortalama Yönsel Endeks):</strong> ADX, trendin gücünü (ne kadar güçlü olduğunu) belirtir, ancak yönünü belirtmez. ADX değeri 25'in üzerinde ise güçlü bir trendin varlığından bahsedilebilir. TUPRS (45.94) ve MGROS (39.49) gibi hisselerde yüksek ADX değerleri, bu hisselerde hem yükseliş hem de düşüş trendinin çok güçlü olduğunu göstermektedir. Bu, bu hisselerde işlem yapmanın yüksek riskli olabileceğini ve stop-loss kullanımının kritik olduğunu vurgular.</p>
+</li>
+</ul>
+<h2>5. Risk Haritasi ve Senaryolar</h2>
+<p><strong>Yukarı Senaryo:</strong> Yukarı senaryo, enerji ve bankacılık sektöründeki güçlü alış baskısının devam etmesi ve BIST 100 endeksinin 5.550-5.600 direnç bandını test etmesi üzerine kuruludur. Bu senaryonun gerçekleşmesi için PETKM, TUPRS ve VAKBN gibi hisselerin günlük kapanışlarını yukarı yönlü sürdürmesi ve MGROS, TAVHL gibi zayıf hisselerde toparlanma sinyallerinin görülmesi gerekmektedir. Bu durumda portföyde enerji ve bankacılık hisselerine ağırlık vermek doğru bir strateji olacaktır.</p>
+<p><strong>Aşağı Senaryo:</strong> Aşağı senaryo, küresel risk iştahında anlık bir bozulma veya enflasyon verilerinin beklentilerin üzerinde gelmesiyle BIST 100 endeksinin 5.250-5.300 destek bandına çekilmesi ihtimalidir. Bu senaryoda, özellikle teknik göstergelerde "SAT" sinyali alan veya kanalın alt bölgelerine gerileyen hisselerde (TUPRS, KRDMD) kar realizasyonu yapmak ve portföyde daha defansif sektörlere (örneğin, bazı banka hisseleri) geçmek risk yönetimi açısından önemlidir. MGROS gibi aşırı satım bölgesindeki hisselerde de bu senaryoda ek satış baskısı görülebilir.</p>
+<p><strong>Bölünme (Range-Bound) Senaryosu:</strong> Piyasanın kritik destek ve direnç bandları arasında sıkışıp kaldığı bir senaryo da söz konusudur. Bu durumda, endeks 5.350-5.450 bandında dalgalanabilir. Bu senaryoda, sektörel dönüşümlere odaklanmak ve her iki yönlü hareketten faydalanmak için stratejiler geliştirmek gerekecektir. Örneğin, enerji hisselerinde kar alıp, zayıf sektörlere (perakende, telekom) yönelmek bir bölünme stratejisi olabilir.</p>
+<p><strong>Dikkat Edilecek Seviyeler:</strong></p>
+<ul>
+<li>
+<p><strong>Endeks Desteği:</strong> 5.250 - 5.300</p>
+</li>
+<li>
+<p><strong>Endeks Direnci:</strong> 5.450 - 5.550</p>
+</li>
+<li>
+<p><strong>Hisse Desteği:</strong> PETKM 20.50 TL, TUPRS 380.00 TL, VAKBN 32.50 TL</p>
+</li>
+<li>
+<p><strong>Hisse Direnci:</strong> PETKM 23.50 TL, TUPRS 410.00 TL, VAKBN 34.50 TL</p>
+</li>
+</ul>
+<h2>6. Gunun Onerilen Hisseleri</h2>
+<p>Aşağıda, teknik ve osilator verilerine göre AL/GÜCLÜ AL sinyali veren hisselerin önerileri yer almaktadır. Bu tavsiyeler, yalnızca sağlanan verilerle sınırlıdır ve her yatırım kararında temel analiz ve risk yönetimi ilkeleri mutlaka göz önünde bulundurulmalıdır.</p>
+<table>
+<thead>
+<tr>
+<th>Hisse</th>
+<th>Sinyal</th>
+<th>Giris Bolgesi</th>
+<th>Hedef</th>
+<th>Stop</th>
+<th>Gerekce</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>PETKM</strong></td>
+<td>GÜÇLÜ AL</td>
+<td>22.00 - 22.50 TL</td>
+<td>24.50 TL</td>
+<td>21.00 TL</td>
+<td>Teknikte "AL" ve kanal %101'de. Osilatörlerde "GÜÇLÜ AL", RSI aşırı alım (71.15) olmasına rağmen MACD ve CCI güçlü alış baskısı gösteriyor. Günlük +%9.97 ile momentum yüksek.</td>
+</tr>
+<tr>
+<td><strong>TUPRS</strong></td>
+<td>GÜÇLÜ AL</td>
+<td>390.00 - 395.00 TL</td>
+<td>430.00 TL</td>
+<td>375.00 TL</td>
+<td>Teknikte "AL" ve kanal %27'de (düşük seviye). Osilatörlerde "GÜÇLÜ AL". 60g +%68.6 getiriye rağmen momentum devam ediyor. ADX (45.94) trendin çok güçlü olduğunu gösteriyor.</td>
+</tr>
+<tr>
+<td><strong>GUBRF</strong></td>
+<td>GÜÇLÜ AL</td>
+<td>485.00 - 490.00 TL</td>
+<td>530.00 TL</td>
+<td>475.00 TL</td>
+<td>Teknikte "AL" ve kanal %83'de. Osilatörlerde "GÜÇLÜ AL". RSI (63.12), MACD (13.72) ve Stochastic (78.71) hepsi güçlü alış sinyali veriyor.</td>
+</tr>
+<tr>
+<td><strong>KCHOL</strong></td>
+<td>GÜÇLÜ AL</td>
+<td>215.00 - 220.00 TL</td>
+<td>240.00 TL</td>
+<td>210.00 TL</td>
+<td>Teknikte "GÜÇLÜ AL" ve kanal %73'te. Osilatörlerde "GÜÇLÜ AL". 60g +%17.2 getiri sağladı. RSI (61.41) ve MACD (4.21) destekliyor.</td>
+</tr>
+<tr>
+<td><strong>BIMAS</strong></td>
+<td>GÜÇLÜ AL</td>
+<td>415.00 - 420.00 TL</td>
+<td>450.00 TL</td>
+<td>410.00 TL</td>
+<td>Teknikte "GÜÇLÜ AL" ve kanal %70'te. Osilatörlerde "GÜÇLÜ AL". RSI (60.7) ve MACD (7.37) alış baskısını teyit ediyor.</td>
+</tr>
+<tr>
+<td><strong>VAKBN</strong></td>
+<td>GÜÇLÜ AL</td>
+<td>33.00 - 33.50 TL</td>
+<td>36.00 TL</td>
+<td>32.00 TL</td>
+<td>Teknikte "GÜÇLÜ AL" ve kanal %92'de. Osilatörlerde "GÜÇLÜ AL". Bankacılık sektörüne likidite desteği haberi ile uyumlu. RSI (59.8) ve MACD (0.74) pozitif.</td>
+</tr>
+<tr>
+<td><strong>SASA</strong></td>
+<td>GÜÇLÜ AL</td>
+<td>2.45 - 2.50 TL</td>
+<td>2.75 TL</td>
+<td>2.35 TL</td>
+<td>Teknikte "BEKLE" olmasına rağmen osilatörlerde "GÜÇLÜ AL". RSI (65.45) aşırı alım sınırında. Günlük +%9.61 ile momentum güçlü.</td>
+</tr>
+</tbody>
+</table></article>
+<p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>
+</main>
+
+<footer class="footer">Bilgilendirme amacıyla hazırlanmıştır, yatırım tavsiyesi değildir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'tr', includedLanguages: 'en,de,fr,ar,ru', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body></html>
