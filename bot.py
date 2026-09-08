@@ -67,7 +67,7 @@ if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY and not OR_API_KEY:
 AMD_MODEL = os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")
 
 # Opsiyonel: virgulle ayrilmis fallback modeller (environment ile kontrol edilebilir)
-AMD_FALLBACK_MODELS = [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "Qwen3.8-Flash-Next,MiniCPM5-1B").split(",") if m.strip()]
+AMD_FALLBACK_MODELS = [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "Qwen3.8-Flash-Next").split(",") if m.strip()]  # MiniCPM5-1B cikarildi: Turkce raporu tasiyamiyor, talimat eko + Ingilizce karistirma yapiyor
 
 # Eger VLM (vision-language) modellerini explicit olarak kullanmak isterseniz bu environment'i 1 yapin
 AMD_INCLUDE_VLM = os.environ.get("AMD_INCLUDE_VLM", "0") == "1"
@@ -353,7 +353,14 @@ def _contains_prompt_leak(prompt: str, yanit: str) -> bool:
     if not yanit:
         return False
     talimatlar = [s.strip() for s in prompt.splitlines() if len(s.strip()) >= 50]
-    return any(t in yanit for t in talimatlar)
+    for t in talimatlar:
+        if t in yanit:
+            return True
+        # Birebir eslesme tirnak/kesme ile bozulursa: talimatin ilk 60 karakterlik
+        # on eki yanitin acilisinda geciyorsa yine sizma sayilir.
+        if len(t) >= 60 and t[:60] in yanit[:500]:
+            return True
+    return False
 
 
 def _dil_karismis(metin: str) -> bool:
@@ -388,7 +395,13 @@ def _havuz_modelleri(saglayici, env_listesi, tercih, etiket, suzgec=None):
         mevcut = [m.id for m in saglayici.models.list()]
         if suzgec:
             mevcut = [m for m in mevcut if suzgec(m)]
-        secilen = [t for t in tercih if any(t in m for m in mevcut)]
+        secilen = []
+        for t in tercih:
+            secilen.extend(m for m in mevcut if t in m)
+        # Sirayi koruyarak tekillestir ve TAM kimlikleri dondur — Groq gibi
+        # saglayicilarda gercek kimlik "openai/gpt-oss-120b" tarzinda on ekli
+        # olabilir; tercih alt dizesini gondermek 404 model_not_found verir.
+        secilen = list(dict.fromkeys(secilen))
         if secilen:
             logger.info("%s icin mevcut modellerden secilenler: %s", etiket, secilen)
             return secilen
