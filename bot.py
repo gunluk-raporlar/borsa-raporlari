@@ -852,7 +852,7 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
         logger.warning("[Derin Analiz] ZAI_API_KEY tanimli degil; sayfa uretilmeyecek.")
         return None
 
-    model = os.environ.get("ZAI_MODEL", "glm-4.7-flash")
+    model = os.environ.get("ZAI_MODEL") or "glm-4.7-flash"
     client = OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/paas/v4/",
                     timeout=300.0, max_retries=1)
 
@@ -928,7 +928,9 @@ Tabloda SADECE teknik ve osilator verilerine gore AL/GÜCLÜ AL sinyali veren hi
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.4,
                 max_tokens=8000,
-                thinking={"type": "disabled"},
+                # GLM'in dusunme modunu kapatmak icin ozel parametre SDK'ya
+                # extra_body ile gonderilir; dogrudan kwarg hata verir.
+                extra_body={"thinking": {"type": "disabled"}},
             )
             icerik = resp.choices[0].message.content or ""
             if icerik.strip():
