@@ -35,8 +35,16 @@ ALT_API_KEY = os.environ.get("ALT_API_KEY") or os.environ.get("GROQ_API_KEY", ""
 ALT_BASE_URL = os.environ.get("ALT_BASE_URL", "https://api.groq.com/openai/v1")
 ALT_MODELS = [m.strip() for m in os.environ.get("ALT_MODELS", "llama-3.3-70b-versatile").split(",") if m.strip()]
 
-if not AMD_API_KEY and not ALT_API_KEY:
-    raise SystemExit("AMD_API_KEY veya ALT_API_KEY ortam degiskenlerinden en az biri ayarlanmali!")
+# Ikinci yedek: Cloudflare Workers AI (ucretsiz katman: gunluk 10.000 neuron;
+# Groq'un dar dakikalik token siniri yoktur, bu yuzden buyuk rapor promptu icin
+# de uygundur). Anahtar: dash.cloudflare.com -> My Profile -> API Tokens
+# (Workers AI izinli olmali). Gerekli secret'lar: CF_API_KEY ve CF_ACCOUNT_ID.
+CF_API_KEY = os.environ.get("CF_API_KEY") or os.environ.get("CLOUDFLARE_API_KEY") or os.environ.get("CLOUDFLARE_API_TOKEN", "")
+CF_ACCOUNT_ID = os.environ.get("CF_ACCOUNT_ID", "")
+CF_MODELS = [m.strip() for m in os.environ.get("CF_MODELS", "@cf/meta/llama-3.3-70b-instruct-fp8-fast").split(",") if m.strip()]
+
+if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY:
+    raise SystemExit("AMD_API_KEY, ALT_API_KEY veya CF_API_KEY'den en az biri ayarlanmali!")
 
 # Varsayilan model: 1B parametrelik MiniCPM5-1B karmasik Turkce promptlarda Ingilizce
 # ic-konusma uretip talimatlari rapora sicrayabilir ve tekrar dongusune girebilir;
@@ -73,6 +81,13 @@ alt_client = OpenAI(
     timeout=240.0,
     max_retries=0,
 ) if ALT_API_KEY else None
+
+cf_client = OpenAI(
+    api_key=CF_API_KEY,
+    base_url=f"https://api.cloudflare.com/client/v4/accounts/{CF_ACCOUNT_ID}/ai/v1",
+    timeout=240.0,
+    max_retries=0,
+) if CF_API_KEY and CF_ACCOUNT_ID else None
 
 # Takip edilen BIST30 hisseleri (Guncel liste)
 HISSELER = [
@@ -306,19 +321,32 @@ def _looks_degenerate(metin: str) -> bool:
 
 
 def _contains_prompt_leak(prompt: str, yanit: str) -> bool:
-    """Yanitin icinde prompt'un talimat satirlarindan biri BIREBIR geciyorsa True.
+    """Yanitin icinde prompt'un uzun satirlarindan biri BIREBIR geciyorsa True.
 
     Kucuk modeller bazen verilen talimati ("Raporu kesinlikle profesyonel...")
-    yanita kopyalar; talimat satirlari veri satirlarindan ayird edilerek sadece
-    belirleyici olanlar (ilk iki ve son) kontrol edilir.
+    yanita kopyalar. Prompt'un 50+ karakterlik tum satirlari kontrol edilir:
+    talimat satirlari bu uzunlukta; veri satirlarinin (haber basligi, fiyat
+    satiri) raporda birebir tam haliyle tekrarlanasi pratikte imkansizdir.
     """
     if not yanit:
         return False
-    talimatlar = [s.strip() for s in prompt.splitlines() if len(s.strip()) >= 40]
-    if not talimatlar:
+    talimatlar = [s.strip() for s in prompt.splitlines() if len(s.strip()) >= 50]
+    return any(t in yanit for t in talimatlar)
+
+
+def _dil_karismis(metin: str) -> bool:
+    """Turkce beklenen yanitta Ingilizce ic-konusma baskin mi diye bakar.
+
+    Kucuk modeller bazen Turkce talimata ragmen Ingilizce dusunup Ingilizce
+    yazar. Ingilizce fonksiyon kelimeleri baskin ve Turkce kelimeler cok azsa
+    yanit bozuk sayilir (Ingilizce finans terimleri gecen normal Turkce raporlar
+    esikyi gecmez).
+    """
+    if not metin:
         return False
-    kontrol = talimatlar[:2] + talimatlar[-1:]
-    return any(t in yanit for t in kontrol)
+    ing = len(re.findall(r"\b(the|and|of|to|has|have|with|for|from|this|that|is|are)\b", metin, re.IGNORECASE))
+    turkce = len(re.findall(r"\b(ve|ile|olarak|için|göre|daha|çok|ancak|piyasa|rapor|hisse)\b", metin, re.IGNORECASE))
+    return ing >= 8 and ing > turkce * 2
 
 
 def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
@@ -346,10 +374,16 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
 
     max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "8000"))
 
-    # Deneme sirasi: once AMD modelleri, sonra yedek saglayici modelleri.
-    # sirasi=("YEDEK", "AMD") verilirse yedek oncelikli denenir (kucuk cagrilar icin).
-    sirasi = sirasi or ("AMD", "YEDEK")
-    havuzlar = {"AMD": (client, AMD_MODEL_LIST or [AMD_MODEL]), "YEDEK": (alt_client, ALT_MODELS)}
+    # Deneme sirasi: AMD (ana) -> Cloudflare -> Groq. Raporda Cloudflare Groq'dan
+    # once gelir cunku Groq'un ucretsiz katmanindaki dar dakikalik token siniri
+    # buyuk promptlarda 429 verir; ozette ise Groq oncelidir (kucuk cagri).
+    # sirasi parametresiyle oncelik degistirilebilir.
+    sirasi = sirasi or ("AMD", "CF", "YEDEK")
+    havuzlar = {
+        "AMD": (client, AMD_MODEL_LIST or [AMD_MODEL]),
+        "CF": (cf_client, CF_MODELS),
+        "YEDEK": (alt_client, ALT_MODELS),
+    }
     istekler = []
     for etiket in sirasi:
         saglayici, modeller = havuzlar[etiket]
@@ -377,9 +411,10 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
             secim = resp.choices[0]
             icerik = secim.message.content or ""
 
-            if _looks_degenerate(icerik) or _contains_prompt_leak(prompt, icerik):
-                logger.warning("%s/%s bozuk yanit uretti (tekrar dongusu veya prompt sizmasi); siradaki model denenecek.", etiket, model)
-                print(f"[Uyari] {etiket}/{model} bozuk yanit uretti (tekrar dongusu/prompt sizmasi), siradaki model deneniyor ({deneme}/{max_deneme})...", flush=True)
+            if _looks_degenerate(icerik) or _contains_prompt_leak(prompt, icerik) or _dil_karismis(icerik):
+                sebep = "tekrar dongusu" if _looks_degenerate(icerik) else ("prompt sizmasi" if _contains_prompt_leak(prompt, icerik) else "Ingilizce karisma")
+                logger.warning("%s/%s bozuk yanit uretti (%s); siradaki model denenecek.", etiket, model, sebep)
+                print(f"[Uyari] {etiket}/{model} bozuk yanit uretti ({sebep}), siradaki model deneniyor ({deneme}/{max_deneme})...", flush=True)
                 time.sleep(2)
                 continue
 
@@ -506,9 +541,9 @@ def summary_agent(state: AgentState):
    [RAPOR]:
    {rapor[:6000]}
    """
-    # Ozet kucuk bir cagri oldugu icin once yedek saglayici (Groq) kullanilir;
-    # boylece ana rapor icin AMD'nin gunluk kotasini tuketmez.
-    ozet = llm_call(prompt, sirasi=("YEDEK", "AMD"))
+    # Ozet kucuk bir cagri oldugu icin once ucretsiz yedekler (Groq -> Cloudflare)
+    # kullanilir; boylece ana rapor icin AMD'nin gunluk kotasini tuketmez.
+    ozet = llm_call(prompt, sirasi=("YEDEK", "CF", "AMD"))
     save_daily("summaries", bugun, {"ozet": ozet})
     return {}
 
