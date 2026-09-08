@@ -14,20 +14,6 @@
     "genel": "GÜÇLÜ AL"
   },
   {
-    "hisse": "BIMAS",
-    "son": 418.0,
-    "deg60": 10.57,
-    "kisa": "AL",
-    "orta": "AL",
-    "uzun": "AL",
-    "wt": "AL",
-    "wt1": 33.8,
-    "konum": 70.0,
-    "r": 0.71,
-    "puan": 4,
-    "genel": "GÜÇLÜ AL"
-  },
-  {
     "hisse": "VAKBN",
     "son": 33.32,
     "deg60": 2.15,
@@ -80,6 +66,20 @@
     "wt1": 39.2,
     "konum": 83.0,
     "r": -0.1,
+    "puan": 3,
+    "genel": "AL"
+  },
+  {
+    "hisse": "SAHOL",
+    "son": 94.05,
+    "deg60": -1.98,
+    "kisa": "AL",
+    "orta": "BEKLE",
+    "uzun": "AL",
+    "wt": "AL",
+    "wt1": 41.0,
+    "konum": 86.0,
+    "r": -0.5,
     "puan": 3,
     "genel": "AL"
   },
@@ -150,6 +150,20 @@
     "wt1": 11.0,
     "konum": 64.0,
     "r": 0.16,
+    "puan": 2,
+    "genel": "NÖTR"
+  },
+  {
+    "hisse": "GARAN",
+    "son": 133.5,
+    "deg60": -1.77,
+    "kisa": "AL",
+    "orta": "BEKLE",
+    "uzun": "BEKLE",
+    "wt": "AL",
+    "wt1": 32.3,
+    "konum": 84.0,
+    "r": -0.51,
     "puan": 2,
     "genel": "NÖTR"
   },
@@ -294,6 +308,20 @@
     "genel": "SAT"
   },
   {
+    "hisse": "SISE",
+    "son": 41.66,
+    "deg60": -6.93,
+    "kisa": "BEKLE",
+    "orta": "BEKLE",
+    "uzun": "SAT",
+    "wt": "AL",
+    "wt1": -34.0,
+    "konum": 127.0,
+    "r": -0.92,
+    "puan": 1,
+    "genel": "SAT"
+  },
+  {
     "hisse": "PGSUS",
     "son": 149.4,
     "deg60": -13.14,
@@ -306,6 +334,20 @@
     "r": -0.95,
     "puan": 1,
     "genel": "SAT"
+  },
+  {
+    "hisse": "TAVHL",
+    "son": 269.75,
+    "deg60": -1.26,
+    "kisa": "BEKLE",
+    "orta": "SAT",
+    "uzun": "SAT",
+    "wt": "SAT",
+    "wt1": -9.6,
+    "konum": 51.0,
+    "r": -0.34,
+    "puan": 0,
+    "genel": "GÜÇLÜ SAT"
   },
   {
     "hisse": "EKGYO",

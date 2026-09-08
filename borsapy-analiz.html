@@ -129,7 +129,7 @@ Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.</p>
 <div class="card" style="margin-bottom:20px">
 <h3 style="margin:4px 0 10px">RSI (14) — Aşırı Alım/Satım Haritası</h3>
 <div style="position:relative; height:540px">
-<canvas id="borsapy-rsi-843372"></canvas>
+<canvas id="borsapy-rsi-723660"></canvas>
 </div>
 </div>
 <script>
@@ -140,7 +140,7 @@ Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.</p>
         if (v <= 30) return '#047857';
         return '#94a3b8';
     });
-    new Chart(document.getElementById('borsapy-rsi-843372'), {
+    new Chart(document.getElementById('borsapy-rsi-723660'), {
         type: 'bar',
         data: { labels: veri.labels, datasets: [{ label: 'RSI (14)', data: veri.degerler, backgroundColor: renkler }] },
         options: {
