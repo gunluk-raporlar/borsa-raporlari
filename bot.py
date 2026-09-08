@@ -1541,12 +1541,38 @@ def teknik_tarama_yap():
             logger.warning("[Teknik Tarama] Ek deneme basarisiz: %s", e)
             time.sleep(3)
 
+    # Gun ici canli fiyatlari TradingView'den al: isyatirimhisse gun sonu (EOD)
+    # veri servis eder, piyasa acikken fiyatlar akmaz. borsapy (TradingView)
+    # ~15 dk gecikmeli canli fiyat verir; kapali piyasada iki kaynak esittir
+    # (o zaman ekleme yapilmaz ve tablo kapanis verisine doner).
+    canli = {}
+    try:
+        import borsapy as bp
+        for hisse in HISSELER:
+            try:
+                fi = bp.Ticker(hisse).fast_info
+                deger = fi.get("last_price") if hasattr(fi, "get") else getattr(fi, "last_price", None)
+                if deger and float(deger) > 0:
+                    canli[hisse] = float(deger)
+            except Exception:
+                pass
+            time.sleep(0.2)
+        logger.info("[Teknik Tarama] %d hisse icin canli fiyat alindi (TradingView).", len(canli))
+    except ImportError:
+        logger.warning("[Teknik Tarama] borsapy yok; gun ici canli fiyat kullanilamayacak.")
+
     satirlar = []
     for sira, hisse in enumerate(HISSELER, 1):
         seri = df[df[kod_kolonu] == hisse][kapanis_kolonu].astype(float).dropna()
         if len(seri) < 145:  # EMA144 anlamlı olsun
             logger.info("[Teknik Tarama] %d/%d %s: yetersiz gecmis (%d gun), atlandi", sira, len(HISSELER), hisse, len(seri))
             continue
+        # Is Yatirim serisinin sonuna canli fiyati ekle (kapanistan farkliyse):
+        # boylece EMA/WT/regresyon tum gostergeler gun ici hareketle hesaplanir.
+        iy_son = float(seri.iloc[-1])
+        tv = canli.get(hisse)
+        if tv and abs(tv - iy_son) > 0.005:
+            seri = pd.concat([seri, pd.Series([tv])], ignore_index=True)
         son = float(seri.iloc[-1])
         emalar = {p: _ema(seri, p) for p in (5, 8, 13, 21, 34, 55, 89, 144)}
         e = {p: float(emalar[p].iloc[-1]) for p in emalar}
@@ -1714,12 +1740,14 @@ def build_teknik_html(satirlar, date_str):
         for s in satirlar
     )
     guclu = sum(1 for s in satirlar if s["genel"] == "GÜÇLÜ AL")
+    simdi = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%H:%M")
     icerik = f"""
 <div class="hero">
 <h1>Teknik Tarama</h1>
 <p>BIST 30 hisseleri icin otomatik teknik tarama: EMA dizilim sinyalleri (kısa 5-8-13-21, orta 34-55, uzun 89-144),
 Wave Trend osilatörü ve 60 günlük regresyon kanalı konumu. Kanal konumu %0=alt bant, %100=üst bant;
-Pearson (r) trendin gücünü gösterir. Piyasa saatlerinde (hafta içi 10:00-18:30) 30 dakikada bir otomatik güncellenir.
+Pearson (r) trendin gücünü gösterir. <strong>Son güncelleme: {simdi} (İstanbul)</strong> — piyasa saatlerinde
+30 dakikada bir, TradingView canlı fiyatlarıyla (~15 dk gecikmeli) güncellenir.
 <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong></p>
 </div>
 {_sektor_isi_haritasi(satirlar)}
