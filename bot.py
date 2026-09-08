@@ -353,6 +353,9 @@ def _contains_prompt_leak(prompt: str, yanit: str) -> bool:
     if not yanit:
         return False
     talimatlar = [s.strip() for s in prompt.splitlines() if len(s.strip()) >= 50]
+    # Tablo sablonlari muaf: modele "bu tabloyu olustur" dedigimiz satirlari
+    # modelin geri yazmasi istenen davranistir, sizma degildir.
+    talimatlar = [t for t in talimatlar if not t.startswith("|") and not set(t) <= set("|- ")]
     for t in talimatlar:
         if t in yanit:
             return True
@@ -584,29 +587,34 @@ def _zai_call(prompt):
     modeller = [(os.environ.get("ZAI_MODEL") or "glm-4.7-flash"), "glm-4.5-flash"]
     son_hata = None
     for mdl in modeller:
-        try:
-            logger.info("[Z.ai] rapor cagrisi: %s", mdl)
-            resp = client.chat.completions.create(
-                model=mdl,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.4,
-                max_tokens=8000,
-                extra_body={"thinking": {"type": "disabled"}},
-            )
-            icerik = resp.choices[0].message.content or ""
-            if not icerik.strip():
-                son_hata = "bos yanit"
-                continue
-            if _looks_degenerate(icerik) or _contains_prompt_leak(prompt, icerik) or _dil_karismis(icerik):
-                son_hata = "bozuk yanit (dongu/sizma/dil)"
-                logger.warning("[Z.ai] %s bozuk yanit uretti; siradaki deneniyor.", mdl)
-                continue
-            logger.info("[Z.ai] rapor alindi (%s): %d karakter", mdl, len(icerik))
-            return icerik
-        except Exception as e:
-            son_hata = str(e)[:200]
-            logger.warning("[Z.ai] %s basarisiz: %s", mdl, son_hata)
-            time.sleep(2)
+        for deneme in range(2):  # 429/asiri yuk icin ayni modeli bekleyip tekrar dene
+            try:
+                logger.info("[Z.ai] rapor cagrisi: %s (deneme %d)", mdl, deneme + 1)
+                resp = client.chat.completions.create(
+                    model=mdl,
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.4,
+                    max_tokens=8000,
+                    extra_body={"thinking": {"type": "disabled"}},
+                )
+                icerik = resp.choices[0].message.content or ""
+                if not icerik.strip():
+                    son_hata = "bos yanit"
+                    continue
+                if _looks_degenerate(icerik) or _contains_prompt_leak(prompt, icerik) or _dil_karismis(icerik):
+                    son_hata = "bozuk yanit (dongu/sizma/dil)"
+                    logger.warning("[Z.ai] %s bozuk yanit uretti; siradaki deneniyor.", mdl)
+                    break
+                logger.info("[Z.ai] rapor alindi (%s): %d karakter", mdl, len(icerik))
+                return icerik
+            except Exception as e:
+                son_hata = str(e)[:200]
+                logger.warning("[Z.ai] %s basarisiz: %s", mdl, son_hata)
+                if "429" in son_hata or "1305" in son_hata or "overloaded" in son_hata.lower():
+                    time.sleep(30)
+                    continue
+                time.sleep(2)
+                break
     logger.warning("[Z.ai] anahtarli cagri basarisiz (%s); yedek zincire dusuluyor.", son_hata)
     return None
 
