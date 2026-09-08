@@ -804,6 +804,23 @@ def portfolio_agent(state: AgentState):
     usd_degeri = BASLANGIC_SERMAYE * (guncel_usd / ilk_usd_kuru)
     gold_degeri = BASLANGIC_SERMAYE * (guncel_gold / ilk_gold_fiyati)
 
+    # BIST 100 kiyaslama cizgisi: endeksin portfoy baslangicindan bugune
+    # getirisini 100.000 TL tabanina normalize eder (borsapy/borsapy index).
+    xu100_degeri = None
+    try:
+        import borsapy as bp
+        ix = bp.index("XU100")
+        ixh = ix.history(period="3mo")
+        if ixh is not None and len(ixh) >= 2:
+            kapanislar = ixh["Close"].astype(float).dropna()
+            kapanislar.index = [str(d)[:10] for d in kapanislar.index]
+            taban = kapanislar[kapanislar.index >= p["start_date"]]
+            taban_deger = float(taban.iloc[0]) if len(taban) else float(kapanislar.iloc[0])
+            if taban_deger > 0:
+                xu100_degeri = BASLANGIC_SERMAYE * (float(kapanislar.iloc[-1]) / taban_deger)
+    except Exception as e:
+        logger.warning("[Uyari] XU100 kiyaslama verisi alinamadi: %s", e)
+
     p["history"].append({
         "date": bugun,
         "total": round(toplam, 2),
@@ -814,13 +831,115 @@ def portfolio_agent(state: AgentState):
         "benchmarks": {
             "USD": round(usd_degeri, 2),
             "GOLD": round(gold_degeri, 2),
-            "DEPOSIT": round(deposit_degeri, 2)
+            "DEPOSIT": round(deposit_degeri, 2),
+            **({"XU100": round(xu100_degeri, 2)} if xu100_degeri else {})
         }
     })
     save_portfolio(p)
 
     ozet = f"Deneme Portfoyu ({bugun}): Toplam {round(toplam,2):.2f} TL (Toplam %{yuzde:+.2f}, Mevduat: {round(deposit_degeri,2):.2f} TL, USD Karşılığı: {round(usd_degeri,2):.2f} TL, Altın Karşılığı: {round(gold_degeri,2):.2f} TL)"
     return {"final_report": state.get("final_report", "") + "\n\n[PORTFOY OZETI]\n" + ozet}
+
+
+# ---------- DERIN ANALIZ (Z.ai GLM ile gunluk derin rapor) ----------
+def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
+    """Kullanicinin Z.ai anahtariyla (ZAI_API_KEY secret) sayfada yayinlanan
+    uzun ve derinlemesine gunluk analizi uretir; sonunda onerilen hisseler
+    tablosu (markdown) icerir. Anahtar SADECE sunucuda kalir, sayfaya
+    gomulmez. Anahtar yoksa None doner."""
+    anahtar = os.environ.get("ZAI_API_KEY", "")
+    if not anahtar:
+        logger.warning("[Derin Analiz] ZAI_API_KEY tanimli degil; sayfa uretilmeyecek.")
+        return None
+
+    model = os.environ.get("ZAI_MODEL", "glm-4.7-flash")
+    client = OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/paas/v4/",
+                    timeout=300.0, max_retries=1)
+
+    teknik_ozet = "\n".join(
+        f"{s['hisse']}: son {s['son']} TL, gunluk {s['gunluk']:+.2f}%, 60g {s['deg60']:+.1f}%, "
+        f"kisa={s['kisa']} orta={s['orta']} uzun={s['uzun']}, WT={s['wt']}, "
+        f"kanal %{s['konum']:.0f}, r={s['r']:.2f}, genel={s['genel']} ({s['sektor']})"
+        for s in teknik_satirlar
+    )
+    borsapy_ozet = "\n".join(
+        f"{s['hisse']}: oneri={s['oneri']} (al={s['al']}/sat={s['sat']}/notr={s['notr']}), "
+        f"RSI={s['rsi']}, MACD={s['macd']}, StochK={s['stoch']}, CCI20={s['cci']}, ADX={s['adx']}"
+        for s in borsapy_satirlar
+    )
+    portfoy = ""
+    p = load_portfolio()
+    if p and p.get("history"):
+        son = p["history"][-1]
+        portfoy = (f"Deneme portfoyu: toplam {son['total']} TL (%{son['pct']:+.2f}), "
+                   f"gunluk %{son['daily_pct']:+.2f}, kiyaslamalar: {son.get('benchmarks')}")
+
+    prompt = f"""Sen kidemli bir hedge-fund arastirma direktoru ve portfoy yoneticisisin. Asagidaki BIST 30 verilerini kullanarak kurumsal yatirimcilara hitap eden, DERINLEMESINE ve UZUN (en az 1200 kelime) bir gunluk analiz raporu yaz. Rapor Turkce olacak.
+
+Yanitini su yapida olustur:
+
+## 1. Piyasa Ozeti ve Genel Bakis
+(Gunun genel havasi, sektor donusumleri, endeks yorumu)
+
+## 2. Sektor Bazli Degerlendirme
+(Isı haritasi verilerine ve sinyal yogunluguna gore guclu/zayif sektorler)
+
+## 3. Teknik Gorsel Analiz
+(EMA dizilimleri, Wave Trend, regresyon kanali konumlari ve Pearson degerlerinin birlikte yorumu; ayrisan hisseler)
+
+## 4. Osilator ve Momentum Okumalari
+(RSI/MACD/Stochastic/CCI/ADX degerlerinin uyarilari; asiri alim/satim bolgelerindeki hisseler)
+
+## 5. Risk Haritasi ve Senaryolar
+(Yukari/asagi senaryolar, bolunme stratejileri, dikkat edilecek seviyeler)
+
+## 6. Gunun Onerilen Hisseleri
+Raporun SONUNDA asagidaki basliklarla tam bir tablo olustur:
+
+| Hisse | Sinyal | Giris Bolgesi | Hedef | Stop | Gerekce |
+|-------|--------|---------------|-------|------|---------|
+| ... | ... | ... | ... | ... | ... |
+
+Tabloda SADECE teknik ve osilator verilerine gore AL/GÜCLÜ AL sinyali veren hisseleri listeleyip her biri icin gerekce yaz. Rakamlari yalnizca verilen fiyatlardan turet, asla disaridan veri ekleme.
+
+### VERILER
+
+[TEKNIK TARAMA SINYALLERI]
+{teknik_ozet}
+
+[TRADINGVIEW OSILATOR SINYALLERI]
+{borsapy_ozet}
+
+[PORTFOY DURUMU]
+{portfoy}
+
+[GUNLUK RAPOR VE HABERLER]
+{rapor_state.get('news_data', '')}
+{rapor_state.get('tech_data', '')[:3000]}
+{rapor_state.get('final_report', '')[:6000]}"""
+
+    son_hata = None
+    denenecekler = [model] + (["glm-4.5-flash"] if model != "glm-4.5-flash" else [])
+    for deneme, mdl in enumerate(denenecekler):
+        try:
+            logger.info("[Derin Analiz] GLM cagrisi (%s), deneme %d", mdl, deneme + 1)
+            resp = client.chat.completions.create(
+                model=mdl,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.4,
+                max_tokens=8000,
+                thinking={"type": "disabled"},
+            )
+            icerik = resp.choices[0].message.content or ""
+            if icerik.strip():
+                return icerik
+            son_hata = "bos yanit"
+        except Exception as e:
+            son_hata = str(e)[:200]
+            logger.warning("[Derin Analiz] %s basarisiz: %s", mdl, son_hata)
+            time.sleep(3)
+    logger.error("[Derin Analiz] tum modeller basarisiz (%s)", son_hata)
+    return None
 
 
 workflow = StateGraph(AgentState)
@@ -1004,6 +1123,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok=""):
     a_p = ' class="active"' if aktif == "portfoy" else ""
     a_t = ' class="active"' if aktif == "teknik" else ""
     a_b = ' class="active"' if aktif == "borsapy" else ""
+    a_d = ' class="active"' if aktif == "derin" else ""
     return f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -1021,7 +1141,7 @@ j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a></nav>
+<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a></nav>
 </div></header>
 {_tv_ticker_tape()}
 
@@ -1133,20 +1253,23 @@ def sparkline_svg(history):
     golds = [round(float(item.get("GOLD", stocks[i])), 2) for i, item in enumerate(benchmarks)]
     usds = [round(float(item.get("USD", stocks[i])), 2) for i, item in enumerate(benchmarks)]
     deposits = [round(float(item.get("DEPOSIT", stocks[i])), 2) for i, item in enumerate(benchmarks)]
+    xu100 = [item.get("XU100") for item in benchmarks]
+    xu100_var = all(v is not None for v in xu100) and any(xu100)
+    xu100_veri = [round(float(v), 2) for v in xu100] if xu100_var else None
 
     import random
     import json as _json
     grafik_id = f"portfoy-grafik-{random.randint(100000, 999999)}"
 
-    veri = {
-        "labels": etiketler,
-        "datasets": [
-            {"label": "Deneme Portföyü (Hisseler)", "data": stocks, "borderColor": "#047857", "backgroundColor": "#047857"},
-            {"label": "Altın", "data": golds, "borderColor": "#d97706", "backgroundColor": "#d97706"},
-            {"label": "Dolar", "data": usds, "borderColor": "#2563eb", "backgroundColor": "#2563eb"},
-            {"label": "Mevduat", "data": deposits, "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]},
-        ],
-    }
+    datasetler = [
+        {"label": "Deneme Portföyü (Hisseler)", "data": stocks, "borderColor": "#047857", "backgroundColor": "#047857"},
+        {"label": "Altın", "data": golds, "borderColor": "#d97706", "backgroundColor": "#d97706"},
+        {"label": "Dolar", "data": usds, "borderColor": "#2563eb", "backgroundColor": "#2563eb"},
+        {"label": "Mevduat", "data": deposits, "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]},
+    ]
+    if xu100_veri:
+        datasetler.append({"label": "BIST 100 Endeksi", "data": xu100_veri, "borderColor": "#7c3aed", "backgroundColor": "#7c3aed", "borderDash": [2, 2]})
+    veri = {"labels": etiketler, "datasets": datasetler}
     veri_json = _json.dumps(veri, ensure_ascii=False)
 
     return f"""
@@ -1312,6 +1435,32 @@ def build_portfolio_html(p):
 #   - Son 60 gun lineer regresyon kanali + Pearson korelasyonu (trend gucu)
 # Tamamen matematikseldir; LLM kullanmaz ve her gun otomatik guncellenir.
 
+# BIST 30 sektor haritasi (isi haritasi icin)
+SEKTORLER = {
+    "Bankacılık": ["AKBNK", "GARAN", "ISCTR", "VAKBN", "YKBNK"],
+    "Holding": ["KCHOL", "SAHOL"],
+    "Havacılık & Ulaştırma": ["THYAO", "PGSUS", "TAVHL"],
+    "Otomotiv": ["FROTO", "TOASO"],
+    "Enerji & Petrokimya": ["TUPRS", "PETKM", "ENKAI", "ASTOR"],
+    "Perakende": ["BIMAS", "MGROS"],
+    "Metal & Madencilik": ["EREGL", "KRDMD"],
+    "Kimya & Gübre": ["SASA", "GUBRF"],
+    "Telekom": ["TCELL", "TTKOM"],
+    "Gıda & İçecek": ["AEFES"],
+    "Cam & Seramik": ["SISE"],
+    "Savunma": ["ASELS"],
+    "Gayrimenkul": ["EKGYO"],
+    "Finans (Diğer)": ["DSTKF"],
+    "Sanayi (Diğer)": ["TRALT"],
+}
+
+
+def _hisse_sektoru(hisse):
+    for sektor, listeler in SEKTORLER.items():
+        if hisse in listeler:
+            return sektor
+    return "Diğer"
+
 def _ema(seri, periyot):
     return seri.ewm(span=periyot, adjust=False).mean()
 
@@ -1419,6 +1568,7 @@ def teknik_tarama_yap():
         konum = ((son - alt) / (ust - alt) * 100) if ust > alt else 50.0
         r = float(np.corrcoef(x, son60.values)[0, 1]) if son60.std() > 0 else 0.0
         deg60 = (son / float(seri.iloc[-61]) - 1) * 100 if len(seri) >= 61 else 0.0
+        gunluk = (son / float(seri.iloc[-2]) - 1) * 100 if len(seri) >= 2 and float(seri.iloc[-2]) > 0 else 0.0
 
         # Genel degerlendirme: yonlu sinyal sayisi (kisa/orta/uzun/WT)
         puansay = sum(1 for s in (kisa, orta, uzun) if s == "AL") + (1 if wt_sinyal in ("AL", "DİPTE AL") else 0)
@@ -1435,6 +1585,7 @@ def teknik_tarama_yap():
 
         satirlar.append({
             "hisse": hisse, "son": round(son, 2), "deg60": round(deg60, 2),
+            "gunluk": round(gunluk, 2), "sektor": _hisse_sektoru(hisse),
             "kisa": kisa, "orta": orta, "uzun": uzun,
             "wt": wt_sinyal, "wt1": round(w1, 1),
             "konum": round(konum, 0), "r": round(r, 2),
@@ -1455,9 +1606,89 @@ def _teknik_sinyal_hucre(sinyal):
     return f"<td class='{sinif}'>{sinyal}</td>"
 
 
+def _isi_renk(deg):
+    """Günlük degisime gore yesil/kirmizi yogunluk rengi (isi haritasi hücre arka plani)."""
+    if deg is None:
+        return "#f1f5f9"
+    yogunluk = min(abs(deg) / 4.0, 1.0)  # +/-4% tam doygunluk
+    if deg >= 0:
+        return f"rgba(4,120,87,{0.15 + 0.75 * yogunluk:.2f})"
+    return f"rgba(185,28,28,{0.15 + 0.75 * yogunluk:.2f})"
+
+
+def _sektor_isi_haritasi(satirlar):
+    """Sektore ortalanmis gunluk degisim ile renkli blok haritasi uretir."""
+    sektorler = {}
+    for s in satirlar:
+        sektorler.setdefault(s.get("sektor", "Diğer"), []).append(s)
+    veriler = []
+    for sektor, listeler in sektorler.items():
+        ortalama = sum(x["gunluk"] for x in listeler) / len(listeler)
+        veriler.append((sektor, ortalama, len(listeler)))
+    veriler.sort(key=lambda x: x[1], reverse=True)
+    hucre = "".join(
+        f"<div style='background:{_isi_renk(d)}; border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'>"
+        f"<div style='font-weight:700; font-size:13px;'>{ad}</div>"
+        f"<div style='font-size:17px; font-weight:800; margin-top:4px;'>{d:+.2f}%</div>"
+        f"<div style='font-size:11px; opacity:.75;'>{n} hisse</div></div>"
+        for ad, d, n in veriler
+    )
+    return f"""
+<h2 class="section-title">Sektörel Isı Haritası <span style="font-size:12px; color:var(--muted); font-weight:400">(günlük değişim ortalaması)</span></h2>
+<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:10px; margin-bottom:8px;">{hucre}</div>"""
+
+
+def _tv_modal_js():
+    """Tablo satirina tiklaninca acilan TradingView mum grafigi modalı (istemci tarafi)."""
+    return """
+<div id="tv-modal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,.65); z-index:999; padding:20px;">
+  <div style="background:#fff; max-width:1000px; margin:24px auto; border-radius:12px; padding:12px 16px 16px; max-height:92vh; overflow:auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <strong id="tv-baslik" style="font-size:16px;"></strong>
+      <a href="javascript:void(0)" onclick="tvKapat()" style="color:#64748b; text-decoration:none; font-size:20px; line-height:1;">&times;</a>
+    </div>
+    <div id="tv-chart" style="height:520px;"></div>
+    <div style="color:#64748b; font-size:12px; margin-top:6px;">Grafik: TradingView (giriş yok, ~15 dk gecikmeli veri). Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
+  </div>
+</div>
+<script>
+function tvAc(hisse) {
+  var modal = document.getElementById('tv-modal');
+  var govde = document.getElementById('tv-chart');
+  document.getElementById('tv-baslik').textContent = hisse + ' — Mum Grafiği (TradingView)';
+  govde.innerHTML = '';
+  var kutu = document.createElement('div');
+  kutu.className = 'tradingview-widget-container';
+  kutu.style.height = '100%';
+  var ic = document.createElement('div');
+  ic.className = 'tradingview-widget-container__widget';
+  ic.style.height = '100%';
+  kutu.appendChild(ic);
+  var s = document.createElement('script');
+  s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+  s.async = true;
+  s.innerHTML = JSON.stringify({
+    symbol: 'BIST:' + hisse, interval: 'D', theme: 'light', style: '1',
+    locale: 'tr', autosize: true, hide_side_toolbar: false, allow_symbol_change: false,
+    calendar: false, support_host: 'https://www.tradingview.com'
+  });
+  kutu.appendChild(s);
+  govde.appendChild(kutu);
+  modal.style.display = 'block';
+}
+function tvKapat() {
+  document.getElementById('tv-modal').style.display = 'none';
+  document.getElementById('tv-chart').innerHTML = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') tvKapat(); });
+</script>"""
+
+
 def build_teknik_html(satirlar, date_str):
     satir_html = "".join(
-        f"<tr><td><strong>{s['hisse']}</strong></td><td>{s['son']:,.2f} TL</td>"
+        f"<tr style='cursor:pointer' onclick=\"tvAc('{s['hisse']}')\"><td><strong>{s['hisse']}</strong></td>"
+        f"<td>{s['son']:,.2f} TL</td>"
+        f"<td class='{_renk(s['gunluk'])}'>{s['gunluk']:+.2f}%</td>"
         f"<td class='{_renk(s['deg60'])}'>{s['deg60']:+.1f}%</td>"
         f"{_teknik_sinyal_hucre(s['kisa'])}{_teknik_sinyal_hucre(s['orta'])}{_teknik_sinyal_hucre(s['uzun'])}"
         f"{_teknik_sinyal_hucre(s['wt'])}"
@@ -1471,15 +1702,18 @@ def build_teknik_html(satirlar, date_str):
 <h1>Teknik Tarama</h1>
 <p>BIST 30 hisseleri icin otomatik teknik tarama: EMA dizilim sinyalleri (kısa 5-8-13-21, orta 34-55, uzun 89-144),
 Wave Trend osilatörü ve 60 günlük regresyon kanalı konumu. Kanal konumu %0=alt bant, %100=üst bant;
-Pearson (r) trendin gücünü gösterir. Piyasa saatlerinde (hafta içi 10:00-18:30) 30 dakikada bir otomatik güncellenir.</p>
+Pearson (r) trendin gücünü gösterir. Piyasa saatlerinde (hafta içi 10:00-18:30) 30 dakikada bir otomatik güncellenir.
+<strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong></p>
 </div>
+{_sektor_isi_haritasi(satirlar)}
 <div class="card" style="padding:8px 24px 16px">
 <table>
-<tr><th>Hisse</th><th>Son</th><th>60G %</th><th>Kısa Vade</th><th>Orta Vade</th><th>Uzun Vade</th><th>Wave Trend</th><th>Kanal</th><th>Pearson</th><th>Genel</th></tr>
+<tr><th>Hisse</th><th>Son</th><th>Gün</th><th>60G %</th><th>Kısa Vade</th><th>Orta Vade</th><th>Uzun Vade</th><th>Wave Trend</th><th>Kanal</th><th>Pearson</th><th>Genel</th></tr>
 {satir_html}
 </table>
-<p style="margin:12px 0 4px; color:var(--muted); font-size:13px">Bugün {len(satirlar)} hisse tarandi; {guclu} hisse GÜÇLÜ AL sinyalinde. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
-</div>"""
+<p style="margin:12px 0 4px; color:var(--muted); font-size:13px">Bugün {len(satirlar)} hisse tarandı; {guclu} hisse GÜÇLÜ AL sinyalinde. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
+</div>
+{_tv_modal_js()}"""
     return _sayfa(f"Teknik Tarama - {date_str}", icerik, "teknik")
 
 
@@ -1539,7 +1773,7 @@ def build_borsapy_html(satirlar, date_str):
     import json as _json
 
     hucreler = "".join(
-        f"<tr><td><strong>{s['hisse']}</strong></td>"
+        f"<tr style='cursor:pointer' onclick=\"tvAc('{s['hisse']}')\"><td><strong>{s['hisse']}</strong></td>"
         f"{_teknik_sinyal_hucre(s['oneri'])}"
         f"<td><span class='pos'>{s['al']}</span> / <span class='neg'>{s['sat']}</span> / {s['notr']}</td>"
         f"<td>{s['rsi'] if s['rsi'] is not None else '-'}</td>"
@@ -1599,7 +1833,8 @@ def build_borsapy_html(satirlar, date_str):
 <h1>Borsapy Sinyalleri</h1>
 <p>TradingView teknik analiz göstergelerinin BIST 30 özeti (borsapy kütüphanesiyle çekilir):
 toplam osilatör + hareketli ortalama oylarına göre genel öneri, RSI, MACD, Stokastik %K, CCI ve ADX.
-Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.</p>
+Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.
+<strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong></p>
 </div>
 {grafik}
 <div class="card" style="padding:8px 24px 16px">
@@ -1608,7 +1843,8 @@ Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.</p>
 {hucreler}
 </table>
 <p style="margin:12px 0 4px; color:var(--muted); font-size:13px">{len(satirlar)} hisse sorgulandı; {guclu} hisse GÜÇLÜ AL. RSI &ge;70 aşırı alım, &le;30 aşırı satım bölgesidir. ADX &gt;25 güçlü trend gösterir. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
-</div>"""
+</div>
+{_tv_modal_js()}"""
     return _sayfa(f"Borsapy Sinyalleri - {date_str}", icerik, "borsapy")
 
 
@@ -1627,14 +1863,36 @@ if __name__ == "__main__":
     # Teknik tarama: LLM'den bagimsiz, saf matematik; basarisiz olursa diger
     # sayfalarin uretimini bozmamasi icin ayri try/except icinde.
     teknik_oneriler = []
+    teknik_satirlar = []
     try:
-        t_satirlar = teknik_tarama_yap()
-        if t_satirlar:
+        teknik_satirlar = teknik_tarama_yap()
+        if teknik_satirlar:
             with open("teknik-analiz.html", "w", encoding="utf-8") as f:
-                f.write(build_teknik_html(t_satirlar, date_str))
-            teknik_oneriler = [s for s in t_satirlar if s["genel"] in ("GÜÇLÜ AL", "AL")][:6]
+                f.write(build_teknik_html(teknik_satirlar, date_str))
+            teknik_oneriler = [s for s in teknik_satirlar if s["genel"] in ("GÜÇLÜ AL", "AL")][:6]
     except Exception:
         logger.exception("[Teknik Tarama] sayfa uretilemedi; rapor uretimini etkilemez.")
+
+    # Borsapy (TradingView) sinyalleri + derin analiz icin toplanir.
+    borsapy_satirlar = []
+    try:
+        borsapy_satirlar = borsapy_analiz_yap()
+        if borsapy_satirlar:
+            with open("borsapy-analiz.html", "w", encoding="utf-8") as f:
+                f.write(build_borsapy_html(borsapy_satirlar, date_str))
+    except Exception:
+        logger.exception("[Borsapy] sayfa uretilemedi; diger sayfalar etkilenmez.")
+
+    # Derin analiz: kullanicinin Z.ai anahtariyla uzun gunluk rapor;
+    # anahtar yoksa atlanir, diger uretimleri etkilemez.
+    try:
+        derin = derin_analiz_yap(result, teknik_satirlar, borsapy_satirlar)
+        if derin:
+            with open("derin-analiz.html", "w", encoding="utf-8") as f:
+                f.write(rapor_sayfasi(markdown_to_html(derin), date_str + " — Derin Analiz"))
+            print("[Derin Analiz] sayfa uretildi.", flush=True)
+    except Exception:
+        logger.exception("[Derin Analiz] sayfa uretilemedi; diger sayfalar etkilenmez.")
 
     p = load_portfolio()
     with open("index.html", "w", encoding="utf-8") as f:
