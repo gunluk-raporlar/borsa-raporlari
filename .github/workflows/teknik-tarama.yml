@@ -1,0 +1,35 @@
+name: Teknik Tarama (Piyasa Saatleri)
+on:
+  schedule:
+    # Hafta ici 07:00-15:30 UTC = 10:00-18:30 Turkiye saati, her 30 dakikada
+    - cron: '*/30 7-15 * * 1-5'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  tarama:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Kutuphaneleri kur
+        run: pip install -r requirements.txt
+      - name: Taramayi calistir
+        run: python -u teknik_tarama.py
+      - name: Degisiklikleri yayinla
+        run: |
+          git config user.name "borsa-bot"
+          git config user.email "borsa-bot@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Degisiklik yok; commit atlanır."
+            exit 0
+          fi
+          git commit -m "Teknik tarama guncellemesi"
+          git pull --rebase origin main
+          git push origin main

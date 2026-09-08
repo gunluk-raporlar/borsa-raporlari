@@ -1367,7 +1367,7 @@ def build_teknik_html(satirlar, date_str):
 <h1>Teknik Tarama</h1>
 <p>BIST 30 hisseleri icin otomatik teknik tarama: EMA dizilim sinyalleri (kısa 5-8-13-21, orta 34-55, uzun 89-144),
 Wave Trend osilatörü ve 60 günlük regresyon kanalı konumu. Kanal konumu %0=alt bant, %100=üst bant;
-Pearson (r) trendin gücünü gösterir. Her gün raporla birlikte otomatik güncellenir.</p>
+Pearson (r) trendin gücünü gösterir. Piyasa saatlerinde (hafta içi 10:00-18:30) 30 dakikada bir otomatik güncellenir.</p>
 </div>
 <div class="card" style="padding:8px 24px 16px">
 <table>
