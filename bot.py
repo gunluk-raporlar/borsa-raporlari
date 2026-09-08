@@ -52,11 +52,6 @@ OR_API_KEY = os.environ.get("OR_API_KEY") or os.environ.get("OPENROUTER_API_KEY"
 OR_BASE_URL = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1")
 OR_MODELS = [m.strip() for m in os.environ.get("OR_MODELS", "").split(",") if m.strip()]
 
-# Sitedeki AI asistan widget'i icin Z.ai anahtari (ucretsiz GLM-Flash modelleri).
-# DIKKAT: Anahtar HTML'e gomulur — bunun icin ozel/alinabilir bir ucretsiz
-# anahtar kullanin (ZAI_API_KEY secret'i). Sizilirsa yalnizca ucretsiz kota yanar.
-WIDGET_AI_KEY = os.environ.get("WIDGET_AI_KEY", "")
-
 # Model emekleme durumlarina karsi otomatik secim icin tercih siralari
 # (icerik eslesmesiyle bulunur; saglayici tam adlandirmayi degistirse de calisir).
 GROQ_MODEL_TERCIH = ["gpt-oss-120b", "llama-4-scout", "llama-4-maverick", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
@@ -911,12 +906,8 @@ tr:last-child td { border-bottom:none; }
 
 
 def _ai_kutu():
-    """AI asistan soru kutusu (interactive-box'in sag sutunu)."""
-    if not WIDGET_AI_KEY:
-        return """
-        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center;">
-            <span style="color: #64748b; font-size: 13px;">🤖 BIST AI Asistan yapılandırılıyor...</span>
-        </div>"""
+    """AI asistan soru kutusu (interactive-box'in sag sutunu). Puter.js
+    kullanildigi icin anahtar gerekmez; kutu her zaman aktiftir."""
     return """
         <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
             <div style="display: flex; gap: 8px;">
@@ -932,12 +923,11 @@ def _ai_kutu():
 
 
 def _ai_panel():
-    """AI asistan yanit paneli + GLM Flash cagrisi yapan JavaScript.
+    """AI asistan yanit paneli + Puter.js uzerinden GLM cagrisi.
 
-    Anahtar tarayiciya gomulur; ucretsiz Flash modelleri kullanilir
-    (glm-4.7-flash -> glm-4.5-flash yedegi)."""
-    if not WIDGET_AI_KEY:
-        return ""
+    Puter.js "kullanici-oder" modeliyle calisir: gelistirici anahtar eklemez
+    ve odeme yapmaz; kullanici kendi Puter ucretsiz kotasini kullanir
+    (kota dolarsa Puter oturum acma penceresi acar)."""
     return """
 <div id="ai-panel" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; font-size: 14px; line-height: 1.6;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
@@ -945,14 +935,14 @@ def _ai_panel():
         <a href="javascript:void(0)" onclick="document.getElementById('ai-panel').style.display='none'" style="color: #64748b; text-decoration: none; font-size: 18px; line-height: 1;">&times;</a>
     </div>
     <div id="ai-answer"></div>
-    <div style="margin-top: 8px; color: #64748b; font-size: 12px;">Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir. Model: GLM-Flash (Z.ai)</div>
+    <div style="margin-top: 8px; color: #64748b; font-size: 12px;">Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir. Model: GLM-Flash (Z.ai, Puter.js üzerinden — ilk kullanımda Puter oturumu isteyebilir).</div>
 </div>
 <style>
 .ai-chip { background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; border-radius: 999px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
 .ai-chip:hover { border-color: #0f766e; color: #0f766e; }
 </style>
+<script src="https://js.puter.com/v2/"></script>
 <script>
-var AI_KEY = "__AI_KEY__";
 function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
 async function aiSor() {
     var giris = document.getElementById('ai-input');
@@ -965,35 +955,29 @@ async function aiSor() {
     cevap.innerHTML = '<em>Yanıt hazırlanıyor...</em>';
     btn.disabled = true; giris.disabled = true;
     var sistem = 'Sen "BIST 30 Günlük Raporlar" sitesinin Türkçe yapay zeka asistanısın. Görevin: Borsa İstanbul, makroekonomi ve teknik analiz (EMA, RSI, MACD, Wave Trend, destek/direnç vb.) konularında eğitici, kısa ve anlaşılır yanıtlar vermek. Canlı piyasa verine erişimin yok; güncel veriler için kullanıcıyı sitedeki Teknik Tarama, Borsapy Sinyal ve Günlük Rapor sayfalarına yönlendir. Kesin alım-satım tavsiyesi verme; bilgilendir. Yanıtlarını madde işaretleriyle yaz, en fazla 200 kelime tut.';
-    var modeller = ['glm-4.7-flash', 'glm-4.5-flash'];
+    var modeller = ['z-ai/glm-4.7-flash', 'infron:z-ai/glm-4.7-flash', 'z-ai/glm-4.5-flash', 'infron:z-ai/glm-4.5-flash'];
     var sonHata = '';
     for (var i = 0; i < modeller.length; i++) {
         try {
-            var r = await fetch('https://api.z.ai/api/paas/v4/chat/completions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + AI_KEY },
-                body: JSON.stringify({
-                    model: modeller[i],
-                    messages: [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
-                    temperature: 0.5,
-                    max_tokens: 700,
-                    thinking: { type: 'disabled' }
-                })
-            });
-            if (!r.ok) { sonHata = 'Hata ' + r.status; continue; }
-            var j = await r.json();
-            var metin = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '';
+            var r = await puter.ai.chat(
+                [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
+                { model: modeller[i] }
+            );
+            var metin = (r && r.message && r.message.content) || (typeof r === 'string' ? r : '') || '';
             if (!metin) { sonHata = 'Boş yanıt'; continue; }
-            metin = metin.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            metin = String(metin).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
             cevap.innerHTML = metin.replace(/\\n/g, '<br>');
             giris.disabled = false; btn.disabled = false; giris.value = '';
             return;
-        } catch (e) { sonHata = 'Bağlantı hatası'; }
+        } catch (e) {
+            sonHata = (e && e.message) ? e.message : 'Bilinmeyen hata';
+            if (sonHata.indexOf('auth') !== -1 || sonHata.indexOf('permission') !== -1) break;
+        }
     }
-    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + '). Lütfen sonra tekrar deneyin.</span>';
+    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + '). Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin veya sonra tekrar deneyin.</span>';
     giris.disabled = false; btn.disabled = false;
 }
-</script>""".replace("__AI_KEY__", WIDGET_AI_KEY)
+</script>"""
 
 
 def _tv_ticker_tape():
