@@ -56,7 +56,7 @@ OR_MODELS = [m.strip() for m in os.environ.get("OR_MODELS", "").split(",") if m.
 # (icerik eslesmesiyle bulunur; saglayici tam adlandirmayi degistirse de calisir).
 GROQ_MODEL_TERCIH = ["gpt-oss-120b", "llama-4-scout", "llama-4-maverick", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
 CF_MODEL_TERCIH = ["llama-3.3-70b-instruct-fp8-fast", "llama-4-scout", "llama-3.3-70b-instruct", "llama-3.1-8b-instruct"]
-OR_MODEL_TERCIH = ["deepseek-chat", "llama-3.3-70b", "qwen3-235b", "qwen3-32b", "gpt-oss-120b"]
+OR_MODEL_TERCIH = ["nemotron-3-ultra", "nemotron-3.5-lightning", "nemotron-3-super", "gemma-4-31b", "ling-3.0-flash-fin", "inkling"]  # 2026-09 ucretsiz kadro: nemotron3 ailesi + gemma4 + ling-fin
 
 if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY and not OR_API_KEY:
     raise SystemExit("AMD_API_KEY, ALT_API_KEY, CF_API_KEY veya OR_API_KEY'den en az biri ayarlanmali!")
