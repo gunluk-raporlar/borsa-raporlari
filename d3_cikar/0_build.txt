@@ -1,0 +1,939 @@
+﻿2026-09-08T12:12:13.2771363Z Current runner version: '2.337.0'
+2026-09-08T12:12:13.2829466Z ##[group]Runner Image Provisioner
+2026-09-08T12:12:13.2831303Z Hosted Compute Agent
+2026-09-08T12:12:13.2832504Z Version: 20260828.587
+2026-09-08T12:12:13.2833902Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-08T12:12:13.2835587Z Build Date: 2026-08-28T16:44:25Z
+2026-09-08T12:12:13.2837078Z Worker ID: {28b29792-4537-45dd-b44f-612713ebfb37}
+2026-09-08T12:12:13.2839124Z Azure Region: westus2
+2026-09-08T12:12:13.2840375Z ##[endgroup]
+2026-09-08T12:12:13.2843381Z ##[group]Operating System
+2026-09-08T12:12:13.2844666Z Ubuntu
+2026-09-08T12:12:13.2845954Z 24.04.4
+2026-09-08T12:12:13.2847121Z LTS
+2026-09-08T12:12:13.2849011Z ##[endgroup]
+2026-09-08T12:12:13.2850218Z ##[group]Runner Image
+2026-09-08T12:12:13.2852067Z Image: ubuntu-24.04
+2026-09-08T12:12:13.2853565Z Version: 20260831.293.1
+2026-09-08T12:12:13.2856196Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260831.293/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-08T12:12:13.2859723Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260831.293
+2026-09-08T12:12:13.2861943Z ##[endgroup]
+2026-09-08T12:12:13.2864166Z ##[group]GITHUB_TOKEN Permissions
+2026-09-08T12:12:13.2867390Z Contents: write
+2026-09-08T12:12:13.2868929Z Metadata: read
+2026-09-08T12:12:13.2870352Z ##[endgroup]
+2026-09-08T12:12:13.2873645Z Secret source: Actions
+2026-09-08T12:12:13.2875976Z Prepare workflow directory
+2026-09-08T12:12:13.3443607Z Prepare all required actions
+2026-09-08T12:12:13.3500076Z Getting action download info
+2026-09-08T12:12:13.6660706Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-08T12:12:13.8339196Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-09-08T12:12:14.0560631Z Complete job name: build
+2026-09-08T12:12:14.1317110Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-08T12:12:14.1326332Z ##[group]Run actions/checkout@v4
+2026-09-08T12:12:14.1327136Z with:
+2026-09-08T12:12:14.1327684Z   repository: gunluk-raporlar/borsa-raporlari
+2026-09-08T12:12:14.1331909Z   token: ***
+2026-09-08T12:12:14.1332420Z   ssh-strict: true
+2026-09-08T12:12:14.1332919Z   ssh-user: git
+2026-09-08T12:12:14.1333423Z   persist-credentials: true
+2026-09-08T12:12:14.1333972Z   clean: true
+2026-09-08T12:12:14.1334480Z   sparse-checkout-cone-mode: true
+2026-09-08T12:12:14.1335066Z   fetch-depth: 1
+2026-09-08T12:12:14.1335555Z   fetch-tags: false
+2026-09-08T12:12:14.1336060Z   show-progress: true
+2026-09-08T12:12:14.1336560Z   lfs: false
+2026-09-08T12:12:14.1337068Z   submodules: false
+2026-09-08T12:12:14.1337573Z   set-safe-directory: true
+2026-09-08T12:12:14.1338284Z   allow-unsafe-pr-checkout: false
+2026-09-08T12:12:14.1339162Z ##[endgroup]
+2026-09-08T12:12:14.2600580Z Syncing repository: gunluk-raporlar/borsa-raporlari
+2026-09-08T12:12:14.2604052Z ##[group]Getting Git version info
+2026-09-08T12:12:14.2605421Z Working directory is '/home/runner/work/borsa-raporlari/borsa-raporlari'
+2026-09-08T12:12:14.2610929Z [command]/usr/bin/git version
+2026-09-08T12:12:14.2774021Z git version 2.55.0
+2026-09-08T12:12:14.2802992Z ##[endgroup]
+2026-09-08T12:12:14.2813121Z Temporarily overriding HOME='/home/runner/work/_temp/de214884-1be4-4a5a-ab45-5c32bda887f5' before making global git config changes
+2026-09-08T12:12:14.2815956Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-08T12:12:14.2818496Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/borsa-raporlari/borsa-raporlari
+2026-09-08T12:12:14.2897134Z Deleting the contents of '/home/runner/work/borsa-raporlari/borsa-raporlari'
+2026-09-08T12:12:14.2917026Z ##[group]Initializing the repository
+2026-09-08T12:12:14.2919365Z [command]/usr/bin/git init /home/runner/work/borsa-raporlari/borsa-raporlari
+2026-09-08T12:12:14.3065927Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-08T12:12:14.3084858Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-08T12:12:14.3095752Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-08T12:12:14.3097629Z hint: call:
+2026-09-08T12:12:14.3098776Z hint:
+2026-09-08T12:12:14.3099929Z hint: 	git config --global init.defaultBranch <name>
+2026-09-08T12:12:14.3101163Z hint:
+2026-09-08T12:12:14.3102288Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-08T12:12:14.3104062Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-08T12:12:14.3105558Z hint:
+2026-09-08T12:12:14.3106442Z hint: 	git branch -m <name>
+2026-09-08T12:12:14.3107414Z hint:
+2026-09-08T12:12:14.3109032Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-08T12:12:14.3111266Z Initialized empty Git repository in /home/runner/work/borsa-raporlari/borsa-raporlari/.git/
+2026-09-08T12:12:14.3114939Z [command]/usr/bin/git remote add origin https://github.com/gunluk-raporlar/borsa-raporlari
+2026-09-08T12:12:14.3212512Z ##[endgroup]
+2026-09-08T12:12:14.3214039Z ##[group]Disabling automatic garbage collection
+2026-09-08T12:12:14.3258969Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-08T12:12:14.4532429Z ##[endgroup]
+2026-09-08T12:12:14.4534121Z ##[group]Setting up auth
+2026-09-08T12:12:14.4536992Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-08T12:12:14.4543158Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-08T12:12:14.4551395Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-08T12:12:14.4556897Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-08T12:12:14.4562944Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-08T12:12:14.4602492Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-08T12:12:14.4845845Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-08T12:12:14.4886731Z ##[endgroup]
+2026-09-08T12:12:14.4889236Z ##[group]Fetching the repository
+2026-09-08T12:12:14.4897829Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +bad0dd1d6f8670669ed28d82ff9dd5d260d7cf3b:refs/remotes/origin/main
+2026-09-08T12:12:15.2732513Z From https://github.com/gunluk-raporlar/borsa-raporlari
+2026-09-08T12:12:15.2750308Z  * [new ref]         bad0dd1d6f8670669ed28d82ff9dd5d260d7cf3b -> origin/main
+2026-09-08T12:12:15.2772240Z ##[endgroup]
+2026-09-08T12:12:15.2774744Z ##[group]Determining the checkout info
+2026-09-08T12:12:15.2777453Z ##[endgroup]
+2026-09-08T12:12:15.2779473Z [command]/usr/bin/git sparse-checkout disable
+2026-09-08T12:12:15.2799713Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-08T12:12:15.2844205Z ##[group]Checking out the ref
+2026-09-08T12:12:15.2847293Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-09-08T12:12:15.2946865Z Switched to a new branch 'main'
+2026-09-08T12:12:15.2953450Z branch 'main' set up to track 'origin/main'.
+2026-09-08T12:12:15.2963706Z ##[endgroup]
+2026-09-08T12:12:15.3009027Z [command]/usr/bin/git log -1 --format=%H
+2026-09-08T12:12:15.3040730Z bad0dd1d6f8670669ed28d82ff9dd5d260d7cf3b
+2026-09-08T12:12:15.3458549Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-08T12:12:15.3465443Z ##[group]Run actions/setup-python@v5
+2026-09-08T12:12:15.3466879Z with:
+2026-09-08T12:12:15.3467943Z   python-version: 3.12
+2026-09-08T12:12:15.3469356Z   check-latest: false
+2026-09-08T12:12:15.3480437Z   token: ***
+2026-09-08T12:12:15.3481595Z   update-environment: true
+2026-09-08T12:12:15.3482917Z   allow-prereleases: false
+2026-09-08T12:12:15.3484219Z   freethreaded: false
+2026-09-08T12:12:15.3485403Z ##[endgroup]
+2026-09-08T12:12:15.5130137Z ##[group]Installed versions
+2026-09-08T12:12:15.5596426Z (node:1995) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-08T12:12:15.5598856Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-08T12:12:15.5600185Z Successfully set up CPython (3.12.14)
+2026-09-08T12:12:15.5601275Z ##[endgroup]
+2026-09-08T12:12:15.5843913Z ##[group]Run pip install -r requirements.txt
+2026-09-08T12:12:15.5844794Z [36;1mpip install -r requirements.txt[0m
+2026-09-08T12:12:15.5948898Z shell: /usr/bin/bash -e {0}
+2026-09-08T12:12:15.5949471Z env:
+2026-09-08T12:12:15.5950052Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T12:12:15.5950972Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-09-08T12:12:15.5951857Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T12:12:15.5952619Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T12:12:15.5953406Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T12:12:15.5954165Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-09-08T12:12:15.5954602Z ##[endgroup]
+2026-09-08T12:12:20.1277636Z Collecting openai (from -r requirements.txt (line 1))
+2026-09-08T12:12:20.1870601Z   Downloading openai-3.8.0-py3-none-any.whl.metadata (41 kB)
+2026-09-08T12:12:20.3420371Z Collecting pandas (from -r requirements.txt (line 2))
+2026-09-08T12:12:20.3498741Z   Downloading pandas-3.0.5-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (79 kB)
+2026-09-08T12:12:20.4355237Z Collecting langgraph (from -r requirements.txt (line 3))
+2026-09-08T12:12:20.4429402Z   Downloading langgraph-1.2.11-py3-none-any.whl.metadata (4.9 kB)
+2026-09-08T12:12:20.4607904Z Collecting feedparser (from -r requirements.txt (line 4))
+2026-09-08T12:12:20.4681411Z   Downloading feedparser-6.0.14-py3-none-any.whl.metadata (2.7 kB)
+2026-09-08T12:12:20.4856789Z Collecting isyatirimhisse (from -r requirements.txt (line 5))
+2026-09-08T12:12:20.4936156Z   Downloading isyatirimhisse-5.0.1-py3-none-any.whl.metadata (18 kB)
+2026-09-08T12:12:20.5155782Z Collecting markdown (from -r requirements.txt (line 6))
+2026-09-08T12:12:20.5226711Z   Downloading markdown-3.10.3-py3-none-any.whl.metadata (5.1 kB)
+2026-09-08T12:12:20.5534892Z Collecting yfinance (from -r requirements.txt (line 7))
+2026-09-08T12:12:20.5607317Z   Downloading yfinance-1.7.0-py3-none-any.whl.metadata (6.7 kB)
+2026-09-08T12:12:20.5820070Z Collecting borsapy (from -r requirements.txt (line 8))
+2026-09-08T12:12:20.5911045Z   Downloading borsapy-0.11.0-py3-none-any.whl.metadata (102 kB)
+2026-09-08T12:12:20.6275542Z Collecting anyio<5,>=4.10.0 (from openai->-r requirements.txt (line 1))
+2026-09-08T12:12:20.6349246Z   Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+2026-09-08T12:12:20.6517118Z Collecting httpx2<3,>=2.7.0 (from openai->-r requirements.txt (line 1))
+2026-09-08T12:12:20.6590897Z   Downloading httpx2-2.12.0-py3-none-any.whl.metadata (9.5 kB)
+2026-09-08T12:12:20.7600961Z Collecting jiter<1,>=0.16.0 (from openai->-r requirements.txt (line 1))
+2026-09-08T12:12:20.7685440Z   Downloading jiter-0.16.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (5.2 kB)
+2026-09-08T12:12:20.8814064Z Collecting pydantic!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.*,<3,>=1.10.13 (from openai->-r requirements.txt (line 1))
+2026-09-08T12:12:20.8887580Z   Downloading pydantic-2.13.5-py3-none-any.whl.metadata (110 kB)
+2026-09-08T12:12:20.9152604Z Collecting sniffio (from openai->-r requirements.txt (line 1))
+2026-09-08T12:12:20.9227134Z   Downloading sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+2026-09-08T12:12:20.9429985Z Collecting typing-extensions<5,>=4.14 (from openai->-r requirements.txt (line 1))
+2026-09-08T12:12:20.9505051Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-09-08T12:12:20.9710077Z Collecting idna>=2.8 (from anyio<5,>=4.10.0->openai->-r requirements.txt (line 1))
+2026-09-08T12:12:20.9782466Z   Downloading idna-3.19-py3-none-any.whl.metadata (9.2 kB)
+2026-09-08T12:12:21.0017332Z Collecting httpcore2==2.12.0 (from httpx2<3,>=2.7.0->openai->-r requirements.txt (line 1))
+2026-09-08T12:12:21.0096528Z   Downloading httpcore2-2.12.0-py3-none-any.whl.metadata (25 kB)
+2026-09-08T12:12:21.0329537Z Collecting truststore>=0.10 (from httpx2<3,>=2.7.0->openai->-r requirements.txt (line 1))
+2026-09-08T12:12:21.0409709Z   Downloading truststore-0.10.4-py3-none-any.whl.metadata (4.4 kB)
+2026-09-08T12:12:21.0569249Z Collecting h11>=0.16 (from httpcore2==2.12.0->httpx2<3,>=2.7.0->openai->-r requirements.txt (line 1))
+2026-09-08T12:12:21.0638052Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+2026-09-08T12:12:21.0800735Z Collecting annotated-types>=0.6.0 (from pydantic!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.*,<3,>=1.10.13->openai->-r requirements.txt (line 1))
+2026-09-08T12:12:21.0873575Z   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+2026-09-08T12:12:21.7596369Z Collecting pydantic-core==2.46.5 (from pydantic!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.*,<3,>=1.10.13->openai->-r requirements.txt (line 1))
+2026-09-08T12:12:21.7673876Z   Downloading pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+2026-09-08T12:12:21.7842473Z Collecting typing-inspection>=0.4.2 (from pydantic!=2.0.*,!=2.1.*,!=2.2.*,!=2.3.*,<3,>=1.10.13->openai->-r requirements.txt (line 1))
+2026-09-08T12:12:21.7936009Z   Downloading typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+2026-09-08T12:12:21.9945813Z Collecting numpy>=1.26.0 (from pandas->-r requirements.txt (line 2))
+2026-09-08T12:12:22.0021236Z   Downloading numpy-2.5.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+2026-09-08T12:12:22.0190741Z Collecting python-dateutil>=2.8.2 (from pandas->-r requirements.txt (line 2))
+2026-09-08T12:12:22.0314574Z   Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+2026-09-08T12:12:22.0726827Z Collecting langchain-core<2,>=1.4.7 (from langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.0798696Z   Downloading langchain_core-1.6.2-py3-none-any.whl.metadata (4.8 kB)
+2026-09-08T12:12:22.1015021Z Collecting langgraph-checkpoint<5.0.0,>=4.1.0 (from langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.1093834Z   Downloading langgraph_checkpoint-4.2.0-py3-none-any.whl.metadata (6.7 kB)
+2026-09-08T12:12:22.1282919Z Collecting langgraph-prebuilt<1.2.0,>=1.1.0 (from langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.1355647Z   Downloading langgraph_prebuilt-1.1.0-py3-none-any.whl.metadata (5.2 kB)
+2026-09-08T12:12:22.1618880Z Collecting langgraph-sdk<0.5.0,>=0.4.2 (from langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.1689040Z   Downloading langgraph_sdk-0.4.4-py3-none-any.whl.metadata (5.1 kB)
+2026-09-08T12:12:22.3277606Z Collecting xxhash>=3.5.0 (from langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.3352457Z   Downloading xxhash-4.0.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (17 kB)
+2026-09-08T12:12:22.3582804Z Collecting httpx<1.0.0,>=0.23.0 (from langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.3653939Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+2026-09-08T12:12:22.3828027Z Collecting jsonpatch<2.0.0,>=1.33.0 (from langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.3900018Z   Downloading jsonpatch-1.33-py2.py3-none-any.whl.metadata (3.0 kB)
+2026-09-08T12:12:22.4061159Z Collecting langchain-protocol>=0.0.17 (from langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.4133167Z   Downloading langchain_protocol-0.0.19-py3-none-any.whl.metadata (2.4 kB)
+2026-09-08T12:12:22.4790519Z Collecting langsmith<1.0.0,>=0.3.45 (from langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.4864267Z   Downloading langsmith-0.12.2-py3-none-any.whl.metadata (22 kB)
+2026-09-08T12:12:22.5109770Z Collecting packaging>=23.2.0 (from langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.5180513Z   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+2026-09-08T12:12:22.5563736Z Collecting pyyaml<7.0.0,>=5.3.0 (from langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.5651614Z   Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+2026-09-08T12:12:22.5872717Z Collecting tenacity!=8.4.0,<10.0.0,>=8.1.0 (from langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.5945313Z   Downloading tenacity-9.1.4-py3-none-any.whl.metadata (1.2 kB)
+2026-09-08T12:12:22.7040494Z Collecting uuid-utils<1.0,>=0.12.0 (from langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.7115699Z   Downloading uuid_utils-0.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.4 kB)
+2026-09-08T12:12:22.7365205Z Collecting certifi (from httpx<1.0.0,>=0.23.0->langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.7436222Z   Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+2026-09-08T12:12:22.7636179Z Collecting httpcore==1.* (from httpx<1.0.0,>=0.23.0->langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.7707040Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+2026-09-08T12:12:22.7908047Z Collecting jsonpointer>=1.9 (from jsonpatch<2.0.0,>=1.33.0->langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.7978936Z   Downloading jsonpointer-3.1.1-py3-none-any.whl.metadata (2.4 kB)
+2026-09-08T12:12:22.8919713Z Collecting ormsgpack>=1.12.0 (from langgraph-checkpoint<5.0.0,>=4.1.0->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:22.9069574Z   Downloading ormsgpack-1.12.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.2 kB)
+2026-09-08T12:12:23.2826552Z Collecting orjson>=3.11.5 (from langgraph-sdk<0.5.0,>=0.4.2->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:23.2939641Z   Downloading orjson-3.12.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (41 kB)
+2026-09-08T12:12:23.4795433Z Collecting websockets<17,>=14 (from langgraph-sdk<0.5.0,>=0.4.2->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:23.4871426Z   Downloading websockets-16.1.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.8 kB)
+2026-09-08T12:12:23.5059548Z Collecting distro>=1.7.0 (from langsmith<1.0.0,>=0.3.45->langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:23.5126096Z   Downloading distro-1.9.0-py3-none-any.whl.metadata (6.8 kB)
+2026-09-08T12:12:23.5407324Z Collecting requests-toolbelt>=1.0.0 (from langsmith<1.0.0,>=0.3.45->langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:23.5498652Z   Downloading requests_toolbelt-1.0.0-py2.py3-none-any.whl.metadata (14 kB)
+2026-09-08T12:12:23.6079985Z Collecting requests>=2.0.0 (from langsmith<1.0.0,>=0.3.45->langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:23.6147140Z   Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+2026-09-08T12:12:23.6939227Z Collecting zstandard>=0.23.0 (from langsmith<1.0.0,>=0.3.45->langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:23.7280752Z   Downloading zstandard-0.25.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.3 kB)
+2026-09-08T12:12:23.7559503Z Collecting feedparser-sgmllib<3,>=2 (from feedparser->-r requirements.txt (line 4))
+2026-09-08T12:12:23.7623069Z   Downloading feedparser_sgmllib-2.1.0-py3-none-any.whl.metadata (926 bytes)
+2026-09-08T12:12:23.7825158Z Collecting openpyxl (from isyatirimhisse->-r requirements.txt (line 5))
+2026-09-08T12:12:23.7896335Z   Downloading openpyxl-3.1.5-py2.py3-none-any.whl.metadata (2.5 kB)
+2026-09-08T12:12:23.8124105Z Collecting beautifulsoup4>=4.11.1 (from yfinance->-r requirements.txt (line 7))
+2026-09-08T12:12:23.8195375Z   Downloading beautifulsoup4-4.15.0-py3-none-any.whl.metadata (3.8 kB)
+2026-09-08T12:12:23.8844087Z Collecting curl_cffi>=0.15 (from yfinance->-r requirements.txt (line 7))
+2026-09-08T12:12:23.8916389Z   Downloading curl_cffi-0.16.3-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (17 kB)
+2026-09-08T12:12:24.1227046Z Collecting lxml>=4.9.0 (from yfinance->-r requirements.txt (line 7))
+2026-09-08T12:12:24.1302085Z   Downloading lxml-6.1.3-cp312-cp312-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl.metadata (3.3 kB)
+2026-09-08T12:12:24.1462000Z Collecting multitasking>=0.0.7 (from yfinance->-r requirements.txt (line 7))
+2026-09-08T12:12:24.1534046Z   Downloading multitasking-0.0.13-py3-none-any.whl.metadata (16 kB)
+2026-09-08T12:12:24.1819912Z Collecting peewee>=3.16.2 (from yfinance->-r requirements.txt (line 7))
+2026-09-08T12:12:24.1891547Z   Downloading peewee-4.5.1-py3-none-any.whl.metadata (10 kB)
+2026-09-08T12:12:24.2130710Z Collecting platformdirs>=2.0.0 (from yfinance->-r requirements.txt (line 7))
+2026-09-08T12:12:24.2203166Z   Downloading platformdirs-4.11.7-py3-none-any.whl.metadata (5.5 kB)
+2026-09-08T12:12:24.3718069Z Collecting protobuf>=3.19.0 (from yfinance->-r requirements.txt (line 7))
+2026-09-08T12:12:24.3792303Z   Downloading protobuf-7.36.1-cp310-abi3-manylinux2014_x86_64.whl.metadata (595 bytes)
+2026-09-08T12:12:24.4160164Z Collecting pytz>=2022.5 (from yfinance->-r requirements.txt (line 7))
+2026-09-08T12:12:24.4231847Z   Downloading pytz-2026.3.post1-py2.py3-none-any.whl.metadata (22 kB)
+2026-09-08T12:12:24.4680084Z Collecting pymupdf4llm>=0.2.9 (from borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:24.4761479Z   Downloading pymupdf4llm-1.28.2-py3-none-any.whl.metadata (21 kB)
+2026-09-08T12:12:24.5450071Z Collecting rich>=13.0.0 (from borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:24.5522873Z   Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+2026-09-08T12:12:24.5737318Z Collecting tradingview-screener>=3.0.0 (from borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:24.5826934Z   Downloading tradingview_screener-3.2.1-py3-none-any.whl.metadata (11 kB)
+2026-09-08T12:12:24.6070838Z Collecting typer>=0.12.0 (from borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:24.6143417Z   Downloading typer-0.27.2-py3-none-any.whl.metadata (16 kB)
+2026-09-08T12:12:24.6395056Z Collecting urllib3>=2.0.0 (from borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:24.6464867Z   Downloading urllib3-2.7.0-py3-none-any.whl.metadata (6.9 kB)
+2026-09-08T12:12:24.6667168Z Collecting websocket-client>=1.9.0 (from borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:24.6737764Z   Downloading websocket_client-1.9.2-py3-none-any.whl.metadata (8.3 kB)
+2026-09-08T12:12:24.6962024Z Collecting soupsieve>=1.6.1 (from beautifulsoup4>=4.11.1->yfinance->-r requirements.txt (line 7))
+2026-09-08T12:12:24.7033147Z   Downloading soupsieve-2.9.2-py3-none-any.whl.metadata (4.6 kB)
+2026-09-08T12:12:24.8070114Z Collecting cffi>=2.0.0 (from curl_cffi>=0.15->yfinance->-r requirements.txt (line 7))
+2026-09-08T12:12:24.8144372Z   Downloading cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.5 kB)
+2026-09-08T12:12:24.8331921Z Collecting pycparser (from cffi>=2.0.0->curl_cffi>=0.15->yfinance->-r requirements.txt (line 7))
+2026-09-08T12:12:24.8403593Z   Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+2026-09-08T12:12:24.8611346Z Collecting et-xmlfile (from openpyxl->isyatirimhisse->-r requirements.txt (line 5))
+2026-09-08T12:12:24.8682527Z   Downloading et_xmlfile-2.0.0-py3-none-any.whl.metadata (2.7 kB)
+2026-09-08T12:12:25.0072314Z Collecting pymupdf==1.28.2 (from pymupdf4llm>=0.2.9->borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:25.0145074Z   Downloading pymupdf-1.28.2-cp310-abi3-manylinux_2_28_x86_64.whl.metadata (26 kB)
+2026-09-08T12:12:25.0364845Z Collecting pymupdf_layout==1.28.2 (from pymupdf4llm>=0.2.9->borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:25.0436964Z   Downloading pymupdf_layout-1.28.2-cp310-abi3-manylinux_2_28_x86_64.whl.metadata (4.4 kB)
+2026-09-08T12:12:25.0598396Z Collecting tabulate (from pymupdf4llm>=0.2.9->borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:25.0668520Z   Downloading tabulate-0.10.0-py3-none-any.whl.metadata (40 kB)
+2026-09-08T12:12:25.1382648Z Collecting psutil (from pymupdf4llm>=0.2.9->borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:25.1455265Z   Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+2026-09-08T12:12:25.2206980Z Collecting onnxruntime (from pymupdf_layout==1.28.2->pymupdf4llm>=0.2.9->borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:25.2279386Z   Downloading onnxruntime-1.29.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (5.6 kB)
+2026-09-08T12:12:25.2530822Z Collecting networkx (from pymupdf_layout==1.28.2->pymupdf4llm>=0.2.9->borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:25.2603489Z   Downloading networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+2026-09-08T12:12:25.2818678Z Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas->-r requirements.txt (line 2))
+2026-09-08T12:12:25.2891445Z   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+2026-09-08T12:12:25.4040653Z Collecting charset_normalizer<4,>=2 (from requests>=2.0.0->langsmith<1.0.0,>=0.3.45->langchain-core<2,>=1.4.7->langgraph->-r requirements.txt (line 3))
+2026-09-08T12:12:25.4115474Z   Downloading charset_normalizer-3.5.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (45 kB)
+2026-09-08T12:12:25.4455159Z Collecting markdown-it-py>=2.2.0 (from rich>=13.0.0->borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:25.4531566Z   Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+2026-09-08T12:12:25.4816671Z Collecting pygments<3.0.0,>=2.13.0 (from rich>=13.0.0->borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:25.4879096Z   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+2026-09-08T12:12:25.5051098Z Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=13.0.0->borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:25.5125372Z   Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+2026-09-08T12:12:25.5358611Z Collecting shellingham>=1.3.0 (from typer>=0.12.0->borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:25.5429601Z   Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+2026-09-08T12:12:25.5593981Z Collecting annotated-doc>=0.0.2 (from typer>=0.12.0->borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:25.5665870Z   Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+2026-09-08T12:12:25.5913486Z Collecting flatbuffers (from onnxruntime->pymupdf_layout==1.28.2->pymupdf4llm>=0.2.9->borsapy->-r requirements.txt (line 8))
+2026-09-08T12:12:25.5984154Z   Downloading flatbuffers-25.12.19-py2.py3-none-any.whl.metadata (1.0 kB)
+2026-09-08T12:12:25.6203803Z Downloading openai-3.8.0-py3-none-any.whl (1.7 MB)
+2026-09-08T12:12:25.7657270Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 12.2 MB/s  0:00:00
+2026-09-08T12:12:25.7729429Z Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+2026-09-08T12:12:25.7927892Z Downloading httpx2-2.12.0-py3-none-any.whl (95 kB)
+2026-09-08T12:12:25.8080688Z Downloading httpcore2-2.12.0-py3-none-any.whl (83 kB)
+2026-09-08T12:12:25.8225615Z Downloading jiter-0.16.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (343 kB)
+2026-09-08T12:12:25.8584370Z Downloading pydantic-2.13.5-py3-none-any.whl (472 kB)
+2026-09-08T12:12:25.9016807Z Downloading pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+2026-09-08T12:12:26.0440890Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 14.8 MB/s  0:00:00
+2026-09-08T12:12:26.0516855Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-09-08T12:12:26.0615120Z Downloading pandas-3.0.5-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (11.0 MB)
+2026-09-08T12:12:26.5636071Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.0/11.0 MB 22.1 MB/s  0:00:00
+2026-09-08T12:12:26.5711150Z Downloading langgraph-1.2.11-py3-none-any.whl (248 kB)
+2026-09-08T12:12:26.5872665Z Downloading langchain_core-1.6.2-py3-none-any.whl (571 kB)
+2026-09-08T12:12:26.6097910Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 571.7/571.7 kB 24.9 MB/s  0:00:00
+2026-09-08T12:12:26.6168918Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+2026-09-08T12:12:26.6284618Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+2026-09-08T12:12:26.6380465Z Downloading jsonpatch-1.33-py2.py3-none-any.whl (12 kB)
+2026-09-08T12:12:26.6471908Z Downloading langgraph_checkpoint-4.2.0-py3-none-any.whl (56 kB)
+2026-09-08T12:12:26.6569030Z Downloading langgraph_prebuilt-1.1.0-py3-none-any.whl (41 kB)
+2026-09-08T12:12:26.6661475Z Downloading langgraph_sdk-0.4.4-py3-none-any.whl (162 kB)
+2026-09-08T12:12:26.6803506Z Downloading langsmith-0.12.2-py3-none-any.whl (760 kB)
+2026-09-08T12:12:26.7087842Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 760.7/760.7 kB 26.8 MB/s  0:00:00
+2026-09-08T12:12:26.7161128Z Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+2026-09-08T12:12:26.7455776Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 28.6 MB/s  0:00:00
+2026-09-08T12:12:26.7524869Z Downloading tenacity-9.1.4-py3-none-any.whl (28 kB)
+2026-09-08T12:12:26.7611963Z Downloading uuid_utils-0.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (323 kB)
+2026-09-08T12:12:26.7804415Z Downloading websockets-16.1.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (187 kB)
+2026-09-08T12:12:26.7962259Z Downloading feedparser-6.0.14-py3-none-any.whl (80 kB)
+2026-09-08T12:12:26.8066319Z Downloading feedparser_sgmllib-2.1.0-py3-none-any.whl (11 kB)
+2026-09-08T12:12:26.8179218Z Downloading isyatirimhisse-5.0.1-py3-none-any.whl (13 kB)
+2026-09-08T12:12:26.8263410Z Downloading markdown-3.10.3-py3-none-any.whl (110 kB)
+2026-09-08T12:12:26.8367968Z Downloading yfinance-1.7.0-py3-none-any.whl (149 kB)
+2026-09-08T12:12:26.8520485Z Downloading borsapy-0.11.0-py3-none-any.whl (334 kB)
+2026-09-08T12:12:26.8719617Z Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+2026-09-08T12:12:26.8862063Z Downloading beautifulsoup4-4.15.0-py3-none-any.whl (109 kB)
+2026-09-08T12:12:26.8971715Z Downloading curl_cffi-0.16.3-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (13.5 MB)
+2026-09-08T12:12:27.2911666Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.5/13.5 MB 34.3 MB/s  0:00:00
+2026-09-08T12:12:27.2986189Z Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+2026-09-08T12:12:27.3103081Z Downloading cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (221 kB)
+2026-09-08T12:12:27.3247944Z Downloading distro-1.9.0-py3-none-any.whl (20 kB)
+2026-09-08T12:12:27.3340909Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+2026-09-08T12:12:27.3431878Z Downloading idna-3.19-py3-none-any.whl (68 kB)
+2026-09-08T12:12:27.3526319Z Downloading jsonpointer-3.1.1-py3-none-any.whl (7.7 kB)
+2026-09-08T12:12:27.3616934Z Downloading langchain_protocol-0.0.19-py3-none-any.whl (7.3 kB)
+2026-09-08T12:12:27.3708855Z Downloading lxml-6.1.3-cp312-cp312-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl (5.2 MB)
+2026-09-08T12:12:27.5064380Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 39.0 MB/s  0:00:00
+2026-09-08T12:12:27.5135704Z Downloading multitasking-0.0.13-py3-none-any.whl (16 kB)
+2026-09-08T12:12:27.5227263Z Downloading numpy-2.5.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+2026-09-08T12:12:27.8883546Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 46.0 MB/s  0:00:00
+2026-09-08T12:12:27.8960264Z Downloading openpyxl-3.1.5-py2.py3-none-any.whl (250 kB)
+2026-09-08T12:12:27.9079435Z Downloading orjson-3.12.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (131 kB)
+2026-09-08T12:12:27.9179730Z Downloading ormsgpack-1.12.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (212 kB)
+2026-09-08T12:12:27.9295610Z Downloading packaging-26.3-py3-none-any.whl (129 kB)
+2026-09-08T12:12:27.9398112Z Downloading peewee-4.5.1-py3-none-any.whl (193 kB)
+2026-09-08T12:12:27.9505478Z Downloading platformdirs-4.11.7-py3-none-any.whl (23 kB)
+2026-09-08T12:12:27.9596531Z Downloading protobuf-7.36.1-cp310-abi3-manylinux2014_x86_64.whl (343 kB)
+2026-09-08T12:12:27.9754884Z Downloading pymupdf4llm-1.28.2-py3-none-any.whl (176 kB)
+2026-09-08T12:12:27.9860458Z Downloading pymupdf-1.28.2-cp310-abi3-manylinux_2_28_x86_64.whl (25.8 MB)
+2026-09-08T12:12:28.4699321Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 25.8/25.8 MB 53.2 MB/s  0:00:00
+2026-09-08T12:12:28.4793546Z Downloading pymupdf_layout-1.28.2-cp310-abi3-manylinux_2_28_x86_64.whl (42.9 MB)
+2026-09-08T12:12:29.9296250Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 42.9/42.9 MB 29.5 MB/s  0:00:01
+2026-09-08T12:12:29.9357469Z Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+2026-09-08T12:12:29.9466018Z Downloading pytz-2026.3.post1-py2.py3-none-any.whl (508 kB)
+2026-09-08T12:12:29.9615555Z Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+2026-09-08T12:12:29.9710970Z Downloading charset_normalizer-3.5.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (248 kB)
+2026-09-08T12:12:29.9816646Z Downloading urllib3-2.7.0-py3-none-any.whl (131 kB)
+2026-09-08T12:12:29.9919020Z Downloading requests_toolbelt-1.0.0-py2.py3-none-any.whl (54 kB)
+2026-09-08T12:12:30.0019069Z Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+2026-09-08T12:12:30.0137384Z Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+2026-09-08T12:12:30.0325404Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 63.9 MB/s  0:00:00
+2026-09-08T12:12:30.0395743Z Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+2026-09-08T12:12:30.0487328Z Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+2026-09-08T12:12:30.0587389Z Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+2026-09-08T12:12:30.0676116Z Downloading sniffio-1.3.1-py3-none-any.whl (10 kB)
+2026-09-08T12:12:30.0770995Z Downloading soupsieve-2.9.2-py3-none-any.whl (37 kB)
+2026-09-08T12:12:30.0874641Z Downloading tradingview_screener-3.2.1-py3-none-any.whl (22 kB)
+2026-09-08T12:12:30.0965529Z Downloading truststore-0.10.4-py3-none-any.whl (18 kB)
+2026-09-08T12:12:30.1066015Z Downloading typer-0.27.2-py3-none-any.whl (123 kB)
+2026-09-08T12:12:30.1157823Z Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+2026-09-08T12:12:30.1248776Z Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+2026-09-08T12:12:30.1339048Z Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+2026-09-08T12:12:30.1430073Z Downloading websocket_client-1.9.2-py3-none-any.whl (95 kB)
+2026-09-08T12:12:30.1526424Z Downloading xxhash-4.0.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (261 kB)
+2026-09-08T12:12:30.1630503Z Downloading zstandard-0.25.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.5 MB)
+2026-09-08T12:12:30.2435651Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.5/5.5 MB 68.8 MB/s  0:00:00
+2026-09-08T12:12:30.2507301Z Downloading et_xmlfile-2.0.0-py3-none-any.whl (18 kB)
+2026-09-08T12:12:30.2598643Z Downloading networkx-3.6.1-py3-none-any.whl (2.1 MB)
+2026-09-08T12:12:30.2915855Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 63.4 MB/s  0:00:00
+2026-09-08T12:12:30.2988340Z Downloading onnxruntime-1.29.0-cp312-cp312-manylinux_2_28_x86_64.whl (23.1 MB)
+2026-09-08T12:12:30.5909849Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 23.1/23.1 MB 79.4 MB/s  0:00:00
+2026-09-08T12:12:30.5984362Z Downloading flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+2026-09-08T12:12:30.6079930Z Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+2026-09-08T12:12:30.6179888Z Downloading pycparser-3.0-py3-none-any.whl (48 kB)
+2026-09-08T12:12:30.6270288Z Downloading tabulate-0.10.0-py3-none-any.whl (39 kB)
+2026-09-08T12:12:31.4179722Z Installing collected packages: pytz, multitasking, flatbuffers, zstandard, xxhash, websockets, websocket-client, uuid-utils, urllib3, typing-extensions, truststore, tenacity, tabulate, soupsieve, sniffio, six, shellingham, pyyaml, pymupdf, pygments, pycparser, psutil, protobuf, platformdirs, peewee, packaging, ormsgpack, orjson, numpy, networkx, mdurl, markdown, lxml, jsonpointer, jiter, idna, h11, feedparser-sgmllib, et-xmlfile, distro, charset_normalizer, certifi, annotated-types, annotated-doc, typing-inspection, requests, python-dateutil, pydantic-core, openpyxl, onnxruntime, markdown-it-py, langchain-protocol, jsonpatch, httpcore2, httpcore, feedparser, cffi, beautifulsoup4, anyio, rich, requests-toolbelt, pymupdf_layout, pydantic, pandas, httpx2, httpx, curl_cffi, yfinance, typer, tradingview-screener, pymupdf4llm, openai, langsmith, isyatirimhisse, langchain-core, borsapy, langgraph-sdk, langgraph-checkpoint, langgraph-prebuilt, langgraph
+2026-09-08T12:12:49.3426763Z 
+2026-09-08T12:12:49.3499182Z Successfully installed annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 beautifulsoup4-4.15.0 borsapy-0.11.0 certifi-2026.7.22 cffi-2.1.1 charset_normalizer-3.5.1 curl_cffi-0.16.3 distro-1.9.0 et-xmlfile-2.0.0 feedparser-6.0.14 feedparser-sgmllib-2.1.0 flatbuffers-25.12.19 h11-0.16.0 httpcore-1.0.9 httpcore2-2.12.0 httpx-0.28.1 httpx2-2.12.0 idna-3.19 isyatirimhisse-5.0.1 jiter-0.16.0 jsonpatch-1.33 jsonpointer-3.1.1 langchain-core-1.6.2 langchain-protocol-0.0.19 langgraph-1.2.11 langgraph-checkpoint-4.2.0 langgraph-prebuilt-1.1.0 langgraph-sdk-0.4.4 langsmith-0.12.2 lxml-6.1.3 markdown-3.10.3 markdown-it-py-4.2.0 mdurl-0.1.2 multitasking-0.0.13 networkx-3.6.1 numpy-2.5.3 onnxruntime-1.29.0 openai-3.8.0 openpyxl-3.1.5 orjson-3.12.0 ormsgpack-1.12.2 packaging-26.3 pandas-3.0.5 peewee-4.5.1 platformdirs-4.11.7 protobuf-7.36.1 psutil-7.2.2 pycparser-3.0 pydantic-2.13.5 pydantic-core-2.46.5 pygments-2.21.0 pymupdf-1.28.2 pymupdf4llm-1.28.2 pymupdf_layout-1.28.2 python-dateutil-2.9.0.post0 pytz-2026.3.post1 pyyaml-6.0.3 requests-2.34.2 requests-toolbelt-1.0.0 rich-15.0.0 shellingham-1.5.4 six-1.17.0 sniffio-1.3.1 soupsieve-2.9.2 tabulate-0.10.0 tenacity-9.1.4 tradingview-screener-3.2.1 truststore-0.10.4 typer-0.27.2 typing-extensions-4.16.0 typing-inspection-0.4.4 urllib3-2.7.0 uuid-utils-0.17.1 websocket-client-1.9.2 websockets-16.1.1 xxhash-4.0.1 yfinance-1.7.0 zstandard-0.25.0
+2026-09-08T12:12:49.5575772Z ##[group]Run for deneme in 1 2 3; do
+2026-09-08T12:12:49.5576341Z [36;1mfor deneme in 1 2 3; do[0m
+2026-09-08T12:12:49.5576987Z [36;1m  echo "=== Bot calistirma denemesi: $deneme/3 ==="[0m
+2026-09-08T12:12:49.5577400Z [36;1m  if python -u bot.py; then[0m
+2026-09-08T12:12:49.5577733Z [36;1m    echo "Basarili (deneme $deneme)."[0m
+2026-09-08T12:12:49.5578051Z [36;1m    exit 0[0m
+2026-09-08T12:12:49.5578579Z [36;1m  fi[0m
+2026-09-08T12:12:49.5578843Z [36;1m  echo "Bu deneme basarisiz oldu."[0m
+2026-09-08T12:12:49.5579174Z [36;1m  if [ "$deneme" -lt 3 ]; then[0m
+2026-09-08T12:12:49.5579528Z [36;1m    echo "5 dakika beklenip tekrar denenecek..."[0m
+2026-09-08T12:12:49.5579887Z [36;1m    sleep 300[0m
+2026-09-08T12:12:49.5580133Z [36;1m  fi[0m
+2026-09-08T12:12:49.5580354Z [36;1mdone[0m
+2026-09-08T12:12:49.5580627Z [36;1mecho "3 denemenin hepsi basarisiz oldu."[0m
+2026-09-08T12:12:49.5580952Z [36;1mexit 1[0m
+2026-09-08T12:12:49.5619917Z shell: /usr/bin/bash -e {0}
+2026-09-08T12:12:49.5620210Z env:
+2026-09-08T12:12:49.5620519Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T12:12:49.5621014Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-09-08T12:12:49.5621494Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T12:12:49.5621938Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T12:12:49.5622377Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T12:12:49.5622812Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-09-08T12:12:49.5623392Z   AMD_API_KEY: ***
+2026-09-08T12:12:49.5623782Z   ALT_API_KEY: ***
+2026-09-08T12:12:49.5624129Z   CF_API_KEY: ***
+2026-09-08T12:12:49.5624421Z   CF_ACCOUNT_ID: ***
+2026-09-08T12:12:49.5624871Z   OR_API_KEY: ***
+2026-09-08T12:12:49.5625202Z   ZAI_API_KEY: ***
+2026-09-08T12:12:49.5625447Z ##[endgroup]
+2026-09-08T12:12:49.5687323Z === Bot calistirma denemesi: 1/3 ===
+2026-09-08T12:12:52.7195359Z INFO:bot:[Haber Ajani] Finans haberleri toplaniyor...
+2026-09-08T12:12:52.7196134Z [Haber Ajani] Finans haberleri toplaniyor...
+2026-09-08T12:12:52.7197145Z INFO:bot:[Haber Ajani] Kaynak: BloombergHT
+2026-09-08T12:12:52.7208667Z [Haber Ajani] Kaynak: BloombergHT
+2026-09-08T12:12:54.2240160Z INFO:bot:[Haber Ajani] Kaynak: CNN Turk
+2026-09-08T12:12:54.2240950Z [Haber Ajani] Kaynak: CNN Turk
+2026-09-08T12:12:55.8881733Z INFO:bot:[Haber Ajani] Kaynak: Haberturk
+2026-09-08T12:12:55.8882555Z [Haber Ajani] Kaynak: Haberturk
+2026-09-08T12:12:57.4809727Z INFO:bot:[Haber Ajani] Kaynak: Ekonomim-Piyasa
+2026-09-08T12:12:57.4829131Z [Haber Ajani] Kaynak: Ekonomim-Piyasa
+2026-09-08T12:13:00.1977700Z INFO:bot:[Haber Ajani] Kaynak: Ekonomim-Ekonomi
+2026-09-08T12:13:00.1996784Z [Haber Ajani] Kaynak: Ekonomim-Ekonomi
+2026-09-08T12:13:03.1269636Z INFO:bot:[Haber Ajani] Kaynak: Ekonomim-Sirket
+2026-09-08T12:13:03.1270577Z [Haber Ajani] Kaynak: Ekonomim-Sirket
+2026-09-08T12:13:05.9501872Z INFO:bot:[Teknik Ajan] BIST hisse fiyatlari toplu olarak cekiliyor (Is Yatirim)...
+2026-09-08T12:13:05.9503033Z [Teknik Ajan] BIST hisse fiyatlari toplu olarak cekiliyor (Is Yatirim)...
+2026-09-08T12:13:17.9470843Z [Warning] Could not fetch data for 'AEFES': HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T12:13:29.7579218Z [Warning] Could not fetch data for 'AKBNK': HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T12:13:52.1670956Z [Warning] Could not fetch data for 'ASTOR': HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T12:14:06.2440282Z [Warning] Could not fetch data for 'DSTKF': HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T12:15:20.2025776Z INFO:bot:[Temel Ajan] Sirket finansal verileri cekiliyor...
+2026-09-08T12:15:20.2026581Z [Temel Ajan] Sirket finansal verileri cekiliyor...
+2026-09-08T12:15:20.2027975Z INFO:bot:[Temel Ajan] 1/30: AEFES
+2026-09-08T12:15:20.2037647Z [Temel Ajan] 1/30: AEFES
+2026-09-08T12:15:28.1071906Z INFO:bot:[Temel Ajan] 2/30: AKBNK
+2026-09-08T12:15:28.1085409Z [Temel Ajan] 2/30: AKBNK
+2026-09-08T12:15:39.8601032Z [Warning] Could not fetch data for 'AKBNK' in one period: HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T12:15:41.5738830Z [Info] No financial data found for symbol 'AKBNK'. You may need to adjust the financial_group or years.
+2026-09-08T12:15:45.5741392Z INFO:bot:[Temel Ajan] 3/30: ASELS
+2026-09-08T12:15:45.5749326Z [Temel Ajan] 3/30: ASELS
+2026-09-08T12:15:56.2093569Z [Warning] Could not fetch data for 'ASELS' in one period: HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T12:16:01.1492062Z INFO:bot:[Temel Ajan] 4/30: ASTOR
+2026-09-08T12:16:01.1492869Z [Temel Ajan] 4/30: ASTOR
+2026-09-08T12:16:10.0264110Z INFO:bot:[Temel Ajan] 5/30: BIMAS
+2026-09-08T12:16:10.0277585Z [Temel Ajan] 5/30: BIMAS
+2026-09-08T12:16:21.0570925Z [Warning] Could not fetch data for 'BIMAS' in one period: HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T12:16:26.6619080Z INFO:bot:[Temel Ajan] 6/30: DSTKF
+2026-09-08T12:16:26.6619709Z [Temel Ajan] 6/30: DSTKF
+2026-09-08T12:16:39.8988839Z [Warning] Could not fetch data for 'DSTKF' in one period: HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T12:16:39.8992296Z [Info] No financial data found for symbol 'DSTKF'. You may need to adjust the financial_group or years.
+2026-09-08T12:16:43.8989821Z INFO:bot:[Temel Ajan] 7/30: EKGYO
+2026-09-08T12:16:43.8990549Z [Temel Ajan] 7/30: EKGYO
+2026-09-08T12:16:55.0815427Z [Warning] Could not fetch data for 'EKGYO' in one period: HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T12:17:07.0337690Z [Warning] Could not fetch data for 'EKGYO' in one period: HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T12:17:07.0339906Z [Info] No financial data found for symbol 'EKGYO'. You may need to adjust the financial_group or years.
+2026-09-08T12:17:11.0339738Z INFO:bot:[Temel Ajan] 8/30: ENKAI
+2026-09-08T12:17:11.0356739Z [Temel Ajan] 8/30: ENKAI
+2026-09-08T12:17:22.1714380Z [Warning] Could not fetch data for 'ENKAI' in one period: HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T12:17:28.0699589Z INFO:bot:[Temel Ajan] 9/30: EREGL
+2026-09-08T12:17:28.0700358Z [Temel Ajan] 9/30: EREGL
+2026-09-08T12:17:42.8753702Z INFO:bot:[Temel Ajan] 10/30: FROTO
+2026-09-08T12:17:42.8754089Z [Temel Ajan] 10/30: FROTO
+2026-09-08T12:17:56.3687331Z [Warning] Could not fetch data for 'FROTO' in one period: HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T12:17:56.3739235Z INFO:bot:[Temel Ajan] 11/30: GARAN
+2026-09-08T12:17:56.3739793Z [Temel Ajan] 11/30: GARAN
+2026-09-08T12:18:00.2717796Z [Info] No financial data found for symbol 'GARAN'. You may need to adjust the financial_group or years.
+2026-09-08T12:18:04.2731489Z INFO:bot:[Temel Ajan] 12/30: GUBRF
+2026-09-08T12:18:04.2732311Z [Temel Ajan] 12/30: GUBRF
+2026-09-08T12:18:13.9335681Z INFO:bot:[Temel Ajan] 13/30: ISCTR
+2026-09-08T12:18:13.9349407Z [Temel Ajan] 13/30: ISCTR
+2026-09-08T12:18:18.8552847Z [Info] No financial data found for symbol 'ISCTR'. You may need to adjust the financial_group or years.
+2026-09-08T12:18:22.8564531Z INFO:bot:[Temel Ajan] 14/30: KCHOL
+2026-09-08T12:18:22.8565301Z [Temel Ajan] 14/30: KCHOL
+2026-09-08T12:18:35.8750047Z INFO:bot:[Temel Ajan] 15/30: KRDMD
+2026-09-08T12:18:35.8750817Z [Temel Ajan] 15/30: KRDMD
+2026-09-08T12:18:43.4179076Z INFO:bot:[Temel Ajan] 16/30: MGROS
+2026-09-08T12:18:43.4179819Z [Temel Ajan] 16/30: MGROS
+2026-09-08T12:18:55.7530200Z INFO:bot:[Temel Ajan] 17/30: PETKM
+2026-09-08T12:18:55.7531250Z [Temel Ajan] 17/30: PETKM
+2026-09-08T12:19:02.6233079Z INFO:bot:[Temel Ajan] 18/30: PGSUS
+2026-09-08T12:19:02.6234109Z [Temel Ajan] 18/30: PGSUS
+2026-09-08T12:19:14.5611949Z INFO:bot:[Temel Ajan] 19/30: SAHOL
+2026-09-08T12:19:14.5612723Z [Temel Ajan] 19/30: SAHOL
+2026-09-08T12:19:21.8324115Z INFO:bot:[Temel Ajan] 20/30: SASA
+2026-09-08T12:19:21.8324921Z [Temel Ajan] 20/30: SASA
+2026-09-08T12:19:27.5874062Z INFO:bot:[Temel Ajan] 21/30: SISE
+2026-09-08T12:19:27.5874917Z [Temel Ajan] 21/30: SISE
+2026-09-08T12:19:33.8768899Z INFO:bot:[Temel Ajan] 22/30: TAVHL
+2026-09-08T12:19:33.8779529Z [Temel Ajan] 22/30: TAVHL
+2026-09-08T12:19:41.6069493Z INFO:bot:[Temel Ajan] 23/30: TCELL
+2026-09-08T12:19:41.6080656Z [Temel Ajan] 23/30: TCELL
+2026-09-08T12:19:50.5217568Z INFO:bot:[Temel Ajan] 24/30: THYAO
+2026-09-08T12:19:50.5218709Z [Temel Ajan] 24/30: THYAO
+2026-09-08T12:20:03.3278645Z INFO:bot:[Temel Ajan] 25/30: TOASO
+2026-09-08T12:20:03.3279393Z [Temel Ajan] 25/30: TOASO
+2026-09-08T12:20:09.9000940Z INFO:bot:[Temel Ajan] 26/30: TRALT
+2026-09-08T12:20:09.9009362Z [Temel Ajan] 26/30: TRALT
+2026-09-08T12:20:21.3357867Z INFO:bot:[Temel Ajan] 27/30: TTKOM
+2026-09-08T12:20:21.3359014Z [Temel Ajan] 27/30: TTKOM
+2026-09-08T12:20:29.8959657Z INFO:bot:[Temel Ajan] 28/30: TUPRS
+2026-09-08T12:20:29.8960293Z [Temel Ajan] 28/30: TUPRS
+2026-09-08T12:20:39.4627994Z INFO:bot:[Temel Ajan] 29/30: VAKBN
+2026-09-08T12:20:39.4628916Z [Temel Ajan] 29/30: VAKBN
+2026-09-08T12:20:42.0246301Z [Info] No financial data found for symbol 'VAKBN'. You may need to adjust the financial_group or years.
+2026-09-08T12:20:46.0259139Z INFO:bot:[Temel Ajan] 30/30: YKBNK
+2026-09-08T12:20:46.0259935Z [Temel Ajan] 30/30: YKBNK
+2026-09-08T12:20:49.9813308Z [Info] No financial data found for symbol 'YKBNK'. You may need to adjust the financial_group or years.
+2026-09-08T12:20:53.9838070Z INFO:bot:[Bas Analist] Rapor sentezleniyor...
+2026-09-08T12:20:53.9839102Z [Bas Analist] Rapor sentezleniyor...
+2026-09-08T12:20:53.9844341Z [Teknik Tarama] 30 hisse icin 300 gunluk veri cekiliyor...
+2026-09-08T12:20:53.9853214Z INFO:bot:[Teknik Tarama] 30 hisse icin 300 gunluk veri cekiliyor...
+2026-09-08T12:22:31.9590816Z [Warning] Could not fetch data for 'SAHOL': HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T12:23:18.0000357Z INFO:bot:[Teknik Tarama] 1 hisse icin ek deneme (1): SAHOL
+2026-09-08T12:23:18.0001087Z [Teknik Tarama] 1 hisse icin ek deneme: SAHOL
+2026-09-08T12:23:28.8921796Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=AEFES "HTTP/1.1 200 OK"
+2026-09-08T12:24:11.5612117Z INFO:websocket:Websocket connected
+2026-09-08T12:24:12.0617071Z INFO:websocket:Websocket connected
+2026-09-08T12:24:12.5612240Z INFO:websocket:Websocket connected
+2026-09-08T12:24:14.2752223Z INFO:httpx:HTTP Request: GET https://www.kap.org.tr/tr/bist-sirketler "HTTP/1.1 200 OK"
+2026-09-08T12:24:16.5213039Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a140e95bea0140ed2fde10009d "HTTP/1.1 200 OK"
+2026-09-08T12:24:17.0719997Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a140e95bea0140ed2fde10009d "HTTP/1.1 200 OK"
+2026-09-08T12:24:18.7837967Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=AEFES "HTTP/1.1 200 OK"
+2026-09-08T12:24:29.8875271Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:24:30.3107071Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=AKBNK "HTTP/1.1 200 OK"
+2026-09-08T12:24:50.2093616Z INFO:websocket:Websocket connected
+2026-09-08T12:24:50.7093574Z INFO:websocket:Websocket connected
+2026-09-08T12:24:51.2612364Z INFO:websocket:Websocket connected
+2026-09-08T12:24:52.7698070Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a240e8d1830140e905edcd0006 "HTTP/1.1 200 OK"
+2026-09-08T12:24:53.3183595Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a240e8d1830140e905edcd0006 "HTTP/1.1 200 OK"
+2026-09-08T12:24:54.1122747Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=AKBNK "HTTP/1.1 200 OK"
+2026-09-08T12:25:30.9302653Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:25:31.3481535Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=ASELS "HTTP/1.1 200 OK"
+2026-09-08T12:25:46.9714155Z INFO:websocket:Websocket connected
+2026-09-08T12:25:47.4721840Z INFO:websocket:Websocket connected
+2026-09-08T12:25:48.0709678Z INFO:websocket:Websocket connected
+2026-09-08T12:25:50.1044753Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a1413b7ef401413bc2251e0047 "HTTP/1.1 200 OK"
+2026-09-08T12:25:50.6820300Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a1413b7ef401413bc2251e0047 "HTTP/1.1 200 OK"
+2026-09-08T12:25:52.9533711Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=ASELS "HTTP/1.1 200 OK"
+2026-09-08T12:26:10.1731989Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:26:11.2043898Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=ASTOR "HTTP/1.1 200 OK"
+2026-09-08T12:26:27.3910389Z INFO:websocket:Websocket connected
+2026-09-08T12:26:27.8909347Z INFO:websocket:Websocket connected
+2026-09-08T12:26:28.4971486Z INFO:websocket:Websocket connected
+2026-09-08T12:26:30.0553697Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/8acae2c562329bd10164405fe6c17996 "HTTP/1.1 200 OK"
+2026-09-08T12:26:30.4343726Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/8acae2c562329bd10164405fe6c17996 "HTTP/1.1 200 OK"
+2026-09-08T12:26:30.8460747Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=ASTOR "HTTP/1.1 200 OK"
+2026-09-08T12:26:56.9670241Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:26:57.5819220Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=BIMAS "HTTP/1.1 200 OK"
+2026-09-08T12:27:15.5288799Z INFO:websocket:Websocket connected
+2026-09-08T12:27:16.1998580Z INFO:websocket:Websocket connected
+2026-09-08T12:27:16.9597680Z INFO:websocket:Websocket connected
+2026-09-08T12:27:18.2414587Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a140e95be70140ee1b7b030119 "HTTP/1.1 200 OK"
+2026-09-08T12:27:18.8153486Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a140e95be70140ee1b7b030119 "HTTP/1.1 200 OK"
+2026-09-08T12:27:19.4997700Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=BIMAS "HTTP/1.1 200 OK"
+2026-09-08T12:27:35.3084898Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:27:36.4709294Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=DSTKF "HTTP/1.1 200 OK"
+2026-09-08T12:27:51.3447841Z INFO:websocket:Websocket connected
+2026-09-08T12:27:52.0521476Z INFO:websocket:Websocket connected
+2026-09-08T12:27:52.8180709Z INFO:websocket:Websocket connected
+2026-09-08T12:27:54.3020748Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a1415f4d9b01415fe0caa830df "HTTP/1.1 200 OK"
+2026-09-08T12:27:54.8660451Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a1415f4d9b01415fe0caa830df "HTTP/1.1 200 OK"
+2026-09-08T12:27:55.1831238Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=DSTKF "HTTP/1.1 200 OK"
+2026-09-08T12:28:12.3895389Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:28:15.2935389Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=EKGYO "HTTP/1.1 200 OK"
+2026-09-08T12:28:31.2174532Z INFO:websocket:Websocket connected
+2026-09-08T12:28:31.9257067Z INFO:websocket:Websocket connected
+2026-09-08T12:28:32.7464849Z INFO:websocket:Websocket connected
+2026-09-08T12:28:34.2021286Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a2422d9a780142513cda5b232e "HTTP/1.1 200 OK"
+2026-09-08T12:28:34.7454866Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a2422d9a780142513cda5b232e "HTTP/1.1 200 OK"
+2026-09-08T12:28:35.3486811Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=EKGYO "HTTP/1.1 200 OK"
+2026-09-08T12:28:51.0842828Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:28:51.4973679Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=ENKAI "HTTP/1.1 200 OK"
+2026-09-08T12:29:09.3244195Z INFO:websocket:Websocket connected
+2026-09-08T12:29:09.9043232Z INFO:websocket:Websocket connected
+2026-09-08T12:29:10.6007231Z INFO:websocket:Websocket connected
+2026-09-08T12:29:12.0252830Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a240e95dc90140ed3883fe0093 "HTTP/1.1 200 OK"
+2026-09-08T12:29:12.7945318Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a240e95dc90140ed3883fe0093 "HTTP/1.1 200 OK"
+2026-09-08T12:29:13.2541227Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=ENKAI "HTTP/1.1 200 OK"
+2026-09-08T12:29:34.6120343Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:29:35.0318504Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=EREGL "HTTP/1.1 200 OK"
+2026-09-08T12:29:53.6700816Z INFO:websocket:Websocket connected
+2026-09-08T12:29:54.3165599Z INFO:websocket:Websocket connected
+2026-09-08T12:29:55.0774582Z INFO:websocket:Websocket connected
+2026-09-08T12:29:56.8938499Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a240e95dc90140ede4c12a0133 "HTTP/1.1 200 OK"
+2026-09-08T12:29:57.4374824Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a240e95dc90140ede4c12a0133 "HTTP/1.1 200 OK"
+2026-09-08T12:29:57.8282441Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=EREGL "HTTP/1.1 200 OK"
+2026-09-08T12:30:22.5971386Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:30:23.0800417Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=FROTO "HTTP/1.1 200 OK"
+2026-09-08T12:30:53.3803206Z INFO:websocket:Websocket connected
+2026-09-08T12:30:53.9026705Z INFO:websocket:Websocket connected
+2026-09-08T12:30:54.5183634Z INFO:websocket:Websocket connected
+2026-09-08T12:30:55.9569136Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a140f2ed71014106890fae0138 "HTTP/1.1 200 OK"
+2026-09-08T12:30:56.5270637Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a140f2ed71014106890fae0138 "HTTP/1.1 200 OK"
+2026-09-08T12:30:56.9295582Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=FROTO "HTTP/1.1 200 OK"
+2026-09-08T12:31:18.3231295Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:31:19.8546091Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=GARAN "HTTP/1.1 200 OK"
+2026-09-08T12:31:37.0083077Z INFO:websocket:Websocket connected
+2026-09-08T12:31:37.5078786Z INFO:websocket:Websocket connected
+2026-09-08T12:31:38.0638987Z INFO:websocket:Websocket connected
+2026-09-08T12:31:39.7652244Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a140f2ed720140f37cb2a601b7 "HTTP/1.1 200 OK"
+2026-09-08T12:31:40.3301862Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a140f2ed720140f37cb2a601b7 "HTTP/1.1 200 OK"
+2026-09-08T12:31:40.7335900Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=GARAN "HTTP/1.1 200 OK"
+2026-09-08T12:31:59.6316376Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:32:00.0447554Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=GUBRF "HTTP/1.1 200 OK"
+2026-09-08T12:32:15.5851497Z INFO:websocket:Websocket connected
+2026-09-08T12:32:16.0850485Z INFO:websocket:Websocket connected
+2026-09-08T12:32:16.6533718Z INFO:websocket:Websocket connected
+2026-09-08T12:32:18.4255526Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a241733d4a01417989f3760a4d "HTTP/1.1 200 OK"
+2026-09-08T12:32:18.9699886Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a241733d4a01417989f3760a4d "HTTP/1.1 200 OK"
+2026-09-08T12:32:19.5626572Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=GUBRF "HTTP/1.1 200 OK"
+2026-09-08T12:32:35.3185469Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:32:36.1377757Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=ISCTR "HTTP/1.1 200 OK"
+2026-09-08T12:32:49.5715015Z INFO:websocket:Websocket connected
+2026-09-08T12:32:50.0716191Z INFO:websocket:Websocket connected
+2026-09-08T12:32:50.6693360Z INFO:websocket:Websocket connected
+2026-09-08T12:32:52.3523726Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a140f2ed7201411682b0cb05c6 "HTTP/1.1 200 OK"
+2026-09-08T12:32:52.9116978Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a140f2ed7201411682b0cb05c6 "HTTP/1.1 200 OK"
+2026-09-08T12:32:54.0900572Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=ISCTR "HTTP/1.1 200 OK"
+2026-09-08T12:33:09.6581453Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:33:10.0797001Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=KCHOL "HTTP/1.1 200 OK"
+2026-09-08T12:33:24.6097000Z INFO:websocket:Websocket connected
+2026-09-08T12:33:25.2196658Z INFO:websocket:Websocket connected
+2026-09-08T12:33:25.9139797Z INFO:websocket:Websocket connected
+2026-09-08T12:33:27.5186795Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a140f2ed710140f2f4d6c70039 "HTTP/1.1 200 OK"
+2026-09-08T12:33:28.0891071Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a140f2ed710140f2f4d6c70039 "HTTP/1.1 200 OK"
+2026-09-08T12:33:28.9317195Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=KCHOL "HTTP/1.1 200 OK"
+2026-09-08T12:33:56.0309967Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:33:58.3696707Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=KRDMD "HTTP/1.1 200 OK"
+2026-09-08T12:34:20.1715039Z INFO:websocket:Websocket connected
+2026-09-08T12:34:20.7235603Z INFO:websocket:Websocket connected
+2026-09-08T12:34:21.3749177Z INFO:websocket:Websocket connected
+2026-09-08T12:34:22.7921785Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a140f2ed7201412ace3ada0707 "HTTP/1.1 200 OK"
+2026-09-08T12:34:23.5865147Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a140f2ed7201412ace3ada0707 "HTTP/1.1 200 OK"
+2026-09-08T12:34:24.0950142Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=KRDMD "HTTP/1.1 200 OK"
+2026-09-08T12:34:46.1800106Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:34:47.9596051Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=MGROS "HTTP/1.1 200 OK"
+2026-09-08T12:35:10.5060875Z INFO:websocket:Websocket connected
+2026-09-08T12:35:11.0065372Z INFO:websocket:Websocket connected
+2026-09-08T12:35:11.6308463Z INFO:websocket:Websocket connected
+2026-09-08T12:35:13.3892129Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a141462df2014150162e1c3424 "HTTP/1.1 200 OK"
+2026-09-08T12:35:13.9600304Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a141462df2014150162e1c3424 "HTTP/1.1 200 OK"
+2026-09-08T12:35:14.3668968Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=MGROS "HTTP/1.1 200 OK"
+2026-09-08T12:35:48.1979577Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:35:52.6275396Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=PETKM "HTTP/1.1 200 OK"
+2026-09-08T12:36:12.0757313Z INFO:websocket:Websocket connected
+2026-09-08T12:36:12.6331721Z INFO:websocket:Websocket connected
+2026-09-08T12:36:13.3091858Z INFO:websocket:Websocket connected
+2026-09-08T12:36:14.7128648Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a240f2ef470141165c566a03e4 "HTTP/1.1 200 OK"
+2026-09-08T12:36:15.2767529Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a240f2ef470141165c566a03e4 "HTTP/1.1 200 OK"
+2026-09-08T12:36:15.6829367Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=PETKM "HTTP/1.1 200 OK"
+2026-09-08T12:36:28.5630504Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:36:29.7504886Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=PGSUS "HTTP/1.1 200 OK"
+2026-09-08T12:36:51.9200198Z INFO:websocket:Websocket connected
+2026-09-08T12:36:52.5843470Z INFO:websocket:Websocket connected
+2026-09-08T12:36:53.3287268Z INFO:websocket:Websocket connected
+2026-09-08T12:36:55.1890210Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a2422d9a78014232e751bc22a4 "HTTP/1.1 200 OK"
+2026-09-08T12:36:55.9779056Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a2422d9a78014232e751bc22a4 "HTTP/1.1 200 OK"
+2026-09-08T12:36:57.2501610Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=PGSUS "HTTP/1.1 200 OK"
+2026-09-08T12:37:13.2592993Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:37:13.6791646Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=SAHOL "HTTP/1.1 200 OK"
+2026-09-08T12:37:25.8858715Z INFO:websocket:Websocket connected
+2026-09-08T12:37:26.3845438Z INFO:websocket:Websocket connected
+2026-09-08T12:37:26.9857916Z INFO:websocket:Websocket connected
+2026-09-08T12:37:28.5631179Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a240ee37a90140ee50087e000b "HTTP/1.1 200 OK"
+2026-09-08T12:37:29.1278902Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a240ee37a90140ee50087e000b "HTTP/1.1 200 OK"
+2026-09-08T12:37:29.5372961Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=SAHOL "HTTP/1.1 200 OK"
+2026-09-08T12:37:51.5032275Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:37:51.9246873Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=SASA "HTTP/1.1 200 OK"
+2026-09-08T12:38:08.5228579Z INFO:websocket:Websocket connected
+2026-09-08T12:38:09.1192994Z INFO:websocket:Websocket connected
+2026-09-08T12:38:09.8277830Z INFO:websocket:Websocket connected
+2026-09-08T12:38:11.2373225Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a240ee866c0140f20abd9500cc "HTTP/1.1 200 OK"
+2026-09-08T12:38:11.8068543Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a240ee866c0140f20abd9500cc "HTTP/1.1 200 OK"
+2026-09-08T12:38:12.0312113Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=SASA "HTTP/1.1 200 OK"
+2026-09-08T12:38:40.5367893Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:38:41.3430381Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=SISE "HTTP/1.1 200 OK"
+2026-09-08T12:39:00.8913656Z INFO:websocket:Websocket connected
+2026-09-08T12:39:01.5562915Z INFO:websocket:Websocket connected
+2026-09-08T12:39:02.2339951Z INFO:websocket:Websocket connected
+2026-09-08T12:39:03.7010269Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a140f2ed710140f385d5690102 "HTTP/1.1 200 OK"
+2026-09-08T12:39:04.2449950Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a140f2ed710140f385d5690102 "HTTP/1.1 200 OK"
+2026-09-08T12:39:04.8257912Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=SISE "HTTP/1.1 200 OK"
+2026-09-08T12:39:18.3899777Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:39:22.3707996Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=TAVHL "HTTP/1.1 200 OK"
+2026-09-08T12:39:38.1192915Z INFO:websocket:Websocket connected
+2026-09-08T12:39:38.6946373Z INFO:websocket:Websocket connected
+2026-09-08T12:39:39.3902481Z INFO:websocket:Websocket connected
+2026-09-08T12:39:41.1361840Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a140f2ed720140f31195ef010e "HTTP/1.1 200 OK"
+2026-09-08T12:39:41.5185904Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a140f2ed720140f31195ef010e "HTTP/1.1 200 OK"
+2026-09-08T12:39:43.6180769Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=TAVHL "HTTP/1.1 200 OK"
+2026-09-08T12:40:14.2435886Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:40:14.6703268Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=TCELL "HTTP/1.1 200 OK"
+2026-09-08T12:40:37.8079370Z INFO:websocket:Websocket connected
+2026-09-08T12:40:38.3097985Z INFO:websocket:Websocket connected
+2026-09-08T12:40:38.8591698Z INFO:websocket:Websocket connected
+2026-09-08T12:40:40.3446466Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a1486ec80a0148c55510d71d31 "HTTP/1.1 200 OK"
+2026-09-08T12:40:40.9010598Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a1486ec80a0148c55510d71d31 "HTTP/1.1 200 OK"
+2026-09-08T12:40:41.4040369Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=TCELL "HTTP/1.1 200 OK"
+2026-09-08T12:41:08.2887935Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:41:08.7115884Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=THYAO "HTTP/1.1 200 OK"
+2026-09-08T12:41:27.6836230Z INFO:websocket:Websocket connected
+2026-09-08T12:41:28.1834358Z INFO:websocket:Websocket connected
+2026-09-08T12:41:28.6832912Z INFO:websocket:Websocket connected
+2026-09-08T12:41:29.8255742Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a140f2ed720140f376bebb01a7 "HTTP/1.1 200 OK"
+2026-09-08T12:41:30.3951931Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a140f2ed720140f376bebb01a7 "HTTP/1.1 200 OK"
+2026-09-08T12:41:31.8293428Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=THYAO "HTTP/1.1 200 OK"
+2026-09-08T12:41:55.5357922Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:41:56.5422547Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=TOASO "HTTP/1.1 200 OK"
+2026-09-08T12:42:21.1853577Z INFO:websocket:Websocket connected
+2026-09-08T12:42:21.9496707Z INFO:websocket:Websocket connected
+2026-09-08T12:42:22.7100452Z INFO:websocket:Websocket connected
+2026-09-08T12:42:24.2475027Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a140f2ed710140f328bed700a5 "HTTP/1.1 200 OK"
+2026-09-08T12:42:24.9118985Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a140f2ed710140f328bed700a5 "HTTP/1.1 200 OK"
+2026-09-08T12:42:25.7097769Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=TOASO "HTTP/1.1 200 OK"
+2026-09-08T12:42:40.8349158Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:42:41.2858310Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=TRALT "HTTP/1.1 200 OK"
+2026-09-08T12:42:50.6299660Z INFO:websocket:Websocket connected
+2026-09-08T12:42:51.2082368Z INFO:websocket:Websocket connected
+2026-09-08T12:42:51.9807488Z INFO:websocket:Websocket connected
+2026-09-08T12:42:53.6006728Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a2422d9a6e0142bd91d3687a69 "HTTP/1.1 200 OK"
+2026-09-08T12:42:54.3366713Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a2422d9a6e0142bd91d3687a69 "HTTP/1.1 200 OK"
+2026-09-08T12:42:54.9405334Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=TRALT "HTTP/1.1 200 OK"
+2026-09-08T12:43:07.7270980Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:43:08.1504622Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=TTKOM "HTTP/1.1 200 OK"
+2026-09-08T12:43:23.4575790Z INFO:websocket:Websocket connected
+2026-09-08T12:43:24.1023739Z INFO:websocket:Websocket connected
+2026-09-08T12:43:24.8852193Z INFO:websocket:Websocket connected
+2026-09-08T12:43:26.6815626Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a241e538ab0141ea9c96912c8b "HTTP/1.1 200 OK"
+2026-09-08T12:43:27.5546551Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a241e538ab0141ea9c96912c8b "HTTP/1.1 200 OK"
+2026-09-08T12:43:29.3770089Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=TTKOM "HTTP/1.1 200 OK"
+2026-09-08T12:43:44.4065897Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:43:45.9366210Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=TUPRS "HTTP/1.1 200 OK"
+2026-09-08T12:43:56.1254238Z INFO:websocket:Websocket connected
+2026-09-08T12:43:56.7006537Z INFO:websocket:Websocket connected
+2026-09-08T12:43:57.3984449Z INFO:websocket:Websocket connected
+2026-09-08T12:43:58.7347519Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a140f2ed720140f37f139c01bc "HTTP/1.1 200 OK"
+2026-09-08T12:43:59.2790124Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a140f2ed720140f37f139c01bc "HTTP/1.1 200 OK"
+2026-09-08T12:43:59.6719228Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=TUPRS "HTTP/1.1 200 OK"
+2026-09-08T12:44:12.3073801Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:44:12.7209813Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=VAKBN "HTTP/1.1 200 OK"
+2026-09-08T12:44:24.7904491Z INFO:websocket:Websocket connected
+2026-09-08T12:44:25.2906074Z INFO:websocket:Websocket connected
+2026-09-08T12:44:25.8144129Z INFO:websocket:Websocket connected
+2026-09-08T12:44:26.8012073Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a1415f4d9b01415fe3340f36e4 "HTTP/1.1 200 OK"
+2026-09-08T12:44:27.3596301Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a1415f4d9b01415fe3340f36e4 "HTTP/1.1 200 OK"
+2026-09-08T12:44:27.7668609Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=VAKBN "HTTP/1.1 200 OK"
+2026-09-08T12:44:44.6867086Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:44:45.4735898Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=YKBNK "HTTP/1.1 200 OK"
+2026-09-08T12:44:59.1931765Z INFO:websocket:Websocket connected
+2026-09-08T12:44:59.6926495Z INFO:websocket:Websocket connected
+2026-09-08T12:45:00.1929808Z INFO:websocket:Websocket connected
+2026-09-08T12:45:01.8351684Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/ozet/4028e4a240f2ef4c01412ae6d6630538 "HTTP/1.1 200 OK"
+2026-09-08T12:45:04.1318713Z INFO:httpx:HTTP Request: GET https://kap.org.tr/tr/sirket-bilgileri/genel/4028e4a240f2ef4c01412ae6d6630538 "HTTP/1.1 200 OK"
+2026-09-08T12:45:06.6827355Z INFO:httpx:HTTP Request: GET https://www.isyatirim.com.tr/tr-tr/analiz/hisse/Sayfalar/sirket-karti.aspx?hisse=YKBNK "HTTP/1.1 200 OK"
+2026-09-08T12:45:37.3024481Z INFO:httpx:HTTP Request: POST https://www.isyatirim.com.tr/_layouts/15/IsYatirim.Website/StockInfo/CompanyInfoAjax.aspx/GetSermayeArttirimlari "HTTP/1.1 200 OK"
+2026-09-08T12:45:37.5064580Z INFO:bot:[Teknik Tarama] 30 hisse icin canli fiyat alindi (TradingView).
+2026-09-08T12:45:37.5871212Z INFO:bot:[Teknik Tarama] 30 hisse tarandi; guclu AL: 10
+2026-09-08T12:45:37.5879203Z [Teknik Tarama] 30 hisse tarandi.
+2026-09-08T12:45:37.7615933Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:37.7620347Z INFO:bot:[Borsapy] 1/30 AEFES: NÖTR
+2026-09-08T12:45:38.1425191Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:38.1430199Z INFO:bot:[Borsapy] 2/30 AKBNK: GÜÇLÜ AL
+2026-09-08T12:45:38.5219654Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:38.5223397Z INFO:bot:[Borsapy] 3/30 ASELS: AL
+2026-09-08T12:45:38.9037997Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:38.9039362Z INFO:bot:[Borsapy] 4/30 ASTOR: NÖTR
+2026-09-08T12:45:39.2890046Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:39.2891966Z INFO:bot:[Borsapy] 5/30 BIMAS: GÜÇLÜ AL
+2026-09-08T12:45:39.8005347Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:39.8006287Z INFO:bot:[Borsapy] 6/30 DSTKF: AL
+2026-09-08T12:45:40.1815201Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:40.1819698Z INFO:bot:[Borsapy] 7/30 EKGYO: AL
+2026-09-08T12:45:40.5629354Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:40.5633314Z INFO:bot:[Borsapy] 8/30 ENKAI: AL
+2026-09-08T12:45:41.0765803Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:41.0769875Z INFO:bot:[Borsapy] 9/30 EREGL: AL
+2026-09-08T12:45:41.4576122Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:41.4577199Z INFO:bot:[Borsapy] 10/30 FROTO: AL
+2026-09-08T12:45:41.8364571Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:41.8365643Z INFO:bot:[Borsapy] 11/30 GARAN: AL
+2026-09-08T12:45:42.2173728Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:42.2178841Z INFO:bot:[Borsapy] 12/30 GUBRF: GÜÇLÜ AL
+2026-09-08T12:45:42.5996066Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:42.6000072Z INFO:bot:[Borsapy] 13/30 ISCTR: AL
+2026-09-08T12:45:42.9805265Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:42.9809627Z INFO:bot:[Borsapy] 14/30 KCHOL: GÜÇLÜ AL
+2026-09-08T12:45:43.4916713Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:43.4917947Z INFO:bot:[Borsapy] 15/30 KRDMD: GÜÇLÜ AL
+2026-09-08T12:45:43.8706283Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:43.8707110Z INFO:bot:[Borsapy] 16/30 MGROS: SAT
+2026-09-08T12:45:44.2612618Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:44.2617185Z INFO:bot:[Borsapy] 17/30 PETKM: GÜÇLÜ AL
+2026-09-08T12:45:44.6399070Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:44.6403517Z INFO:bot:[Borsapy] 18/30 PGSUS: NÖTR
+2026-09-08T12:45:45.1523444Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:45.1527529Z INFO:bot:[Borsapy] 19/30 SAHOL: GÜÇLÜ AL
+2026-09-08T12:45:45.5340615Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:45.5344013Z INFO:bot:[Borsapy] 20/30 SASA: GÜÇLÜ AL
+2026-09-08T12:45:45.9215871Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:45.9220318Z INFO:bot:[Borsapy] 21/30 SISE: AL
+2026-09-08T12:45:46.4299096Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:46.4303302Z INFO:bot:[Borsapy] 22/30 TAVHL: SAT
+2026-09-08T12:45:46.9416559Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:46.9420741Z INFO:bot:[Borsapy] 23/30 TCELL: SAT
+2026-09-08T12:45:47.3223037Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:47.3227002Z INFO:bot:[Borsapy] 24/30 THYAO: SAT
+2026-09-08T12:45:47.7020190Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:47.7021572Z INFO:bot:[Borsapy] 25/30 TOASO: AL
+2026-09-08T12:45:48.0820038Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:48.0821778Z INFO:bot:[Borsapy] 26/30 TRALT: GÜÇLÜ AL
+2026-09-08T12:45:48.4649846Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:48.4651159Z INFO:bot:[Borsapy] 27/30 TTKOM: SAT
+2026-09-08T12:45:48.8459984Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:48.8464422Z INFO:bot:[Borsapy] 28/30 TUPRS: GÜÇLÜ AL
+2026-09-08T12:45:49.2260827Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:49.2265181Z INFO:bot:[Borsapy] 29/30 VAKBN: GÜÇLÜ AL
+2026-09-08T12:45:49.6061761Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T12:45:49.6065732Z INFO:bot:[Borsapy] 30/30 YKBNK: AL
+2026-09-08T12:45:49.9070210Z INFO:bot:[Borsapy] 30 hisse tarandi
+2026-09-08T12:45:49.9083912Z INFO:bot:[Z.ai] rapor cagrisi: glm-4.7-flash
+2026-09-08T12:45:50.9547625Z INFO:httpx2:HTTP Request: POST https://api.z.ai/api/paas/v4/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-08T12:45:50.9552234Z INFO:openai._base_client:Retrying request in 0.462930 seconds
+2026-09-08T12:45:51.6910373Z INFO:httpx2:HTTP Request: POST https://api.z.ai/api/paas/v4/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-08T12:45:51.6919687Z WARNING:bot:[Z.ai] glm-4.7-flash basarisiz: Error code: 429 - {'error': {'code': '1305', 'message': 'The service may be temporarily overloaded, please try again later'}}
+2026-09-08T12:45:53.6922397Z INFO:bot:[Z.ai] rapor cagrisi: glm-4.5-flash
+2026-09-08T12:48:40.8196209Z INFO:httpx2:HTTP Request: POST https://api.z.ai/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-09-08T12:48:40.8352024Z WARNING:bot:[Z.ai] glm-4.5-flash bozuk yanit uretti; siradaki deneniyor.
+2026-09-08T12:48:40.8353406Z WARNING:bot:[Z.ai] anahtarli cagri basarisiz (bozuk yanit (dongu/sizma/dil)); yedek zincire dusuluyor.
+2026-09-08T12:48:42.3456929Z INFO:bot:Cloudflare icin mevcut modellerden secilenler: ['@cf/meta/llama-3.3-70b-instruct-fp8-fast', '@cf/meta/llama-4-scout-17b-16e-instruct', '@cf/meta/llama-3.1-8b-instruct-fp8']
+2026-09-08T12:48:42.4587667Z INFO:httpx2:HTTP Request: GET https://api.groq.com/openai/v1/models "HTTP/1.1 200 OK"
+2026-09-08T12:48:42.4609654Z INFO:bot:Groq icin mevcut modellerden secilenler: ['openai/gpt-oss-120b']
+2026-09-08T12:48:42.8150843Z INFO:httpx2:HTTP Request: GET https://openrouter.ai/api/v1/models "HTTP/1.1 200 OK"
+2026-09-08T12:48:42.9244670Z INFO:bot:OpenRouter icin mevcut modellerden secilenler: ['nvidia/nemotron-3-ultra-550b-a55b:free', 'nvidia/nemotron-3.5-lightning:free', 'nvidia/nemotron-3-super-120b-a12b:free', 'google/gemma-4-31b-it:free', 'inclusionai/ling-3.0-flash-fin:free', 'thinkingmachines/inkling-small:free', 'thinkingmachines/inkling:free']
+2026-09-08T12:48:42.9247911Z INFO:bot:LLM cagrisi: AMD model=DeepSeek-V4-Flash deneme=1/6
+2026-09-08T12:52:43.6704691Z [Uyari] Baglanti/zaman asimi sorunu (AMD/DeepSeek-V4-Flash, APITimeoutError: ReadTimeout('The read operation timed out')). 20 sn bekleniyor, tekrar deneniyor (1/6)...
+2026-09-08T12:53:03.6706485Z INFO:bot:LLM cagrisi: AMD model=Qwen3.8-Flash-Next deneme=2/6
+2026-09-08T12:57:04.4461693Z [Uyari] Baglanti/zaman asimi sorunu (AMD/Qwen3.8-Flash-Next, APITimeoutError: ReadTimeout('The read operation timed out')). 40 sn bekleniyor, tekrar deneniyor (2/6)...
+2026-09-08T12:57:44.4469681Z INFO:bot:LLM cagrisi: CF model=@cf/meta/llama-3.3-70b-instruct-fp8-fast deneme=3/6
+2026-09-08T12:58:14.0596571Z INFO:httpx2:HTTP Request: POST https://api.cloudflare.com/client/v4/accounts/***/ai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-08T12:58:14.0687130Z WARNING:bot:CF/@cf/meta/llama-3.3-70b-instruct-fp8-fast bozuk yanit uretti (prompt sizmasi); siradaki model denenecek.
+2026-09-08T12:58:14.0688718Z [Uyari] CF/@cf/meta/llama-3.3-70b-instruct-fp8-fast bozuk yanit uretti (prompt sizmasi), siradaki model deneniyor (3/6)...
+2026-09-08T12:58:16.0691274Z INFO:bot:LLM cagrisi: CF model=@cf/meta/llama-4-scout-17b-16e-instruct deneme=4/6
+2026-09-08T12:58:35.9600464Z INFO:httpx2:HTTP Request: POST https://api.cloudflare.com/client/v4/accounts/***/ai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-08T12:58:35.9706856Z WARNING:bot:CF/@cf/meta/llama-4-scout-17b-16e-instruct bozuk yanit uretti (prompt sizmasi); siradaki model denenecek.
+2026-09-08T12:58:35.9707770Z [Uyari] CF/@cf/meta/llama-4-scout-17b-16e-instruct bozuk yanit uretti (prompt sizmasi), siradaki model deneniyor (4/6)...
+2026-09-08T12:58:37.9719742Z INFO:bot:LLM cagrisi: CF model=@cf/meta/llama-3.1-8b-instruct-fp8 deneme=5/6
+2026-09-08T13:00:38.7291532Z INFO:httpx2:HTTP Request: POST https://api.cloudflare.com/client/v4/accounts/***/ai/v1/chat/completions "HTTP/1.1 408 Request Timeout"
+2026-09-08T13:00:38.7295513Z WARNING:bot:Baglanti/zaman asimi sorununa rastlandi: Error code: 408 - {'errors': [{'message': 'AiError: AiError: Request timeout (6007fa11-b141-47e3-a49a-66f1a754de5a)', 'code': 3046}], 'success': False, 'result': {}, 'messages': []}. 75 sn bekleniyor, deneme 5/6
+2026-09-08T13:01:56.2089774Z INFO:bot:LLM cagrisi: YEDEK model=openai/gpt-oss-120b deneme=6/6
+2026-09-08T13:01:56.3882920Z INFO:httpx2:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 413 Payload Too Large"
+2026-09-08T13:01:56.3887971Z WARNING:bot:Rate limit veya 429 alindi: Error code: 413 - {'error': {'message': 'Request too large for model `openai/gpt-oss-120b` in organization `org_01m1qewzhveras6zszqv0vqtew` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Requested 9046, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}. 60 sn bekleniyor, deneme 6/6
+2026-09-08T13:02:57.5039777Z ERROR:bot:LLM cagrisi maksimum deneme sayisinda tamamlanamadi.
+2026-09-08T13:02:57.5043973Z WARNING:bot:LLM'e ulaşılamadi, kısmi ham rapor döndürülüyor.
+2026-09-08T13:02:57.5046164Z INFO:bot:[Ozet Ajani] Gunun analizi hafizaya indeksleniyor...
+2026-09-08T13:02:57.5053922Z [Ozet Ajani] Gunun analizi hafizaya indeksleniyor...
+2026-09-08T13:03:04.7240236Z INFO:bot:Cloudflare icin mevcut modellerden secilenler: ['@cf/meta/llama-3.3-70b-instruct-fp8-fast', '@cf/meta/llama-4-scout-17b-16e-instruct', '@cf/meta/llama-3.1-8b-instruct-fp8']
+2026-09-08T13:03:04.7969788Z INFO:httpx2:HTTP Request: GET https://api.groq.com/openai/v1/models "HTTP/1.1 200 OK"
+2026-09-08T13:03:04.7980334Z INFO:bot:Groq icin mevcut modellerden secilenler: ['openai/gpt-oss-120b']
+2026-09-08T13:03:05.2549245Z INFO:httpx2:HTTP Request: GET https://openrouter.ai/api/v1/models "HTTP/1.1 200 OK"
+2026-09-08T13:03:05.3371487Z INFO:bot:OpenRouter icin mevcut modellerden secilenler: ['nvidia/nemotron-3-ultra-550b-a55b:free', 'nvidia/nemotron-3.5-lightning:free', 'nvidia/nemotron-3-super-120b-a12b:free', 'google/gemma-4-31b-it:free', 'inclusionai/ling-3.0-flash-fin:free', 'thinkingmachines/inkling-small:free', 'thinkingmachines/inkling:free']
+2026-09-08T13:03:05.3379341Z INFO:bot:LLM cagrisi: YEDEK model=openai/gpt-oss-120b deneme=1/6
+2026-09-08T13:03:08.2129846Z INFO:httpx2:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-09-08T13:03:08.2186044Z INFO:bot:[Portfoy Ajani] Deneme portfoyu ve kiyaslamalar guncelleniyor...
+2026-09-08T13:03:08.2199315Z [Portfoy Ajani] Deneme portfoyu ve kiyaslamalar guncelleniyor...
+2026-09-08T13:03:08.7776640Z [Bilgi] Benchmark kurlari (kaynak: yfinance): USDTRY=48.45502853393555, gram altin=6925.329275252647
+2026-09-08T13:03:09.0182558Z INFO:websocket:Websocket connected
+2026-09-08T13:03:09.2789411Z INFO:bot:[Derin Analiz] GLM cagrisi (glm-4.7-flash), deneme 1
+2026-09-08T13:03:09.9477618Z INFO:httpx2:HTTP Request: POST https://api.z.ai/api/paas/v4/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-09-08T13:03:09.9481684Z INFO:openai._base_client:Retrying request in 0.388272 seconds
+2026-09-08T13:04:16.6489907Z INFO:httpx2:HTTP Request: POST https://api.z.ai/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-09-08T13:04:16.6645170Z [Derin Analiz] sayfa uretildi.
+2026-09-08T13:04:16.6654524Z RAPOR OLUSTURULDU: 2026-09-08
+2026-09-08T13:04:17.0484233Z Basarili (deneme 1).
+2026-09-08T13:04:17.0519238Z ##[group]Run git config user.name "borsa-bot"
+2026-09-08T13:04:17.0519703Z [36;1mgit config user.name "borsa-bot"[0m
+2026-09-08T13:04:17.0520122Z [36;1mgit config user.email "borsa-bot@users.noreply.github.com"[0m
+2026-09-08T13:04:17.0520517Z [36;1mgit add -A[0m
+2026-09-08T13:04:17.0520928Z [36;1mgit diff --cached --quiet || git commit -m "Gunluk rapor ve portfoy guncellemesi"[0m
+2026-09-08T13:04:17.0521516Z [36;1m# Insan veya diger isler araya commit atarsa (fetch first) cakismasin:[0m
+2026-09-08T13:04:17.0521955Z [36;1mgit pull --rebase origin main[0m
+2026-09-08T13:04:17.0522257Z [36;1mgit push origin main[0m
+2026-09-08T13:04:17.0560354Z shell: /usr/bin/bash -e {0}
+2026-09-08T13:04:17.0560638Z env:
+2026-09-08T13:04:17.0560955Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T13:04:17.0561429Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-09-08T13:04:17.0561932Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T13:04:17.0562343Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T13:04:17.0563033Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T13:04:17.0563492Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-09-08T13:04:17.0563858Z ##[endgroup]
+2026-09-08T13:04:17.0822419Z [main 88212e9] Gunluk rapor ve portfoy guncellemesi
+2026-09-08T13:04:17.0825330Z  12 files changed, 636 insertions(+), 314 deletions(-)
+2026-09-08T13:04:17.7866344Z From https://github.com/gunluk-raporlar/borsa-raporlari
+2026-09-08T13:04:17.7883098Z  * branch            main       -> FETCH_HEAD
+2026-09-08T13:04:17.7908898Z    bad0dd1..aef9b28  main       -> origin/main
+2026-09-08T13:04:17.8251260Z Auto-merging borsapy-analiz.html
+2026-09-08T13:04:17.8261880Z Rebasing (1/1)
+2026-09-08T13:04:17.8262471Z CONFLICT (content): Merge conflict in borsapy-analiz.html
+2026-09-08T13:04:17.8279082Z error: could not apply 88212e9... Gunluk rapor ve portfoy guncellemesi
+2026-09-08T13:04:17.8279849Z Auto-merging data/teknik/2026-09-08.json
+2026-09-08T13:04:17.8298845Z hint: Resolve all conflicts manually, mark them as resolved with
+2026-09-08T13:04:17.8299715Z CONFLICT (content): Merge conflict in data/teknik/2026-09-08.json
+2026-09-08T13:04:17.8300924Z hint: "git add/rm <conflicted_files>", then run "git rebase --continue".
+2026-09-08T13:04:17.8301672Z Auto-merging index.html
+2026-09-08T13:04:17.8303146Z hint: You can instead skip this commit: run "git rebase --skip".
+2026-09-08T13:04:17.8303875Z CONFLICT (content): Merge conflict in index.html
+2026-09-08T13:04:17.8304924Z hint: To abort and get back to the state before "git rebase", run "git rebase --abort".
+2026-09-08T13:04:17.8305696Z Auto-merging teknik-analiz.html
+2026-09-08T13:04:17.8311137Z hint: Disable this message with "git config set advice.mergeConflict false"
+2026-09-08T13:04:17.8312040Z CONFLICT (content): Merge conflict in teknik-analiz.html
+2026-09-08T13:04:17.8313611Z Could not apply 88212e9... # Gunluk rapor ve portfoy guncellemesi
+2026-09-08T13:04:17.8353589Z ##[error]Process completed with exit code 1.
+2026-09-08T13:04:17.8542276Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-08T13:04:17.8543644Z Post job cleanup.
+2026-09-08T13:04:17.9508696Z [command]/usr/bin/git version
+2026-09-08T13:04:17.9586121Z git version 2.55.0
+2026-09-08T13:04:17.9699454Z Temporarily overriding HOME='/home/runner/work/_temp/f9db4ff7-d64f-4888-84cf-b2d7731d7dc8' before making global git config changes
+2026-09-08T13:04:17.9701691Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-08T13:04:17.9703105Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/borsa-raporlari/borsa-raporlari
+2026-09-08T13:04:17.9787419Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-08T13:04:17.9851989Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-08T13:04:18.0279789Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-08T13:04:18.0298686Z http.https://github.com/.extraheader
+2026-09-08T13:04:18.0320103Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-08T13:04:18.0380883Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-08T13:04:18.0760725Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-08T13:04:18.0824707Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-08T13:04:18.1406972Z Cleaning up orphan processes
+2026-09-08T13:04:18.1794851Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

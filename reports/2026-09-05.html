@@ -4,12 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Piyasa Raporu - 2026-09-05</title>
+<!-- Google Tag Manager & Analytics -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-XXXXXXX';f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
 <style>
 :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
-        --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
+       --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
 * { box-sizing:border-box; }
 body { margin:0; font-family:"Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
-       background:var(--bg); color:var(--ink); line-height:1.65; }
+      background:var(--bg); color:var(--ink); line-height:1.65; }
 a { color:var(--accent); }
 .topbar { background:var(--ink); }
 .topbar .inner { max-width:1080px; margin:0 auto; padding:14px 20px; display:flex;
@@ -60,15 +65,128 @@ tr:last-child td { border-bottom:none; }
   table { font-size:13px; }
   th, td { padding:7px 8px; }
 }
+
+@media (max-width: 768px) {
+    .interactive-box {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ---- Mobil tasima duzeltmeleri ---- */
+body { overflow-x: hidden; }
+.tv-ticker-bant { max-width: 100%; overflow: hidden; }
+.tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tbl-wrap table { min-width: 760px; }   /* genis tablolar kart icinde yatay kayar */
+.report table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 640px) {
+  .topbar .inner { padding: 10px 12px; }
+  .topbar nav { display: flex; flex-wrap: wrap; gap: 4px 2px; }
+  .topbar nav a { margin-left: 10px; font-size: 12.5px; }
+}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/assets/v0.0.25/search-modal-snippet.css" />
+<script type="module" src="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/assets/v0.0.25/search-modal-snippet.js"></script>
 </head>
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="../index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="../index.html" class="active">Raporlar</a><a href="../portfolio.html">Deneme Portföyü</a></nav>
+<nav><a href="../index.html" class="active">Raporlar</a><a href="../derin-analiz.html">Derin Analiz</a><a href="../teknik-analiz.html">Teknik Tarama</a><a href="../borsapy-analiz.html">Borsapy Sinyal</a><a href="../portfolio.html">Deneme Portföyü</a></nav>
 </div></header>
-<main class="wrap">
+<div class="tradingview-widget-container tv-ticker-bant" style="margin:0 0 18px; width:100%;">
+<div class="tradingview-widget-container__widget"></div>
+<script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+{
+"symbols": [{"proName":"BIST:AEFES","title":"AEFES"}, {"proName":"BIST:AKBNK","title":"AKBNK"}, {"proName":"BIST:ASELS","title":"ASELS"}, {"proName":"BIST:ASTOR","title":"ASTOR"}, {"proName":"BIST:BIMAS","title":"BIMAS"}, {"proName":"BIST:DSTKF","title":"DSTKF"}, {"proName":"BIST:EKGYO","title":"EKGYO"}, {"proName":"BIST:ENKAI","title":"ENKAI"}, {"proName":"BIST:EREGL","title":"EREGL"}, {"proName":"BIST:FROTO","title":"FROTO"}, {"proName":"BIST:GARAN","title":"GARAN"}, {"proName":"BIST:GUBRF","title":"GUBRF"}, {"proName":"BIST:ISCTR","title":"ISCTR"}, {"proName":"BIST:KCHOL","title":"KCHOL"}, {"proName":"BIST:KRDMD","title":"KRDMD"}, {"proName":"BIST:MGROS","title":"MGROS"}, {"proName":"BIST:PETKM","title":"PETKM"}, {"proName":"BIST:PGSUS","title":"PGSUS"}, {"proName":"BIST:SAHOL","title":"SAHOL"}, {"proName":"BIST:SASA","title":"SASA"}, {"proName":"BIST:SISE","title":"SISE"}, {"proName":"BIST:TAVHL","title":"TAVHL"}, {"proName":"BIST:TCELL","title":"TCELL"}, {"proName":"BIST:THYAO","title":"THYAO"}, {"proName":"BIST:TOASO","title":"TOASO"}, {"proName":"BIST:TRALT","title":"TRALT"}, {"proName":"BIST:TTKOM","title":"TTKOM"}, {"proName":"BIST:TUPRS","title":"TUPRS"}, {"proName":"BIST:VAKBN","title":"VAKBN"}, {"proName":"BIST:YKBNK","title":"YKBNK"}],
+"showSymbolLogo": false,
+"isTransparent": true,
+"displayMode": "adaptive",
+"locale": "tr"
+}
+</script>
+</div>
 
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve Google Çeviri) -->
+    <div class="site-widgets" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; background: #f8fafc; padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #475569; gap: 15px; border: 1px solid #e2e8f0;">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
+        </div>
+        <div id="google_translate_element"></div>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Google Arama ve BIST AI Asistan) -->
+    <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; min-height: 52px;">
+            <search-modal-snippet api-url="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/" placeholder="Borsa raporları hakkında ara ve sor..."></search-modal-snippet>
+        </div>
+
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="ai-input" placeholder="BIST AI asistanına sorun..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') aiSor();">
+                <button onclick="aiSor()" id="ai-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Sor</button>
+            </div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">
+                <span class="ai-chip" onclick="aiChip(this)">Piyasa özeti ne?</span>
+                <span class="ai-chip" onclick="aiChip(this)">RSI ve MACD nedir?</span>
+                <span class="ai-chip" onclick="aiChip(this)">Destek ve direnç nedir?</span>
+            </div>
+        </div>
+    </div>
+
+<div id="ai-panel" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; font-size: 14px; line-height: 1.6;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <strong style="color: #0f766e;">🤖 BIST AI Asistan</strong>
+        <a href="javascript:void(0)" onclick="document.getElementById('ai-panel').style.display='none'" style="color: #64748b; text-decoration: none; font-size: 18px; line-height: 1;">&times;</a>
+    </div>
+    <div id="ai-answer"></div>
+    <div style="margin-top: 8px; color: #64748b; font-size: 12px;">Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir. Model: GLM-Flash (Z.ai, Puter.js üzerinden — ilk kullanımda Puter oturumu isteyebilir).</div>
+</div>
+<style>
+.ai-chip { background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; border-radius: 999px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
+.ai-chip:hover { border-color: #0f766e; color: #0f766e; }
+</style>
+<script src="https://js.puter.com/v2/"></script>
+<script>
+function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
+async function aiSor() {
+    var giris = document.getElementById('ai-input');
+    var soru = (giris.value || '').trim();
+    if (!soru) return;
+    var btn = document.getElementById('ai-btn');
+    var cevap = document.getElementById('ai-answer');
+    var panel = document.getElementById('ai-panel');
+    panel.style.display = 'block';
+    cevap.innerHTML = '<em>Yanıt hazırlanıyor...</em>';
+    btn.disabled = true; giris.disabled = true;
+    var sistem = 'Sen "BIST 30 Günlük Raporlar" sitesinin Türkçe yapay zeka asistanısın. Görevin: Borsa İstanbul, makroekonomi ve teknik analiz (EMA, RSI, MACD, Wave Trend, destek/direnç vb.) konularında eğitici, kısa ve anlaşılır yanıtlar vermek. Canlı piyasa verine erişimin yok; güncel veriler için kullanıcıyı sitedeki Teknik Tarama, Borsapy Sinyal ve Günlük Rapor sayfalarına yönlendir. Kesin alım-satım tavsiyesi verme; bilgilendir. Yanıtlarını madde işaretleriyle yaz, en fazla 200 kelime tut.';
+    var modeller = ['z-ai/glm-4.7-flash', 'infron:z-ai/glm-4.7-flash', 'z-ai/glm-4.5-flash', 'infron:z-ai/glm-4.5-flash'];
+    var sonHata = '';
+    for (var i = 0; i < modeller.length; i++) {
+        try {
+            var r = await puter.ai.chat(
+                [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
+                { model: modeller[i] }
+            );
+            var metin = (r && r.message && r.message.content) || (typeof r === 'string' ? r : '') || '';
+            if (!metin) { sonHata = 'Boş yanıt'; continue; }
+            metin = String(metin).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            cevap.innerHTML = metin.replace(/\n/g, '<br>');
+            giris.disabled = false; btn.disabled = false; giris.value = '';
+            return;
+        } catch (e) {
+            sonHata = (e && e.message) ? e.message : 'Bilinmeyen hata';
+            if (sonHata.indexOf('auth') !== -1 || sonHata.indexOf('permission') !== -1) break;
+        }
+    }
+    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + '). Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin veya sonra tekrar deneyin.</span>';
+    giris.disabled = false; btn.disabled = false;
+}
+</script>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
 <div class="hero">
 <h1>Günlük Piyasa Raporu</h1>
 <div class="meta"><span class="badge">2026-09-05</span><span>BIST 30 &bull; Yapay zeka destekli günlük analiz</span></div>
@@ -409,5 +527,35 @@ tr:last-child td { border-bottom:none; }
 Deneme Portfoyu (2026-09-05): Toplam 99998.76 TL (baslangic 100000 TL, toplam %-0.00, gunluk %-0.00)</p></article>
 <p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>
 </main>
+
 <footer class="footer">Bilgilendirme amacıyla hazırlanmıştır, yatırım tavsiyesi değildir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'tr', includedLanguages: 'en,de,fr,ar,ru', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body></html>

@@ -1,0 +1,39 @@
+﻿2026-09-08T13:04:17.0519227Z ##[group]Run git config user.name "borsa-bot"
+2026-09-08T13:04:17.0519699Z [36;1mgit config user.name "borsa-bot"[0m
+2026-09-08T13:04:17.0520119Z [36;1mgit config user.email "borsa-bot@users.noreply.github.com"[0m
+2026-09-08T13:04:17.0520514Z [36;1mgit add -A[0m
+2026-09-08T13:04:17.0520925Z [36;1mgit diff --cached --quiet || git commit -m "Gunluk rapor ve portfoy guncellemesi"[0m
+2026-09-08T13:04:17.0521514Z [36;1m# Insan veya diger isler araya commit atarsa (fetch first) cakismasin:[0m
+2026-09-08T13:04:17.0521952Z [36;1mgit pull --rebase origin main[0m
+2026-09-08T13:04:17.0522254Z [36;1mgit push origin main[0m
+2026-09-08T13:04:17.0560347Z shell: /usr/bin/bash -e {0}
+2026-09-08T13:04:17.0560635Z env:
+2026-09-08T13:04:17.0560952Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T13:04:17.0561426Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-09-08T13:04:17.0561902Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T13:04:17.0562341Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T13:04:17.0563029Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T13:04:17.0563489Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-09-08T13:04:17.0563855Z ##[endgroup]
+2026-09-08T13:04:17.0822390Z [main 88212e9] Gunluk rapor ve portfoy guncellemesi
+2026-09-08T13:04:17.0825318Z  12 files changed, 636 insertions(+), 314 deletions(-)
+2026-09-08T13:04:17.7866305Z From https://github.com/gunluk-raporlar/borsa-raporlari
+2026-09-08T13:04:17.7883076Z  * branch            main       -> FETCH_HEAD
+2026-09-08T13:04:17.7908880Z    bad0dd1..aef9b28  main       -> origin/main
+2026-09-08T13:04:17.8251226Z Auto-merging borsapy-analiz.html
+2026-09-08T13:04:17.8261857Z Rebasing (1/1)
+2026-09-08T13:04:17.8262466Z CONFLICT (content): Merge conflict in borsapy-analiz.html
+2026-09-08T13:04:17.8279067Z error: could not apply 88212e9... Gunluk rapor ve portfoy guncellemesi
+2026-09-08T13:04:17.8279825Z Auto-merging data/teknik/2026-09-08.json
+2026-09-08T13:04:17.8298831Z hint: Resolve all conflicts manually, mark them as resolved with
+2026-09-08T13:04:17.8299709Z CONFLICT (content): Merge conflict in data/teknik/2026-09-08.json
+2026-09-08T13:04:17.8300914Z hint: "git add/rm <conflicted_files>", then run "git rebase --continue".
+2026-09-08T13:04:17.8301667Z Auto-merging index.html
+2026-09-08T13:04:17.8303138Z hint: You can instead skip this commit: run "git rebase --skip".
+2026-09-08T13:04:17.8303871Z CONFLICT (content): Merge conflict in index.html
+2026-09-08T13:04:17.8304919Z hint: To abort and get back to the state before "git rebase", run "git rebase --abort".
+2026-09-08T13:04:17.8305692Z Auto-merging teknik-analiz.html
+2026-09-08T13:04:17.8311125Z hint: Disable this message with "git config set advice.mergeConflict false"
+2026-09-08T13:04:17.8312031Z CONFLICT (content): Merge conflict in teknik-analiz.html
+2026-09-08T13:04:17.8313589Z Could not apply 88212e9... # Gunluk rapor ve portfoy guncellemesi
+2026-09-08T13:04:17.8353575Z ##[error]Process completed with exit code 1.

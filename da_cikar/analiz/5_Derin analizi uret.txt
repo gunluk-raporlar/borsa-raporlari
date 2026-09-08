@@ -1,0 +1,92 @@
+﻿2026-09-08T11:27:44.2526393Z ##[group]Run python -u derin_analiz.py
+2026-09-08T11:27:44.2526866Z [36;1mpython -u derin_analiz.py[0m
+2026-09-08T11:27:44.2560036Z shell: /usr/bin/bash -e {0}
+2026-09-08T11:27:44.2560243Z env:
+2026-09-08T11:27:44.2560467Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T11:27:44.2560820Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-09-08T11:27:44.2561156Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T11:27:44.2561456Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T11:27:44.2561748Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-08T11:27:44.2562039Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-09-08T11:27:44.2562450Z   ZAI_API_KEY: ***
+2026-09-08T11:27:44.2562621Z   ZAI_MODEL: 
+2026-09-08T11:27:44.2562783Z ##[endgroup]
+2026-09-08T11:27:46.0316315Z INFO:derin-analiz:Teknik tarama aliniyor...
+2026-09-08T11:27:46.0325500Z INFO:bot:[Teknik Tarama] 30 hisse icin 300 gunluk veri cekiliyor...
+2026-09-08T11:27:46.0326200Z [Teknik Tarama] 30 hisse icin 300 gunluk veri cekiliyor...
+2026-09-08T11:28:10.3655466Z [Warning] Could not fetch data for 'ASTOR': HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T11:29:07.6833877Z [Warning] Could not fetch data for 'ISCTR': HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out. (read timeout=10)
+2026-09-08T11:29:49.9322271Z [Warning] Could not fetch data for 'SASA': HTTPSConnectionPool(host='www.isyatirim.com.tr', port=443): Read timed out.
+2026-09-08T11:30:26.0031635Z INFO:bot:[Teknik Tarama] 3 hisse icin ek deneme (1): ASTOR, ISCTR, SASA
+2026-09-08T11:30:26.0032263Z [Teknik Tarama] 3 hisse icin ek deneme: ASTOR, ISCTR, SASA
+2026-09-08T11:30:46.7576990Z INFO:bot:[Teknik Tarama] 30 hisse tarandi; guclu AL: 9
+2026-09-08T11:30:46.7577510Z [Teknik Tarama] 30 hisse tarandi.
+2026-09-08T11:30:46.7589151Z INFO:derin-analiz:Borsapy sinyalleri aliniyor...
+2026-09-08T11:30:49.3957274Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:49.3961175Z INFO:bot:[Borsapy] 1/30 AEFES: SAT
+2026-09-08T11:30:49.7044211Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:49.7047103Z INFO:bot:[Borsapy] 2/30 AKBNK: GÜÇLÜ AL
+2026-09-08T11:30:50.0139844Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:50.0142598Z INFO:bot:[Borsapy] 3/30 ASELS: AL
+2026-09-08T11:30:50.3284362Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:50.3286825Z INFO:bot:[Borsapy] 4/30 ASTOR: SAT
+2026-09-08T11:30:50.6379714Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:50.6382326Z INFO:bot:[Borsapy] 5/30 BIMAS: GÜÇLÜ AL
+2026-09-08T11:30:50.9478292Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:50.9479141Z INFO:bot:[Borsapy] 6/30 DSTKF: AL
+2026-09-08T11:30:51.2585462Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:51.2587828Z INFO:bot:[Borsapy] 7/30 EKGYO: AL
+2026-09-08T11:30:51.5688846Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:51.5689523Z INFO:bot:[Borsapy] 8/30 ENKAI: AL
+2026-09-08T11:30:51.8784408Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:51.8785082Z INFO:bot:[Borsapy] 9/30 EREGL: AL
+2026-09-08T11:30:52.1867725Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:52.1868378Z INFO:bot:[Borsapy] 10/30 FROTO: AL
+2026-09-08T11:30:52.4956014Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:52.4956643Z INFO:bot:[Borsapy] 11/30 GARAN: AL
+2026-09-08T11:30:52.8053858Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:52.8056210Z INFO:bot:[Borsapy] 12/30 GUBRF: GÜÇLÜ AL
+2026-09-08T11:30:53.1149769Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:53.1151345Z INFO:bot:[Borsapy] 13/30 ISCTR: AL
+2026-09-08T11:30:53.4319465Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:53.4322404Z INFO:bot:[Borsapy] 14/30 KCHOL: GÜÇLÜ AL
+2026-09-08T11:30:53.7423375Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:53.7424274Z INFO:bot:[Borsapy] 15/30 KRDMD: GÜÇLÜ AL
+2026-09-08T11:30:54.0508109Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:54.0508912Z INFO:bot:[Borsapy] 16/30 MGROS: SAT
+2026-09-08T11:30:54.3655397Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:54.3658183Z INFO:bot:[Borsapy] 17/30 PETKM: GÜÇLÜ AL
+2026-09-08T11:30:54.6746274Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:54.6749095Z INFO:bot:[Borsapy] 18/30 PGSUS: SAT
+2026-09-08T11:30:54.9833808Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:54.9836453Z INFO:bot:[Borsapy] 19/30 SAHOL: GÜÇLÜ AL
+2026-09-08T11:30:55.2932878Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:55.2933964Z INFO:bot:[Borsapy] 20/30 SASA: GÜÇLÜ AL
+2026-09-08T11:30:55.6017680Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:55.6018372Z INFO:bot:[Borsapy] 21/30 SISE: AL
+2026-09-08T11:30:55.9109844Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:55.9113017Z INFO:bot:[Borsapy] 22/30 TAVHL: SAT
+2026-09-08T11:30:56.2208662Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:56.2211634Z INFO:bot:[Borsapy] 23/30 TCELL: SAT
+2026-09-08T11:30:56.5309872Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:56.5312334Z INFO:bot:[Borsapy] 24/30 THYAO: SAT
+2026-09-08T11:30:56.8401323Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:56.8404058Z INFO:bot:[Borsapy] 25/30 TOASO: AL
+2026-09-08T11:30:57.1492494Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:57.1495511Z INFO:bot:[Borsapy] 26/30 TRALT: GÜÇLÜ AL
+2026-09-08T11:30:57.4699284Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:57.4699962Z INFO:bot:[Borsapy] 27/30 TTKOM: SAT
+2026-09-08T11:30:57.7780994Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:57.7783697Z INFO:bot:[Borsapy] 28/30 TUPRS: GÜÇLÜ AL
+2026-09-08T11:30:58.0867885Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:58.0869014Z INFO:bot:[Borsapy] 29/30 VAKBN: GÜÇLÜ AL
+2026-09-08T11:30:58.3969176Z INFO:httpx:HTTP Request: POST https://scanner.tradingview.com/turkey/scan "HTTP/1.1 200 OK"
+2026-09-08T11:30:58.3969818Z INFO:bot:[Borsapy] 30/30 YKBNK: AL
+2026-09-08T11:30:58.6973663Z INFO:bot:[Borsapy] 30 hisse tarandi
+2026-09-08T11:30:58.6974540Z INFO:derin-analiz:GLM ile derin analiz uretiliyor...
+2026-09-08T11:30:58.6987139Z INFO:bot:[Derin Analiz] GLM cagrisi (), deneme 1
+2026-09-08T11:30:59.0358389Z WARNING:bot:[Derin Analiz]  basarisiz: Completions.create() got an unexpected keyword argument 'thinking'
+2026-09-08T11:31:02.0361792Z INFO:bot:[Derin Analiz] GLM cagrisi (glm-4.5-flash), deneme 2
+2026-09-08T11:31:05.0370056Z WARNING:bot:[Derin Analiz] glm-4.5-flash basarisiz: Completions.create() got an unexpected keyword argument 'thinking'
+2026-09-08T11:31:05.0371853Z ERROR:bot:[Derin Analiz] tum modeller basarisiz (Completions.create() got an unexpected keyword argument 'thinking')
+2026-09-08T11:31:05.0372845Z ERROR:derin-analiz:Derin analiz uretilemedi (model hatasi veya bos yanit).
