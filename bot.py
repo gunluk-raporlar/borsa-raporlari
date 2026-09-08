@@ -43,7 +43,7 @@ ALT_MODELS = [m.strip() for m in os.environ.get("ALT_MODELS", "").split(",") if 
 # de uygundur). Anahtar: dash.cloudflare.com -> My Profile -> API Tokens
 # (Workers AI izinli olmali). Gerekli secret'lar: CF_API_KEY ve CF_ACCOUNT_ID.
 CF_API_KEY = os.environ.get("CF_API_KEY") or os.environ.get("CLOUDFLARE_API_KEY") or os.environ.get("CLOUDFLARE_API_TOKEN", "")
-CF_ACCOUNT_ID = os.environ.get("CF_ACCOUNT_ID", "")
+CF_ACCOUNT_ID = os.environ.get("CF_ACCOUNT_ID") or os.environ.get("CLOUDFLARE_ACCOUNT_ID", "")
 CF_MODELS = [m.strip() for m in os.environ.get("CF_MODELS", "").split(",") if m.strip()]
 
 # Ucuncu yedek: OpenRouter (ucretsiz modeller ":free" ekli olur; fonlansiz
