@@ -378,6 +378,39 @@ def _dil_karismis(metin: str) -> bool:
     return ing >= 8 and ing > turkce * 2
 
 
+def _cf_modelleri():
+    """Cloudflare Workers AI model listesini resmi endpointten ceker.
+
+    Dikkat: Cloudflare'in OpenAI-uyumlu katmaninda /ai/v1/models YOKTUR;
+    dogru liste endpoint'i /ai/models/search'tur. Donen isimler (@cf/... on
+    ekli) ayni zamanda cagrida kullanilan tam model kimlikleridir.
+    """
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            f"https://api.cloudflare.com/client/v4/accounts/{CF_ACCOUNT_ID}/ai/models/search?per_page=100&task=Text%20Generation",
+            headers={"Authorization": f"Bearer {CF_API_KEY}"})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            d = json.load(r)
+        return [m["name"] for m in d.get("result", []) if m.get("name")]
+    except Exception as e:
+        logger.warning("[Uyari] Cloudflare model listesi alinamadi (%s), tercih sirasi kullanilacak: %s", "models/search", e)
+        return []
+
+
+def _cf_havuz():
+    """Cloudflare model havuzu: env ile acik liste verilmisse onu kullan;
+    yoksa /ai/models/search listesinden tercih sirasina gore sec."""
+    if CF_MODELS:
+        return CF_MODELS
+    mevcut = _cf_modelleri()
+    secilen = list(dict.fromkeys(m for m in mevcut if any(t in m for t in CF_MODEL_TERCIH)))
+    if secilen:
+        logger.info("Cloudflare icin mevcut modellerden secilenler: %s", secilen)
+        return secilen
+    return CF_MODEL_TERCIH
+
+
 def _havuz_modelleri(saglayici, env_listesi, tercih, etiket, suzgec=None):
     """Saglayicinin kullanilabilir modellerini belirler.
 
@@ -443,7 +476,7 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
     sirasi = sirasi or ("AMD", "CF", "YEDEK", "OR")
     havuzlar = {
         "AMD": (client, AMD_MODEL_LIST or [AMD_MODEL]),
-        "CF": (cf_client, _havuz_modelleri(cf_client, CF_MODELS, CF_MODEL_TERCIH, "Cloudflare") if cf_client else CF_MODELS),
+        "CF": (cf_client, _cf_havuz() if cf_client else CF_MODELS),
         "YEDEK": (alt_client, _havuz_modelleri(alt_client, ALT_MODELS, GROQ_MODEL_TERCIH, "Groq") if alt_client else ALT_MODELS),
         "OR": (or_client, _havuz_modelleri(or_client, OR_MODELS, OR_MODEL_TERCIH, "OpenRouter",
                                            suzgec=lambda m: m.endswith(":free")) if or_client else OR_MODELS),
