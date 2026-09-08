@@ -221,9 +221,11 @@ def main():
         bot.ticker_json_yaz(teknik_satirlar)
         print("[OK] ticker.json tazelendi")
 
-    # 6) SEO dosyaları
+    # 6) SEO dosyaları + site içi arama indeksi
     bot.sitemap_ve_robots_yaz(raporlar)
     print("[OK] sitemap.xml + robots.txt yazıldı")
+    bot.site_arama_json_yaz(raporlar)
+    print("[OK] site-arama.json yazıldı")
     print("\nGÖÇ TAMAMLANDI — tüm sayfalar yeni şablonla üretildi.")
 
 

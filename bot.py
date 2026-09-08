@@ -1220,6 +1220,212 @@ body { overflow-x: hidden; }
 """
 
 
+# ---------- GLM TABANLI SAYFA CEVRISI (Google Translate yerine) ----------
+# Siteyi ve raporlari ureten yapay zeka (Z.ai GLM) ayni zamanda sayfayi
+# cevirir: Puter.js uzerinden calisir, hicbir hesap/anahtar gerekmez,
+# ziyaretci kendi ucretsiz Puter kotasin kullanir. Cince basta olmak
+# uzere 5 dil + "Turkce'ye don" secenegi.
+_CEVIRI_DILLERI = """
+<select id="dil-sec" aria-label="Sayfa dili seçin" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; background: #fff; color: #334155; cursor: pointer;">
+  <option value="">🌐 Dil / 语言</option>
+  <option value="zh">🇨🇳 中文（简体）</option>
+  <option value="en">🇬🇧 English</option>
+  <option value="de">🇩🇪 Deutsch</option>
+  <option value="ru">🇷🇺 Русский</option>
+  <option value="ar">🇸🇦 العربية</option>
+  <option value="tr">🇹🇷 Türkçe (orijinal)</option>
+</select>
+<span id="ceviri-durum" style="font-size: 12px; color: #64748b;"></span>
+<script>
+(function() {
+  var DIL_ADLARI = { zh: 'Simplified Chinese', en: 'English', de: 'German', ru: 'Russian', ar: 'Arabic' };
+  var ORIJINALLER = null;
+  var mesgul = false;
+
+  function zamanAsimi(p, ms) {
+    return Promise.race([p, new Promise(function(_, rej) { setTimeout(function() { rej(new Error('zaman aşımı')); }, ms); })]);
+  }
+
+  function metinDugumleri() {
+    var sonuc = [];
+    var ana = document.querySelector('main') || document.body;
+    var walker = document.createTreeWalker(ana, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(n) {
+        if (!n.nodeValue || !n.nodeValue.trim() || n.nodeValue.trim().length < 2) return NodeFilter.FILTER_REJECT;
+        var p = n.parentElement;
+        if (!p) return NodeFilter.FILTER_REJECT;
+        var tag = p.tagName;
+        if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT' || tag === 'TEXTAREA' || tag === 'INPUT') return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var n;
+    while ((n = walker.nextNode())) sonuc.push(n);
+    return sonuc;
+  }
+
+  function geriYukle() {
+    if (ORIJINALLER) ORIJINALLER.forEach(function(k) { k.node.nodeValue = k.org; });
+    document.getElementById('ceviri-durum').innerText = '';
+  }
+
+  async function sayfaCevir(dil) {
+    var durum = document.getElementById('ceviri-durum');
+    if (dil === '' || mesgul) return;
+    if (dil === 'tr') { geriYukle(); return; }
+    if (typeof puter === 'undefined') {
+      durum.innerHTML = '<span style="color:#b91c1c">Çeviri motoru henüz yüklenmedi, birkaç saniye sonra tekrar deneyin.</span>';
+      document.getElementById('dil-sec').value = '';
+      return;
+    }
+    mesgul = true;
+    try {
+      if (ORIJINALLER === null) {
+        ORIJINALLER = metinDugumleri().map(function(n) { return { node: n, org: n.nodeValue }; });
+      }
+      // Metinleri ~1800 karakterlik gruplara böl (istek başına)
+      var parcalar = [], suanki = [], uzunluk = 0;
+      ORIJINALLER.forEach(function(k) {
+        suanki.push(k); uzunluk += k.org.length;
+        if (uzunluk >= 1800) { parcalar.push(suanki); suanki = []; uzunluk = 0; }
+      });
+      if (suanki.length) parcalar.push(suanki);
+
+      var sistem = 'You are a professional translator for a Turkish finance website. The user sends a JSON array of strings. Translate EVERY array item into ' + DIL_ADLARI[dil] + '. Return ONLY a JSON array of the exact same length containing the translations — no explanations, no markdown fences. Keep stock ticker codes (KCHOL, PETKM, THYAO...), numbers, currency amounts, dates and indicator acronyms (RSI, MACD, EMA, ADX, CCI, WT) exactly as they are.';
+      for (var i = 0; i < parcalar.length; i++) {
+        durum.innerText = '🌐 Çevriliyor... (' + (i + 1) + '/' + parcalar.length + ')';
+        var r = await zamanAsimi(puter.ai.chat(
+          [ { role: 'system', content: sistem }, { role: 'user', content: JSON.stringify(parcalar[i].map(function(k) { return k.org; })) } ],
+          { model: 'z-ai/glm-4.7-flash' }
+        ), 45000);
+        var yanit = (r && r.message && r.message.content) || '';
+        yanit = yanit.replace(/^```(json)?\\s*/i, '').replace(/\\s*```\\s*$/, '').trim();
+        var cevrilen = JSON.parse(yanit);
+        if (!Array.isArray(cevrilen) || cevrilen.length !== parcalar[i].length) throw new Error('bozuk yanıt');
+        parcalar[i].forEach(function(k, idx) { if (typeof cevrilen[idx] === 'string') k.node.nodeValue = cevrilen[idx]; });
+      }
+      durum.innerText = '✓ ' + DIL_ADLARI[dil] + ' — Türkçe için listeden seçin';
+    } catch (e) {
+      var hata = (e && e.message) ? e.message : 'bilinmeyen hata';
+      durum.innerHTML = '<span style="color:#b91c1c">Çeviri tamamlanamadı (' + hata + ').</span> <span style="color:#475569">Türkçe için listeden seçin. Puter oturum penceresi açıldıysa giriş yapmayı deneyin.</span>';
+      document.getElementById('dil-sec').value = '';
+    }
+    mesgul = false;
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('dil-sec').addEventListener('change', function() { sayfaCevir(this.value); });
+  });
+})();
+</script>
+"""
+
+
+def _ceviri_widget(kok=""):
+    """Ust widget cubuguna GLM ceviri secicisini koyar (kok parametresi
+    ileride gerekirse diye korunur; script zaten kendini baglar)."""
+    return _CEVIRI_DILLERI
+
+
+# ---------- KENDI SITE-ICI ARAMAMIZ (Cloudflare arama widget'i yerine) ----------
+# CF "search-modal-snippet" yalnizca yetkilendirilmis domainlerde aciliyordu;
+# onrender.com'da izinli olmadigi icin bos beyaz kutu render oluyordu. Bunun
+# yerine botun her kosuda urettigi site-arama.json uzerinden tamamen yerel,
+# hesapsiz, her domainde calisan bir arama kuruyoruz. Soru gorunumlu
+# sorgular icin sonuc panelindeki baglantiyla mevcut Puter asistanina
+# (aiSor) kopruleniir.
+_SITE_ARAMA_KUTUSU = """
+<div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Sitede ara: hisse, konu, tarih... (ör. PETKM, RSI, portföy)" style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Ara</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid #e2e8f0; padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '{KOK}';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\\?\\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\\.|mi|mı|icin)\\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+"""
+
+
+def _site_arama_kutusu(kok=""):
+    return _SITE_ARAMA_KUTUSU.replace("{KOK}", kok)
+
+
 def _ai_kutu():
     """AI asistan soru kutusu (interactive-box'in sag sutunu). Puter.js
     kullanildigi icin anahtar gerekmez; kutu her zaman aktiftir."""
@@ -1405,8 +1611,6 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None):
 <script type="application/ld+json">{ld_json}</script>
 <style>{BASE_CSS}</style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<link rel="stylesheet" href="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/assets/v0.0.25/search-modal-snippet.css" />
-<script type="module" src="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/assets/v0.0.25/search-modal-snippet.js"></script>
 </head>
 <body>
 <header class="topbar"><div class="inner">
@@ -1416,20 +1620,18 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None):
 {_kendi_ticker(kok)}
 
 <main class="wrap">
-    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve Google Çeviri) -->
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
     <div class="site-widgets" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; background: #f8fafc; padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #475569; gap: 15px; border: 1px solid #e2e8f0;">
         <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
             <span id="current-date-time">⏳ Yükleniyor...</span>
             <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
         </div>
-        <div id="google_translate_element"></div>
+{_ceviri_widget(kok)}
     </div>
 
-    <!-- Etkileşimli Araçlar (Google Arama ve BIST AI Asistan) -->
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
     <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; min-height: 52px;">
-            <search-modal-snippet api-url="https://9b926caa-c6ae-4e2b-9a1e-8ccdc1246cc0.search.ai.cloudflare.com/" placeholder="Borsa raporları hakkında ara ve sor..."></search-modal-snippet>
-        </div>
+{_site_arama_kutusu(kok)}
 {_ai_kutu()}
     </div>
 {_ai_panel()}
@@ -1462,12 +1664,6 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None):
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
         }});
 </script>
-<script type="text/javascript">
-    function googleTranslateElementInit() {{
-        new google.translate.TranslateElement({{pageLanguage: 'tr', includedLanguages: 'en,de,fr,ar,ru', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}}, 'google_translate_element');
-    }}
-</script>
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body></html>"""
 
 
@@ -2237,6 +2433,52 @@ Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.
     )
 
 
+def site_arama_json_yaz(rapor_dosyalari):
+    """Site ici arama kutusunun indeksini (site-arama.json) uretir.
+    Statik sayfalar anahtar kelime + hisse kodlariyla; rapor ve derin analiz
+    sayfalari metinin ilk ~3500 karakteriyle indekslenir. Aramanin kendisi
+    tarayici tarafinda calisir — hesap, anahtar veya dis servis gerekmez."""
+    tag_temizle = re.compile(r"<[^>]+>")
+
+    def makale_metni(dosya):
+        try:
+            src = open(dosya, encoding="utf-8").read()
+        except OSError:
+            return ""
+        m = re.search(r'<article class="report">(.*?)</article>', src, re.S)
+        govde = m.group(1) if m else src
+        govde = re.sub(r"<script.*?</script>", " ", govde, flags=re.S)
+        govde = re.sub(r"<style.*?</style>", " ", govde, flags=re.S)
+        return tag_temizle.sub(" ", re.sub(r"\s+", " ", govde)).strip()
+
+    hisse_listesi = " ".join(HISSELER)
+    sayfalar = [
+        {"b": "Ana Sayfa — Rapor Arşivi", "u": "index.html",
+         "t": "BIST 30 günlük raporlar arşiv deneme portföy özeti teknik taramada öne çıkanlar günlük değişim " + hisse_listesi},
+        {"b": "Teknik Tarama", "u": "teknik-analiz.html",
+         "t": "EMA dizilim sinyalleri kısa orta uzun vade Wave Trend WT osilatör regresyon kanalı konumu Pearson korelasyon ısı haritası sektör mum grafiği TradingView " + hisse_listesi + " " + " ".join(SEKTORLER.keys())},
+        {"b": "Borsapy Sinyalleri (TradingView)", "u": "borsapy-analiz.html",
+         "t": "osilatör oyları al sat nötr güçlü al genel öneri RSI MACD stokastik stoch CCI ADX aşırı alım aşırı satım " + hisse_listesi},
+        {"b": "Deneme Portföyü", "u": "portfolio.html",
+         "t": "sanal portföy 100.000 TL eşit dağıtılmış hisse performansı günlük geçmiş getiri altın dolar mevduat XU100 benchmark karşılaştırma " + hisse_listesi},
+    ]
+    derin_metin = makale_metni("derin-analiz.html")
+    if derin_metin:
+        sayfalar.append({"b": "Derin Analiz (günlük derinlemesine inceleme)", "u": "derin-analiz.html",
+                         "t": derin_metin[:3500]})
+    for fn in rapor_dosyalari:
+        metin = makale_metni(os.path.join("reports", fn))
+        if metin:
+            sayfalar.append({"b": f"Günlük Rapor — {fn[:-5]}", "u": f"reports/{fn}", "t": metin[:3500]})
+    veri = {
+        "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M"),
+        "sayfalar": sayfalar,
+    }
+    with open("site-arama.json", "w", encoding="utf-8") as f:
+        json.dump(veri, f, ensure_ascii=False)
+    logger.info("[Arama] site-arama.json yazildi (%d sayfa)", len(sayfalar))
+
+
 def sitemap_ve_robots_yaz(rapor_dosyalari):
     """Arama motorlari icin robots.txt ve sitemap.xml uretir.
     Ana sayfalarin lastmod'u en son bot kosusunun tarihi olur; raporlarin
@@ -2339,5 +2581,11 @@ if __name__ == "__main__":
         sitemap_ve_robots_yaz(raporlar)
     except Exception:
         logger.exception("[SEO] sitemap/robots uretilemedi; rapor uretimini etkilemez.")
+
+    # Site ici arama indeksi
+    try:
+        site_arama_json_yaz(raporlar)
+    except Exception:
+        logger.exception("[Arama] site-arama.json uretilemedi; rapor uretimini etkilemez.")
 
     print("RAPOR OLUSTURULDU:", date_str)
