@@ -147,7 +147,9 @@ def load_recent(category, gun=30):
     return sonuc
 
 
-# Haber RSS kaynaklari
+# Haber RSS kaynaklari (2026-09 genisletildi: 6 -> 12 kaynak)
+# Hepsi canli test edildi (HTTP 200 + gecerli RSS). Radyo ve gunluk raporlar
+# bu havuzu kullanir; kaynak cesitliligi arttikca konular da cesitlenir.
 HABER_KAYNAKLARI = {
     "BloombergHT": "https://www.bloomberght.com/rss",
     "CNN Turk": "https://www.cnnturk.com/feed/rss/ekonomi/news",
@@ -155,6 +157,13 @@ HABER_KAYNAKLARI = {
     "Ekonomim-Piyasa": "https://www.ekonomim.net/rss/piyasa-10",
     "Ekonomim-Ekonomi": "https://www.ekonomim.net/rss/ekonomi-5",
     "Ekonomim-Sirket": "https://www.ekonomim.net/rss/sirket-12",
+    # ---- eklenen kaynaklar ----
+    "NTV Ekonomi": "https://www.ntv.com.tr/ekonomi.rss",
+    "TRT Haber Ekonomi": "https://www.trthaber.com/ekonomi_articles.rss",
+    "AA Ekonomi": "https://www.aa.com.tr/tr/rss/default?cat=ekonomi",
+    "Sozcu Ekonomi": "https://www.sozcu.com.tr/rss/ekonomi.xml",
+    "Dunya": "https://www.dunya.com/rss",
+    "Ekonomist": "https://www.ekonomist.com.tr/rss",
 }
 
 # Finansla ilgisiz haber basliklarini elemek icin filtre
@@ -185,21 +194,30 @@ def news_agent(state: AgentState):
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     toplanan = []
+    gorulen = set()  # ayni haberi birden cok kaynaktan tekrar eklemeyelim
+
+    def _norm(t):
+        return re.sub(r"[^a-z0-9çğıöşü]", "", t.lower())
+
     for ad, url in HABER_KAYNAKLARI.items():
         logger.info("[Haber Ajani] Kaynak: %s", ad)
         print(f"[Haber Ajani] Kaynak: {ad}", flush=True)
         try:
             f = feedparser.parse(url)
-            for e in f.entries[:5]:
+            for e in f.entries[:4]:  # kaynak basina 4 (12 kaynak x 4 = ~48 ham baslik)
                 baslik = e.title
                 if any(k.lower() in baslik.lower() for k in FINANS_DISI_KELIMELER):
                     continue
+                anahtar = _norm(baslik)
+                if not anahtar or anahtar in gorulen:
+                    continue  # mukerrer / bos baslik
+                gorulen.add(anahtar)
                 toplanan.append(f"[{ad}] {baslik}")
         except Exception:
             continue
         time.sleep(1)
     if toplanan:
-        save_daily("news", bugun, toplanan[:25])
+        save_daily("news", bugun, toplanan[:28])
 
     # Gecmis haberleri de ekle (hafiza)
     gecmis = load_recent("news", gun=7)
@@ -211,7 +229,7 @@ def news_agent(state: AgentState):
 
     if not toplanan and not gecmis:
         return {"news_data": "Haber verisi alinamadi."}
-    bugun_metin = "\n".join(toplanan[:25]) if toplanan else "(bugun haber alinamadi)"
+    bugun_metin = "\n".join(toplanan[:28]) if toplanan else "(bugun haber alinamadi)"
     return {"news_data": bugun_metin + gecmis_metin}
 
 
@@ -1506,14 +1524,14 @@ def _radyo_kutusu(kok=""):
     Yayinlar radyo.yml ile piyasa gunlerinde (acilis/ogle/kapanis) uretilir;
     sunucular kurgusal YAPAY ZEKA karakterleridir."""
     return f"""
-<div id="bist-radyo" style="display:none; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; min-width:250px; max-width:330px;">
+<div id="bist-radyo" style="display:none; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; min-width:250px; max-width:330px;" oncontextmenu="return false;">
   <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
     <strong style="font-size:13px; color:#0f172a;">📻 BIST Radyo</strong>
     <span style="background:#f0fdfa; color:#0f766e; border:1px solid #99f6e4; border-radius:999px; padding:1px 8px; font-size:11px;">AI sunucular</span>
   </div>
-  <audio id="radyo-audio" controls preload="none" style="width:100%; height:34px;"></audio>
+  <audio id="radyo-audio" controls preload="none" controlslist="nodownload noremoteplayback" style="width:100%; height:34px;" oncontextmenu="return false;"></audio>
   <div id="radyo-liste" style="margin-top:6px; font-size:12.5px; color:#475569;"></div>
-  <div style="margin-top:4px; color:#94a3b8; font-size:11px;">Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
+  <div style="margin-top:4px; color:#94a3b8; font-size:11px;">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
 </div>
 <script>
 (function() {{

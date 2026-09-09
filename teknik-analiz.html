@@ -246,14 +246,14 @@ body { overflow-x: hidden; }
 </script>
 
 
-<div id="bist-radyo" style="display:none; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; min-width:250px; max-width:330px;">
+<div id="bist-radyo" style="display:none; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; min-width:250px; max-width:330px;" oncontextmenu="return false;">
   <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
     <strong style="font-size:13px; color:#0f172a;">📻 BIST Radyo</strong>
     <span style="background:#f0fdfa; color:#0f766e; border:1px solid #99f6e4; border-radius:999px; padding:1px 8px; font-size:11px;">AI sunucular</span>
   </div>
-  <audio id="radyo-audio" controls preload="none" style="width:100%; height:34px;"></audio>
+  <audio id="radyo-audio" controls preload="none" controlslist="nodownload noremoteplayback" style="width:100%; height:34px;" oncontextmenu="return false;"></audio>
   <div id="radyo-liste" style="margin-top:6px; font-size:12.5px; color:#475569;"></div>
-  <div style="margin-top:4px; color:#94a3b8; font-size:11px;">Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
+  <div style="margin-top:4px; color:#94a3b8; font-size:11px;">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
 </div>
 <script>
 (function() {
@@ -459,10 +459,16 @@ async function aiSor() {
 <div class="hero">
 <h1>Teknik Tarama</h1>
 <p>BIST 30 hisseleri icin otomatik teknik tarama: EMA dizilim sinyalleri (kısa 5-8-13-21, orta 34-55, uzun 89-144),
-Wave Trend osilatörü ve 60 günlük regresyon kanalı konumu. Kanal konumu %0=alt bant, %100=üst bant;
-Pearson (r) trendin gücünü gösterir. <strong>Son güncelleme: 06:06 (İstanbul)</strong> — piyasa saatlerinde
-30 dakikada bir, TradingView canlı fiyatlarıyla (~15 dk gecikmeli) güncellenir.
-<strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong></p>
+Wave Trend osilatörü ve 60 günlük regresyon kanalı konumu. Kanal konumu %0=alt bant, %100=üst bant demektir;
+%100'ün üzeri fiyatın bandın üstüne çıktığını (aşırı), 0'ın altı bandın altına düştüğünü gösterir.
+Pearson (r) son 60 gündeki trendin yönünü/gücünü gösterir (negatif r, fiyatın aşağı yönlü trendini ifade eder;
+sinyal yalnızca yön göstergelerine dayanır). <strong>Son güncelleme: 09.09 06:21 (İstanbul)</strong> — piyasa
+saatlerinde 30 dakikada bir TradingView canlı fiyatlarıyla (~15 dk gecikmeli); piyasa kapalıyken son işlem
+gününün kapanış verisiyle güncellenir. Bu sayfa EMA/Wave Trend/regresyon kanalı yöntemine dayanır;
+"Borsapy Sinyal" sayfası TradingView osilatör oylarını kullandığı için aynı hissede farklı sinyal
+gösterebilir. <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong></p>
+<button type="button" class="ses-btn" onclick="sesliOkuToggle(this,'teknik-ses-metin')" aria-label="Teknik tarama özetini sesli oku">🔊 Sesli Özeti Dinle</button>
+<div id="teknik-ses-metin" hidden>Bugün 30 hisse tarandı. Güçlü al sinyali veren 8 hisse: KCHOL, 224,10 TL; BIMAS, 419,75 TL; KRDMD, 45,66 TL; TRALT, 52,95 TL; PETKM, 24,26 TL; GUBRF, 502,00 TL; VAKBN, 36,64 TL; AKBNK, 74,70 TL. Al sinyalindeki 5 hisse: TUPRS, SAHOL, DSTKF, SISE, TOASO. Sat sinyalindeki 9 hisse: ASTOR, TAVHL, AEFES, FROTO, TCELL, THYAO, TTKOM, MGROS, PGSUS. Tüm hisselerin sinyal ve göstergeleri tabloda yer alıyor.</div>
 </div>
 
 <h2 class="section-title">Sektörel Isı Haritası <span style="font-size:12px; color:var(--muted); font-weight:400">(günlük değişim ortalaması)</span></h2>
