@@ -195,8 +195,10 @@ def main():
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     simdi = datetime.now(tz)
     tarih = simdi.strftime("%Y-%m-%d")
-    if simdi.weekday() < 5 and os.environ.get("FORCE") != "1":
-        print("HAFTA ICI: hafta sonu gundemi uretilmedi (hafta ici icerigi gunluk rapor kapsar).", flush=True)
+    if simdi.weekday() < 5:
+        # Hafta ici ASLA calismaz (workflow_dispatch ile elle tetiklense bile):
+        # hafta ici gundemi gunluk rapor kapsar, hafta sonu sayisi hafta icinde yayinlanamaz.
+        print("HAFTA ICI: hafta sonu gundemi uretilmedi (sadece Cumartesi/Pazar calisir).", flush=True)
         return 0
 
     kategoriler = haberleri_topla()

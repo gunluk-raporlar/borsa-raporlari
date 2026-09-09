@@ -6,11 +6,6 @@ on:
     # Pazar 17:30 TSI (UTC+3) = 14:30 UTC: hafta sonu ozeti + yeni hafta ajandasi
     - cron: '30 14 * * 0'
   workflow_dispatch:
-    inputs:
-      FORCE:
-        description: 'Hafta ici test icin FORCE=1 verin'
-        required: false
-        default: ''
 permissions:
   contents: write
 jobs:
@@ -28,7 +23,6 @@ jobs:
         run: pip install -r requirements.txt
       - name: Gundemi uret
         env:
-          FORCE: ${{ inputs.FORCE }}
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
           CF_API_KEY: ${{ secrets.CLOUDFLARE_API_TOKEN }}
