@@ -125,6 +125,56 @@ def _son_dosya(kategori):
     return dosyalar[-1] if dosyalar else None
 
 
+def _gecmis_yayin_metni(bugun, limit=5, max_karakter=2200):
+    """Eski yayin transkriptlerini hafiza olarak okur (data/radyo/*.json).
+    Boylece sunucular onceki yayinlarda soylediklerine atif yapabilir:
+    'Dün kapanışta temkinli olalım demiştik...' gibi dogal sureklilik olusur.
+    En yeni 5 yayin alinir; cok uzun olmamasi icin karakter siniri vardir."""
+    klasor = os.path.join(bot.DATA_DIR, "radyo")
+    if not os.path.isdir(klasor):
+        return ""
+    dosyalar = sorted(f for f in os.listdir(klasor) if f.endswith(".json"))
+    parcalar = []
+    toplam = 0
+    for f in reversed(dosyalar):
+        if f.startswith(bugun):
+            continue  # bugunun kendi yayini henuz hafiza degil
+        try:
+            d = json.load(open(os.path.join(klasor, f), encoding="utf-8"))
+        except Exception:
+            continue
+        satirlar = d.get("satirlar") or []
+        if not satirlar:
+            continue
+        blok = f"-- {d.get('tarih', f[:-5])} ({d.get('bolum', '')}): " + " ".join(satirlar[:14])
+        if len(blok) > 1600:
+            blok = blok[:1600] + "..."
+        parcalar.append(blok)
+        toplam += len(blok)
+        if len(parcalar) >= limit or toplam > max_karakter:
+            break
+    return "\n".join(parcalar) if parcalar else ""
+
+
+def _transkript_kaydet(veri, satirlar):
+    """Uretilen sohbeti data/radyo/<tarih>-<bolum>.json olarak saklar.
+    Bu dosyalar repoda kalici hafizadir: hem sonraki yayinlar icin (sureklilik)
+    hem de ileride video uretimi (altyazi/goruntu senkronu) icin kullanilabilir."""
+    klasor = os.path.join(bot.DATA_DIR, "radyo")
+    os.makedirs(klasor, exist_ok=True)
+    tarih = veri.get("tarih") or veri.get("bugun") or datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%Y-%m-%d")
+    yol = os.path.join(klasor, f"{tarih}-{veri['bolum']}.json")
+    kayit = {
+        "tarih": tarih,
+        "bolum": veri["bolum"],
+        "guncelleme": veri.get("guncelleme", ""),
+        "satirlar": satirlar,
+    }
+    with open(yol, "w", encoding="utf-8") as f:
+        json.dump(kayit, f, ensure_ascii=False, indent=1)
+    return yol
+
+
 def _gunun_verisi():
     """Sohbetin dayanacagi veri ozetini toplar (LLM promptuna ve sablona ortak)."""
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
@@ -163,25 +213,49 @@ def _gunun_verisi():
                    f"Karşılaştırmalar: altın {bot._tl_okunus(b.get('GOLD', 0))} TL, "
                    f"dolar {bot._tl_okunus(b.get('USD', 0))} TL, "
                    f"mevduat {bot._tl_okunus(b.get('DEPOSIT', 0))} TL.")
+    # Onceki yayinlarin transkriptleri (hafiza / sureklilik)
+    gecmis = _gecmis_yayin_metni(bugun)
     return {
         "bugun": bugun,
+        "guncelleme": datetime.now(tz).strftime("%d.%m %H:%M"),
         "haberler": haberler,
         "guclu": guclu,
         "en_hareketli": en_hareketli,
         "pf_ozet": pf_ozet,
+        "gecmis": gecmis,
         "tarama_sayisi": len(tarama),
     }
 
 
 # ---------- Sohbet metni ----------
-_PROMPT_SABLON = """Sen bir radyo sohbet senaristi yapay zekasısın. BIST Radyo için iki kurgusal sunucunun (Ela ve Mert) piyasa sohbetini yaz. İkisi de GERÇEK KİŞİ DEĞİL, yapay zeka sunuculardır; bunu içerikte söylemeye gerek yok ama kimlik/unvan taklidi de yapma (analist, direktör vb. demeyin).
+_PROMPT_SABLON = """Sen bir ekonomi radyosu sohbet yazari yapay zekasısın. BIST Radyo için iki kurgusal sunucunun (Ela ve Mert) DOĞAL bir piyasa programını yaz. İkisi de GERÇEK KİŞİ DEĞİL, yapay zeka sunuculardır; kimlik/unvan taklidi yapma (analist, direktör vb. demeyin). Program; birbirine laf atan, soru soran, aynı fikirde olmayabilen, yorum yapan ve senaryolu beklentisini paylaşan iki sunucunun sohbeti gibi olmalı — tebliğ/duyuru değil, sohbet.
 
-Kurallar:
-- Her satır TAM OLARAK "ELA: " veya "MERT: " ile başlayacak; sonraki her satır yeni konuşmacıya geçebilir (karşılıklı diyalog).
-- Toplam 14-18 replik; her replik 1-3 kısa cümle. Konuşma dili, doğal, radyo tonu; madde işareti, tablo, başlık KULLANMA.
-- Sıralama: (1) selamlama ve günün havası, (2) gündemdeki haberler, (3) öne çıkan hisseler ve hareketler, (4) deneme portföyü ve kıyaslamalar, (5) kapanışta kısa özet + bilgilendirme notu ("Yatırım tavsiyesi değildir" bir kez).
-- YALNIZCA sağlanan verilerden konuş; dışarıdan veri/rakam ekleme. Rakamları doğal oku (ör. "224,10 TL" yazarsan metinde böyle kalsın, seslendirme otomatik çevrilir).
-- Bilgilendirme amacıyla konuşun, kesin al-sat yönlendirmesi yapmayın.
+KARAKTERLER (kurgusal, abartısız):
+- ELA: makro tarafı ağır basar; sakin, meraklı, soru sorar, rakamların ardındaki hikayeyi arar.
+- MERT: piyasa/teknik tarafı ağır basar; biraz daha atak ve esprili, sezgiyle konuşur, Ela'nın fikrine bazen katılır bazen nazikçe karşı çıkar.
+
+FORMAT:
+- Her satır TAM OLARAK "ELA: " veya "MERT: " ile başlar, karşılıklı diyalog halinde ilerler.
+- Toplam 18-24 replik. Replikler KISA ve konuşma dilinde: 1-3 cümle; soru, tepki, onay, karşı çıkma, espri serpiştir. Madde işareti/tablo/başlık KULLANMA.
+- Bazı replikler birbirine bağlansın (Mert'in sorusuna Ela cevap versin), böylece kopuk monolog yerine gerçek bir sohbet olsun.
+
+AKIŞ (bölüme göre esnet):
+1) Selamlama + günün havası (hissiyat, ilk izlenim)
+2) Gündem: haberleri kendi cümleleriyle YORUMLAYIN (sadece okumayın): bu ne anlama gelir, kime ne yarar/zarar
+3) Öne çıkan hisseler ve hareketler: neden hareket etmiş olabileceğine dair sohbet/yorum
+4) Deneme portföyü + altın/dolar karşılaştırması üzerine yorum
+5) TAHMİN BÖLÜMÜ: Mert ve Ela günün geri kalanı/yarın için SENARYOLU beklentilerini söyler ("bence...", "eğer ... olursa ...", "benim okumam şöyle..."); kesin iddia değil, kişisel AI yorumu olduğu hissettirilsin.
+6) Kapanış: kısa toparlama + bir kez "Bu yayın bilgilendirme amaçlıdır, yatırım tavsiyesi değildir; tahminler yapay zekanın görüşüdür."
+
+HAFIZA (çok önemli): [GEÇMİŞ YAYINLAR] bölümündeki eski yayınlardan bir-iki tanesine doğal biçimde atıf yapın ("Dün kapanışta... demiştik, bugün ... görüyoruz" gibi). Geçmişte söylediklerinizle çelişiyorsanız bunu açıkça söyleyin ("o zaman temkinliydik, haklı çıktık" ya da "yanılmışız, nedenini konuşalım").
+
+SINIRLAR:
+- Somut fiyatlar ve veriler YALNIZCA sağlanan bölümlerden alınır; dışarıdan uydurma rakam ekleme. Rakamları metinde "224,10 TL" biçiminde yaz (seslendirme otomatik çevirir).
+- Tahminler senaryolu ve görüş niteliğinde olsun; "kesin" ifadelerden ve doğrudan al-sat yönlendirmesinden kaçının.
+- Türkçe karakterlere dikkat.
+
+[GEÇMİŞ YAYINLAR]
+{gecmis}
 
 [GÜNÜN HABERLERİ]
 {haberler}
@@ -224,6 +298,8 @@ def _sablon_sohbet(v):
             satirlar.append(f"ELA: {s['hisse']} tarafında {yon} var; günlük değişim {abs(s['gunluk'] or 0):.2f} yüzde.")
     if v["pf_ozet"]:
         satirlar.append(f"MERT: Deneme portföyüne bakacak olursak: {v['pf_ozet']}")
+    satirlar.append("ELA: Benim okumam şöyle: gün içinde seçici alımlar sürebilir ama oynaklık yüksek, bu yüzden temkinli kalmakta fayda var.")
+    satirlar.append("MERT: Katılıyorum; bence günün kalanında piyasa dengelenmeye çalışacak. Tabii bu benim tahminim, yatırım tavsiyesi değil.")
     satirlar.append("ELA: Özetle piyasada seçici ve temkinli bir hava hâkim; gelişmeleri takip etmeye devam edeceğiz.")
     satirlar.append("MERT: Unutmayın, bu yayın bilgilendirme amaçlıdır, yatırım tavsiyesi değildir. Hoşça kalın!")
     return satirlar
@@ -232,6 +308,7 @@ def _sablon_sohbet(v):
 def _sohbet_uret(v):
     """Once LLM dener; sonuc bozuk/ulasilamazsa sablona dusulur."""
     prompt = _PROMPT_SABLON.format(
+        gecmis=v.get("gecmis") or "(henüz eski yayın yok)",
         haberler="\n".join("- " + h for h in v["haberler"]) or "(bugun haber alinamadi)",
         guclu="\n".join(
             f"{s['hisse']} ({s.get('sektor', '')}): {bot._tl_okunus(s['son'])} TL, gunluk {s['gunluk']:+.2f}%"
@@ -269,9 +346,12 @@ def _sohbet_uret(v):
         icerik = re.sub(r"\s+", " ", m.group(2)).strip()
         if icerik and not icerik.lower().startswith(("ela:", "mert:")):
             satirlar.append(f"{konusan}: {icerik}")
-    if len(satirlar) < 8:  # cok kisaysa sablona don
+    # Program uzunlugu: en az 12 replik (yoksa sablona), en fazla 26 (ses dosyasi sismesin)
+    if len(satirlar) < 12:
         logger.warning("LLM sohbeti yetersiz (%d replik); sablon kullanilacak.", len(satirlar))
         return _sablon_sohbet(v)
+    if len(satirlar) > 26:
+        satirlar = satirlar[:26]
     return satirlar
 
 
@@ -366,8 +446,18 @@ def main():
         return 1
 
     veri = _gunun_verisi()
+    veri["bolum"] = bolum
     satirlar = _sohbet_uret(veri)
     logger.info("Sohbet hazir: %d replik (%s - %s)", len(satirlar), tarih, bolum_adi)
+
+    # Transkripti hafizaya kaydet (data/radyo/): gelecek yayinlar icin sureklilik
+    # + ileride video uretimi icin altyazi temeli. Seslendirme oncesi kaydedilir;
+    # boylece ses hata verse bile sohbet kaybolmaz.
+    try:
+        tr_yol = _transkript_kaydet(veri, satirlar)
+        logger.info("Transkript kaydedildi: %s", tr_yol)
+    except Exception as e:
+        logger.warning("Transkript kaydedilemedi: %s", e)
 
     parcalar = []
     try:
