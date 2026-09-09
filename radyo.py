@@ -431,6 +431,12 @@ def main():
     simdi = datetime.now(tz)
     tarih = simdi.strftime("%Y-%m-%d")
     bolum = _bolum_belirle()
+    # Hafta sonu korumasi: piyasa kapaliyken acilis/ogle/kapanis yayini uretilmez.
+    # (Ileride 'haftalik' turu eklenirse hafta sonu calisabilir; elle BOLUM verilse bile
+    # piyasa bolumleri engellenir — bos icerikli 'rezil' yayin istemiyoruz.)
+    if simdi.weekday() >= 5 and bolum in ("acilis", "ogle", "kapanis"):
+        print(f"HAFTA SONU: {bolum} yayini uretilmedi (piyasa kapali).", flush=True)
+        return 0
     bolum_adi = BOLUM_ADLARI[bolum]
     os.makedirs(RADYO_DIR, exist_ok=True)
     os.makedirs(TMP_DIR, exist_ok=True)

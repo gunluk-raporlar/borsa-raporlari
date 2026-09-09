@@ -1,7 +1,9 @@
 name: Gunluk BIST 30 Raporu
 on:
   schedule:
-    - cron: '0 5 * * *'   # 08:00 Türkiye saati (UTC+3) = 05:00 UTC
+    # Hafta ici 08:00 Turkiye saati (UTC+3) = 05:00 UTC — hafta sonu piyasa kapali,
+    # gunluk rapor/portfoy/MP3 uretilmez (hafta sonu 'rezil' gorunum istemiyoruz)
+    - cron: '0 5 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write

@@ -460,7 +460,7 @@ async function aiSor() {
 <div class="hero">
 <h1>Deneme Portföyü</h1>
 <p>BIST 30 hisselerine eşit dağıtılmış 100,000 TL'lik sanal portföy. Alım-satım yapılmaz, sadece takip edilir;
-her sabah bir önceki işlem gününün kapanış fiyatlarıyla otomatik güncellenir.</p>
+hafta içi her sabah bir önceki işlem gününün kapanış fiyatlarıyla otomatik güncellenir.</p>
 </div>
 
 <div class="stats">
@@ -471,13 +471,13 @@ her sabah bir önceki işlem gününün kapanış fiyatlarıyla otomatik güncel
 </div>
 <div class="card" style="margin-bottom:22px">
 <div style="position:relative; height:340px;">
-<canvas id="portfoy-grafik-783734"></canvas>
+<canvas id="portfoy-grafik-224559"></canvas>
 </div>
 <script>
 (function() {
     var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100819.58], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100459.02], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}, {"label": "BIST 100 Endeksi", "data": [100000.0, 100000.0, 99549.87], "borderColor": "#7c3aed", "backgroundColor": "#7c3aed", "borderDash": [2, 2]}]};
     var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
-    var ctx = document.getElementById('portfoy-grafik-783734').getContext('2d');
+    var ctx = document.getElementById('portfoy-grafik-224559').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -533,7 +533,7 @@ her sabah bir önceki işlem gününün kapanış fiyatlarıyla otomatik güncel
 <table><tr><th>Tarih*</th><th>Toplam Değer</th><th>Toplam %</th><th>Günlük %</th></tr><tr><td>2026-09-08</td><td>102,352.27 TL</td><td class='pos'>+2.35%</td><td class='pos'>+2.34%</td></tr><tr><td>2026-09-07</td><td>100,013.04 TL</td><td class='pos'>+0.01%</td><td class='pos'>+0.00%</td></tr><tr><td>2026-09-06</td><td>100,013.04 TL</td><td class='pos'>+0.01%</td><td class='pos'>+0.01%</td></tr></table>
 </div>
 </div>
-<p style="margin:10px 0 0; color:var(--muted); font-size:12.5px">Portföy her sabah otomatik olarak, bir önceki işlem gününün kapanış fiyatlarıyla güncellenir; hafta sonu ve tatil günlerinde değer değişmez. Canlı fiyatlar için üstteki fiyat şeridine bakınız.<br>
+<p style="margin:10px 0 0; color:var(--muted); font-size:12.5px">Portföy hafta içi her sabah otomatik olarak, bir önceki işlem gününün kapanış fiyatlarıyla güncellenir; hafta sonu ve tatil günlerinde değer değişmez. Canlı fiyatlar için üstteki fiyat şeridine bakınız.<br>
 * Tarih sütunu, portföyün güncellendiği günü gösterir; fiyatlar bir önceki işlem gününün kapanışına aittir.
 Hafta sonu ve tatil günlerinde değer değişmez.</p>
 </main>

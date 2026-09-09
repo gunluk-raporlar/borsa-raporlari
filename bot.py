@@ -894,7 +894,7 @@ BASLANGIC_SERMAYE = 100000.0
 # Portfoy sayfalarindaki ortak aciklama notu: veri kesitini kullaniciya net anlatsin
 # ("Guncel" fiyatlar aslinda bir onceki islem gununun kapanisidir; gunluk %0'lik
 # hafta sonu/tatil kayitlari bu yuzden normaldir).
-PORTFOY_NOTU = ("Portföy her sabah otomatik olarak, bir önceki işlem gününün kapanış fiyatlarıyla "
+PORTFOY_NOTU = ("Portföy hafta içi her sabah otomatik olarak, bir önceki işlem gününün kapanış fiyatlarıyla "
                 "güncellenir; hafta sonu ve tatil günlerinde değer değişmez. Canlı fiyatlar için "
                 "üstteki fiyat şeridine bakınız.")
 
@@ -2322,7 +2322,7 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     icerik = f"""
 <div class="hero">
 <h1>BIST 30 Günlük Piyasa Raporları</h1>
-<p>Her sabah 08:00'de otomatik üretilen, yapay zeka destekli BIST 30 analizleri ve sanal portföy takibi.</p>
+<p>Hafta içi her sabah 08:00'de otomatik üretilen, yapay zeka destekli BIST 30 analizleri ve sanal portföy takibi. (Hafta sonu yayın yok — piyasa kapalı.)</p>
 </div>
 <h2 class="section-title">Rapor Arşivi</h2>
 <div class="grid">{kartlar}</div>
@@ -2348,7 +2348,7 @@ def build_portfolio_html(p):
 <div class="hero">
 <h1>Deneme Portföyü</h1>
 <p>BIST 30 hisselerine eşit dağıtılmış {p['initial_capital']:,.0f} TL'lik sanal portföy. Alım-satım yapılmaz, sadece takip edilir;
-her sabah bir önceki işlem gününün kapanış fiyatlarıyla otomatik güncellenir.</p>
+hafta içi her sabah bir önceki işlem gününün kapanış fiyatlarıyla otomatik güncellenir.</p>
 </div>
 {_portfoy_istatistikleri(p)}
 {grafik_html}
