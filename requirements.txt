@@ -7,3 +7,4 @@ markdown
 yfinance
 borsapy
 edge-tts
+imageio-ffmpeg
