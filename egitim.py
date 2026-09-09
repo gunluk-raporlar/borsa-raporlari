@@ -25,6 +25,7 @@ import zoneinfo
 os.environ.setdefault("AMD_API_KEY", "egitim")
 
 import bot  # noqa: E402
+import svg_grafik  # noqa: E402
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 logger = logging.getLogger("egitim")
@@ -86,8 +87,8 @@ def ders_sec(simdi):
     if gun < 0:
         return 0, MUFREDAT[0]
     hafta = gun // 7
-    sira = gun % 7
-    gun_no = 0 if sira == 5 else (1 if sira == 6 else 0)  # Cmt=5, Paz=6 -> 0/1
+    hafta_sonu_gunu = simdi.weekday()  # 5=Cumartesi, 6=Pazar
+    gun_no = 0 if hafta_sonu_gunu == 5 else (1 if hafta_sonu_gunu == 6 else 0)
     idx = (hafta * 2 + gun_no) % len(MUFREDAT)
     return idx, MUFREDAT[idx]
 
@@ -190,6 +191,7 @@ def main():
 
     idx, (konu, kategori, tanim) = ders_sec(simdi)
     veri = _guncel_veri_ornekleri()
+    gorsel_svg = svg_grafik.gorsel_uret(konu)
     logger.info("Ders %d/%d: %s (%s)", idx + 1, len(MUFREDAT), konu, kategori)
     metin = _ders_uret(konu, tanim, veri)
     metin = bot._tarih_gun_duzelt(metin)
@@ -205,12 +207,16 @@ def main():
                 for f in liste[:6])
             onceki = f'<p style="margin-top:16px; color:var(--muted); font-size:13px"><strong>Önceki dersler:</strong> {baglar}</p>'
 
+    figura = ""
+    if gorsel_svg:
+        figura = (f'<figure style="margin:0 0 18px">{gorsel_svg}'
+                  f'<figcaption style="color:var(--muted);font-size:12px;margin-top:6px">Şekil: {konu} — eğitim amaçlı şematik gösterim (gerçek piyasa verisi değildir)</figcaption></figure>')
     icerik = f"""
 <div class="hero">
 <h1>Hafta Sonu Borsa Okulu</h1>
 <div class="meta"><span class="badge">{tarih}</span><span>Ders {idx + 1}/{len(MUFREDAT)} &bull; {kategori} &bull; Kurgusal yapay zeka eğitmen</span></div>
 </div>
-<article class="report" id="rapor-ses-metin">{bot.markdown_to_html(metin)}</article>
+<article class="report" id="rapor-ses-metin">{figura}{bot.markdown_to_html(metin)}</article>
 {onceki}
 <p style="margin-top:12px"><a href="index.html">&larr; Ana sayfaya dön</a></p>"""
     html = bot._sayfa(
