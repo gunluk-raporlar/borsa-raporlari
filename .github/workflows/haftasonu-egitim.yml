@@ -1,13 +1,13 @@
-name: Hafta Sonu Gundem Ajani
+name: Borsa Okulu (Hafta Sonu Dersi)
 on:
   schedule:
-    # Cumartesi + Pazar 09:00 Turkiye saati (06:00 UTC)
-    - cron: '0 6 * * 6,0'
+    # Cumartesi + Pazar 10:30 Turkiye saati (07:30 UTC) — gundemden 1,5 saat sonra (model yuku ayrissin)
+    - cron: '30 7 * * 6,0'
   workflow_dispatch:
 permissions:
   contents: write
 jobs:
-  gundem:
+  egitim:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -19,7 +19,7 @@ jobs:
           python-version: '3.12'
       - name: Kutuphaneleri kur
         run: pip install -r requirements.txt
-      - name: Gundemi uret
+      - name: Borsa okulu dersini uret
         env:
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -27,7 +27,7 @@ jobs:
           CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
-        run: python -u haftasonu.py
+        run: python -u egitim.py
       - name: Degisiklikleri yayinla
         run: |
           git config user.name "borsa-bot"
@@ -37,6 +37,6 @@ jobs:
             echo "Degisiklik yok; commit atlanır."
             exit 0
           fi
-          git commit -m "Hafta sonu gundemi guncellemesi"
+          git commit -m "Borsa okulu dersi guncellemesi"
           git pull --rebase -X theirs origin main
           git push origin main
