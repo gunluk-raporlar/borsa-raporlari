@@ -1242,18 +1242,23 @@ def indexnow_ping(url_yollari):
         logger.warning("[IndexNow] ping basarisiz (sorun degil): %s", e)
 
 
+# Panelden alinan dogrulama kodlari (tasarim geregi herkese acik degerlerdir;
+# ENV ile degistirilebilir: GOOGLE/BING/BAIDU_SITE_DOGRULAMA)
+SABIT_DOGRULAMALAR = {
+    "google-site-verification": "M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY",
+}
+
+
 def _dogrulama_etiketleri():
-    """Arama motoru sahiplik dogrulama meta etiketleri (ENV ile).
-    Google Search Console / Bing Webmaster / Baidu Ziyan panelleri site
-    dogrulamasi icin birer kod verir; asagidaki secret'lar doluysa sayfaya
-    gumulur. Bos birakilirsa hicbir etiket eklenmez."""
+    """Arama motoru sahiplik dogrulama meta etiketleri.
+    Sabitler + ENV secret'lari birlesir; ikisi de bossa etiket eklenmez."""
     etiket = ""
     for env_adi, meta_adi in (
         ("GOOGLE_SITE_DOGRULAMA", "google-site-verification"),
         ("BING_SITE_DOGRULAMA", "msvalidate.01"),
         ("BAIDU_SITE_DOGRULAMA", "baidu-site-verification"),
     ):
-        deger = (os.environ.get(env_adi) or "").strip()
+        deger = (os.environ.get(env_adi) or "").strip() or SABIT_DOGRULAMALAR.get(meta_adi, "")
         if deger:
             etiket += f'<meta name="{meta_adi}" content="{deger}">\n'
     return etiket
