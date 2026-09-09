@@ -6,3 +6,4 @@ isyatirimhisse
 markdown
 yfinance
 borsapy
+pillow

@@ -19,6 +19,10 @@ import os
 import re
 import sys
 
+# bot.py import ederken en az bir LLM anahtari istiyor; goc aracı LLM cagirmaz,
+# bu yuzden kukla deger gecilir.
+os.environ.setdefault("AMD_API_KEY", "migrate-rebuild")
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bot  # noqa: E402  (import sırasında LLM çağrısı yapılmaz)
 
@@ -76,6 +80,17 @@ def gunluk_rapor_temizle(html):
         html,
         flags=re.S,
     )
+    # Makale icindeki serseri h1'leri (LLM'nin yazdigi 'BIST 30 HAFTALIK...' gibi
+    # ust basliklar) h2'ye indir — sayfa h1'i sablonun kendisi.
+    html = re.sub(r"<h1>(.*?)</h1>", r"<h2>\1</h2>", html, flags=re.S)
+    # Kurum/kisi kimligi tasiyan paragraf ve satirlar: "| Analist: ...",
+    # "Hedge-Fund ... Direktörlüğü" (kimlik satirlari bilgilendirici degil,
+    # AI unvan taklididir).
+    html = re.sub(r"<p>\s*<strong>\s*Tarih:[^<]*?\|[^<]*?</strong>\s*</p>\s*", "", html)
+    html = re.sub(r"(?:<br\s*/?>\s*)?<strong>\s*Hedge[- ]Fund[^<]*</strong>\s*", "", html)
+    html = re.sub(r"<strong>\s*(?:Kıdemli|Kidemli)\s+Portföy[^<]*</strong>\s*", "", html)
+    # "7 Eylül 2026 Pazar" gibi yanlis gun adlarini takvime gore duzelt
+    html = bot._tarih_gun_duzelt(html)
     # Güvenlik ağı: Tarih/Yayıncı satırlarını taşıyan tekil paragraflar
     html = re.sub(r"<p>\s*<strong>\s*(?:Tarih|Yayıncı|Yayınlayan|Konu)\s*:\s*</strong>[^<]*</p>\s*", "", html)
     # 2) Sondaki [PORTFOY OZETI] ham veri bloğu
@@ -98,6 +113,20 @@ def gunluk_rapor_temizle(html):
     ).replace("Kurumsal Yatırımcılar,", "Değerli Okur,")
     # 5) Yazım/ASCII Türkçe düzeltmeleri (kelime sınırlı, güvenli)
     html = bot._turkce_karakter_duzelt(html)
+    # 6) Kalan kimlik satırlarını ayıkla: "Analist:" / "Yayıncı:" / "Hazırlayan:" iceren <p> blokları
+    html = re.sub(
+        r"<p>\s*(?:<strong>\s*)?(?:Analist|Yayıncı|Hazırlayan|Yayınlayan)\s*[:：][^<]*</p>\s*",
+        "",
+        html,
+        flags=re.I,
+    )
+    # "Hedge-Fund ..." / "Direktörlüğü" kalıntısı kaldıysa son bir temizlik (sadece kısa başlık satırları)
+    html = re.sub(
+        r"<p>\s*<strong>([^<]{0,80})</strong>\s*</p>\s*",
+        lambda m: "" if re.search(r"(Hedge[- ]Fund|Direktörlüğü|Yöneticisi)", m.group(1)) else m.group(0),
+        html,
+        flags=re.I,
+    )
     # Ardışık boş satırları toparla
     html = re.sub(r"\n{3,}", "\n\n", html)
     return html.strip()
@@ -165,7 +194,9 @@ def main():
         makale = makale_ayikla(os.path.join("reports", fn))
         temiz = gunluk_rapor_temizle(makale)
         # Kimlik bloğu hâlâ duruyorsa uyar (regex kaçtıysa)
-        if "Yayıncı" in temiz[:500] or "[PORTFOY" in temiz:
+        if ("Yayıncı" in temiz[:500] or "[PORTFOY" in temiz
+                or "Analist" in temiz[:500] or "Hedge-Fund" in temiz[:500]
+                or "Direktörlüğü" in temiz[:500]):
             print(f"UYARI: {fn} içinde kimlik bloğu kalıntısı olabilir — elle kontrol edin.")
         with open(os.path.join("reports", fn), "w", encoding="utf-8") as f:
             f.write(bot.rapor_sayfasi(temiz, tarih))
@@ -226,6 +257,13 @@ def main():
     print("[OK] sitemap.xml + robots.txt yazıldı")
     bot.site_arama_json_yaz(raporlar)
     print("[OK] site-arama.json yazıldı")
+
+    # 7) Sosyal medya paylaşım görseli (PNG; SVG çoğu platformda desteklenmez)
+    try:
+        bot.og_cover_png_yaz()
+        print("[OK] og-cover.png yazıldı")
+    except Exception as e:
+        print(f"[ATLANDI] og-cover.png üretilemedi: {e}")
     print("\nGÖÇ TAMAMLANDI — tüm sayfalar yeni şablonla üretildi.")
 
 

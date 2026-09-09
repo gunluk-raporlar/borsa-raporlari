@@ -12,7 +12,7 @@
 <meta property="og:title" content="Günlük Piyasa Raporu - 2026-09-07">
 <meta property="og:description" content="2026-09-07 tarihli BIST 30 günlük piyasa raporu: yönetici özeti, haber ve makro değerlendirme, hisse bazlı teknik analiz ve model portföy önerisi.">
 <meta property="og:url" content="https://borsa-raporlari.onrender.com/reports/2026-09-07.html">
-<meta property="og:image" content="https://borsa-raporlari.onrender.com/og-cover.svg">
+<meta property="og:image" content="https://borsa-raporlari.onrender.com/og-cover.png">
 <meta property="og:locale" content="tr_TR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Günlük Piyasa Raporu - 2026-09-07">
@@ -123,7 +123,8 @@ body { overflow-x: hidden; }
              h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
              '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
     }).join('');
-    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ~15 dk gecikmeli</span>';
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
     iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
   }
   function yukle() {

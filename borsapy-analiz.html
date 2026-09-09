@@ -12,7 +12,7 @@
 <meta property="og:title" content="Borsapy Sinyalleri - 2026-09-08">
 <meta property="og:description" content="TradingView göstergelerinden BIST 30 osilatör özeti: AL/SAT/NÖTR oyları, RSI, MACD, Stokastik %K, CCI ve ADX değerleri. 30 dakikada bir güncellenir.">
 <meta property="og:url" content="https://borsa-raporlari.onrender.com/borsapy-analiz.html">
-<meta property="og:image" content="https://borsa-raporlari.onrender.com/og-cover.svg">
+<meta property="og:image" content="https://borsa-raporlari.onrender.com/og-cover.png">
 <meta property="og:locale" content="tr_TR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Borsapy Sinyalleri - 2026-09-08">
@@ -123,7 +123,8 @@ body { overflow-x: hidden; }
              h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
              '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
     }).join('');
-    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ~15 dk gecikmeli</span>';
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
     iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
   }
   function yukle() {
@@ -415,12 +416,16 @@ async function aiSor() {
 toplam osilatör + hareketli ortalama oylarına göre genel öneri, RSI, MACD, Stokastik %K, CCI ve ADX.
 Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.
 <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong></p>
+<p style="color:var(--muted); font-size:13px; margin-top:8px">Not: Bu sayfadaki oylar TradingView'in osilatör + hareketli ortalama özetidir;
+"Teknik Tarama" sayfasındaki EMA/Wave Trend/regresyon kanalı yönteminden bağımsızdır — bu yüzden aynı
+hisse için iki sayfa farklı sinyal gösterebilir. RSI ≥70 "aşırı alım" bölgesidir; o bölgedeki GÜÇLÜ AL
+etiketleri momentum oylarının çoğunluğunu yansıtır, aşırı alım riskini ortadan kaldırmaz.</p>
 </div>
 
 <div class="card" style="margin-bottom:20px">
 <h3 style="margin:4px 0 10px">RSI (14) — Aşırı Alım/Satım Haritası</h3>
 <div style="position:relative; height:540px">
-<canvas id="borsapy-rsi-697758"></canvas>
+<canvas id="borsapy-rsi-107430"></canvas>
 </div>
 </div>
 <script>
@@ -458,7 +463,7 @@ Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.
             });
         }
     };
-    new Chart(document.getElementById('borsapy-rsi-697758'), {
+    new Chart(document.getElementById('borsapy-rsi-107430'), {
         type: 'bar',
         data: { labels: veri.labels, datasets: [{ label: 'RSI (14)', data: veri.degerler, backgroundColor: renkler }] },
         options: {

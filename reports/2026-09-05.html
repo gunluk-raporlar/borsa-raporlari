@@ -12,7 +12,7 @@
 <meta property="og:title" content="Günlük Piyasa Raporu - 2026-09-05">
 <meta property="og:description" content="2026-09-05 tarihli BIST 30 günlük piyasa raporu: yönetici özeti, haber ve makro değerlendirme, hisse bazlı teknik analiz ve model portföy önerisi.">
 <meta property="og:url" content="https://borsa-raporlari.onrender.com/reports/2026-09-05.html">
-<meta property="og:image" content="https://borsa-raporlari.onrender.com/og-cover.svg">
+<meta property="og:image" content="https://borsa-raporlari.onrender.com/og-cover.png">
 <meta property="og:locale" content="tr_TR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Günlük Piyasa Raporu - 2026-09-05">
@@ -123,7 +123,8 @@ body { overflow-x: hidden; }
              h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
              '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
     }).join('');
-    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ~15 dk gecikmeli</span>';
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
     iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
   }
   function yukle() {
@@ -413,8 +414,7 @@ async function aiSor() {
 <h1>Günlük Piyasa Raporu</h1>
 <div class="meta"><span class="badge">2026-09-05</span><span>BIST 30 &bull; Yapay zeka destekli günlük analiz</span></div>
 </div>
-<article class="report"><h1>BIST 30 HAFTALIK YATIRIM RAPORU</h1>
-<p><strong>Tarih: 7 Eylül 2026 | Analist: Kıdemli Portföy Yöneticisi</strong></p>
+<article class="report"><h2>BIST 30 HAFTALIK YATIRIM RAPORU</h2>
 <hr />
 <h2>1. Yönetici Özeti</h2>
 <p>Piyasa, geçtiğimiz hafta boyunca <strong>jeopolitik risklerin</strong> (İran kaynaklı gerilim) ve <strong>küresel enerji şokunun</strong> (doğal gaz 71 avro) etkisi altında satış baskısı yaşamıştır. Cuma günü gelen tepki alımlarına rağmen, bu hareketin kalıcı bir trend dönüşümü sinyali olmadığını değerlendiriyoruz. Borsa İstanbul'da uygulanmaya başlanan <strong>"Yukarı Adım Kuralı"</strong> aşağı yönlü hareketleri yavaşlatabilir ancak tek başına yön değişimi için yeterli değildir.</p>
