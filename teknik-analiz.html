@@ -99,6 +99,12 @@ body { overflow-x: hidden; }
   .topbar nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
   .topbar nav a { margin-left: 0; font-size: 13px; padding: 4px 0; }
 }
+
+/* ---- Sesli okuma butonu ---- */
+.ses-btn { background:#fff; color:var(--accent); border:1px solid #99f6e4; border-radius:999px;
+           padding:4px 14px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
+.ses-btn:hover { background:var(--accent-bg); }
+.ses-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
@@ -416,11 +422,13 @@ async function aiSor() {
 Wave Trend osilatörü ve 60 günlük regresyon kanalı konumu. Kanal konumu %0=alt bant, %100=üst bant demektir;
 %100'ün üzeri fiyatın bandın üstüne çıktığını (aşırı), 0'ın altı bandın altına düştüğünü gösterir.
 Pearson (r) son 60 gündeki trendin yönünü/gücünü gösterir (negatif r, fiyatın aşağı yönlü trendini ifade eder;
-sinyal yalnızca yön göstergelerine dayanır). <strong>Son güncelleme: 09.09 04:42 (İstanbul)</strong> — piyasa
+sinyal yalnızca yön göstergelerine dayanır). <strong>Son güncelleme: 09.09 05:03 (İstanbul)</strong> — piyasa
 saatlerinde 30 dakikada bir TradingView canlı fiyatlarıyla (~15 dk gecikmeli); piyasa kapalıyken son işlem
 gününün kapanış verisiyle güncellenir. Bu sayfa EMA/Wave Trend/regresyon kanalı yöntemine dayanır;
 "Borsapy Sinyal" sayfası TradingView osilatör oylarını kullandığı için aynı hissede farklı sinyal
 gösterebilir. <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong></p>
+<button type="button" class="ses-btn" onclick="sesliOkuToggle(this,'teknik-ses-metin')" aria-label="Teknik tarama özetini sesli oku">🔊 Sesli Özeti Dinle</button>
+<div id="teknik-ses-metin" hidden>Bugün 30 hisse tarandı. Güçlü al sinyali veren 8 hisse: KCHOL, 224,10 TL; BIMAS, 419,75 TL; KRDMD, 45,66 TL; TRALT, 52,95 TL; PETKM, 24,26 TL; GUBRF, 502,00 TL; VAKBN, 36,64 TL; AKBNK, 74,70 TL. Al sinyalindeki 5 hisse: TUPRS, SAHOL, DSTKF, SISE, TOASO. Sat sinyalindeki 9 hisse: ASTOR, TAVHL, AEFES, FROTO, TCELL, THYAO, TTKOM, MGROS, PGSUS. Tüm hisselerin sinyal ve göstergeleri tabloda yer alıyor.</div>
 </div>
 
 <h2 class="section-title">Sektörel Isı Haritası <span style="font-size:12px; color:var(--muted); font-weight:400">(günlük değişim ortalaması)</span></h2>
@@ -475,6 +483,39 @@ function tvKapat() {
   document.getElementById('tv-chart').innerHTML = '';
 }
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') tvKapat(); });
+</script>
+<script>
+(function() {
+  if (!('speechSynthesis' in window)) { return; }
+  // Chrome bazi sesleri gec yukler; sayfa acilir acilmaz ses listesini isit.
+  var sesleriIsit = function() { try { window.speechSynthesis.getVoices(); } catch (e) {} };
+  sesleriIsit();
+  if (window.speechSynthesis.onvoiceschanged === null) {
+    window.speechSynthesis.onvoiceschanged = sesleriIsit;
+  }
+  window.sesliOkuToggle = function(btn, kaynakId) {
+    var S = window.speechSynthesis;
+    var durum = btn.getAttribute('data-durum') || 'durdu';
+    if (durum === 'okunuyor') { S.pause(); btn.textContent = '\u25b6 Devam'; btn.setAttribute('data-durum', 'bekliyor'); return; }
+    if (durum === 'bekliyor') { S.resume(); btn.textContent = '\u23f8 Duraklat'; btn.setAttribute('data-durum', 'okunuyor'); return; }
+    S.cancel();
+    var kaynak = document.getElementById(kaynakId);
+    var metin = kaynak ? (kaynak.textContent || '') : '';
+    metin = metin.replace(/\s+/g, ' ').trim();
+    if (!metin) { return; }
+    var u = new SpeechSynthesisUtterance(metin);
+    u.lang = 'tr-TR';
+    var sesListe = S.getVoices() || [];
+    var trSes = sesListe.filter(function(v) { return v.lang && v.lang.toLowerCase().indexOf('tr') === 0; })[0] || null;
+    if (trSes) { u.voice = trSes; }
+    u.rate = 1.0;
+    u.onend = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    u.onerror = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    btn.textContent = '\u23f8 Duraklat';
+    btn.setAttribute('data-durum', 'okunuyor');
+    S.speak(u);
+  };
+})();
 </script>
 </main>
 

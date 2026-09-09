@@ -1273,6 +1273,12 @@ body { overflow-x: hidden; }
   .topbar nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
   .topbar nav a { margin-left: 0; font-size: 13px; padding: 4px 0; }
 }
+
+/* ---- Sesli okuma butonu ---- */
+.ses-btn { background:#fff; color:var(--accent); border:1px solid #99f6e4; border-radius:999px;
+           padding:4px 14px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
+.ses-btn:hover { background:var(--accent-bg); }
+.ses-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 """
 
 
@@ -1642,6 +1648,99 @@ def _kendi_ticker(kok=""):
 </script>"""
 
 
+def _sesli_okuma_js():
+    """Tarayicinin yerlesik Web Speech API'si ile 'sesli oku' denetimi.
+
+    Harici servis / API anahtari / kayit yok: tarayici + isletim sisteminin
+    yerlesik sesleri kullanilir (Windows: 'Microsoft Tolga' vb. tr-TR ses;
+    tr ses yoksa varsayilan ses konusur). Buton uc durumludur:
+    okunuyor -> Duraklat, bekliyor -> Devam, durdu -> yeniden baslat."""
+    return r"""<script>
+(function() {
+  if (!('speechSynthesis' in window)) { return; }
+  // Chrome bazi sesleri gec yukler; sayfa acilir acilmaz ses listesini isit.
+  var sesleriIsit = function() { try { window.speechSynthesis.getVoices(); } catch (e) {} };
+  sesleriIsit();
+  if (window.speechSynthesis.onvoiceschanged === null) {
+    window.speechSynthesis.onvoiceschanged = sesleriIsit;
+  }
+  window.sesliOkuToggle = function(btn, kaynakId) {
+    var S = window.speechSynthesis;
+    var durum = btn.getAttribute('data-durum') || 'durdu';
+    if (durum === 'okunuyor') { S.pause(); btn.textContent = '\u25b6 Devam'; btn.setAttribute('data-durum', 'bekliyor'); return; }
+    if (durum === 'bekliyor') { S.resume(); btn.textContent = '\u23f8 Duraklat'; btn.setAttribute('data-durum', 'okunuyor'); return; }
+    S.cancel();
+    var kaynak = document.getElementById(kaynakId);
+    var metin = kaynak ? (kaynak.textContent || '') : '';
+    metin = metin.replace(/\s+/g, ' ').trim();
+    if (!metin) { return; }
+    var u = new SpeechSynthesisUtterance(metin);
+    u.lang = 'tr-TR';
+    var sesListe = S.getVoices() || [];
+    var trSes = sesListe.filter(function(v) { return v.lang && v.lang.toLowerCase().indexOf('tr') === 0; })[0] || null;
+    if (trSes) { u.voice = trSes; }
+    u.rate = 1.0;
+    u.onend = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    u.onerror = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    btn.textContent = '\u23f8 Duraklat';
+    btn.setAttribute('data-durum', 'okunuyor');
+    S.speak(u);
+  };
+})();
+</script>"""
+
+
+def _tl_okunus(deger):
+    """224.1 -> '224,10'; 2450.0 -> '2.450,00' (Turkce sayi bicimi, sesli
+    okumada nokta/virgul karisikligi olmasin)."""
+    s = f"{deger:,.2f}"
+    return s.replace(",", "X").replace(".", ",").replace("X", ".")
+
+
+def _teknik_ses_metni(satirlar):
+    """Teknik tarama sayfasi icin sesli ozet: 30 satirlik tabloyu tek tek
+    okutmak yerine kisa, anlamli bir ozet konusulur."""
+    if not satirlar:
+        return "Teknik tarama verisi bulunamadı."
+    guclu = [s for s in satirlar if s["genel"] == "GÜÇLÜ AL"]
+    al = [s for s in satirlar if s["genel"] == "AL"]
+    sat = [s for s in satirlar if s["genel"] in ("SAT", "GÜÇLÜ SAT")]
+    parcalar = [f"Bugün {len(satirlar)} hisse tarandı."]
+    if guclu:
+        liste = "; ".join(f"{s['hisse']}, {_tl_okunus(s['son'])} TL" for s in guclu)
+        parcalar.append(f"Güçlü al sinyali veren {len(guclu)} hisse: {liste}.")
+    if al:
+        parcalar.append(f"Al sinyalindeki {len(al)} hisse: " + ", ".join(s["hisse"] for s in al) + ".")
+    if sat:
+        parcalar.append(f"Sat sinyalindeki {len(sat)} hisse: " + ", ".join(s["hisse"] for s in sat) + ".")
+    parcalar.append("Tüm hisselerin sinyal ve göstergeleri tabloda yer alıyor.")
+    return " ".join(parcalar)
+
+
+def _borsapy_ses_metni(satirlar):
+    """Borsapy sinyal sayfasi icin sesli ozet: oneri dagilimi + asiri alim/satim
+    bolgesindeki hisseler (RSI esikleri)."""
+    if not satirlar:
+        return "Borsapy sinyal verisi bulunamadı."
+    guclu = [s for s in satirlar if s["oneri"] == "GÜÇLÜ AL"]
+    sat = [s for s in satirlar if s["oneri"] in ("SAT", "GÜÇLÜ SAT")]
+    notr = [s for s in satirlar if s["oneri"] == "NÖTR"]
+    asiri_alim = [s for s in satirlar if isinstance(s.get("rsi"), (int, float)) and s["rsi"] >= 70]
+    asiri_satim = [s for s in satirlar if isinstance(s.get("rsi"), (int, float)) and s["rsi"] <= 30]
+    parcalar = [f"TradingView osilatör oylarına göre {len(satirlar)} hisse değerlendirildi."]
+    if guclu:
+        parcalar.append(f"Güçlü al sinyali veren {len(guclu)} hisse: " + ", ".join(s["hisse"] for s in guclu) + ".")
+    if notr:
+        parcalar.append(f"Nötr sinyaldeki hisseler: " + ", ".join(s["hisse"] for s in notr) + ".")
+    if sat:
+        parcalar.append(f"Sat sinyalindeki hisseler: " + ", ".join(s["hisse"] for s in sat) + ".")
+    if asiri_alim:
+        parcalar.append("RSI yetmiş üzerinde, aşırı alım bölgesindeki hisseler: " + ", ".join(s["hisse"] for s in asiri_alim) + ".")
+    if asiri_satim:
+        parcalar.append("RSI otuz altında, aşırı satım bölgesindeki hisseler: " + ", ".join(s["hisse"] for s in asiri_satim) + ".")
+    return " ".join(parcalar)
+
+
 def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None):
     """Tum sayfalar icin ortak iskelet (ust menu + govde + altbilgi).
 
@@ -1764,10 +1863,12 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
     icerik = f"""
 <div class="hero">
 <h1>{baslik}</h1>
-<div class="meta"><span class="badge">{date_str}</span><span>{alt_baslik}</span></div>
+<div class="meta"><span class="badge">{date_str}</span><span>{alt_baslik}</span>
+<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-ses-metin')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button></div>
 </div>
-<article class="report">{html_icerik}</article>
-<p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>"""
+<article class="report" id="rapor-ses-metin">{html_icerik}</article>
+<p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>
+{_sesli_okuma_js()}"""
     return _sayfa(f"{baslik} - {date_str}", icerik, "raporlar", kok="../",
                   aciklama=aciklama, yol=kok_yol)
 
@@ -2331,6 +2432,8 @@ saatlerinde 30 dakikada bir TradingView canlı fiyatlarıyla (~15 dk gecikmeli);
 gününün kapanış verisiyle güncellenir. Bu sayfa EMA/Wave Trend/regresyon kanalı yöntemine dayanır;
 "Borsapy Sinyal" sayfası TradingView osilatör oylarını kullandığı için aynı hissede farklı sinyal
 gösterebilir. <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong></p>
+<button type="button" class="ses-btn" onclick="sesliOkuToggle(this,'teknik-ses-metin')" aria-label="Teknik tarama özetini sesli oku">🔊 Sesli Özeti Dinle</button>
+<div id="teknik-ses-metin" hidden>{_teknik_ses_metni(satirlar)}</div>
 </div>
 {_sektor_isi_haritasi(satirlar)}
 <div class="card" style="padding:8px 24px 16px">
@@ -2342,7 +2445,8 @@ gösterebilir. <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</str
 </div>
 <p style="margin:12px 0 4px; color:var(--muted); font-size:13px">Bugün {len(satirlar)} hisse tarandı; {guclu} hisse GÜÇLÜ AL sinyalinde. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
 </div>
-{_tv_modal_js()}"""
+{_tv_modal_js()}
+{_sesli_okuma_js()}"""
     return _sayfa(
         f"Teknik Tarama - {date_str}", icerik, "teknik", yol="teknik-analiz.html",
         aciklama="BIST 30 teknik tarama tablosu: EMA dizilim sinyalleri, Wave Trend osilatörü, regresyon kanalı konumu ve Pearson korelasyonu. Piyasa saatlerinde 30 dakikada bir güncellenir.",
@@ -2501,6 +2605,8 @@ Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.
 "Teknik Tarama" sayfasındaki EMA/Wave Trend/regresyon kanalı yönteminden bağımsızdır — bu yüzden aynı
 hisse için iki sayfa farklı sinyal gösterebilir. RSI ≥70 "aşırı alım" bölgesidir; o bölgedeki GÜÇLÜ AL
 etiketleri momentum oylarının çoğunluğunu yansıtır, aşırı alım riskini ortadan kaldırmaz.</p>
+<button type="button" class="ses-btn" onclick="sesliOkuToggle(this,'borsapy-ses-metin')" aria-label="Sinyal özetini sesli oku">🔊 Sesli Özeti Dinle</button>
+<div id="borsapy-ses-metin" hidden>{_borsapy_ses_metni(satirlar)}</div>
 </div>
 {grafik}
 <div class="card" style="padding:8px 24px 16px">
@@ -2512,7 +2618,8 @@ etiketleri momentum oylarının çoğunluğunu yansıtır, aşırı alım riskin
 </div>
 <p style="margin:12px 0 4px; color:var(--muted); font-size:13px">{len(satirlar)} hisse sorgulandı; {guclu} hisse GÜÇLÜ AL. RSI &ge;70 aşırı alım, &le;30 aşırı satım bölgesidir. ADX &gt;25 güçlü trend gösterir. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
 </div>
-{_tv_modal_js()}"""
+{_tv_modal_js()}
+{_sesli_okuma_js()}"""
     return _sayfa(
         f"Borsapy Sinyalleri - {date_str}", icerik, "borsapy", yol="borsapy-analiz.html",
         aciklama="TradingView göstergelerinden BIST 30 osilatör özeti: AL/SAT/NÖTR oyları, RSI, MACD, Stokastik %K, CCI ve ADX değerleri. 30 dakikada bir güncellenir.",

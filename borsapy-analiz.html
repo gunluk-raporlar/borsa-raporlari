@@ -99,6 +99,12 @@ body { overflow-x: hidden; }
   .topbar nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
   .topbar nav a { margin-left: 0; font-size: 13px; padding: 4px 0; }
 }
+
+/* ---- Sesli okuma butonu ---- */
+.ses-btn { background:#fff; color:var(--accent); border:1px solid #99f6e4; border-radius:999px;
+           padding:4px 14px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
+.ses-btn:hover { background:var(--accent-bg); }
+.ses-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
@@ -420,12 +426,14 @@ Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.
 "Teknik Tarama" sayfasındaki EMA/Wave Trend/regresyon kanalı yönteminden bağımsızdır — bu yüzden aynı
 hisse için iki sayfa farklı sinyal gösterebilir. RSI ≥70 "aşırı alım" bölgesidir; o bölgedeki GÜÇLÜ AL
 etiketleri momentum oylarının çoğunluğunu yansıtır, aşırı alım riskini ortadan kaldırmaz.</p>
+<button type="button" class="ses-btn" onclick="sesliOkuToggle(this,'borsapy-ses-metin')" aria-label="Sinyal özetini sesli oku">🔊 Sesli Özeti Dinle</button>
+<div id="borsapy-ses-metin" hidden>TradingView osilatör oylarına göre 30 hisse değerlendirildi. Güçlü al sinyali veren 19 hisse: ISCTR, PETKM, SISE, VAKBN, SASA, SAHOL, KCHOL, AKBNK, TUPRS, GUBRF, YKBNK, TOASO, BIMAS, GARAN, DSTKF, EKGYO, KRDMD, EREGL, TRALT. Nötr sinyaldeki hisseler: TAVHL. Sat sinyalindeki hisseler: TCELL, ASTOR, MGROS. RSI yetmiş üzerinde, aşırı alım bölgesindeki hisseler: ISCTR, PETKM, SISE, VAKBN.</div>
 </div>
 
 <div class="card" style="margin-bottom:20px">
 <h3 style="margin:4px 0 10px">RSI (14) — Aşırı Alım/Satım Haritası</h3>
 <div style="position:relative; height:540px">
-<canvas id="borsapy-rsi-107430"></canvas>
+<canvas id="borsapy-rsi-947567"></canvas>
 </div>
 </div>
 <script>
@@ -463,7 +471,7 @@ etiketleri momentum oylarının çoğunluğunu yansıtır, aşırı alım riskin
             });
         }
     };
-    new Chart(document.getElementById('borsapy-rsi-107430'), {
+    new Chart(document.getElementById('borsapy-rsi-947567'), {
         type: 'bar',
         data: { labels: veri.labels, datasets: [{ label: 'RSI (14)', data: veri.degerler, backgroundColor: renkler }] },
         options: {
@@ -531,6 +539,39 @@ function tvKapat() {
   document.getElementById('tv-chart').innerHTML = '';
 }
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') tvKapat(); });
+</script>
+<script>
+(function() {
+  if (!('speechSynthesis' in window)) { return; }
+  // Chrome bazi sesleri gec yukler; sayfa acilir acilmaz ses listesini isit.
+  var sesleriIsit = function() { try { window.speechSynthesis.getVoices(); } catch (e) {} };
+  sesleriIsit();
+  if (window.speechSynthesis.onvoiceschanged === null) {
+    window.speechSynthesis.onvoiceschanged = sesleriIsit;
+  }
+  window.sesliOkuToggle = function(btn, kaynakId) {
+    var S = window.speechSynthesis;
+    var durum = btn.getAttribute('data-durum') || 'durdu';
+    if (durum === 'okunuyor') { S.pause(); btn.textContent = '\u25b6 Devam'; btn.setAttribute('data-durum', 'bekliyor'); return; }
+    if (durum === 'bekliyor') { S.resume(); btn.textContent = '\u23f8 Duraklat'; btn.setAttribute('data-durum', 'okunuyor'); return; }
+    S.cancel();
+    var kaynak = document.getElementById(kaynakId);
+    var metin = kaynak ? (kaynak.textContent || '') : '';
+    metin = metin.replace(/\s+/g, ' ').trim();
+    if (!metin) { return; }
+    var u = new SpeechSynthesisUtterance(metin);
+    u.lang = 'tr-TR';
+    var sesListe = S.getVoices() || [];
+    var trSes = sesListe.filter(function(v) { return v.lang && v.lang.toLowerCase().indexOf('tr') === 0; })[0] || null;
+    if (trSes) { u.voice = trSes; }
+    u.rate = 1.0;
+    u.onend = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    u.onerror = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    btn.textContent = '\u23f8 Duraklat';
+    btn.setAttribute('data-durum', 'okunuyor');
+    S.speak(u);
+  };
+})();
 </script>
 </main>
 

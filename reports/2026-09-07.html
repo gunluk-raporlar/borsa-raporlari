@@ -99,6 +99,12 @@ body { overflow-x: hidden; }
   .topbar nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
   .topbar nav a { margin-left: 0; font-size: 13px; padding: 4px 0; }
 }
+
+/* ---- Sesli okuma butonu ---- */
+.ses-btn { background:#fff; color:var(--accent); border:1px solid #99f6e4; border-radius:999px;
+           padding:4px 14px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
+.ses-btn:hover { background:var(--accent-bg); }
+.ses-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
@@ -412,9 +418,10 @@ async function aiSor() {
     
 <div class="hero">
 <h1>Günlük Piyasa Raporu</h1>
-<div class="meta"><span class="badge">2026-09-07</span><span>BIST 30 &bull; Yapay zeka destekli günlük analiz</span></div>
+<div class="meta"><span class="badge">2026-09-07</span><span>BIST 30 &bull; Yapay zeka destekli günlük analiz</span>
+<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-ses-metin')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button></div>
 </div>
-<article class="report"><h2>1. Yönetici Özeti</h2>
+<article class="report" id="rapor-ses-metin"><h2>1. Yönetici Özeti</h2>
 <ul>
 <li>
 <p><strong>Piyasa Yönü:</strong> <strong>TEMKİNLİ VE SEÇİCİ</strong> duruşumuzu koruyoruz. Geçtiğimiz hafta boyunca vurguladığımız aşağı yönlü baskı ve jeopolitik riskler devam ediyor. Cuma günü yaşanan tepki alımları kalıcı bir trend dönüşümü sinyali vermemektedir. Endekste net bir dönüş sinyali alınana kadar pozisyon boyutları küçük, nakit oranı yüksek tutulmalıdır.</p>
@@ -595,6 +602,39 @@ async function aiSor() {
 <hr />
 <p><strong>Yasal Uyarı:</strong> Bu rapor yatırım tavsiyesi değildir. Yalnızca bilgilendirme amaçlıdır. Yatırım kararlarınızı kendi araştırmanıza dayandırınız.</p></article>
 <p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>
+<script>
+(function() {
+  if (!('speechSynthesis' in window)) { return; }
+  // Chrome bazi sesleri gec yukler; sayfa acilir acilmaz ses listesini isit.
+  var sesleriIsit = function() { try { window.speechSynthesis.getVoices(); } catch (e) {} };
+  sesleriIsit();
+  if (window.speechSynthesis.onvoiceschanged === null) {
+    window.speechSynthesis.onvoiceschanged = sesleriIsit;
+  }
+  window.sesliOkuToggle = function(btn, kaynakId) {
+    var S = window.speechSynthesis;
+    var durum = btn.getAttribute('data-durum') || 'durdu';
+    if (durum === 'okunuyor') { S.pause(); btn.textContent = '\u25b6 Devam'; btn.setAttribute('data-durum', 'bekliyor'); return; }
+    if (durum === 'bekliyor') { S.resume(); btn.textContent = '\u23f8 Duraklat'; btn.setAttribute('data-durum', 'okunuyor'); return; }
+    S.cancel();
+    var kaynak = document.getElementById(kaynakId);
+    var metin = kaynak ? (kaynak.textContent || '') : '';
+    metin = metin.replace(/\s+/g, ' ').trim();
+    if (!metin) { return; }
+    var u = new SpeechSynthesisUtterance(metin);
+    u.lang = 'tr-TR';
+    var sesListe = S.getVoices() || [];
+    var trSes = sesListe.filter(function(v) { return v.lang && v.lang.toLowerCase().indexOf('tr') === 0; })[0] || null;
+    if (trSes) { u.voice = trSes; }
+    u.rate = 1.0;
+    u.onend = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    u.onerror = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    btn.textContent = '\u23f8 Duraklat';
+    btn.setAttribute('data-durum', 'okunuyor');
+    S.speak(u);
+  };
+})();
+</script>
 </main>
 
 <footer class="footer">Bilgilendirme amacıyla hazırlanmıştır, yatırım tavsiyesi değildir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
