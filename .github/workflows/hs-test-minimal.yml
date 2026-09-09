@@ -1,0 +1,19 @@
+name: HS Test Minimal
+on:
+  schedule:
+    - cron: '30 14 * * 0'
+  workflow_dispatch:
+    inputs:
+      FORCE:
+        description: 'test'
+        required: false
+        default: ''
+permissions:
+  contents: write
+jobs:
+  gundem:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo merhaba
