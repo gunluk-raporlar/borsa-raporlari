@@ -19,6 +19,7 @@ import os
 import re
 import sys
 import json
+import time
 import glob
 import shutil
 import asyncio
@@ -175,6 +176,55 @@ def _transkript_kaydet(veri, satirlar):
     return yol
 
 
+def _genis_haberler(kategori_basina=4):
+    """Sadece TR finans degil: ticaret, para/doviz, jeopolitik, dunya ekonomisi
+    ve emlak basliklarini da toplar (haftasonu ajaninin kaynak havuzundan).
+    Kullanici istegi: yayin sadece TR hisse haberi degil, genis ekonomi sohbeti
+    olsun. Hata/gecikme radyoyu bloklamaz; toplanamazsa bos doner."""
+    try:
+        import feedparser
+        import haftasonu
+    except Exception as e:
+        logger.warning("Genis haber havuzu acilamadi: %s", e)
+        return {}
+    sonuc = {}
+    for kat, kaynaklar in haftasonu.kategoriler().items():
+        if kat.startswith("Ekonomi & Finans"):
+            continue  # TR finans zaten _gunun_verisi'nde var
+        liste, gorulen = [], set()
+        for ad, url in kaynaklar[:4]:
+            try:
+                f = feedparser.parse(url)
+                for e in f.entries[:6]:
+                    # Tazelik filtresi: GoogleNews eski basliklar da donduruyor;
+                    # radyo gundemi 72 saatten eski haberle konusmasin.
+                    try:
+                        import calendar as _cal
+                        yayin_ts = _cal.timegm(e.published_parsed)
+                        if time.time() - yayin_ts > 72 * 3600:
+                            continue
+                    except (AttributeError, KeyError, TypeError):
+                        pass  # tarihsiz entry: kaynak guvenliyse gec
+                    b = re.sub(r"^\[[^\]]*\]\s*", "", e.title).strip()
+                    anahtar = re.sub(r"[^a-z0-9çğıöşü]", "", b.lower())
+                    if not b or anahtar in gorulen:
+                        continue
+                    for k in ("spor", "futbol", "magazin", "dizi", "survivor", "masterchef"):
+                        if k in b.lower():
+                            break
+                    else:
+                        gorulen.add(anahtar)
+                        liste.append(f"[{ad}] {b}")
+            except Exception:
+                continue
+            time.sleep(0.2)
+            if len(liste) >= kategori_basina:
+                break
+        if liste:
+            sonuc[kat] = liste[:kategori_basina]
+    return sonuc
+
+
 def _gunun_verisi():
     """Sohbetin dayanacagi veri ozetini toplar (LLM promptuna ve sablona ortak)."""
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
@@ -213,12 +263,19 @@ def _gunun_verisi():
                    f"Karşılaştırmalar: altın {bot._tl_okunus(b.get('GOLD', 0))} TL, "
                    f"dolar {bot._tl_okunus(b.get('USD', 0))} TL, "
                    f"mevduat {bot._tl_okunus(b.get('DEPOSIT', 0))} TL.")
+    # Genis havuz: ticaret/para/jeopolitik/dunya/emlak (hata olursa bos sozluk)
+    try:
+        genis = _genis_haberler()
+    except Exception:
+        genis = {}
+
     # Onceki yayinlarin transkriptleri (hafiza / sureklilik)
     gecmis = _gecmis_yayin_metni(bugun)
     return {
         "bugun": bugun,
         "guncelleme": datetime.now(tz).strftime("%d.%m %H:%M"),
         "haberler": haberler,
+        "genis_haberler": genis,
         "guclu": guclu,
         "en_hareketli": en_hareketli,
         "pf_ozet": pf_ozet,
@@ -228,45 +285,53 @@ def _gunun_verisi():
 
 
 # ---------- Sohbet metni ----------
-_PROMPT_SABLON = """Sen bir ekonomi radyosu sohbet yazari yapay zekasısın. BIST Radyo için iki kurgusal sunucunun (Ela ve Mert) DOĞAL bir piyasa programını yaz. İkisi de GERÇEK KİŞİ DEĞİL, yapay zeka sunuculardır; kimlik/unvan taklidi yapma (analist, direktör vb. demeyin). Program; birbirine laf atan, soru soran, aynı fikirde olmayabilen, yorum yapan ve senaryolu beklentisini paylaşan iki sunucunun sohbeti gibi olmalı — tebliğ/duyuru değil, sohbet.
+_PROMPT_SABLON = """Sen bir ekonomi radyosu sohbet yazari yapay zekasisin. BIST Radyo icin iki kurgusal sunucunun (Ela ve Mert) UZUN, DOĞAÇLAMA tarzi bir piyasa programini yaz. Ikisi de GERCEK KISI DEGIL, yapay zeka sunuculardir; kimlik/unvan taklidi yapma (analist, direktör vb. demeyin). Program; birbirine laf atan, soru soran, ayni fikirde olmayabilen, konudan konuya dogal gecen, yorum yapan ve senaryolu beklentisini paylasan iki sunucunun keyifli sohbeti gibi olmali — teblig/duyuru DEGIL, yayin akisi olan bir sohbet.
 
-KARAKTERLER (kurgusal, abartısız):
-- ELA: makro tarafı ağır basar; sakin, meraklı, soru sorar, rakamların ardındaki hikayeyi arar.
-- MERT: piyasa/teknik tarafı ağır basar; biraz daha atak ve esprili, sezgiyle konuşur, Ela'nın fikrine bazen katılır bazen nazikçe karşı çıkar.
+KARAKTERLER (kurgusal, abartisiz):
+- ELA: makro ve jeopolitik tarafi agir basar; sakin, merakli, soru sorar, rakamlarin arkasindaki hikayeyi arar, zaman zaman Mert'in iyimserligini dengeleyen seyler soyler.
+- MERT: piyasa/teknik tarafi agir basar; biraz daha atak ve esprili, sezgiyle konusur, Ela'nin fikrine bazen katilir bazen nazikce karsi cikar ("bak ben tam tersini dusunuyorum..." gibi).
 
 FORMAT:
-- Her satır TAM OLARAK "ELA: " veya "MERT: " ile başlar, karşılıklı diyalog halinde ilerler.
-- Toplam 18-24 replik. Replikler KISA ve konuşma dilinde: 1-3 cümle; soru, tepki, onay, karşı çıkma, espri serpiştir. Madde işareti/tablo/başlık KULLANMA.
-- Bazı replikler birbirine bağlansın (Mert'in sorusuna Ela cevap versin), böylece kopuk monolog yerine gerçek bir sohbet olsun.
+- Her satir TAM OLARAK "ELA: " veya "MERT: " ile baslar, karsilikli diyalog halinde ilerler.
+- Toplam 36-44 replik. Replikler konusma dilinde 1-4 cumle; soru, tepki, onay, karsi cikma, kisa espi, birbirinin cumlesini tamamlama serpistir. Madde isareti/tablo/baslik KULLANMA.
+- Ayni fikri farkli cumlelerle tekrar etme; her replik sohbete bir sey katsin.
 
-AKIŞ (bölüme göre esnet):
-1) Selamlama + günün havası (hissiyat, ilk izlenim)
-2) Gündem: haberleri kendi cümleleriyle YORUMLAYIN (sadece okumayın): bu ne anlama gelir, kime ne yarar/zarar
-3) Öne çıkan hisseler ve hareketler: neden hareket etmiş olabileceğine dair sohbet/yorum
-4) Deneme portföyü + altın/dolar karşılaştırması üzerine yorum
-5) TAHMİN BÖLÜMÜ: Mert ve Ela günün geri kalanı/yarın için SENARYOLU beklentilerini söyler ("bence...", "eğer ... olursa ...", "benim okumam şöyle..."); kesin iddia değil, kişisel AI yorumu olduğu hissettirilsin.
-6) Kapanış: kısa toparlama + bir kez "Bu yayın bilgilendirme amaçlıdır, yatırım tavsiyesi değildir; tahminler yapay zekanın görüşüdür."
+AKIS (bolumlere gore esnet; her bolum 4-7 replik olsun, bolumler arasi dogal gecis cumleleri kur):
+1) Selamlama + gunun havasi (hissiyat, ilk izlenim; gecen yayinla kiyas)
+2) EKONOMI & FINANS (Turkiye): gunun haberlerini kendi cumleleriyle YORUMLAYIN (sadece okumayin): bu ne anlama gelir, kime ne yarar/zarar, piyasada nasil karsilik bulur
+3) PARA & DOVIZ: kur, altin, faiz beklentileri uzerine sohbet; portfoy karsilastirmasiyla (altin/dolar/mevduat) baglantili yorum
+4) TICARET & DIS TICARET: ihracat/ithalat/ticaret basliklari varsa yorumlayin; yoksa kisa gecin
+5) JEOPOLITIK & DUNYA EKONOMISI: cografyanin fiyatlara/enerjiye/risk iktahasina etkisi uzerine karsilikli fikirler
+6) ONE CIKAN HISSELER: teknik taranan/one cikan hisseler uzerine "neden hareket etmis olabilir" sohbeti
+7) TAHMIN TURU: HER IKISI de kalan gun/yarin/icin EN AZ IKISENARYO soyler ("bence...", "eger ... olursa ...", "benim okumam suyle..."); yapay zeka gorusu oldugu hissedilsin
+8) Kapanis: kisa toparlama + bir kez "Bu yayin bilgilendirme amaclidir, yatirim tavsiyesi degildir; tahminler yapay zekanin gorusudur."
 
-HAFIZA (çok önemli): [GEÇMİŞ YAYINLAR] bölümündeki eski yayınlardan bir-iki tanesine doğal biçimde atıf yapın ("Dün kapanışta... demiştik, bugün ... görüyoruz" gibi). Geçmişte söylediklerinizle çelişiyorsanız bunu açıkça söyleyin ("o zaman temkinliydik, haklı çıktık" ya da "yanılmışız, nedenini konuşalım").
+DOGACLAMA PUANLARI (sohbeti canli tutmak icin serpistirin, mekanik olmasin):
+- Biri digerinin cumlesini yarida yakalayip devam ettirsin veya itiraz etsin.
+- Ara sira kisa "stüdyo" ani: "su arada bizim teknik ekrana bakalim" gibi gecisler.
+- Gecmis yayinlara dogal atif: "[GECMIS YAYINLAR]'daki bir tespiti hatirlayip bugunkununla kiyaslayin; yanlis tahmin ettiyseniz bunu acikca konusun."
 
 SINIRLAR:
-- Somut fiyatlar ve veriler YALNIZCA sağlanan bölümlerden alınır; dışarıdan uydurma rakam ekleme. Rakamları metinde "224,10 TL" biçiminde yaz (seslendirme otomatik çevirir).
-- Tahminler senaryolu ve görüş niteliğinde olsun; "kesin" ifadelerden ve doğrudan al-sat yönlendirmesinden kaçının.
-- Türkçe karakterlere dikkat.
+- Somut fiyatlar ve veriler YALNIZCA saglanan bolumlerden alinir; disaridan uydurma rakam ekleme. Rakamlari metinde "224,10 TL" biçiminde yaz (seslendirme otomatik cevirir).
+- Tahminler senaryolu ve gorus niteliginde; "kesin" ifadelerden ve dogrudan al-sat yonlendirmesinden kacin.
+- Turkce karakterlere dikkat; kisa ve agizdan cikacak cumleler.
 
-[GEÇMİŞ YAYINLAR]
+[GECMIS YAYINLAR]
 {gecmis}
 
-[GÜNÜN HABERLERİ]
+[EKONOMI & FINANS - TURKIYE HABERLERI]
 {haberler}
 
-[TEKNİK TARAMA - ÖNE ÇIKANLAR]
+[PARA & DOVIZ / TICARET / JEOPOLITIK / DUNYA - GENIS HAVUZ]
+{genis}
+
+[TEKNIK TARAMA - ONE CIKANLAR]
 {guclu}
 
-[EN HAREKETLİ HİSSELER]
+[EN HAREKETLI HISSELER]
 {hareketli}
 
-[PORTFÖY]
+[PORTFOY]
 {pf}"""
 
 
@@ -284,6 +349,13 @@ def _sablon_sohbet(v):
     if v["haberler"]:
         for h in v["haberler"][1:3]:
             satirlar.append(f"ELA: Bir de şu başlık dikkat çekiyor: {h}.")
+    for kat, liste in (v.get("genis_haberler") or {}).items():
+        if not liste:
+            continue
+        satirlar.append(f"MERT: Şimdi {kat.lower()} tarafına bakalım; orada neler oluyor?")
+        for h in liste[:2]:
+            satirlar.append(f"ELA: {kat} gündeminde şu başlık öne çıkıyor: {h}.")
+        break  # sablonda tek kategori yeter; LLM'li yayinlarda hepsi konusulur
     if v["guclu"]:
         satirlar.append("MERT: Teknik tarafta güçlü al sinyali veren hisselere bakalım.")
         for s in v["guclu"]:
@@ -306,9 +378,20 @@ def _sablon_sohbet(v):
 
 
 def _sohbet_uret(v):
-    """Once LLM dener; sonuc bozuk/ulasilamazsa sablona dusulur."""
+    """Once LLM dener; sonuc bozuk/ulasilamazsa sablona dusulur. SKIP_LLM=1
+    verilirse dogrudan sablon kullanilir (hizli test icin)."""
+    if os.environ.get("SKIP_LLM") == "1":
+        return _sablon_sohbet(v)
+    genis_blok = ""
+    for kat, liste in (v.get("genis_haberler") or {}).items():
+        if liste:
+            genis_blok += "\n" + kat + ":\n" + "\n".join("- " + h for h in liste)
+    if not genis_blok:
+        genis_blok = "(genis havuz haberleri alinamadi)"
+
     prompt = _PROMPT_SABLON.format(
         gecmis=v.get("gecmis") or "(henüz eski yayın yok)",
+        genis=genis_blok,
         haberler="\n".join("- " + h for h in v["haberler"]) or "(bugun haber alinamadi)",
         guclu="\n".join(
             f"{s['hisse']} ({s.get('sektor', '')}): {bot._tl_okunus(s['son'])} TL, gunluk {s['gunluk']:+.2f}%"
@@ -334,6 +417,9 @@ def _sohbet_uret(v):
         logger.warning("LLM kullanilamadi; veri tabanli sablon sohbet kullanilacak.")
         return _sablon_sohbet(v)
 
+    # Dongu korumasi: birebir ayni satirlari dusur (GLM ayni repligi tekrar edebiliyor)
+    metin = bot._tekrar_satirlarini_temizle(metin)
+
     satirlar = []
     for satir in metin.splitlines():
         s = satir.strip()
@@ -346,12 +432,14 @@ def _sohbet_uret(v):
         icerik = re.sub(r"\s+", " ", m.group(2)).strip()
         if icerik and not icerik.lower().startswith(("ela:", "mert:")):
             satirlar.append(f"{konusan}: {icerik}")
-    # Program uzunlugu: en az 12 replik (yoksa sablona), en fazla 26 (ses dosyasi sismesin)
-    if len(satirlar) < 12:
-        logger.warning("LLM sohbeti yetersiz (%d replik); sablon kullanilacak.", len(satirlar))
-        return _sablon_sohbet(v)
-    if len(satirlar) > 26:
-        satirlar = satirlar[:26]
+    # Program uzunlugu: uzun sohbet istegi — en az 24 replik, en fazla 48
+    if len(satirlar) < 24:
+        logger.warning("LLM sohbeti kisa kaldi (%d replik); sablonla tamamlaniyor.", len(satirlar))
+        sablon = _sablon_sohbet(v)
+        eksik = 24 - len(satirlar)
+        satirlar = satirlar + sablon[-eksik:] if eksik < len(sablon) else satirlar + sablon
+    if len(satirlar) > 48:
+        satirlar = satirlar[:48]
     return satirlar
 
 
