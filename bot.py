@@ -2027,11 +2027,37 @@ def _renk(deger):
     return "pos" if deger >= 0 else "neg"
 
 
+def html_temizle(html_metin):
+    """LLM cikisindan gelen HTML'de tehlikeli kirimlari kaldirir (XSS savunmasi).
+
+    Rapor icerigi haber RSS'leri + model cikisindan beslendigi icin, zehirli
+    bir haber basliginin modele ettirilip sayfaya <script>/onerror= olarak
+    sizmasi teorik olarak mumkundu. Python-markdown ham HTML'i oldugu gibi
+    gecirdigi icin burada beyaz-yaklasimli bir son temizlik yapilir:
+      - <script>/<iframe>/<object>/<embed>/<style>/<form>/<link>/<meta> bloklari
+      - onclick=, onerror= ... gibi tum on* olay nitelikleri
+      - href/src icinde javascript: / data: / vbscript: URL'leri
+    """
+    # Tehlikeli blok etiketleri (icerikleriyle birlikte)
+    html_metin = re.sub(r"<\s*(script|iframe|object|embed|style|form|link|meta)\b[^>]*>.*?<\s*/\s*\1\s*>",
+                        "", html_metin, flags=re.S | re.I)
+    # Kapanmamis/acikta kalan tehlikeli etiketler
+    html_metin = re.sub(r"<\s*/?\s*(script|iframe|object|embed|form|meta|link)\b[^>]*>", "", html_metin, flags=re.I)
+    # on* olay nitelikleri (onclick, onerror, onload, ...)
+    html_metin = re.sub(r"\son\w+\s*=\s*(\"[^\"]*\"|'[^']*'|[^\s>]+)", "", html_metin, flags=re.I)
+    # javascript:/data:/vbscript: URL'leri (href/src/action gibi niteliklerde)
+    html_metin = re.sub(r"(\s(?:href|src|action|formaction|xlink:href)\s*=\s*[\"']?)\s*(?:javascript|data|vbscript):[^\"'\s>]*",
+                        r"\1#", html_metin, flags=re.I)
+    return html_metin
+
+
 def markdown_to_html(metin):
     import re
     # Paragraf icindeki "- " satirlarinin gercek liste olmasi icin bos satir ekle
     metin = re.sub(r"(?<!\n)\n(\s*[-*] )", r"\n\n\1", metin)
-    return markdown.markdown(metin, extensions=["tables", "fenced_code", "sane_lists", "nl2br"])
+    return html_temizle(
+        markdown.markdown(metin, extensions=["tables", "fenced_code", "sane_lists", "nl2br"])
+    )
 
 
 def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
