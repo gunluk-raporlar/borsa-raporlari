@@ -1933,6 +1933,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None):
     a_t = ' class="active"' if aktif == "teknik" else ""
     a_b = ' class="active"' if aktif == "borsapy" else ""
     a_d = ' class="active"' if aktif == "derin" else ""
+    a_h = ' class="active"' if aktif == "haftasonu" else ""
     tam_url = SITE_URL + (yol.lstrip("/") if yol else "")
     if not aciklama:
         aciklama = "Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi."
@@ -1970,7 +1971,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None):
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a></nav>
+<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu Gündemi</a></nav>
 </div></header>
 {_kendi_ticker(kok)}
 
@@ -2287,6 +2288,19 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     else:
         kartlar = '<p style="color:var(--muted)">Henüz rapor yok.</p>'
 
+    # Hafta sonu gundemi bolumu (en son hafta sonu sayisi; hafta ici de gosterilir)
+    haftasonu_bolumu = ""
+    try:
+        hs_dosyalar = sorted(f for f in os.listdir("haftasonu") if f.endswith(".html"))
+    except OSError:
+        hs_dosyalar = []
+    if hs_dosyalar:
+        son_hs = hs_dosyalar[-1][:-5]
+        haftasonu_bolumu = f"""
+<h2 class="section-title">Hafta Sonu Gündemi</h2>
+<div class="grid"><a class="rcard" href="haftasonu.html"><span class="date">{_tr_tarih(son_hs)}</span>
+<span class="sub">Hafta sonu haberlerinden gündem değerlendirmesi & yeni hafta ajandası &rarr;</span></a></div>"""
+
     teknik_bolumu = ""
     if teknik_oneriler:
         kart = "".join(
@@ -2326,6 +2340,7 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
 </div>
 <h2 class="section-title">Rapor Arşivi</h2>
 <div class="grid">{kartlar}</div>
+{haftasonu_bolumu}
 {teknik_bolumu}
 {portfoy_bolumu}"""
     return _sayfa(
