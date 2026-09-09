@@ -198,8 +198,12 @@ def main():
                 or "Analist" in temiz[:500] or "Hedge-Fund" in temiz[:500]
                 or "Direktörlüğü" in temiz[:500]):
             print(f"UYARI: {fn} içinde kimlik bloğu kalıntısı olabilir — elle kontrol edin.")
+        # Varsa o güne ait MP3 sesli bülten sayfaya oynatıcı olarak gömülür
+        ses_url = None
+        if os.path.exists(os.path.join("reports", f"{tarih}.mp3")):
+            ses_url = f"../reports/{tarih}.mp3"
         with open(os.path.join("reports", fn), "w", encoding="utf-8") as f:
-            f.write(bot.rapor_sayfasi(temiz, tarih))
+            f.write(bot.rapor_sayfasi(temiz, tarih, ses_url=ses_url))
         print(f"[OK] reports/{fn} yeniden üretildi")
 
     # 2) Derin analiz

@@ -461,7 +461,47 @@ async function aiSor() {
 <div class="meta"><span class="badge">2026-09-08</span><span>BIST 30 &bull; Yapay zeka destekli günlük analiz</span>
 <button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-ses-metin')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button></div>
 </div>
-<article class="report" id="rapor-ses-metin"><h2>1. Yönetici Özeti ve Piyasa Genel Bakışı</h2>
+
+<div class="card" style="margin:0 0 18px; padding:12px 16px;">
+  <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+    <strong style="font-size:13.5px">🔊 Raporu Dinle</strong>
+    <button id="tts-btn" onclick="raporDinle()" style="background:#0f766e; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:600; font-size:13px;">Tarayıcı sesiyle başlat</button>
+    <span id="tts-durum" style="color:#64748b; font-size:12.5px;"></span>
+  </div>
+  <audio controls preload="none" src="../reports/2026-09-08.mp3" style="width:100%; height:40px; margin-top:10px;"></audio>
+  <div style="color:#64748b; font-size:12px; margin-top:4px">Sesli bülten (yapay zekâ sesi) — indirilebilir MP3.</div>
+</div>
+<script>
+function raporDinle() {
+  var durum = document.getElementById('tts-durum');
+  var btn = document.getElementById('tts-btn');
+  if (!('speechSynthesis' in window)) {
+    durum.innerText = 'Tarayıcınız sesli okumayı desteklemiyor.';
+    return;
+  }
+  if (speechSynthesis.speaking || speechSynthesis.pending) {
+    speechSynthesis.cancel();
+    durum.innerText = '⏹ Durduruldu.';
+    btn.innerText = 'Tarayıcı sesiyle başlat';
+    return;
+  }
+  var metin = (document.querySelector('article.report') || document.body).innerText.slice(0, 30000);
+  var parcalar = metin.match(/[^.!?,;\n]+[.!?,;]?\n?/g) || [metin];
+  var konusuldu = 0;
+  parcalar.forEach(function(p) {
+    p = p.trim();
+    if (!p || p.length < 2) return;
+    var u = new SpeechSynthesisUtterance(p);
+    u.lang = 'tr-TR';
+    u.rate = 1.05;
+    u.onstart = function() { konusuldu++; durum.innerText = '🔊 Okunuyor... (' + konusuldu + '/' + parcalar.length + ' bölüm)'; };
+    speechSynthesis.speak(u);
+  });
+  btn.innerText = '⏹ Durdur';
+  durum.innerText = '🔊 Okunuyor...';
+}
+</script>
+<article class="report"><h2>1. Yönetici Özeti ve Piyasa Genel Bakışı</h2>
 <p>Güçlü bir temkinli ve seçici seyir izleyen BIST 30 endeksi, geçtiğimiz hafta boyunca sürdürdüğü "Yukarı Adım Kuralı" etkisiyle kısa vadeli bir soluklanma yaşarken, makroekonomik belirsizliklerin yarattığı temel baskıyı tamamen ortadan kaldıramadı. Endeks, jeopolitik risklerin (İran kaynaklı gerilimler) ve küresel enerji şoku (doğal gaz fiyatlarının 71 avronun üzerinde seyretmesi) nedeniyle hala aşırı satım bölgesi sınırları içinde hareket etmektedir.</p>
 <p>Geçmiş analizlerde vurguladığımız üzere, cuma günü gerçekleşen tepki alımları kalıcı bir trend dönüşümü sinyali değil; sadece oynaklığın arttığı ve yatırımcıların nakit konumlarını değerlendirmeye çalıştığı bir "soluklanma" süreci olarak değerlendirilmektedir. Mevcut piyasa dinamiklerinde, yatırımcı psikolojisi "kayıp korkusu" ile "fırsat arayışı" arasında gidip geliyor. Fon yönetimi perspektifinden bakıldığında, endeksin 4.200 seviyelerinin altında kalması ve enerji yoğun sektörlerin (EREGL, TUPRS) hala negatif ayrışması, genel piyasayı "güvenli liman" arayışına itmektedir.</p>
 <p><strong>Temel Perspektif:</strong> Piyasa, net bir makro sinyali (ECB faiz kararı ve ABD enflasyon verileri) ve endeksin üst direnç seviyelerini (4.200-4.250) aşması gerekmektedir. Bu aşamaya gelinmeden, portföy yapısında "nakit koruma" ve "temel bileşenlere (FMCG, İçerik, Güvenli Bankalar) odaklanma" stratejisi en güvenli koruma kalkanıdır.</p>

@@ -1192,6 +1192,116 @@ app = workflow.compile()
 SITE_URL = "https://borsa-raporlari.onrender.com/"
 SITE_ADI = "BIST 30 Günlük Raporlar"
 
+# ---------- INDEXNOW (Bing/Yandex/Seznam/Naver aninda indeksleme) ----------
+# Hesap/anahtar YOK: kok dizine bir anahtar dosyasi koyar, sayfalar degistiginde
+# api.indexnow.org'ya ping atariz. Bing, Yandex, Seznam ve Naver bu protokolle
+# sayfalari kendi tarayicilarini beklemek yerine dakikalar icinde alir.
+# (Google ve Baidu IndexNow kullanmaz; onlar icin dogrulama meta etiketleri
+# asagida ENV ile desteklenir.)
+INDEXNOW_KEY = "ba8235ea226b9c95831f13f37a9e223f"
+INDEXNOW_ANA_SAYFALAR = [
+    "index.html", "derin-analiz.html", "teknik-analiz.html",
+    "borsapy-analiz.html", "portfolio.html",
+]
+
+
+def indexnow_ping(url_yollari):
+    """Degisen URL'leri IndexNow'ya bildirir (hata raporu uretimini bozmaz)."""
+    try:
+        import urllib.request
+        veri = json.dumps({
+            "host": SITE_URL.split("//", 1)[1].rstrip("/"),
+            "key": INDEXNOW_KEY,
+            "keyLocation": SITE_URL + INDEXNOW_KEY + ".txt",
+            "urlList": [SITE_URL + u for u in url_yollari],
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            "https://api.indexnow.org/indexnow", data=veri,
+            headers={"Content-Type": "application/json; charset=utf-8"})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            logger.info("[IndexNow] ping HTTP %s (%d URL)", r.status, len(url_yollari))
+    except Exception as e:
+        logger.warning("[IndexNow] ping basarisiz (sorun degil): %s", e)
+
+
+def _dogrulama_etiketleri():
+    """Arama motoru sahiplik dogrulama meta etiketleri (ENV ile).
+    Google Search Console / Bing Webmaster / Baidu Ziyan panelleri site
+    dogrulamasi icin birer kod verir; asagidaki secret'lar doluysa sayfaya
+    gumulur. Bos birakilirsa hicbir etiket eklenmez."""
+    etiket = ""
+    for env_adi, meta_adi in (
+        ("GOOGLE_SITE_DOGRULAMA", "google-site-verification"),
+        ("BING_SITE_DOGRULAMA", "msvalidate.01"),
+        ("BAIDU_SITE_DOGRULAMA", "baidu-site-verification"),
+    ):
+        deger = (os.environ.get(env_adi) or "").strip()
+        if deger:
+            etiket += f'<meta name="{meta_adi}" content="{deger}">\n'
+    return etiket
+
+
+# ---------- SESLI RAPOR (Edge-TTS, ucretsiz Microsoft sinir sesleri) ----------
+# Gunluk rapor her sabah MP3 olarak da okunur (tr-TR sinir sesi, ~48kbps).
+# Ayrıca her rapor/derin sayfasinda tarayici sesiyle "Dinle" dugmesi var
+# (Web Speech API — ses dosyasi olmasa bile calisir).
+TTS_SESI = os.environ.get("TTS_SESI") or "tr-TR-EmelNeural"
+
+
+def _ses_metni_hazirla(html):
+    """HTML raporu okunabilir saga metne cevirir: tablolar atlanir (sesli
+    okumada veri tablosu anlamsizdir), etiketler temizlenir, ~12 bin
+    karakterle sinirlanir (~12 dk ses)."""
+    metin = re.sub(r"<table.*?</table>", " (Tablo verileri için yazılı rapora bakabilirsiniz.) ", html, flags=re.S)
+    metin = re.sub(r"<script.*?</script>", " ", metin, flags=re.S)
+    metin = re.sub(r"<style.*?</style>", " ", metin, flags=re.S)
+    metin = re.sub(r"<h2[^>]*>", " \n\n ", metin)
+    metin = re.sub(r"<[^>]+>", " ", metin)
+    metin = metin.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">").replace("&bull;", ", ")
+    # Bolum sonlarini cumle sonuna cevir (ses motoru orada nefes alsin)
+    metin = metin.replace("\n\n", ". ")
+    metin = re.sub(r"\s+", " ", metin).strip()
+    return metin.strip(" .,;:")[:12000]
+
+
+def rapor_sesi_uret(html, date_str):
+    """Raporu Edge-TTS ile reports/{tarih}.mp3 olarak okur. Basarisizlik
+    rapor uretimini ASLA etkilemez (False doner)."""
+    try:
+        import asyncio
+        import edge_tts
+    except ImportError:
+        logger.warning("[TTS] edge-tts kurulu degil; ses uretilmedi.")
+        return False
+    metin = _ses_metni_hazirla(html)
+    if len(metin) < 200:
+        logger.info("[TTS] metin cok kisa; ses uretilmedi.")
+        return False
+
+    async def _uret():
+        ses = edge_tts.Communicate(metin, TTS_SESI, rate="+8%")
+        await ses.save(f"reports/{date_str}.mp3")
+
+    try:
+        asyncio.run(_uret())
+        logger.info("[TTS] reports/%s.mp3 uretildi (%s, %d kr)", date_str, TTS_SESI, len(metin))
+        return True
+    except Exception as e:
+        logger.warning("[TTS] ses uretilemedi: %s", e)
+        return False
+
+
+def _eski_sesleri_temizle(kal=14):
+    """Repo sismesin: son N gunun MP3'u kalir, eskiler silinir."""
+    try:
+        dosyalar = sorted(f for f in os.listdir("reports") if f.endswith(".mp3"))
+        for f in dosyalar[:-kal]:
+            os.remove(os.path.join("reports", f))
+            logger.info("[TTS] eski ses silindi: %s", f)
+    except OSError as e:
+        logger.warning("[TTS] ses temizligi basarisiz: %s", e)
+
+
 BASE_CSS = """
 :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
        --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
@@ -1830,7 +1940,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None):
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{title}">
 <meta name="twitter:description" content="{aciklama}">
-<script type="application/ld+json">{ld_json}</script>
+{_dogrulama_etiketleri()}<script type="application/ld+json">{ld_json}</script>
 <style>{BASE_CSS}</style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
@@ -1903,27 +2013,74 @@ def markdown_to_html(metin):
 
 def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
                   alt_baslik="BIST 30 &bull; Yapay zeka destekli günlük analiz",
-                  kok_yol=None, aciklama=None):
+                  kok_yol=None, aciklama=None, ses_url=None):
     if kok_yol is None:
         kok_yol = f"reports/{date_str}.html"
     if aciklama is None:
         aciklama = (f"{date_str} tarihli BIST 30 {baslik.lower()}: yönetici özeti, haber ve makro "
                     f"değerlendirme, hisse bazlı teknik analiz ve model portföy önerisi.")
+    # Sesli rapor: varsa MP3 oynatici + her zaman tarayici sesiyle yedek dugme
+    ses_bolumu = """
+<div class="card" style="margin:0 0 18px; padding:12px 16px;">
+  <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+    <strong style="font-size:13.5px">🔊 Raporu Dinle</strong>
+    <button id="tts-btn" onclick="raporDinle()" style="background:#0f766e; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:600; font-size:13px;">Tarayıcı sesiyle başlat</button>
+    <span id="tts-durum" style="color:#64748b; font-size:12.5px;"></span>
+  </div>"""
+    if ses_url:
+        ses_bolumu += f"""
+  <audio controls preload="none" src="{ses_url}" style="width:100%; height:40px; margin-top:10px;"></audio>
+  <div style="color:#64748b; font-size:12px; margin-top:4px">Sesli bülten (yapay zekâ sesi) — indirilebilir MP3.</div>"""
+    ses_bolumu += """
+</div>
+<script>
+function raporDinle() {
+  var durum = document.getElementById('tts-durum');
+  var btn = document.getElementById('tts-btn');
+  if (!('speechSynthesis' in window)) {
+    durum.innerText = 'Tarayıcınız sesli okumayı desteklemiyor.';
+    return;
+  }
+  if (speechSynthesis.speaking || speechSynthesis.pending) {
+    speechSynthesis.cancel();
+    durum.innerText = '⏹ Durduruldu.';
+    btn.innerText = 'Tarayıcı sesiyle başlat';
+    return;
+  }
+  var metin = (document.querySelector('article.report') || document.body).innerText.slice(0, 30000);
+  var parcalar = metin.match(/[^.!?,;\\n]+[.!?,;]?\\n?/g) || [metin];
+  var konusuldu = 0;
+  parcalar.forEach(function(p) {
+    p = p.trim();
+    if (!p || p.length < 2) return;
+    var u = new SpeechSynthesisUtterance(p);
+    u.lang = 'tr-TR';
+    u.rate = 1.05;
+    u.onstart = function() { konusuldu++; durum.innerText = '🔊 Okunuyor... (' + konusuldu + '/' + parcalar.length + ' bölüm)'; };
+    speechSynthesis.speak(u);
+  });
+  btn.innerText = '⏹ Durdur';
+  durum.innerText = '🔊 Okunuyor...';
+}
+</script>"""
     icerik = f"""
 <div class="hero">
 <h1>{baslik}</h1>
 <div class="meta"><span class="badge">{date_str}</span><span>{alt_baslik}</span>
 <button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-ses-metin')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button></div>
 </div>
-<article class="report" id="rapor-ses-metin">{html_icerik}</article>
-<p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>
-{_sesli_okuma_js()}"""
+{ses_bolumu}
+<article class="report">{html_icerik}</article>
+<p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>"""
     return _sayfa(f"{baslik} - {date_str}", icerik, "raporlar", kok="../",
                   aciklama=aciklama, yol=kok_yol)
 
 
 def build_html(report, date_str):
-    return rapor_sayfasi(markdown_to_html(report), date_str)
+    ses_url = None
+    if os.path.exists(os.path.join("reports", f"{date_str}.mp3")):
+        ses_url = f"../reports/{date_str}.mp3"
+    return rapor_sayfasi(markdown_to_html(report), date_str, ses_url=ses_url)
 
 
 def sparkline_svg(history):
@@ -2828,6 +2985,15 @@ if __name__ == "__main__":
     report = result["final_report"]
 
     os.makedirs("reports", exist_ok=True)
+
+    # Sesli bülten: rapor yazilmadan ONCE uretilir; boylece sayfa MP3 oynaticiyi
+    # gorebilirim. Basarisiszlik raporu asla engellemez.
+    try:
+        rapor_sesi_uret(markdown_to_html(report), date_str)
+    except Exception:
+        logger.exception("[TTS] ses uretimi atlandi; rapor uretimini etkilemez.")
+    _eski_sesleri_temizle()
+
     with open(f"reports/{date_str}.html", "w", encoding="utf-8") as f:
         f.write(build_html(report, date_str))
 
@@ -2898,5 +3064,11 @@ if __name__ == "__main__":
         site_arama_json_yaz(raporlar)
     except Exception:
         logger.exception("[Arama] site-arama.json uretilemedi; rapor uretimini etkilemez.")
+
+    # IndexNow: degisen sayfalari Bing/Yandex/Seznam/Naver'a aninda bildir
+    try:
+        indexnow_ping(INDEXNOW_ANA_SAYFALAR + [f"reports/{fn}" for fn in raporlar[:5]])
+    except Exception:
+        logger.exception("[IndexNow] ping atlamasi sorun degil.")
 
     print("RAPOR OLUSTURULDU:", date_str)

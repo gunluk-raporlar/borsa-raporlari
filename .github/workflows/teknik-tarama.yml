@@ -20,6 +20,10 @@ jobs:
       - name: Kutuphaneleri kur
         run: pip install -r requirements.txt
       - name: Taramayi calistir
+        env:
+          GOOGLE_SITE_DOGRULAMA: ${{ secrets.GOOGLE_SITE_DOGRULAMA }}
+          BING_SITE_DOGRULAMA: ${{ secrets.BING_SITE_DOGRULAMA }}
+          BAIDU_SITE_DOGRULAMA: ${{ secrets.BAIDU_SITE_DOGRULAMA }}
         run: python -u teknik_tarama.py
       - name: Degisiklikleri yayinla
         run: |

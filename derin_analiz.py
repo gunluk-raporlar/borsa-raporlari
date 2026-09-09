@@ -66,7 +66,18 @@ def main():
                   "Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları."),
     )
     with open("derin-analiz.html", "w", encoding="utf-8") as f:
-        f.write(html)
+        f.write(bot.rapor_sayfasi(
+            bot.markdown_to_html(analiz), date_str,
+            baslik="Derin Analiz",
+            alt_baslik="BIST 30 &bull; Yapay zeka destekli derinlemesine analiz",
+            kok_yol="derin-analiz.html",
+            aciklama=("BIST 30'un günlük derinlemesine analizi: sektör değerlendirmesi, EMA ve "
+                      "Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları."),
+        ))
+    try:
+        bot.indexnow_ping(["derin-analiz.html", "index.html"])
+    except Exception:
+        logger.exception("IndexNow ping atlanamadi (sorun degil).")
     print(f"DERIN ANALIZ SAYFA URETILDI: {date_str} | {len(analiz)} karakter", flush=True)
 
 
