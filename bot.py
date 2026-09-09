@@ -355,6 +355,12 @@ def fundamental_agent(state: AgentState):
 
 # ---------- LLM CAGRISI ----------
 def _looks_degenerate(metin: str) -> bool:
+    # Tablo satiri tekrari: ayni (| ile baslayan) satirdan 3+ kez varsa dongudur
+    satirlar = [s.strip() for s in metin.split("\n") if s.strip().startswith("|")]
+    if satirlar:
+        from collections import Counter
+        if Counter(satirlar).most_common(1)[0][1] >= 3:
+            return True
     """Modelin tekrar dongusune girdigi yanitlari yakalamak icin basit sezgisel test.
 
     Kucuk modeller bazen yanitin sonunda ayni kisa parcayi (orn. "18.45, ") yuzlerce
@@ -638,7 +644,7 @@ def _zai_call(prompt):
                     logger.warning("[Z.ai] %s bozuk yanit uretti; siradaki deneniyor.", mdl)
                     break
                 logger.info("[Z.ai] rapor alindi (%s): %d karakter", mdl, len(icerik))
-                return icerik
+                return _tekrar_satirlarini_temizle(icerik)
             except Exception as e:
                 son_hata = str(e)[:200]
                 logger.warning("[Z.ai] %s basarisiz: %s", mdl, son_hata)
@@ -708,6 +714,26 @@ def _tarih_gun_duzelt(metin: str) -> str:
         _duzelt,
         metin,
     )
+
+
+def _tekrar_satirlarini_temizle(metin: str) -> str:
+    """LLM'in tablo/liste satirlarini aynen tekrar etme (dongu) egilimine karsi:
+    birebir ayni satirlar tek örnege dusurulur. GLM birgun '6. Gunun Onerilen
+    Hisseleri' tablosunda ayni satiri 25 kez yazarak 128 satir uretebildi;
+    _looks_degenerate tablo-sablonu muafiyeti nedeniyle bunu yakalayamadi.
+    Bu fonksiyon yayin oncesi son guvendir."""
+    gorulen = set()
+    temiz = []
+    for satir in metin.split("\n"):
+        anahtar = satir.strip()
+        if len(anahtar) > 30 and anahtar in gorulen:
+            continue  # birebir ayni satir: atla
+        gorulen.add(anahtar)
+        temiz.append(satir)
+    sonuc = "\n".join(temiz)
+    if len(sonuc) < len(metin) - 40:
+        logger.info("[Temizlik] tekrar eden %d karakter satir dusuruldu", len(metin) - len(sonuc))
+    return sonuc
 
 
 def rapor_son_islem(metin: str) -> str:
@@ -1232,7 +1258,7 @@ SITE_ADI = "BIST 30 Günlük Raporlar"
 INDEXNOW_KEY = "ba8235ea226b9c95831f13f37a9e223f"
 INDEXNOW_ANA_SAYFALAR = [
     "index.html", "derin-analiz.html", "teknik-analiz.html",
-    "borsapy-analiz.html", "portfolio.html",
+    "borsapy-analiz.html", "portfolio.html", "haftasonu.html",
 ]
 
 
@@ -2953,6 +2979,11 @@ def site_arama_json_yaz(rapor_dosyalari):
         {"b": "Deneme Portföyü", "u": "portfolio.html",
          "t": "sanal portföy 100.000 TL eşit dağıtılmış hisse performansı günlük geçmiş getiri altın dolar mevduat XU100 benchmark karşılaştırma " + hisse_listesi},
     ]
+    haftasonu_metin = makale_metni("haftasonu.html")
+    if haftasonu_metin:
+        sayfalar.append({"b": "Hafta Sonu Gündemi (haftalık bülten)", "u": "haftasonu.html",
+                         "t": "hafta sonu gündem ekonomi finans emlak ticaret döviz jeopolitik yeni hafta ajandası "
+                              + haftasonu_metin[:3200]})
     derin_metin = makale_metni("derin-analiz.html")
     if derin_metin:
         sayfalar.append({"b": "Derin Analiz (günlük derinlemesine inceleme)", "u": "derin-analiz.html",
@@ -2980,6 +3011,7 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
         ("teknik-analiz.html", "hourly"),
         ("borsapy-analiz.html", "hourly"),
         ("portfolio.html", "daily"),
+        ("haftasonu.html", "weekly"),
     ]
     bugun = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%Y-%m-%d")
     url_blokleri = []

@@ -55,25 +55,29 @@ def main():
         logger.error("Derin analiz uretilemedi (model hatasi veya bos yanit).")
         return
 
-    # Rapor sayfasi sarmalayici dogru parametrelerle cagrilmali: yoksa canonical/
-    # og:url "reports/2026-09-08 — Derin Analiz.html" gibi bozuk bir adrese isaret eder.
-    html = bot.rapor_sayfasi(
-        bot.markdown_to_html(analiz), date_str,
+    sarmal = dict(
         baslik="Derin Analiz",
         alt_baslik="BIST 30 &bull; Yapay zeka destekli derinlemesine analiz",
         kok_yol="derin-analiz.html",
         aciklama=("BIST 30'un günlük derinlemesine analizi: sektör değerlendirmesi, EMA ve "
                   "Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları."),
     )
+    html = bot.rapor_sayfasi(bot.markdown_to_html(analiz), date_str, **sarmal)
     with open("derin-analiz.html", "w", encoding="utf-8") as f:
-        f.write(bot.rapor_sayfasi(
-            bot.markdown_to_html(analiz), date_str,
-            baslik="Derin Analiz",
-            alt_baslik="BIST 30 &bull; Yapay zeka destekli derinlemesine analiz",
-            kok_yol="derin-analiz.html",
-            aciklama=("BIST 30'un günlük derinlemesine analizi: sektör değerlendirmesi, EMA ve "
-                      "Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları."),
-        ))
+        f.write(html)
+    # Tarihli arşiv kopyasi: gunluk raporlar gibi gecmis de korunur
+    # (derin-analiz.html her gun uzerine yazilir; dünkü analiz kaybolmasin)
+    os.makedirs("reports", exist_ok=True)
+    # Arsiv sayfasi reports/ altinda yasar; kok yolu bir seviye derin
+    arsiv_html = bot.rapor_sayfasi(
+        bot.markdown_to_html(analiz), date_str,
+        baslik="Derin Analiz",
+        alt_baslik="BIST 30 &bull; Yapay zeka destekli derinlemesine analiz",
+        kok_yol=f"reports/{date_str}-derin-analiz.html",
+        aciklama=sarmal["aciklama"],
+    )
+    with open(f"reports/{date_str}-derin-analiz.html", "w", encoding="utf-8") as f:
+        f.write(arsiv_html)
     try:
         bot.indexnow_ping(["derin-analiz.html", "index.html"])
     except Exception:

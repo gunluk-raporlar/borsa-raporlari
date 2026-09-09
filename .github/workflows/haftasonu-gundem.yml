@@ -32,12 +32,12 @@ jobs:
         run: python -u haftasonu.py
       - name: Borsa okulu dersini uret
         env:
-          AMD_API_KEY: ${{ secrets.AMD_API_KEY }
-          ALT_API_KEY: ${{ secrets.GROQ_API_KEY }
-          CF_API_KEY: ${{ secrets.CLOUDFLARE_API_TOKEN }
-          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }
-          OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }
-          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }
+          AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+          ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          CF_API_KEY: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
         run: python -u egitim.py
       - name: Degisiklikleri yayinla
         run: |
