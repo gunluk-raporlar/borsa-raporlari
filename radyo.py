@@ -508,6 +508,7 @@ def main():
         "baslik": f"{tarih} — {bolum_adi}", "dosya": f"radyo/{dosya_ad}", "sure_sn": sure,
     })
     indeks["bolumler"] = sorted(indeks["bolumler"], key=lambda b: b.get("id", ""), reverse=True)[:20]
+    indeks["guncelleme"] = simdi.strftime("%d.%m %H:%M")  # her kosuda taze saat
     with open(indeks_yolu, "w", encoding="utf-8") as f:
         json.dump(indeks, f, ensure_ascii=False, indent=1)
 
