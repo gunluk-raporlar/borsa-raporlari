@@ -1,7 +1,9 @@
 name: Hafta Sonu Gundem Ajani
 on:
   schedule:
-    # Pazar 17:30 TSI (UTC+3) = 14:30 UTC; haftaya baslamadan once
+    # Cumartesi 10:30 TSI (UTC+3) = 07:30 UTC: hafta sonuna giris gundemi
+    - cron: '30 7 * * 6'
+    # Pazar 17:30 TSI (UTC+3) = 14:30 UTC: hafta sonu ozeti + yeni hafta ajandasi
     - cron: '30 14 * * 0'
   workflow_dispatch:
     inputs:

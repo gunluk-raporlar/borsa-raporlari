@@ -52,6 +52,7 @@ _EKSTRA_KATEGORILER = {
     ],
     "Jeopolitik": [
         ("GoogleNews-Jeopolitik", "https://news.google.com/rss/search?q=jeopolitik%20riskler%20petrol&hl=tr&gl=TR&ceid=TR:tr"),
+        ("AA Guncel", "https://www.aa.com.tr/tr/rss/default?cat=guncel"),
         ("DW Turkce", "https://rss.dw.com/rdf/rss-tur-all"),
         ("Hurriyet Dunya", "https://www.hurriyet.com.tr/rss/dunya"),
         ("Sabah Dunya", "https://www.sabah.com.tr/rss/dunya.xml"),
@@ -70,6 +71,7 @@ def kategoriler():
     """Kategori -> kaynak listesi (TR finans + ekstralar)."""
     k = {}
     tr_liste = [(ad, url) for ad, url in bot.HABER_KAYNAKLARI.items()]
+    tr_liste.append(("Onedio Ekonomi", "https://onedio.com/Publisher/publisher-ekonomi.rss"))
     k["Ekonomi & Finans (Türkiye)"] = tr_liste
     k.update(_EKSTRA_KATEGORILER)
     return k
