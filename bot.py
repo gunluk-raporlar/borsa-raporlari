@@ -1947,6 +1947,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None):
     a_b = ' class="active"' if aktif == "borsapy" else ""
     a_d = ' class="active"' if aktif == "derin" else ""
     a_h = ' class="active"' if aktif == "haftasonu" else ""
+    a_e = ' class="active"' if aktif == "egitim" else ""
     tam_url = SITE_URL + (yol.lstrip("/") if yol else "")
     if not aciklama:
         aciklama = "Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi."
@@ -1984,7 +1985,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None):
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu Gündemi</a></nav>
+<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu Gündemi</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a></nav>
 </div></header>
 {_kendi_ticker(kok)}
 
@@ -2314,6 +2315,19 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
 <div class="grid"><a class="rcard" href="haftasonu.html"><span class="date">{_tr_tarih(son_hs)}</span>
 <span class="sub">Hafta sonu haberlerinden gündem değerlendirmesi & yeni hafta ajandası &rarr;</span></a></div>"""
 
+    # Hafta sonu borsa okulu bolumu (en son ders)
+    egitim_bolumu = ""
+    try:
+        eg_dosyalar = sorted(f for f in os.listdir("haftasonu-egitimi") if f.endswith(".html"))
+    except OSError:
+        eg_dosyalar = []
+    if eg_dosyalar:
+        son_eg = eg_dosyalar[-1][:-5]
+        egitim_bolumu = f"""
+<h2 class="section-title">Hafta Sonu Borsa Okulu</h2>
+<div class="grid"><a class="rcard" href="haftasonu-egitimi.html"><span class="date">{_tr_tarih(son_eg)}</span>
+<span class="sub">Yapay zeka eğitmenden günün dersi: terim, gösterge & grafik okuma &rarr;</span></a></div>"""
+
     teknik_bolumu = ""
     if teknik_oneriler:
         kart = "".join(
@@ -2354,6 +2368,7 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
 <h2 class="section-title">Rapor Arşivi</h2>
 <div class="grid">{kartlar}</div>
 {haftasonu_bolumu}
+{egitim_bolumu}
 {teknik_bolumu}
 {portfoy_bolumu}"""
     return _sayfa(

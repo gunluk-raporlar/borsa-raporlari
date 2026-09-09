@@ -112,7 +112,7 @@ body { overflow-x: hidden; }
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="index.html">Raporlar</a><a href="derin-analiz.html">Derin Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="borsapy-analiz.html" class="active">Borsapy Sinyal</a><a href="portfolio.html">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu Gündemi</a></nav>
+<nav><a href="index.html">Raporlar</a><a href="derin-analiz.html">Derin Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="borsapy-analiz.html" class="active">Borsapy Sinyal</a><a href="portfolio.html">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu Gündemi</a><a href="haftasonu-egitimi.html">Borsa Okulu</a></nav>
 </div></header>
 
 <div class="ticker-bant" id="ticker-bant" data-kok="" style="margin-bottom:16px">
@@ -474,7 +474,7 @@ etiketleri momentum oylarının çoğunluğunu yansıtır, aşırı alım riskin
 <div class="card" style="margin-bottom:20px">
 <h3 style="margin:4px 0 10px">RSI (14) — Aşırı Alım/Satım Haritası</h3>
 <div style="position:relative; height:540px">
-<canvas id="borsapy-rsi-843202"></canvas>
+<canvas id="borsapy-rsi-612648"></canvas>
 </div>
 </div>
 <script>
@@ -512,7 +512,7 @@ etiketleri momentum oylarının çoğunluğunu yansıtır, aşırı alım riskin
             });
         }
     };
-    new Chart(document.getElementById('borsapy-rsi-843202'), {
+    new Chart(document.getElementById('borsapy-rsi-612648'), {
         type: 'bar',
         data: { labels: veri.labels, datasets: [{ label: 'RSI (14)', data: veri.degerler, backgroundColor: renkler }] },
         options: {

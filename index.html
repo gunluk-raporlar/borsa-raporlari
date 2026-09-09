@@ -112,7 +112,7 @@ body { overflow-x: hidden; }
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="index.html" class="active">Raporlar</a><a href="derin-analiz.html">Derin Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="portfolio.html">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu Gündemi</a></nav>
+<nav><a href="index.html" class="active">Raporlar</a><a href="derin-analiz.html">Derin Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="portfolio.html">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu Gündemi</a><a href="haftasonu-egitimi.html">Borsa Okulu</a></nav>
 </div></header>
 
 <div class="ticker-bant" id="ticker-bant" data-kok="" style="margin-bottom:16px">
@@ -465,6 +465,7 @@ async function aiSor() {
 <div class="grid"><a class="rcard" href="reports/2026-09-09.html"><span class="date">9 Eylül 2026, Çarşamba</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-08.html"><span class="date">8 Eylül 2026, Salı</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-07.html"><span class="date">7 Eylül 2026, Pazartesi</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-06.html"><span class="date">6 Eylül 2026, Pazar</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-05.html"><span class="date">5 Eylül 2026, Cumartesi</span><span class="sub">Günlük raporu aç &rarr;</span></a></div>
 
 
+
 <h2 class="section-title">Teknik Taramada Öne Çıkanlar</h2>
 <div class="grid"><a class="rcard" href="teknik-analiz.html"><span class="date">KCHOL</span><span class="sub">GÜÇLÜ AL &bull; 224.80 TL &bull; kanal %89 &bull; r=0.82</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">BIMAS</span><span class="sub">GÜÇLÜ AL &bull; 420.50 TL &bull; kanal %72 &bull; r=0.75</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">KRDMD</span><span class="sub">GÜÇLÜ AL &bull; 45.98 TL &bull; kanal %61 &bull; r=0.73</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">TRALT</span><span class="sub">GÜÇLÜ AL &bull; 53.00 TL &bull; kanal %65 &bull; r=0.30</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">PETKM</span><span class="sub">GÜÇLÜ AL &bull; 24.26 TL &bull; kanal %139 &bull; r=0.21</span></a><a class="rcard" href="teknik-analiz.html"><span class="date">GUBRF</span><span class="sub">GÜÇLÜ AL &bull; 504.00 TL &bull; kanal %89 &bull; r=0.01</span></a></div>
 <p style="margin:10px 0 0"><a href="teknik-analiz.html">Tüm teknik tarama tablosu &rarr;</a></p>
@@ -479,13 +480,13 @@ async function aiSor() {
 </div>
 <div class="card" style="margin-bottom:14px">
 <div style="position:relative; height:340px;">
-<canvas id="portfoy-grafik-382599"></canvas>
+<canvas id="portfoy-grafik-477019"></canvas>
 </div>
 <script>
 (function() {
     var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27, 105135.98], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100819.58, 100415.39], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100459.02, 100476.65], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73, 100370.32], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}, {"label": "BIST 100 Endeksi", "data": [100000.0, 100000.0, 99549.87, 101792.45], "borderColor": "#7c3aed", "backgroundColor": "#7c3aed", "borderDash": [2, 2]}]};
     var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
-    var ctx = document.getElementById('portfoy-grafik-382599').getContext('2d');
+    var ctx = document.getElementById('portfoy-grafik-477019').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {

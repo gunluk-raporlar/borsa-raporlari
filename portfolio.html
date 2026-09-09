@@ -112,7 +112,7 @@ body { overflow-x: hidden; }
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="index.html">Raporlar</a><a href="derin-analiz.html">Derin Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="portfolio.html" class="active">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu Gündemi</a></nav>
+<nav><a href="index.html">Raporlar</a><a href="derin-analiz.html">Derin Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="portfolio.html" class="active">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu Gündemi</a><a href="haftasonu-egitimi.html">Borsa Okulu</a></nav>
 </div></header>
 
 <div class="ticker-bant" id="ticker-bant" data-kok="" style="margin-bottom:16px">
@@ -471,13 +471,13 @@ hafta içi her sabah bir önceki işlem gününün kapanış fiyatlarıyla otoma
 </div>
 <div class="card" style="margin-bottom:22px">
 <div style="position:relative; height:340px;">
-<canvas id="portfoy-grafik-441593"></canvas>
+<canvas id="portfoy-grafik-487808"></canvas>
 </div>
 <script>
 (function() {
     var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27, 105135.98], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100819.58, 100415.39], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100459.02, 100476.65], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73, 100370.32], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}, {"label": "BIST 100 Endeksi", "data": [100000.0, 100000.0, 99549.87, 101792.45], "borderColor": "#7c3aed", "backgroundColor": "#7c3aed", "borderDash": [2, 2]}]};
     var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
-    var ctx = document.getElementById('portfoy-grafik-441593').getContext('2d');
+    var ctx = document.getElementById('portfoy-grafik-487808').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
