@@ -64,7 +64,7 @@ def hucre_metin(hucre_html):
 
 def makale_ayikla(dosya):
     src = open(dosya, encoding="utf-8").read()
-    m = re.search(r'<article class="report">(.*?)</article>', src, re.S)
+    m = re.search(r'<article class="report"[^>]*>(.*?)</article>', src, re.S)
     if not m:
         raise SystemExit(f"HATA: {dosya} içinde article bulunamadı")
     return m.group(1)

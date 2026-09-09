@@ -7,3 +7,4 @@ markdown
 yfinance
 borsapy
 pillow
+edge-tts

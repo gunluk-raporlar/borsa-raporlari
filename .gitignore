@@ -1,11 +1,9 @@
 __pycache__/
 *.pyc
 venv/
-__pycache__/
-*.pyc
-venv/
 *_cikar/
 *_logs.zip
 joblog.txt
 canli_*.html
 *.zip
+radyo/_tmp/

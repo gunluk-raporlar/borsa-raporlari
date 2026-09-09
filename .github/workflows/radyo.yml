@@ -1,0 +1,50 @@
+name: BIST Radyo (AI Sunucular)
+on:
+  schedule:
+    # Piyasa gunleri TSI ~10:10 / 13:30 / 18:05 (UTC+3)
+    - cron: '10 7 * * 1-5'
+    - cron: '30 10 * * 1-5'
+    - cron: '5 15 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      BOLUM:
+        description: 'Bolum (bos birakilirsa saate gore): acilis | ogle | kapanis'
+        required: false
+        default: ''
+permissions:
+  contents: write
+jobs:
+  yayin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Kutuphaneleri kur
+        run: pip install -r requirements.txt
+      - name: Yayini uret
+        env:
+          BOLUM: ${{ inputs.BOLUM }}
+          AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+          ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          CF_API_KEY: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+        run: python -u radyo.py
+      - name: Degisiklikleri yayinla
+        run: |
+          git config user.name "borsa-bot"
+          git config user.email "borsa-bot@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Degisiklik yok; commit atlanır."
+            exit 0
+          fi
+          git commit -m "BIST Radyo yayini guncellemesi"
+          git pull --rebase -X theirs origin main
+          git push origin main
