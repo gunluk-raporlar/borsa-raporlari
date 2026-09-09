@@ -164,6 +164,19 @@ HABER_KAYNAKLARI = {
     "Sozcu Ekonomi": "https://www.sozcu.com.tr/rss/ekonomi.xml",
     "Dunya": "https://www.dunya.com/rss",
     "Ekonomist": "https://www.ekonomist.com.tr/rss",
+    # ---- 2026-09 genisletme-2: kullanici onerileri + RSS rehberi taramasindan ----
+    "Sabah Ekonomi": "https://www.sabah.com.tr/rss/ekonomi.xml",
+    "Hurriyet Ekonomi": "https://www.hurriyet.com.tr/rss/ekonomi",
+    "CNBC-e": "https://www.cnbce.com/rss",
+    "Doviz.com": "https://www.doviz.com/news/rss",
+    "NTV Para": "https://www.ntv.com.tr/ntvpara.rss",
+    "Sozcu Borsa": "https://www.sozcu.com.tr/feeds-rss-category-borsa",
+    "Forbes TR": "https://www.forbes.com.tr/rss",
+    "Capital": "https://www.capital.com.tr/rss/all",
+    "Mynet Finans": "https://www.mynet.com/rss/publisher-finans.rss",
+    "Foreks": "https://www.foreks.com/rss/",
+    "Investing TR Piyasa": "https://tr.investing.com/rss/market_overview.rss",
+    "Paranin Yonu": "https://www.paraninyonu.com.tr/rss.xml",
 }
 
 # Finansla ilgisiz haber basliklarini elemek icin filtre

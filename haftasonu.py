@@ -36,15 +36,25 @@ DUMMY_ANAHTARLAR = {"", "teknik-tarama", "derin-analiz", "radyo", "migrate-rebui
 _EKSTRA_KATEGORILER = {
     "Emlak": [
         ("GoogleNews-Emlak", "https://news.google.com/rss/search?q=emlak%20konut%20piyasas%C4%B1&hl=tr&gl=TR&ceid=TR:tr"),
+        ("Sozcu Emlak", "https://www.sozcu.com.tr/feeds-rss-category-emlak"),
+        ("Isindetayi Gayrimenkul", "https://www.isindetayi.com/rss/gayrimenkul"),
     ],
     "Para & Döviz": [
         ("GoogleNews-Doviz", "https://news.google.com/rss/search?q=d%C3%B6viz%20kur%20piyasas%C4%B1%20TL&hl=tr&gl=TR&ceid=TR:tr"),
+        ("Doviz.com", "https://www.doviz.com/news/rss"),
+        ("Investing TR Forex", "https://tr.investing.com/rss/forex.rss"),
+        ("Paranin Yonu", "https://www.paraninyonu.com.tr/rss.xml"),
+        ("Sozcu Emtia", "https://www.sozcu.com.tr/feeds-rss-category-emtia"),
+        ("Investing TR Emtia", "https://tr.investing.com/rss/commodities.rss"),
     ],
     "Ticaret & Dış Ticaret": [
         ("GoogleNews-Ticaret", "https://news.google.com/rss/search?q=ihracat%20ithalat%20ticaret&hl=tr&gl=TR&ceid=TR:tr"),
     ],
     "Jeopolitik": [
         ("GoogleNews-Jeopolitik", "https://news.google.com/rss/search?q=jeopolitik%20riskler%20petrol&hl=tr&gl=TR&ceid=TR:tr"),
+        ("DW Turkce", "https://rss.dw.com/rdf/rss-tur-all"),
+        ("Hurriyet Dunya", "https://www.hurriyet.com.tr/rss/dunya"),
+        ("Sabah Dunya", "https://www.sabah.com.tr/rss/dunya.xml"),
     ],
     "Küresel Ekonomi": [
         ("BBC Business", "https://feeds.bbci.co.uk/news/business/rss.xml"),
