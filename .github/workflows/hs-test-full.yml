@@ -1,0 +1,48 @@
+name: HS Test Full
+on:
+  schedule:
+    # Pazar 17:30 TSI (UTC+3) = 14:30 UTC; haftaya baslamadan once
+    - cron: '30 14 * * 0'
+  workflow_dispatch:
+    inputs:
+      FORCE:
+        description: 'Hafta ici test icin FORCE=1 verin'
+        required: false
+        default: ''
+permissions:
+  contents: write
+jobs:
+  gundem:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Kutuphaneleri kur
+        run: pip install -r requirements.txt
+      - name: Gundemi uret
+        env:
+          FORCE: ${{ inputs.FORCE }}
+          AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+          ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          CF_API_KEY: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+        run: python -u haftasonu.py
+      - name: Degisiklikleri yayinla
+        run: |
+          git config user.name "borsa-bot"
+          git config user.email "borsa-bot@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Degisiklik yok; commit atlanır."
+            exit 0
+          fi
+          git commit -m "Hafta sonu gundemi guncellemesi"
+          git pull --rebase -X theirs origin main
+          git push origin main
