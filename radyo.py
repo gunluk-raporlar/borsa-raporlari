@@ -6,7 +6,7 @@ cagrilir. Akis:
   1. GUNUN VERISI: data/news, data/teknik (son tarama), portfolio.json, data/prices
   2. SOHRET: LLM (varsa Z.ai, degilse bot.llm_call zinciri) iki sunucu arasinda
      dogal bir sohbet yazar; LLM erisilemezse veriden sablon sohbet uretilir.
-  3. SESLENDIRME: edge-tts (Microsoft tr-TR neural sesler) — Ela = BurcuNeural
+  3. SESLENDIRME: edge-tts (Microsoft tr-TR neural sesler) — Ela = EmelNeural
      (kadin), Mert = AhmetNeural (erkek). Her replik ayri sentezlenir, ffmpeg ile
      kisa sessizliklerle tek MP3'te birlestirilir.
   4. YAYIN: radyo/<tarih>-<bolum>.mp3 yazilir, radyo/indeks.json guncellenir,
@@ -38,7 +38,7 @@ logger = logging.getLogger("radyo")
 RADYO_DIR = "radyo"
 TMP_DIR = os.path.join(RADYO_DIR, "_tmp")
 
-SESLER = {"ELA": "tr-TR-BurcuNeural", "MERT": "tr-TR-AhmetNeural"}
+SESLER = {"ELA": "tr-TR-EmelNeural", "MERT": "tr-TR-AhmetNeural"}
 
 BOLUM_ADLARI = {  # (saat araligi TSI) -> ad
     "acilis": "Açılış Yayını",
