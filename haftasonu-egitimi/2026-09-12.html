@@ -59,9 +59,14 @@ tr:last-child td { border-bottom:none; }
 .report h1 { font-size:22px; margin:26px 0 10px; }
 .report h2 { font-size:19px; margin:26px 0 10px; }
 .report h3 { font-size:16.5px; margin:22px 0 8px; }
-.report table { margin:14px 0; border:1px solid var(--line); border-radius:8px; }
-.report th { background:#f8fafc; }
-.report td, .report th { border:1px solid var(--line); }
+.report table { margin:16px 0; border:1px solid var(--line); width:100%; }
+.report thead th { background:var(--ink); color:#fff; font-weight:600; font-size:12.5px;
+                   text-transform:none; letter-spacing:.3px; padding:11px 14px; text-align:left;
+                   border:1px solid var(--line); white-space:nowrap; }
+.report tbody td { border:1px solid var(--line); padding:10px 14px; }
+.report tbody tr:nth-child(even) td { background:#f8fafc; }
+.report tbody tr:hover td { background:var(--accent-bg); }
+.report tbody td:first-child { font-weight:600; }
 .report hr { border:none; border-top:1px solid var(--line); margin:22px 0; }
 .report blockquote { margin:14px 0; padding:10px 16px; border-left:4px solid var(--line); color:var(--muted); }
 .badge { display:inline-block; background:var(--accent-bg); color:var(--accent); border:1px solid #99f6e4;
@@ -462,141 +467,71 @@ async function aiSor() {
 <div class="meta"><span class="badge">2026-09-12</span><span>Ders 1/26 &bull; Osilatör &bull; Kurgusal yapay zeka eğitmen</span></div>
 </div>
 <article class="report" id="rapor-ses-metin"><figure style="margin:0 0 18px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 300" role="img" style="width:100%;height:auto;background:#fff;border:1px solid #e2e8f0;border-radius:10px;"><text x="14" y="26" font-family="Segoe UI,Arial" font-size="15" font-weight="700" fill="#0f172a">RSI (14) — momentum göstergesi</text><text x="550" y="292" font-family="Segoe UI,Arial" font-size="11" fill="#64748b" text-anchor="end">şematik — temsilidir</text><g transform="translate(0,40)"><line x1="46" y1="12" x2="46" y2="209" stroke="#e2e8f0" stroke-width="1"/><line x1="129" y1="12" x2="129" y2="209" stroke="#e2e8f0" stroke-width="1"/><line x1="213" y1="12" x2="213" y2="209" stroke="#e2e8f0" stroke-width="1"/><line x1="296" y1="12" x2="296" y2="209" stroke="#e2e8f0" stroke-width="1"/><line x1="379" y1="12" x2="379" y2="209" stroke="#e2e8f0" stroke-width="1"/><line x1="463" y1="12" x2="463" y2="209" stroke="#e2e8f0" stroke-width="1"/><text x="46" y="224" font-family="Segoe UI,Arial" font-size="11" fill="#64748b">zaman →</text><rect x="46" y="56.0" width="500" height="139.4" fill="#fef2f2" opacity="0.14"/><line x1="46" y1="56.0" x2="546" y2="56.0" stroke="#b91c1c" stroke-width="1.2" stroke-dasharray="6,4" opacity="0.75"/><line x1="46" y1="195.4" x2="546" y2="195.4" stroke="#047857" stroke-width="1.2" stroke-dasharray="6,4" opacity="0.75"/><text x="542" y="51.0" font-family="Segoe UI,Arial" font-size="10.5" fill="#64748b" text-anchor="end">70 / 30</text><polyline points="46.0,125.7 52.3,125.7 58.7,125.7 65.0,125.7 71.3,125.7 77.6,125.7 84.0,125.7 90.3,125.7 96.6,125.7 103.0,125.7 109.3,125.7 115.6,125.7 121.9,125.7 128.3,125.7 134.6,25.6 140.9,26.7 147.3,29.3 153.6,30.5 159.9,29.4 166.3,31.8 172.6,31.6 178.9,31.3 185.2,30.5 191.6,29.8 197.9,29.5 204.2,29.2 210.6,27.6 216.9,32.1 223.2,32.8 229.5,31.7 235.9,36.1 242.2,34.4 248.5,38.5 254.9,36.0 261.2,37.2 267.5,40.0 273.8,41.8 280.2,39.3 286.5,42.6 292.8,40.5 299.2,43.3 305.5,41.3 311.8,41.9 318.2,37.0 324.5,34.4 330.8,34.3 337.1,35.1 343.5,40.5 349.8,60.2 356.1,56.3 362.5,50.1 368.8,70.2 375.1,70.0 381.4,80.5 387.8,91.1 394.1,85.6 400.4,76.4 406.8,79.4 413.1,74.4 419.4,96.3 425.7,96.8 432.1,105.9 438.4,111.1 444.7,107.2 451.1,93.3 457.4,112.9 463.7,122.8 470.1,113.8 476.4,100.2 482.7,102.7 489.0,96.3 495.4,86.5 501.7,85.1 508.0,92.8 514.4,86.1 520.7,102.7 527.0,84.7 533.3,91.4 539.7,91.3 546.0,104.4" fill="none" stroke="#7c3aed" stroke-width="2.6" stroke-linejoin="round"/><line x1="60" y1="18" x2="76" y2="18" stroke="#7c3aed" stroke-width="2.6"/><text x="82" y="22" font-family="Segoe UI,Arial" font-size="11.5" fill="#0f172a">Gösterge</text><text x="200" y="22" font-family="Segoe UI,Arial" font-size="11.5" fill="#64748b">Bant dışı aşırı bölge • içeri dönüş sinyal adayı</text></g></svg><figcaption style="color:var(--muted);font-size:12px;margin-top:6px">Şekil: RSI (Göreceli Güç Endeksi) — eğitim amaçlı şematik gösterim (gerçek piyasa verisi değildir)</figcaption></figure><h2>Bugünün Dersi: RSI (Göreceli Güç Endeksi)</h2>
-<p>Merhaba! Bugün RSI’yi, yani Göreceli Güç Endeksi’ni birlikte öğreneceğiz. RSI, bir hissenin son dönemdeki yükseliş ve düşüş gücünü 0 ile 100 arasında gösteren bir momentum göstergesidir.</p>
-<h2>1. Nedir?</h2>
-<p>RSI’yi bir koşucunun nefes kontrolü gibi düşünebilirsin.</p>
-<p>Bir koşucu çok hızlı koşmaya başladıysa nefesi hızlanır, yorulmaya başlar. Ama nefesinin hızlanması her an duracağı anlamına gelmez. RSI de hissenin “nefesini” ölçer: Son günlerde alıcılar mı daha güçlü, satıcılar mı?</p>
-<p>Net tanım: RSI, bir hissenin son dönemdeki ortalama kazançlarını ortalama kayıplarıyla karşılaştırır. Sonuç 0 ile 100 arasında bir sayıdır.</p>
-<p>Genel kabul:</p>
+<h3>1. Nedir?</h3>
+<p>Diyelim ki bir bisiklet tırmanıyoruz. Tırmanışın zorluğu arttıkça pedalı daha sert çevirmek zorunda kalıyoruz. RSI (Relative Strength Index), borsada hisse senedinin "zorluk seviyesini" ölçen bir araçtır. Yani, bu hisse senedi son zamanlarda ne kadar hızlı ve güçlü yükseldi veya indiğini gösterir.</p>
+<h3>2. Neden Önemli?</h3>
+<p>Bu bilgiye sahip olmak, paranızı korumanıza yardımcı olur. Borsada herkes hisse almak istediğinde fiyatlar çok yükseklere çıkar. RSI, bu "coşkuyu" tespit eder. Eğer RSI çok yüksekse, fiyatlar mantıklı olmayan bir hızla yükseliyordur; bu da bir "durgunluk" (dip) riski demektir. Yatırımcıya "Dikkat, fiyat çok hızlı ilerliyor, biraz beklemek daha mantıklı olabilir" sinyali verir.</p>
+<h3>3. Nasıl Okunur / Kullanılır?</h3>
+<p>RSI, 0 ile 100 arasında bir değer verir. İşte okuma kuralı:</p>
 <ul>
 <li>
-<p>RSI 70 üstü: Aşırı alım bölgesi</p>
+<p><strong>70 Üstü (Aşırı Alım):</strong> Hisse senedi çok güçlü. Normalde bu durum bir "dip" sinyali verir. Yani, "Fiyat çok yüksek, alım sinyali değil, satış yapılabilir" demektir.</p>
 </li>
 <li>
-<p>RSI 30 altı: Aşırı satım bölgesi</p>
-</li>
-<li>
-<p>RSI 50 civarı: Yükseliş ve düşüş gücünün dengelendiği bölge</p>
+<p><strong>30 Altı (Aşırı Satım):</strong> Hisse senedi çok zayıf. Bu durum bir "tepe" sinyali verir. Yani, "Fiyat çok aşağı indi, satış bitti, alım fırsatı olabilir" demektir.</p>
 </li>
 </ul>
-<h2>2. Neden Önemli?</h2>
-<p>RSI yatırımcıya şu soruları sordurur:</p>
+<h3>4. Gerçek Örnek</h3>
+<p>Bugün verilerine baktığımızda, RSI kanallarındaki değerler bize net bir resim sunuyor:</p>
 <ul>
 <li>
-<p>Hissenin yükselişi hâlâ güçlü mü?</p>
+<p><strong>TUPRS:</strong> Son fiyat 413,50 TL. Günlük hareket -0,78%. RSI kanalı %32 seviyesinde. Bu, hissenin günlük hareketinin düşük olduğunu ve RSI'nin 30'un altında olmadığını gösteriyor. Yani hisse henüz aşırı satılmış bir durumda değil.</p>
 </li>
 <li>
-<p>Yükseliş yoruluyor mu?</p>
+<p><strong>KCHOL:</strong> Son fiyat 225,10 TL. Günlük hareket +0,36%. RSI kanalı %75 seviyesinde. Burada dikkat edilmesi gereken nokta: RSI %75 seviyesine ulaştı. Bu, hissenin son zamanlarda oldukça güçlü ilerlediğini ve aşırı alım bölgesine yaklaştığını işaret ediyor.</p>
 </li>
 <li>
-<p>Düşüş çok mu hızlandı?</p>
-</li>
-<li>
-<p>Fiyat tek başına bir şey söylüyor, RSI başka bir şey mi söylüyor?</p>
+<p><strong>BIMAS:</strong> Son fiyat 434,75 TL. Günlük hareket +1,10%. RSI kanalı %88 seviyesinde. Bu, en yüksek RSI değerlerinden biri. Hisse senedi son günlerde çok hızlı yükseldi ve aşırı alım bölgesine çok yaklaştı. Bu durum, fiyatın bir miktar dinlenme ihtimali olduğunu düşündürüyor.</p>
 </li>
 </ul>
-<p>Bu bilgi yatırımcıya acele kararları azaltma fırsatı verir. RSI tek başına “al” veya “sat” demez. Ama fiyatın momentumu hakkında ipucu verir.</p>
-<h2>3. Nasıl Okunur / Kullanılır?</h2>
-<p>Adım adım bakalım:</p>
+<h3>5. Sık Yapılan Hatalar</h3>
+<ul>
+<li>
+<p><strong>Sadece RSI'ya Bakmak:</strong> RSI sadece fiyatın hızını gösterir, fiyatın yönünü değil. Yani RSI %70 üzerinde olsa bile fiyat hâlâ yukarı gidebilir. Bu yüzden sadece bu göstergeye güvenip hisse alıp satmamak gerekir.</p>
+</li>
+<li>
+<p><strong>Yanlış Zamanlama:</strong> RSI sinyalleri bazen geç kalabilir. Özellikle "aşırı alım" sinyali verdiğinde, fiyatlar bir süre daha yukarı çıkabilir. Bu yüzden "RSI %70'yi geçti, şimdi sat" demek yerine, fiyatın düşmesini beklemek daha güvenlidir.</p>
+</li>
+<li>
+<p><strong>Teknik Göstergeden Varsayımlar Yapmak:</strong> RSI'nın %70 altına düşmesi, hissenin kesinlikle düşeceğini garanti etmez. Bu sadece bir ihtimaldir.</p>
+</li>
+</ul>
+<h3>6. Mini Test</h3>
 <ol>
-<li>
-<p>RSI 50’nin üzerindeyse:<br />
-   Son dönemdeki ortalama kazançlar, ortalama kayıplardan güçlü olabilir.</p>
-</li>
-<li>
-<p>RSI 50’nin altındaysa:<br />
-   Son dönemdeki ortalama kayıplar, ortalama kazançlardan güçlü olabilir.</p>
-</li>
-<li>
-<p>RSI 70 üstüne çıkarsa:<br />
-   Hisse kısa sürede çok yükselmiş olabilir. Bu “aşırı alım” bölgesidir. Ama her zaman düşecek demek değildir.</p>
-</li>
-<li>
-<p>RSI 30 altına inerse:<br />
-   Hisse kısa sürede çok düşmüş olabilir. Bu “aşırı satım” bölgesidir. Ama her zaman yükselecek demek değildir.</p>
-</li>
-<li>
-<p>Trend yönüne bak:<br />
-   Güçlü bir yükseliş trendinde RSI uzun süre 70 üstünde kalabilir. Güçlü bir düşüş trendinde RSI uzun süre 30 altında kalabilir.</p>
-</li>
-<li>
-<p>Tek başına kullanma:<br />
-   RSI’yi fiyat hareketi, hacim, destek-direnç ve genel piyasa yönüyle birlikte düşün.</p>
-</li>
+<li>RSI göstergesi 70 seviyesinin üzerindeyse, bu hisse senedi için ne söylenebilir?</li>
+<li>RSI göstergesi 30 seviyesinin altındaysa, bu hisse senedi için ne söylenebilir?</li>
+<li>TUPRS hissesinde RSI kanalı %32 seviyesindeyse, hissenin genel durumu nasıl yorumlanır?</li>
 </ol>
-<h2>4. Gerçek Örnek</h2>
-<p>Güncel veride RSI değeri verilmedi. Bu yüzden RSI seviyesi uydurmuyoruz. Aşağıdaki örneklerde sadece fiyat ve günlük değişim üzerinden RSI’nin nasıl düşünüleceğini anlatacağız.</p>
+<p><strong>Cevaplar:</strong><br />
+1.  Aşırı alım bölgesindedir. Hisse senedi son zamanlarda çok hızlı yükseldiğinden, bir miktar durgunluk beklenmelidir.<br />
+2.  Aşırı satım bölgesindedir. Hisse senedi son zamanlarda çok hızlı indiğinden, fiyatlar bir miktar toparlanma ihtimali vardır.<br />
+3.  Hisse senedi henüz aşırı satılmış bir durumda değil, günlük hareketi düşüktür.</p>
+<h3>7. Özet</h3>
 <ul>
 <li>
-<p>TUPRS son 413,50 TL, günlük %-0,78, kanal %32, r=0,97.<br />
-  Günlük düşüş küçük görünüyor. Bu tek başına RSI’nin 30 altına indiği anlamına gelmez. RSI için ayrıca bakılmalı.</p>
+<p>RSI, hisse senedinin son 14 günlük hareket hızını ölçer.</p>
 </li>
 <li>
-<p>KCHOL son 225,10 TL, günlük %0,36, kanal %75, r=0,88.<br />
-  Günlük artış ılımlı. RSI’yi sert yukarı iten bir hareket olmayabilir. Ama RSI değeri verilmediği için kesin yorum yapılmaz.</p>
+<p>70 üstü = Aşırı Alım (Dikkat: Fiyat çok hızlı yükseliyor).</p>
 </li>
 <li>
-<p>BIMAS son 434,75 TL, günlük %1,10, kanal %88, r=0,83.<br />
-  Günlük %1,10’luk artış RSI’yi yukarı taşıyabilir. Ancak RSI’nin 70 üstüne çıkıp çıkmadığı ayrıca kontrol edilmeli.</p>
+<p>30 altı = Aşırı Satım (Fırsat: Fiyat çok aşağı indi).</p>
 </li>
 <li>
-<p>VAKBN son 38,08 TL, günlük %9,99, kanal %128, r=0,15.<br />
-  Günlük %9,99’luk sert artış, RSI’yi hızla yukarı çekebilir. Ama RSI değeri verilmediği için “kesin aşırı alım” diyemeyiz.</p>
+<p>RSI sadece momentumu gösterir, fiyatın geleceğini kesin olarak söylemez.</p>
 </li>
 <li>
-<p>TTKOM son 60,85 TL, günlük %9,94, kanal %147, r=-0,74.<br />
-  Günlük %9,94’lük artış güçlü bir momentum gösterebilir. RSI’nin 70 üstüne çıkıp çıkmadığı ayrıca bakılmalı.</p>
-</li>
-<li>
-<p>DSTKF son 2.500,00 TL, günlük %3,73, kanal %86, r=-0,65.<br />
-  Günlük %3,73’lük artış RSI’yi yukarı yönlendirebilir. Ama tek başına alım ya da satım kararı için yeterli değildir.</p>
-</li>
-</ul>
-<p>Burada önemli nokta şu: Günlük yükseliş veya düşüş RSI’yi etkiler. Ama RSI’nin kendisi verilmeden “aşırı alım” ya da “aşırı satım” demek doğru olmaz.</p>
-<h2>5. Sık Yapılan Hatalar</h2>
-<ul>
-<li>
-<p>RSI 70 üstüne çıktı diye hemen “düşecek” demek.</p>
-</li>
-<li>
-<p>RSI 30 altına indi diye hemen “yükselir” demek.</p>
-</li>
-<li>
-<p>RSI’yi tek başına alım-satım sinyali gibi kullanmak.</p>
-</li>
-<li>
-<p>Güçlü trendlerde RSI’nin uzun süre 70 üstünde veya 30 altında kalabileceğini unutmak.</p>
-</li>
-</ul>
-<h2>6. Mini Test</h2>
-<ol>
-<li>RSI 78 ise ne düşünülür?</li>
-</ol>
-<p>Cevap: Aşırı alım bölgesi olabilir. Ama tek başına satış sinyali değildir.</p>
-<ol start="2">
-<li>RSI 24 ise ne düşünülür?</li>
-</ol>
-<p>Cevap: Aşırı satım bölgesi olabilir. Ama tek başına alım sinyali değildir.</p>
-<ol start="3">
-<li>Güncel veride VAKBN günlük %9,99 yükseldi. RSI kesin 70 üstüdür diyebilir miyiz?</li>
-</ol>
-<p>Cevap: Hayır. RSI değeri verilmediği için kesin yorum yapılamaz.</p>
-<h2>7. Özet</h2>
-<ul>
-<li>
-<p>RSI, 0 ile 100 arasında çalışan bir momentum göstergesidir.</p>
-</li>
-<li>
-<p>70 üstü aşırı alım, 30 altı aşırı satım bölgesi olarak kabul edilir.</p>
-</li>
-<li>
-<p>RSI tek başına alım veya satım kararı vermez.</p>
-</li>
-<li>
-<p>Güçlü trendlerde RSI uzun süre uç bölgelerde kalabilir.</p>
-</li>
-<li>
-<p>Güncel veride RSI değeri yoksa, RSI seviyesi hakkında kesin konuşulmaz.</p>
+<p>RSI'nın %75 ve %88 seviyelerine ulaşan hisseler (KCHOL, BIMAS), son günlerde çok güçlü performans göstermişlerdir.</p>
 </li>
 </ul>
 <p>Bu ders eğitim amaçlıdır, yatırım tavsiyesi değildir.</p></article>
