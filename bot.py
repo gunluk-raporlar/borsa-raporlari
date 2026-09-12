@@ -1403,9 +1403,14 @@ tr:last-child td { border-bottom:none; }
 .report h1 { font-size:22px; margin:26px 0 10px; }
 .report h2 { font-size:19px; margin:26px 0 10px; }
 .report h3 { font-size:16.5px; margin:22px 0 8px; }
-.report table { margin:14px 0; border:1px solid var(--line); border-radius:8px; }
-.report th { background:#f8fafc; }
-.report td, .report th { border:1px solid var(--line); }
+.report table { margin:16px 0; border:1px solid var(--line); width:100%; }
+.report thead th { background:var(--ink); color:#fff; font-weight:600; font-size:12.5px;
+                   text-transform:none; letter-spacing:.3px; padding:11px 14px; text-align:left;
+                   border:1px solid var(--line); white-space:nowrap; }
+.report tbody td { border:1px solid var(--line); padding:10px 14px; }
+.report tbody tr:nth-child(even) td { background:#f8fafc; }
+.report tbody tr:hover td { background:var(--accent-bg); }
+.report tbody td:first-child { font-weight:600; }
 .report hr { border:none; border-top:1px solid var(--line); margin:22px 0; }
 .report blockquote { margin:14px 0; padding:10px 16px; border-left:4px solid var(--line); color:var(--muted); }
 .badge { display:inline-block; background:var(--accent-bg); color:var(--accent); border:1px solid #99f6e4;
