@@ -272,14 +272,13 @@ body { overflow-x: hidden; }
       function yukle(i) {
         secili = i;
         ses.src = kok + bolumler[i].dosya;
-        ses.play().catch(function() {});
         liste.innerHTML = bolumler.map(function(b, ix) {
           var sure = b.sure_sn ? Math.round(b.sure_sn / 60) + ' dk' : '';
           return '<a href="javascript:void(0)" onclick="radyoSec(' + ix + ')" style="display:inline-block; margin:2px 6px 2px 0; ' +
                  (ix === secili ? 'font-weight:700;' : '') + '">' + b.baslik + (sure ? ' (' + sure + ')' : '') + '</a>';
         }).join('');
       }
-      window.radyoSec = function(i) { yukle(i); };
+      window.radyoSec = function(i) { yukle(i); ses.play().catch(function() {}); };
       yukle(0);
       kutu.style.display = 'block';
     })
