@@ -461,9 +461,12 @@ async def _replik_seslendir(replik, konusan, cikti_yolu):
     ses = SESLER.get(konusan, SESLER["ELA"])
     metin = _tl_konusma_metni(replik)
     metin = bot._konusma_metni_normalize(metin)
-    # Konusana gore hafif hiz farki: Mert atak (hizli), Ela olculu (yavas)
-    rate = "+6%" if konusan == "MERT" else "+2%"
-    com = Communicate(metin, ses, rate=rate)
+    # Radyo karakterleri: ses + hiz + perde farki (tekduzeligi kirar)
+    if konusan == "MERT":
+        rate, pitch, volume = "+8%", "+6Hz", "+0%"
+    else:  # ELA
+        rate, pitch, volume = "+3%", "-5Hz", "+0%"
+    com = Communicate(metin, ses, rate=rate, pitch=pitch, volume=volume)
     await com.save(cikti_yolu)
     return cikti_yolu
 
@@ -499,6 +502,24 @@ def _sessizlik_mp3(ffmpeg):
     y = os.path.join(TMP_DIR, "sus.mp3")
     r = os.system(f'"{ffmpeg}" -y -loglevel error -f lavfi -i anullsrc=r=24000:cl=mono -t 0.4 -c:a libmp3lame -b:a 48k "{y}"')
     return y if r == 0 else None
+
+
+def _jingle_uret(ffmpeg):
+    """Kisa, yumusak bir 'radyo' istasyon jingle'i (C-E-G arpej + fade)."""
+    cikti = os.path.join(TMP_DIR, "jingle.mp3")
+    cmd = (
+        f'"{ffmpeg}" -y -loglevel error '
+        f'-f lavfi -i "sine=frequency=523.25:duration=0.4" '
+        f'-f lavfi -i "sine=frequency=659.25:duration=0.4" '
+        f'-f lavfi -i "sine=frequency=783.99:duration=0.8" '
+        f'-filter_complex "'
+        f'[0:a]adelay=0:all=1[a0];[1:a]adelay=280:all=1[a1];[2:a]adelay=560:all=1[a2];'
+        f'[a0][a1][a2]amix=inputs=3:duration=longest,'
+        f'afade=t=in:d=0.05,afade=t=out:st=1.2:d=0.6,volume=0.22" '
+        f'-ar 24000 -ac 1 -c:a libmp3lame -b:a 48k "{cikti}"'
+    )
+    r = os.system(cmd)
+    return cikti if r == 0 else None
 
 
 def _sure_sn(dosya):
@@ -583,6 +604,22 @@ def main():
     if not _birlestir(parcalar, sus or parcalar[-1], cikti, ffmpeg):
         logger.error("MP3 birlestirme basarisiz.")
         return 1
+
+    # Radyo jingle'i: programin basina ve sonuna kisa bir istasyon sting'i ekle
+    jingle = _jingle_uret(ffmpeg)
+    if jingle:
+        ham = os.path.join(TMP_DIR, "ham.mp3")
+        os.replace(cikti, ham)
+        r = os.system(
+            f'"{ffmpeg}" -y -loglevel error -i "{jingle}" -i "{ham}" -i "{jingle}" '
+            f'-filter_complex "[0:a]aresample=24000[0];[1:a]aresample=24000[1];[2:a]aresample=24000[2];[0][1][2]concat=n=3:v=0:a=1" '
+            f'-c:a libmp3lame -b:a 48k "{cikti}"'
+        )
+        if r != 0:
+            os.replace(ham, cikti)  # jingle eklenemezse orijinal yayini geri koy
+            logger.warning("Jingle eklenemedi; yayin jingle'siz kaldi.")
+        else:
+            os.remove(ham)
 
     sure = _sure_sn(cikti)
     logger.info("Yayin hazir: %s (%.1f dk)", cikti, sure / 60)
