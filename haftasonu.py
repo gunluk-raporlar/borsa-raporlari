@@ -18,7 +18,7 @@ import json
 import time
 import glob
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 import zoneinfo
 
 os.environ.setdefault("AMD_API_KEY", "haftasonu")
@@ -64,7 +64,8 @@ _EKSTRA_KATEGORILER = {
 }
 
 _EXTRA_FILTRE = ["spor", "futbol", "magazin", "dizi", "yemek tarifi", "hava durumu",
-                 "survivor", "masterchef", "milli piyango", "sayısal loto"]
+                 "survivor", "masterchef", "milli piyango", "sayısal loto",
+                 "KAP ***", "İhale Süreci / Sonucu"]
 
 
 def kategoriler():
@@ -75,6 +76,18 @@ def kategoriler():
     k["Ekonomi & Finans (Türkiye)"] = tr_liste
     k.update(_EKSTRA_KATEGORILER)
     return k
+
+
+def _guncel_mi(e, gun=14):
+    """RSS girdisi son `gun` gün içinde yayınlanmış mı? (tarih bilgisi yoksa kabul et.)"""
+    pp = getattr(e, "published_parsed", None) or getattr(e, "updated_parsed", None)
+    if not pp:
+        return True
+    try:
+        t = datetime(*pp[:6], tzinfo=zoneinfo.ZoneInfo("UTC"))
+        return (datetime.now(zoneinfo.ZoneInfo("UTC")) - t).days <= gun
+    except Exception:
+        return True
 
 
 def haberleri_topla():
@@ -98,7 +111,10 @@ def haberleri_topla():
         for ad, url in kaynaklar:
             try:
                 f = __import__("feedparser").parse(url)
-                for e in f.entries[:6]:
+                alinan = 0
+                for e in f.entries[:40]:
+                    if not _guncel_mi(e):
+                        continue
                     b = temiz(e.title)
                     if not b:
                         continue
@@ -107,6 +123,9 @@ def haberleri_topla():
                         continue
                     gorulen.add(anahtar)
                     liste.append(f"[{ad}] {b}")
+                    alinan += 1
+                    if alinan >= 6:
+                        break
             except Exception:
                 continue
             time.sleep(0.2)
@@ -167,14 +186,26 @@ def _gundem_uret(kategoriler):
                     logger.warning("LLM gundem basarisiz: %s", e)
     if not metin or metin.startswith("(LLM"):
         logger.warning("LLM kullanilamadi; sablon gundem uretilecek.")
+        bolumler = [
+            ("Ekonomi & Finans (Türkiye)", "Ekonomi & Finans (Türkiye)"),
+            ("Para & Döviz", "Para & Döviz"),
+            ("Emlak", "Emlak"),
+            ("Ticaret & Dış Ticaret", "Ticaret & Dış Ticaret"),
+            ("Jeopolitik", "Jeopolitik"),
+            ("Küresel Ekonomi", "Küresel Ekonomi"),
+        ]
         satirlar = ["## 1. Hafta Sonu Gündem Özeti",
-                    "Bu bölüm yapay zeka yerine otomatik şablonla hazırlandı; aşağıda hafta sonu boyunca öne çıkan başlıklar kaynaklarıyla listeleniyor.",
-                    "## 2. Ekonomi & Finans (Türkiye)"]
-        for kat in ("Ekonomi & Finans (Türkiye)", "Para & Döviz", "Emlak", "Ticaret & Dış Ticaret", "Jeopolitik", "Küresel Ekonomi"):
-            liste = kategoriler.get(kat) or []
-            satirlar.append(f"### {kat}")
-            satirlar.extend("- " + b for b in liste[:12]) if liste else satirlar.append("(kayda değer haber yok)")
-        satirlar.append("## 7. Yeni Hafta Ajandası")
+                    "Aşağıda hafta sonu boyunca öne çıkan başlıklar, kaynaklarıyla birlikte özetleniyor."]
+        num = 2
+        for anahtar, baslik in bolumler:
+            liste = kategoriler.get(anahtar) or []
+            satirlar.append(f"## {num}. {baslik}")
+            if liste:
+                satirlar.extend("- " + b for b in liste[:8])
+            else:
+                satirlar.append("Bu hafta sonu bu alanda kayda değer bir gelişme öne çıkmadı.")
+            num += 1
+        satirlar.append(f"## {num}. Yeni Hafta Ajandası")
         satirlar.append("- Hafta içi günlük raporlar, teknik tarama ve BIST Radyo ile takibe devam edilecek.")
         satirlar.append("- Yukarıdaki başlıklardaki gelişmelerin piyasalara yansıması izlenecek.")
         satirlar.append("_Bu içerik yapay zeka ile hafta sonu haberlerinden derlenmiştir; bilgilendirme amaçlıdır, yatırım tavsiyesi değildir._")
