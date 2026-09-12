@@ -26,6 +26,7 @@ os.environ.setdefault("AMD_API_KEY", "egitim")
 
 import bot  # noqa: E402
 import svg_grafik  # noqa: E402
+import excel_tablo  # noqa: E402  Excel gorunumlu gerccek teknik tarama tablosu
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 logger = logging.getLogger("egitim")
@@ -149,6 +150,41 @@ Kurallar:
 {veri}"""
 
 
+def _ders_hisse_bul(metin, satirlar):
+    """Ders metninde gecen ilk BIST kodunu dondurur (tablo onsecimi icin).
+    Ders TTKOM'u ornek olarak anlattıysa tablo o hucreyi acilirken secili gosterir."""
+    if not metin or not satirlar:
+        return None
+    en_iyi, en_konum = None, None
+    for s in satirlar:
+        kod = s.get("hisse")
+        if not kod:
+            continue
+        m = re.search(rf"\b{re.escape(kod)}\b", metin)
+        if m and (en_konum is None or m.start() < en_konum):
+            en_iyi, en_konum = kod, m.start()
+    return en_iyi
+
+
+def _excel_veri_bolumu(metin=None):
+    """data/teknik'teki en guncel taramayi Excel gorunumlu tablo olarak dondurur.
+    Veri yoksa bos string doner (sayfa tablosuz yayinlanir)."""
+    try:
+        x_tarih, x_satirlar = excel_tablo.veri_yukle()
+        if not x_satirlar:
+            return ""
+        on_hisse = _ders_hisse_bul(metin, x_satirlar)
+        if not on_hisse:
+            on_hisse = max(x_satirlar, key=lambda s: abs(s.get("gunluk", 0) or 0)).get("hisse")
+        return excel_tablo.excel_tablo_html(
+            x_satirlar, x_tarih,
+            baslik="TEKNIK-TARAMA.XLSX",
+            preselect_hisse=on_hisse, preselect_alan="gunluk")
+    except Exception as e:
+        logger.warning("Excel tablo uretilemedi (sayfa tablosuz devam ediyor): %s", e)
+        return ""
+
+
 def _ders_uret(konu, tanim, veri):
     prompt = _PROMPT.format(konu=konu, tanim=tanim, veri=veri or "(guncel veri alinamadi)")
     metin = None
@@ -199,6 +235,9 @@ def main():
     metin = _ders_uret(konu, tanim, veri)
     metin = bot._tarih_gun_duzelt(metin)
 
+    # Dersin altina: guncel taramanin Excel gorunumlu gerccek veri tablosu
+    excel_bolumu = _excel_veri_bolumu(metin)
+
     # Onceki dersler listesi
     onceki = ""
     if os.path.isdir(ARSIV_DIR):
@@ -220,6 +259,8 @@ def main():
 <div class="meta"><span class="badge">{tarih}</span><span>Ders {idx + 1}/{len(MUFREDAT)} &bull; {kategori} &bull; Kurgusal yapay zeka eğitmen</span></div>
 </div>
 <article class="report" id="rapor-ses-metin">{figura}{bot.markdown_to_html(metin)}</article>
+<p style="margin:22px 0 0; color:var(--muted); font-size:13px"><strong>Gerçek veriyle pratik:</strong> Aşağıdaki tablo bugünün teknik taramasından gelir — bir hücreye tıklayıp ad/formül çubuğunu görebilir, sütun başlıklarına tıklayarak sıralayabilirsin.</p>
+{excel_bolumu}
 {onceki}
 <p style="margin-top:12px"><a href="index.html">&larr; Ana sayfaya dön</a></p>"""
     html = bot._sayfa(
