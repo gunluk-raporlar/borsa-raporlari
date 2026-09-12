@@ -358,7 +358,6 @@ def _looks_degenerate(metin: str) -> bool:
     # Tablo satiri tekrari: ayni (| ile baslayan) satirdan 3+ kez varsa dongudur
     satirlar = [s.strip() for s in metin.split("\n") if s.strip().startswith("|")]
     if satirlar:
-        from collections import Counter
         if Counter(satirlar).most_common(1)[0][1] >= 3:
             return True
     """Modelin tekrar dongusune girdigi yanitlari yakalamak icin basit sezgisel test.
