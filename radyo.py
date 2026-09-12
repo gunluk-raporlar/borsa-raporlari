@@ -460,8 +460,10 @@ async def _replik_seslendir(replik, konusan, cikti_yolu):
     from edge_tts import Communicate
     ses = SESLER.get(konusan, SESLER["ELA"])
     metin = _tl_konusma_metni(replik)
-    # cok uzun replikleri edge-tts sinirina takilmamak icin oldugu gibi gonder
-    com = Communicate(metin, ses, rate="+0%")
+    metin = bot._konusma_metni_normalize(metin)
+    # Konusana gore hafif hiz farki: Mert atak (hizli), Ela olculu (yavas)
+    rate = "+6%" if konusan == "MERT" else "+2%"
+    com = Communicate(metin, ses, rate=rate)
     await com.save(cikti_yolu)
     return cikti_yolu
 

@@ -1309,6 +1309,30 @@ def _dogrulama_etiketleri():
 TTS_SESI = os.environ.get("TTS_SESI") or "tr-TR-EmelNeural"
 
 
+# Sesli okumada ticker ve kısaltmaların doğal telaffuzu
+HISSE_ADLARI = {
+    "AEFES": "Anadolu Efes", "AKBNK": "Akbank", "ASELS": "Aselsan",
+    "ASTOR": "Astor Enerji", "BIMAS": "BİM", "DSTKF": "Destek Finans Faktoring",
+    "EKGYO": "Emlak Konut GYO", "ENKAI": "Enka İnşaat", "EREGL": "Ereğli Demir Çelik",
+    "FROTO": "Ford Otosan", "GARAN": "Garanti BBVA", "GUBRF": "Gübre Fabrikaları",
+    "ISCTR": "İş Bankası", "KCHOL": "Koç Holding", "KRDMD": "Kardemir",
+    "MGROS": "Migros", "PETKM": "Petkim", "PGSUS": "Pegasus",
+    "SAHOL": "Sabancı Holding", "SASA": "Sasa Polyester", "SISE": "Şişecam",
+    "TAVHL": "TAV Havalimanları", "TCELL": "Turkcell", "THYAO": "Türk Hava Yolları",
+    "TOASO": "Tofaş", "TRALT": "Türk Altın İşletmeleri", "TTKOM": "Türk Telekom",
+    "TUPRS": "Tüpraş", "VAKBN": "Vakıfbank", "YKBNK": "Yapı Kredi",
+}
+
+
+def _konusma_metni_normalize(metin):
+    """Sesli okuma öncesi kısaltma ve ticker'ları doğal söylenişe çevirir:
+    'BIST' -> 'Borsa İstanbul', 'TUPRS' -> 'Tüpraş' vb. (kelime sınırlı)."""
+    metin = re.sub(r"\bBIST\b", "Borsa İstanbul", metin)
+    for kod, ad in HISSE_ADLARI.items():
+        metin = re.sub(r"\b" + re.escape(kod) + r"\b", ad, metin)
+    return metin
+
+
 def _ses_metni_hazirla(html):
     """HTML raporu okunabilir saga metne cevirir: tablolar atlanir (sesli
     okumada veri tablosu anlamsizdir), etiketler temizlenir, ~12 bin
@@ -1322,6 +1346,7 @@ def _ses_metni_hazirla(html):
     # Bolum sonlarini cumle sonuna cevir (ses motoru orada nefes alsin)
     metin = metin.replace("\n\n", ". ")
     metin = re.sub(r"\s+", " ", metin).strip()
+    metin = _konusma_metni_normalize(metin)
     return metin.strip(" .,;:")[:12000]
 
 
@@ -1597,14 +1622,13 @@ def _radyo_kutusu(kok=""):
       function yukle(i) {{
         secili = i;
         ses.src = kok + bolumler[i].dosya;
-        ses.play().catch(function() {{}});
         liste.innerHTML = bolumler.map(function(b, ix) {{
           var sure = b.sure_sn ? Math.round(b.sure_sn / 60) + ' dk' : '';
           return '<a href="javascript:void(0)" onclick="radyoSec(' + ix + ')" style="display:inline-block; margin:2px 6px 2px 0; ' +
                  (ix === secili ? 'font-weight:700;' : '') + '">' + b.baslik + (sure ? ' (' + sure + ')' : '') + '</a>';
         }}).join('');
       }}
-      window.radyoSec = function(i) {{ yukle(i); }};
+      window.radyoSec = function(i) {{ yukle(i); ses.play().catch(function() {{}}); }};
       yukle(0);
       kutu.style.display = 'block';
     }})
