@@ -109,11 +109,14 @@ def _guncel_veri_ornekleri():
                 hareketli = sorted(satirlar, key=lambda s: abs(s.get("gunluk", 0) or 0), reverse=True)[:3]
                 if guclu:
                     parcalar.append("Güçlü al sinyali örnekleri: " + "; ".join(
-                        f"{s['hisse']} son {bot._tl_okunus(s['son'])} TL, kanal %{s.get('konum', 0):.0f}, r={s.get('r', 0):.2f}"
+                        f"{s['hisse']} son {bot._tl_okunus(s['son'])} TL, günlük {s.get('gunluk', 0):+.2f}%, "
+                        f"kanal %{s.get('konum', 0):.0f}, r={s.get('r', 0):.2f}"
                         for s in guclu) + ".")
                 if hareketli:
                     parcalar.append("En hareketli hisseler: " + "; ".join(
-                        f"{s['hisse']} günlük {s.get('gunluk', 0):+.2f}%" for s in hareketli) + ".")
+                        f"{s['hisse']} son {bot._tl_okunus(s['son'])} TL, günlük {s.get('gunluk', 0):+.2f}%, "
+                        f"kanal %{s.get('konum', 0):.0f}, r={s.get('r', 0):.2f}"
+                        for s in hareketli) + ".")
         except Exception:
             pass
     return " ".join(parcalar)
