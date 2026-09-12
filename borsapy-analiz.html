@@ -3,22 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Borsapy Sinyalleri - 2026-09-11</title>
+<title>Borsapy Sinyalleri - 2026-09-12</title>
 <meta name="description" content="TradingView göstergelerinden BIST 30 osilatör özeti: AL/SAT/NÖTR oyları, RSI, MACD, Stokastik %K, CCI ve ADX değerleri. 30 dakikada bir güncellenir.">
 <link rel="canonical" href="https://borsa-raporlari.onrender.com/borsapy-analiz.html">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BIST 30 Günlük Raporlar">
-<meta property="og:title" content="Borsapy Sinyalleri - 2026-09-11">
+<meta property="og:title" content="Borsapy Sinyalleri - 2026-09-12">
 <meta property="og:description" content="TradingView göstergelerinden BIST 30 osilatör özeti: AL/SAT/NÖTR oyları, RSI, MACD, Stokastik %K, CCI ve ADX değerleri. 30 dakikada bir güncellenir.">
 <meta property="og:url" content="https://borsa-raporlari.onrender.com/borsapy-analiz.html">
 <meta property="og:image" content="https://borsa-raporlari.onrender.com/og-cover.png">
 <meta property="og:locale" content="tr_TR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Borsapy Sinyalleri - 2026-09-11">
+<meta name="twitter:title" content="Borsapy Sinyalleri - 2026-09-12">
 <meta name="twitter:description" content="TradingView göstergelerinden BIST 30 osilatör özeti: AL/SAT/NÖTR oyları, RSI, MACD, Stokastik %K, CCI ve ADX değerleri. 30 dakikada bir güncellenir.">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Borsapy Sinyalleri - 2026-09-11", "description": "TradingView göstergelerinden BIST 30 osilatör özeti: AL/SAT/NÖTR oyları, RSI, MACD, Stokastik %K, CCI ve ADX değerleri. 30 dakikada bir güncellenir.", "url": "https://borsa-raporlari.onrender.com/borsapy-analiz.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.onrender.com/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Borsapy Sinyalleri - 2026-09-12", "description": "TradingView göstergelerinden BIST 30 osilatör özeti: AL/SAT/NÖTR oyları, RSI, MACD, Stokastik %K, CCI ve ADX değerleri. 30 dakikada bir güncellenir.", "url": "https://borsa-raporlari.onrender.com/borsapy-analiz.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.onrender.com/"}}</script>
 <style>
 :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9; --card:#ffffff;
        --pos:#047857; --neg:#b91c1c; --accent:#0f766e; --accent-bg:#f0fdfa; }
@@ -59,9 +59,14 @@ tr:last-child td { border-bottom:none; }
 .report h1 { font-size:22px; margin:26px 0 10px; }
 .report h2 { font-size:19px; margin:26px 0 10px; }
 .report h3 { font-size:16.5px; margin:22px 0 8px; }
-.report table { margin:14px 0; border:1px solid var(--line); border-radius:8px; }
-.report th { background:#f8fafc; }
-.report td, .report th { border:1px solid var(--line); }
+.report table { margin:16px 0; border:1px solid var(--line); width:100%; }
+.report thead th { background:var(--ink); color:#fff; font-weight:600; font-size:12.5px;
+                   text-transform:none; letter-spacing:.3px; padding:11px 14px; text-align:left;
+                   border:1px solid var(--line); white-space:nowrap; }
+.report tbody td { border:1px solid var(--line); padding:10px 14px; }
+.report tbody tr:nth-child(even) td { background:#f8fafc; }
+.report tbody tr:hover td { background:var(--accent-bg); }
+.report tbody td:first-child { font-weight:600; }
 .report hr { border:none; border-top:1px solid var(--line); margin:22px 0; }
 .report blockquote { margin:14px 0; padding:10px 16px; border-left:4px solid var(--line); color:var(--muted); }
 .badge { display:inline-block; background:var(--accent-bg); color:var(--accent); border:1px solid #99f6e4;
@@ -272,14 +277,13 @@ body { overflow-x: hidden; }
       function yukle(i) {
         secili = i;
         ses.src = kok + bolumler[i].dosya;
-        ses.play().catch(function() {});
         liste.innerHTML = bolumler.map(function(b, ix) {
           var sure = b.sure_sn ? Math.round(b.sure_sn / 60) + ' dk' : '';
           return '<a href="javascript:void(0)" onclick="radyoSec(' + ix + ')" style="display:inline-block; margin:2px 6px 2px 0; ' +
                  (ix === secili ? 'font-weight:700;' : '') + '">' + b.baslik + (sure ? ' (' + sure + ')' : '') + '</a>';
         }).join('');
       }
-      window.radyoSec = function(i) { yukle(i); };
+      window.radyoSec = function(i) { yukle(i); ses.play().catch(function() {}); };
       yukle(0);
       kutu.style.display = 'block';
     })
@@ -474,7 +478,7 @@ etiketleri momentum oylarının çoğunluğunu yansıtır, aşırı alım riskin
 <div class="card" style="margin-bottom:20px">
 <h3 style="margin:4px 0 10px">RSI (14) — Aşırı Alım/Satım Haritası</h3>
 <div style="position:relative; height:540px">
-<canvas id="borsapy-rsi-937892"></canvas>
+<canvas id="borsapy-rsi-108444"></canvas>
 </div>
 </div>
 <script>
@@ -512,7 +516,7 @@ etiketleri momentum oylarının çoğunluğunu yansıtır, aşırı alım riskin
             });
         }
     };
-    new Chart(document.getElementById('borsapy-rsi-937892'), {
+    new Chart(document.getElementById('borsapy-rsi-108444'), {
         type: 'bar',
         data: { labels: veri.labels, datasets: [{ label: 'RSI (14)', data: veri.degerler, backgroundColor: renkler }] },
         options: {
