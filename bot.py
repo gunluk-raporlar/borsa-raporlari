@@ -1500,7 +1500,9 @@ table { border-collapse:collapse; width:100%; font-size:14.5px; }
 th, td { border-bottom:1px solid var(--line); padding:9px 12px; text-align:left; }
 th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
 tr:last-child td { border-bottom:none; }
-.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:14px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(165px,1fr)); gap:14px; }
+/* 'hidden' ozelligini .grid'in display'i ezmesin diye guaranti */
+[hidden] { display:none !important; }
 .rcard { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px;
          text-decoration:none; color:var(--ink); display:block; transition:border-color .15s, box-shadow .15s; }
 .rcard:hover { border-color:var(--accent); box-shadow:0 2px 10px rgba(15,23,42,.08); }
@@ -2451,12 +2453,16 @@ def _tr_tarih(iso_tarih):
 
 
 def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
-    if rapor_dosyalari:
+    # Derin analiz arsiv dosyalari rapor arsivine degil, kendi bolumune gider
+    gundem_dosyalari = [fn for fn in (rapor_dosyalari or []) if "-derin-analiz" not in fn]
+    derin_dosyalari = [fn for fn in (rapor_dosyalari or []) if "-derin-analiz" in fn]
+
+    if gundem_dosyalari:
         GORUNEN_ARŞİV = 3
         kart_liste = [
             f'<a class="rcard" href="reports/{fn}"><span class="date">{_tr_tarih(fn[:-5])}</span>'
             f'<span class="sub">Günlük raporu aç &rarr;</span></a>'
-            for fn in rapor_dosyalari
+            for fn in gundem_dosyalari
         ]
         kartlar = "".join(kart_liste[:GORUNEN_ARŞİV])
         if len(kart_liste) > GORUNEN_ARŞİV:
@@ -2464,12 +2470,12 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
             gizli_kartlar = "".join(kart_liste[GORUNEN_ARŞİV:])
             kartlar += f"""
 <div style="margin:8px 0 0"><button type="button" onclick="arsivAc(this)" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:7px 16px; font-size:13.5px; font-weight:600; color:#0f172a; cursor:pointer">Daha fazla göster ({kalan} gün)</button></div>
-<div class="grid" id="arsiv-devam" hidden style="margin-top:10px">{gizli_kartlar}</div>
+<div class="grid" id="arsiv-devam" style="display:none; margin-top:10px">{gizli_kartlar}</div>
 <script>
 function arsivAc(btn) {{
   var devam = document.getElementById('arsiv-devam');
-  var kapali = devam.hidden;
-  devam.hidden = !kapali;
+  var kapali = devam.style.display === 'none';
+  devam.style.display = kapali ? 'grid' : 'none';
   btn.textContent = kapali ? 'Daha az göster' : 'Daha fazla göster ({kalan} gün)';
 }}
 </script>"""
@@ -2506,6 +2512,19 @@ function arsivAc(btn) {{
 <h2 class="section-title">Hafta Sonu Borsa Okulu</h2>
 <div class="grid">{eg_kartlar}</div>
 <p style="margin:10px 0 0"><a href="haftasonu-egitimi.html">Borsa Okulu sayfası &rarr;</a></p>"""
+
+    # Derin analiz bolumu: guncel sayfa + arsivdeki son 3 analiz
+    derin_bolumu = ""
+    if derin_dosyalari:
+        derin_kartlar = "".join(
+            f'<a class="rcard" href="reports/{fn}"><span class="date">{_tr_tarih(fn[:-5].replace("-derin-analiz", ""))}</span>'
+            f'<span class="sub">O günün derin analizi &rarr;</span></a>'
+            for fn in derin_dosyalari[:3]
+        )
+        derin_bolumu = f"""
+<h2 class="section-title">Derin Analiz</h2>
+<div class="grid"><a class="rcard" href="derin-analiz.html"><span class="date">Güncel Derin Analiz</span>
+<span class="sub">Piyasanın detaylı değerlendirmesi &rarr;</span></a>{derin_kartlar}</div>"""
 
     teknik_bolumu = ""
     if teknik_oneriler:
@@ -2546,6 +2565,7 @@ function arsivAc(btn) {{
 </div>
 <h2 class="section-title">Rapor Arşivi</h2>
 <div class="grid">{kartlar}</div>
+{derin_bolumu}
 {haftasonu_bolumu}
 {egitim_bolumu}
 {teknik_bolumu}
