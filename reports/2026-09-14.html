@@ -395,7 +395,7 @@ async function aiSor() {
 <div class="hero">
 <h1>Günlük Piyasa Raporu</h1>
 <div class="meta"><span class="badge">2026-09-14</span><span>BIST 30 &bull; Yapay zeka destekli günlük analiz</span>
-<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-ses-metin')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button></div>
+<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button></div>
 </div>
 
 <div class="card" style="margin:0 0 18px; padding:14px 18px">
@@ -407,46 +407,11 @@ async function aiSor() {
 <div style="color:var(--muted); font-size:12px">30 hissenin eşit ağırlıklı sepeti, ilk görüldüğü fiyata göre normalize edildi.</div>
 </div>
 
-<div class="card" style="margin:0 0 18px; padding:12px 16px;">
-  <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-    <strong style="font-size:13.5px">🔊 Raporu Dinle</strong>
-    <button id="tts-btn" onclick="raporDinle()" style="background:#0f766e; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:600; font-size:13px;">Tarayıcı sesiyle başlat</button>
-    <span id="tts-durum" style="color:#64748b; font-size:12.5px;"></span>
-  </div>
-  <audio controls preload="none" src="../reports/2026-09-14.mp3" style="width:100%; height:40px; margin-top:10px;"></audio>
-  <div style="color:#64748b; font-size:12px; margin-top:4px">Sesli bülten (yapay zekâ sesi) — indirilebilir MP3.</div>
+<div class="card" style="margin:0 0 18px; padding:8px 14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+  <strong style="font-size:13px; white-space:nowrap">🔊 Sesli bülten</strong>
+  <audio controls preload="none" src="../reports/2026-09-14.mp3" style="flex:1; min-width:220px; height:34px;"></audio>
 </div>
-<script>
-function raporDinle() {
-  var durum = document.getElementById('tts-durum');
-  var btn = document.getElementById('tts-btn');
-  if (!('speechSynthesis' in window)) {
-    durum.innerText = 'Tarayıcınız sesli okumayı desteklemiyor.';
-    return;
-  }
-  if (speechSynthesis.speaking || speechSynthesis.pending) {
-    speechSynthesis.cancel();
-    durum.innerText = '⏹ Durduruldu.';
-    btn.innerText = 'Tarayıcı sesiyle başlat';
-    return;
-  }
-  var metin = (document.querySelector('article.report') || document.body).innerText.slice(0, 30000);
-  var parcalar = metin.match(/[^.!?,;\n]+[.!?,;]?\n?/g) || [metin];
-  var konusuldu = 0;
-  parcalar.forEach(function(p) {
-    p = p.trim();
-    if (!p || p.length < 2) return;
-    var u = new SpeechSynthesisUtterance(p);
-    u.lang = 'tr-TR';
-    u.rate = 1.05;
-    u.onstart = function() { konusuldu++; durum.innerText = '🔊 Okunuyor... (' + konusuldu + '/' + parcalar.length + ' bölüm)'; };
-    speechSynthesis.speak(u);
-  });
-  btn.innerText = '⏹ Durdur';
-  durum.innerText = '🔊 Okunuyor...';
-}
-</script>
-<article class="report"><h2>1. Yönetici Özeti ve Piyasa Genel Bakışı</h2>
+<article class="report" id="rapor-govde"><h2>1. Yönetici Özeti ve Piyasa Genel Bakışı</h2>
 <p>Güncel piyasa dinamikleri, geçtiğimiz haftalarda öne çıkan jeopolitik belirsizliklerin ve enerji şoklarının yarattığı baskının hafifçe yumuşamasına rağmen, hâlâ belirleyici bir etken olmaya devam ediyor. BIST 30 endeksi, önceki günlerdeki "yukarı adım kuralı" tepkisiyle birlikte, 4.200-4.250 bandı civarında sert bir direnç bölgesi oluşturmuş durumda. Geçmiş analizlerde (özellikle 7-8 Eylül tarihli raporlarda) vurgulandığı üzere, bu bölge aşılırsa endeks için net bir trend dönüşümü sinyali alınabilir; ancak henüz bu seviyelerin kalıcı bir üst dirençten geçişle desteklendiği görünmemektedir. Piyasa, küresel resesyon endişeleri ve ABD enflasyon verilerine odaklanarak temkinli bir "soluklanma" aşamasında seyretmektedir.</p>
 <p>Geçmiş portföy önerilerinde (9 Eylül) öne çıkan "Nakit %35" stratejisi, bugünkü oynaklık ve volatilite karşısında stratejik bir haklılık kazanmıştır. Özellikle enerji ve savunma sektörlerindeki dalgalanmalar, risk iştahını sınırlı tutmak zorunda bırakmaktadır. Endeksin genel yönü, henüz net bir yükseliş trendi içermese de, enflasyona dayanıklı perakende (BIMAS, KCHOL) ve temel metal sektörleri (EREGL, TUPRS) pozitif ayrışarak endeksi desteklemeye devam etmektedir. Fon yönetimi perspektifiyle bakıldığında, mevcut koşullarda "seçici alım" ve "riskten korunma" (nakit tutma) ilkeleri, portföyün değerini korumak adına en güvenli hamle olarak görülmektedir.</p>
 <h2>2. Haber ve Makroekonomik Değerlendirme</h2>
@@ -1028,5 +993,38 @@ function temaDegistir() {
         .catch(err => {
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
         });
+</script>
+<script>
+(function() {
+  if (!('speechSynthesis' in window)) { return; }
+  // Chrome bazi sesleri gec yukler; sayfa acilir acilmaz ses listesini isit.
+  var sesleriIsit = function() { try { window.speechSynthesis.getVoices(); } catch (e) {} };
+  sesleriIsit();
+  if (window.speechSynthesis.onvoiceschanged === null) {
+    window.speechSynthesis.onvoiceschanged = sesleriIsit;
+  }
+  window.sesliOkuToggle = function(btn, kaynakId) {
+    var S = window.speechSynthesis;
+    var durum = btn.getAttribute('data-durum') || 'durdu';
+    if (durum === 'okunuyor') { S.pause(); btn.textContent = '\u25b6 Devam'; btn.setAttribute('data-durum', 'bekliyor'); return; }
+    if (durum === 'bekliyor') { S.resume(); btn.textContent = '\u23f8 Duraklat'; btn.setAttribute('data-durum', 'okunuyor'); return; }
+    S.cancel();
+    var kaynak = document.getElementById(kaynakId);
+    var metin = kaynak ? (kaynak.textContent || '') : '';
+    metin = metin.replace(/\s+/g, ' ').trim();
+    if (!metin) { return; }
+    var u = new SpeechSynthesisUtterance(metin);
+    u.lang = 'tr-TR';
+    var sesListe = S.getVoices() || [];
+    var trSes = sesListe.filter(function(v) { return v.lang && v.lang.toLowerCase().indexOf('tr') === 0; })[0] || null;
+    if (trSes) { u.voice = trSes; }
+    u.rate = 1.0;
+    u.onend = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    u.onerror = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    btn.textContent = '\u23f8 Duraklat';
+    btn.setAttribute('data-durum', 'okunuyor');
+    S.speak(u);
+  };
+})();
 </script>
 </body></html>

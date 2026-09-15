@@ -83,11 +83,24 @@
 <h2 class="section-title">Yayın Arşivi</h2>
 <div id="radyo-arsiv"><p style="color:var(--muted); font-size:13.5px">Yayınlar yükleniyor...</p></div>
 
+<h2 class="section-title">Günlük Rapor Sesli Bülteni</h2>
+<div class="card" style="margin-bottom:12px">
+<p style="margin:0 0 8px; font-size:13.5px; color:var(--muted)">Her işlem günü otomatik üretilen günlük raporun (ve derin analizin) yapay zeka sesiyle okumasi — radyo sohbetinden ayrı, kendi podcast akışında.</p>
+<div id="rapor-bulten-liste"><p style="color:var(--muted); font-size:13.5px; margin:0">Bültenler yükleniyor...</p></div>
+</div>
+
 <div class="card" style="margin-top:18px">
 <h3 style="margin:0 0 8px">📡 Podcast ile abonelik</h3>
 <p style="margin:0 0 8px; font-size:14px">RSS adresini Apple Podcasts, Overcast, AntennaPod veya benzeri bir podcast uygulamasına ekleyin; yeni yayınlar otomatik gelir:</p>
-<p style="margin:0 0 4px"><input type="text" readonly value="https://borsa-raporlari.pages.dev/radyo/podcast.xml" onclick="this.select()" style="width:100%; padding:7px 10px; border:1px solid var(--line); border-radius:6px; font-size:12.5px; background:var(--accent-bg); color:var(--ink);"></p>
-<p style="margin:8px 0 0; font-size:13px"><a href="podcast.xml" target="_blank" rel="noopener">RSS akışını aç &rarr;</a></p>
+<div style="margin-bottom:10px">
+  <div style="font-size:13px; font-weight:600; margin-bottom:3px">📻 BIST Radyo — Ela &amp; Mert sohbeti</div>
+  <input type="text" readonly value="https://borsa-raporlari.pages.dev/radyo/podcast.xml" onclick="this.select()" style="width:100%; padding:7px 10px; border:1px solid var(--line); border-radius:6px; font-size:12.5px; background:var(--accent-bg); color:var(--ink);">
+</div>
+<div>
+  <div style="font-size:13px; font-weight:600; margin-bottom:3px">📰 Günlük Rapor — Sesli Bülten</div>
+  <input type="text" readonly value="https://borsa-raporlari.pages.dev/radyo/podcast-raporlar.xml" onclick="this.select()" style="width:100%; padding:7px 10px; border:1px solid var(--line); border-radius:6px; font-size:12.5px; background:var(--accent-bg); color:var(--ink);">
+</div>
+<p style="margin:8px 0 0; font-size:13px"><a href="podcast.xml" target="_blank" rel="noopener">Radyo RSS'ini aç &rarr;</a> &nbsp;&bull;&nbsp; <a href="podcast-raporlar.xml" target="_blank" rel="noopener">Rapor bülteni RSS'ini aç &rarr;</a></p>
 </div>
 
 <div class="card" style="margin-top:14px; color:var(--muted); font-size:12.5px">
@@ -193,6 +206,37 @@ function temaDegistir() {
     })
     .catch(function() {
       simdi.textContent = 'Yayın listesi yüklenemedi; sayfayı yenileyip tekrar deneyin.';
+    });
+})();
+
+// Günlük Rapor Sesli Bülteni (ayrı podcast akışı): radyo/podcast-raporlar.xml
+(function() {
+  var liste = document.getElementById('rapor-bulten-liste');
+  if (!liste) return;
+  fetch('podcast-raporlar.xml?t=' + Date.now())
+    .then(function(r) { return r.text(); })
+    .then(function(metin) {
+      var doc = new DOMParser().parseFromString(metin, 'text/xml');
+      var ogeler = Array.prototype.slice.call(doc.querySelectorAll('item'));
+      if (!ogeler.length) {
+        liste.innerHTML = '<p style="color:var(--muted); font-size:13.5px; margin:0">Henüz sesli bülten yok.</p>';
+        return;
+      }
+      var html = '';
+      ogeler.forEach(function(o) {
+        var baslik = (o.querySelector('title') || {}).textContent || '';
+        var enc = o.querySelector('enclosure');
+        var url = enc ? enc.getAttribute('url') : '';
+        if (!url) return;
+        html += '<div style="display:flex; align-items:center; gap:10px; padding:6px 0; border-top:1px solid var(--line); flex-wrap:wrap">' +
+                '<span style="font-size:13.5px; font-weight:600; min-width:250px">' + baslik + '</span>' +
+                '<audio controls preload="none" src="' + url + '" style="flex:1; min-width:200px; height:32px;"></audio>' +
+                '</div>';
+      });
+      liste.innerHTML = html;
+    })
+    .catch(function() {
+      liste.innerHTML = '<p style="color:var(--muted); font-size:13.5px; margin:0">Bülten listesi yüklenemedi.</p>';
     });
 })();
 </script>

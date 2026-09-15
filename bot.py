@@ -2317,60 +2317,27 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
     if aciklama is None:
         aciklama = (f"{date_str} tarihli BIST 30 {baslik.lower()}: yönetici özeti, haber ve makro "
                     f"değerlendirme, hisse bazlı teknik analiz ve model portföy önerisi.")
-    # Sesli rapor: varsa MP3 oynatici + her zaman tarayici sesiyle yedek dugme
-    ses_bolumu = """
-<div class="card" style="margin:0 0 18px; padding:12px 16px;">
-  <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-    <strong style="font-size:13.5px">🔊 Raporu Dinle</strong>
-    <button id="tts-btn" onclick="raporDinle()" style="background:#0f766e; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:600; font-size:13px;">Tarayıcı sesiyle başlat</button>
-    <span id="tts-durum" style="color:#64748b; font-size:12.5px;"></span>
-  </div>"""
+    # Ses: kucuk "🔊 Sesli Oku" dugmesi tarayicinin yerlesik sesiyle okur
+    # (_sesli_okuma_js); MP3 varsa tek satirlik karmasik olmayan oynatici.
+    # Eski kocaman "Raporu Dinle" kutusu kaldirildi (fazla yer kapliyordu).
+    ses_bolumu = ""
     if ses_url:
-        ses_bolumu += f"""
-  <audio controls preload="none" src="{ses_url}" style="width:100%; height:40px; margin-top:10px;"></audio>
-  <div style="color:#64748b; font-size:12px; margin-top:4px">Sesli bülten (yapay zekâ sesi) — indirilebilir MP3.</div>"""
-    ses_bolumu += """
-</div>
-<script>
-function raporDinle() {
-  var durum = document.getElementById('tts-durum');
-  var btn = document.getElementById('tts-btn');
-  if (!('speechSynthesis' in window)) {
-    durum.innerText = 'Tarayıcınız sesli okumayı desteklemiyor.';
-    return;
-  }
-  if (speechSynthesis.speaking || speechSynthesis.pending) {
-    speechSynthesis.cancel();
-    durum.innerText = '⏹ Durduruldu.';
-    btn.innerText = 'Tarayıcı sesiyle başlat';
-    return;
-  }
-  var metin = (document.querySelector('article.report') || document.body).innerText.slice(0, 30000);
-  var parcalar = metin.match(/[^.!?,;\\n]+[.!?,;]?\\n?/g) || [metin];
-  var konusuldu = 0;
-  parcalar.forEach(function(p) {
-    p = p.trim();
-    if (!p || p.length < 2) return;
-    var u = new SpeechSynthesisUtterance(p);
-    u.lang = 'tr-TR';
-    u.rate = 1.05;
-    u.onstart = function() { konusuldu++; durum.innerText = '🔊 Okunuyor... (' + konusuldu + '/' + parcalar.length + ' bölüm)'; };
-    speechSynthesis.speak(u);
-  });
-  btn.innerText = '⏹ Durdur';
-  durum.innerText = '🔊 Okunuyor...';
-}
-</script>"""
+        ses_bolumu = f"""
+<div class="card" style="margin:0 0 18px; padding:8px 14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+  <strong style="font-size:13px; white-space:nowrap">🔊 Sesli bülten</strong>
+  <audio controls preload="none" src="{ses_url}" style="flex:1; min-width:220px; height:34px;"></audio>
+</div>"""
     icerik = f"""
 <div class="hero">
 <h1>{baslik}</h1>
 <div class="meta"><span class="badge">{date_str}</span><span>{alt_baslik}</span>
-<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-ses-metin')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button></div>
+<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button></div>
 </div>
 {_bist30_sepeti_sparkline()}
 {ses_bolumu}
-<article class="report">{html_icerik}</article>
-<p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>"""
+<article class="report" id="rapor-govde">{html_icerik}</article>
+<p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>
+{_sesli_okuma_js()}"""
     ld_ek = json.dumps({
         "@context": "https://schema.org", "@type": "Article",
         "headline": f"{baslik} — {date_str}", "datePublished": date_str,
@@ -3652,6 +3619,61 @@ def podcast_rss_yaz():
     logger.info("[Podcast] %d bolumluk RSS yazildi.", len(ogeler))
 
 
+def _rss_pubdate(tarih_str):
+    """'2026-09-15' -> 'Tue, 15 Sep 2026 08:00:00 +0300' (bozuk tarihte fallback)."""
+    try:
+        g = datetime.strptime(tarih_str, "%Y-%m-%d")
+        return f"{_RSS_GUNLER[g.weekday()]}, {g.day:02d} {_RSS_AYLAR[g.month - 1]} {g.year} 08:00:00 +0300"
+    except Exception:
+        return "Wed, 01 Jan 2026 08:00:00 +0300"
+
+
+def rapor_podcast_yaz():
+    """reports/*.mp3 -> radyo/podcast-raporlar.xml (Radyo'dan AYRI kategori).
+    Gunluk rapor sesli bultenleri; '-derin-analiz.mp3' dosyalari da varsa
+    kendi adlarıyla ayni aka girer. Dosya adi kaynaktir: 2026-09-15.mp3 gibi
+    tarihten baslik/pubDate uretilir; MP3 yoksa aka oge dusmez."""
+    try:
+        dosyalar = sorted(f for f in os.listdir("reports") if f.endswith(".mp3"))
+    except OSError:
+        return
+    ogeler = []
+    for ad in reversed(dosyalar):  # en yeni once
+        tarih = ad[:10]
+        tur = "Derin Analiz Sesli Bülteni" if "-derin-analiz" in ad else "Günlük Rapor Sesli Bülteni"
+        yol = os.path.join("reports", ad)
+        try:
+            boyut = os.path.getsize(yol)
+        except OSError:
+            boyut = 0
+        rapor_link = SITE_URL + ("reports/" + ad[:-4] + "-derin-analiz.html" if "-derin-analiz" in ad
+                                 else "reports/" + tarih + ".html")
+        ogeler.append(
+            f"<item><title>{tarih} — {tur}</title><guid isPermaLink=\"false\">rapor-{ad[:-4]}</guid>"
+            f"<pubDate>{_rss_pubdate(tarih)}</pubDate>"
+            f"<enclosure url=\"{SITE_URL}reports/{ad}\" type=\"audio/mpeg\" length=\"{boyut}\" />"
+            f"<link>{rapor_link}</link>"
+            f"<description>{tarih} tarihli {tur.lower()} — yapay zeka sesiyle rapor okumasi. Yatirim tavsiyesi degildir.</description>"
+            f"</item>"
+        )
+    # xml-stylesheet PI: podcast.xsl iki akista da calisir (geniktir, kanal
+    # basligi/ogeleri stil icinde sabit degil, XML'den okunur).
+    xml = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<?xml-stylesheet type="text/xsl" href="podcast.xsl"?>\n'
+        '<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"><channel>\n'
+        f"<title>BIST Günlük Rapor — Sesli Bülten</title>\n<link>{SITE_URL}</link>\n"
+        "<language>tr</language>\n"
+        "<description>Her işlem günü otomatik üretilen BIST 30 günlük raporunun ve derin "
+        "analizin yapay zeka sesiyle okumasi. Yatırım tavsiyesi değildir.</description>\n"
+        + "\n".join(ogeler)
+        + "\n</channel></rss>"
+    )
+    with open("radyo/podcast-raporlar.xml", "w", encoding="utf-8") as f:
+        f.write(xml)
+    logger.info("[Podcast] %d bolumluk rapor RSS'i yazildi.", len(ogeler))
+
+
 def site_arama_json_yaz(rapor_dosyalari):
     """Site ici arama kutusunun indeksini (site-arama.json) uretir.
     Statik sayfalar anahtar kelime + hisse kodlariyla; rapor ve derin analiz
@@ -3932,6 +3954,10 @@ if __name__ == "__main__":
         podcast_rss_yaz()
     except Exception:
         logger.exception("[Podcast] RSS yazilamadi.")
+    try:
+        rapor_podcast_yaz()
+    except Exception:
+        logger.exception("[Podcast] rapor RSS'i yazilamadi.")
 
     # SEO: arama motorlari dosyalari her kosuda taze lastmod ile yeniden yazilir
     try:

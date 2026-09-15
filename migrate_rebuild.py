@@ -289,6 +289,11 @@ def main():
         print("[OK] radyo/podcast.xml yazıldı")
     except Exception as e:
         print(f"[ATLANDI] podcast RSS: {e}")
+    try:
+        bot.rapor_podcast_yaz()
+        print("[OK] radyo/podcast-raporlar.xml yazıldı")
+    except Exception as e:
+        print(f"[ATLANDI] rapor podcast RSS: {e}")
 
     # 6) SEO dosyaları + site içi arama indeksi
     bot.sitemap_ve_robots_yaz(raporlar)
