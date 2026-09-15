@@ -1501,6 +1501,9 @@ th, td { border-bottom:1px solid var(--line); padding:9px 12px; text-align:left;
 th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
 tr:last-child td { border-bottom:none; }
 .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(165px,1fr)); gap:14px; }
+/* genis icerik kartlari icin esit 2 kolon (hisse detay: teknik durum + haberler);
+   auto-fill kucuk kart gridi tabloyu dar sutuna sikistirdigi icin ayri sinif gerekli */
+.grid-iki { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
 /* 'hidden' ozelligini .grid'in display'i ezmesin diye guaranti */
 [hidden] { display:none !important; }
 .rcard { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px;
@@ -1534,6 +1537,7 @@ tr:last-child td { border-bottom:none; }
   .report { padding:18px 16px; }
   table { font-size:13px; }
   th, td { padding:7px 8px; }
+  .grid-iki { grid-template-columns:1fr; }
 }
 
 @media (max-width: 768px) {
@@ -1723,7 +1727,7 @@ def _radyo_kutusu(kok=""):
   </div>
   <audio id="radyo-audio" controls preload="none" controlslist="nodownload noremoteplayback" style="width:100%; height:34px;" oncontextmenu="return false;"></audio>
   <div id="radyo-liste" style="margin-top:6px; font-size:12.5px; color:#475569;"></div>
-  <div style="margin-top:4px; font-size:11px;"><a href="{kok}radyo/podcast.xml" target="_blank" rel="noopener">📡 Podcast (RSS) ile abone ol</a></div>
+  <div style="margin-top:4px; font-size:11px;"><a href="{kok}radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> &bull; <a href="{kok}radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
   <div style="margin-top:4px; color:#94a3b8; font-size:11px;">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
 </div>
 <script>
@@ -3355,7 +3359,7 @@ def build_hisse_html(kod, satir, tarihler, veriler, haberler):
 {degisim_html}</div>
 </div>
 {f'<div class="card" style="margin-bottom:16px">{grafik}</div>' if grafik else ''}
-<div class="grid">
+<div class="grid-iki">
 <div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
 <table style="font-size:13.5px">{teknik_ogeler}</table>
 <p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a></p></div>
@@ -3617,8 +3621,11 @@ def podcast_rss_yaz():
             f"<description>BIST Radyo — kurgusal yapay zeka sunucularla borsa bülteni.</description>"
             f"<itunes:duration>{max(1, round(b.get('sure_sn', 60) / 60))}</itunes:duration></item>"
         )
+    # xml-stylesheet PI: tarayicida dogrudan acilinca ham XML agaci yerine
+    # podcast.xsl ile bicimlendirilmis sayfa gorunur; podcast uygulamalari PI'yi yok sayar.
     xml = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<?xml-stylesheet type="text/xsl" href="podcast.xsl"?>\n'
         '<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"><channel>\n'
         f"<title>BIST Radyo — Yapay Zeka Borsa Bülteni</title>\n<link>{SITE_URL}</link>\n"
         "<language>tr</language>\n"
@@ -3664,6 +3671,8 @@ def site_arama_json_yaz(rapor_dosyalari):
     sayfalar += [
         {"b": "Hisseler (BIST 30 detay sayfaları)", "u": "hisse/index.html",
          "t": "hisse detay sayfa fiyat teknik sinyal haber grafik sektör " + hisse_listesi},
+        {"b": "BIST Radyo (Podcast)", "u": "radyo/index.html",
+         "t": "radyo podcast yayın dinle sesli bülten açılış öğle kapanış Ela Mert yapay zeka sunucu RSS abone mp3"},
         {"b": "Sinyal Karnesi (AL sinyalleri backtest)", "u": "sinyal-karnesi.html",
          "t": "sinyal karnesi AL sinyali backtest isabet oranı getiri performans geçmiş teknik tarama sonuç"},
         {"b": "Haber Arşivi", "u": "haberler.html",

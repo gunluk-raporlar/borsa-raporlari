@@ -27,6 +27,9 @@ th, td { border-bottom:1px solid var(--line); padding:9px 12px; text-align:left;
 th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
 tr:last-child td { border-bottom:none; }
 .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(165px,1fr)); gap:14px; }
+/* genis icerik kartlari icin esit 2 kolon (hisse detay: teknik durum + haberler);
+   auto-fill kucuk kart gridi tabloyu dar sutuna sikistirdigi icin ayri sinif gerekli */
+.grid-iki { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
 /* 'hidden' ozelligini .grid'in display'i ezmesin diye guaranti */
 [hidden] { display:none !important; }
 .rcard { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px;
@@ -60,6 +63,7 @@ tr:last-child td { border-bottom:none; }
   .report { padding:18px 16px; }
   table { font-size:13px; }
   th, td { padding:7px 8px; }
+  .grid-iki { grid-template-columns:1fr; }
 }
 
 @media (max-width: 768px) {
