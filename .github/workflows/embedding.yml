@@ -45,6 +45,7 @@ jobs:
 
       - name: Metrikleri repoya isle
         run: |
+          [ -d data/metrics ] || { echo "Metrik klasoru yok (embedding atlandi), commit gerekmez."; exit 0; }
           git config user.name "gunluk-raporlar"
           git config user.email "gunluk-raporlar@users.noreply.github.com"
           git add data/metrics
