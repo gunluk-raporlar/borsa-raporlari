@@ -33,7 +33,7 @@ jobs:
       - name: Vercel build ayarlari (linksiz derleme)
         run: |
           mkdir -p .vercel
-          echo '{"framework":"nextjs"}' > .vercel/project.json
+          echo '{"projectId":"_","orgId":"_","settings":{"framework":"nextjs"}}' > .vercel/project.json
 
       - name: Vercel + next-on-pages build
         run: |
