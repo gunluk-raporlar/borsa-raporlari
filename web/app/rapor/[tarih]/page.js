@@ -1,5 +1,6 @@
 import { raporHtmlGetir } from "../../../lib/data";
 
+export const runtime = "edge";
 export const revalidate = 3600;
 
 export async function generateMetadata({ params }) {
