@@ -1,0 +1,23 @@
+{
+  "name": "borsa-raporlari-web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "pages:build": "vercel build --prod && next-on-pages --skip-build",
+    "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static --project-name=borsa-raporlari-web"
+  },
+  "dependencies": {
+    "next": "15.5.2",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "swr": "^2.2.6"
+  },
+  "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.16",
+    "vercel": "47.0.4",
+    "wrangler": "^3.114.0"
+  }
+}

@@ -1,0 +1,57 @@
+name: Embedding (pgvector)
+
+# Gecelik rapor uretiminden sonra yeni/değisen rapor parçalarini embedding'ler
+# ve Supabase (pgvector) veritabanina yazar. Secret'lar tanimli degilse sessizce
+# atlanir — diger workflow'lari etkilemez.
+
+on:
+  schedule:
+    - cron: '35 5 * * 1-5' # 08:35 TR (gunluk rapordan 35 dk sonra)
+  workflow_dispatch:
+    inputs:
+      mod:
+        description: "backfill = tüm arşivi tarar"
+        type: choice
+        options:
+          - artimli
+          - backfill
+        default: artimli
+
+permissions:
+  contents: write
+
+jobs:
+  embed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Bagimliliklar
+        run: pip install -r pipeline/requirements.txt
+
+      - name: Embedding + Supabase upsert
+        env:
+          CF_API_KEY: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SITE_URL: https://borsa-raporlari.pages.dev
+          MOD: ${{ inputs.mod == 'backfill' && '--backfill' || '' }}
+        run: python pipeline/embed.py "$MOD"
+
+      - name: Metrikleri repoya isle
+        run: |
+          git config user.name "gunluk-raporlar"
+          git config user.email "gunluk-raporlar@users.noreply.github.com"
+          git add data/metrics
+          if git diff --cached --quiet; then
+            echo "Yeni metrik yok, commit atlanıyor."
+          else
+            git commit -m "metrics: embedding calismasi $(date -u +%F-%H:%M UTC)"
+            git pull --rebase -X theirs origin main || true
+            git push origin main || echo "[uyari] push başarısız — metrikler sonraki çalışmada işlenir"
+          fi

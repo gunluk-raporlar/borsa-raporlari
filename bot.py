@@ -489,7 +489,91 @@ def _havuz_modelleri(saglayici, env_listesi, tercih, etiket, suzgec=None):
     return tercih
 
 
+# ---------- IZLEME: LLM GECIKME METRIKLERI ----------
+# Her LLM cagrisinin suresi data/metrics/ altina yazilir (web/durum sayfasi ve
+# /api/metrics bu dosyalari okur). Tum adimlar try/except korumalidir; izleme
+# rapor uretimini ASLA bozamaz.
+METRIK_KAYIT = []
+
+
+def _metrik_kaydet(islev, sure, ok, model="-"):
+    try:
+        METRIK_KAYIT.append({
+            "islev": islev,
+            "model": model,
+            "sure_sn": round(float(sure), 3),
+            "ok": bool(ok),
+            "saat": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).isoformat(timespec="seconds"),
+        })
+    except Exception:
+        pass
+
+
+def metrik_dosyasi_yaz(etiket="bot"):
+    """Toplanan gecikme metriklerini data/metrics/llm-<tarih>.json (gecmis) ve
+    data/metrics/latest.json (ozet, izleme sayfasinin okudugu) dosyalarina yazar."""
+    try:
+        if not METRIK_KAYIT:
+            return
+        os.makedirs(os.path.join("data", "metrics"), exist_ok=True)
+        tarih = datetime.now().strftime("%Y-%m-%d")
+        sureler = sorted(k["sure_sn"] for k in METRIK_KAYIT)
+        p95 = sureler[int(0.95 * (len(sureler) - 1))] if sureler else 0
+        ozet = {
+            "adet": len(sureler),
+            "ortalama_sn": round(sum(sureler) / len(sureler), 3),
+            "p95_sn": p95,
+            "maks_sn": round(sureler[-1], 3),
+            "basari_orani": round(sum(1 for k in METRIK_KAYIT if k["ok"]) / len(sureler), 3),
+            "son_guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).isoformat(timespec="seconds"),
+        }
+        gunluk_yol = os.path.join("data", "metrics", f"llm-{tarih}.json")
+        gecmis = []
+        if os.path.exists(gunluk_yol):
+            try:
+                with open(gunluk_yol, encoding="utf-8") as fh:
+                    gecmis = json.load(fh).get("cagrilar", [])
+            except Exception:
+                gecmis = []
+        with open(gunluk_yol, "w", encoding="utf-8") as fh:
+            json.dump({"tarih": tarih, "etiket": etiket,
+                       "cagrilar": gecmis + METRIK_KAYIT, "ozet": ozet},
+                      fh, ensure_ascii=False, indent=1)
+        latest_yol = os.path.join("data", "metrics", "latest.json")
+        latest = {}
+        if os.path.exists(latest_yol):
+            try:
+                with open(latest_yol, encoding="utf-8") as fh:
+                    latest = json.load(fh)
+            except Exception:
+                latest = {}
+        latest["llm"] = ozet
+        latest["guncelleme"] = ozet["son_guncelleme"]
+        with open(latest_yol, "w", encoding="utf-8") as fh:
+            json.dump(latest, fh, ensure_ascii=False, indent=1)
+        logger.info("[Metrik] %d LLM cagrisi olculdu: ort %.1fs, p95 %.1fs (%s)",
+                    ozet["adet"], ozet["ortalama_sn"], ozet["p95_sn"], gunluk_yol)
+    except Exception:
+        logger.exception("[Metrik] LLM metrik dosyalari yazilamadi; uretim etkilenmez.")
+
+
 def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
+    """_llm_call_ic icin gecikme olcumlu ince sarmalayici (imza ayni kalir)."""
+    t0 = time.time()
+    sonuc = _llm_call_ic(prompt, max_deneme=max_deneme, fallback_on_fail=fallback_on_fail, sirasi=sirasi)
+    _metrik_kaydet("llm_call", time.time() - t0, bool(sonuc))
+    return sonuc
+
+
+def _zai_call(prompt):
+    """_zai_call_ic icin gecikme olcumlu ince sarmalayici (imza ayni kalir)."""
+    t0 = time.time()
+    sonuc = _zai_call_ic(prompt)
+    _metrik_kaydet("zai_call", time.time() - t0, sonuc is not None, model="glm")
+    return sonuc
+
+
+def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
     """Daha saglam LLM cagrisi:
     - cok saglayicili: AMD modelleri + (tanimliysa) yedek saglayici modelleri
       sirayla denenir; bir saglayici tukendiginde digerine otomatik gecilir
@@ -611,7 +695,7 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
 
 # ---------- BAS ANALIST (CIO) ----------
 # ---------- Z.AI CAGIRICI (gunluk rapor icin buyuk GLM modeli) ----------
-def _zai_call(prompt):
+def _zai_call_ic(prompt):
     """Kullanicinin ZAI_API_KEY secret'iyla GLM'i cagirir; kaliteli/uzun
     gunluk rapor bu saglayicidan yazilir. Anahtar yoksa veya iki model de
     basarisiz olursa None doner (cagiran taraf mevcut llm_call zincirine duser).
@@ -3222,5 +3306,11 @@ if __name__ == "__main__":
         indexnow_ping(INDEXNOW_ANA_SAYFALAR + [f"reports/{fn}" for fn in raporlar[:5]])
     except Exception:
         logger.exception("[IndexNow] ping atlamasi sorun degil.")
+
+    # Izleme: LLM gecikme metriklerini diske yaz (hata uretimi etkilemez)
+    try:
+        metrik_dosyasi_yaz()
+    except Exception:
+        logger.exception("[Metrik] metrik yazimi atlandi.")
 
     print("RAPOR OLUSTURULDU:", date_str)

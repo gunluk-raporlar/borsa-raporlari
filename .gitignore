@@ -7,3 +7,10 @@ joblog.txt
 canli_*.html
 *.zip
 radyo/_tmp/
+
+# Next.js arayuzu (web/)
+web/node_modules/
+web/.next/
+web/.vercel/
+web/out/
+
