@@ -3265,8 +3265,9 @@ def _fiyat_gecmisi(gun=None):
     return tarihler, veriler
 
 
-def _mini_sparkline(degerler, w=520, h=90):
-    """Bagimsiz SVG cizgi grafigi; renk ilk/son degere gore otomatik."""
+def _mini_sparkline(degerler, w=520, h=90, etiket="fiyat grafiği"):
+    """Bagimsiz SVG cizgi grafigi; renk ilk/son degere gore otomatik.
+    etiket: ekran okuyucular icin aria-label (kart basligi ayri yazilir)."""
     degerler = [float(v) for v in degerler if v is not None]
     if len(degerler) < 2:
         return ""
@@ -3278,7 +3279,7 @@ def _mini_sparkline(degerler, w=520, h=90):
         for i, v in enumerate(degerler)
     )
     renk = "#047857" if degerler[-1] >= degerler[0] else "#b91c1c"
-    return (f'<svg viewBox="0 0 {w} {h}" class="chart" role="img" aria-label="fiyat grafiği" '
+    return (f'<svg viewBox="0 0 {w} {h}" class="chart" role="img" aria-label="{etiket}" '
             f'style="max-width:{w}px"> '
             f'<polyline fill="none" stroke="{renk}" stroke-width="2.5" points="{noktalar}" /></svg>')
 
@@ -3306,7 +3307,7 @@ def _bist30_sepeti_sparkline(gun=30):
                 seri.append(round(toplam / adet * 100, 2))
         if len(seri) < 3:
             return ""
-        grafik = _mini_sparkline(seri)
+        grafik = _mini_sparkline(seri, etiket=f"BIST 30 sepeti fiyat grafiği (son {len(seri)} gün)")
         deg = seri[-1] - seri[0]
         sinif = "pos" if deg >= 0 else "neg"
         return f"""
@@ -3324,7 +3325,19 @@ def _bist30_sepeti_sparkline(gun=30):
 
 def build_hisse_html(kod, satir, tarihler, veriler, haberler):
     seri = [(t, v.get(kod)) for t, v in zip(tarihler, veriler) if v.get(kod)]
-    grafik = _mini_sparkline([f for _, f in seri]) if len(seri) >= 2 else ""
+    grafik = (_mini_sparkline([f for _, f in seri], etiket=f"{kod} fiyat grafiği (son {len(seri)} gün)")
+              if len(seri) >= 2 else "")
+    grafik_karti = (
+        f"""<div class="card" style="margin-bottom:16px">
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
+<strong style="font-size:14px">📊 {kod} fiyat grafiği</strong>
+<span style="color:var(--muted); font-size:12px">son {len(seri)} gün &bull; kapanış fiyatları</span>
+</div>
+{grafik}
+<div style="color:var(--muted); font-size:12px">{seri[0][0]} tarihinden bugüne {kod} kapanış fiyatları (TL). Karşılaştırma grafiği değildir.</div>
+</div>"""
+        if grafik else ""
+    )
     degisim = None
     if len(seri) >= 2:
         degisim = (seri[-1][1] / seri[0][1] - 1) * 100
@@ -3358,7 +3371,7 @@ def build_hisse_html(kod, satir, tarihler, veriler, haberler):
 <span class="{_renk(satir.get('gunluk', 0))}">{satir.get('gunluk', 0):+.2f}% (günlük)</span>
 {degisim_html}</div>
 </div>
-{f'<div class="card" style="margin-bottom:16px">{grafik}</div>' if grafik else ''}
+{grafik_karti}
 <div class="grid-iki">
 <div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
 <table style="font-size:13.5px">{teknik_ogeler}</table>
