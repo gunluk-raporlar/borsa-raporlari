@@ -30,6 +30,11 @@ jobs:
       - name: Bagimliliklar
         run: npm ci
 
+      - name: Vercel build ayarlari (linksiz derleme)
+        run: |
+          mkdir -p .vercel
+          echo '{"framework":"nextjs"}' > .vercel/project.json
+
       - name: Vercel + next-on-pages build
         run: |
           npx vercel build --prod

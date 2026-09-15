@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "pages:build": "vercel build --prod && next-on-pages --skip-build",
+    "pages:build": "node -e \"const fs=require('fs');fs.mkdirSync('.vercel',{recursive:true});fs.writeFileSync('.vercel/project.json',JSON.stringify({framework:'nextjs'}))\" && vercel build --prod && next-on-pages --skip-build",
     "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static --project-name=borsa-raporlari-web"
   },
   "dependencies": {
