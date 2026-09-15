@@ -2457,6 +2457,7 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     gundem_dosyalari = [fn for fn in (rapor_dosyalari or []) if "-derin-analiz" not in fn]
     derin_dosyalari = [fn for fn in (rapor_dosyalari or []) if "-derin-analiz" in fn]
 
+    arsiv_bolumu = ""
     if gundem_dosyalari:
         GORUNEN_ARŞİV = 3
         kart_liste = [
@@ -2464,11 +2465,15 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
             f'<span class="sub">Günlük raporu aç &rarr;</span></a>'
             for fn in gundem_dosyalari
         ]
-        kartlar = "".join(kart_liste[:GORUNEN_ARŞİV])
+        gorunen = "".join(kart_liste[:GORUNEN_ARŞİV])
+        ekler = ""
         if len(kart_liste) > GORUNEN_ARŞİV:
             kalan = len(kart_liste) - GORUNEN_ARŞİV
             gizli_kartlar = "".join(kart_liste[GORUNEN_ARŞİV:])
-            kartlar += f"""
+            # DIKKAT: buton + gizli grid, gorunen grid'in DIŞINDA kardes
+            # element olarak eklenir; grid icine gomülürse iç içe grid
+            # dar bir kolona sıkışıp dikey dizilir.
+            ekler = f"""
 <div style="margin:8px 0 0"><button type="button" onclick="arsivAc(this)" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:7px 16px; font-size:13.5px; font-weight:600; color:#0f172a; cursor:pointer">Daha fazla göster ({kalan} gün)</button></div>
 <div class="grid" id="arsiv-devam" style="display:none; margin-top:10px">{gizli_kartlar}</div>
 <script>
@@ -2479,8 +2484,13 @@ function arsivAc(btn) {{
   btn.textContent = kapali ? 'Daha az göster' : 'Daha fazla göster ({kalan} gün)';
 }}
 </script>"""
+        arsiv_bolumu = f"""
+<h2 class="section-title">Rapor Arşivi</h2>
+<div class="grid">{gorunen}</div>{ekler}"""
     else:
-        kartlar = '<p style="color:var(--muted)">Henüz rapor yok.</p>'
+        arsiv_bolumu = """
+<h2 class="section-title">Rapor Arşivi</h2>
+<p style="color:var(--muted)">Henüz rapor yok.</p>"""
 
     # Hafta sonu gundemi bolumu (en son hafta sonu sayisi; hafta ici de gosterilir)
     haftasonu_bolumu = ""
@@ -2563,8 +2573,7 @@ function arsivAc(btn) {{
 <h1>BIST 30 Günlük Piyasa Raporları</h1>
 <p>Hafta içi her sabah 08:00'de otomatik üretilen, yapay zeka destekli BIST 30 analizleri ve sanal portföy takibi. (Hafta sonu yayın yok — piyasa kapalı.)</p>
 </div>
-<h2 class="section-title">Rapor Arşivi</h2>
-<div class="grid">{kartlar}</div>
+{arsiv_bolumu}
 {derin_bolumu}
 {haftasonu_bolumu}
 {egitim_bolumu}

@@ -487,8 +487,9 @@ async function aiSor() {
 <h1>BIST 30 Günlük Piyasa Raporları</h1>
 <p>Hafta içi her sabah 08:00'de otomatik üretilen, yapay zeka destekli BIST 30 analizleri ve sanal portföy takibi. (Hafta sonu yayın yok — piyasa kapalı.)</p>
 </div>
+
 <h2 class="section-title">Rapor Arşivi</h2>
-<div class="grid"><a class="rcard" href="reports/2026-09-15.html"><span class="date">15 Eylül 2026, Salı</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-14.html"><span class="date">14 Eylül 2026, Pazartesi</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-11.html"><span class="date">11 Eylül 2026, Cuma</span><span class="sub">Günlük raporu aç &rarr;</span></a>
+<div class="grid"><a class="rcard" href="reports/2026-09-15.html"><span class="date">15 Eylül 2026, Salı</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-14.html"><span class="date">14 Eylül 2026, Pazartesi</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-11.html"><span class="date">11 Eylül 2026, Cuma</span><span class="sub">Günlük raporu aç &rarr;</span></a></div>
 <div style="margin:8px 0 0"><button type="button" onclick="arsivAc(this)" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:7px 16px; font-size:13.5px; font-weight:600; color:#0f172a; cursor:pointer">Daha fazla göster (6 gün)</button></div>
 <div class="grid" id="arsiv-devam" style="display:none; margin-top:10px"><a class="rcard" href="reports/2026-09-10.html"><span class="date">10 Eylül 2026, Perşembe</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-09.html"><span class="date">9 Eylül 2026, Çarşamba</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-08.html"><span class="date">8 Eylül 2026, Salı</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-07.html"><span class="date">7 Eylül 2026, Pazartesi</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-06.html"><span class="date">6 Eylül 2026, Pazar</span><span class="sub">Günlük raporu aç &rarr;</span></a><a class="rcard" href="reports/2026-09-05.html"><span class="date">5 Eylül 2026, Cumartesi</span><span class="sub">Günlük raporu aç &rarr;</span></a></div>
 <script>
@@ -498,7 +499,7 @@ function arsivAc(btn) {
   devam.style.display = kapali ? 'grid' : 'none';
   btn.textContent = kapali ? 'Daha az göster' : 'Daha fazla göster (6 gün)';
 }
-</script></div>
+</script>
 
 <h2 class="section-title">Derin Analiz</h2>
 <div class="grid"><a class="rcard" href="derin-analiz.html"><span class="date">Güncel Derin Analiz</span>
@@ -526,13 +527,13 @@ function arsivAc(btn) {
 </div>
 <div class="card" style="margin-bottom:14px">
 <div style="position:relative; height:340px;">
-<canvas id="portfoy-grafik-727626"></canvas>
+<canvas id="portfoy-grafik-928719"></canvas>
 </div>
 <script>
 (function() {
     var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-14", "2026-09-15"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27, 105135.98, 105721.9, 105320.34, 106949.37, 105257.55], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100819.58, 100415.39, 101224.05, 100055.94, 99407.07, 98829.8], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100459.02, 100476.65, 100522.88, 100761.11, 100778.93, 100828.28], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73, 100370.32, 100494.06, 100617.96, 100990.57, 101115.08], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}, {"label": "BIST 100 Endeksi", "data": [100000.0, 100000.0, 99549.87, 101792.45, 102500.71, 101711.89, 102230.56, 100595.27], "borderColor": "#7c3aed", "backgroundColor": "#7c3aed", "borderDash": [2, 2]}]};
     var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
-    var ctx = document.getElementById('portfoy-grafik-727626').getContext('2d');
+    var ctx = document.getElementById('portfoy-grafik-928719').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {

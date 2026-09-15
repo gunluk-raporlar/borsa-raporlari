@@ -47,7 +47,9 @@ table { border-collapse:collapse; width:100%; font-size:14.5px; }
 th, td { border-bottom:1px solid var(--line); padding:9px 12px; text-align:left; }
 th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
 tr:last-child td { border-bottom:none; }
-.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:14px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(165px,1fr)); gap:14px; }
+/* 'hidden' ozelligini .grid'in display'i ezmesin diye guaranti */
+[hidden] { display:none !important; }
 .rcard { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px;
          text-decoration:none; color:var(--ink); display:block; transition:border-color .15s, box-shadow .15s; }
 .rcard:hover { border-color:var(--accent); box-shadow:0 2px 10px rgba(15,23,42,.08); }
@@ -59,9 +61,14 @@ tr:last-child td { border-bottom:none; }
 .report h1 { font-size:22px; margin:26px 0 10px; }
 .report h2 { font-size:19px; margin:26px 0 10px; }
 .report h3 { font-size:16.5px; margin:22px 0 8px; }
-.report table { margin:14px 0; border:1px solid var(--line); border-radius:8px; }
-.report th { background:#f8fafc; }
-.report td, .report th { border:1px solid var(--line); }
+.report table { margin:16px 0; border:1px solid var(--line); width:100%; }
+.report thead th { background:var(--ink); color:#fff; font-weight:600; font-size:12.5px;
+                   text-transform:none; letter-spacing:.3px; padding:11px 14px; text-align:left;
+                   border:1px solid var(--line); white-space:nowrap; }
+.report tbody td { border:1px solid var(--line); padding:10px 14px; }
+.report tbody tr:nth-child(even) td { background:#f8fafc; }
+.report tbody tr:hover td { background:var(--accent-bg); }
+.report tbody td:first-child { font-weight:600; }
 .report hr { border:none; border-top:1px solid var(--line); margin:22px 0; }
 .report blockquote { margin:14px 0; padding:10px 16px; border-left:4px solid var(--line); color:var(--muted); }
 .badge { display:inline-block; background:var(--accent-bg); color:var(--accent); border:1px solid #99f6e4;
@@ -266,20 +273,40 @@ body { overflow-x: hidden; }
     .then(function(d) {
       var bolumler = (d && d.bolumler) || [];
       if (!bolumler.length) { return; }
+      // Siralama: en yeni gun once; gun icinde acilis -> ogle -> kapanis.
+      // (indeks.json eski duzende kaydedilmis olabilir; burada da garantiye aliyoruz.)
+      var sira = { acilis: 0, ogle: 1, kapanis: 2 };
+      bolumler.sort(function(a, b) {
+        if (a.tarih !== b.tarih) return a.tarih < b.tarih ? 1 : -1;
+        var sa = (a.bolum in sira) ? sira[a.bolum] : 9;
+        var sb = (b.bolum in sira) ? sira[b.bolum] : 9;
+        return sa - sb;
+      });
+      var sonGun = bolumler[0].tarih;
       var ses = document.getElementById('radyo-audio');
       var liste = document.getElementById('radyo-liste');
       var secili = 0;
-      function yukle(i) {
-        secili = i;
-        ses.src = kok + bolumler[i].dosya;
-        liste.innerHTML = bolumler.map(function(b, ix) {
+      var eskiAcik = false;
+      function renderListe() {
+        var gizli = 0;
+        var html = bolumler.map(function(b, ix) {
+          if (b.tarih !== sonGun && !eskiAcik) { gizli++; return ''; }
           var sure = b.sure_sn ? Math.round(b.sure_sn / 60) + ' dk' : '';
           return '<a href="javascript:void(0)" onclick="radyoSec(' + ix + ')" style="display:inline-block; margin:2px 6px 2px 0; ' +
                  (ix === secili ? 'font-weight:700;' : '') + '">' + b.baslik + (sure ? ' (' + sure + ')' : '') + '</a>';
         }).join('');
+        if (gizli) {
+          html += '<a href="javascript:void(0)" onclick="radyoEskiAc()" style="display:inline-block; margin:4px 0 2px; font-weight:600; color:#0f766e">' +
+                  (eskiAcik ? '⌃ Sadece son günü göster' : '⌄ Önceki günler (' + gizli + ')') + '</a>';
+        }
+        liste.innerHTML = html;
       }
-      window.radyoSec = function(i) { yukle(i); ses.play().catch(function() {}); };
-      yukle(0);
+      window.radyoSec = function(i) { secili = i; renderListe(); ses.src = kok + bolumler[i].dosya; ses.play().catch(function() {}); };
+      window.radyoEskiAc = function() { eskiAcik = !eskiAcik; renderListe(); };
+      // Baslangicta en yeni bolum yuklenir; sadece son gunun yayinlari listelenir.
+      ses.src = kok + bolumler[0].dosya;
+      secili = 0;
+      renderListe();
       kutu.style.display = 'block';
     })
     .catch(function() {});
