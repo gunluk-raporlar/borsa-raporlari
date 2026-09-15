@@ -2,25 +2,17 @@ export const runtime = "edge";
 
 import { sbConf, sbRest } from "../../../lib/data";
 
-export async function POST(req) {
-  let q = "";
-  try {
-    const govde = await req.json();
-    q = (govde.q || "").trim();
-  } catch {
-    // gövde bozuk → q boş kalır
-  }
-  if (!q) {
-    return Response.json({ hata: "Arama metni boş olamaz." }, { status: 400 });
-  }
+async function aramaYap(soru) {
+  let q = (soru || "").trim();
+  if (!q) return { status: 400, body: { hata: "Arama metni boş olamaz." } };
   if (q.length > 500) q = q.slice(0, 500);
 
   const { CF_ACCOUNT_ID, CF_API_KEY } = process.env;
   if (!CF_ACCOUNT_ID || !CF_API_KEY || !sbConf().url || !sbConf().key) {
-    return Response.json(
-      { hata: "Arama servisi henüz yapılandırılmadı (SUPABASE/CF değişkenleri eksik)." },
-      { status: 503 }
-    );
+    return {
+      status: 503,
+      body: { hata: "Arama servisi henüz yapılandırılmadı (SUPABASE/CF değişkenleri eksik)." },
+    };
   }
 
   try {
@@ -58,8 +50,27 @@ export async function POST(req) {
       icerik: (s.icerik || "").slice(0, 600),
       benzerlik: s.benzerlik,
     }));
-    return Response.json({ sonuc: temiz });
+    return { status: 200, body: { sonuc: temiz } };
   } catch (e) {
-    return Response.json({ hata: e.message || "bilinmeyen hata" }, { status: 502 });
+    return { status: 502, body: { hata: e.message || "bilinmeyen hata" } };
   }
+}
+
+export async function POST(req) {
+  let q = "";
+  try {
+    const govde = await req.json();
+    q = govde.q || "";
+  } catch {
+    // gövde bozuk → q boş kalır
+  }
+  const r = await aramaYap(q);
+  return Response.json(r.body, { status: r.status });
+}
+
+/** Test ve kolay çağrı için: /api/ara?q=soru */
+export async function GET(req) {
+  const q = new URL(req.url).searchParams.get("q") || "";
+  const r = await aramaYap(q);
+  return Response.json(r.body, { status: r.status });
 }
