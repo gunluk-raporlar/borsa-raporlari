@@ -1,20 +1,8 @@
 import { raporListesi } from "../lib/data";
+import ArsivListesi from "../components/ArsivListesi";
 
 export const runtime = "edge";
 export const revalidate = 300;
-
-function tarihYazi(t) {
-  try {
-    return new Date(`${t}T09:00:00`).toLocaleDateString("tr-TR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      weekday: "long",
-    });
-  } catch {
-    return t;
-  }
-}
 
 export default async function Home() {
   let raporlar = [];
@@ -51,15 +39,7 @@ export default async function Home() {
 
       <h2 className="section-title" style={{ marginTop: 26 }}>Rapor Arşivi</h2>
       {hata && <div className="bilgi">Rapor listesi şu anda alınamadı; birkaç dakika sonra tekrar deneyin.</div>}
-      {!hata && raporlar.length === 0 && <div className="bilgi">Henüz rapor yayınlanmadı.</div>}
-      <div className="grid">
-        {raporlar.map((r) => (
-          <a key={r.tarih} className="rcard" href={`/rapor/${r.tarih}`}>
-            <span className="tarih">{tarihYazi(r.tarih)}</span>
-            <span className="alt">{r.baslik} · raporu aç →</span>
-          </a>
-        ))}
-      </div>
+      {!hata && <ArsivListesi raporlar={raporlar} />}
     </>
   );
 }

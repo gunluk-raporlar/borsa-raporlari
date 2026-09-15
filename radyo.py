@@ -640,7 +640,20 @@ def main():
         "id": dosya_ad[:-4], "tarih": tarih, "bolum": bolum,
         "baslik": f"{tarih} — {bolum_adi}", "dosya": f"radyo/{dosya_ad}", "sure_sn": sure,
     })
-    indeks["bolumler"] = sorted(indeks["bolumler"], key=lambda b: b.get("id", ""), reverse=True)[:20]
+    # Siralama: en yeni gun once; gun icinde acilis -> ogle -> kapanis.
+    # (Eskiden id'ye gore ters alfabetik yapiliyordu: ogle, kapanis, acilis
+    # diye karisik gorunuyordu.) Iki gecisli stabil sort: once bolum sirasi,
+    # sonra tarih ters.
+    _BOLUM_SIRA = {"acilis": 0, "ogle": 1, "kapanis": 2}
+    indeks["bolumler"] = sorted(
+        indeks["bolumler"],
+        key=lambda b: _BOLUM_SIRA.get(b.get("bolum", ""), 9),
+    )
+    indeks["bolumler"] = sorted(
+        indeks["bolumler"],
+        key=lambda b: b.get("tarih", ""),
+        reverse=True,
+    )[:20]
     indeks["guncelleme"] = simdi.strftime("%d.%m %H:%M")  # her kosuda taze saat
     with open(indeks_yolu, "w", encoding="utf-8") as f:
         json.dump(indeks, f, ensure_ascii=False, indent=1)

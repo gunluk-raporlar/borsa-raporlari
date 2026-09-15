@@ -1700,20 +1700,40 @@ def _radyo_kutusu(kok=""):
     .then(function(d) {{
       var bolumler = (d && d.bolumler) || [];
       if (!bolumler.length) {{ return; }}
+      // Siralama: en yeni gun once; gun icinde acilis -> ogle -> kapanis.
+      // (indeks.json eski duzende kaydedilmis olabilir; burada da garantiye aliyoruz.)
+      var sira = {{ acilis: 0, ogle: 1, kapanis: 2 }};
+      bolumler.sort(function(a, b) {{
+        if (a.tarih !== b.tarih) return a.tarih < b.tarih ? 1 : -1;
+        var sa = (a.bolum in sira) ? sira[a.bolum] : 9;
+        var sb = (b.bolum in sira) ? sira[b.bolum] : 9;
+        return sa - sb;
+      }});
+      var sonGun = bolumler[0].tarih;
       var ses = document.getElementById('radyo-audio');
       var liste = document.getElementById('radyo-liste');
       var secili = 0;
-      function yukle(i) {{
-        secili = i;
-        ses.src = kok + bolumler[i].dosya;
-        liste.innerHTML = bolumler.map(function(b, ix) {{
+      var eskiAcik = false;
+      function renderListe() {{
+        var gizli = 0;
+        var html = bolumler.map(function(b, ix) {{
+          if (b.tarih !== sonGun && !eskiAcik) {{ gizli++; return ''; }}
           var sure = b.sure_sn ? Math.round(b.sure_sn / 60) + ' dk' : '';
           return '<a href="javascript:void(0)" onclick="radyoSec(' + ix + ')" style="display:inline-block; margin:2px 6px 2px 0; ' +
                  (ix === secili ? 'font-weight:700;' : '') + '">' + b.baslik + (sure ? ' (' + sure + ')' : '') + '</a>';
         }}).join('');
+        if (gizli) {{
+          html += '<a href="javascript:void(0)" onclick="radyoEskiAc()" style="display:inline-block; margin:4px 0 2px; font-weight:600; color:#0f766e">' +
+                  (eskiAcik ? '⌃ Sadece son günü göster' : '⌄ Önceki günler (' + gizli + ')') + '</a>';
+        }}
+        liste.innerHTML = html;
       }}
-      window.radyoSec = function(i) {{ yukle(i); ses.play().catch(function() {{}}); }};
-      yukle(0);
+      window.radyoSec = function(i) {{ secili = i; renderListe(); ses.src = kok + bolumler[i].dosya; ses.play().catch(function() {{}}); }};
+      window.radyoEskiAc = function() {{ eskiAcik = !eskiAcik; renderListe(); }};
+      // Baslangicta en yeni bolum yuklenir; sadece son gunun yayinlari listelenir.
+      ses.src = kok + bolumler[0].dosya;
+      secili = 0;
+      renderListe();
       kutu.style.display = 'block';
     }})
     .catch(function() {{}});
@@ -2432,11 +2452,27 @@ def _tr_tarih(iso_tarih):
 
 def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     if rapor_dosyalari:
-        kartlar = "".join(
+        GORUNEN_ARŞİV = 3
+        kart_liste = [
             f'<a class="rcard" href="reports/{fn}"><span class="date">{_tr_tarih(fn[:-5])}</span>'
             f'<span class="sub">Günlük raporu aç &rarr;</span></a>'
             for fn in rapor_dosyalari
-        )
+        ]
+        kartlar = "".join(kart_liste[:GORUNEN_ARŞİV])
+        if len(kart_liste) > GORUNEN_ARŞİV:
+            kalan = len(kart_liste) - GORUNEN_ARŞİV
+            gizli_kartlar = "".join(kart_liste[GORUNEN_ARŞİV:])
+            kartlar += f"""
+<div style="margin:8px 0 0"><button type="button" onclick="arsivAc(this)" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:7px 16px; font-size:13.5px; font-weight:600; color:#0f172a; cursor:pointer">Daha fazla göster ({kalan} gün)</button></div>
+<div class="grid" id="arsiv-devam" hidden style="margin-top:10px">{gizli_kartlar}</div>
+<script>
+function arsivAc(btn) {{
+  var devam = document.getElementById('arsiv-devam');
+  var kapali = devam.hidden;
+  devam.hidden = !kapali;
+  btn.textContent = kapali ? 'Daha az göster' : 'Daha fazla göster ({kalan} gün)';
+}}
+</script>"""
     else:
         kartlar = '<p style="color:var(--muted)">Henüz rapor yok.</p>'
 
@@ -2453,18 +2489,23 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
 <div class="grid"><a class="rcard" href="haftasonu.html"><span class="date">{_tr_tarih(son_hs)}</span>
 <span class="sub">Hafta sonu haberlerinden gündem değerlendirmesi & yeni hafta ajandası &rarr;</span></a></div>"""
 
-    # Hafta sonu borsa okulu bolumu (en son ders)
+    # Hafta sonu borsa okulu bolumu: son 4 ders tarih sirali kartlarla.
+    # (Eskiden yalnizca en son ders gorunuyordu; digerleri arsivde kayiplasiyordu.)
     egitim_bolumu = ""
     try:
         eg_dosyalar = sorted(f for f in os.listdir("haftasonu-egitimi") if f.endswith(".html"))
     except OSError:
         eg_dosyalar = []
     if eg_dosyalar:
-        son_eg = eg_dosyalar[-1][:-5]
+        eg_kartlar = "".join(
+            f'<a class="rcard" href="haftasonu-egitimi/{fn}"><span class="date">{_tr_tarih(fn[:-5])}</span>'
+            f'<span class="sub">Yapay zeka eğitmenden günün dersi &rarr;</span></a>'
+            for fn in reversed(eg_dosyalar[-4:])
+        )
         egitim_bolumu = f"""
 <h2 class="section-title">Hafta Sonu Borsa Okulu</h2>
-<div class="grid"><a class="rcard" href="haftasonu-egitimi.html"><span class="date">{_tr_tarih(son_eg)}</span>
-<span class="sub">Yapay zeka eğitmenden günün dersi: terim, gösterge & grafik okuma &rarr;</span></a></div>"""
+<div class="grid">{eg_kartlar}</div>
+<p style="margin:10px 0 0"><a href="haftasonu-egitimi.html">Borsa Okulu sayfası &rarr;</a></p>"""
 
     teknik_bolumu = ""
     if teknik_oneriler:
