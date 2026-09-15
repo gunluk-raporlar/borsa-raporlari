@@ -37,7 +37,9 @@ jobs:
         env:
           CF_API_KEY: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          # SUPABASE_URL gizli degil (proje ref'i herkese acik); secret yerine
+          # sabit yazildi — secret degeri bir kez bozuk kaydedilmisti.
+          SUPABASE_URL: https://ttmdhdoxhbrjnzrxttmr.supabase.co
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           SITE_URL: https://borsa-raporlari.pages.dev
           MOD: ${{ inputs.mod == 'backfill' && '--backfill' || '' }}
