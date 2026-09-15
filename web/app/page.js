@@ -1,5 +1,6 @@
 import { raporListesi } from "../lib/data";
 
+export const runtime = "edge";
 export const revalidate = 300;
 
 function tarihYazi(t) {
