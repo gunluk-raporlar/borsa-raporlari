@@ -1515,11 +1515,11 @@ tr:last-child td { border-bottom:none; }
 .report h2 { font-size:19px; margin:26px 0 10px; }
 .report h3 { font-size:16.5px; margin:22px 0 8px; }
 .report table { margin:16px 0; border:1px solid var(--line); width:100%; }
-.report thead th { background:var(--ink); color:#fff; font-weight:600; font-size:12.5px;
+.report thead th { background:#0f172a; color:#fff; font-weight:600; font-size:12.5px;
                    text-transform:none; letter-spacing:.3px; padding:11px 14px; text-align:left;
                    border:1px solid var(--line); white-space:nowrap; }
 .report tbody td { border:1px solid var(--line); padding:10px 14px; }
-.report tbody tr:nth-child(even) td { background:#f8fafc; }
+.report tbody tr:nth-child(even) td { background:rgba(148,163,184,.10); }
 .report tbody tr:hover td { background:var(--accent-bg); }
 .report tbody td:first-child { font-weight:600; }
 .report hr { border:none; border-top:1px solid var(--line); margin:22px 0; }
@@ -1528,7 +1528,7 @@ tr:last-child td { border-bottom:none; }
          border-radius:999px; padding:3px 12px; font-size:12.5px; font-weight:600; }
 .meta { color:var(--muted); font-size:13.5px; margin:8px 0 22px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
 .footer { text-align:center; color:var(--muted); font-size:12.5px; padding:26px 20px;
-          border-top:1px solid var(--line); background:#fff; }
+          border-top:1px solid var(--line); background:var(--card); }
 .chart { width:100%; height:auto; display:block; }
 @media (max-width:640px) {
   .report { padding:18px 16px; }
@@ -1566,6 +1566,39 @@ body { overflow-x: hidden; }
            padding:4px 14px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
 .ses-btn:hover { background:var(--accent-bg); }
 .ses-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+/* ---- Karanlik tema (html.dark) ---- */
+html.dark { --ink:#dbe4f0; --muted:#8fa3bd; --line:#273449; --bg:#0b1220; --card:#121c30;
+            --pos:#34d399; --neg:#f87171; --accent:#2dd4bf; --accent-bg:#0c2b27; }
+html.dark .report tbody tr:nth-child(even) td { background:rgba(148,163,184,.08); }
+html.dark .badge { background:#0c2b27; color:#2dd4bf; border-color:#155e56; }
+html.dark .ses-btn { background:#121c30; border-color:#155e56; color:#2dd4bf; }
+html.dark .footer { background:var(--card); }
+/* topbar/ticker/tablo basliklari her temada koyu kalmali (--ink metin rengi
+   oldugu icin temayla birlikte acilmamali) */
+.topbar, .ticker-bant, .report thead th { background:#0f172a; }
+html.dark .ticker-bant, html.dark .topbar { background:#0b1220; border-bottom:1px solid var(--line); }
+.theme-btn { background:transparent; color:#cbd5e1; border:1px solid #475569; border-radius:8px;
+             padding:4px 10px; font-size:14px; cursor:pointer; }
+.theme-btn:hover { color:#fff; border-color:#94a3b8; }
+
+/* ---- Mobil alt navigasyon ---- */
+.altbar { display:none; }
+@media (max-width: 768px) {
+  .altbar { display:flex; position:fixed; bottom:0; left:0; right:0; z-index:60;
+            background:#0f172a; padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+            justify-content:space-around; border-top:1px solid #1e293b; }
+  .altbar a { color:#cbd5e1; text-decoration:none; font-size:11px; text-align:center; flex:1; padding:2px 0; }
+  .altbar a .i { display:block; font-size:17px; }
+  .altbar a.active { color:#2dd4bf; font-weight:700; }
+  body { padding-bottom:66px; }
+}
+
+/* ---- Günlük ısı haritası ---- */
+.isi-harita { display:grid; grid-template-columns:repeat(auto-fill, minmax(96px,1fr)); gap:8px; }
+.isi-hucre { border-radius:10px; padding:10px 6px; text-align:center; color:#fff; }
+.isi-hucre b { display:block; font-size:13.5px; letter-spacing:.4px; }
+.isi-hucre span { font-size:12px; font-weight:700; }
 """
 
 
@@ -1690,6 +1723,7 @@ def _radyo_kutusu(kok=""):
   </div>
   <audio id="radyo-audio" controls preload="none" controlslist="nodownload noremoteplayback" style="width:100%; height:34px;" oncontextmenu="return false;"></audio>
   <div id="radyo-liste" style="margin-top:6px; font-size:12.5px; color:#475569;"></div>
+  <div style="margin-top:4px; font-size:11px;"><a href="{kok}radyo/podcast.xml" target="_blank" rel="noopener">📡 Podcast (RSS) ile abone ol</a></div>
   <div style="margin-top:4px; color:#94a3b8; font-size:11px;">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
 </div>
 <script>
@@ -2095,12 +2129,13 @@ def _borsapy_ses_metni(satirlar):
     return " ".join(parcalar)
 
 
-def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None):
+def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_ek=None):
     """Tum sayfalar icin ortak iskelet (ust menu + govde + altbilgi).
 
     aciklama: <meta name="description"> ve og:description icin kisa ozet.
     yol: sayfanin site kokune gore yolu (canonical + og:url icin; or.
-    "teknik-analiz.html", "reports/2026-09-08.html", "" = ana sayfa)."""
+    "teknik-analiz.html", "reports/2026-09-08.html", "" = ana sayfa).
+    ld_ek: varsa <head>'e eklenen ikinci JSON-LD blogu (or. Article semasi)."""
     a_r = ' class="active"' if aktif == "raporlar" else ""
     a_p = ' class="active"' if aktif == "portfoy" else ""
     a_t = ' class="active"' if aktif == "teknik" else ""
@@ -2108,9 +2143,19 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None):
     a_d = ' class="active"' if aktif == "derin" else ""
     a_h = ' class="active"' if aktif == "haftasonu" else ""
     a_e = ' class="active"' if aktif == "egitim" else ""
+    a_his = ' class="active"' if aktif == "hisseler" else ""
+    a_hb = ' class="active"' if aktif == "haberler" else ""
+    a_s = ' class="active"' if aktif == "sozluk" else ""
+    a_k = ' class="active"' if aktif == "karne" else ""
+    a_alt_r = ' class="active"' if aktif == "raporlar" else ""
+    a_alt_t = ' class="active"' if aktif == "teknik" else ""
+    a_alt_his = ' class="active"' if aktif == "hisseler" else ""
+    a_alt_p = ' class="active"' if aktif == "portfoy" else ""
+    a_alt_hb = ' class="active"' if aktif == "haberler" else ""
     tam_url = SITE_URL + (yol.lstrip("/") if yol else "")
     if not aciklama:
         aciklama = "Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi."
+    ld_ek_html = f'<script type="application/ld+json">{ld_ek}</script>' if ld_ek else ""
     favicon = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E"
                "%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E"
                "%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E")
@@ -2138,20 +2183,22 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None):
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{title}">
 <meta name="twitter:description" content="{aciklama}">
-{_dogrulama_etiketleri()}<script type="application/ld+json">{ld_json}</script>
-<style>{BASE_CSS}</style>
+{_dogrulama_etiketleri()}<script type="application/ld+json">{ld_json}</script>{ld_ek_html}
+<script>(function(){{try{{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){{document.documentElement.classList.add('dark');}}}}catch(e){{}}}})();</script>
+<link rel="stylesheet" href="{kok}style.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu Gündemi</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a></nav>
+<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a></nav>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button>
 </div></header>
 {_kendi_ticker(kok)}
 
 <main class="wrap">
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
-    <div class="site-widgets" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; background: #f8fafc; padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #475569; gap: 15px; border: 1px solid #e2e8f0;">
+    <div class="site-widgets" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; background: var(--card); padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: var(--muted); gap: 15px; border: 1px solid var(--line);">
         <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
             <span id="current-date-time">⏳ Yükleniyor...</span>
             <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
@@ -2170,6 +2217,29 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None):
     <!-- Asıl Sayfa İçeriği -->
     {icerik}
 </main>
+
+<nav class="altbar" aria-label="Hızlı menü">
+<a href="{kok}index.html"{a_alt_r}><span class="i">📊</span>Raporlar</a>
+<a href="{kok}teknik-analiz.html"{a_alt_t}><span class="i">📈</span>Teknik</a>
+<a href="{kok}hisse/index.html"{a_alt_his}><span class="i">🏦</span>Hisseler</a>
+<a href="{kok}portfolio.html"{a_alt_p}><span class="i">💼</span>Portföy</a>
+<a href="{kok}haberler.html"{a_alt_hb}><span class="i">📰</span>Haberler</a>
+</nav>
+
+<script>
+function temaDegistir() {{
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try {{ localStorage.setItem('tema', koyu ? 'dark' : 'light'); }} catch (e) {{}}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}}
+(function() {{
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+}})();
+</script>
 
 <footer class="footer">Bilgilendirme amacıyla hazırlanmıştır, yatırım tavsiyesi değildir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
 
@@ -2293,11 +2363,20 @@ function raporDinle() {
 <div class="meta"><span class="badge">{date_str}</span><span>{alt_baslik}</span>
 <button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-ses-metin')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button></div>
 </div>
+{_bist30_sepeti_sparkline()}
 {ses_bolumu}
 <article class="report">{html_icerik}</article>
 <p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>"""
+    ld_ek = json.dumps({
+        "@context": "https://schema.org", "@type": "Article",
+        "headline": f"{baslik} — {date_str}", "datePublished": date_str,
+        "inLanguage": "tr", "description": aciklama,
+        "author": {"@type": "Organization", "name": SITE_ADI, "url": SITE_URL},
+        "publisher": {"@type": "Organization", "name": SITE_ADI, "url": SITE_URL},
+        "mainEntityOfPage": SITE_URL + (kok_yol or ""),
+    }, ensure_ascii=False)
     return _sayfa(f"{baslik} - {date_str}", icerik, "raporlar", kok="../",
-                  aciklama=aciklama, yol=kok_yol)
+                  aciklama=aciklama, yol=kok_yol, ld_ek=ld_ek)
 
 
 def build_html(report, date_str):
@@ -2913,8 +2992,24 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') tvKap
 
 
 def build_teknik_html(satirlar, date_str):
+    # Günlük ısı haritası: değişime göre renk derinliği (yeşil yükselen, kırmızı düşen)
+    def _isi_renk(deg):
+        a = min(0.15 + abs(deg) / 3.0 * 0.80, 0.92)
+        return ("4,120,87" if deg >= 0 else "185,28,28") + f",{a:.2f}"
+
+    sirali = sorted(satirlar, key=lambda x: x.get("gunluk", 0), reverse=True)
+    isi = "".join(
+        f"<div class='isi-hucre' style=\"background:rgba({_isi_renk(s.get('gunluk', 0))})\">"
+        f"<b>{s['hisse']}</b><span>{s.get('gunluk', 0):+.2f}%</span></div>"
+        for s in sirali
+    )
+    isi_bolumu = f"""
+<h2 class="section-title">Günlük Isı Haritası</h2>
+<div class="isi-harita">{isi}</div>
+<p style="color:var(--muted); font-size:12px; margin:8px 0 0">Renk koyuluğu değişim büyüklüğünü gösterir — yeşil yükselenler, kırmızı düşenler. Hisse adına tıklayın: detay sayfası (fiyat grafiği, teknik durum, haberler).</p>"""
+
     satir_html = "".join(
-        f"<tr style='cursor:pointer' onclick=\"tvAc('{s['hisse']}')\"><td><strong>{s['hisse']}</strong></td>"
+        f"<tr style='cursor:pointer' onclick=\"tvAc('{s['hisse']}')\"><td><a style='color:inherit; text-decoration:none; font-weight:700' href='hisse/{s['hisse']}.html'>{s['hisse']}</a></td>"
         f"<td>{s['son']:,.2f} TL</td>"
         f"<td class='{_renk(s['gunluk'])}'>{s['gunluk']:+.2f}%</td>"
         f"<td class='{_renk(s['deg60'])}'>{s['deg60']:+.1f}%</td>"
@@ -2942,6 +3037,7 @@ gösterebilir. <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</str
 <div id="teknik-ses-metin" hidden>{_teknik_ses_metni(satirlar)}</div>
 </div>
 {_sektor_isi_haritasi(satirlar)}
+{isi_bolumu}
 <div class="card" style="padding:8px 24px 16px">
 <div class="tbl-wrap">
 <table>
@@ -2950,6 +3046,7 @@ gösterebilir. <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</str
 </table>
 </div>
 <p style="margin:12px 0 4px; color:var(--muted); font-size:13px">Bugün {len(satirlar)} hisse tarandı; {guclu} hisse GÜÇLÜ AL sinyalinde. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
+<p style="margin:0 0 6px"><a href="sinyal-karnesi.html">📊 <strong>Sinyal Karnesi</strong> — geçmiş AL sinyalleri 5 işlem günü sonra ne yapmış? &rarr;</a></p>
 </div>
 {_tv_modal_js()}
 {_sesli_okuma_js()}"""
@@ -3132,6 +3229,407 @@ etiketleri momentum oylarının çoğunluğunu yansıtır, aşırı alım riskin
     )
 
 
+# ---------- YENI BOLUM GENERATORLERI ----------
+# Hisse detay sayfalari, sinyal karnesi (backtest), haber arsivi, sozluk,
+# ekonomik takvim rehberi ve radyo podcast RSS'i uretir. Hepsi mevcut
+# data/ dosyalarindan calisir; LLM cagrisi gerektirmez.
+
+
+def style_css_yaz():
+    """BASE_CSS'i tek dosyaya yazar; her sayfa <style> gömmeden link verir
+    (sayfalar kuculur, tarayici CSS'i cache'ler)."""
+    with open("style.css", "w", encoding="utf-8") as f:
+        f.write(BASE_CSS)
+
+
+def _fiyat_gecmisi(gun=None):
+    """data/prices/*.json -> (tarihler asc, [{HISSE: fiyat}, ...] ayni sirada)"""
+    try:
+        dosyalar = sorted(f for f in os.listdir("data/prices") if f.endswith(".json"))
+    except OSError:
+        dosyalar = []
+    if gun:
+        dosyalar = dosyalar[-gun:]
+    tarihler, veriler = [], []
+    for d in dosyalar:
+        try:
+            with open(os.path.join("data/prices", d), encoding="utf-8") as f:
+                veriler.append(json.load(f))
+            tarihler.append(d[:-5])
+        except Exception:
+            continue
+    return tarihler, veriler
+
+
+def _mini_sparkline(degerler, w=520, h=90):
+    """Bagimsiz SVG cizgi grafigi; renk ilk/son degere gore otomatik."""
+    degerler = [float(v) for v in degerler if v is not None]
+    if len(degerler) < 2:
+        return ""
+    lo, hi = min(degerler), max(degerler)
+    aralik = (hi - lo) or 1.0
+    adim = w / (len(degerler) - 1)
+    noktalar = " ".join(
+        f"{round(i * adim, 1)},{round(h - 6 - (v - lo) / aralik * (h - 14), 1)}"
+        for i, v in enumerate(degerler)
+    )
+    renk = "#047857" if degerler[-1] >= degerler[0] else "#b91c1c"
+    return (f'<svg viewBox="0 0 {w} {h}" class="chart" role="img" aria-label="fiyat grafiği" '
+            f'style="max-width:{w}px"> '
+            f'<polyline fill="none" stroke="{renk}" stroke-width="2.5" points="{noktalar}" /></svg>')
+
+
+def _bist30_sepeti_sparkline(gun=30):
+    """Son N günün eşit ağırlıklı BIST30 sepeti grafiği (rapor sayfalarının tepesi).
+    Eksik verili tarihler atlanır; her hisse ilk GÖRÜLDÜĞÜ fiyata göre normalize edilir."""
+    try:
+        tarihler, veriler = _fiyat_gecmisi(gun)
+        if len(tarihler) < 3:
+            return ""
+        son_hisseler = list(veriler[-1].keys())
+        seri, baz = [], {}
+        for t, v in zip(tarihler, veriler):
+            toplam, adet = 0.0, 0
+            for h in son_hisseler:
+                f = v.get(h)
+                if not f:
+                    continue
+                if h not in baz:
+                    baz[h] = float(f)
+                toplam += float(f) / baz[h]
+                adet += 1
+            if adet >= 15:  # eksik verili günleri (ör. hafta sonu artığı) atla
+                seri.append(round(toplam / adet * 100, 2))
+        if len(seri) < 3:
+            return ""
+        grafik = _mini_sparkline(seri)
+        deg = seri[-1] - seri[0]
+        sinif = "pos" if deg >= 0 else "neg"
+        return f"""
+<div class="card" style="margin:0 0 18px; padding:14px 18px">
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
+<strong style="font-size:14px">BIST 30 sepeti — son {len(seri)} gün</strong>
+<span class="{sinif}" style="font-weight:700">{deg:+.2f}%</span>
+</div>
+{grafik}
+<div style="color:var(--muted); font-size:12px">30 hissenin eşit ağırlıklı sepeti, ilk görüldüğü fiyata göre normalize edildi.</div>
+</div>"""
+    except Exception:
+        return ""
+
+
+def build_hisse_html(kod, satir, tarihler, veriler, haberler):
+    seri = [(t, v.get(kod)) for t, v in zip(tarihler, veriler) if v.get(kod)]
+    grafik = _mini_sparkline([f for _, f in seri]) if len(seri) >= 2 else ""
+    degisim = None
+    if len(seri) >= 2:
+        degisim = (seri[-1][1] / seri[0][1] - 1) * 100
+    haber_ogeleri = "".join(
+        f"<li style='margin:6px 0'>{h.split(']', 1)[-1].strip()}"
+        f"{' <span style=&quot;color:var(--muted)&quot;>[' + h[1:].split(']')[0] + ']</span>' if h.startswith('[') and ']' in h else ''}</li>"
+        for h in haberler[:12]
+    ) or "<li style='color:var(--muted)'>Son 7 günde bu hisseye dair başlık bulunamadı.</li>"
+    teknik_ogeler = "".join(
+        f"<tr><td>{etiket}</td><td><strong>{deger}</strong></td></tr>"
+        for etiket, deger in [
+            ("Genel", satir.get("genel", "—")),
+            ("Kısa vade (EMA 5-8-13-21)", satir.get("kisa", "—")),
+            ("Orta vade (EMA 34-55)", satir.get("orta", "—")),
+            ("Uzun vade (EMA 89-144)", satir.get("uzun", "—")),
+            ("Wave Trend", satir.get("wt", "—")),
+            ("Kanal konumu", f"%{satir.get('konum', 0):.0f}"),
+            ("Trend gücü (r)", f"{satir.get('r', 0):.2f}"),
+            ("Puan", satir.get("puan", "—")),
+        ]
+    )
+    degisim_html = (
+        f"<span class='{_renk(degisim)}' style='font-weight:700'>{degisim:+.1f}% ({seri[0][0]}'ten beri)</span>"
+        if degisim is not None else ""
+    )
+    icerik = f"""
+<div class="hero">
+<h1>{kod} <span style="font-size:16px; color:var(--muted)">{satir.get('sektor', '')}</span></h1>
+<div class="meta"><span class="badge">{satir.get('genel', '—')}</span>
+<span><strong>{satir.get('son', 0):,.2f} TL</strong></span>
+<span class="{_renk(satir.get('gunluk', 0))}">{satir.get('gunluk', 0):+.2f}% (günlük)</span>
+{degisim_html}</div>
+</div>
+{f'<div class="card" style="margin-bottom:16px">{grafik}</div>' if grafik else ''}
+<div class="grid">
+<div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
+<table style="font-size:13.5px">{teknik_ogeler}</table>
+<p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a></p></div>
+<div class="card"><h3 style="margin:0 0 8px">Son 7 Gün Haberleri</h3>
+<ul style="margin:0; padding-left:18px; font-size:13.5px">{haber_ogeleri}</ul></div>
+</div>
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 8px">{kod} konulu içerikler</h3>
+<p style="margin:0"><a href="https://borsa-raporlari-web.pages.dev/ara?q={kod}" target="_blank" rel="noopener">🔍 Semantik aramada "{kod}" geçen tüm rapor bölümleri &rarr;</a></p>
+<p style="margin:6px 0 0"><a href="../index.html">Günlük rapor arşivi &rarr;</a></p>
+</div>"""
+    return _sayfa(
+        f"{kod} — Hisse Analizi", icerik, "hisseler", kok="../",
+        yol=f"hisse/{kod}.html",
+        aciklama=f"{kod} ({satir.get('sektor', 'BIST 30')}) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.",
+    )
+
+
+def hisse_sayfalari_yaz(teknik_satirlar):
+    """BIST30 hisseleri icin hisse/<KOD>.html + hisse/index.html uretir."""
+    if not teknik_satirlar:
+        return
+    os.makedirs("hisse", exist_ok=True)
+    tarihler, veriler = _fiyat_gecmisi()
+    haber_toplu = []
+    try:
+        for d in sorted(os.listdir("data/news"))[-7:]:
+            with open(os.path.join("data/news", d), encoding="utf-8") as f:
+                haber_toplu += json.load(f)
+    except Exception:
+        pass
+    for s in teknik_satirlar:
+        kod = s["hisse"]
+        haberler = [h for h in haber_toplu if kod.lower() in h.lower()]
+        with open(os.path.join("hisse", f"{kod}.html"), "w", encoding="utf-8") as f:
+            f.write(build_hisse_html(kod, s, tarihler, veriler, haberler))
+    kartlar = "".join(
+        f'<a class="rcard" href="{s["hisse"]}.html"><span class="date">{s["hisse"]}</span>'
+        f'<span class="sub">{s.get("genel", "")} &bull; {s.get("son", 0):,.2f} TL</span>'
+        f'<span class="sub {_renk(s.get("gunluk", 0))}">{s.get("gunluk", 0):+.2f}%</span></a>'
+        for s in teknik_satirlar
+    )
+    icerik = f"""
+<div class="hero">
+<h1>BIST 30 Hisseleri</h1>
+<p>Her hisse için güncel fiyat, teknik sinyal durumu, fiyat grafiği ve son 7 günün haberleri.</p>
+</div>
+<h2 class="section-title">Hisse Kartları</h2>
+<div class="grid">{kartlar}</div>"""
+    with open(os.path.join("hisse", "index.html"), "w", encoding="utf-8") as f:
+        f.write(_sayfa("BIST 30 Hisseleri", icerik, "hisseler", yol="hisse/index.html"))
+    logger.info("[Hisseler] %d hisse sayfasi uretildi.", len(teknik_satirlar))
+
+
+def sinyal_karnesi_yaz(teknik_satirlar):
+    """data/teknik gecmisindeki AL sinyallerini 5 islem gunu sonraki fiyatlara
+    karsi test eder (basit backtest) ve sinyal-karnesi.html uretir."""
+    try:
+        t_dosyalar = sorted(f for f in os.listdir("data/teknik") if f.endswith(".json"))
+    except OSError:
+        t_dosyalar = []
+    tarihler, veriler = _fiyat_gecmisi()
+    kayitlar = []
+    for td in t_dosyalar[:-1]:  # son günün 5 gün sonrası henüz yok
+        try:
+            with open(os.path.join("data/teknik", td), encoding="utf-8") as f:
+                gunun_satirlari = json.load(f)
+        except Exception:
+            continue
+        d = td[:-5]
+        if d not in tarihler:
+            continue
+        d_idx = tarihler.index(d)
+        sonraki = tarihler[d_idx + 1:]
+        if len(sonraki) < 5:
+            continue
+        cikis_t = sonraki[4]
+        cikis_veri = veriler[tarihler.index(cikis_t)]
+        giris_veri = veriler[d_idx]
+        for s in gunun_satirlari:
+            if s.get("genel") != "AL":
+                continue
+            kod = s.get("hisse")
+            giris = giris_veri.get(kod) or s.get("son")
+            cikis = cikis_veri.get(kod)
+            if not giris or not cikis:
+                continue
+            kayitlar.append({
+                "tarih": d, "hisse": kod, "giris": float(giris), "cikis": float(cikis),
+                "cikis_t": cikis_t, "getiri": (float(cikis) / float(giris) - 1) * 100,
+            })
+    if not kayitlar:
+        logger.info("[Karne] backtest icin yeterli gecmis yok; sayfa yazilmadi.")
+        return
+    ort = sum(k["getiri"] for k in kayitlar) / len(kayitlar)
+    isabet = sum(1 for k in kayitlar if k["getiri"] > 0) / len(kayitlar) * 100
+    en_iyi = sorted(kayitlar, key=lambda k: k["getiri"], reverse=True)[:3]
+    en_kotu = sorted(kayitlar, key=lambda k: k["getiri"])[:3]
+
+    def _mini_liste(liste, renk_ile=True):
+        return "".join(
+            f"<div style='display:flex; justify-content:space-between; margin:4px 0'>"
+            f"<span><strong>{k['hisse']}</strong> · {k['tarih']}</span>"
+            f"<span class='{_renk(k['getiri'])}' style='font-weight:700'>{k['getiri']:+.2f}%</span></div>"
+            for k in liste
+        )
+
+    tablo = "".join(
+        f"<tr><td>{k['tarih']}</td><td><strong>{k['hisse']}</strong></td>"
+        f"<td>{k['giris']:,.2f} TL</td><td>{k['cikis']:,.2f} TL</td><td>{k['cikis_t']}</td>"
+        f"<td class='{_renk(k['getiri'])}' style='font-weight:700'>{k['getiri']:+.2f}%</td></tr>"
+        for k in sorted(kayitlar, key=lambda k: k["tarih"], reverse=True)[:15]
+    )
+    icerik = f"""
+<div class="hero">
+<h1>Sinyal Karnesi</h1>
+<p>Teknik taramanın verdiği <strong>AL</strong> sinyallerini 5 işlem günü sonra fiyata karşı test ediyoruz.
+Sinyal günü kapanışı alıp 5. işlem günü kapanışında satmış olsaydık sonuç: {len(kayitlar)} sinyal,
+ortalama <strong class="{_renk(ort)}">{ort:+.2f}%</strong>, isabet oranı <strong>{isabet:.0f}%</strong>.
+(Geçmiş performans gelecek getirinin garantisi değildir; yöntem basit tutulmuştur.)</p>
+</div>
+<div class="grid">
+<div class="card"><h3 style="margin:0 0 8px">🏆 En iyi 3</h3>{_mini_liste(en_iyi)}</div>
+<div class="card"><h3 style="margin:0 0 8px">📉 En kötü 3</h3>{_mini_liste(en_kotu)}</div>
+</div>
+<h2 class="section-title">Son 15 Sinyal</h2>
+<div class="card" style="padding:8px 24px 16px"><div class="tbl-wrap"><table>
+<tr><th>Sinyal Günü</th><th>Hisse</th><th>Giriş</th><th>Çıkış</th><th>Çıkış Günü</th><th>Getiri</th></tr>
+{tablo}
+</table></div></div>
+<p style="color:var(--muted); font-size:12.5px">Yöntem: genel sinyali "AL" olan her hisse, sinyal günü kapanışından
+5 işlem günü sonraki kapanışa karşı ölçülür. Sinyaller yatırım tavsiyesi değildir.</p>"""
+    with open("sinyal-karnesi.html", "w", encoding="utf-8") as f:
+        f.write(_sayfa("Sinyal Karnesi — AL Sinyalleri Backtest", icerik, "karne",
+                       yol="sinyal-karnesi.html"))
+    logger.info("[Karne] %d AL sinyali test edildi; sayfa uretildi.", len(kayitlar))
+
+
+def haberler_yaz(gun=14):
+    """data/news gecmisinden haber arsivi sayfasi uretir."""
+    try:
+        dosyalar = sorted(os.listdir("data/news"))[-gun:][::-1]
+    except OSError:
+        dosyalar = []
+    bolumler = []
+    toplam = 0
+    for d in dosyalar:
+        try:
+            with open(os.path.join("data/news", d), encoding="utf-8") as f:
+                liste = json.load(f)
+        except Exception:
+            continue
+        if not liste:
+            continue
+        toplam += len(liste)
+        ogeler = "".join(f"<li style='margin:5px 0'>{h}</li>" for h in liste)
+        bolumler.append(
+            f"<h2 class='section-title'>{_tr_tarih(d[:-5])}</h2>"
+            f"<div class='card'><ul style='margin:0; padding-left:20px; font-size:13.5px'>{ogeler}</ul></div>"
+        )
+    govde = "".join(bolumler) or '<p style="color:var(--muted)">Haber arşivi henüz oluşmadı.</p>'
+    icerik = f"""
+<div class="hero">
+<h1>Haber Arşivi</h1>
+<p>RSS akışlarından toplanan günlük BIST ve makro haber başlıkları — son {len(dosyalar)} gün, toplam {toplam} başlık.</p>
+</div>
+{govde}"""
+    with open("haberler.html", "w", encoding="utf-8") as f:
+        f.write(_sayfa("Haber Arşivi", icerik, "haberler", yol="haberler.html"))
+    logger.info("[Haberler] %d gundelik arsiv yazildi.", len(dosyalar))
+
+
+def sozluk_yaz():
+    """data/sozluk.json iceriginden aramali sozluk sayfasi uretir."""
+    try:
+        with open("data/sozluk.json", encoding="utf-8") as f:
+            terimler = json.load(f)
+    except Exception:
+        terimler = []
+    ogeler = "".join(
+        f"<div class='card sozluk-oge' data-terim='{t['terim'].lower()}' style='margin:10px 0'>"
+        f"<strong style='color:var(--accent)'>{t['terim']}</strong>"
+        f"<p style='margin:6px 0 0; font-size:14px'>{t['aciklama']}</p></div>"
+        for t in sorted(terimler, key=lambda x: x["terim"].casefold())
+    )
+    icerik = f"""
+<div class="hero">
+<h1>Borsa Sözlüğü</h1>
+<p>Borsa Okulu derslerinde geçen temel kavramlar — arayarak süzgeçleyebilirsin.</p>
+</div>
+<div class="arama-form" style="margin:14px 0">
+<input type="text" id="sozluk-ara" placeholder="Terim ara: RSI, temettü, kaldıraç..." onkeyup="sozlukSuz()" style="flex:1; padding:10px 14px; border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink)">
+</div>
+<div id="sozluk-liste">{ogeler}</div>
+<script>
+function sozlukSuz() {{
+  var q = (document.getElementById('sozluk-ara').value || '').toLowerCase();
+  document.querySelectorAll('.sozluk-oge').forEach(function(el) {{
+    el.style.display = el.getAttribute('data-terim').indexOf(q) !== -1 ? '' : 'none';
+  }});
+}}
+</script>"""
+    with open("sozluk.html", "w", encoding="utf-8") as f:
+        f.write(_sayfa("Borsa Sözlüğü", icerik, "sozluk", yol="sozluk.html"))
+    logger.info("[Sozluk] %d terim yazildi.", len(terimler))
+
+
+def takvim_yaz():
+    """data/takvim.json iceriginden ekonomik takvim rehberi uretir."""
+    try:
+        with open("data/takvim.json", encoding="utf-8") as f:
+            ogeler = json.load(f)
+    except Exception:
+        ogeler = []
+    kartlar = "".join(
+        f"<div class='card' style='margin:10px 0'><strong style='color:var(--accent)'>{o['etkinlik']}</strong>"
+        f"<div style='color:var(--muted); font-size:13px; margin-top:4px'>{o['periyot']}"
+        f"{' &bull; ' + o['not'] if o.get('not') else ''}</div></div>"
+        for o in ogeler
+    ) or '<p style="color:var(--muted)">Takvim verisi henüz girilmedi.</p>'
+    icerik = f"""
+<div class="hero">
+<h1>Ekonomik Takvim Rehberi</h1>
+<p>Borsa için kritik düzenli veri açıklamaları ve ne anlama geldikleri. Belirli gün tarihleri
+resmî kurumların takviminden teyit edilmelidir.</p>
+</div>
+{kartlar}"""
+    with open("takvim.html", "w", encoding="utf-8") as f:
+        f.write(_sayfa("Ekonomik Takvim Rehberi", icerik, "takvim", yol="takvim.html"))
+    logger.info("[Takvim] rehber yazildi (%d oge).", len(ogeler))
+
+
+_RSS_GUNLER = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+_RSS_AYLAR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+
+def podcast_rss_yaz():
+    """radyo/indeks.json -> radyo/podcast.xml (iTunes uyumlu basit RSS 2.0)."""
+    try:
+        with open("radyo/indeks.json", encoding="utf-8") as f:
+            d = json.load(f)
+    except Exception:
+        return
+    ogeler = []
+    for b in d.get("bolumler", []):
+        try:
+            g = datetime.strptime(b.get("tarih", ""), "%Y-%m-%d")
+            pub = f"{_RSS_GUNLER[g.weekday()]}, {g.day:02d} {_RSS_AYLAR[g.month - 1]} {g.year} 08:00:00 +0300"
+        except Exception:
+            pub = "Wed, 01 Jan 2026 08:00:00 +0300"
+        url = SITE_URL + b.get("dosya", "")
+        ogeler.append(
+            f"<item><title>{b.get('baslik', '')}</title><guid isPermaLink=\"false\">{b.get('id', '')}</guid>"
+            f"<pubDate>{pub}</pubDate>"
+            f"<enclosure url=\"{url}\" type=\"audio/mpeg\" length=\"0\" />"
+            f"<link>{SITE_URL}index.html</link>"
+            f"<description>BIST Radyo — kurgusal yapay zeka sunucularla borsa bülteni.</description>"
+            f"<itunes:duration>{max(1, round(b.get('sure_sn', 60) / 60))}</itunes:duration></item>"
+        )
+    xml = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"><channel>\n'
+        f"<title>BIST Radyo — Yapay Zeka Borsa Bülteni</title>\n<link>{SITE_URL}</link>\n"
+        "<language>tr</language>\n"
+        "<description>Borsa İstanbul'da gün başlangıcı, öğle ve kapanış değerlendirmeleri; "
+        "kurgusal yapay zeka sunucular. Yatırım tavsiyesi değildir.</description>\n"
+        + "\n".join(ogeler)
+        + "\n</channel></rss>"
+    )
+    with open("radyo/podcast.xml", "w", encoding="utf-8") as f:
+        f.write(xml)
+    logger.info("[Podcast] %d bolumluk RSS yazildi.", len(ogeler))
+
+
 def site_arama_json_yaz(rapor_dosyalari):
     """Site ici arama kutusunun indeksini (site-arama.json) uretir.
     Statik sayfalar anahtar kelime + hisse kodlariyla; rapor ve derin analiz
@@ -3160,6 +3658,18 @@ def site_arama_json_yaz(rapor_dosyalari):
          "t": "osilatör oyları al sat nötr güçlü al genel öneri RSI MACD stokastik stoch CCI ADX aşırı alım aşırı satım " + hisse_listesi},
         {"b": "Deneme Portföyü", "u": "portfolio.html",
          "t": "sanal portföy 100.000 TL eşit dağıtılmış hisse performansı günlük geçmiş getiri altın dolar mevduat XU100 benchmark karşılaştırma " + hisse_listesi},
+    ]
+    sayfalar += [
+        {"b": "Hisseler (BIST 30 detay sayfaları)", "u": "hisse/index.html",
+         "t": "hisse detay sayfa fiyat teknik sinyal haber grafik sektör " + hisse_listesi},
+        {"b": "Sinyal Karnesi (AL sinyalleri backtest)", "u": "sinyal-karnesi.html",
+         "t": "sinyal karnesi AL sinyali backtest isabet oranı getiri performans geçmiş teknik tarama sonuç"},
+        {"b": "Haber Arşivi", "u": "haberler.html",
+         "t": "haber arşivi borsa makro ekonomi başlıklar rss gündem"},
+        {"b": "Borsa Sözlüğü", "u": "sozluk.html",
+         "t": "sözlük terimler RSI MACD EMA temettü kaldıraç volatilite destek direnç borsa okulu kavramlar"},
+        {"b": "Ekonomik Takvim Rehberi", "u": "takvim.html",
+         "t": "ekonomik takvim faiz enflasyon FOMC bilanço TCMB TÜİK veri açıklama rehber"},
     ]
     haftasonu_metin = makale_metni("haftasonu.html")
     if haftasonu_metin:
@@ -3194,6 +3704,11 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
         ("borsapy-analiz.html", "hourly"),
         ("portfolio.html", "daily"),
         ("haftasonu.html", "weekly"),
+        ("sinyal-karnesi.html", "daily"),
+        ("haberler.html", "hourly"),
+        ("sozluk.html", "weekly"),
+        ("takvim.html", "weekly"),
+        ("hisse/index.html", "daily"),
     ]
     bugun = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%Y-%m-%d")
     url_blokleri = []
@@ -3211,6 +3726,16 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
             f"  <url><loc>{SITE_URL}reports/{fn}</loc><lastmod>{lm}</lastmod>"
             f"<changefreq>monthly</changefreq><priority>0.6</priority></url>"
         )
+    # Hisse detay sayfalari
+    try:
+        for fn in sorted(os.listdir("hisse")):
+            if fn.endswith(".html") and fn != "index.html":
+                url_blokleri.append(
+                    f"  <url><loc>{SITE_URL}hisse/{fn}</loc><lastmod>{bugun}</lastmod>"
+                    f"<changefreq>daily</changefreq><priority>0.6</priority></url>"
+                )
+    except OSError:
+        pass
     with open("sitemap.xml", "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -3352,6 +3877,37 @@ if __name__ == "__main__":
     if p and p.get("history"):
         with open("portfolio.html", "w", encoding="utf-8") as f:
             f.write(build_portfolio_html(p))
+
+    # Yeni bolumler: hepsi data/ klasorundeki gecmisle calisir, LLM gerekmez;
+    # tek tek try/except ile birinin hatasi digerlerini etkilemez.
+    try:
+        style_css_yaz()
+    except Exception:
+        logger.exception("[CSS] style.css yazilamadi; sayfalar etkilenmez.")
+    try:
+        hisse_sayfalari_yaz(teknik_satirlar)
+    except Exception:
+        logger.exception("[Hisseler] sayfalar uretilemedi.")
+    try:
+        sinyal_karnesi_yaz(teknik_satirlar)
+    except Exception:
+        logger.exception("[Karne] uretilemedi.")
+    try:
+        haberler_yaz()
+    except Exception:
+        logger.exception("[Haberler] uretilemedi.")
+    try:
+        sozluk_yaz()
+    except Exception:
+        logger.exception("[Sozluk] uretilemedi.")
+    try:
+        takvim_yaz()
+    except Exception:
+        logger.exception("[Takvim] uretilemedi.")
+    try:
+        podcast_rss_yaz()
+    except Exception:
+        logger.exception("[Podcast] RSS yazilamadi.")
 
     # SEO: arama motorlari dosyalari her kosuda taze lastmod ile yeniden yazilir
     try:

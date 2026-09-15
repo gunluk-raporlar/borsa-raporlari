@@ -245,6 +245,8 @@ def main():
     # 5) Ana sayfa + portföy
     p = bot.load_portfolio()
     teknik_oneriler = [s for s in teknik_satirlar if s.get("genel") in ("GÜÇLÜ AL", "AL")][:6]
+    bot.style_css_yaz()
+    print("[OK] style.css yazıldı")
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(bot.build_index_html(p, raporlar, teknik_oneriler))
     print("[OK] index.html yeniden üretildi")
@@ -255,6 +257,38 @@ def main():
     if teknik_satirlar:
         bot.ticker_json_yaz(teknik_satirlar)
         print("[OK] ticker.json tazelendi")
+
+    # 5b) Yeni bölümler: hisse sayfaları, sinyal karnesi, haberler, sözlük, takvim, podcast
+    try:
+        bot.hisse_sayfalari_yaz(teknik_satirlar)
+        print("[OK] hisse/ sayfaları üretildi")
+    except Exception as e:
+        print(f"[ATLANDI] hisse sayfaları: {e}")
+    try:
+        bot.sinyal_karnesi_yaz(teknik_satirlar)
+        print("[OK] sinyal-karnesi.html üretildi")
+    except Exception as e:
+        print(f"[ATLANDI] sinyal karnesi: {e}")
+    try:
+        bot.haberler_yaz()
+        print("[OK] haberler.html üretildi")
+    except Exception as e:
+        print(f"[ATLANDI] haberler: {e}")
+    try:
+        bot.sozluk_yaz()
+        print("[OK] sozluk.html üretildi")
+    except Exception as e:
+        print(f"[ATLANDI] sözlük: {e}")
+    try:
+        bot.takvim_yaz()
+        print("[OK] takvim.html üretildi")
+    except Exception as e:
+        print(f"[ATLANDI] takvim: {e}")
+    try:
+        bot.podcast_rss_yaz()
+        print("[OK] radyo/podcast.xml yazıldı")
+    except Exception as e:
+        print(f"[ATLANDI] podcast RSS: {e}")
 
     # 6) SEO dosyaları + site içi arama indeksi
     bot.sitemap_ve_robots_yaz(raporlar)
