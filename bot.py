@@ -1329,7 +1329,7 @@ workflow.add_edge("portfolio", END)
 app = workflow.compile()
 
 # ---------- ORTAK SITE TASARIMI ----------
-SITE_URL = "https://borsa-raporlari.onrender.com/"
+SITE_URL = "https://borsa-raporlari.pages.dev/"
 SITE_ADI = "BIST 30 Günlük Raporlar"
 
 # ---------- INDEXNOW (Bing/Yandex/Seznam/Naver aninda indeksleme) ----------
@@ -3405,8 +3405,10 @@ def hisse_sayfalari_yaz(teknik_satirlar):
 </div>
 <h2 class="section-title">Hisse Kartları</h2>
 <div class="grid">{kartlar}</div>"""
+    # DİKKAT: bu sayfa hisse/ alt klasorunde — kok="../" olmazsa CSS ve
+    # nav linkleri kirilir (stilsiz 'bozuk' sayfa).
     with open(os.path.join("hisse", "index.html"), "w", encoding="utf-8") as f:
-        f.write(_sayfa("BIST 30 Hisseleri", icerik, "hisseler", yol="hisse/index.html"))
+        f.write(_sayfa("BIST 30 Hisseleri", icerik, "hisseler", kok="../", yol="hisse/index.html"))
     logger.info("[Hisseler] %d hisse sayfasi uretildi.", len(teknik_satirlar))
 
 
@@ -3798,7 +3800,7 @@ def og_cover_png_yaz():
     d.text((120, 78), "BIST 30 Günlük Raporlar", font=_font(True, 58), fill="#ffffff")
     d.text((120, 152), "Yapay zeka destekli piyasa analizi, teknik tarama ve sanal portföy",
            font=_font(False, 26), fill="#94a3b8")
-    d.text((120, 528), "borsa-raporlari.onrender.com", font=_font(False, 25), fill="#5eead4")
+    d.text((120, 528), "borsa-raporlari.pages.dev", font=_font(False, 25), fill="#5eead4")
     uyari = "Bilgilendirme amaçlıdır — yatırım tavsiyesi değildir"
     u_font = _font(False, 22)
     u_genislik = d.textlength(uyari, font=u_font)

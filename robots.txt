@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://borsa-raporlari.onrender.com/sitemap.xml
+Sitemap: https://borsa-raporlari.pages.dev/sitemap.xml
