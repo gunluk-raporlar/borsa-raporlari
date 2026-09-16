@@ -30,6 +30,18 @@ tr:last-child td { border-bottom:none; }
 /* genis icerik kartlari icin esit 2 kolon (hisse detay: teknik durum + haberler);
    auto-fill kucuk kart gridi tabloyu dar sutuna sikistirdigi icin ayri sinif gerekli */
 .grid-iki { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+/* ---- Gunluk BIST30 panosu (arastirma evi bulteni tarzi) ---- */
+.pano { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin:0 0 18px; }
+.pano-baslik { font-size:15.5px; font-weight:700; margin-bottom:10px; padding-left:10px; border-left:4px solid var(--accent); }
+.pano-veri { display:grid; grid-template-columns:repeat(auto-fit, minmax(130px,1fr)); gap:8px; margin-bottom:12px; }
+.pano-hucre { background:var(--accent-bg); border:1px solid var(--line); border-radius:10px; padding:8px 12px; }
+.pano-etiket { font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; }
+.pano-deger { font-size:17px; font-weight:700; }
+.pano-man { display:grid; gap:4px; font-size:13.5px; margin-bottom:12px; }
+.pano-tablo { font-size:13px; }
+.pano-tablo th, .pano-tablo td { padding:5px 8px; white-space:nowrap; }
+.pano-tablo thead th { background:var(--ink); color:#fff; position:sticky; top:0; }
+.pano-not { color:var(--muted); font-size:12px; margin:8px 0 0; }
 /* 'hidden' ozelligini .grid'in display'i ezmesin diye guaranti */
 [hidden] { display:none !important; }
 .rcard { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px;

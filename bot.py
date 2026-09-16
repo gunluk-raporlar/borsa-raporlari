@@ -1169,22 +1169,26 @@ def portfolio_agent(state: AgentState):
     usd_degeri = BASLANGIC_SERMAYE * (guncel_usd / ilk_usd_kuru)
     gold_degeri = BASLANGIC_SERMAYE * (guncel_gold / ilk_gold_fiyati)
 
-    # BIST 100 kiyaslama cizgisi: endeksin portfoy baslangicindan bugune
-    # getirisini 100.000 TL tabanina normalize eder (borsapy/borsapy index).
-    xu100_degeri = None
+    # BIST 100 ve BIST 30 kiyaslama cizgileri: endeksin portfoy baslangicindan
+    # bugune getirisini 100.000 TL tabanina normalize eder (borsapy index).
+    xu100_degeri = xu030_degeri = None
     try:
         import borsapy as bp
-        ix = bp.index("XU100")
-        ixh = ix.history(period="3mo")
-        if ixh is not None and len(ixh) >= 2:
+
+        def _endeks_normalize(kod):
+            ixh = bp.index(kod).history(period="3mo")
+            if ixh is None or len(ixh) < 2:
+                return None
             kapanislar = ixh["Close"].astype(float).dropna()
             kapanislar.index = [str(d)[:10] for d in kapanislar.index]
             taban = kapanislar[kapanislar.index >= p["start_date"]]
             taban_deger = float(taban.iloc[0]) if len(taban) else float(kapanislar.iloc[0])
-            if taban_deger > 0:
-                xu100_degeri = BASLANGIC_SERMAYE * (float(kapanislar.iloc[-1]) / taban_deger)
+            return BASLANGIC_SERMAYE * (float(kapanislar.iloc[-1]) / taban_deger) if taban_deger > 0 else None
+
+        xu100_degeri = _endeks_normalize("XU100")
+        xu030_degeri = _endeks_normalize("XU030")
     except Exception as e:
-        logger.warning("[Uyari] XU100 kiyaslama verisi alinamadi: %s", e)
+        logger.warning("[Uyari] Endeks kiyaslama verisi alinamadi: %s", e)
 
     p["history"].append({
         "date": bugun,
@@ -1197,7 +1201,8 @@ def portfolio_agent(state: AgentState):
             "USD": round(usd_degeri, 2),
             "GOLD": round(gold_degeri, 2),
             "DEPOSIT": round(deposit_degeri, 2),
-            **({"XU100": round(xu100_degeri, 2)} if xu100_degeri else {})
+            **({"XU100": round(xu100_degeri, 2)} if xu100_degeri else {}),
+            **({"XU030": round(xu030_degeri, 2)} if xu030_degeri else {})
         }
     })
     save_portfolio(p)
@@ -1504,6 +1509,18 @@ tr:last-child td { border-bottom:none; }
 /* genis icerik kartlari icin esit 2 kolon (hisse detay: teknik durum + haberler);
    auto-fill kucuk kart gridi tabloyu dar sutuna sikistirdigi icin ayri sinif gerekli */
 .grid-iki { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+/* ---- Gunluk BIST30 panosu (arastirma evi bulteni tarzi) ---- */
+.pano { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin:0 0 18px; }
+.pano-baslik { font-size:15.5px; font-weight:700; margin-bottom:10px; padding-left:10px; border-left:4px solid var(--accent); }
+.pano-veri { display:grid; grid-template-columns:repeat(auto-fit, minmax(130px,1fr)); gap:8px; margin-bottom:12px; }
+.pano-hucre { background:var(--accent-bg); border:1px solid var(--line); border-radius:10px; padding:8px 12px; }
+.pano-etiket { font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; }
+.pano-deger { font-size:17px; font-weight:700; }
+.pano-man { display:grid; gap:4px; font-size:13.5px; margin-bottom:12px; }
+.pano-tablo { font-size:13px; }
+.pano-tablo th, .pano-tablo td { padding:5px 8px; white-space:nowrap; }
+.pano-tablo thead th { background:var(--ink); color:#fff; position:sticky; top:0; }
+.pano-not { color:var(--muted); font-size:12px; margin:8px 0 0; }
 /* 'hidden' ozelligini .grid'in display'i ezmesin diye guaranti */
 [hidden] { display:none !important; }
 .rcard { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px;
@@ -2313,9 +2330,95 @@ def markdown_to_html(metin):
     )
 
 
+def _pano_html(satirlar):
+    """Gunluk BIST30 panosu (arastirma evi bulteni tarzi): piyasa verileri
+    kutusu + manset satirlari + 30 hisselik gunluk degisim tablosu +
+    sektor ortalamalari. Tamamen teknik tarama ve portfoy kur verisinden
+    hesaplanir; dis veri/tavsiye icermez."""
+    if not satirlar:
+        return ""
+    sirali = sorted(satirlar, key=lambda s: (s.get("gunluk", 0) or 0), reverse=True)
+    gunlukler = [s.get("gunluk", 0) or 0 for s in sirali]
+    yukselen = sum(1 for g in gunlukler if g > 0)
+    dusen = sum(1 for g in gunlukler if g < 0)
+    ort = sum(gunlukler) / len(gunlukler) if gunlukler else 0.0
+    en_yuk = sirali[:3]
+    en_dus = list(reversed(sirali[-3:]))
+
+    guclu_al = sum(1 for s in satirlar if s.get("genel") == "GÜÇLÜ AL")
+    al = sum(1 for s in satirlar if s.get("genel") == "AL")
+    sat_s = sum(1 for s in satirlar if s.get("genel") == "SAT")
+    guclu_sat = sum(1 for s in satirlar if s.get("genel") == "GÜÇLÜ SAT")
+    notr = len(satirlar) - guclu_al - al - sat_s - guclu_sat
+
+    usd = altin = ""
+    try:
+        p = load_portfolio()
+        if p and p.get("history"):
+            rates = (p["history"][-1].get("rates") or {})
+            if rates.get("USD"):
+                usd = f'{rates["USD"]:.2f}'.replace(".", ",")
+            if rates.get("GOLD"):
+                altin = f'{rates["GOLD"]:.0f}'
+    except Exception:
+        pass
+
+    def _fmt(v):
+        return f"{v:+.2f}%".replace(".", ",")
+
+    sektor_ort = {}
+    for s in satirlar:
+        sektor_ort.setdefault(s.get("sektor", "Diğer"), []).append(s.get("gunluk", 0) or 0)
+    sektorler = sorted(((k, sum(v) / len(v)) for k, v in sektor_ort.items()),
+                       key=lambda kv: kv[1], reverse=True)
+    sektor_html = " &bull; ".join(
+        f"{k} <span class='{_renk(v)}'>{_fmt(v)}</span>" for k, v in sektorler)
+
+    def _sinyal(genel):
+        return ('pos' if genel in ("GÜÇLÜ AL", "AL")
+                else 'neg' if genel in ("SAT", "GÜÇLÜ SAT") else '')
+
+    satir_html = "\n".join(
+        f"<tr><td>{i}</td>"
+        f"<td><a href='hisse/{s['hisse']}.html'><strong>{s['hisse']}</strong></a></td>"
+        f"<td>{s.get('son', 0):,.2f}</td>"
+        f"<td class='{_renk(s.get('gunluk', 0))}'><strong>{_fmt(s.get('gunluk', 0) or 0)}</strong></td>"
+        f"<td class='{_renk(s.get('deg60', 0))}'>{(s.get('deg60', 0) or 0):+.1f}%</td>"
+        f"<td>%{(s.get('konum', 0) or 0):.0f}</td>"
+        f"<td class='{_sinyal(s.get('genel', ''))}'><strong>{s.get('genel', '')}</strong></td></tr>"
+        for i, s in enumerate(sirali, 1))
+
+    return f"""
+<div class="pano">
+<div class="pano-baslik">📊 Günün Panosu — BIST 30</div>
+<div class="pano-veri">
+  <div class="pano-hucre"><div class="pano-etiket">BIST 30 Sepeti</div><div class="pano-deger {_renk(ort)}">{_fmt(ort)}</div></div>
+  <div class="pano-hucre"><div class="pano-etiket">Yükselen / Düşen</div><div class="pano-deger">{yukselen} / {dusen}</div></div>
+  <div class="pano-hucre"><div class="pano-etiket">$/TL</div><div class="pano-deger">{usd or '—'}</div></div>
+  <div class="pano-hucre"><div class="pano-etiket">Gram Altın</div><div class="pano-deger">{(altin + ' TL') if altin else '—'}</div></div>
+  <div class="pano-hucre"><div class="pano-etiket">Sinyal (AL / SAT)</div><div class="pano-deger">{guclu_al + al} / {sat_s + guclu_sat}</div></div>
+</div>
+<div class="pano-man">
+<div><span class="pos">▲ En çok yükselenler:</span> {" &bull; ".join(f"<b>{s['hisse']}</b> {_fmt(s.get('gunluk') or 0)}" for s in en_yuk)}</div>
+<div><span class="neg">▼ En çok düşenler:</span> {" &bull; ".join(f"<b>{s['hisse']}</b> {_fmt(s.get('gunluk') or 0)}" for s in en_dus)}</div>
+<div>📣 Sinyal dağılımı: GÜÇLÜ AL {guclu_al} &middot; AL {al} &middot; NÖTR {notr} &middot; SAT {sat_s} &middot; GÜÇLÜ SAT {guclu_sat}</div>
+<div>🏷️ Sektör ortalamaları: {sektor_html}</div>
+</div>
+<div class="tbl-wrap">
+<table class="pano-tablo">
+<thead><tr><th>#</th><th>Hisse</th><th>Son (TL)</th><th>Günlük</th><th>60 Gün</th><th>Kanal</th><th>Sinyal</th></tr></thead>
+<tbody>
+{satir_html}
+</tbody>
+</table>
+</div>
+<p class="pano-not">Tablo, site teknik taramasından derlenmiştir; eğitim amaçlıdır, yatırım tavsiyesi değildir.</p>
+</div>"""
+
+
 def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
                   alt_baslik="BIST 30 &bull; Yapay zeka destekli günlük analiz",
-                  kok_yol=None, aciklama=None, ses_url=None):
+                  kok_yol=None, aciklama=None, ses_url=None, teknik_satirlar=None):
     if kok_yol is None:
         kok_yol = f"reports/{date_str}.html"
     if aciklama is None:
@@ -2339,6 +2442,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
 </div>
 {_bist30_sepeti_sparkline()}
 {ses_bolumu}
+{_pano_html(teknik_satirlar)}
 <article class="report" id="rapor-govde">{html_icerik}</article>
 <p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>
 {_sesli_okuma_js()}"""
@@ -2354,11 +2458,12 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
                   aciklama=aciklama, yol=kok_yol, ld_ek=ld_ek)
 
 
-def build_html(report, date_str):
+def build_html(report, date_str, teknik_satirlar=None):
     ses_url = None
     if os.path.exists(os.path.join("reports", f"{date_str}.mp3")):
         ses_url = f"../reports/{date_str}.mp3"
-    return rapor_sayfasi(markdown_to_html(report), date_str, ses_url=ses_url)
+    return rapor_sayfasi(markdown_to_html(report), date_str, ses_url=ses_url,
+                         teknik_satirlar=teknik_satirlar)
 
 
 def sparkline_svg(history):
@@ -2386,6 +2491,9 @@ def sparkline_svg(history):
     xu100 = [item.get("XU100") for item in benchmarks]
     xu100_var = all(v is not None for v in xu100) and any(xu100)
     xu100_veri = [round(float(v), 2) for v in xu100] if xu100_var else None
+    xu030 = [item.get("XU030") for item in benchmarks]
+    xu030_var = all(v is not None for v in xu030) and any(xu030)
+    xu030_veri = [round(float(v), 2) for v in xu030] if xu030_var else None
 
     import random
     import json as _json
@@ -2399,6 +2507,8 @@ def sparkline_svg(history):
     ]
     if xu100_veri:
         datasetler.append({"label": "BIST 100 Endeksi", "data": xu100_veri, "borderColor": "#7c3aed", "backgroundColor": "#7c3aed", "borderDash": [2, 2]})
+    if xu030_veri:
+        datasetler.append({"label": "BIST 30 Endeksi", "data": xu030_veri, "borderColor": "#e11d48", "backgroundColor": "#e11d48", "borderDash": [2, 2]})
     veri = {"labels": etiketler, "datasets": datasetler}
     veri_json = _json.dumps(veri, ensure_ascii=False)
 
@@ -3956,7 +4066,7 @@ if __name__ == "__main__":
     _eski_sesleri_temizle()
 
     with open(f"reports/{date_str}.html", "w", encoding="utf-8") as f:
-        f.write(build_html(report, date_str))
+        f.write(build_html(report, date_str, teknik_satirlar=_SON_TEKNIK))
 
     raporlar = sorted((fn for fn in os.listdir("reports") if fn.endswith(".html")), reverse=True)
 
