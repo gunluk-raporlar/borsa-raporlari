@@ -310,6 +310,85 @@ def technical_agent(state: AgentState):
 
 
 # ---------- TEMEL AJAN (finansal tablolar) ----------
+_BILANCO_KODLARI = {
+    # Seri XI No:29 mali tablo kodlari -> kayit anahtarlari
+    "1BL": "toplam_varlik",
+    "1A": "donen_varlik",
+    "1AK": "duran_varlik",
+    "2A": "kisa_borc",
+    "2B": "uzun_borc",
+    "2AA": "fin_borc_kisa",
+    "2BA": "fin_borc_uzun",
+    "2N": "ozsermaye",
+    "2OA": "odenmis_sermaye",
+    "3L": "net_kar",
+    "3C": "satis",
+}
+
+
+def _df_bilanco_satiri(df, bu_yil):
+    """fetch_financials ciktisindan (tek sirket) en guncel dolu donemin
+    bilanço/gelir ozetini cikarir. Finansal sirketlerin (banka/faktoring)
+    sablonu farkli kod kullandigi icin isim tabanli yedek eslestirme de yapar:
+    AKTİF TOPLAMI -> toplam_varlik, ÖZKAY* -> ozsermaye, NET DÖNEM KAR* -> net_kar.
+    Donus: ({kalem: TL}, donem) ya da ({}, '')."""
+    if df is None or df.empty:
+        return {}, ""
+    yil_kolonlari = [c for c in df.columns if str(c).startswith(str(bu_yil))]
+    if not yil_kolonlari:
+        return {}, ""
+    kolon_degerler = {}
+    for _, r in df.iterrows():
+        kod = str(r.get("FINANCIAL_ITEM_CODE") or "")
+        ad = str(r.get("FINANCIAL_ITEM_NAME_TR") or "").upper()
+        hedef = _BILANCO_KODLARI.get(kod)
+        for c in yil_kolonlari:
+            try:
+                v = r.get(c)
+                if v is None:
+                    continue
+                v = float(v)
+            except (TypeError, ValueError):
+                continue
+            if v == 0:
+                continue
+            hucre = kolon_degerler.setdefault(c, {})
+            if hedef and hedef not in hucre:
+                hucre[hedef] = v
+            if "toplam_varlik" not in hucre and ("AKTİF TOPLAM" in ad or "TOPLAM VARLIK" in ad):
+                hucre["toplam_varlik"] = v
+            if "ozsermaye" not in hucre and "ÖZKAY" in ad:
+                hucre["ozsermaye"] = v
+            if "net_kar" not in hucre and "NET DÖNEM KAR" in ad:
+                hucre["net_kar"] = v
+    if not kolon_degerler:
+        return {}, ""
+    # veri olan EN GUNCEL donemi sec (gelecek donemler bos olur)
+    son_kolon = max(kolon_degerler.keys(), key=lambda c: [int(x) for x in str(c).split("/")])
+    kod_deger = kolon_degerler[son_kolon]
+    if "toplam_varlik" not in kod_deger and "ozsermaye" not in kod_deger:
+        return {}, ""
+    finansal_borc = kod_deger.pop("fin_borc_kisa", 0.0) + kod_deger.pop("fin_borc_uzun", 0.0)
+    if finansal_borc:
+        kod_deger["finansal_borc"] = finansal_borc
+    return kod_deger, son_kolon
+
+
+def _bilanco_cek_hisse(hisse, bu_yil):
+    """Tek sirket icin mali tablo ceker. Grup 1 (genel sablon) bos donerse
+    grup 2 (banka/faktoring sablonu) denenir. Donus: ({kalem: TL}, donem)."""
+    from isyatirimhisse import fetch_financials
+    for grup in ("1", "2"):
+        try:
+            df = fetch_financials(symbols=[hisse], start_year=bu_yil, end_year=bu_yil, financial_group=grup)
+        except Exception:
+            continue
+        kay, donem = _df_bilanco_satiri(df, bu_yil)
+        if kay:
+            return kay, donem
+    return {}, ""
+
+
 def fundamental_agent(state: AgentState):
     logger.info("[Temel Ajan] Sirket finansal verileri cekiliyor...")
     print("[Temel Ajan] Sirket finansal verileri cekiliyor...", flush=True)
@@ -321,14 +400,30 @@ def fundamental_agent(state: AgentState):
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     ozetler = []
+    bilanco_kayit = {}
     bu_yil = datetime.now(tz).year
     for sira, hisse in enumerate(HISSELER, 1):
         logger.info("[Temel Ajan] %d/%d: %s", sira, len(HISSELER), hisse)
         print(f"[Temel Ajan] {sira}/{len(HISSELER)}: {hisse}", flush=True)
         try:
             fin = fetch_financials(symbols=[hisse], start_year=bu_yil - 1, end_year=bu_yil, financial_group="1")
-            if fin is None or fin.empty:
-                continue
+        except Exception:
+            fin = None
+        if fin is None or fin.empty:
+            # Finansal sirketler (banka/faktoring) genel sablonda bos gelir;
+            # banka sablonundan (grup 2) bilanço dene.
+            kayit, donem = _bilanco_cek_hisse(hisse, bu_yil)
+            if kayit:
+                kayit["donem"] = donem
+                bilanco_kayit[hisse] = kayit
+            time.sleep(4)
+            continue
+        try:
+            # Bilanço/gelir ozetini ayni cekimden ucretsiz cikar (hisse sayfasi karti)
+            kayit, donem = _df_bilanco_satiri(fin, bu_yil)
+            if kayit:
+                kayit["donem"] = donem
+                bilanco_kayit[hisse] = kayit
             # Hasilat ve net donem kari satirlarini bul
             satir = fin[fin["FINANCIAL_ITEM_CODE"].isin(["1A", "3A"])]
             yil_kolonlari = [c for c in fin.columns if str(c).startswith(str(bu_yil))]
@@ -347,6 +442,9 @@ def fundamental_agent(state: AgentState):
 
     if ozetler:
         save_daily("financials", bugun, ozetler)
+    if bilanco_kayit:
+        save_daily("bilanco", bugun, bilanco_kayit)
+        logger.info("[Temel Ajan] %d sirket icin bilanco ozeti kaydedildi.", len(bilanco_kayit))
 
     if not ozetler:
         return {"fundamental_data": "Finansal veri alinamadi."}
@@ -3416,8 +3514,37 @@ def _sirket_profilleri():
 
 
 def _bilanco_ozeti(kod):
-    """Son data/financials kaydindan '{KOD}: ...' satirini okur.
-    'Dönen Varlıklar=151.30 mlyr TL; ...' -> gorunur ozet metni. Veri yoksa ''."""
+    """Hisse profil kartinin bilanço bolumu. Oncelik: data/bilanco (temel
+    ajandin zengin ozeti); yoksa eski data/financials tek satiri; o da
+    yoksa '' (kart bilançosuz cikar)."""
+    try:
+        dosyalar = sorted(f for f in os.listdir("data/bilanco") if f.endswith(".json"))
+        if dosyalar:
+            tarih = dosyalar[-1][:-5]
+            tumu = json.load(open(os.path.join("data/bilanco", dosyalar[-1]), encoding="utf-8"))
+            b = tumu.get(kod) or {}
+            if b:
+                def _mlr(v):
+                    if v in (None, "", 0):
+                        return "&mdash;"
+                    v = float(v)
+                    if abs(v) >= 1e9:
+                        return f"{v / 1e9:,.1f}".replace(",", "X").replace(".", ",").replace("X", ".") + " mlr TL"
+                    return f"{v / 1e6:,.0f}".replace(",", ".") + " mln TL"
+                toplam_borc = (b.get("kisa_borc") or 0) + (b.get("uzun_borc") or 0)
+                nk = b.get("net_kar") or 0
+                donem = b.get("donem", "")
+                return f"""
+<div style="margin:10px 0 0; padding-top:8px; border-top:1px solid var(--line)">
+<div style="color:var(--muted); font-size:12px; margin-bottom:2px">Bilanço &mdash; {donem} dönemi ({tarih} verisi)</div>
+<table style="font-size:12.5px">
+<tr><td>Toplam Varlıklar</td><td><strong>{_mlr(b.get('toplam_varlik'))}</strong></td><td>Toplam Borç</td><td><strong>{_mlr(toplam_borc or None)}</strong></td></tr>
+<tr><td>Dönen Varlıklar</td><td>{_mlr(b.get('donen_varlik'))}</td><td>Öz Sermaye</td><td><strong>{_mlr(b.get('ozsermaye'))}</strong></td></tr>
+<tr><td>Finansal Borç</td><td>{_mlr(b.get('finansal_borc'))}</td><td>Net Dönem Kârı</td><td class='{_renk(nk)}'><strong>{_mlr(nk or None)}</strong></td></tr>
+</table>
+</div>"""
+    except Exception:
+        pass
     try:
         dosyalar = sorted(f for f in os.listdir("data/financials") if f.endswith(".json"))
         if not dosyalar:
