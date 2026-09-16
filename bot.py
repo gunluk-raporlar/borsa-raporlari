@@ -2183,10 +2183,14 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <meta property="og:description" content="{aciklama}">
 <meta property="og:url" content="{tam_url}">
 <meta property="og:image" content="{SITE_URL}og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{SITE_ADI} kapak görseli">
 <meta property="og:locale" content="tr_TR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{title}">
 <meta name="twitter:description" content="{aciklama}">
+<meta name="twitter:image" content="{SITE_URL}og-cover.png">
 {_dogrulama_etiketleri()}<script type="application/ld+json">{ld_json}</script>{ld_ek_html}
 <script>(function(){{try{{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){{document.documentElement.classList.add('dark');}}}}catch(e){{}}}})();</script>
 <link rel="stylesheet" href="{kok}style.css">
@@ -3603,12 +3607,15 @@ def podcast_rss_yaz():
         )
     # xml-stylesheet PI: tarayicida dogrudan acilinca ham XML agaci yerine
     # podcast.xsl ile bicimlendirilmis sayfa gorunur; podcast uygulamalari PI'yi yok sayar.
+    # itunes:image + image: uygulama icinde kanal kapagi gorunsun.
     xml = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<?xml-stylesheet type="text/xsl" href="podcast.xsl"?>\n'
         '<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"><channel>\n'
         f"<title>BIST Radyo — Yapay Zeka Borsa Bülteni</title>\n<link>{SITE_URL}</link>\n"
         "<language>tr</language>\n"
+        f"<itunes:image href=\"{SITE_URL}og-cover.png\" />\n"
+        f"<image><url>{SITE_URL}og-cover.png</url><title>BIST Radyo — Yapay Zeka Borsa Bülteni</title><link>{SITE_URL}</link></image>\n"
         "<description>Borsa İstanbul'da gün başlangıcı, öğle ve kapanış değerlendirmeleri; "
         "kurgusal yapay zeka sunucular. Yatırım tavsiyesi değildir.</description>\n"
         + "\n".join(ogeler)
@@ -3664,6 +3671,8 @@ def rapor_podcast_yaz():
         '<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"><channel>\n'
         f"<title>BIST Günlük Rapor — Sesli Bülten</title>\n<link>{SITE_URL}</link>\n"
         "<language>tr</language>\n"
+        f"<itunes:image href=\"{SITE_URL}og-cover.png\" />\n"
+        f"<image><url>{SITE_URL}og-cover.png</url><title>BIST Günlük Rapor — Sesli Bülten</title><link>{SITE_URL}</link></image>\n"
         "<description>Her işlem günü otomatik üretilen BIST 30 günlük raporunun ve derin "
         "analizin yapay zeka sesiyle okumasi. Yatırım tavsiyesi değildir.</description>\n"
         + "\n".join(ogeler)
