@@ -2468,7 +2468,7 @@ def paylas_html(metin, url):
             f'onclick="if(navigator.clipboard){{navigator.clipboard.writeText(\'{url}\');this.textContent=\'✓\';}}">🔗</a></span>')
 
 
-def _pano_html(satirlar):
+def _pano_html(satirlar, kok=""):
     """Gunluk BIST30 panosu (arastirma evi bulteni tarzi): piyasa verileri
     kutusu + manset satirlari + 30 hisselik gunluk degisim tablosu +
     sektor ortalamalari. Tamamen teknik tarama ve portfoy kur verisinden
@@ -2518,7 +2518,7 @@ def _pano_html(satirlar):
 
     satir_html = "\n".join(
         f"<tr><td>{i}</td>"
-        f"<td><a href='hisse/{s['hisse']}.html'><strong>{s['hisse']}</strong></a></td>"
+        f"<td><a href='{kok}hisse/{s['hisse']}.html'><strong>{s['hisse']}</strong></a></td>"
         f"<td>{s.get('son', 0):,.2f}</td>"
         f"<td class='{_renk(s.get('gunluk', 0))}'><strong>{_fmt(s.get('gunluk', 0) or 0)}</strong></td>"
         f"<td class='{_renk(s.get('deg60', 0))}'>{(s.get('deg60', 0) or 0):+.1f}%</td>"
@@ -2573,6 +2573,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
   <strong style="font-size:13px; white-space:nowrap">🔊 Sesli bülten</strong>
   <audio controls preload="none" src="{ses_url}" style="flex:1; min-width:220px; height:34px;"></audio>
 </div>"""
+    kok = "../" if "/" in (kok_yol or "") else ""
     icerik = f"""
 <div class="hero">
 <h1>{baslik}</h1>
@@ -2582,10 +2583,10 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
 </div>
 {_bist30_sepeti_sparkline()}
 {ses_bolumu}
-{_pano_html(teknik_satirlar)}
-{_ajanda_html(ajanda or [], limit=14)}
+{_pano_html(teknik_satirlar, kok)}
+{_ajanda_html(ajanda or [], limit=14, kok=kok)}
 <article class="report" id="rapor-govde">{html_icerik}</article>
-<p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>
+<p style="margin-top:18px"><a href="{kok}index.html">&larr; Tüm raporlara dön</a></p>
 {_sesli_okuma_js()}"""
     ld_ek = json.dumps({
         "@context": "https://schema.org", "@type": "Article",
@@ -2595,7 +2596,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
         "publisher": {"@type": "Organization", "name": SITE_ADI, "url": SITE_URL},
         "mainEntityOfPage": SITE_URL + (kok_yol or ""),
     }, ensure_ascii=False)
-    return _sayfa(f"{baslik} - {date_str}", icerik, "raporlar", kok="../",
+    return _sayfa(f"{baslik} - {date_str}", icerik, "raporlar", kok=kok,
                   aciklama=aciklama, yol=kok_yol, ld_ek=ld_ek)
 
 
@@ -4161,7 +4162,7 @@ def _ekonomik_takvim_yukle():
         return []
 
 
-def _ajanda_html(olaylar, limit=None):
+def _ajanda_html(olaylar, limit=None, kok=""):
     """Garanti bultenindeki 'Gunluk Ajanda' tablosunun muadili:
     yakin donem ekonomik veri duyurulari (tarih/saat/ulke/olay/tahmin/onceki)."""
     if not olaylar:
@@ -4209,7 +4210,7 @@ def _ajanda_html(olaylar, limit=None):
 </tbody>
 </table>
 </div>
-<p class="pano-not">🔴 = yüksek etkili veri. Kaynak: TradingView ekonomik takvimi; saatler TR zamanıdır. <a href="takvim.html">Ekonomik Takvim Rehberi &rarr;</a></p>
+<p class="pano-not">🔴 = yüksek etkili veri. Kaynak: TradingView ekonomik takvimi; saatler TR zamanıdır. <a href="{kok}takvim.html">Ekonomik Takvim Rehberi &rarr;</a></p>
 </div>"""
 
 
@@ -4594,15 +4595,28 @@ if __name__ == "__main__":
     try:
         derin = derin_analiz_yap(result, teknik_satirlar, borsapy_satirlar)
         if derin:
+            # Guncel sayfa (kokte) + tarihsiz ARŞİV kopyası (reports/ altında;
+            # sitemap'e girer ve ana sayfa arşivinde listelenir).
+            sayfa = rapor_sayfasi(
+                markdown_to_html(derin), date_str,
+                baslik="Derin Analiz",
+                alt_baslik="BIST 30 &bull; Yapay zeka destekli derinlemesine analiz",
+                kok_yol="derin-analiz.html",
+                aciklama="BIST 30'un günlük derinlemesine analizi: sektör değerlendirmesi, EMA ve Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları.",
+            )
+            arsiv_yolu = f"reports/{date_str}-derin-analiz.html"
+            arsiv_sayfasi = rapor_sayfasi(
+                markdown_to_html(derin), date_str,
+                baslik="Derin Analiz",
+                alt_baslik="BIST 30 &bull; Yapay zeka destekli derinlemesine analiz",
+                kok_yol=arsiv_yolu,
+                aciklama=f"{date_str} tarihli BIST 30 derin analiz raporu.",
+            )
             with open("derin-analiz.html", "w", encoding="utf-8") as f:
-                f.write(rapor_sayfasi(
-                    markdown_to_html(derin), date_str,
-                    baslik="Derin Analiz",
-                    alt_baslik="BIST 30 &bull; Yapay zeka destekli derinlemesine analiz",
-                    kok_yol="derin-analiz.html",
-                    aciklama="BIST 30'un günlük derinlemesine analizi: sektör değerlendirmesi, EMA ve Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları.",
-                ))
-            print("[Derin Analiz] sayfa uretildi.", flush=True)
+                f.write(sayfa)
+            with open(arsiv_yolu, "w", encoding="utf-8") as f:
+                f.write(arsiv_sayfasi)
+            print(f"[Derin Analiz] sayfa uretildi (+ arsiv: {arsiv_yolu}).", flush=True)
     except Exception:
         logger.exception("[Derin Analiz] sayfa uretilemedi; diger sayfalar etkilenmez.")
 
