@@ -3333,8 +3333,9 @@ def _bilanco_ozeti(kod):
 
 
 def _sirket_profili_html(kod):
-    """Hisse detay sayfasina borsa ekrani tarzi sirket profili karti.
-    Bilgi data/sirketler.json'dan gelir; kayit yoksa kart cikmaz."""
+    """Hisse detay sayfasina borsa ekrani tarzi sirket kunyesi karti.
+    Bilgi data/sirketler.json'dan gelir (is Yatirim sirket kartlarindan
+    derlendi, ay/yil bazli guncellenir); kayit yoksa kart cikmaz."""
     p = _sirket_profilleri().get(kod)
     if not p:
         return ""
@@ -3343,18 +3344,27 @@ def _sirket_profili_html(kod):
         meta.append(f'<span>Kuruluş: <strong>{p["kurulus"]}</strong></span>')
     if p.get("grup"):
         meta.append(f'<span>Ana ortak: <strong>{p["grup"]}</strong></span>')
+    if p.get("sermaye"):
+        donem = f' ({p["sermaye_donem"]})' if p.get("sermaye_donem") else ""
+        meta.append(f'<span>Ödenmiş sermaye: <strong>{p["sermaye"]}</strong>{donem}</span>')
+    web_html = ""
+    if p.get("web"):
+        web_html = (f'<div style="margin:8px 0 0; font-size:13.5px">🌐 '
+                    f'<a href="https://{p["web"]}" target="_blank" rel="noopener">{p["web"]}</a></div>')
     markalar = p.get("markalar") or []
     marka_html = ""
     if markalar:
         rozetler = "".join(f'<span class="badge" style="margin:0 6px 6px 0; font-size:11.5px">{m}</span>' for m in markalar)
         marka_html = (f'<div style="margin:8px 0 0"><div style="color:var(--muted); font-size:12px; '
                       f'margin-bottom:5px">Markalar &amp; iştirakler</div>{rozetler}</div>')
+    unvan = f'<div style="font-weight:700; margin-bottom:4px">{p.get("unvan", "")}</div>' if p.get("unvan") else ""
     return f"""
 <div class="card" style="margin:0 0 18px">
 <h3 style="margin:0 0 6px">🏢 Şirket Profili</h3>
+{unvan}
 <div class="meta" style="margin:0 0 8px">{''.join(meta)}</div>
 <p style="margin:0; font-size:14px">{p.get('faaliyet', '')}</p>
-{marka_html}{_bilanco_ozeti(kod)}
+{marka_html}{web_html}{_bilanco_ozeti(kod)}
 </div>"""
 
 
