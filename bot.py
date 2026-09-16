@@ -183,6 +183,11 @@ HABER_KAYNAKLARI = {
 FINANS_DISI_KELIMELER = [
     "masterchef", "survivor", "on numara", "sayisal loto", "milli piyango",
     "hava durumu", "magazin", "dizi", "burc", "futbol", "mac sonucu",
+    # gundem/magazin/kaza haberleri borsayi ilgilendirmiyor (kredibilite)
+    "cinayet", "olümüne", "ölümüne", "oldur", "öldür", "intihar", "tecavüz",
+    "darp", "kavga", "tutukland", "gözaltına", "uyuşturucu", "taciz",
+    "babası kendisini", "yardım iste", "bebek", "gelin", "damat", "nişanlı",
+    "düğün", "boşandı", "aşk yaşadı", "sevgilisi",
 ]
 
 
@@ -1116,7 +1121,10 @@ BASLANGIC_SERMAYE = 100000.0
 # hafta sonu/tatil kayitlari bu yuzden normaldir).
 PORTFOY_NOTU = ("Portföy hafta içi her sabah otomatik olarak, bir önceki işlem gününün kapanış fiyatlarıyla "
                 "güncellenir; hafta sonu ve tatil günlerinde değer değişmez. Canlı fiyatlar için "
-                "üstteki fiyat şeridine bakınız.")
+                "üstteki fiyat şeridine bakınız. Getiri, başlangıçta eşit dağıtılan 100.000 TL'nin güncel "
+                "değerine göre hesaplanır; tablodaki tekil hisse yüzdelerinin basit ortalaması değildir. "
+                "Karşılaştırma çizgileri (altın/dolar/mevduat/endeks/enflasyon) da aynı 100.000 TL "
+                "tabanına normalize edilmiştir.")
 
 
 def load_portfolio():
@@ -2628,6 +2636,18 @@ def sparkline_svg(history):
     xu030_var = all(v is not None for v in xu030) and any(xu030)
     xu030_veri = [round(float(v), 2) for v in xu030] if xu030_var else None
 
+    # Enflasyon kiyas cizgisi: yillik TUFE varsayimi 100.000 TL tabanina
+    # uygulanir. Oran elle guncellenmelidir (TUIK son yillik verisi).
+    ENFLASYON_YILLIK = 0.32
+    try:
+        bas_t = datetime.strptime(history[0]["date"], "%Y-%m-%d")
+        enflasyon_veri = [
+            round(100000 * ((1 + ENFLASYON_YILLIK) ** ((datetime.strptime(item["date"], "%Y-%m-%d") - bas_t).days / 365)), 2)
+            for item in history
+        ]
+    except Exception:
+        enflasyon_veri = None
+
     import random
     import json as _json
     grafik_id = f"portfoy-grafik-{random.randint(100000, 999999)}"
@@ -2642,6 +2662,8 @@ def sparkline_svg(history):
         datasetler.append({"label": "BIST 100 Endeksi", "data": xu100_veri, "borderColor": "#7c3aed", "backgroundColor": "#7c3aed", "borderDash": [2, 2]})
     if xu030_veri:
         datasetler.append({"label": "BIST 30 Endeksi", "data": xu030_veri, "borderColor": "#e11d48", "backgroundColor": "#e11d48", "borderDash": [2, 2]})
+    if enflasyon_veri:
+        datasetler.append({"label": "Enflasyon (varsayım %32)", "data": enflasyon_veri, "borderColor": "#c026d3", "backgroundColor": "#c026d3", "borderDash": [4, 3]})
     veri = {"labels": etiketler, "datasets": datasetler}
     veri_json = _json.dumps(veri, ensure_ascii=False)
 
@@ -3914,6 +3936,12 @@ def sinyal_karnesi_yaz(teknik_satirlar):
         return
     ort = sum(k["getiri"] for k in kayitlar) / len(kayitlar)
     isabet = sum(1 for k in kayitlar if k["getiri"] > 0) / len(kayitlar) * 100
+    # Masraf senaryosu: giris+cikis komisyon ve BSMV toplam ~%0,10 (varsayim).
+    # Not: BIST hisselerinde kazanc stopaji su an yok; masraf buyuk olcude
+    # araci kurum komisyonudur. Gercek oran araci kuruma gore degisir.
+    ISLEM_MALIYETI = 0.10
+    net_ort = ort - ISLEM_MALIYETI
+    net_isabet = sum(1 for k in kayitlar if k["getiri"] - ISLEM_MALIYETI > 0) / len(kayitlar) * 100
     en_iyi = sorted(kayitlar, key=lambda k: k["getiri"], reverse=True)[:3]
     en_kotu = sorted(kayitlar, key=lambda k: k["getiri"])[:3]
 
@@ -3936,7 +3964,9 @@ def sinyal_karnesi_yaz(teknik_satirlar):
 <h1>Sinyal Karnesi</h1>
 <p>Teknik taramanın verdiği <strong>AL</strong> sinyallerini 5 işlem günü sonra fiyata karşı test ediyoruz.
 Sinyal günü kapanışı alıp 5. işlem günü kapanışında satmış olsaydık sonuç: {len(kayitlar)} sinyal,
-ortalama <strong class="{_renk(ort)}">{ort:+.2f}%</strong>, isabet oranı <strong>{isabet:.0f}%</strong>.
+ortalama <strong class="{_renk(ort)}">{ort:+.2f}%</strong> (brüt), isabet oranı <strong>{isabet:.0f}%</strong>.
+Komisyon+BSMV masrafı (~%0,10) sonrası: ortalama <strong class="{_renk(net_ort)}">{net_ort:+.2f}%</strong>,
+isabet <strong>{net_isabet:.0f}%</strong> (varsayımsal masraf senaryosu; gerçek oran aracı kuruma göre değişir).
 (Geçmiş performans gelecek getirinin garantisi değildir; yöntem basit tutulmuştur.)</p>
 </div>
 <div class="grid">
@@ -3970,6 +4000,11 @@ def haberler_yaz(gun=14):
                 liste = json.load(f)
         except Exception:
             continue
+        if not liste:
+            continue
+        # Gündem/magazin gurultusu render asamasinda da ele (eski veriler de temiz)
+        liste = [h for h in liste
+                 if not any(k.lower() in h.lower() for k in FINANS_DISI_KELIMELER)]
         if not liste:
             continue
         toplam += len(liste)
