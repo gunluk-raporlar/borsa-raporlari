@@ -59,7 +59,10 @@
     fetch(kok + 'ticker.json?t=' + Date.now())
       .then(function(r) { return r.json(); })
       .then(ciz)
-      .catch(function() {});
+      .catch(function() {
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+      });
   }
   yukle();
   setInterval(yukle, 5 * 60 * 1000);
@@ -404,11 +407,11 @@ async function aiSor() {
 Wave Trend osilatörü ve 60 günlük regresyon kanalı konumu. Kanal konumu %0=alt bant, %100=üst bant demektir;
 %100'ün üzeri fiyatın bandın üstüne çıktığını (aşırı), 0'ın altı bandın altına düştüğünü gösterir.
 Pearson (r) son 60 gündeki trendin yönünü/gücünü gösterir (negatif r, fiyatın aşağı yönlü trendini ifade eder;
-sinyal yalnızca yön göstergelerine dayanır). <strong>Son güncelleme: 16.09 14:49 (İstanbul)</strong> — piyasa
+sinyal yalnızca yön göstergelerine dayanır). <strong>Son güncelleme: 16.09 15:22 (İstanbul)</strong> — piyasa
 saatlerinde 30 dakikada bir TradingView canlı fiyatlarıyla (~15 dk gecikmeli); piyasa kapalıyken son işlem
 gününün kapanış verisiyle güncellenir. Bu sayfa EMA/Wave Trend/regresyon kanalı yöntemine dayanır;
 "Borsapy Sinyal" sayfası TradingView osilatör oylarını kullandığı için aynı hissede farklı sinyal
-gösterebilir. <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong></p>
+gösterebilir. <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong> Tüm sinyaller otomatik taramadan üretilir; yatırım tavsiyesi değildir.</p>
 <button type="button" class="ses-btn" onclick="sesliOkuToggle(this,'teknik-ses-metin')" aria-label="Teknik tarama özetini sesli oku">🔊 Sesli Özeti Dinle</button>
 <div id="teknik-ses-metin" hidden>Bugün 29 hisse tarandı. Sat sinyalindeki 27 hisse: KCHOL, DSTKF, KRDMD, PETKM, ASELS, TRALT, VAKBN, SASA, ASTOR, SAHOL, TAVHL, GARAN, AKBNK, EKGYO, YKBNK, ENKAI, ISCTR, SISE, FROTO, TOASO, EREGL, AEFES, TTKOM, TCELL, PGSUS, THYAO, MGROS. Tüm hisselerin sinyal ve göstergeleri tabloda yer alıyor.</div>
 </div>

@@ -9,3 +9,14 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   Content-Security-Policy: default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; img-src 'self' https: data: blob:; connect-src 'self' https: wss:; font-src 'self' https: data:; frame-src 'self' https:; object-src 'none'; base-uri 'self'
+
+# Onbellek: HTML kisa sureli (site gun icinde 30 dk'da bir guncelleniyor;
+# daha uzun cache bayat fiyat/sinyal gosterir), degismeyen varliklar 1 gun.
+/*.html
+  Cache-Control: public, max-age=60
+/ticker.json
+  Cache-Control: public, max-age=60
+/style.css
+  Cache-Control: public, max-age=86400
+/og-cover.png
+  Cache-Control: public, max-age=86400

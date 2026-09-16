@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import html
 import socket
 import re
 from collections import Counter
@@ -2231,7 +2232,10 @@ def _kendi_ticker(kok=""):
     fetch(kok + 'ticker.json?t=' + Date.now())
       .then(function(r) {{ return r.json(); }})
       .then(ciz)
-      .catch(function() {{}});
+      .catch(function() {{
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+      }});
   }}
   yukle();
   setInterval(yukle, 5 * 60 * 1000);
@@ -2990,6 +2994,7 @@ function arsivAc(btn) {{
 
 def build_portfolio_html(p):
     son = p["history"][-1]
+    ilk_gun = p["history"][0]["date"] if p.get("history") else ""
     grafik = sparkline_svg(p["history"])
     grafik_html = f'<div class="card" style="margin-bottom:22px">{grafik}</div>' if grafik else ""
     gecmis = "".join(
@@ -3004,6 +3009,17 @@ def build_portfolio_html(p):
 <p>BIST 30 hisselerine eşit dağıtılmış {p['initial_capital']:,.0f} TL'lik sanal portföy. Alım-satım yapılmaz, sadece takip edilir;
 hafta içi her sabah bir önceki işlem gününün kapanış fiyatlarıyla otomatik güncellenir.</p>
 </div>
+<details class="card" style="margin-bottom:22px">
+<summary style="cursor:pointer; font-weight:700">📐 Metodoloji — bu portföy nasıl hesaplanıyor?</summary>
+<div style="margin-top:10px; font-size:14px; display:grid; gap:6px">
+<p style="margin:0">• {ilk_gun} tarihinde 100.000 TL, BIST 30 hisselerine <strong>eşit dağıtıldı</strong>; adetler fraksiyoneldir, gerçek uygulamada tam lota yuvarlama gerekir.</p>
+<p style="margin:0">• Hafta içi her sabah <strong>bir önceki işlem gününün kapanış fiyatlarıyla</strong> güncellenir; tatil günlerinde değer değişmez, hiç alım-satım yapılmaz.</p>
+<p style="margin:0">• <strong>Temettü, bedelsiz ve bölünmeler şu an hesaba katılmaz</strong>; bu olayların geçtiği günlerde getiri sapması olabilir.</p>
+<p style="margin:0">• Karşılaştırma çizgileri (altın, dolar, mevduat, BIST 100, BIST 30, enflasyon) aynı 100.000 TL tabanına normalize edilir; enflasyon değeri TradingView ekonomik takviminden gelen son TÜİK yıllık okumadır ve grafiğe dönem tarihiyle yansır.</p>
+<p style="margin:0">• Toplam getiri, tekil hisse yüzdelerinin ortalaması değil, portföyün toplam değer değişimidir. Sinyal Karnesi sayfasındaki net getiri senaryosu ~%0,10 komisyon+BSMV varsayımı kullanır.</p>
+<p style="margin:0; color:var(--muted)">Bu bir sanal deneme portföyüdür; yatırım tavsiyesi değildir. Geçmiş performans gelecekteki sonuçların garantisi değildir.</p>
+</div>
+</details>
 {_portfoy_istatistikleri(p)}
 {grafik_html}
 <h2 class="section-title">Hisse Performansı (ilk alım vs son fiyat)</h2>
@@ -3357,7 +3373,7 @@ sinyal yalnızca yön göstergelerine dayanır). <strong>Son güncelleme: {simdi
 saatlerinde 30 dakikada bir TradingView canlı fiyatlarıyla (~15 dk gecikmeli); piyasa kapalıyken son işlem
 gününün kapanış verisiyle güncellenir. Bu sayfa EMA/Wave Trend/regresyon kanalı yöntemine dayanır;
 "Borsapy Sinyal" sayfası TradingView osilatör oylarını kullandığı için aynı hissede farklı sinyal
-gösterebilir. <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong></p>
+gösterebilir. <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong> Tüm sinyaller otomatik taramadan üretilir; yatırım tavsiyesi değildir.</p>
 <button type="button" class="ses-btn" onclick="sesliOkuToggle(this,'teknik-ses-metin')" aria-label="Teknik tarama özetini sesli oku">🔊 Sesli Özeti Dinle</button>
 <div id="teknik-ses-metin" hidden>{_teknik_ses_metni(satirlar)}</div>
 </div>
@@ -3530,7 +3546,7 @@ document.addEventListener('DOMContentLoaded', function() {{
 <p>TradingView teknik analiz göstergelerinin BIST 30 özeti (borsapy kütüphanesiyle çekilir):
 toplam osilatör + hareketli ortalama oylarına göre genel öneri, RSI, MACD, Stokastik %K, CCI ve ADX.
 Piyasa saatlerinde teknik taramayla birlikte 30 dakikada bir güncellenir.
-<strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong></p>
+<strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong> Sinyaller otomatik taramadan üretilir; yatırım tavsiyesi değildir.</p>
 <p style="color:var(--muted); font-size:13px; margin-top:8px">Not: Bu sayfadaki oylar TradingView'in osilatör + hareketli ortalama özetidir;
 "Teknik Tarama" sayfasındaki EMA/Wave Trend/regresyon kanalı yönteminden bağımsızdır — bu yüzden aynı
 hisse için iki sayfa farklı sinyal gösterebilir. RSI ≥70 "aşırı alım" bölgesidir; o bölgedeki GÜÇLÜ AL
@@ -3770,8 +3786,8 @@ def build_hisse_html(kod, satir, tarihler, veriler, haberler, sirket_haberleri=N
         degisim = (seri[-1][1] / seri[0][1] - 1) * 100
     if sirket_haberleri:
         haber_ogeleri = "".join(
-            f"<li style='margin:6px 0'><a href='{h['link']}' target='_blank' rel='noopener'>{h['baslik']}</a>"
-            f" <span style='color:var(--muted); font-size:12px'>&mdash; {h['kaynak']}"
+            f"<li style='margin:6px 0'><a href='{html.escape(h['link'], quote=True)}' target='_blank' rel='noopener'>{html.escape(h['baslik'])}</a>"
+            f" <span style='color:var(--muted); font-size:12px'>&mdash; {html.escape(h['kaynak'])}"
             + (f" &middot; {datetime.fromtimestamp(h['ts']).strftime('%d.%m')}" if h.get("ts") else "")
             + "</span></li>"
             for h in sirket_haberleri[:6])
@@ -3911,8 +3927,8 @@ def build_sirket_haberleri_html(haber_map, teknik_satirlar=None):
         if ogeler:
             haberli += 1
             satirlar = "".join(
-                f"<li style='margin:5px 0'><a href='{h['link']}' target='_blank' rel='noopener'>{h['baslik']}</a>"
-                f" <span style='color:var(--muted); font-size:12px'>— {h['kaynak']}</span></li>"
+                f"<li style='margin:5px 0'><a href='{html.escape(h['link'], quote=True)}' target='_blank' rel='noopener'>{html.escape(h['baslik'])}</a>"
+                f" <span style='color:var(--muted); font-size:12px'>— {html.escape(h['kaynak'])}</span></li>"
                 for h in ogeler[:5])
             govde = f"<ul style='margin:4px 0 0; padding-left:18px; font-size:13.5px'>{satirlar}</ul>"
         else:
@@ -4095,7 +4111,7 @@ def haberler_yaz(gun=14):
         if not liste:
             continue
         toplam += len(liste)
-        ogeler = "".join(f"<li style='margin:5px 0'>{h}</li>" for h in liste)
+        ogeler = "".join(f"<li style='margin:5px 0'>{html.escape(h)}</li>" for h in liste)
         bolumler.append(
             f"<h2 class='section-title'>{_tr_tarih(d[:-5])}</h2>"
             f"<div class='card'><ul style='margin:0; padding-left:20px; font-size:13.5px'>{ogeler}</ul></div>"

@@ -147,7 +147,10 @@ body { overflow-x: hidden; }
     fetch(kok + 'ticker.json?t=' + Date.now())
       .then(function(r) { return r.json(); })
       .then(ciz)
-      .catch(function() {});
+      .catch(function() {
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+      });
   }
   yukle();
   setInterval(yukle, 5 * 60 * 1000);
