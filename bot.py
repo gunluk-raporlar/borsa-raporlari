@@ -4255,6 +4255,86 @@ def ekonomik_takvim_cek(gun=14):
     return secili
 
 
+# TradingView ekonomik takvimi Ingilizce gelir; yaygin olay adlari icin
+# anahtar-kelime sozluguyle yanina Turkçe gloss uretilir. LLM cagrisi yapmaz,
+# maliyeti/kotasi yoktur; sozlukte olmayan nadir olaylar Ingilizce kalir.
+TAKVIM_TR = [
+    ("MBA 30-Year Mortgage Rate", "MBA 30 Yıllık Konut Kredisi Faizi"),
+    ("Net Long-term TIC Flows", "Uzun Vadeli Sermaye Girişleri (TIC)"),
+    ("Interest Rate Decision", "Faiz Kararı"),
+    ("FOMC Economic Projections", "FOMC Ekonomik Projeksiyonları"),
+    ("Press Conference", "Basın Toplantısı"),
+    ("Initial Jobless Claims", "İlk İşsizlik Başvuruları"),
+    ("Continuing Jobless Claims", "Devam Eden İşsizlik Başvuruları"),
+    ("Nonfarm Payrolls", "Tarım Dışı İstihdam"),
+    ("Average Hourly Earnings", "Ortalama Saatlik Kazançlar"),
+    ("Crude Oil Stocks Change", "Ham Petrol Stok Değişimi"),
+    ("Crude Oil Stock Change", "Ham Petrol Stok Değişimi"),
+    ("Gasoline Stocks Change", "Benzin Stok Değişimi"),
+    ("Distillate Stocks Change", "Distilat Stok Değişimi"),
+    ("New Car Registrations", "Yeni Otomobil Kayıtları"),
+    ("Pending Home Sales", "Bekleyen Konut Satışları"),
+    ("Existing Home Sales", "Mevcut Konut Satışları"),
+    ("Building Permits", "İnşaat İzinleri"),
+    ("Housing Starts", "Konut Başlangıçları"),
+    ("Housing Market Index", "Konut Piyasası Endeksi"),
+    ("Manufacturing Index", "İmalat Endeksi"),
+    ("Manufacturing PMI", "İmalat PMI"),
+    ("Services PMI", "Hizmet PMI"),
+    ("Composite PMI", "Karma PMI"),
+    ("Retail Sales Control Group", "Perakende Satışlar (kontrol grubu)"),
+    ("Retail Sales Ex Autos", "Perakende Satışlar (otomobil hariç)"),
+    ("Retail Sales", "Perakende Satışlar"),
+    ("Import Prices", "İthalat Fiyatları"),
+    ("Export Prices", "İhracat Fiyatları"),
+    ("Industrial Production", "Sanayi Üretimi"),
+    ("Capacity Utilization", "Kapasite Kullanımı"),
+    ("Business Inventories", "İşletme Stokları"),
+    ("Durable Goods Orders", "Dayanıklı Mal Siparişleri"),
+    ("Factory Orders", "Fabrika Siparişleri"),
+    ("Wholesale Inventories", "Toptan Satış Stokları"),
+    ("Job Openings", "Açık İş Pozisyonları"),
+    ("ADP Employment Change", "ADP İstihdam Değişimi"),
+    ("Unemployment Rate", "İşsizlik Oranı"),
+    ("Consumer Confidence", "Tüketici Güven Endeksi"),
+    ("Consumer Sentiment", "Tüketici Duyarlılığı"),
+    ("Trade Balance", "Dış Ticaret Dengesi"),
+    ("Current Account", "Cari İşlemler Dengesi"),
+    ("Core CPI", "Çekirdek TÜFE"),
+    ("Core PPI", "Çekirdek ÜFE"),
+    ("CPI", "TÜFE"),
+    ("PPI", "ÜFE"),
+    ("GDP", "GSYH"),
+    ("Policy Rate", "Politika Faizi"),
+    ("Economic Bulletin", "Ekonomik Bülten"),
+    ("President", "Başkanı"),
+    ("Speech", "Konuşması"),
+    ("Core", "çekirdek"),
+    ("Flash", "ön tahmin"),
+    ("Prel", "ilk tahmin"),
+    ("Final", "son veri"),
+    ("MoM", "aylık"),
+    ("YoY", "yıllık"),
+    ("QoQ", "çeyreklik"),
+    ("New Home Sales", "Yeni Konut Satışları"),
+    ("Business Confidence", "İşletme Güveni"),
+    ("Economic Sentiment", "Ekonomik Duyarlılık"),
+    ("Chicago Fed National Activity Index", "Chicago Fed Ulusal Aktivite Endeksi"),
+]
+
+
+def _takvim_tr(olay):
+    """Ingilizce olay adini sozlukle Turkcelestirir; sozlukte karsiligi
+    yoksa '' dondurur (o zaman Ingilizce ad yanina gloss eklenmez)."""
+    if not olay:
+        return ""
+    tr = olay
+    for en, turkce in TAKVIM_TR:
+        if en.lower() in tr.lower():
+            tr = re.sub(re.escape(en), turkce, tr, flags=re.IGNORECASE)
+    return tr if tr.strip().casefold() != olay.strip().casefold() else ""
+
+
 def _ekonomik_takvim_yukle():
     """Son data/ekonomik-takvim kaydini dondurur (yoksa [])."""
     try:
@@ -4296,9 +4376,11 @@ def _ajanda_html(olaylar, limit=None, kok=""):
             satirlar.append(f"<tr><td colspan='5' style='background:var(--accent-bg); font-weight:700; font-size:12px'>{_gun_etiketi(e['tarih'])} ({e['tarih']})</td></tr>")
             son_gun = e["tarih"]
         onem = " 🔴" if e.get("onem", 0) >= 1 else ""
+        tr = _takvim_tr(e.get("olay", ""))
+        tr_html = f" <span style='color:var(--muted); font-size:11.5px'>&mdash; {tr}</span>" if tr else ""
         satirlar.append(
             f"<tr><td>{e.get('saat', '')}</td><td><strong>{e.get('ulke', '')}</strong>{onem}</td>"
-            f"<td>{e.get('olay', '')}</td>"
+            f"<td>{e.get('olay', '')}{tr_html}</td>"
             f"<td style='text-align:right'>{_deger(e.get('tahmin'))}</td>"
             f"<td style='text-align:right'>{_deger(e.get('onceki'))}</td></tr>")
     return f"""
