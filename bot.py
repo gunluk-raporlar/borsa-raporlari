@@ -2636,13 +2636,13 @@ def sparkline_svg(history):
     xu030_var = all(v is not None for v in xu030) and any(xu030)
     xu030_veri = [round(float(v), 2) for v in xu030] if xu030_var else None
 
-    # Enflasyon kiyas cizgisi: yillik TUFE varsayimi 100.000 TL tabanina
-    # uygulanir. Oran elle guncellenmelidir (TUIK son yillik verisi).
-    ENFLASYON_YILLIK = 0.32
+    # Enflasyon kiyas cizgisi: son yayinlanan TUIK yillik TUFE (TradingView
+    # ekonomik takvim ucundan cekilir; erisilemezse cache/varsayilan).
+    enflasyon_oran, enflasyon_etiket = _enflasyon_yukle()
     try:
         bas_t = datetime.strptime(history[0]["date"], "%Y-%m-%d")
         enflasyon_veri = [
-            round(100000 * ((1 + ENFLASYON_YILLIK) ** ((datetime.strptime(item["date"], "%Y-%m-%d") - bas_t).days / 365)), 2)
+            round(100000 * ((1 + enflasyon_oran) ** ((datetime.strptime(item["date"], "%Y-%m-%d") - bas_t).days / 365)), 2)
             for item in history
         ]
     except Exception:
@@ -2663,7 +2663,7 @@ def sparkline_svg(history):
     if xu030_veri:
         datasetler.append({"label": "BIST 30 Endeksi", "data": xu030_veri, "borderColor": "#e11d48", "backgroundColor": "#e11d48", "borderDash": [2, 2]})
     if enflasyon_veri:
-        datasetler.append({"label": "Enflasyon (varsayım %32)", "data": enflasyon_veri, "borderColor": "#c026d3", "backgroundColor": "#c026d3", "borderDash": [4, 3]})
+        datasetler.append({"label": enflasyon_etiket, "data": enflasyon_veri, "borderColor": "#c026d3", "backgroundColor": "#c026d3", "borderDash": [4, 3]})
     veri = {"labels": etiketler, "datasets": datasetler}
     veri_json = _json.dumps(veri, ensure_ascii=False)
 
@@ -4060,6 +4060,58 @@ function sozlukSuz() {{
     logger.info("[Sozluk] %d terim yazildi.", len(terimler))
 
 
+VARSAYILAN_ENFLASYON = 0.32  # TUIK verisi hic alinamazsa kullanilan yedek
+
+
+def enflasyon_cek():
+    """Son yayinlanan TUIK TUFE yillik degisimini TradingView ekonomik takvim
+    ucundan ceker (TR 'Inflation Rate YoY' olayinin 'actual' alani TUIK
+    verisidir). data/enflasyon.json'a cache'lenir; erisilemezse onceki cache,
+    o da yoksa varsayilan oran kullanilir. Donus: (oran, aciklama) | (None, '')."""
+    import urllib.request
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    bugun = datetime.now(tz).strftime("%Y-%m-%d")
+    frm = (datetime.now(tz) - timedelta(days=50)).strftime("%Y-%m-%d")
+    url = (f"https://economic-calendar.tradingview.com/events"
+           f"?from={frm}T00%3A00%3A00.000Z&to={bugun}T00%3A00%3A00.000Z&countries=TR")
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0",
+                                               "Origin": "https://www.tradingview.com"})
+    try:
+        with urllib.request.urlopen(req, timeout=25) as r:
+            d = json.load(r)
+        olaylar = d.get("result")
+        if isinstance(olaylar, dict):
+            olaylar = olaylar.get("events", [])
+        adaylar = [e for e in olaylar
+                   if "inflation rate yoy" in str(e.get("title", "")).lower()
+                   and e.get("actual") not in (None, "", 0)]
+        if adaylar:
+            son = max(adaylar, key=lambda e: str(e.get("date", "")))
+            oran = float(son["actual"]) / 100.0
+            kayit = {"oran": round(oran, 4), "donem": str(son.get("date", ""))[:10],
+                     "kaynak": "TUIK (TradingView uzerinden)", "guncelleme": bugun}
+            with open("data/enflasyon.json", "w", encoding="utf-8") as f:
+                json.dump(kayit, f, ensure_ascii=False, indent=1)
+            logger.info("[Enflasyon] TUIK yillik TUFE: %%%.2f (%s bilanco donemi)",
+                        oran * 100, kayit["donem"])
+            return oran, kayit["kaynak"]
+    except Exception as e:
+        logger.warning("[Enflasyon] TUIK verisi cekilemedi: %s", e)
+    return None, ""
+
+
+def _enflasyon_yukle():
+    """Portfoy grafigindeki enflasyon cizgisi icin (oran, etiket). Once cache
+    dosyasindaki TUIK verisi, o yoksa varsayilan oran kullanilir."""
+    try:
+        d = json.load(open("data/enflasyon.json", encoding="utf-8"))
+        oran = float(d.get("oran"))
+        donem = d.get("donem", "")
+        return oran, f"Enflasyon (TÜİK yıllık %{oran * 100:.1f}, {donem})"
+    except Exception:
+        return VARSAYILAN_ENFLASYON, f"Enflasyon (varsayım %{VARSAYILAN_ENFLASYON * 100:.0f})"
+
+
 def ekonomik_takvim_cek(gun=14):
     """TradingView'in acik ekonomik takvim ucundan TR/US/EU veri duyurularini
     ceker (onemsizler filtrelenir) ve data/ekonomik-takvim/ altina kaydeder.
@@ -4503,6 +4555,12 @@ if __name__ == "__main__":
         logger.exception("[Takvim] cekilemedi; eski veri varsa o kullanilir.")
     if not ajanda:
         ajanda = _ekonomik_takvim_yukle()
+
+    # TUIK yillik TUFE (portfoy grafigindeki enflasyon cizgisi icin)
+    try:
+        enflasyon_cek()
+    except Exception:
+        logger.exception("[Enflasyon] guncellenemedi; onceki veri kullanilir.")
 
     with open(f"reports/{date_str}.html", "w", encoding="utf-8") as f:
         f.write(build_html(report, date_str, teknik_satirlar=_SON_TEKNIK, ajanda=ajanda))
