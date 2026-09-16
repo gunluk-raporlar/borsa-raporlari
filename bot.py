@@ -14,6 +14,9 @@ import feedparser
 import markdown
 import logging
 
+# Yayin oncesi sirket adi / makro sayi denetimi (bkz. dogrulama.py)
+import dogrulama
+
 # Ag takilmalarinda sonsuza kadar beklememek icin genel soket zaman asimi.
 socket.setdefaulttimeout(30)
 
@@ -651,6 +654,8 @@ def metrik_dosyasi_yaz(etiket="bot"):
             except Exception:
                 latest = {}
         latest["llm"] = ozet
+        DOGRULAMA_IST["son_guncelleme"] = ozet["son_guncelleme"]
+        latest["dogrulama"] = dict(DOGRULAMA_IST)
         latest["guncelleme"] = ozet["son_guncelleme"]
         with open(latest_yol, "w", encoding="utf-8") as fh:
             json.dump(latest, fh, ensure_ascii=False, indent=1)
@@ -1034,6 +1039,8 @@ Biçim kuralları (zorunlu):
 - Kimlik satırı YAZMA: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri ve tarih ya da haftanın gün adı raporda GEÇMEYECEK (tarih-gün eşleştirmesinde sık hata yapıyorsun; şablon zaten tarihi gösteriyor).
 - TÜM metinde doğru Türkçe karakterler kullan (ç, ğ, ı, i, ö, ş, ü); "sinyal" gibi kelimeleri yanlış yazma ("sinyil" DEĞİL).
 - 5. bölümdeki nakit/likidite önerisi ile 6. bölümdeki NAKİT satırının ağırlığı ÇELİŞMEMELİ (örn. "%40 nakit tutun" deyip %0 nakitlik portföy verme).
+- Şirket adlarını YALNIZCA verilerde hisse kodunun yanında verilen resmi adla kullan (örn. YKBNK kodunun adı "Yapı Kredi"dir); hiçbir şirket için kendi hafızandan farklı bir isim, kısaltma ya da benzer bir ad yazma.
+- Enflasyon gibi makro göstergeleri yalnızca [MAKRO GEREKLER] bölümündeki değerlerle an; kendi genel bilginden sayı yazma.
 
 Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek verileri ve geçmiş hafızayı baz al. Raporu zengin finansal terimler kullanarak Türkçe kaleme al."""
 
@@ -1047,19 +1054,27 @@ Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek veril
     sinyaller = ""
     if t_satirlar:
         sinyaller += "\n[TEKNIK TARAMA SINYALLERI - BUGUN]\n" + "\n".join(
-            f"{s['hisse']} ({s['sektor']}): son {s['son']} TL, gunluk {s['gunluk']:+.2f}%, 60g {s['deg60']:+.1f}%, "
+            f"{s['hisse']} ({HISSE_ADLARI.get(s['hisse'], s['hisse'])}, {s['sektor']}): son {s['son']} TL, gunluk {s['gunluk']:+.2f}%, 60g {s['deg60']:+.1f}%, "
             f"kisa={s['kisa']} orta={s['orta']} uzun={s['uzun']}, WT={s['wt']}, kanal %{s['konum']:.0f}, "
             f"r={s['r']:.2f}, genel={s['genel']}"
             for s in t_satirlar
         )
     if b_satirlar:
         sinyaller += "\n\n[TRADINGVIEW OSILATOR OYLERI - BUGUN]\n" + "\n".join(
-            f"{s['hisse']}: oneri={s['oneri']} (al={s['al']}/sat={s['sat']}/notr={s['notr']}), RSI={s['rsi']}, "
+            f"{s['hisse']} ({HISSE_ADLARI.get(s['hisse'], s['hisse'])}): oneri={s['oneri']} (al={s['al']}/sat={s['sat']}/notr={s['notr']}), RSI={s['rsi']}, "
             f"MACD={s['macd']}, StochK={s['stoch']}, CCI20={s['cci']}, ADX={s['adx']}"
             for s in b_satirlar
         )
     if sinyaller:
         prompt = prompt.replace("Kurallar: Asla uydurma", sinyaller + "\n\nKurallar: Asla uydurma")
+
+    # Makro gercekler tek kaynaktan: model kendi hafizasindan enflasyon yazmasin.
+    enflasyon = _enflasyon_fakt()
+    if enflasyon:
+        prompt = prompt.replace(
+            "Kurallar: Asla uydurma",
+            "[MAKRO GEREKLER]\nEnflasyon (TUIK yillik): "
+            f"{enflasyon['metin']} (donem: {enflasyon['donem']})\n\nKurallar: Asla uydurma")
 
     # once kullanici Z.ai anahtari (buyuk GLM modeli), olmazsa yedek zincir
     response = _zai_call(prompt)
@@ -1083,6 +1098,7 @@ Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek veril
     # Yayin onesi otomatik temizlik: uydurulmus tarih/yayinci satirlari,
     # koseli parantezli yer tutucular, eksik h2 yapisi, ASCII Turkce...
     response = rapor_son_islem(response)
+    response = _metin_dogrula_ve_kaydet(response, " / gunluk rapor")
     return {"final_report": response}
 
 
@@ -1336,13 +1352,13 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
                     timeout=300.0, max_retries=1)
 
     teknik_ozet = "\n".join(
-        f"{s['hisse']}: son {s['son']} TL, gunluk {s['gunluk']:+.2f}%, 60g {s['deg60']:+.1f}%, "
+        f"{s['hisse']} ({HISSE_ADLARI.get(s['hisse'], s['hisse'])}): son {s['son']} TL, gunluk {s['gunluk']:+.2f}%, 60g {s['deg60']:+.1f}%, "
         f"kisa={s['kisa']} orta={s['orta']} uzun={s['uzun']}, WT={s['wt']}, "
         f"kanal %{s['konum']:.0f}, r={s['r']:.2f}, genel={s['genel']} ({s['sektor']})"
         for s in teknik_satirlar
     )
     borsapy_ozet = "\n".join(
-        f"{s['hisse']}: oneri={s['oneri']} (al={s['al']}/sat={s['sat']}/notr={s['notr']}), "
+        f"{s['hisse']} ({HISSE_ADLARI.get(s['hisse'], s['hisse'])}): oneri={s['oneri']} (al={s['al']}/sat={s['sat']}/notr={s['notr']}), "
         f"RSI={s['rsi']}, MACD={s['macd']}, StochK={s['stoch']}, CCI20={s['cci']}, ADX={s['adx']}"
         for s in borsapy_satirlar
     )
@@ -1352,6 +1368,12 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
         son = p["history"][-1]
         portfoy = (f"Deneme portfoyu: toplam {son['total']} TL (%{son['pct']:+.2f}), "
                    f"gunluk %{son['daily_pct']:+.2f}, kiyaslamalar: {son.get('benchmarks')}")
+
+    # Makro gercekler tek kaynaktan (data/enflasyon.json); dogrulama ayni
+    # degerle kiyaslar.
+    enflasyon = _enflasyon_fakt()
+    makro = (f"Enflasyon (TUIK yillik): {enflasyon['metin']} (donem: {enflasyon['donem']})"
+             if enflasyon else "makro veri yok")
 
     prompt = f"""Sen Türkiye piyasalarında uzmanlaşmış bağımsız bir finansal analist yapay zekâsısın (gerçek bir kişi veya kurum değilsin; kendini öyle tanıtma). Aşağıdaki BIST 30 verilerini kullanarak profesyonel okuyucuya hitap eden, DERİNLEMESİNE ve UZUN (en az 1200 kelime) bir günlük analiz raporu yaz. Rapor Türkçe olacak ve TÜM metinde doğru Türkçe karakterler (ç, ğ, ı, ö, ş, ü) kullanılacak; "sinyal" gibi kelimeler yanlış yazılmayacak.
 
@@ -1379,7 +1401,7 @@ Raporun SONUNDA aşağıdaki başlıklarla tam bir tablo oluştur:
 |-------|--------|---------------|-------|------|---------|
 | ... | ... | ... | ... | ... | ... |
 
-Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren hisseleri listeleyip her biri için gerekçe yaz. Rakamları yalnızca verilen fiyatlardan türet, asla dışarıdan veri ekleme. Metinde köşeli parantezli [...] yer tutucu kullanma; rapor doğrudan "## 1." başlığıyla başlasın. Kimlik satırı EKLEME: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri ve tarih ya da haftanın gün adı raporda GEÇMEYECEK (tarih-gün eşleştirmesinde sık hata yapıyorsun).
+Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren hisseleri listeleyip her biri için gerekçe yaz. Rakamları yalnızca verilen fiyatlardan türet, asla dışarıdan veri ekleme. Şirket adlarını YALNIZCA verilerde hisse kodunun yanında verilen resmi adla kullan; hiçbir şirket için kendi hafızandan farklı bir isim yazma. Enflasyon oranını yalnızca [MAKRO GEREKLER] bölümündeki değerle an. Metinde köşeli parantezli [...] yer tutucu kullanma; rapor doğrudan "## 1." başlığıyla başlasın. Kimlik satırı EKLEME: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri ve tarih ya da haftanın gün adı raporda GEÇMEYECEK (tarih-gün eşleştirmesinde sık hata yapıyorsun).
 
 ### VERİLER
 
@@ -1391,6 +1413,9 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
 
 [PORTFOY DURUMU]
 {portfoy}
+
+[MAKRO GEREKLER]
+{makro}
 
 [GUNLUK RAPOR VE HABERLER]
 {rapor_state.get('news_data', '')}
@@ -1413,7 +1438,8 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
             )
             icerik = resp.choices[0].message.content or ""
             if icerik.strip():
-                return rapor_son_islem(icerik)
+                icerik = rapor_son_islem(icerik)
+                return _metin_dogrula_ve_kaydet(icerik, " / derin analiz")
             son_hata = "bos yanit"
         except Exception as e:
             son_hata = str(e)[:200]
@@ -1526,6 +1552,51 @@ def _konusma_metni_normalize(metin):
     for kod, ad in HISSE_ADLARI.items():
         metin = re.sub(r"\b" + re.escape(kod) + r"\b", ad, metin)
     return metin
+
+
+def _enflasyon_fakt():
+    """data/enflasyon.json'dan gercek TUIK oranini okur. Bu deger hem
+    promptlara 'tek kaynak' olarak gomulur hem dogrulamada kiyaslanir;
+    modelin hafizasindan enflasyon yazmasi boylece imkansizlastirilir."""
+    try:
+        with open(os.path.join("data", "enflasyon.json"), encoding="utf-8") as f:
+            veri = json.load(f)
+        yuzde = float(veri["oran"]) * 100.0
+        return {"yuzde": yuzde,
+                "metin": ("%{:.1f}".format(yuzde)).replace(".", ","),
+                "donem": str(veri.get("donem", ""))}
+    except Exception:
+        logger.warning("[Dogrulama] data/enflasyon.json okunamadi; makro gercek promptlara girmeyecek.")
+        return None
+
+
+# Dogrulama istatistikleri: metrik_dosyasi_yaz bunlari data/metrics/latest.json
+# icindeki "dogrulama" anahtarina yazar (izleme sayfasinin gosterdigi).
+DOGRULAMA_IST = {"isim": 0, "enflasyon": 0, "toplam_metin": 0, "son_guncelleme": ""}
+
+
+def _metin_dogrula_ve_kaydet(metin, etiket=""):
+    """Yayin oncesi deterministik dogrulama: sirket adi eslesmeleri ve
+    enflasyon sayisi. Duzeltmeler loglanip sayilir; beklenmeyen hatada metin
+    duzenlenmemis olarak gecirilir (uretim asla bu katmandan dolayi durmaz)."""
+    try:
+        enflasyon = _enflasyon_fakt()
+        sonuc = dogrulama.metin_dogrula(
+            metin, HISSE_ADLARI, enflasyon["yuzde"] if enflasyon else None)
+        if sonuc["isim_duzeltme"] or sonuc["enflasyon_duzeltme"]:
+            DOGRULAMA_IST["isim"] += len(sonuc["isim_duzeltme"])
+            DOGRULAMA_IST["enflasyon"] += len(sonuc["enflasyon_duzeltme"])
+            for yanlis, dogru, kod in sonuc["isim_duzeltme"]:
+                logger.warning("[Dogrulama%s] sirket adi duzeltildi: '%s' -> '%s (%s)'",
+                               etiket, yanlis, dogru, kod)
+            for eski, yeni in sonuc["enflasyon_duzeltme"]:
+                logger.warning("[Dogrulama%s] enflasyon sayisi duzeltildi: %s -> %s",
+                               etiket, eski, yeni)
+        DOGRULAMA_IST["toplam_metin"] += 1
+        return sonuc["metin"]
+    except Exception:
+        logger.exception("[Dogrulama] beklenmeyen hata; metin duzenlenmeden geciriliyor.")
+        return metin
 
 
 def _ses_metni_hazirla(html):
