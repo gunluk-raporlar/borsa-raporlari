@@ -4026,11 +4026,17 @@ def sinyal_karnesi_yaz(teknik_satirlar):
     en_iyi = sorted(kayitlar, key=lambda k: k["getiri"], reverse=True)[:3]
     en_kotu = sorted(kayitlar, key=lambda k: k["getiri"])[:3]
 
-    def _mini_liste(liste, renk_ile=True):
+    def _mini_liste(liste):
+        def _tr_tarih(iso):
+            parcalar = iso.split("-")
+            return ".".join(reversed(parcalar)) if len(parcalar) == 3 else iso
+
         return "".join(
-            f"<div style='display:flex; justify-content:space-between; margin:4px 0'>"
-            f"<span><strong>{k['hisse']}</strong> · {k['tarih']}</span>"
-            f"<span class='{_renk(k['getiri'])}' style='font-weight:700'>{k['getiri']:+.2f}%</span></div>"
+            f"<div style='margin:8px 0'>"
+            f"<div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'>"
+            f"<strong>{k['hisse']}</strong>"
+            f"<span class='{_renk(k['getiri'])}' style='font-weight:700; white-space:nowrap'>{k['getiri']:+.2f}%</span></div>"
+            f"<div style='color:var(--muted); font-size:12px'>Sinyal: {_tr_tarih(k['tarih'])}</div></div>"
             for k in liste
         )
 
