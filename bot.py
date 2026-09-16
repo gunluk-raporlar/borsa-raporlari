@@ -1685,6 +1685,11 @@ body { overflow-x: hidden; }
            padding:4px 14px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
 .ses-btn:hover { background:var(--accent-bg); }
 .ses-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+/* sosyal paylasim rozetleri (rapor/hisse basliklarinda) */
+.paylas { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px;
+          border:1px solid var(--line); border-radius:999px; font-size:13px; text-decoration:none;
+          color:var(--muted); background:transparent; }
+.paylas:hover { border-color:var(--accent); color:var(--accent); }
 
 /* ---- Karanlik tema (html.dark) ---- */
 html.dark { --ink:#dbe4f0; --muted:#8fa3bd; --line:#273449; --bg:#0b1220; --card:#121c30;
@@ -2031,7 +2036,7 @@ def _ai_panel():
 .ai-chip { background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; border-radius: 999px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
 .ai-chip:hover { border-color: #0f766e; color: #0f766e; }
 </style>
-<script src="https://js.puter.com/v2/"></script>
+<script defer src="https://js.puter.com/v2/"></script>
 <script>
 function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
 function aiZamanAsimi(promise, ms) {
@@ -2248,7 +2253,17 @@ def _borsapy_ses_metni(satirlar):
     return " ".join(parcalar)
 
 
-def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_ek=None):
+def _chart_js_script(grafik):
+    """Chart.js yalnizca gercekten grafik cizen sayfalara eklenir; 200 KB'lik
+    kutuphaneyi 57 sayfanin tamamina yuklemek Core Web Vitals'i bosuna
+    yormaktaydi. Render-blocking olmamasi icin defer ile yuklenir; grafik
+    init'leri DOMContentLoaded'a baglanmali."""
+    if not grafik:
+        return ""
+    return '<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>'
+
+
+def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_ek=None, grafik=False):
     """Tum sayfalar icin ortak iskelet (ust menu + govde + altbilgi).
 
     aciklama: <meta name="description"> ve og:description icin kisa ozet.
@@ -2309,8 +2324,10 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <meta name="twitter:image" content="{SITE_URL}og-cover.png">
 {_dogrulama_etiketleri()}<script type="application/ld+json">{ld_json}</script>{ld_ek_html}
 <script>(function(){{try{{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){{document.documentElement.classList.add('dark');}}}}catch(e){{}}}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://js.puter.com" crossorigin>
 <link rel="stylesheet" href="{kok}style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+{_chart_js_script(grafik)}
 </head>
 <body>
 <header class="topbar"><div class="inner">
@@ -2365,7 +2382,7 @@ function temaDegistir() {{
 }})();
 </script>
 
-<footer class="footer">Bilgilendirme amacıyla hazırlanmıştır, yatırım tavsiyesi değildir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
+<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
 
 <!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
 <script>
@@ -2427,6 +2444,20 @@ def markdown_to_html(metin):
     return html_temizle(
         markdown.markdown(metin, extensions=["tables", "fenced_code", "sane_lists", "nl2br"])
     )
+
+
+def paylas_html(metin, url):
+    """Rapor/hisse sayfalarina kucuk sosyal paylasim rozetleri
+    (X, Telegram, WhatsApp + baglanti kopyala)."""
+    import urllib.parse
+    m = urllib.parse.quote_plus(metin)
+    u = urllib.parse.quote_plus(url)
+    return (f'<span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px">'
+            f'<a class="paylas" href="https://twitter.com/intent/tweet?text={m}&url={u}" target="_blank" rel="noopener" title="X\'te paylaş">𝕏</a>'
+            f'<a class="paylas" href="https://t.me/share/url?url={u}&text={m}" target="_blank" rel="noopener" title="Telegram\'da paylaş">✈</a>'
+            f'<a class="paylas" href="https://wa.me/?text={m}%20{u}" target="_blank" rel="noopener" title="WhatsApp\'ta paylaş">💬</a>'
+            f'<a class="paylas" href="javascript:void(0)" title="Bağlantıyı kopyala" '
+            f'onclick="if(navigator.clipboard){{navigator.clipboard.writeText(\'{url}\');this.textContent=\'✓\';}}">🔗</a></span>')
 
 
 def _pano_html(satirlar):
@@ -2537,7 +2568,8 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
 <div class="hero">
 <h1>{baslik}</h1>
 <div class="meta"><span class="badge">{date_str}</span><span>{alt_baslik}</span>
-<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button></div>
+<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button>
+{paylas_html(baslik + ' ' + date_str, SITE_URL + (kok_yol or f"reports/{date_str}.html"))}</div>
 </div>
 {_bist30_sepeti_sparkline()}
 {ses_bolumu}
@@ -2616,6 +2648,7 @@ def sparkline_svg(history):
 <canvas id="{grafik_id}"></canvas>
 </div>
 <script>
+document.addEventListener('DOMContentLoaded', function() {{
 (function() {{
     var veri = {veri_json};
     var baslangiclar = veri.datasets.map(function(d) {{ return d.data[0]; }});
@@ -2661,6 +2694,7 @@ def sparkline_svg(history):
         }}
     }});
 }})();
+}});
 </script>
 """
 
@@ -2845,6 +2879,7 @@ function arsivAc(btn) {{
     return _sayfa(
         "BIST 30 Günlük Raporlar", icerik, "raporlar", yol="",
         aciklama="BIST 30'un yapay zeka destekli günlük raporları, teknik tarama ve osilatör sinyalleri, model portföy önerileri ve 100.000 TL'lik sanal deneme portföyünün takibi.",
+        grafik=True,
     )
 
 
@@ -2884,6 +2919,7 @@ Hafta sonu ve tatil günlerinde değer değişmez.</p>"""
     return _sayfa(
         "Deneme Portföyü", icerik, "portfoy", yol="portfolio.html",
         aciklama="100.000 TL sermayeyle BIST 30 hisselerine eşit dağıtılmış sanal deneme portföyü: günlük değer takibi, hisse performansı ve altın/dolar/mevduat karşılaştırması.",
+        grafik=True,
     )
 
 
@@ -3327,6 +3363,7 @@ def build_borsapy_html(satirlar, date_str):
 </div>
 </div>
 <script>
+document.addEventListener('DOMContentLoaded', function() {{
 (function() {{
     var veri = {veri_json};
     var renkler = veri.degerler.map(function(v) {{
@@ -3378,6 +3415,7 @@ def build_borsapy_html(satirlar, date_str):
         plugins: [esikVeDegerler]
     }});
 }})();
+}});
 </script>"""
 
     guclu = sum(1 for s in satirlar if s["oneri"] == "GÜÇLÜ AL")
@@ -3410,6 +3448,7 @@ etiketleri momentum oylarının çoğunluğunu yansıtır, aşırı alım riskin
     return _sayfa(
         f"Borsapy Sinyalleri - {date_str}", icerik, "borsapy", yol="borsapy-analiz.html",
         aciklama="TradingView göstergelerinden BIST 30 osilatör özeti: AL/SAT/NÖTR oyları, RSI, MACD, Stokastik %K, CCI ve ADX değerleri. 30 dakikada bir güncellenir.",
+        grafik=True,
     )
 
 

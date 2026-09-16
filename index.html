@@ -24,8 +24,10 @@
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "BIST 30 Günlük Raporlar", "description": "BIST 30'un yapay zeka destekli günlük raporları, teknik tarama ve osilatör sinyalleri, model portföy önerileri ve 100.000 TL'lik sanal deneme portföyünün takibi.", "url": "https://borsa-raporlari.pages.dev/", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://js.puter.com" crossorigin>
 <link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
 <header class="topbar"><div class="inner">
@@ -341,7 +343,7 @@
 .ai-chip { background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; border-radius: 999px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
 .ai-chip:hover { border-color: #0f766e; color: #0f766e; }
 </style>
-<script src="https://js.puter.com/v2/"></script>
+<script defer src="https://js.puter.com/v2/"></script>
 <script>
 function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
 function aiZamanAsimi(promise, ms) {
@@ -440,13 +442,14 @@ function arsivAc(btn) {
 </div>
 <div class="card" style="margin-bottom:14px">
 <div style="position:relative; height:340px;">
-<canvas id="portfoy-grafik-691520"></canvas>
+<canvas id="portfoy-grafik-329260"></canvas>
 </div>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
 (function() {
     var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-14", "2026-09-15"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27, 105135.98, 105721.9, 105320.34, 106949.37, 105257.55], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100819.58, 100415.39, 101224.05, 100055.94, 99407.07, 98829.8], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100459.02, 100476.65, 100522.88, 100761.11, 100778.93, 100828.28], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73, 100370.32, 100494.06, 100617.96, 100990.57, 101115.08], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}, {"label": "BIST 100 Endeksi", "data": [100000.0, 100000.0, 99549.87, 101792.45, 102500.71, 101711.89, 102230.56, 100595.27], "borderColor": "#7c3aed", "backgroundColor": "#7c3aed", "borderDash": [2, 2]}, {"label": "BIST 30 Endeksi", "data": [100000.0, 100000.0, 102229.74, 103039.21, 102174.27, 103088.58, 101680.09, 99488.48], "borderColor": "#e11d48", "backgroundColor": "#e11d48", "borderDash": [2, 2]}]};
     var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
-    var ctx = document.getElementById('portfoy-grafik-691520').getContext('2d');
+    var ctx = document.getElementById('portfoy-grafik-329260').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -488,6 +491,7 @@ function arsivAc(btn) {
         }
     });
 })();
+});
 </script>
 </div>
 <div class="card" style="padding:8px 24px 16px">
@@ -524,7 +528,7 @@ function temaDegistir() {
 })();
 </script>
 
-<footer class="footer">Bilgilendirme amacıyla hazırlanmıştır, yatırım tavsiyesi değildir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
+<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)</footer>
 
 <!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
 <script>
