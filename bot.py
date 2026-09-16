@@ -3294,6 +3294,70 @@ def _bist30_sepeti_sparkline(gun=30):
         return ""
 
 
+def _sirket_profilleri():
+    """data/sirketler.json -> {KOD: profil}. Dosya yoksa bos sozluk; sayfa
+    profilsiz de uretilir."""
+    try:
+        with open("data/sirketler.json", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _bilanco_ozeti(kod):
+    """Son data/financials kaydindan '{KOD}: ...' satirini okur.
+    'Dönen Varlıklar=151.30 mlyr TL; ...' -> gorunur ozet metni. Veri yoksa ''."""
+    try:
+        dosyalar = sorted(f for f in os.listdir("data/financials") if f.endswith(".json"))
+        if not dosyalar:
+            return ""
+        tarih = dosyalar[-1][:-5]
+        satirlar = json.load(open(os.path.join("data/financials", dosyalar[-1]), encoding="utf-8"))
+        satir = next((s for s in satirlar if s.startswith(kod + ":")), "")
+        if not satir:
+            return ""
+        ogeler = []
+        for parca in satir.split(":", 1)[1].split(";"):
+            parca = parca.strip()
+            if "=" not in parca:
+                continue
+            ad, deger = parca.split("=", 1)
+            deger = deger.strip().replace("mlyr", "milyar").replace(".", ",")
+            ogeler.append(f"{ad.strip()} <strong>{deger}</strong>")
+        if not ogeler:
+            return ""
+        return (f'<div style="margin:10px 0 0; padding-top:8px; border-top:1px solid var(--line); '
+                f'color:var(--muted); font-size:12.5px">Bilançodan ({tarih} verisi): {" &bull; ".join(ogeler)}</div>')
+    except Exception:
+        return ""
+
+
+def _sirket_profili_html(kod):
+    """Hisse detay sayfasina borsa ekrani tarzi sirket profili karti.
+    Bilgi data/sirketler.json'dan gelir; kayit yoksa kart cikmaz."""
+    p = _sirket_profilleri().get(kod)
+    if not p:
+        return ""
+    meta = []
+    if p.get("kurulus"):
+        meta.append(f'<span>Kuruluş: <strong>{p["kurulus"]}</strong></span>')
+    if p.get("grup"):
+        meta.append(f'<span>Ana ortak: <strong>{p["grup"]}</strong></span>')
+    markalar = p.get("markalar") or []
+    marka_html = ""
+    if markalar:
+        rozetler = "".join(f'<span class="badge" style="margin:0 6px 6px 0; font-size:11.5px">{m}</span>' for m in markalar)
+        marka_html = (f'<div style="margin:8px 0 0"><div style="color:var(--muted); font-size:12px; '
+                      f'margin-bottom:5px">Markalar &amp; iştirakler</div>{rozetler}</div>')
+    return f"""
+<div class="card" style="margin:0 0 18px">
+<h3 style="margin:0 0 6px">🏢 Şirket Profili</h3>
+<div class="meta" style="margin:0 0 8px">{''.join(meta)}</div>
+<p style="margin:0; font-size:14px">{p.get('faaliyet', '')}</p>
+{marka_html}{_bilanco_ozeti(kod)}
+</div>"""
+
+
 def build_hisse_html(kod, satir, tarihler, veriler, haberler):
     seri = [(t, v.get(kod)) for t, v in zip(tarihler, veriler) if v.get(kod)]
     grafik = (_mini_sparkline([f for _, f in seri], etiket=f"{kod} fiyat grafiği (son {len(seri)} gün)")
@@ -3343,6 +3407,7 @@ def build_hisse_html(kod, satir, tarihler, veriler, haberler):
 {degisim_html}</div>
 </div>
 {grafik_karti}
+{_sirket_profili_html(kod)}
 <div class="grid-iki">
 <div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
 <table style="font-size:13.5px">{teknik_ogeler}</table>
