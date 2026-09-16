@@ -2548,7 +2548,8 @@ def _pano_html(satirlar):
 
 def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
                   alt_baslik="BIST 30 &bull; Yapay zeka destekli günlük analiz",
-                  kok_yol=None, aciklama=None, ses_url=None, teknik_satirlar=None):
+                  kok_yol=None, aciklama=None, ses_url=None, teknik_satirlar=None,
+                  ajanda=None):
     if kok_yol is None:
         kok_yol = f"reports/{date_str}.html"
     if aciklama is None:
@@ -2574,6 +2575,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
 {_bist30_sepeti_sparkline()}
 {ses_bolumu}
 {_pano_html(teknik_satirlar)}
+{_ajanda_html(ajanda or [], limit=14)}
 <article class="report" id="rapor-govde">{html_icerik}</article>
 <p style="margin-top:18px"><a href="../index.html">&larr; Tüm raporlara dön</a></p>
 {_sesli_okuma_js()}"""
@@ -2589,12 +2591,12 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
                   aciklama=aciklama, yol=kok_yol, ld_ek=ld_ek)
 
 
-def build_html(report, date_str, teknik_satirlar=None):
+def build_html(report, date_str, teknik_satirlar=None, ajanda=None):
     ses_url = None
     if os.path.exists(os.path.join("reports", f"{date_str}.mp3")):
         ses_url = f"../reports/{date_str}.mp3"
     return rapor_sayfasi(markdown_to_html(report), date_str, ses_url=ses_url,
-                         teknik_satirlar=teknik_satirlar)
+                         teknik_satirlar=teknik_satirlar, ajanda=ajanda)
 
 
 def sparkline_svg(history):
@@ -4023,13 +4025,116 @@ function sozlukSuz() {{
     logger.info("[Sozluk] %d terim yazildi.", len(terimler))
 
 
+def ekonomik_takvim_cek(gun=14):
+    """TradingView'in acik ekonomik takvim ucundan TR/US/EU veri duyurularini
+    ceker (onemsizler filtrelenir) ve data/ekonomik-takvim/ altina kaydeder.
+    Kaynak erisilemezse bos liste doner; onceki gunun verisi sayfalarda kullanilir."""
+    import urllib.request
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    bugun = datetime.now(tz).strftime("%Y-%m-%d")
+    to = (datetime.now(tz) + timedelta(days=gun)).strftime("%Y-%m-%d")
+    url = (f"https://economic-calendar.tradingview.com/events"
+           f"?from={bugun}T00%3A00%3A00.000Z&to={to}T00%3A00%3A00.000Z&countries=TR,US,EU")
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0",
+                                               "Origin": "https://www.tradingview.com"})
+    with urllib.request.urlopen(req, timeout=25) as r:
+        d = json.load(r)
+    olaylar = d.get("result")
+    if isinstance(olaylar, dict):
+        olaylar = olaylar.get("events", [])
+    secili = []
+    for e in olaylar:
+        try:
+            onem = int(e.get("importance") or 0)
+        except (TypeError, ValueError):
+            onem = 0
+        if onem < 0:
+            continue  # otomatik/kucuk veriler: ajandayi sisirmesin
+        secili.append({
+            "tarih": str(e.get("date", ""))[:10],
+            "saat": str(e.get("date", ""))[11:16],
+            "ulke": e.get("country", ""),
+            "olay": e.get("title", ""),
+            "onem": onem,
+            "tahmin": e.get("forecast"),
+            "gercek": e.get("actual"),
+            "onceki": e.get("previous"),
+        })
+    save_daily("ekonomik-takvim", bugun, secili)
+    logger.info("[Takvim] %d olay cekildi (%d gun).", len(secili), gun)
+    return secili
+
+
+def _ekonomik_takvim_yukle():
+    """Son data/ekonomik-takvim kaydini dondurur (yoksa [])."""
+    try:
+        dosyalar = sorted(f for f in os.listdir("data/ekonomik-takvim") if f.endswith(".json"))
+        return json.load(open(os.path.join("data/ekonomik-takvim", dosyalar[-1]), encoding="utf-8"))
+    except Exception:
+        return []
+
+
+def _ajanda_html(olaylar, limit=None):
+    """Garanti bultenindeki 'Gunluk Ajanda' tablosunun muadili:
+    yakin donem ekonomik veri duyurulari (tarih/saat/ulke/olay/tahmin/onceki)."""
+    if not olaylar:
+        return ""
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    bugun = datetime.now(tz).strftime("%Y-%m-%d")
+    yarin = (datetime.now(tz) + timedelta(days=1)).strftime("%Y-%m-%d")
+
+    def _gun_etiketi(t):
+        if t == bugun:
+            return "Bugün"
+        if t == yarin:
+            return "Yarın"
+        return t[8:10] + "." + t[5:7]
+
+    def _deger(v):
+        if v in (None, "", 0):
+            return "&mdash;"
+        try:
+            return f"{float(v):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        except (TypeError, ValueError):
+            return str(v)
+
+    secili = olaylar[:limit] if limit else olaylar
+    satirlar = []
+    son_gun = None
+    for e in secili:
+        if e.get("tarih") != son_gun:
+            satirlar.append(f"<tr><td colspan='5' style='background:var(--accent-bg); font-weight:700; font-size:12px'>{_gun_etiketi(e['tarih'])} ({e['tarih']})</td></tr>")
+            son_gun = e["tarih"]
+        onem = " 🔴" if e.get("onem", 0) >= 1 else ""
+        satirlar.append(
+            f"<tr><td>{e.get('saat', '')}</td><td><strong>{e.get('ulke', '')}</strong>{onem}</td>"
+            f"<td>{e.get('olay', '')}</td>"
+            f"<td style='text-align:right'>{_deger(e.get('tahmin'))}</td>"
+            f"<td style='text-align:right'>{_deger(e.get('onceki'))}</td></tr>")
+    return f"""
+<div class="pano">
+<div class="pano-baslik">📅 Günlük Ajanda — Ekonomik Veri Duyuruları</div>
+<div class="tbl-wrap">
+<table class="pano-tablo">
+<thead><tr><th>Saat</th><th>Ülke</th><th>Olay</th><th style="text-align:right">Tahmin</th><th style="text-align:right">Önceki</th></tr></thead>
+<tbody>
+{''.join(satirlar)}
+</tbody>
+</table>
+</div>
+<p class="pano-not">🔴 = yüksek etkili veri. Kaynak: TradingView ekonomik takvimi; saatler TR zamanıdır. <a href="takvim.html">Ekonomik Takvim Rehberi &rarr;</a></p>
+</div>"""
+
+
 def takvim_yaz():
-    """data/takvim.json iceriginden ekonomik takvim rehberi uretir."""
+    """Ekonomik takvim sayfasi: ustte TradingView akisindan gelen gercek
+    yaklasan olaylar, altta kalici rehber (data/takvim.json)."""
     try:
         with open("data/takvim.json", encoding="utf-8") as f:
             ogeler = json.load(f)
     except Exception:
         ogeler = []
+    yaklasan = _ajanda_html(_ekonomik_takvim_yukle())
     kartlar = "".join(
         f"<div class='card' style='margin:10px 0'><strong style='color:var(--accent)'>{o['etkinlik']}</strong>"
         f"<div style='color:var(--muted); font-size:13px; margin-top:4px'>{o['periyot']}"
@@ -4038,14 +4143,15 @@ def takvim_yaz():
     ) or '<p style="color:var(--muted)">Takvim verisi henüz girilmedi.</p>'
     icerik = f"""
 <div class="hero">
-<h1>Ekonomik Takvim Rehberi</h1>
-<p>Borsa için kritik düzenli veri açıklamaları ve ne anlama geldikleri. Belirli gün tarihleri
-resmî kurumların takviminden teyit edilmelidir.</p>
+<h1>Ekonomik Takvim</h1>
+<p>Önümüzdeki günlerin önemli ekonomik veri duyuruları ve borsa için kritik düzenli açıklamaların rehberi.</p>
 </div>
+{yaklasan or '<p style="color:var(--muted)">Yaklaşan olay listesi henüz yüklenmedi.</p>'}
+<h2 class="section-title">Düzenli Veri Rehberi</h2>
 {kartlar}"""
     with open("takvim.html", "w", encoding="utf-8") as f:
-        f.write(_sayfa("Ekonomik Takvim Rehberi", icerik, "takvim", yol="takvim.html"))
-    logger.info("[Takvim] rehber yazildi (%d oge).", len(ogeler))
+        f.write(_sayfa("Ekonomik Takvim", icerik, "takvim", yol="takvim.html"))
+    logger.info("[Takvim] sayfa yazildi (%d rehber ogesi).", len(ogeler))
 
 
 _RSS_GUNLER = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -4351,10 +4457,20 @@ if __name__ == "__main__":
         logger.exception("[TTS] ses uretimi atlandi; rapor uretimini etkilemez.")
     _eski_sesleri_temizle()
 
-    with open(f"reports/{date_str}.html", "w", encoding="utf-8") as f:
-        f.write(build_html(report, date_str, teknik_satirlar=_SON_TEKNIK))
-
     raporlar = sorted((fn for fn in os.listdir("reports") if fn.endswith(".html")), reverse=True)
+
+    # Ekonomik takvim: TradingView acik ucundan; rapora 'Gunluk Ajanda'
+    # bolumu olarak girer ve takvim.html'de yayinlanir.
+    ajanda = []
+    try:
+        ajanda = ekonomik_takvim_cek()
+    except Exception:
+        logger.exception("[Takvim] cekilemedi; eski veri varsa o kullanilir.")
+    if not ajanda:
+        ajanda = _ekonomik_takvim_yukle()
+
+    with open(f"reports/{date_str}.html", "w", encoding="utf-8") as f:
+        f.write(build_html(report, date_str, teknik_satirlar=_SON_TEKNIK, ajanda=ajanda))
 
     # Teknik tarama: LLM'den bagimsiz, saf matematik; basarisiz olursa diger
     # sayfalarin uretimini bozmamasi icin ayri try/except icinde.

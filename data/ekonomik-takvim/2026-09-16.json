@@ -1,0 +1,632 @@
+[
+  {
+    "tarih": "2026-09-16",
+    "saat": "09:00",
+    "ulke": "EU",
+    "olay": "Industrial Production MoM",
+    "onem": 0,
+    "tahmin": -0.2,
+    "gercek": null,
+    "onceki": 0
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "11:00",
+    "ulke": "US",
+    "olay": "MBA 30-Year Mortgage Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 6.85
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Retail Sales MoM",
+    "onem": 1,
+    "tahmin": 0.8,
+    "gercek": null,
+    "onceki": -0.6
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Import Prices MoM",
+    "onem": 0,
+    "tahmin": 0.4,
+    "gercek": null,
+    "onceki": -0.4
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Retail Sales Control Group MoM",
+    "onem": 0,
+    "tahmin": 0.4,
+    "gercek": null,
+    "onceki": -0.4
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Retail Sales Ex Autos MoM",
+    "onem": 0,
+    "tahmin": 0.5,
+    "gercek": null,
+    "onceki": -0.3
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Export Prices MoM",
+    "onem": 0,
+    "tahmin": 0.5,
+    "gercek": null,
+    "onceki": -1.3
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "Business Inventories MoM",
+    "onem": 0,
+    "tahmin": 0.3,
+    "gercek": null,
+    "onceki": 0
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "NAHB Housing Market Index",
+    "onem": 0,
+    "tahmin": 34,
+    "gercek": null,
+    "onceki": 35
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "14:30",
+    "ulke": "US",
+    "olay": "EIA Crude Oil Stocks Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -0.391
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "14:30",
+    "ulke": "US",
+    "olay": "EIA Gasoline Stocks Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 1.269
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "17:00",
+    "ulke": "EU",
+    "olay": "ECB President Lagarde Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "FOMC Economic Projections",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "Fed Interest Rate Decision",
+    "onem": 1,
+    "tahmin": 4,
+    "gercek": null,
+    "onceki": 3.75
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "18:30",
+    "ulke": "US",
+    "olay": "Fed Press Conference",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "20:00",
+    "ulke": "US",
+    "olay": "Net Long-term TIC Flows",
+    "onem": 0,
+    "tahmin": 146.3,
+    "gercek": null,
+    "onceki": 172.7
+  },
+  {
+    "tarih": "2026-09-17",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Building Permits Prel",
+    "onem": 1,
+    "tahmin": 1.41,
+    "gercek": null,
+    "onceki": 1.433
+  },
+  {
+    "tarih": "2026-09-17",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Initial Jobless Claims",
+    "onem": 0,
+    "tahmin": 208,
+    "gercek": null,
+    "onceki": 206
+  },
+  {
+    "tarih": "2026-09-17",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Philadelphia Fed Manufacturing Index",
+    "onem": 0,
+    "tahmin": 30.5,
+    "gercek": null,
+    "onceki": 47.4
+  },
+  {
+    "tarih": "2026-09-17",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Building Permits MoM Prel",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 4.3
+  },
+  {
+    "tarih": "2026-09-17",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Housing Starts MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -12.4
+  },
+  {
+    "tarih": "2026-09-17",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Housing Starts",
+    "onem": 1,
+    "tahmin": 1.31,
+    "gercek": null,
+    "onceki": 1.239
+  },
+  {
+    "tarih": "2026-09-17",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "Pending Home Sales YoY",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -2.2
+  },
+  {
+    "tarih": "2026-09-17",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "Pending Home Sales MoM",
+    "onem": 0,
+    "tahmin": 2,
+    "gercek": null,
+    "onceki": -2.3
+  },
+  {
+    "tarih": "2026-09-18",
+    "saat": "10:30",
+    "ulke": "EU",
+    "olay": "ECB President Lagarde Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-18",
+    "saat": "13:15",
+    "ulke": "US",
+    "olay": "Industrial Production MoM",
+    "onem": 0,
+    "tahmin": 0.3,
+    "gercek": null,
+    "onceki": 0.2
+  },
+  {
+    "tarih": "2026-09-18",
+    "saat": "13:30",
+    "ulke": "US",
+    "olay": "Fed Bowman Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-21",
+    "saat": "07:00",
+    "ulke": "TR",
+    "olay": "Business Confidence",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 102.8
+  },
+  {
+    "tarih": "2026-09-21",
+    "saat": "10:30",
+    "ulke": "US",
+    "olay": "Fed Goolsbee Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-21",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Chicago Fed National Activity Index",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -0.08
+  },
+  {
+    "tarih": "2026-09-22",
+    "saat": "07:00",
+    "ulke": "TR",
+    "olay": "Consumer Confidence",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 90.8
+  },
+  {
+    "tarih": "2026-09-22",
+    "saat": "12:15",
+    "ulke": "US",
+    "olay": "ADP Employment Change Weekly",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 16.25
+  },
+  {
+    "tarih": "2026-09-22",
+    "saat": "14:00",
+    "ulke": "EU",
+    "olay": "Consumer Confidence Flash",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -15.5
+  },
+  {
+    "tarih": "2026-09-22",
+    "saat": "14:05",
+    "ulke": "US",
+    "olay": "Fed Williams Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-22",
+    "saat": "14:20",
+    "ulke": "US",
+    "olay": "Fed Jefferson Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-22",
+    "saat": "20:30",
+    "ulke": "US",
+    "olay": "API Crude Oil Stock Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 7.14
+  },
+  {
+    "tarih": "2026-09-23",
+    "saat": "08:00",
+    "ulke": "EU",
+    "olay": "S&P Global Composite PMI Flash",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 52
+  },
+  {
+    "tarih": "2026-09-23",
+    "saat": "08:00",
+    "ulke": "EU",
+    "olay": "S&P Global Services PMI Flash",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 51.6
+  },
+  {
+    "tarih": "2026-09-23",
+    "saat": "08:00",
+    "ulke": "EU",
+    "olay": "S&P Global Manufacturing PMI Flash",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 52.7
+  },
+  {
+    "tarih": "2026-09-23",
+    "saat": "11:00",
+    "ulke": "US",
+    "olay": "MBA 30-Year Mortgage Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-23",
+    "saat": "13:45",
+    "ulke": "US",
+    "olay": "S&P Global Composite PMI Flash",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 56
+  },
+  {
+    "tarih": "2026-09-23",
+    "saat": "13:45",
+    "ulke": "US",
+    "olay": "S&P Global Services PMI Flash",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-23",
+    "saat": "13:45",
+    "ulke": "US",
+    "olay": "S&P Global Manufacturing PMI Flash",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-23",
+    "saat": "14:30",
+    "ulke": "US",
+    "olay": "EIA Gasoline Stocks Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-23",
+    "saat": "14:30",
+    "ulke": "US",
+    "olay": "EIA Crude Oil Stocks Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-24",
+    "saat": "04:00",
+    "ulke": "EU",
+    "olay": "New Car Registrations YoY",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-24",
+    "saat": "04:00",
+    "ulke": "EU",
+    "olay": "New Car Registrations YoY",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 13.6
+  },
+  {
+    "tarih": "2026-09-24",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Initial Jobless Claims",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-24",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Current Account",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -226.8
+  },
+  {
+    "tarih": "2026-09-24",
+    "saat": "12:50",
+    "ulke": "US",
+    "olay": "Fed Hammack Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-24",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "New Home Sales",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.607
+  },
+  {
+    "tarih": "2026-09-24",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "New Home Sales MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -10.5
+  },
+  {
+    "tarih": "2026-09-24",
+    "saat": "14:10",
+    "ulke": "US",
+    "olay": "Fed Paulson Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-25",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Durable Goods Orders Ex Transp MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.4
+  },
+  {
+    "tarih": "2026-09-25",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Durable Goods Orders MoM",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 1.1
+  },
+  {
+    "tarih": "2026-09-25",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "Michigan Consumer Sentiment Final",
+    "onem": 0,
+    "tahmin": 47.8,
+    "gercek": null,
+    "onceki": 51.7
+  },
+  {
+    "tarih": "2026-09-25",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "Fed Hammack Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-09-28",
+    "saat": "14:30",
+    "ulke": "US",
+    "olay": "Dallas Fed Manufacturing Index",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 11.6
+  },
+  {
+    "tarih": "2026-09-29",
+    "saat": "09:00",
+    "ulke": "EU",
+    "olay": "Economic Sentiment",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 98.4
+  },
+  {
+    "tarih": "2026-09-29",
+    "saat": "13:00",
+    "ulke": "US",
+    "olay": "S&P/Case-Shiller Home Price YoY",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 2.1
+  },
+  {
+    "tarih": "2026-09-29",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "CB Consumer Confidence",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 89.4
+  },
+  {
+    "tarih": "2026-09-29",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "JOLTs Job Openings",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 7.271
+  },
+  {
+    "tarih": "2026-09-29",
+    "saat": "20:30",
+    "ulke": "US",
+    "olay": "API Crude Oil Stock Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  }
+]
