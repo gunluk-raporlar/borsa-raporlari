@@ -73,21 +73,21 @@
     "tarih": "2026-09-16",
     "saat": "14:00",
     "ulke": "US",
-    "olay": "Business Inventories MoM",
-    "onem": 0,
-    "tahmin": 0.3,
-    "gercek": null,
-    "onceki": 0
-  },
-  {
-    "tarih": "2026-09-16",
-    "saat": "14:00",
-    "ulke": "US",
     "olay": "NAHB Housing Market Index",
     "onem": 0,
     "tahmin": 34,
     "gercek": null,
     "onceki": 35
+  },
+  {
+    "tarih": "2026-09-16",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "Business Inventories MoM",
+    "onem": 0,
+    "tahmin": 0.3,
+    "gercek": null,
+    "onceki": 0
   },
   {
     "tarih": "2026-09-16",
