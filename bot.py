@@ -2166,6 +2166,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     a_e = ' class="active"' if aktif == "egitim" else ""
     a_his = ' class="active"' if aktif == "hisseler" else ""
     a_hb = ' class="active"' if aktif == "haberler" else ""
+    a_shb = ' class="active"' if aktif == "sirkethaber" else ""
     a_s = ' class="active"' if aktif == "sozluk" else ""
     a_k = ' class="active"' if aktif == "karne" else ""
     a_alt_r = ' class="active"' if aktif == "raporlar" else ""
@@ -2216,7 +2217,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a></nav>
+<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a></nav>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button>
 </div></header>
 {_kendi_ticker(kok)}
@@ -3478,7 +3479,7 @@ def _sirket_profili_html(kod):
 </div>"""
 
 
-def build_hisse_html(kod, satir, tarihler, veriler, haberler):
+def build_hisse_html(kod, satir, tarihler, veriler, haberler, sirket_haberleri=None):
     seri = [(t, v.get(kod)) for t, v in zip(tarihler, veriler) if v.get(kod)]
     grafik = (_mini_sparkline([f for _, f in seri], etiket=f"{kod} fiyat grafiği (son {len(seri)} gün)")
               if len(seri) >= 2 else "")
@@ -3496,11 +3497,19 @@ def build_hisse_html(kod, satir, tarihler, veriler, haberler):
     degisim = None
     if len(seri) >= 2:
         degisim = (seri[-1][1] / seri[0][1] - 1) * 100
-    haber_ogeleri = "".join(
-        f"<li style='margin:6px 0'>{h.split(']', 1)[-1].strip()}"
-        f"{' <span style=&quot;color:var(--muted)&quot;>[' + h[1:].split(']')[0] + ']</span>' if h.startswith('[') and ']' in h else ''}</li>"
-        for h in haberler[:12]
-    ) or "<li style='color:var(--muted)'>Son 7 günde bu hisseye dair başlık bulunamadı.</li>"
+    if sirket_haberleri:
+        haber_ogeleri = "".join(
+            f"<li style='margin:6px 0'><a href='{h['link']}' target='_blank' rel='noopener'>{h['baslik']}</a>"
+            f" <span style='color:var(--muted); font-size:12px'>&mdash; {h['kaynak']}"
+            + (f" &middot; {datetime.fromtimestamp(h['ts']).strftime('%d.%m')}" if h.get("ts") else "")
+            + "</span></li>"
+            for h in sirket_haberleri[:6])
+    else:
+        haber_ogeleri = "".join(
+            f"<li style='margin:6px 0'>{h.split(']', 1)[-1].strip()}"
+            f"{' <span style=&quot;color:var(--muted)&quot;>[' + h[1:].split(']')[0] + ']</span>' if h.startswith('[') and ']' in h else ''}</li>"
+            for h in haberler[:12]
+        ) or "<li style='color:var(--muted)'>Son 7 günde bu hisseye dair başlık bulunamadı.</li>"
     teknik_ogeler = "".join(
         f"<tr><td>{etiket}</td><td><strong>{deger}</strong></td></tr>"
         for etiket, deger in [
@@ -3533,7 +3542,8 @@ def build_hisse_html(kod, satir, tarihler, veriler, haberler):
 <table style="font-size:13.5px">{teknik_ogeler}</table>
 <p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a></p></div>
 <div class="card"><h3 style="margin:0 0 8px">Son 7 Gün Haberleri</h3>
-<ul style="margin:0; padding-left:18px; font-size:13.5px">{haber_ogeleri}</ul></div>
+<ul style="margin:0; padding-left:18px; font-size:13.5px">{haber_ogeleri}</ul>
+<p style="margin:8px 0 0; font-size:12.5px"><a href="../sirket-haberleri.html#H-{kod}">Tüm şirket haberleri &rarr;</a></p></div>
 </div>
 <div class="card" style="margin-top:14px">
 <h3 style="margin:0 0 8px">{kod} konulu içerikler</h3>
@@ -3545,6 +3555,113 @@ def build_hisse_html(kod, satir, tarihler, veriler, haberler):
         yol=f"hisse/{kod}.html",
         aciklama=f"{kod} ({satir.get('sektor', 'BIST 30')}) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.",
     )
+
+
+# ---------- SIRKET HABERLERI (Google News RSS, sirket basina) ----------
+_HABER_GURULTU = re.compile(
+    r"(günlük teknik analiz|teknik ve osilatör|teknik analiz|destek ve direnç|"
+    r"destek-direnç|sinyal listesi|sinyalleri|osilatör|news by matriks|tradingview)",
+    re.I)
+
+
+def _sirket_haberleri_cek(profiller):
+    """Her BIST30 sirketi icin Google News RSS'ten son 7 gunun haberlerini
+    ceker ve data/sirket-haberleri/<tarih>.json'a kaydeder. API anahtari
+    gerekmez; bir sirketin akisi basarisizsa digerlerini engellemez."""
+    try:
+        import feedparser
+        import urllib.parse
+    except ImportError:
+        logger.warning("[Sirket Haberi] feedparser kurulu degil; haber cekilmedi.")
+        return []
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    bugun = datetime.now(tz).strftime("%Y-%m-%d")
+    kayitlar = []
+    for kod, p in profiller.items():
+        sorgu = p.get("sorgu") or p.get("unvan") or kod
+        url = (f"https://news.google.com/rss/search?q={urllib.parse.quote_plus(sorgu)}"
+               f"+OR+{kod}+when:7d&hl=tr&gl=TR&ceid=TR:tr")
+        gorulen = set()
+        adet = 0
+        try:
+            f = feedparser.parse(url)
+            for e in f.entries:
+                baslik = (e.title or "").strip()
+                if not baslik or _HABER_GURULTU.search(baslik):
+                    continue
+                # 'Baslik - Kaynak' kalibindan kaynagi soy
+                kaynak = baslik.rsplit(" - ", 1)[-1].strip()
+                temiz = baslik.rsplit(" - ", 1)[0].strip()
+                anahtar = re.sub(r"\W+", "", temiz.lower())[:60]
+                if not temiz or anahtar in gorulen:
+                    continue
+                gorulen.add(anahtar)
+                ts = int(time.mktime(e.published_parsed)) if hasattr(e, "published_parsed") else 0
+                kayitlar.append({"kod": kod, "baslik": temiz, "kaynak": kaynak,
+                                 "link": e.link, "ts": ts})
+                adet += 1
+                if adet >= 6:
+                    break
+        except Exception as e:
+            logger.warning("[Sirket Haberi] %s akisi okunamadi: %s", kod, e)
+        time.sleep(0.3)
+    save_daily("sirket-haberleri", bugun, kayitlar)
+    logger.info("[Sirket Haberi] %d sirket icin %d haber toplandi.",
+                len({k['kod'] for k in kayitlar}), len(kayitlar))
+    return kayitlar
+
+
+def _sirket_haberleri_yukle():
+    """Son sirket-haberleri kaydini {KOD: [haber, ...]} sozlugune cevirir
+    (ts'ye gore yeni once, hisse basina en fazla 6)."""
+    try:
+        dosyalar = sorted(f for f in os.listdir("data/sirket-haberleri") if f.endswith(".json"))
+        kayitlar = json.load(open(os.path.join("data/sirket-haberleri", dosyalar[-1]), encoding="utf-8"))
+    except Exception:
+        return {}
+    harita = {}
+    for k in sorted(kayitlar, key=lambda x: x.get("ts", 0), reverse=True):
+        harita.setdefault(k["kod"], []).append(k)
+    return harita
+
+
+def build_sirket_haberleri_html(haber_map, teknik_satirlar=None):
+    """sirket-haberleri.html: 30 sirketin son 7 gun haberleri, sirket basina
+    gruplanmis tek sayfa."""
+    if teknik_satirlar:
+        sira = [s["hisse"] for s in teknik_satirlar]
+    else:
+        sira = sorted(haber_map.keys())
+    bolumler = []
+    haberli = 0
+    for kod in sira:
+        ogeler = haber_map.get(kod, [])
+        unvan = _sirket_profilleri().get(kod, {}).get("unvan", "")
+        if ogeler:
+            haberli += 1
+            satirlar = "".join(
+                f"<li style='margin:5px 0'><a href='{h['link']}' target='_blank' rel='noopener'>{h['baslik']}</a>"
+                f" <span style='color:var(--muted); font-size:12px'>— {h['kaynak']}</span></li>"
+                for h in ogeler[:5])
+            govde = f"<ul style='margin:4px 0 0; padding-left:18px; font-size:13.5px'>{satirlar}</ul>"
+        else:
+            govde = "<p style='color:var(--muted); font-size:13px; margin:4px 0 0'>Son 7 günde öne çıkan başlık yok.</p>"
+        bolumler.append(
+            f"<div class='card' id='H-{kod}' style='margin-bottom:12px; padding:12px 18px'>"
+            f"<div style='display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px'>"
+            f"<div><a href='hisse/{kod}.html' style='font-weight:700; font-size:15px'>{kod}</a>"
+            f"<span style='color:var(--muted); font-size:12.5px'> · {unvan}</span></div>"
+            f"<a href='hisse/{kod}.html' style='font-size:12.5px'>Hisse sayfası &rarr;</a>"
+            f"</div>{govde}</div>")
+    icerik = f"""
+<div class="hero">
+<h1>Şirket Haberleri</h1>
+<p>BIST 30 şirketlerinin son 7 gündeki şirket özelinde başlıkları; {haberli} şirkette haber bulundu. Kaynaklara tıklayarak orijinal habere gidebilirsiniz.</p>
+</div>
+{''.join(bolumler)}"""
+    return _sayfa("Şirket Haberleri", icerik, "sirkethaber",
+                  aciklama="BIST 30 şirketlerinin son 7 gündeki şirket haberleri ve KAP gelişmeleri.",
+                  yol="sirket-haberleri.html")
 
 
 def hisse_sayfalari_yaz(teknik_satirlar):
@@ -3560,11 +3677,13 @@ def hisse_sayfalari_yaz(teknik_satirlar):
                 haber_toplu += json.load(f)
     except Exception:
         pass
+    sirket_haber_map = _sirket_haberleri_yukle()
     for s in teknik_satirlar:
         kod = s["hisse"]
         haberler = [h for h in haber_toplu if kod.lower() in h.lower()]
         with open(os.path.join("hisse", f"{kod}.html"), "w", encoding="utf-8") as f:
-            f.write(build_hisse_html(kod, s, tarihler, veriler, haberler))
+            f.write(build_hisse_html(kod, s, tarihler, veriler, haberler,
+                                     sirket_haberleri=sirket_haber_map.get(kod, [])))
     kartlar = "".join(
         f'<a class="rcard" href="{s["hisse"]}.html"><span class="date">{s["hisse"]}</span>'
         f'<span class="sub">{s.get("genel", "")} &bull; {s.get("son", 0):,.2f} TL</span>'
@@ -3900,6 +4019,7 @@ def site_arama_json_yaz(rapor_dosyalari):
     sayfalar += [
         {"b": "Hisseler (BIST 30 detay sayfaları)", "u": "hisse/index.html",
          "t": "hisse detay sayfa fiyat teknik sinyal haber grafik sektör " + hisse_listesi},
+        {"b": "Şirket Haberleri", "u": "sirket-haberleri.html", "t": "şirket haberleri KAP gelişme açıklama basın son dakika BIST30 şirket özel "},
         {"b": "BIST Radyo (Podcast)", "u": "radyo/index.html",
          "t": "radyo podcast yayın dinle sesli bülten açılış öğle kapanış Ela Mert yapay zeka sunucu RSS abone mp3"},
         {"b": "Sinyal Karnesi (AL sinyalleri backtest)", "u": "sinyal-karnesi.html",
@@ -4124,10 +4244,24 @@ if __name__ == "__main__":
         style_css_yaz()
     except Exception:
         logger.exception("[CSS] style.css yazilamadi; sayfalar etkilenmez.")
+    # Sirket haberleri: hisse detay sayfalari + sirket-haberleri.html icin
+    # hisse sayfalarindan ONCE cekilir (~40sn; Google News RSS, anahtarsiz).
+    sirket_haber_map = {}
+    try:
+        _sirket_haberleri_cek(_sirket_profilleri())
+        sirket_haber_map = _sirket_haberleri_yukle()
+    except Exception:
+        logger.exception("[Sirket Haberi] cekilemedi; hisse sayfalari eski yontemle uretilir.")
+
     try:
         hisse_sayfalari_yaz(teknik_satirlar)
     except Exception:
         logger.exception("[Hisseler] sayfalar uretilemedi.")
+    try:
+        with open("sirket-haberleri.html", "w", encoding="utf-8") as f:
+            f.write(build_sirket_haberleri_html(sirket_haber_map, teknik_satirlar))
+    except Exception:
+        logger.exception("[Sirket Haberi] sayfa uretilemedi.")
     try:
         sinyal_karnesi_yaz(teknik_satirlar)
     except Exception:

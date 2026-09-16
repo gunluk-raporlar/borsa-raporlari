@@ -110,6 +110,11 @@
    "b": "BIST Radyo (Podcast)",
    "u": "radyo/index.html",
    "t": "radyo podcast yayın dinle sesli bülten açılış öğle kapanış Ela Mert yapay zeka sunucu RSS abone mp3"
+  },
+  {
+   "b": "Şirket Haberleri",
+   "u": "sirket-haberleri.html",
+   "t": "şirket haberleri KAP gelişme açıklama basın son dakika BIST30 şirket özel"
   }
  ]
 }

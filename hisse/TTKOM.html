@@ -20,7 +20,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="TTKOM — Hisse Analizi">
 <meta name="twitter:description" content="TTKOM (Telekom) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.">
-<meta name="twitter:image" content="https://borsa-raporlari.pages.devog-cover.png">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "TTKOM — Hisse Analizi", "description": "TTKOM (Telekom) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/TTKOM.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
@@ -30,7 +30,7 @@
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="../index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="../index.html">Raporlar</a><a href="../hisse/index.html" class="active">Hisseler</a><a href="../derin-analiz.html">Derin Analiz</a><a href="../teknik-analiz.html">Teknik Tarama</a><a href="../sinyal-karnesi.html">Sinyal Karnesi</a><a href="../borsapy-analiz.html">Borsapy Sinyal</a><a href="../haberler.html">Haberler</a><a href="../portfolio.html">Deneme Portföyü</a><a href="../haftasonu.html">Hafta Sonu</a><a href="../haftasonu-egitimi.html">Borsa Okulu</a><a href="../sozluk.html">Sözlük</a></nav>
+<nav><a href="../index.html">Raporlar</a><a href="../hisse/index.html" class="active">Hisseler</a><a href="../derin-analiz.html">Derin Analiz</a><a href="../teknik-analiz.html">Teknik Tarama</a><a href="../sinyal-karnesi.html">Sinyal Karnesi</a><a href="../borsapy-analiz.html">Borsapy Sinyal</a><a href="../haberler.html">Haberler</a><a href="../sirket-haberleri.html">Şirket Haberleri</a><a href="../portfolio.html">Deneme Portföyü</a><a href="../haftasonu.html">Hafta Sonu</a><a href="../haftasonu-egitimi.html">Borsa Okulu</a><a href="../sozluk.html">Sözlük</a></nav>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button>
 </div></header>
 
@@ -403,7 +403,14 @@ async function aiSor() {
 <span class="neg">-4.44% (günlük)</span>
 <span class='pos' style='font-weight:700'>+10.6% (2026-09-06'ten beri)</span></div>
 </div>
-<div class="card" style="margin-bottom:16px"><div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px"><strong style="font-size:14px">📊 TTKOM fiyat grafiği</strong><span style="color:var(--muted); font-size:12px">son 7 gün &bull; kapanış fiyatları</span></div><svg viewBox="0 0 520 90" class="chart" role="img" aria-label="TTKOM fiyat grafiği (son 7 gün)" style="max-width:520px"> <polyline fill="none" stroke="#047857" stroke-width="2.5" points="0.0,84.0 86.7,84.0 173.3,80.2 260.0,61.9 346.7,54.7 433.3,8.0 520.0,37.3" /></svg><div style="color:var(--muted); font-size:12px">2026-09-06 tarihinden bugüne TTKOM kapanış fiyatları (TL). Karşılaştırma grafiği değildir.</div></div>
+<div class="card" style="margin-bottom:16px">
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
+<strong style="font-size:14px">📊 TTKOM fiyat grafiği</strong>
+<span style="color:var(--muted); font-size:12px">son 7 gün &bull; kapanış fiyatları</span>
+</div>
+<svg viewBox="0 0 520 90" class="chart" role="img" aria-label="TTKOM fiyat grafiği (son 7 gün)" style="max-width:520px"> <polyline fill="none" stroke="#047857" stroke-width="2.5" points="0.0,84.0 86.7,84.0 173.3,80.2 260.0,61.9 346.7,54.7 433.3,8.0 520.0,37.3" /></svg>
+<div style="color:var(--muted); font-size:12px">2026-09-06 tarihinden bugüne TTKOM kapanış fiyatları (TL). Karşılaştırma grafiği değildir.</div>
+</div>
 
 <div class="card" style="margin:0 0 18px">
 <h3 style="margin:0 0 6px">🏢 Şirket Profili</h3>
@@ -417,7 +424,8 @@ async function aiSor() {
 <table style="font-size:13.5px"><tr><td>Genel</td><td><strong>SAT</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>BEKLE</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>BEKLE</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>SAT</strong></td></tr><tr><td>Wave Trend</td><td><strong>AL</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%79</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>-0.67</strong></td></tr><tr><td>Puan</td><td><strong>1</strong></td></tr></table>
 <p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a></p></div>
 <div class="card"><h3 style="margin:0 0 8px">Son 7 Gün Haberleri</h3>
-<ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='color:var(--muted)'>Son 7 günde bu hisseye dair başlık bulunamadı.</li></ul></div>
+<ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMilAFBVV95cUxOVDduT09oSlpMb0FlaFdQWFR6SjRoajFyRXZ1T3gwY2NfRVJIbXE2cUdfRkwxOE1HNkQxdFdxNXNnREpRV0dfQmd0NXFzWDJHTmV6SnIzS1Z2XzdjTFdTMmVVdEZpNmljTXRiV3pzUHprbzcyYnhqem5OT3JtOERHdlNEWkRDVjBaV2psT0xxc3JJSktE?oc=5' target='_blank' rel='noopener'>Türk Telekom teknolojisi geleceğin teminatı</a> <span style='color:var(--muted); font-size:12px'>&mdash; A Haber &middot; 14.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiswFBVV95cUxQVXFUTF9XRjctY0Jud0JSMWRkRmRDR2dpLVlmYXNBX0x2RW5YME9GYzRZbU1pTkhvaUZwajJlYVFYdUN3eTJOUm1TdE1yZVMzVUVNOHh5dXlrVl94eGhKcHpPVjJzd1B2cWk2NFZlWXdWaDIyenhscEhhRWVkVjE0b3hLYm1MaVRPMzdjTF8zalRwNmxNVUJQdExENndfcXl1eXdoUy1VblpTTVlxZ2o5STl6TQ?oc=5' target='_blank' rel='noopener'>Türk Telekom named digital transformation, tech supporter of COP31</a> <span style='color:var(--muted); font-size:12px'>&mdash; Daily Sabah &middot; 14.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiygFBVV95cUxOU3NHXzRvcS1OTE1fcnBfZXRPS0pCSUxmZm54WVA2U0llVHdIYndVTENSOVlvc1R2aDZHTV9VWkVtQmZ1eVpDdWlMdy1vbTY0SVRyakEzMmlKbGktLThlZmlwZmFfa01waXFKLTNnMzZBUXZxTlBRRVVpMmpZSVdFdWd4c2Q2RWdNZV9TaU9MQlNsdnltN3Q2Q25Sckt5c3VIWl9DNjZicXlKNGFpTlhuZWdhVk5hQjlMdmFBUDNQcnU2eG9HSkFOUlZ3?oc=5' target='_blank' rel='noopener'>Altı Üstü İstanbul dizisini Türk Telekom Fiber hızıyla izleyin!</a> <span style='color:var(--muted); font-size:12px'>&mdash; ATV &middot; 14.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMirAFBVV95cUxObXFFLWdoTFNzNm1OMzVieWlpN3NpVFlPRU1adV8ydmI3LU5iQVJZdHM3T0R2YnZ2aG9NUGdhUm9UUzBYT0FONHBISjlyci0tN0VQQVNGSk9YYVRuWVdaWU44Sk9yRktHbHRsSUI4WkVXSU1vVGdYeTZLVTJFU0ZZNEp6R0lERF9mYVhsZ19LVnNWWUkyVVE3M3FBQml4Vk9kdTVOOENvV1VWdFhF?oc=5' target='_blank' rel='noopener'>Türk Telekom'dan 2,5 milyar liralık azami fon tutarlı geri alım programı</a> <span style='color:var(--muted); font-size:12px'>&mdash; Bloomberght &middot; 14.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMilAFBVV95cUxOS0tBZDRvMktQcHhzMWt2ekhQQlY3ZGl4eTNlb21vdlh1YzdQdDJNX3BJWGh6OXJHOW96eXlXcHlMUmJHSHJyRl82a1IyblFOLXRTV3FIY3VGeUVldFJYZUV6eVVXQzBieV9UcE1acmhFb1p3VjNJU1E1UUVNV1dTVDBmcHRIQzdXRGFQWFhFNVFVVjJN?oc=5' target='_blank' rel='noopener'>Türk Telekom’da İki Elazığlı İsme Üst Düzey Görev</a> <span style='color:var(--muted); font-size:12px'>&mdash; Kanal23 &middot; 13.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMixgFBVV95cUxOOUJjVlJrUWRmNXJ1X0Q2Mm9nc1RCVk54akRNVnhqTnBWb2pqd2ZHcU90eV82N0VqSHRtMkVVaGJEUzZPT1laZ0dJYTVLM0NTMjFzZ0JlSnhka29Fb2wtemZsd0hWUnpmbC1GUjVDc2ZWWlBvblBjeW5TZlVGODdGZF9pMzZPcGNQYjl0b09XN1NhamQ5UktMSEplNHh6SmFmM3pnSGctSGxyVkx3dHJuOFJUMi1XWjJaQ3V2TmtpNlhaWnRydkE?oc=5' target='_blank' rel='noopener'>Türk Telekom Prime İstanbul Coffee Festival kahve ve müzik tutkunlarını bir araya getiriyor</a> <span style='color:var(--muted); font-size:12px'>&mdash; Türk Telekom Medya Merkezi &middot; 09.09</span></li></ul>
+<p style="margin:8px 0 0; font-size:12.5px"><a href="../sirket-haberleri.html#H-TTKOM">Tüm şirket haberleri &rarr;</a></p></div>
 </div>
 <div class="card" style="margin-top:14px">
 <h3 style="margin:0 0 8px">TTKOM konulu içerikler</h3>

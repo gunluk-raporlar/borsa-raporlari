@@ -260,6 +260,13 @@ def main():
 
     # 5b) Yeni bölümler: hisse sayfaları, sinyal karnesi, haberler, sözlük, takvim, podcast
     try:
+        bot._sirket_haberleri_cek(bot._sirket_profilleri())
+        with open("sirket-haberleri.html", "w", encoding="utf-8") as f:
+            f.write(bot.build_sirket_haberleri_html(bot._sirket_haberleri_yukle(), teknik_satirlar))
+        print("[OK] sirket-haberleri.html üretildi")
+    except Exception as e:
+        print(f"[ATLANDI] şirket haberleri: {e}")
+    try:
         bot.hisse_sayfalari_yaz(teknik_satirlar)
         print("[OK] hisse/ sayfaları üretildi")
     except Exception as e:
