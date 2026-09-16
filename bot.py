@@ -1338,6 +1338,26 @@ def portfolio_agent(state: AgentState):
 
 
 # ---------- DERIN ANALIZ (Z.ai GLM ile gunluk derin rapor) ----------
+def _derin_dongu_var(metin: str) -> bool:
+    """Uzun raporlarda paragraf/blok seviyesindeki tekrar dongusunu yakalar.
+
+    _looks_degenerate tablo-satiri ve art arda kisa-parca dongulerine
+    odaklidir; derin analizde gorulen bicim baskadir: model ayni fikri
+    birkac cumlelik blokla tekrar tekrar yazar (orn. ayni hisse analizi
+    7 kez). Bu yuzden burada hem cumle hem kayan-pencere tekrarina bakilir.
+    """
+    if not metin or len(metin) < 500:
+        return False
+    duz = re.sub(r"\s+", " ", metin).strip()
+    cumleler = [c.strip() for c in re.split(r"(?<=[.!?])\s+", duz) if len(c.strip()) > 80]
+    if cumleler and Counter(cumleler).most_common(1)[0][1] >= 3:
+        return True
+    pencereler = [duz[i:i + 60] for i in range(0, max(1, len(duz) - 60), 60)]
+    if pencereler and Counter(pencereler).most_common(1)[0][1] >= 3:
+        return True
+    return False
+
+
 def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
     """Kullanicinin Z.ai anahtariyla (ZAI_API_KEY secret) sayfada yayinlanan
     uzun ve derinlemesine gunluk analizi uretir; sonunda onerilen hisseler
@@ -1439,6 +1459,11 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
             )
             icerik = resp.choices[0].message.content or ""
             if icerik.strip():
+                if _derin_dongu_var(icerik):
+                    son_hata = "tekrar dongusu"
+                    logger.warning("[Derin Analiz] %s tekrar dongusune girdi; rapor yayinlanmayip siradaki model deneniyor.", mdl)
+                    time.sleep(3)
+                    continue
                 icerik = rapor_son_islem(icerik)
                 return _metin_dogrula_ve_kaydet(icerik, " / derin analiz")
             son_hata = "bos yanit"
@@ -2370,6 +2395,8 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     a_alt_his = ' class="active"' if aktif == "hisseler" else ""
     a_alt_p = ' class="active"' if aktif == "portfoy" else ""
     a_alt_hb = ' class="active"' if aktif == "haberler" else ""
+    a_tkv = ' class="active"' if aktif == "takvim" else ""
+    a_alt_tkv = ' class="active"' if aktif == "takvim" else ""
     tam_url = SITE_URL + (yol.lstrip("/") if yol else "")
     if not aciklama:
         aciklama = "Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi."
@@ -2415,7 +2442,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
-<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a></nav>
+<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a></nav>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button>
 </div></header>
 {_kendi_ticker(kok)}
@@ -2448,6 +2475,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <a href="{kok}hisse/index.html"{a_alt_his}><span class="i">🏦</span>Hisseler</a>
 <a href="{kok}portfolio.html"{a_alt_p}><span class="i">💼</span>Portföy</a>
 <a href="{kok}haberler.html"{a_alt_hb}><span class="i">📰</span>Haberler</a>
+<a href="{kok}takvim.html"{a_alt_tkv}><span class="i">📅</span>Takvim</a>
 </nav>
 
 <script>
