@@ -2740,14 +2740,23 @@ def sparkline_svg(history):
     veri_json = _json.dumps(veri, ensure_ascii=False)
 
     return f"""
-<div style="position:relative; height:340px;">
+<div class="pgrafik-sarmal">
+<div style="position:relative; height:340px; min-width:640px;">
 <canvas id="{grafik_id}"></canvas>
 </div>
+<p class="pgrafik-ipucu">↔ Grafiği sağa-sola kaydırabilirsiniz</p>
+</div>
+<style>
+.pgrafik-sarmal{{overflow-x:auto;-webkit-overflow-scrolling:touch}}
+.pgrafik-ipucu{{display:none;margin:6px 0 0;color:var(--muted);font-size:12px;text-align:center}}
+@media(max-width:700px){{.pgrafik-ipucu{{display:block}}}}
+</style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {{
 (function() {{
     var veri = {veri_json};
     var baslangiclar = veri.datasets.map(function(d) {{ return d.data[0]; }});
+    var mobil = window.matchMedia('(max-width: 700px)').matches;
     var ctx = document.getElementById('{grafik_id}').getContext('2d');
     new Chart(ctx, {{
         type: 'line',
@@ -2755,8 +2764,8 @@ document.addEventListener('DOMContentLoaded', function() {{
             labels: veri.labels,
             datasets: veri.datasets.map(function(d) {{
                 return Object.assign({{}}, d, {{
-                    borderWidth: 3,
-                    pointRadius: 2,
+                    borderWidth: mobil ? 2 : 3,
+                    pointRadius: mobil ? 0 : 2,
                     pointHitRadius: 14,
                     tension: 0.15,
                     fill: false,
@@ -2768,7 +2777,7 @@ document.addEventListener('DOMContentLoaded', function() {{
             maintainAspectRatio: false,
             interaction: {{ mode: 'nearest', intersect: false }},
             plugins: {{
-                legend: {{ position: 'top', labels: {{ boxWidth: 12, font: {{ size: 12, weight: '600' }} }} }},
+                legend: {{ position: 'top', labels: {{ boxWidth: mobil ? 10 : 12, padding: mobil ? 6 : 10, font: {{ size: mobil ? 11 : 12, weight: '600' }} }} }},
                 tooltip: {{
                     callbacks: {{
                         label: function(ctx2) {{
@@ -2784,8 +2793,8 @@ document.addEventListener('DOMContentLoaded', function() {{
                 }}
             }},
             scales: {{
-                y: {{ ticks: {{ callback: function(v) {{ return v.toLocaleString('tr-TR') + ' TL'; }} }} }},
-                x: {{ ticks: {{ maxRotation: 0, autoSkip: true, maxTicksLimit: 8 }} }}
+                y: {{ ticks: {{ callback: function(v) {{ return v.toLocaleString('tr-TR') + (mobil ? '' : ' TL'); }} }} }},
+                x: {{ ticks: {{ maxRotation: 0, autoSkip: true, maxTicksLimit: mobil ? 6 : 8 }} }}
             }}
         }}
     }});
