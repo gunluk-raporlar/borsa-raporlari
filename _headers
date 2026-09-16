@@ -1,0 +1,11 @@
+# Cloudflare Pages ozel basliklari: tum yanitlara temel guvenlik basliklari.
+# Not: Site inline scriptler, Puter.js ve TradingView widget'lari kullandigi
+# icin CSP'yi 'unsafe-inline' iceren gevsek bir seviyede tutuyoruz; yine de
+# bilinmeyen dis kaynaklari kisitlar.
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; img-src 'self' https: data: blob:; connect-src 'self' https: wss:; font-src 'self' https: data:; frame-src 'self' https:; object-src 'none'; base-uri 'self'
