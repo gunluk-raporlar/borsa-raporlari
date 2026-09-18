@@ -5,19 +5,19 @@
   "sure_sn": 4.5,
   "son_guncelleme": "2026-09-17T05:47:03+03:00"
  },
- "guncelleme": "2026-09-17T05:47:03+03:00",
+ "guncelleme": "2026-09-18T08:18:01+03:00",
  "llm": {
   "adet": 2,
-  "ortalama_sn": 85.327,
-  "p95_sn": 3.919,
-  "maks_sn": 166.734,
+  "ortalama_sn": 42.017,
+  "p95_sn": 4.205,
+  "maks_sn": 79.829,
   "basari_orani": 1.0,
-  "son_guncelleme": "2026-09-17T08:26:00+03:00"
+  "son_guncelleme": "2026-09-18T08:18:01+03:00"
  },
  "dogrulama": {
   "isim": 0,
-  "enflasyon": 0,
+  "enflasyon": 1,
   "toplam_metin": 2,
-  "son_guncelleme": "2026-09-17T08:26:00+03:00"
+  "son_guncelleme": "2026-09-18T08:18:01+03:00"
  }
 }
