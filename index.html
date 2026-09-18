@@ -432,7 +432,7 @@ function arsivAc(btn) {
 <p style="margin:10px 0 0"><a href="haftasonu-egitimi.html">Borsa Okulu sayfası &rarr;</a></p>
 
 <h2 class="section-title">Teknik Taramada Öne Çıkanlar</h2>
-<div class="grid"><a class="rcard" href="teknik-analiz.html"><span class="date">TUPRS</span><span class="sub">AL &bull; 414.75 TL &bull; kanal %18 &bull; r=0.97</span></a></div>
+<div class="grid"><a class="rcard" href="teknik-analiz.html"><span class="date">TUPRS</span><span class="sub">AL &bull; 415.00 TL &bull; kanal %18 &bull; r=0.97</span></a></div>
 <p style="margin:10px 0 0"><a href="teknik-analiz.html">Tüm teknik tarama tablosu &rarr;</a></p>
 
 <h2 class="section-title">Deneme Portföyü</h2>
@@ -446,7 +446,7 @@ function arsivAc(btn) {
 <div class="card" style="margin-bottom:14px">
 <div class="pgrafik-sarmal">
 <div style="position:relative; height:340px; min-width:640px;">
-<canvas id="portfoy-grafik-220505"></canvas>
+<canvas id="portfoy-grafik-464495"></canvas>
 </div>
 <p class="pgrafik-ipucu">↔ Grafiği sağa-sola kaydırabilirsiniz</p>
 </div>
@@ -461,7 +461,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27, 105135.98, 105721.9, 105320.34, 106949.37, 105257.55, 102312.18, 97523.7, 99889.37], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100819.58, 100415.39, 101224.05, 100055.94, 99407.07, 98829.8, 98312.05, 98717.83, 100482.02], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100459.02, 100476.65, 100522.88, 100761.11, 100778.93, 100828.28, 100675.68, 100892.96, 101024.82], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73, 100370.32, 100494.06, 100617.96, 100990.57, 101115.08, 101239.74, 101364.56, 101489.53], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}, {"label": "BIST 100 Endeksi", "data": [100000.0, 100000.0, 99549.87, 101792.45, 102500.71, 101711.89, 102230.56, 100595.27, 98167.77, 92728.66, 95464.61], "borderColor": "#7c3aed", "backgroundColor": "#7c3aed", "borderDash": [2, 2]}, {"label": "BIST 30 Endeksi", "data": [100000.0, 100000.0, 102229.74, 103039.21, 102174.27, 103088.58, 101680.09, 99488.48, 99488.48, 93935.57, 97843.06], "borderColor": "#e11d48", "backgroundColor": "#e11d48", "borderDash": [2, 2]}, {"label": "Enflasyon (TÜİK yıllık %31.5, 2026-09-03)", "data": [100000.0, 100075.07, 100150.2, 100225.39, 100300.63, 100375.93, 100602.16, 100677.69, 100753.27, 100828.91, 100904.6], "borderColor": "#c026d3", "backgroundColor": "#c026d3", "borderDash": [4, 3]}]};
     var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
     var mobil = window.matchMedia('(max-width: 700px)').matches;
-    var ctx = document.getElementById('portfoy-grafik-220505').getContext('2d');
+    var ctx = document.getElementById('portfoy-grafik-464495').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
