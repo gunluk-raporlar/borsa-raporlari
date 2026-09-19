@@ -4010,6 +4010,8 @@ def hisse_sayfalari_yaz(teknik_satirlar):
 <h1>BIST 30 Hisseleri</h1>
 <p>Her hisse için güncel fiyat, teknik sinyal durumu, fiyat grafiği ve son 7 günün haberleri.</p>
 </div>
+<div id="isi-haritasi"></div>
+<script src="isi-haritasi.js?v=3" defer></script>
 <h2 class="section-title">Hisse Kartları</h2>
 <div class="grid">{kartlar}</div>"""
     # DİKKAT: bu sayfa hisse/ alt klasorunde — kok="../" olmazsa CSS ve

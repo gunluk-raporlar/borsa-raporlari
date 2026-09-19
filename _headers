@@ -16,6 +16,8 @@
   Cache-Control: public, max-age=60
 /ticker.json
   Cache-Control: public, max-age=60
+/hisse/isi-haritasi.js
+  Cache-Control: public, max-age=300
 /style.css
   Cache-Control: public, max-age=86400
 /og-cover.png
