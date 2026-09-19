@@ -34,7 +34,7 @@
     ".isi-legend-bar{flex:1;max-width:240px;height:8px;border-radius:4px;border:1px solid var(--line);",
     "background:linear-gradient(90deg,#7f1d1d,#dc2626,#fecaca,#f8fafc,#d1fae5,#34d399,#047857)}",
     ".isi-treemap{position:relative;width:100%;height:clamp(340px,52vw,470px);border-radius:10px;overflow:hidden;background:var(--bg);border:1px solid var(--line)}",
-    ".isi-kare{position:absolute;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:3px 7px;text-decoration:none;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);transition:filter .12s}",
+    ".isi-kare{position:absolute;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:3px 7px;text-decoration:none;overflow:hidden;white-space:nowrap;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);transition:filter .12s}",
     ".isi-kare:hover{filter:brightness(1.09);z-index:2;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}",
     ".isi-kod{font-weight:700;letter-spacing:.3px;line-height:1.15}",
     ".isi-yuzde{line-height:1.2;opacity:.95}",
@@ -218,7 +218,9 @@
     var mcapVar = hisseler.some(function (h) { return typeof h.m === "number" && h.m > 0; });
 
     var items = hisseler.map(function (h) {
-      return { a: (mcapVar && typeof h.m === "number" && h.m > 0) ? h.m : 1, h: h };
+      // Piyasa degerini 0.6. kuvvetle olcekle: dev hisseler haritayi tumuyle
+      // isgal etmesin, kucuk hisselerin etiketi okunur kalsin.
+      return { a: (mcapVar && typeof h.m === "number" && h.m > 0) ? Math.pow(h.m, 0.6) : 1, h: h };
     });
     if (mcapVar) items.sort(function (a, b) { return b.a - a.a; });
     else items.sort(function (a, b) { return a.h.h < b.h.h ? -1 : 1; });
