@@ -80,8 +80,8 @@
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
     <div class="site-widgets">
         <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <span id="current-date-time">Yükleniyor...</span>
-            <span id="istanbul-weather">İstanbul Hava Durumu...</span>
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
         </div>
 
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
@@ -97,12 +97,12 @@
 
 <div id="bist-radyo" style="display:none; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; min-width:250px; max-width:330px;" oncontextmenu="return false;">
   <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-    <strong style="font-size:13px; color:#0f172a;">BIST Radyo</strong>
+    <strong style="font-size:13px; color:#0f172a;">📻 BIST Radyo</strong>
     <span style="background:#f0fdfa; color:#0f766e; border:1px solid #99f6e4; border-radius:999px; padding:1px 8px; font-size:11px;">AI sunucular</span>
   </div>
   <audio id="radyo-audio" controls preload="none" controlslist="nodownload noremoteplayback" style="width:100%; height:34px;" oncontextmenu="return false;"></audio>
   <div id="radyo-liste" style="margin-top:6px; font-size:12.5px; color:#475569;"></div>
-  <div style="margin-top:4px; font-size:11px;"><a href="../radyo/index.html">Tüm yayınlar &amp; Podcast sayfası</a> • <a href="../radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
+  <div style="margin-top:4px; font-size:11px;"><a href="../radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> • <a href="../radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
   <div style="margin-top:4px; color:#94a3b8; font-size:11px;">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
 </div>
 <script>
@@ -260,7 +260,7 @@
 
 <div id="ai-panel" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; font-size: 14px; line-height: 1.6;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-        <strong style="color: #0f766e;">BIST AI Asistan</strong>
+        <strong style="color: #0f766e;">🤖 BIST AI Asistan</strong>
         <a href="javascript:void(0)" onclick="document.getElementById('ai-panel').style.display='none'" style="color: #64748b; text-decoration: none; font-size: 18px; line-height: 1;">×</a>
     </div>
     <div id="ai-answer"></div>
@@ -329,12 +329,12 @@ async function aiSor() {
 <h1>KCHOL <span style="font-size:16px; color:var(--muted)">Holding</span></h1>
 <div class="meta"><span class="badge">NÖTR</span>
 <span><strong>220.60 TL</strong></span>
-<span class="pos">2.75% (günlük)</span>
-<span class='neg' style='font-weight:700'>0.2% (2026-09-05'ten beri)</span></div>
+<span class="pos">+2.75% (günlük)</span>
+<span class='neg' style='font-weight:700'>-0.2% (2026-09-05'ten beri)</span></div>
 </div>
 <div class="card" style="margin-bottom:16px">
 <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
-<strong style="font-size:14px">KCHOL fiyat grafiği</strong>
+<strong style="font-size:14px">📊 KCHOL fiyat grafiği</strong>
 <span style="color:var(--muted); font-size:12px">son 11 gün • kapanış fiyatları</span>
 </div>
 <svg viewBox="0 0 520 90" class="chart" role="img" aria-label="KCHOL fiyat grafiği (son 11 gün)" style="max-width:520px"> <polyline fill="none" stroke="#b91c1c" stroke-width="2.5" points="0.0,49.6 52.0,49.6 104.0,31.2 156.0,10.8 208.0,12.8 260.0,8.0 312.0,8.0 364.0,34.8 416.0,84.0 468.0,35.2 520.0,51.2" /></svg>
@@ -342,7 +342,7 @@ async function aiSor() {
 </div>
 
 <div class="card" style="margin:0 0 18px">
-<h3 style="margin:0 0 6px">Şirket Profili</h3>
+<h3 style="margin:0 0 6px">🏢 Şirket Profili</h3>
 <div style="font-weight:700; margin-bottom:4px">Koç Holding</div>
 <div class="meta" style="margin:0 0 8px"><span>Kuruluş: <strong>06.12,1963</strong></span><span>Ana ortak: <strong>Koç ailesi</strong></span><span>Ödenmiş sermaye: <strong>2,536,000,000 TL</strong> (2026/6)</span></div>
 <p style="margin:0; font-size:14px">Türkiye'nin en büyük sanayi ve hizmet grubu; enerji, dayanıklı tüketim, otomotiv, finans ve turizm başlıklarında işletmeler.</p>
@@ -361,12 +361,12 @@ async function aiSor() {
 <table style="font-size:13.5px"><tr><td>Genel</td><td><strong>NÖTR</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>BEKLE</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>AL</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>AL</strong></td></tr><tr><td>Wave Trend</td><td><strong>SAT</strong></td></tr><tr><td>Kanal konumu</td><td><strong>3%8</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>0.90</strong></td></tr><tr><td>Puan</td><td><strong>2</strong></td></tr></table>
 <p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Technical Scan</a></p></div>
 <div class="card"><h3 style="margin:0 0 8px">Son 7 Gün Haberleri</h3>
-<ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMixAFBVV95cUxOSEs3NXFtRWJFYlFxX08yMVFteXZJVG16WGF4M3dMbTVDc1J3WXkxUjFFdjh3SmlVUUlkbC1xNm1WUkRDbF81UmstX2hHSHpmSnNXSHpmWFhFdERXVWR1bmZGN1VnaFdsSk5vUWxQeWlpTzB6VzI5cC1ia3FZbEp4ekotRENGSThZVzV6QlI2S0lIaFRnUE9rUTBkU0RkSl96dzhpajdjODVaQjlCWTA4U1BiUnFIX2VFSUtGdi1zX3JYeG5o?oc=5' target='_blank' rel='noopener'>InvestingPro Koç Holding’in 2024’teki 4%3’lük kazancını nasıl tespit etti</a> <span style='color:var(--muted); font-size:12px'>Investing.com Türkiye · 19.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiiwFBVV95cUxQQ0NQRVRjWk55dTBkdHdSVWZpTHNGMUtXeHNVaWx3N3FMVDFBcHU3VjRRXzRKRkRyUUl4Tkd4blY1cXBBZ0RKUWR3bGdaaXVQc2JvLU8zdDlsRlc1cWp0NHl0aG95S0NGTnYxVDJlUXJLRmVmX2l6cnNuZ0lDMFp6bnJwZkZBUDdGM01j?oc=5' target='_blank' rel='noopener'>Koç Holding’de şampiyonluk gururu...</a> <span style='color:var(--muted); font-size:12px'>HT Kulüp · 19.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiwwFBVV95cUxQUEVLRndRbVBtbFdCQXJzeHg2cDAwajFGcldNWmdRTndyaHhXVzRidFlIYUlueUJnUW1FWF95eTBnVzJLdTZGQzloclgzWTFDaW9fRnBuYTdPejhKMkFWTDRqVUppOWJSSjl6eGdFVm9GSWUtQXVSdXdVWWhXWWtoT0IyT2k2UGxPQnJnUWRPSlBsckJscWFFdjFMcFNWZDFsT0tTcmtOeXd2c1dYb3BsNVdab2VZZFAtbFF6RUpDWm1TN3M?oc=5' target='_blank' rel='noopener'>MEB ve Koç Holding’den dev iş birliği: 5.2 milyon ortaokul öğrencisine yapay zeka eğitimi</a> <span style='color:var(--muted); font-size:12px'>turkiyedeisdunyasi.com · 17.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMigwFBVV95cUxPOUxKaGtRcmpXY1NFNFpHOTg4cWZMV0d2bFo4LWlseko4RlhGSXJNNFU4SHMxWmNkcFdDdzI5QzRZZWk0ZWlYZXAtZE00NEhaYW1sMXRaQ3BhYlp6cGFzWnNVV2JZRFhVN2FoSXhldnRNWmN0ZFoyWl9NQ09pQ2VmamFWcw?oc=5' target='_blank' rel='noopener'>MEB ve Koç Holding’den yapay zeka eğitim programı</a> <span style='color:var(--muted); font-size:12px'>Manşet Haber · 17.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiqwFBVV95cUxQbzFWaDMwNmdjZEZITUZKNUs1Q2VnTEtRVm0wQU1WNzNNOFdFeVVGQW5ucjNna2JZZ1JQemQxNTBZR1h1UnF0VmhlRkZNeFJnbmF1Nm5Ib3B5WjBOOVJyR0tIa1h0TzI2NTNVLWhBNjNvc0c0cnd6NmxZSnBCdWJrTFY0WWozbFNnX0xkSTFLQmctUDlqcjVjVTl1N290QWVvTzZqWlZZLUNKNXc?oc=5' target='_blank' rel='noopener'>ORTAOKUL ÖĞRENCİLERİ İÇİN YAPAY ZEKÂ EĞİTİM PROGRAMI HAYATA GEÇİRİLDİ</a> <span style='color:var(--muted); font-size:12px'>MEB · 17.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMinAFBVV95cUxQMThUa3NOZFFKeElVNjZCcnlSbTFyMkFEZ2hLaGJRaGNhdVJDNE53VzBvQUt0QThJMjZQWmVVcGwzYldNbjRiS0Y2MWpNWWhIRmxjMEZWSzhNUHdmR21GSWVWMzdJbDd1NXIybnl2SjN4eVpZV3F5WjJEY1ppekxDV3dRUHlGV3l1Z1A5em9vbnA4YVc2bkF0T0xBQ0o?oc=5' target='_blank' rel='noopener'>Koç Holding'i liste başı yapan gelir: 1.69 trilyon TL haberi</a> <span style='color:var(--muted); font-size:12px'>borsaningundemi.com · 16.09</span></li></ul>
+<ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMixAFBVV95cUxOSEs3NXFtRWJFYlFxX08yMVFteXZJVG16WGF4M3dMbTVDc1J3WXkxUjFFdjh3SmlVUUlkbC1xNm1WUkRDbF81UmstX2hHSHpmSnNXSHpmWFhFdERXVWR1bmZGN1VnaFdsSk5vUWxQeWlpTzB6VzI5cC1ia3FZbEp4ekotRENGSThZVzV6QlI2S0lIaFRnUE9rUTBkU0RkSl96dzhpajdjODVaQjlCWTA4U1BiUnFIX2VFSUtGdi1zX3JYeG5o?oc=5' target='_blank' rel='noopener'>InvestingPro Koç Holding’in 2024’teki 4%3’lük kazancını nasıl tespit etti</a> <span style='color:var(--muted); font-size:12px'>— Investing.com Türkiye · 19.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiiwFBVV95cUxQQ0NQRVRjWk55dTBkdHdSVWZpTHNGMUtXeHNVaWx3N3FMVDFBcHU3VjRRXzRKRkRyUUl4Tkd4blY1cXBBZ0RKUWR3bGdaaXVQc2JvLU8zdDlsRlc1cWp0NHl0aG95S0NGTnYxVDJlUXJLRmVmX2l6cnNuZ0lDMFp6bnJwZkZBUDdGM01j?oc=5' target='_blank' rel='noopener'>Koç Holding’de şampiyonluk gururu...</a> <span style='color:var(--muted); font-size:12px'>— HT Kulüp · 19.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiwwFBVV95cUxQUEVLRndRbVBtbFdCQXJzeHg2cDAwajFGcldNWmdRTndyaHhXVzRidFlIYUlueUJnUW1FWF95eTBnVzJLdTZGQzloclgzWTFDaW9fRnBuYTdPejhKMkFWTDRqVUppOWJSSjl6eGdFVm9GSWUtQXVSdXdVWWhXWWtoT0IyT2k2UGxPQnJnUWRPSlBsckJscWFFdjFMcFNWZDFsT0tTcmtOeXd2c1dYb3BsNVdab2VZZFAtbFF6RUpDWm1TN3M?oc=5' target='_blank' rel='noopener'>MEB ve Koç Holding’den dev iş birliği: 5.2 milyon ortaokul öğrencisine yapay zeka eğitimi</a> <span style='color:var(--muted); font-size:12px'>— turkiyedeisdunyasi.com · 17.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMigwFBVV95cUxPOUxKaGtRcmpXY1NFNFpHOTg4cWZMV0d2bFo4LWlseko4RlhGSXJNNFU4SHMxWmNkcFdDdzI5QzRZZWk0ZWlYZXAtZE00NEhaYW1sMXRaQ3BhYlp6cGFzWnNVV2JZRFhVN2FoSXhldnRNWmN0ZFoyWl9NQ09pQ2VmamFWcw?oc=5' target='_blank' rel='noopener'>MEB ve Koç Holding’den yapay zeka eğitim programı</a> <span style='color:var(--muted); font-size:12px'>— Manşet Haber · 17.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiqwFBVV95cUxQbzFWaDMwNmdjZEZITUZKNUs1Q2VnTEtRVm0wQU1WNzNNOFdFeVVGQW5ucjNna2JZZ1JQemQxNTBZR1h1UnF0VmhlRkZNeFJnbmF1Nm5Ib3B5WjBOOVJyR0tIa1h0TzI2NTNVLWhBNjNvc0c0cnd6NmxZSnBCdWJrTFY0WWozbFNnX0xkSTFLQmctUDlqcjVjVTl1N290QWVvTzZqWlZZLUNKNXc?oc=5' target='_blank' rel='noopener'>ORTAOKUL ÖĞRENCİLERİ İÇİN YAPAY ZEKÂ EĞİTİM PROGRAMI HAYATA GEÇİRİLDİ</a> <span style='color:var(--muted); font-size:12px'>— MEB · 17.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMinAFBVV95cUxQMThUa3NOZFFKeElVNjZCcnlSbTFyMkFEZ2hLaGJRaGNhdVJDNE53VzBvQUt0QThJMjZQWmVVcGwzYldNbjRiS0Y2MWpNWWhIRmxjMEZWSzhNUHdmR21GSWVWMzdJbDd1NXIybnl2SjN4eVpZV3F5WjJEY1ppekxDV3dRUHlGV3l1Z1A5em9vbnA4YVc2bkF0T0xBQ0o?oc=5' target='_blank' rel='noopener'>Koç Holding'i liste başı yapan gelir: 1.69 trilyon TL haberi</a> <span style='color:var(--muted); font-size:12px'>— borsaningundemi.com · 16.09</span></li></ul>
 <p style="margin:8px 0 0; font-size:12.5px"><a href="../sirket-haberleri.html#H-KCHOL">Tüm şirket haberleri →</a></p></div>
 </div>
 <div class="card" style="margin-top:14px">
 <h3 style="margin:0 0 8px">KCHOL konulu içerikler</h3>
-<p style="margin:0"><a href="https://borsa-raporlari-web.pages.dev/ara?q=KCHOL" target="_blank" rel="noopener">Semantik aramada "KCHOL" geçen tüm rapor bölümleri →</a></p>
+<p style="margin:0"><a href="https://borsa-raporlari-web.pages.dev/ara?q=KCHOL" target="_blank" rel="noopener">🔍 Semantik aramada "KCHOL" geçen tüm rapor bölümleri →</a></p>
 <p style="margin:6px 0 0"><a href="../index.html">Günlük rapor arşivi →</a></p>
 </div>
 </main>

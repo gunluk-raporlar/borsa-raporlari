@@ -76,8 +76,8 @@
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
     <div class="site-widgets">
         <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <span id="current-date-time">Yükleniyor...</span>
-            <span id="istanbul-weather">İstanbul Hava Durumu...</span>
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
         </div>
 
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
@@ -93,12 +93,12 @@
 
 <div id="bist-radyo" style="display:none; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; min-width:250px; max-width:330px;" oncontextmenu="return false;">
   <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-    <strong style="font-size:13px; color:#0f172a;">BIST Radyo</strong>
+    <strong style="font-size:13px; color:#0f172a;">📻 BIST Radyo</strong>
     <span style="background:#f0fdfa; color:#0f766e; border:1px solid #99f6e4; border-radius:999px; padding:1px 8px; font-size:11px;">AI sunucular</span>
   </div>
   <audio id="radyo-audio" controls preload="none" controlslist="nodownload noremoteplayback" style="width:100%; height:34px;" oncontextmenu="return false;"></audio>
   <div id="radyo-liste" style="margin-top:6px; font-size:12.5px; color:#475569;"></div>
-  <div style="margin-top:4px; font-size:11px;"><a href="../radyo/index.html">Tüm yayınlar &amp; Podcast sayfası</a> • <a href="../radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
+  <div style="margin-top:4px; font-size:11px;"><a href="../radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> • <a href="../radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
   <div style="margin-top:4px; color:#94a3b8; font-size:11px;">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
 </div>
 <script>
@@ -256,7 +256,7 @@
 
 <div id="ai-panel" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; font-size: 14px; line-height: 1.6;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-        <strong style="color: #0f766e;">BIST AI Asistan</strong>
+        <strong style="color: #0f766e;">🤖 BIST AI Asistan</strong>
         <a href="javascript:void(0)" onclick="document.getElementById('ai-panel').style.display='none'" style="color: #64748b; text-decoration: none; font-size: 18px; line-height: 1;">×</a>
     </div>
     <div id="ai-answer"></div>
@@ -324,7 +324,7 @@ async function aiSor() {
 <div class="hero">
 <h1>Günlük Piyasa Raporu</h1>
 <div class="meta"><span class="badge">2026-09-15</span><span>BIST 30 • Yapay zeka destekli günlük analiz</span>
-<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">Sesli Oku</button>
+<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button>
 <span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px"><a class="paylas" href="https://twitter.com/intent/tweet?text=G%C3%BCnl%C3%BCk+Piyasa+Raporu+2026-09-15&url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-15.html" target="_blank" rel="noopener" title="X'te paylaş">𝕏</a><a class="paylas" href="https://t.me/share/url?url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-15.html&text=G%C3%BCnl%C3%BCk+Piyasa+Raporu+2026-09-15" target="_blank" rel="noopener" title="Telegram'da paylaş">✈</a><a class="paylas" href="https://wa.me/?text=G%C3%BCnl%C3%BCk+Piyasa+Raporu+2026-09-15%20https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-15.html" target="_blank" rel="noopener" title="WhatsApp'ta paylaş">💬</a><a class="paylas" href="javascript:void(0)" title="Bağlantıyı kopyala" onclick="if(navigator.clipboard){navigator.clipboard.writeText('https://borsa-raporlari.pages.dev/de/reports/2026-09-15.html');this.textContent='✓';}">🔗</a></span></div>
 </div>
 
@@ -338,12 +338,12 @@ async function aiSor() {
 </div>
 
 <div class="card" style="margin:0 0 18px; padding:8px 14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-  <strong style="font-size:13px; white-space:nowrap">Sesli bülten</strong>
+  <strong style="font-size:13px; white-space:nowrap">🔊 Sesli bülten</strong>
   <audio controls preload="none" src="https://borsa-raporlari.pages.dev/reports/2026-09-15.mp3" style="flex:1; min-width:220px; height:34px;"></audio>
 </div>
 
 <div class="pano">
-<div class="pano-baslik">Günün Panosu — BIST 30</div>
+<div class="pano-baslik">📊 Günün Panosu — BIST 30</div>
 <div class="pano-veri">
   <div class="pano-hucre"><div class="pano-etiket">BIST 30 Sepeti</div><div class="pano-deger neg">-3.22%</div></div>
   <div class="pano-hucre"><div class="pano-etiket">Yükselen / Düşen</div><div class="pano-deger">2 / 28</div></div>
@@ -352,10 +352,10 @@ async function aiSor() {
   <div class="pano-hucre"><div class="pano-etiket">Sinyal (AL / SAT)</div><div class="pano-deger">3 / 20</div></div>
 </div>
 <div class="pano-man">
-<div><span class="pos">En çok yükselenler:</span> <b>DSTKF</b> +3.65% • <b>ASELS</b> +1.14% • <b>AKBNK</b> -0.21%</div>
-<div><span class="neg">En çok düşenler:</span> <b>YKBNK</b> -5.35% • <b>VAKBN</b> -5.20% • <b>TOASO</b> -5.17%</div>
-<div>Sinyal dağılımı: GÜÇLÜ AL 0 · AL 3 · NÖTR 7 · SAT 8 · GÜÇLÜ SAT 12</div>
-<div>Sektör ortalamaları: Finans (Diğer) <span class='pos'>+3.65%</span>Savunma <span class='pos'>+1.14%</span>Metal &amp; Madencilik <span class='neg'>-2.11%</span>Cam &amp; Seramik <span class='neg'>-2.57%</span>Enerji &amp; Petrokimya <span class='neg'>-3.00%</span>Gıda &amp; İçecek <span class='neg'>-3.30%</span>Sanayi (Diğer) <span class='neg'>-3.44%</span>Gayrimenkul <span class='neg'>-3.55%</span>Telekom <span class='neg'>-3.69%</span>Bankacılık <span class='neg'>-3.76%</span>Perakende <span class='neg'>-3.88%</span>Holding <span class='neg'>-3.94%</span>Kimya &amp; Gübre <span class='neg'>-4.23%</span>Havacılık &amp; Ulaştırma <span class='neg'>-4.27%</span>Otomotiv <span class='neg'>-4.63%</span></div>
+<div><span class="pos">▲ En çok yükselenler:</span> <b>DSTKF</b> +3.65% • <b>ASELS</b> +1.14% • <b>AKBNK</b> -0.21%</div>
+<div><span class="neg">▼ En çok düşenler:</span> <b>YKBNK</b> -5.35% • <b>VAKBN</b> -5.20% • <b>TOASO</b> -5.17%</div>
+<div>📣 Sinyal dağılımı: GÜÇLÜ AL 0 · AL 3 · NÖTR 7 · SAT 8 · GÜÇLÜ SAT 12</div>
+<div>🏷️ Sektör ortalamaları: Finans (Diğer) <span class='pos'>+3.65%</span> • Savunma <span class='pos'>+1.14%</span> • Metal &amp; Madencilik <span class='neg'>-2.11%</span> • Cam &amp; Seramik <span class='neg'>-2.57%</span> • Enerji &amp; Petrokimya <span class='neg'>-3.00%</span> • Gıda &amp; İçecek <span class='neg'>-3.30%</span> • Sanayi (Diğer) <span class='neg'>-3.44%</span> • Gayrimenkul <span class='neg'>-3.55%</span> • Telekom <span class='neg'>-3.69%</span> • Bankacılık <span class='neg'>-3.76%</span> • Perakende <span class='neg'>-3.88%</span> • Holding <span class='neg'>-3.94%</span> • Kimya &amp; Gübre <span class='neg'>-4.23%</span> • Havacılık &amp; Ulaştırma <span class='neg'>-4.27%</span> • Otomotiv <span class='neg'>-4.63%</span></div>
 </div>
 <div class="tbl-wrap">
 <table class="pano-tablo">
@@ -398,7 +398,7 @@ async function aiSor() {
 </div>
 
 <div class="pano">
-<div class="pano-baslik">Günlük Ajanda — Ekonomik Veri Duyuruları</div>
+<div class="pano-baslik">📅 Günlük Ajanda — Ekonomik Veri Duyuruları</div>
 <div class="tbl-wrap">
 <table class="pano-tablo">
 <thead><tr><th>Saat</th><th>Ülke</th><th>Olay</th><th style="text-align:right">Tahmin</th><th style="text-align:right">Önceki</th></tr></thead>
@@ -407,7 +407,7 @@ async function aiSor() {
 </tbody>
 </table>
 </div>
-<p class="pano-not">yüksek etkili veri. Kaynak: TradingView ekonomik takvimi; saatler TR zamanıdır. <a href="../takvim.html">Ekonomik Takvim Rehberi →</a></p>
+<p class="pano-not">🔴 = yüksek etkili veri. Kaynak: TradingView ekonomik takvimi; saatler TR zamanıdır. <a href="../takvim.html">Ekonomik Takvim Rehberi →</a></p>
 </div>
 <article class="report" id="rapor-govde"><h2>1. Yönetici Özeti ve Piyasa Genel Bakışı</h2>
 <p>Gün, BIST 30 endeksinin kritik bir direnç bandı olan 4,200-4,250 seviyesinde "soluklanma" ve konsolidasyon içinde geçtiği bir dönüm noktası olarak değerlendirilmelidir. Endeks, bu bölgenin üzerinde kalıcı bir toparlanma için net bir trend dönüşüm sinyali vermemekte, bu seviyenin altında kaldığı sürece ise aşağı yönlü baskının devam etme riski mevcuttur. Bu durum, piyasanın temkinli ve seçici bir duruş sergilemesine neden olmaktadır. Önceki analizlerde öne çıkan "güvenli liman" olarak tanımlanan perakende ve enerji sektörlerine dayalı hisse senetleri, portföy performansını destekleyen ana unsurlar olmaya devam etmektedir. Özellikle KCHOL ve BIMAS, endekse karşı pozitif ayrışma sergileyerek portföyümüzde çapa görevi görmektedir. Ancak, jeopolitik risklerin (İran-Orta Doğu gerilimi) ve enerji fiyatlarındaki dalgalanmaların (doğal gaz fiyatları 71 €/MWh üzerinde) sürmesi, özellikle enerji yoğun ve jeopolitik risklere açık sektörler üzerinde baskı unsuru olmaya devam etmektedir. ABD Merkez Bankası (Fed) Eylül faiz kararına ilişkin belirsizlik ve küresel resesyon endişeleri, risk iştahını azaltmakta ve sermayenin daha güvenli varlıklara akmasına neden olmaktadır. Bu ortamda, fon yönetiminin temel perspektifi, yüksek nakit oranı ile riskten korunmayı ön planda tutarken, teknik ve temel dayanıklılığı güçlü olan seçili hisselerde kontrollü pozisyonlar oluşturmaya devam etmektir. Piyasa, bir yandan Fed'in faiz kararını beklerken diğer yandan jeopolitik risklerin yarattığı oynaklığa karşı hazırlıklı olmalıdır.</p>
@@ -418,31 +418,31 @@ async function aiSor() {
 <p><strong>En Çok Ayrışan ve Güçlü Al Sinyali Veren Hisseler:</strong></p>
 <ul>
 <li>
-<p><strong>TUPRS (Enerji &amp; Petrokimya):</strong>Hisse, son 415.75 TL seviyesinde günlük +0%.54'lük bir artışla işlem görmektedir. 60 günlük getirisi 8%3.2 ile dikkat çekmektedir. Kısa, orta ve uzun vadeli tüm zaman periyotlarında "AL" sinyali veren TUPRS, Wilder Trend (WT) göstergesi de "AL" konumundadır. Pearson korelasyon katsayısı (r=0.97) ile endekse karşı inanılmaz bir pozitif korelasyon sergilemekte ve kanal içinde 3%1'lik bir konumla yükseliş potansiyelini korumaktadır. TradingView osilatörleri de bu görüşü desteklemektedir; RSI 70.55 (aşırı alım bölgesi), MACD yukarı yönlü kesişme ve StochK 86.43 ile güçlü bir alım momentumu işaret etmektedir. Genel sinyali "GÜÇLÜ AL" olarak değerlendirilmektedir.</p>
+<p><strong>TUPRS (Enerji &amp; Petrokimya):</strong> Hisse, son 415.75 TL seviyesinde günlük +0%.54'lük bir artışla işlem görmektedir. 60 günlük getirisi 8%3.2 ile dikkat çekmektedir. Kısa, orta ve uzun vadeli tüm zaman periyotlarında "AL" sinyali veren TUPRS, Wilder Trend (WT) göstergesi de "AL" konumundadır. Pearson korelasyon katsayısı (r=0.97) ile endekse karşı inanılmaz bir pozitif korelasyon sergilemekte ve kanal içinde 3%1'lik bir konumla yükseliş potansiyelini korumaktadır. TradingView osilatörleri de bu görüşü desteklemektedir; RSI 70.55 (aşırı alım bölgesi), MACD yukarı yönlü kesişme ve StochK 86.43 ile güçlü bir alım momentumu işaret etmektedir. Genel sinyali "GÜÇLÜ AL" olarak değerlendirilmektedir.</p>
 </li>
 <li>
-<p><strong>KCHOL (Holding):</strong>225.5 TL seviyesinde yatay seyreden KCHOL, 60 günlük getirisi +1%5.5 ile istikrarlı bir performans sergilemektedir. Tüm zaman periyotlarında "AL" sinyali veren hisse, WT göstergesi de "AL" konumundadır. Pearson korelasyonu (r=0.89) ile endekse karşı güçlü bir pozitif ayrışma göstermekte ve kanal içinde 7%2'lik bir konumla orta vadeli yükseliş trendini korumaktadır. RSI 67.53, MACD'de yukarı yönlü momentum ve StochK 69.55 osilatörü, alım baskısının sürdüğünü teyit etmektedir. Genel sinyali "GÜÇLÜ AL" olarak belirlenmiştir.</p>
+<p><strong>KCHOL (Holding):</strong> 225.5 TL seviyesinde yatay seyreden KCHOL, 60 günlük getirisi +1%5.5 ile istikrarlı bir performans sergilemektedir. Tüm zaman periyotlarında "AL" sinyali veren hisse, WT göstergesi de "AL" konumundadır. Pearson korelasyonu (r=0.89) ile endekse karşı güçlü bir pozitif ayrışma göstermekte ve kanal içinde 7%2'lik bir konumla orta vadeli yükseliş trendini korumaktadır. RSI 67.53, MACD'de yukarı yönlü momentum ve StochK 69.55 osilatörü, alım baskısının sürdüğünü teyit etmektedir. Genel sinyali "GÜÇLÜ AL" olarak belirlenmiştir.</p>
 </li>
 <li>
-<p><strong>BIMAS (Perakende):</strong>429.75 TL seviyesinde günlük -1%.15'lik bir gerileme yaşasa da 60 günlük getirisi +1%2.1 ile endekse karşı dirençli kalmaktadır. Tüm zaman periyotlarında "AL" sinyali veren BIMAS, WT göstergesi de "AL" konumundadır. Pearson korelasyonu (r=0.84) ile endekse karşı güçlü bir pozitif ayrışma sergilemekte ve kanal içinde 7%2'lik bir konumdadır. RSI 64.56, MACD'de yukarı yönlü momentum ve StochK 89.55 osilatörü, alım baskısının hala geçerli olduğunu göstermektedir. Genel sinyali "GÜÇLÜ AL" olarak değerlendirilmektedir.</p>
+<p><strong>BIMAS (Perakende):</strong> 429.75 TL seviyesinde günlük -1%.15'lik bir gerileme yaşasa da 60 günlük getirisi +1%2.1 ile endekse karşı dirençli kalmaktadır. Tüm zaman periyotlarında "AL" sinyali veren BIMAS, WT göstergesi de "AL" konumundadır. Pearson korelasyonu (r=0.84) ile endekse karşı güçlü bir pozitif ayrışma sergilemekte ve kanal içinde 7%2'lik bir konumdadır. RSI 64.56, MACD'de yukarı yönlü momentum ve StochK 89.55 osilatörü, alım baskısının hala geçerli olduğunu göstermektedir. Genel sinyali "GÜÇLÜ AL" olarak değerlendirilmektedir.</p>
 </li>
 </ul>
 <p><strong>Direnç ve Destek Noktalarını Test Eden Hisseler:</strong></p>
 <ul>
 <li>
-<p><strong>PETKM (Enerji &amp; Petrokimya):</strong>23.66 TL seviyesinde günlük -4%.13'lük bir düşüş yaşayan PETKM, 60 günlük getirisi +1%7.6 ile güçlü bir performans sergilemektedir. Kısa, orta ve uzun vadeli "AL" sinyali vermesine rağmen, WT göstergesi "TEPEDE SAT" olarak uyarı vermektedir. Pearson korelasyonu (r=0.46) zayıf kalmıştır. RSI 61.75, MACD'de yukarı yönlü momentum olsa da günlük sert düşüş, teknik bir düzeltme beklentisini güçlendirmektedir. Genel sinyali "NÖTR" olarak değerlendirilmekte ve bu hisse için yeni alım yapmak yerine mevcut pozisyonlarda stop-loss takibi önerilmektedir.</p>
+<p><strong>PETKM (Enerji &amp; Petrokimya):</strong> 23.66 TL seviyesinde günlük -4%.13'lük bir düşüş yaşayan PETKM, 60 günlük getirisi +1%7.6 ile güçlü bir performans sergilemektedir. Kısa, orta ve uzun vadeli "AL" sinyali vermesine rağmen, WT göstergesi "TEPEDE SAT" olarak uyarı vermektedir. Pearson korelasyonu (r=0.46) zayıf kalmıştır. RSI 61.75, MACD'de yukarı yönlü momentum olsa da günlük sert düşüş, teknik bir düzeltme beklentisini güçlendirmektedir. Genel sinyali "NÖTR" olarak değerlendirilmekte ve bu hisse için yeni alım yapmak yerine mevcut pozisyonlarda stop-loss takibi önerilmektedir.</p>
 </li>
 <li>
-<p><strong>VAKBN (Bankacılık):</strong>35.74 TL seviyesinde günlük -6%.14'lük sert bir düşüş yaşayan VAKBN, 60 günlük getirisi +2%.1 ile zayıf kalmıştır. Kısa vadeli "BEKLE" sinyali vermesine rağmen, orta ve uzun vadeli "AL" sinyali vermektedir. WT göstergesi "AL" konumundadır. Ancak, Pearson korelasyonu (r=0.26) son derece zayıf olup, hisse endeksten bağımsız bir seyir izlemektedir. Günlük sert düşüş, teknik bir kırılma işareti olabilir. Genel sinyali "AL" olsa da, bu düşüş sonrası hisse için temkinli bir yaklaşım gerekmektedir.</p>
+<p><strong>VAKBN (Bankacılık):</strong> 35.74 TL seviyesinde günlük -6%.14'lük sert bir düşüş yaşayan VAKBN, 60 günlük getirisi +2%.1 ile zayıf kalmıştır. Kısa vadeli "BEKLE" sinyali vermesine rağmen, orta ve uzun vadeli "AL" sinyali vermektedir. WT göstergesi "AL" konumundadır. Ancak, Pearson korelasyonu (r=0.26) son derece zayıf olup, hisse endeksten bağımsız bir seyir izlemektedir. Günlük sert düşüş, teknik bir kırılma işareti olabilir. Genel sinyali "AL" olsa da, bu düşüş sonrası hisse için temkinli bir yaklaşım gerekmektedir.</p>
 </li>
 </ul>
 <p><strong>Güçlü Sat Sinyali Veren Hisseler:</strong></p>
 <ul>
 <li>
-<p><strong>THYAO (Havacılık &amp; Ulaştırma):</strong>295.5 TL seviyesinde günlük -1%.58'lik bir düşüş yaşayan THYAO, 60 günlük getirisi -9%.6 ile endeksin altında kalmaktadır. Kısa ve orta vadeli "SAT" sinyali veren hisse, WT göstergesi de "SAT" konumundadır. Pearson korelasyonu (r=-0.87) ile endekse karşı güçlü bir negatif ayrışma sergilemektedir. RSI 41.38, MACD'de aşağı yönlü momentum ve StochK 39.07 osilatörü, satış baskısının sürdüğünü açıkça göstermektedir. Genel sinyali "GÜÇLÜ SAT" olarak belirlenmiş ve bu hisse portföyden tamamen uzak durulmalıdır.</p>
+<p><strong>THYAO (Havacılık &amp; Ulaştırma):</strong> 295.5 TL seviyesinde günlük -1%.58'lik bir düşüş yaşayan THYAO, 60 günlük getirisi -9%.6 ile endeksin altında kalmaktadır. Kısa ve orta vadeli "SAT" sinyali veren hisse, WT göstergesi de "SAT" konumundadır. Pearson korelasyonu (r=-0.87) ile endekse karşı güçlü bir negatif ayrışma sergilemektedir. RSI 41.38, MACD'de aşağı yönlü momentum ve StochK 39.07 osilatörü, satış baskısının sürdüğünü açıkça göstermektedir. Genel sinyali "GÜÇLÜ SAT" olarak belirlenmiş ve bu hisse portföyden tamamen uzak durulmalıdır.</p>
 </li>
 <li>
-<p><strong>ASELS (Savunma):</strong>372.5 TL seviyesinde günlük -5%.40'lık sert bir düşüş yaşayan ASELS, 60 günlük getirisi -7%.5 ile zayıf bir performans sergilemektedir. Tüm zaman periyotlarında "BEKLE" sinyali vermesine rağmen, WT göstergesi "SAT" konumundadır. Pearson korelasyonu (r=0.42) zayıf kalmıştır. TradingView osilatörleri, RSI 42.88, MACD'de yukarı yönlü olmasına rağmen CCI20 -150.54 ile ciddi bir zayıflık işaret etmektedir. Genel sinyali "GÜÇLÜ SAT" olarak değerlendirilmektedir.</p>
+<p><strong>ASELS (Savunma):</strong> 372.5 TL seviyesinde günlük -5%.40'lık sert bir düşüş yaşayan ASELS, 60 günlük getirisi -7%.5 ile zayıf bir performans sergilemektedir. Tüm zaman periyotlarında "BEKLE" sinyali vermesine rağmen, WT göstergesi "SAT" konumundadır. Pearson korelasyonu (r=0.42) zayıf kalmıştır. TradingView osilatörleri, RSI 42.88, MACD'de yukarı yönlü olmasına rağmen CCI20 -150.54 ile ciddi bir zayıflık işaret etmektedir. Genel sinyali "GÜÇLÜ SAT" olarak değerlendirilmektedir.</p>
 </li>
 </ul>
 <h2>4. Şirket ve Finansal Değerlendirme</h2>
@@ -450,22 +450,22 @@ async function aiSor() {
 <p><strong>Öne Çıkan Pozitif Temel Veriler:</strong></p>
 <ul>
 <li>
-<p><strong>KCHOL ve SAHOL (Holdingler):</strong>KCHOL'ün 3,615.15 milyar TL ve SAHOL'ün 2,790.07 milyar TL gibi devasa dönen varlıkları, bu şirketlerin pazar liderliğini ve operasyonel derinliğini göstermektedir. Bu büyüklük, likidite sağlarken, perakende ve finansal hizmetler gibi çeşitli sektörlerdeki varlıkları sayesinde makroekonomik şoklara karşı bir tampon görevi görmektedir. KCHOL'ün teknik analizdeki güçlü performansı, bu temel dayanıklılıkla desteklenmektedir.</p>
+<p><strong>KCHOL ve SAHOL (Holdingler):</strong> KCHOL'ün 3,615.15 milyar TL ve SAHOL'ün 2,790.07 milyar TL gibi devasa dönen varlıkları, bu şirketlerin pazar liderliğini ve operasyonel derinliğini göstermektedir. Bu büyüklük, likidite sağlarken, perakende ve finansal hizmetler gibi çeşitli sektörlerdeki varlıkları sayesinde makroekonomik şoklara karşı bir tampon görevi görmektedir. KCHOL'ün teknik analizdeki güçlü performansı, bu temel dayanıklılıkla desteklenmektedir.</p>
 </li>
 <li>
-<p><strong>TUPRS (Enerji &amp; Petrokimya):</strong>TUPRS'ın 439.48 milyar TL'lik dönen varlıkları, sektördeki önemli oyuncu olduğunu teyit etmektedir. Petrol ve petrokimya ürünlerindeki küresel fiyat artışları, şirketin gelir ve karlılığı üzerinde olumlu bir etki yaratmaktadır. Özellikle 60 günlük getirisi 8%3.2 olan TUPRS, temel olarak enerji fiyatlarındaki artışlardan doğrudan fayda sağlayan bir profil çizmektedir. Bu, teknik analizdeki "GÜÇLÜ AL" sinyalinin arkasındaki temel dayanağı oluşturmaktadır.</p>
+<p><strong>TUPRS (Enerji &amp; Petrokimya):</strong> TUPRS'ın 439.48 milyar TL'lik dönen varlıkları, sektördeki önemli oyuncu olduğunu teyit etmektedir. Petrol ve petrokimya ürünlerindeki küresel fiyat artışları, şirketin gelir ve karlılığı üzerinde olumlu bir etki yaratmaktadır. Özellikle 60 günlük getirisi 8%3.2 olan TUPRS, temel olarak enerji fiyatlarındaki artışlardan doğrudan fayda sağlayan bir profil çizmektedir. Bu, teknik analizdeki "GÜÇLÜ AL" sinyalinin arkasındaki temel dayanağı oluşturmaktadır.</p>
 </li>
 </ul>
 <p><strong>Temel Zayıflıklar ve Riskler:</strong></p>
 <ul>
 <li>
-<p><strong>Bankacılık Sektörü (GARAN, AKBNK, YKBNK, VAKBN):</strong>Bu bankaların dönen varlıkları (GARAN 512.19 milyar TL, AKBNK 72.55 TL, YKBNK 36.64 TL, VAKBN 35.74 TL) sektöre göre daha düşük görünse de, bu durum piyasa değerini tam olarak yansıtmamaktadır. Bankacılık sektörünün temel riski, yüksek enflasyon ortamında faiz marjlarının baskıya uğraması ve kredi riskinin artmasıdır. Özellikle VAKBN'ın son bir günde 6%.14'lük düşüşü, bu temel endişelerin piyasa fiyatlarına yansıdığının bir göstergesidir. Teknik analizde de bu hisselerin Pearson korelasyon katsayılarının düşük veya negatif olması, temel zayıflıklarının yansıması olarak değerlendirilebilir.</p>
+<p><strong>Bankacılık Sektörü (GARAN, AKBNK, YKBNK, VAKBN):</strong> Bu bankaların dönen varlıkları (GARAN 512.19 milyar TL, AKBNK 72.55 TL, YKBNK 36.64 TL, VAKBN 35.74 TL) sektöre göre daha düşük görünse de, bu durum piyasa değerini tam olarak yansıtmamaktadır. Bankacılık sektörünün temel riski, yüksek enflasyon ortamında faiz marjlarının baskıya uğraması ve kredi riskinin artmasıdır. Özellikle VAKBN'ın son bir günde 6%.14'lük düşüşü, bu temel endişelerin piyasa fiyatlarına yansıdığının bir göstergesidir. Teknik analizde de bu hisselerin Pearson korelasyon katsayılarının düşük veya negatif olması, temel zayıflıklarının yansıması olarak değerlendirilebilir.</p>
 </li>
 <li>
-<p><strong>Enerji Yoğun Sanayi (EREGL, SISE, TOASO):</strong>EREGL (38.86 TL), SISE (43.52 TL) ve TOASO (284.25 TL) gibi şirketlerin dönen varlıkları (EREGL 151.30 milyar TL, SISE 152.29 milyar TL, TOASO 24.88 milyar TL) operasyonel maliyetleri üzerinde doğrudan bir etki alanına sahiptir. Doğal gaz fiyatlarındaki 71 €/MWh üzerindeki seyretme, bu şirketlerin enerji maliyetlerini artırarak kar marjlarını baskılamaktadır. Bu temel zayıflık, teknik analizde bu hisselerin "NÖTR" veya "SAT" sinyaller vermesinin arkasındaki temel nedendir.</p>
+<p><strong>Enerji Yoğun Sanayi (EREGL, SISE, TOASO):</strong> EREGL (38.86 TL), SISE (43.52 TL) ve TOASO (284.25 TL) gibi şirketlerin dönen varlıkları (EREGL 151.30 milyar TL, SISE 152.29 milyar TL, TOASO 24.88 milyar TL) operasyonel maliyetleri üzerinde doğrudan bir etki alanına sahiptir. Doğal gaz fiyatlarındaki 71 €/MWh üzerindeki seyretme, bu şirketlerin enerji maliyetlerini artırarak kar marjlarını baskılamaktadır. Bu temel zayıflık, teknik analizde bu hisselerin "NÖTR" veya "SAT" sinyaller vermesinin arkasındaki temel nedendir.</p>
 </li>
 <li>
-<p><strong>Havacılık ve Ulaştırma (THYAO, TAVHL, PGSUS):</strong>THYAO (512.19 milyar TL), TAVHL (268.50 TL) ve PGSUS (156.60 TL) gibi şirketler, jeopolitik risklere ve talep koşullarına karşı en savunmasız sektörlere aittir. THYAO'nun temel olarak jeopolitik gerilimler ve yüksek enerji maliyetleri nedeniyle performansını sürdürememesi, teknik analizdeki "GÜÇLÜ SAT" sinyaliyle tam bir uyum içindedir.</p>
+<p><strong>Havacılık ve Ulaştırma (THYAO, TAVHL, PGSUS):</strong> THYAO (512.19 milyar TL), TAVHL (268.50 TL) ve PGSUS (156.60 TL) gibi şirketler, jeopolitik risklere ve talep koşullarına karşı en savunmasız sektörlere aittir. THYAO'nun temel olarak jeopolitik gerilimler ve yüksek enerji maliyetleri nedeniyle performansını sürdürememesi, teknik analizdeki "GÜÇLÜ SAT" sinyaliyle tam bir uyum içindedir.</p>
 </li>
 </ul>
 <h2>5. Risk Yönetimi ve Strateji</h2>
@@ -476,13 +476,13 @@ async function aiSor() {
 <p><strong>Senaryo: Fed'in Eylül toplantısında beklenenden daha hawkish (şahin) bir tutum sergileyerek faiz artırımı sinyali vermesi.</strong></p>
 <ul>
 <li>
-<p><strong>Etki:</strong>Küresel likiditenin aniden daralması, risk iştahının çökmesi ve sermayenin güvenli limanlara (ABD tahvilleri, altın) akışı.</p>
+<p><strong>Etki:</strong> Küresel likiditenin aniden daralması, risk iştahının çökmesi ve sermayenin güvenli limanlara (ABD tahvilleri, altın) akışı.</p>
 </li>
 <li>
-<p><strong>Yansıma:</strong>BIST 30 endeksinin 4,000 destek seviyesini test etmesi, bankacılık ve hisse senedi piyasası üzerinde baskı.</p>
+<p><strong>Yansıma:</strong> BIST 30 endeksinin 4,000 destek seviyesini test etmesi, bankacılık ve hisse senedi piyasası üzerinde baskı.</p>
 </li>
 <li>
-<p><strong>Koruma Kalkanı:</strong>Portföyde yüksek nakit oranı (3%5-40) tutulması. Stop-loss seviyelerine (TUPRS için 395 TL, KCHOL için 210 TL, BIMAS için 415 TL) harfiyen uyulması. Kaldıraç kullanımından tamamen kaçınılması.</p>
+<p><strong>Koruma Kalkanı:</strong> Portföyde yüksek nakit oranı (3%5-40) tutulması. Stop-loss seviyelerine (TUPRS için 395 TL, KCHOL için 210 TL, BIMAS için 415 TL) harfiyen uyulması. Kaldıraç kullanımından tamamen kaçınılması.</p>
 </li>
 </ul>
 </li>
@@ -490,13 +490,13 @@ async function aiSor() {
 <p><strong>Senaryo: İran-Orta Doğu geriliminin tırmanması ve enerji fiyatlarının (özellikle doğal gaz) 80 €/MWh üzerine çıkması.</strong></p>
 <ul>
 <li>
-<p><strong>Etki:</strong>Enerji maliyetlerinin patlaması, sanayi üretiminin yavaşlaması ve enflasyonun daha da yükselmesi.</p>
+<p><strong>Etki:</strong> Enerji maliyetlerinin patlaması, sanayi üretiminin yavaşlaması ve enflasyonun daha da yükselmesi.</p>
 </li>
 <li>
-<p><strong>Yansıma:</strong>EREGL, SISE, TOASO gibi enerji yoğun hisselerde sert satış baskısı. TÜFE verilerinin beklentileri aşması ve MB'nin sıkı para politikasına devam etmesi.</p>
+<p><strong>Yansıma:</strong> EREGL, SISE, TOASO gibi enerji yoğun hisselerde sert satış baskısı. TÜFE verilerinin beklentileri aşması ve MB'nin sıkı para politikasına devam etmesi.</p>
 </li>
 <li>
-<p><strong>Koruma Kalkanı:</strong>Enerji yoğun hisse senetlerinden tamamen uzak durulması. Portföyde enflasyona dayanıklı olarak görülen perakende (BIMAS, KCHOL) ve temel metal (TUPRS) hisselerine ağırlık verilmesi.</p>
+<p><strong>Koruma Kalkanı:</strong> Enerji yoğun hisse senetlerinden tamamen uzak durulması. Portföyde enflasyona dayanıklı olarak görülen perakende (BIMAS, KCHOL) ve temel metal (TUPRS) hisselerine ağırlık verilmesi.</p>
 </li>
 </ul>
 </li>
@@ -504,13 +504,13 @@ async function aiSor() {
 <p><strong>Senaryo: Kritik destek seviyelerinin kırılması (Endeks 4,000, THYAO 290 TL, EREGL 37 TL).</strong></p>
 <ul>
 <li>
-<p><strong>Etki:</strong>Teknik olarak tetiklenen stop-loss emirlerinin gelmesi ve domino etkisiyle piyasanın daha da aşağı sürüklenmesi.</p>
+<p><strong>Etki:</strong> Teknik olarak tetiklenen stop-loss emirlerinin gelmesi ve domino etkisiyle piyasanın daha da aşağı sürüklenmesi.</p>
 </li>
 <li>
-<p><strong>Yansıma:</strong>Geniş çaplı bir portföy değer kaybı.</p>
+<p><strong>Yansıma:</strong> Geniş çaplı bir portföy değer kaybı.</p>
 </li>
 <li>
-<p><strong>Koruma Kalkanı:</strong>Her hisse için önceden belirlenmiş ve teknik analizle desteklenmiş stop-loss seviyelerinin otomatik emirlerle takibi. Bu seviyeler kırıldığında pozisyonların kapatılması.</p>
+<p><strong>Koruma Kalkanı:</strong> Her hisse için önceden belirlenmiş ve teknik analizle desteklenmiş stop-loss seviyelerinin otomatik emirlerle takibi. Bu seviyeler kırıldığında pozisyonların kapatılması.</p>
 </li>
 </ul>
 </li>
@@ -521,13 +521,13 @@ async function aiSor() {
 <p><strong>Senaryo: Fed'in faizlerde bir indirime veya "dovish" (güvercin) bir dil kullanması.</strong></p>
 <ul>
 <li>
-<p><strong>Etki:</strong>Küresel risk iştahının artması, gelişmekte olan piyasalara sermaye girişi.</p>
+<p><strong>Etki:</strong> Küresel risk iştahının artması, gelişmekte olan piyasalara sermaye girişi.</p>
 </li>
 <li>
-<p><strong>Yansıma:</strong>BIST 30 endeksinin 4,250 direncini kırması ve 4,300-4,400 bandına yükselmesi.</p>
+<p><strong>Yansıma:</strong> BIST 30 endeksinin 4,250 direncini kırması ve 4,300-4,400 bandına yükselmesi.</p>
 </li>
 <li>
-<p><strong>Strateji:</strong>Yüksek nakit oranı, bu yükseliş dalgasına katılmak için bir fırsat sunar. Stop-loss koruması altında, özellikle teknik olarak güçlü olan TUPRS ve KCHOL gibi hisselerde pozisyon artırımı yapılabilir.</p>
+<p><strong>Strateji:</strong> Yüksek nakit oranı, bu yükseliş dalgasına katılmak için bir fırsat sunar. Stop-loss koruması altında, özellikle teknik olarak güçlü olan TUPRS ve KCHOL gibi hisselerde pozisyon artırımı yapılabilir.</p>
 </li>
 </ul>
 </li>
@@ -535,18 +535,19 @@ async function aiSor() {
 <p><strong>Senaryo: Jeopolitik gerilimlerde aniden bir yumuşama ve enerji fiyatlarında gerileme.</strong></p>
 <ul>
 <li>
-<p><strong>Etki:</strong>Maliyet baskısının azalması ve şirketlerin kar beklentilerinin yükselmesi.</p>
+<p><strong>Etki:</strong> Maliyet baskısının azalması ve şirketlerin kar beklentilerinin yükselmesi.</p>
 </li>
 <li>
-<p><strong>Yansıma:</strong>Enerji ve sanayi hisselerinde toparlanma.</p>
+<p><strong>Yansıma:</strong> Enerji ve sanayi hisselerinde toparlanma.</p>
 </li>
 <li>
-<p><strong>Strateji:</strong>Bu senaryo, portföyde zaten tutulan TUPRS gibi hisselerde kâr realizasyonu için bir fırsat sunarken, zayıf kalmış diğer sanayi hisselerinde (SISE, TOASO) temkinli bir şekilde tekran değerlendirme imkanı tanır.</p>
+<p><strong>Strateji:</strong> Bu senaryo, portföyde zaten tutulan TUPRS gibi hisselerde kâr realizasyonu için bir fırsat sunarken, zayıf kalmış diğer sanayi hisselerinde (SISE, TOASO) temkinli bir şekilde tekran değerlendirme imkanı tanır.</p>
 </li>
 </ul>
 </li>
 </ol>
-<p><strong>Stratejik Yaklaşım:</strong><br />Mevcut konjonktürde en doğru strateji, "temkinli duruş, yüksek likidite ve seçici alım" yaklaşımını benimsemektir. Panik satışlarına kapılmamak, ancak aynı zamanda yeni alımları net bir trend dönüşüm sinyali beklentisiyle sınırlamak esastır. Risk yönetimi, sadece stop-loss seviyeleriyle değil, aynı zamanda sektörel dağılım ve nakit oranı yönetimi ile de sağlanmalıdır.</p>
+<p><strong>Stratejik Yaklaşım:</strong><br />
+Mevcut konjonktürde en doğru strateji, "temkinli duruş, yüksek likidite ve seçici alım" yaklaşımını benimsemektir. Panik satışlarına kapılmamak, ancak aynı zamanda yeni alımları net bir trend dönüşüm sinyali beklentisiyle sınırlamak esastır. Risk yönetimi, sadece stop-loss seviyeleriyle değil, aynı zamanda sektörel dağılım ve nakit oranı yönetimi ile de sağlanmalıdır.</p>
 <h2>6. Önerilen Model Portföy</h2>
 <p>Aşağıdaki model portföy, yukarıdaki teknik ve temel analizlere dayanarak, sinyal gücüne, Pearson korelasyonuna ve kanal konumuna göre ağırlıklandırılmıştır. Portföy, mevcut belirsizlik ortamında sermayenin korunmasını ve sınırlı bir upside potansiyelini hedeflemektedir.</p>
 <table>
@@ -665,7 +666,7 @@ async function aiSor() {
 </tr>
 </tbody>
 </table></article>
-<p style="margin-top:18px"><a href="../index.html">Tüm raporlara dön</a></p>
+<p style="margin-top:18px"><a href="../index.html">← Tüm raporlara dön</a></p>
 <script>
 (function() {
   if (!('speechSynthesis' in window)) { return; }

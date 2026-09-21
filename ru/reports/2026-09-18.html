@@ -80,8 +80,8 @@
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
     <div class="site-widgets">
         <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <span id="current-date-time">Yükleniyor...</span>
-            <span id="istanbul-weather">İstanbul Hava Durumu...</span>
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
         </div>
 
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
@@ -97,12 +97,12 @@
 
 <div id="bist-radyo" style="display:none; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; min-width:250px; max-width:330px;" oncontextmenu="return false;">
   <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-    <strong style="font-size:13px; color:#0f172a;">BIST Radyo</strong>
+    <strong style="font-size:13px; color:#0f172a;">📻 BIST Radyo</strong>
     <span style="background:#f0fdfa; color:#0f766e; border:1px solid #99f6e4; border-radius:999px; padding:1px 8px; font-size:11px;">AI sunucular</span>
   </div>
   <audio id="radyo-audio" controls preload="none" controlslist="nodownload noremoteplayback" style="width:100%; height:34px;" oncontextmenu="return false;"></audio>
   <div id="radyo-liste" style="margin-top:6px; font-size:12.5px; color:#475569;"></div>
-  <div style="margin-top:4px; font-size:11px;"><a href="../radyo/index.html">Tüm yayınlar &amp; Podcast sayfası</a> • <a href="../radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
+  <div style="margin-top:4px; font-size:11px;"><a href="../radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> • <a href="../radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
   <div style="margin-top:4px; color:#94a3b8; font-size:11px;">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
 </div>
 <script>
@@ -260,7 +260,7 @@
 
 <div id="ai-panel" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; font-size: 14px; line-height: 1.6;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-        <strong style="color: #0f766e;">BIST AI Asistan</strong>
+        <strong style="color: #0f766e;">🤖 BIST AI Asistan</strong>
         <a href="javascript:void(0)" onclick="document.getElementById('ai-panel').style.display='none'" style="color: #64748b; text-decoration: none; font-size: 18px; line-height: 1;">×</a>
     </div>
     <div id="ai-answer"></div>
@@ -328,7 +328,7 @@ async function aiSor() {
 <div class="hero">
 <h1>Günlük Piyasa Raporu</h1>
 <div class="meta"><span class="badge">2026-09-18</span><span>BIST 30 • Yapay zeka destekli günlük analiz</span>
-<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">Sesli Oku</button>
+<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button>
 <span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px"><a class="paylas" href="https://twitter.com/intent/tweet?text=G%C3%BCnl%C3%BCk+Piyasa+Raporu+2026-09-18&url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-18.html" target="_blank" rel="noopener" title="X'te paylaş">𝕏</a><a class="paylas" href="https://t.me/share/url?url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-18.html&text=G%C3%BCnl%C3%BCk+Piyasa+Raporu+2026-09-18" target="_blank" rel="noopener" title="Telegram'da paylaş">✈</a><a class="paylas" href="https://wa.me/?text=G%C3%BCnl%C3%BCk+Piyasa+Raporu+2026-09-18%20https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-18.html" target="_blank" rel="noopener" title="WhatsApp'ta paylaş">💬</a><a class="paylas" href="javascript:void(0)" title="Bağlantıyı kopyala" onclick="if(navigator.clipboard){navigator.clipboard.writeText('https://borsa-raporlari.pages.dev/ru/reports/2026-09-18.html');this.textContent='✓';}">🔗</a></span></div>
 </div>
 
@@ -342,12 +342,12 @@ async function aiSor() {
 </div>
 
 <div class="card" style="margin:0 0 18px; padding:8px 14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-  <strong style="font-size:13px; white-space:nowrap">Sesli bülten</strong>
+  <strong style="font-size:13px; white-space:nowrap">🔊 Sesli bülten</strong>
   <audio controls preload="none" src="https://borsa-raporlari.pages.dev/reports/2026-09-18.mp3" style="flex:1; min-width:220px; height:34px;"></audio>
 </div>
 
 <div class="pano">
-<div class="pano-baslik">Günün Panosu — BIST 30</div>
+<div class="pano-baslik">📊 Günün Panosu — BIST 30</div>
 <div class="pano-veri">
   <div class="pano-hucre"><div class="pano-etiket">BIST 30 Sepeti</div><div class="pano-deger pos">+4.78%</div></div>
   <div class="pano-hucre"><div class="pano-etiket">Yükselen / Düşen</div><div class="pano-deger">28 / 2</div></div>
@@ -356,10 +356,10 @@ async function aiSor() {
   <div class="pano-hucre"><div class="pano-etiket">Sinyal (AL / SAT)</div><div class="pano-deger">1 / 23</div></div>
 </div>
 <div class="pano-man">
-<div><span class="pos">En çok yükselenler:</span> <b>YKBNK</b> +9.96% • <b>AKBNK</b> +9.74% • <b>GARAN</b> +9.59%</div>
-<div><span class="neg">En çok düşenler:</span> <b>DSTKF</b> -9.97% • <b>SASA</b> -3.97% • <b>TUPRS</b> +2.55%</div>
-<div>Sinyal dağılımı: GÜÇLÜ AL 0 · AL 1 · NÖTR 6 · SAT 3 · GÜÇLÜ SAT 20</div>
-<div>Sektör ortalamaları: Bankacılık <span class='pos'>+9.13%</span>Holding <span class='pos'>+6.69%</span>Havacılık &amp; Ulaştırma <span class='pos'>+5.94%</span>Gayrimenkul <span class='pos'>+5.71%</span>Savunma <span class='pos'>+5.49%</span>Gıda &amp; İçecek <span class='pos'>+5.18%</span>Cam &amp; Seramik <span class='pos'>+5.13%</span>Metal &amp; Madencilik <span class='pos'>+4.98%</span>Telekom <span class='pos'>+4.75%</span>Sanayi (Diğer) <span class='pos'>+4.69%</span>Otomotiv <span class='pos'>+4.58%</span>Perakende <span class='pos'>+4.20%</span>Enerji &amp; Petrokimya <span class='pos'>+3.48%</span>Kimya &amp; Gübre <span class='neg'>-0.27%</span>Finans (Diğer) <span class='neg'>-9.97%</span></div>
+<div><span class="pos">▲ En çok yükselenler:</span> <b>YKBNK</b> +9.96% • <b>AKBNK</b> +9.74% • <b>GARAN</b> +9.59%</div>
+<div><span class="neg">▼ En çok düşenler:</span> <b>DSTKF</b> -9.97% • <b>SASA</b> -3.97% • <b>TUPRS</b> +2.55%</div>
+<div>📣 Sinyal dağılımı: GÜÇLÜ AL 0 · AL 1 · NÖTR 6 · SAT 3 · GÜÇLÜ SAT 20</div>
+<div>🏷️ Sektör ortalamaları: Bankacılık <span class='pos'>+9.13%</span> • Holding <span class='pos'>+6.69%</span> • Havacılık &amp; Ulaştırma <span class='pos'>+5.94%</span> • Gayrimenkul <span class='pos'>+5.71%</span> • Savunma <span class='pos'>+5.49%</span> • Gıda &amp; İçecek <span class='pos'>+5.18%</span> • Cam &amp; Seramik <span class='pos'>+5.13%</span> • Metal &amp; Madencilik <span class='pos'>+4.98%</span> • Telekom <span class='pos'>+4.75%</span> • Sanayi (Diğer) <span class='pos'>+4.69%</span> • Otomotiv <span class='pos'>+4.58%</span> • Perakende <span class='pos'>+4.20%</span> • Enerji &amp; Petrokimya <span class='pos'>+3.48%</span> • Kimya &amp; Gübre <span class='neg'>-0.27%</span> • Finans (Diğer) <span class='neg'>-9.97%</span></div>
 </div>
 <div class="tbl-wrap">
 <table class="pano-tablo">
@@ -402,16 +402,16 @@ async function aiSor() {
 </div>
 
 <div class="pano">
-<div class="pano-baslik">Günlük Ajanda — Ekonomik Veri Duyuruları</div>
+<div class="pano-baslik">📅 Günlük Ajanda — Ekonomik Veri Duyuruları</div>
 <div class="tbl-wrap">
 <table class="pano-tablo">
 <thead><tr><th>Saat</th><th>Ülke</th><th>Olay</th><th style="text-align:right">Tahmin</th><th style="text-align:right">Önceki</th></tr></thead>
 <tbody>
-<tr><td colspan='5' style='background:var(--accent-bg); font-weight:700; font-size:12px'>Bugün (2026-09-18)</td></tr><tr><td>10:30</td><td><strong>EU</strong></td><td>ECB President Lagarde Speech <span style='color:var(--muted); font-size:11.5px'>ECB Başkanı Lagarde Konuşması</span></td><td style='text-align:right'>—</td><td style='text-align:right'>—</td></tr><tr><td>13:15</td><td><strong>US</strong></td><td>Industrial Production MoM <span style='color:var(--muted); font-size:11.5px'>Sanayi Üretimi aylık</span></td><td style='text-align:right'>0.30</td><td style='text-align:right'>0.20</td></tr><tr><td>13:30</td><td><strong>US</strong></td><td>Fed Bowman Speech <span style='color:var(--muted); font-size:11.5px'>Fed Bowman Konuşması</span></td><td style='text-align:right'>—</td><td style='text-align:right'>—</td></tr><tr><td colspan='5' style='background:var(--accent-bg); font-weight:700; font-size:12px'>21.09 (2026-09-21)</td></tr><tr><td>07:00</td><td><strong>TR</strong></td><td>Business Confidence <span style='color:var(--muted); font-size:11.5px'>İşletme Güveni</span></td><td style='text-align:right'>—</td><td style='text-align:right'>102.80</td></tr><tr><td>10:30</td><td><strong>US</strong></td><td>Fed Goolsbee Speech <span style='color:var(--muted); font-size:11.5px'>Fed Goolsbee Konuşması</span></td><td style='text-align:right'>—</td><td style='text-align:right'>—</td></tr><tr><td>12:30</td><td><strong>US</strong></td><td>Chicago Fed National Activity Index <span style='color:var(--muted); font-size:11.5px'>Chicago Fed Ulusal Aktivite Endeksi</span></td><td style='text-align:right'>—</td><td style='text-align:right'>-0.08</td></tr><tr><td colspan='5' style='background:var(--accent-bg); font-weight:700; font-size:12px'>22.09 (2026-09-22)</td></tr><tr><td>07:00</td><td><strong>TR</strong></td><td>Consumer Confidence <span style='color:var(--muted); font-size:11.5px'>Tüketici Güven Endeksi</span></td><td style='text-align:right'>—</td><td style='text-align:right'>90.80</td></tr><tr><td>12:15</td><td><strong>US</strong></td><td>ADP Employment Change Weekly <span style='color:var(--muted); font-size:11.5px'>ADP İstihdam Değişimi Weekly</span></td><td style='text-align:right'>—</td><td style='text-align:right'>16.25</td></tr><tr><td>14:00</td><td><strong>EU</strong></td><td>Consumer Confidence Flash <span style='color:var(--muted); font-size:11.5px'>Tüketici Güven Endeksi ön tahmin</span></td><td style='text-align:right'>—</td><td style='text-align:right'>-15.50</td></tr><tr><td>14:05</td><td><strong>US</strong></td><td>Fed Williams Speech <span style='color:var(--muted); font-size:11.5px'>Fed Williams Konuşması</span></td><td style='text-align:right'>—</td><td style='text-align:right'>—</td></tr><tr><td>14:20</td><td><strong>US</strong></td><td>Fed Jefferson Speech <span style='color:var(--muted); font-size:11.5px'>Fed Jefferson Konuşması</span></td><td style='text-align:right'>—</td><td style='text-align:right'>—</td></tr><tr><td>20:30</td><td><strong>US</strong></td><td>API Crude Oil Stock Change <span style='color:var(--muted); font-size:11.5px'>API Ham Petrol Stok Değişimi</span></td><td style='text-align:right'>—</td><td style='text-align:right'>7.14</td></tr><tr><td colspan='5' style='background:var(--accent-bg); font-weight:700; font-size:12px'>23.09 (2026-09-23)</td></tr><tr><td>08:00</td><td><strong>EU</strong></td><td>S&amp;P Global Manufacturing PMI Flash <span style='color:var(--muted); font-size:11.5px'>S&amp;P Global İmalat PMI ön tahmin</span></td><td style='text-align:right'>—</td><td style='text-align:right'>52.70</td></tr><tr><td>08:00</td><td><strong>EU</strong></td><td>S&amp;P Global Composite PMI Flash <span style='color:var(--muted); font-size:11.5px'>S&amp;P Global Karma PMI ön tahmin</span></td><td style='text-align:right'>—</td><td style='text-align:right'>52.00</td></tr>
+<tr><td colspan='5' style='background:var(--accent-bg); font-weight:700; font-size:12px'>Bugün (2026-09-18)</td></tr><tr><td>10:30</td><td><strong>EU</strong></td><td>ECB President Lagarde Speech <span style='color:var(--muted); font-size:11.5px'>— ECB Başkanı Lagarde Konuşması</span></td><td style='text-align:right'>—</td><td style='text-align:right'>—</td></tr><tr><td>13:15</td><td><strong>US</strong></td><td>Industrial Production MoM <span style='color:var(--muted); font-size:11.5px'>— Sanayi Üretimi aylık</span></td><td style='text-align:right'>0.30</td><td style='text-align:right'>0.20</td></tr><tr><td>13:30</td><td><strong>US</strong></td><td>Fed Bowman Speech <span style='color:var(--muted); font-size:11.5px'>— Fed Bowman Konuşması</span></td><td style='text-align:right'>—</td><td style='text-align:right'>—</td></tr><tr><td colspan='5' style='background:var(--accent-bg); font-weight:700; font-size:12px'>21.09 (2026-09-21)</td></tr><tr><td>07:00</td><td><strong>TR</strong></td><td>Business Confidence <span style='color:var(--muted); font-size:11.5px'>— İşletme Güveni</span></td><td style='text-align:right'>—</td><td style='text-align:right'>102.80</td></tr><tr><td>10:30</td><td><strong>US</strong></td><td>Fed Goolsbee Speech <span style='color:var(--muted); font-size:11.5px'>— Fed Goolsbee Konuşması</span></td><td style='text-align:right'>—</td><td style='text-align:right'>—</td></tr><tr><td>12:30</td><td><strong>US</strong></td><td>Chicago Fed National Activity Index <span style='color:var(--muted); font-size:11.5px'>— Chicago Fed Ulusal Aktivite Endeksi</span></td><td style='text-align:right'>—</td><td style='text-align:right'>-0.08</td></tr><tr><td colspan='5' style='background:var(--accent-bg); font-weight:700; font-size:12px'>22.09 (2026-09-22)</td></tr><tr><td>07:00</td><td><strong>TR</strong></td><td>Consumer Confidence <span style='color:var(--muted); font-size:11.5px'>— Tüketici Güven Endeksi</span></td><td style='text-align:right'>—</td><td style='text-align:right'>90.80</td></tr><tr><td>12:15</td><td><strong>US</strong></td><td>ADP Employment Change Weekly <span style='color:var(--muted); font-size:11.5px'>— ADP İstihdam Değişimi Weekly</span></td><td style='text-align:right'>—</td><td style='text-align:right'>16.25</td></tr><tr><td>14:00</td><td><strong>EU</strong></td><td>Consumer Confidence Flash <span style='color:var(--muted); font-size:11.5px'>— Tüketici Güven Endeksi ön tahmin</span></td><td style='text-align:right'>—</td><td style='text-align:right'>-15.50</td></tr><tr><td>14:05</td><td><strong>US</strong></td><td>Fed Williams Speech <span style='color:var(--muted); font-size:11.5px'>— Fed Williams Konuşması</span></td><td style='text-align:right'>—</td><td style='text-align:right'>—</td></tr><tr><td>14:20</td><td><strong>US</strong></td><td>Fed Jefferson Speech <span style='color:var(--muted); font-size:11.5px'>— Fed Jefferson Konuşması</span></td><td style='text-align:right'>—</td><td style='text-align:right'>—</td></tr><tr><td>20:30</td><td><strong>US</strong></td><td>API Crude Oil Stock Change <span style='color:var(--muted); font-size:11.5px'>— API Ham Petrol Stok Değişimi</span></td><td style='text-align:right'>—</td><td style='text-align:right'>7.14</td></tr><tr><td colspan='5' style='background:var(--accent-bg); font-weight:700; font-size:12px'>23.09 (2026-09-23)</td></tr><tr><td>08:00</td><td><strong>EU</strong></td><td>S&amp;P Global Manufacturing PMI Flash <span style='color:var(--muted); font-size:11.5px'>— S&amp;P Global İmalat PMI ön tahmin</span></td><td style='text-align:right'>—</td><td style='text-align:right'>52.70</td></tr><tr><td>08:00</td><td><strong>EU</strong></td><td>S&amp;P Global Composite PMI Flash <span style='color:var(--muted); font-size:11.5px'>— S&amp;P Global Karma PMI ön tahmin</span></td><td style='text-align:right'>—</td><td style='text-align:right'>52.00</td></tr>
 </tbody>
 </table>
 </div>
-<p class="pano-not">yüksek etkili veri. Kaynak: TradingView ekonomik takvimi; saatler TR zamanıdır. <a href="../takvim.html">Ekonomik Takvim Rehberi →</a></p>
+<p class="pano-not">🔴 = yüksek etkili veri. Kaynak: TradingView ekonomik takvimi; saatler TR zamanıdır. <a href="../takvim.html">Ekonomik Takvim Rehberi →</a></p>
 </div>
 <article class="report" id="rapor-govde"><h2>1. Yönetici Özeti ve Piyasa Genel Bakışı</h2>
 <p>Bugün BIST 30 endeksi, 4,200-4,250 direnç bandında sert bir toparlanma süreci yaşarken, piyasa dinamiklerinde belirgin bir değişim gözlemleniyor. Geçmiş haftalarda hakim olan "nakit koruma" ve "temkinli duruş" yaklaşımı, bugün teknik sinyallerin güçlenmesiyle birlikte daha seçici bir alım stratejisine evriliyor. Endeks, önceki günlerdeki zayıflamayı telafi ederken, lider hisselerdeki momentum artışı, piyasa risk iştahında hafif bir yükselişe işaret ediyor.</p>
@@ -541,8 +541,8 @@ async function aiSor() {
 </tr>
 </tbody>
 </table>
-<p><strong>Not:</strong>Portföy ağırlıkları toplamı 1%00'ü tamamlamaktadır. Giriş bölgesi, hedefler ve stop seviyeleri sağlanan gerçek fiyatlardan ve teknik kanal analizinden türetilmiştir. Yatırımcılar, bu portföyü kendi risk toleranslarına göre değerlendirmelidir.</p></article>
-<p style="margin-top:18px"><a href="../index.html">Tüm raporlara dön</a></p>
+<p><strong>Not:</strong> Portföy ağırlıkları toplamı 1%00'ü tamamlamaktadır. Giriş bölgesi, hedefler ve stop seviyeleri sağlanan gerçek fiyatlardan ve teknik kanal analizinden türetilmiştir. Yatırımcılar, bu portföyü kendi risk toleranslarına göre değerlendirmelidir.</p></article>
+<p style="margin-top:18px"><a href="../index.html">← Tüm raporlara dön</a></p>
 <script>
 (function() {
   if (!('speechSynthesis' in window)) { return; }

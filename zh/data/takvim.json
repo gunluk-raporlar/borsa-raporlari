@@ -1,9 +1,0 @@
-[
- {"etkinlik": "TCMB Politika Faizi Kararı (PPK)", "periyot": "Ayda bir, PPK toplantısı", "not": "Faiz kararı hisse ve kur üzerinde en güçlü etki. Tarihler TCMB resmi takviminden teyit edilmeli."},
- {"etkinlik": "TÜİK Tüketici Enflasyonu (TÜFE)", "periyot": "Her ayın ilk haftası", "not": "Beklentiden yüksek enflasyon, faiz indirim beklentisini geciktirir."},
- {"etkinlik": "ABD Fed Faiz Kararı (FOMC)", "periyot": "Yılda 8 toplantı", "not": "Küresel risk iştahını etkiler; gelişen piyasalara sermaye akışını belirler."},
- {"etkinlik": "ABD Enflasyonu (CPI)", "periyot": "Her ay ortası", "not": "Fed beklentilerini hareketlendirir; aynı gün BIST açılışını etkiler."},
- {"etkinlik": "Bilanço Sezonu", "periyot": "Ocak-Nisan-Temmuz-Ekim ayları", "not": "Şirketler çeyrek finansallarını açıklar; hisse bazlı büyük hareketler bilanço günlerinde olur."},
- {"etkinlik": "Temettü Dağıtım Dönemi", "periyot": "Genellikle Mart-Haziran", "not": "Kâr payı yatan hisselerde fiyat temettü kadar düzeltme yapar."},
- {"etkinlik": "BİST Seans Saatleri", "periyot": "Hafta içi 10:00-18:00 (öğle arası hariç)", "not": "Site teknik taraması işlem saatlerinde 30 dakikada bir güncellenir; hafta sonu yayın yapılmaz."}
-]

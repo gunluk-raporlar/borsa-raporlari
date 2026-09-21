@@ -76,8 +76,8 @@
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
     <div class="site-widgets">
         <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <span id="current-date-time">Yükleniyor...</span>
-            <span id="istanbul-weather">İstanbul Hava Durumu...</span>
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
         </div>
 
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
@@ -93,12 +93,12 @@
 
 <div id="bist-radyo" style="display:none; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; min-width:250px; max-width:330px;" oncontextmenu="return false;">
   <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-    <strong style="font-size:13px; color:#0f172a;">BIST Radyo</strong>
+    <strong style="font-size:13px; color:#0f172a;">📻 BIST Radyo</strong>
     <span style="background:#f0fdfa; color:#0f766e; border:1px solid #99f6e4; border-radius:999px; padding:1px 8px; font-size:11px;">AI sunucular</span>
   </div>
   <audio id="radyo-audio" controls preload="none" controlslist="nodownload noremoteplayback" style="width:100%; height:34px;" oncontextmenu="return false;"></audio>
   <div id="radyo-liste" style="margin-top:6px; font-size:12.5px; color:#475569;"></div>
-  <div style="margin-top:4px; font-size:11px;"><a href="../radyo/index.html">Tüm yayınlar &amp; Podcast sayfası</a> • <a href="../radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
+  <div style="margin-top:4px; font-size:11px;"><a href="../radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> • <a href="../radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
   <div style="margin-top:4px; color:#94a3b8; font-size:11px;">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
 </div>
 <script>
@@ -256,7 +256,7 @@
 
 <div id="ai-panel" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; font-size: 14px; line-height: 1.6;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-        <strong style="color: #0f766e;">BIST AI Asistan</strong>
+        <strong style="color: #0f766e;">🤖 BIST AI Asistan</strong>
         <a href="javascript:void(0)" onclick="document.getElementById('ai-panel').style.display='none'" style="color: #64748b; text-decoration: none; font-size: 18px; line-height: 1;">×</a>
     </div>
     <div id="ai-answer"></div>
@@ -324,7 +324,7 @@ async function aiSor() {
 <div class="hero">
 <h1>Günlük Piyasa Raporu</h1>
 <div class="meta"><span class="badge">2026-09-16</span><span>BIST 30 • Yapay zeka destekli günlük analiz</span>
-<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">Sesli Oku</button>
+<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button>
 <span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px"><a class="paylas" href="https://twitter.com/intent/tweet?text=G%C3%BCnl%C3%BCk+Piyasa+Raporu+2026-09-16&url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-16.html" target="_blank" rel="noopener" title="X'te paylaş">𝕏</a><a class="paylas" href="https://t.me/share/url?url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-16.html&text=G%C3%BCnl%C3%BCk+Piyasa+Raporu+2026-09-16" target="_blank" rel="noopener" title="Telegram'da paylaş">✈</a><a class="paylas" href="https://wa.me/?text=G%C3%BCnl%C3%BCk+Piyasa+Raporu+2026-09-16%20https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-16.html" target="_blank" rel="noopener" title="WhatsApp'ta paylaş">💬</a><a class="paylas" href="javascript:void(0)" title="Bağlantıyı kopyala" onclick="if(navigator.clipboard){navigator.clipboard.writeText('https://borsa-raporlari.pages.dev/en/reports/2026-09-16.html');this.textContent='✓';}">🔗</a></span></div>
 </div>
 
@@ -338,12 +338,12 @@ async function aiSor() {
 </div>
 
 <div class="card" style="margin:0 0 18px; padding:8px 14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-  <strong style="font-size:13px; white-space:nowrap">Sesli bülten</strong>
+  <strong style="font-size:13px; white-space:nowrap">🔊 Sesli bülten</strong>
   <audio controls preload="none" src="https://borsa-raporlari.pages.dev/reports/2026-09-16.mp3" style="flex:1; min-width:220px; height:34px;"></audio>
 </div>
 
 <div class="pano">
-<div class="pano-baslik">Günün Panosu — BIST 30</div>
+<div class="pano-baslik">📊 Günün Panosu — BIST 30</div>
 <div class="pano-veri">
   <div class="pano-hucre"><div class="pano-etiket">BIST 30 Sepeti</div><div class="pano-deger neg">-3.22%</div></div>
   <div class="pano-hucre"><div class="pano-etiket">Yükselen / Düşen</div><div class="pano-deger">2 / 27</div></div>
@@ -352,10 +352,10 @@ async function aiSor() {
   <div class="pano-hucre"><div class="pano-etiket">Sinyal (AL / SAT)</div><div class="pano-deger">3 / 23</div></div>
 </div>
 <div class="pano-man">
-<div><span class="pos">En çok yükselenler:</span> <b>DSTKF</b> +4.41% • <b>ASELS</b> +1.21% • <b>TOASO</b> +0.00%</div>
-<div><span class="neg">En çok düşenler:</span> <b>YKBNK</b> -5.35% • <b>VAKBN</b> -5.20% • <b>TAVHL</b> -5.12%</div>
-<div>Sinyal dağılımı: GÜÇLÜ AL 0 · AL 3 · NÖTR 4 · SAT 10 · GÜÇLÜ SAT 13</div>
-<div>Sektör ortalamaları: Finans (Diğer) <span class='pos'>+4.41%</span>Savunma <span class='pos'>+1.21%</span>Otomotiv <span class='neg'>-2.05%</span>Metal &amp; Madencilik <span class='neg'>-2.42%</span>Cam &amp; Seramik <span class='neg'>-2.57%</span>Enerji &amp; Petrokimya <span class='neg'>-3.12%</span>Sanayi (Diğer) <span class='neg'>-3.44%</span>Gıda &amp; İçecek <span class='neg'>-3.65%</span>Telekom <span class='neg'>-3.69%</span>Gayrimenkul <span class='neg'>-3.79%</span>Holding <span class='neg'>-3.94%</span>Perakende <span class='neg'>-4.00%</span>Kimya &amp; Gübre <span class='neg'>-4.23%</span>Havacılık &amp; Ulaştırma <span class='neg'>-4.27%</span>Bankacılık <span class='neg'>-4.54%</span></div>
+<div><span class="pos">▲ En çok yükselenler:</span> <b>DSTKF</b> +4.41% • <b>ASELS</b> +1.21% • <b>TOASO</b> +0.00%</div>
+<div><span class="neg">▼ En çok düşenler:</span> <b>YKBNK</b> -5.35% • <b>VAKBN</b> -5.20% • <b>TAVHL</b> -5.12%</div>
+<div>📣 Sinyal dağılımı: GÜÇLÜ AL 0 · AL 3 · NÖTR 4 · SAT 10 · GÜÇLÜ SAT 13</div>
+<div>🏷️ Sektör ortalamaları: Finans (Diğer) <span class='pos'>+4.41%</span> • Savunma <span class='pos'>+1.21%</span> • Otomotiv <span class='neg'>-2.05%</span> • Metal &amp; Madencilik <span class='neg'>-2.42%</span> • Cam &amp; Seramik <span class='neg'>-2.57%</span> • Enerji &amp; Petrokimya <span class='neg'>-3.12%</span> • Sanayi (Diğer) <span class='neg'>-3.44%</span> • Gıda &amp; İçecek <span class='neg'>-3.65%</span> • Telekom <span class='neg'>-3.69%</span> • Gayrimenkul <span class='neg'>-3.79%</span> • Holding <span class='neg'>-3.94%</span> • Perakende <span class='neg'>-4.00%</span> • Kimya &amp; Gübre <span class='neg'>-4.23%</span> • Havacılık &amp; Ulaştırma <span class='neg'>-4.27%</span> • Bankacılık <span class='neg'>-4.54%</span></div>
 </div>
 <div class="tbl-wrap">
 <table class="pano-tablo">
@@ -398,7 +398,7 @@ async function aiSor() {
 </div>
 
 <div class="pano">
-<div class="pano-baslik">Günlük Ajanda — Ekonomik Veri Duyuruları</div>
+<div class="pano-baslik">📅 Günlük Ajanda — Ekonomik Veri Duyuruları</div>
 <div class="tbl-wrap">
 <table class="pano-tablo">
 <thead><tr><th>Saat</th><th>Ülke</th><th>Olay</th><th style="text-align:right">Tahmin</th><th style="text-align:right">Önceki</th></tr></thead>
@@ -407,7 +407,7 @@ async function aiSor() {
 </tbody>
 </table>
 </div>
-<p class="pano-not">yüksek etkili veri. Kaynak: TradingView ekonomik takvimi; saatler TR zamanıdır. <a href="../takvim.html">Ekonomik Takvim Rehberi →</a></p>
+<p class="pano-not">🔴 = yüksek etkili veri. Kaynak: TradingView ekonomik takvimi; saatler TR zamanıdır. <a href="../takvim.html">Ekonomik Takvim Rehberi →</a></p>
 </div>
 <article class="report" id="rapor-govde"><h2>1. Yönetici Özeti ve Piyasa Genel Bakışı</h2>
 <p>Piyasalar, küresel ve yerel makroekonomik belirsizliklerin gölgesinde, son derece volatil ve seçici bir seyir izlemektedir. BIST 30 endeksi, 4,200-4,250 direnç bandında konsolidasyonunu sürdürmektedir. Bu kritik seviyenin altında kalıcı bir toparlanma sinyali henüz oluşmamış olup, endeksin bu bant üzerindeki tutunma çabası, mevcut piyasa koşullarındaki belirsizliğe işaret etmektedir. Önceki analizlerde öne çıkan temel riskler; ABD Merkez Bankası'nın (Fed) Eylül ayındaki faiz kararının yaratağı likidite etkisi, İran kaynaklı jeopolistik gerilimlerin enerji fiyatları üzerinden yansıması ve Türkiye'deki yüksek enflasyon (2%8.4) beklentisi, güncel piyasa dinamiklerinin merkezinde yer almaktadır. Bu ortamda fon yönetiminin temel perspektifi, agresif alım stratejilerinden ziyade, yüksek likidite koruması ile seçili, teknik ve temel dayanıklılığı güçlü hisseler üzerinde kontrollü pozisyonlar oluşturmaya odaklanmıştır. Piyasalar, Fed kararını ve jeopolitik gelişmeleri yakından takip etmekte ve gerektiğinde portföydeki nakit payını artırarak esnek kalmayı hedeflemektedir.</p>
@@ -418,7 +418,7 @@ async function aiSor() {
 <h2>4. Şirket ve Finansal Değerlendirme</h2>
 <p>Temel veriler ışığında BIST 30 şirketlerinin finansal profilleri, makroekonomik zorluklara karşı dayanıklılık testine tabi tutulmaktadır. Dönen varlıklar büyüklüğü, bir şirketin operasyonel esnekliği ve piyasa hakimiyeti açısından önemli bir göstergedir. Bu bağlamda, KCHOL (Koç Holding) ve SAHOL (Sabancı Holding) gibi holding şirketleri, 3,615 milyar TL ve 2,790 milyar TL gibi devasa dönen varlıklarıyla sektörlerindeki liderliğini korumaktadır. Bu yapılar, çeşitlendirilmiş iş kolları sayesinde tek bir sektörel şok karşısında daha dirençli görünmektedir. Ancak, enerji ve metal gibi emtia yoğun sektörlerde faaliyet gösteren şirketler, yüksek doğal gaz ve enerji maliyetleri nedeniyle marj baskısı yaşamaktadır. Örneğin, EREGL (Ereğli Demir Çelik) ve SISE (Şişecam) gibi şirketler, maliyet artışlarını fiyatlara yansıtmakta zorlanmaktadır. Bankacılık sektörü ise yüksek enflasyon ve faiz ortamında, kredi büyümesi ile net faiz marjı arasında bir denge kurmaya çalışmaktadır. Bu ortamda, sermaye yeterlilik rasyonun yüksek ve likiditesi güçlü bankalar, öne çıkmaktadır. Ancak teknik analizdeki "GÜÇLÜ SAT" sinyalleri, bankacılık sektörüne genel olarak temkinli bir yaklaşım gerektirdiğini göstermektedir. Finansal rasyoların yanı sıra, şirketlerin borç yapıları ve döviz cinsinden borçlanma seviyeleri, kur dalgalanmalarına karşı önemli risk faktörleri oluşturmaktadır.</p>
 <h2>5. Risk Yönetimi ve Strateji</h2>
-<p>Mevcut piyasa koşullarında, risk yönetimi portföy performansını belirleyen en kritik faktördür. Kısa vadeli olası senaryolar, aşağı ve yukarı yönde potansiyelleri analiz ederek bir koruma kalkanı oluşturmayı gerektirmektedir. <strong>Aşağı Yönlü Risk Senaryosu:</strong>ABD Fed'in beklenenden daha hawkish (yeni bir indirim beklentisi yerine faiz sabitliği veya gelecekteki artış sinyali) bir açıklama yapması veya İran-Orta Doğu geriliminin tırmanması enerji fiyatlarını ve küresel risk iştahını anında olumsuz etkileyebilir. Bu durumda, BIST 30 endeksinin 4,000 destek seviyesini test etmesi ve bankacılık, havacılık gibi riskli sektörlerde sert satış dalgası yaşanması yüksek bir ihtimaldir. Bu senaryoda, portföydeki nakit oranı 4%0-50 seviyesine çıkarılmalı ve stop-loss seviyelerinde (örneğin KCHOL 210 TL, BIMAS 415 TL) kesin disiplin uygulanmalıdır. <strong>Yukarı Yönlü Risk Senaryosu:</strong>Eğer Fed faiz indirimine dair net bir sinyal verir ve jeopolitik gerilimler barışçıl bir seyir izlerse, BIST 30 endeksinin 4,250 direncini kırarak 4,350-4,400 bandına doğru bir yükseliş potansiyeli doğabilir. Bu senaryoda, yüksek nakit oranı, stratejik olarak tutulan hisselerde pozisyon artışı için bir fırsat sunacaktır. <strong>Stratejik Yaklaşım:</strong>Her iki senaryo da, mevcut belirsizlik ortamında agresif kaldıraç kullanımından kaçınılması, pozisyon boyutlarının küçültülmesi ve yüksek likidite ile piyasa dalgalanmalarına karşı esnekliğin korunması gerektiğini göstermektedir. Riskten korunma, portföyün tamamını satmaktan ziyade, doğru hisselerde doğru ağırlıkla pozisyon almayı bilmekle ilgilidir.</p>
+<p>Mevcut piyasa koşullarında, risk yönetimi portföy performansını belirleyen en kritik faktördür. Kısa vadeli olası senaryolar, aşağı ve yukarı yönde potansiyelleri analiz ederek bir koruma kalkanı oluşturmayı gerektirmektedir. <strong>Aşağı Yönlü Risk Senaryosu:</strong> ABD Fed'in beklenenden daha hawkish (yeni bir indirim beklentisi yerine faiz sabitliği veya gelecekteki artış sinyali) bir açıklama yapması veya İran-Orta Doğu geriliminin tırmanması enerji fiyatlarını ve küresel risk iştahını anında olumsuz etkileyebilir. Bu durumda, BIST 30 endeksinin 4,000 destek seviyesini test etmesi ve bankacılık, havacılık gibi riskli sektörlerde sert satış dalgası yaşanması yüksek bir ihtimaldir. Bu senaryoda, portföydeki nakit oranı 4%0-50 seviyesine çıkarılmalı ve stop-loss seviyelerinde (örneğin KCHOL 210 TL, BIMAS 415 TL) kesin disiplin uygulanmalıdır. <strong>Yukarı Yönlü Risk Senaryosu:</strong> Eğer Fed faiz indirimine dair net bir sinyal verir ve jeopolitik gerilimler barışçıl bir seyir izlerse, BIST 30 endeksinin 4,250 direncini kırarak 4,350-4,400 bandına doğru bir yükseliş potansiyeli doğabilir. Bu senaryoda, yüksek nakit oranı, stratejik olarak tutulan hisselerde pozisyon artışı için bir fırsat sunacaktır. <strong>Stratejik Yaklaşım:</strong> Her iki senaryo da, mevcut belirsizlik ortamında agresif kaldıraç kullanımından kaçınılması, pozisyon boyutlarının küçültülmesi ve yüksek likidite ile piyasa dalgalanmalarına karşı esnekliğin korunması gerektiğini göstermektedir. Riskten korunma, portföyün tamamını satmaktan ziyade, doğru hisselerde doğru ağırlıkla pozisyon almayı bilmekle ilgilidir.</p>
 <h2>6. Önerilen Model Portföy</h2>
 <p>Yukarıdaki analiz ve sinyal verileri ışığında, teknik dayanıklılığı yüksek, temel makro risklere karşı daha az savunmasız ve momentumu güçlü olan hisselere ağırlık verilen, yüksek nakit korumalı bir model portföy aşağıda sunulmuştur. Portföy, kısa vadeli dalgalanmalara karşı bir kalkan görevi görmektedir.</p>
 <table>
@@ -456,7 +456,7 @@ async function aiSor() {
 <td>2900 TL</td>
 <td>3200 TL</td>
 <td>2600 TL</td>
-<td>4.41'lik günlük artış ve hacim patlaması, RSI 68.86 ve StochK 98.82 (aşırı alım ancak güçlü momentum), TradingView "GÜÇLÜ AL" sinyali.</td>
+<td>4%.41'lik günlük artış ve hacim patlaması, RSI 68.86 ve StochK 98.82 (aşırı alım ancak güçlü momentum), TradingView "GÜÇLÜ AL" sinyali.</td>
 </tr>
 <tr>
 <td>KCHOL</td>
@@ -526,7 +526,7 @@ async function aiSor() {
 </tr>
 </tbody>
 </table></article>
-<p style="margin-top:18px"><a href="../index.html">Tüm raporlara dön</a></p>
+<p style="margin-top:18px"><a href="../index.html">← Tüm raporlara dön</a></p>
 <script>
 (function() {
   if (!('speechSynthesis' in window)) { return; }

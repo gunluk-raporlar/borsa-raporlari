@@ -81,8 +81,8 @@
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
     <div class="site-widgets">
         <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <span id="current-date-time">Yükleniyor...</span>
-            <span id="istanbul-weather">İstanbul Hava Durumu...</span>
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
         </div>
 
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
@@ -98,12 +98,12 @@
 
 <div id="bist-radyo" style="display:none; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; min-width:250px; max-width:330px;" oncontextmenu="return false;">
   <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-    <strong style="font-size:13px; color:#0f172a;">BIST Radyo</strong>
+    <strong style="font-size:13px; color:#0f172a;">📻 BIST Radyo</strong>
     <span style="background:#f0fdfa; color:#0f766e; border:1px solid #99f6e4; border-radius:999px; padding:1px 8px; font-size:11px;">AI sunucular</span>
   </div>
   <audio id="radyo-audio" controls preload="none" controlslist="nodownload noremoteplayback" style="width:100%; height:34px;" oncontextmenu="return false;"></audio>
   <div id="radyo-liste" style="margin-top:6px; font-size:12.5px; color:#475569;"></div>
-  <div style="margin-top:4px; font-size:11px;"><a href="radyo/index.html">Tüm yayınlar &amp; Podcast sayfası</a> • <a href="radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
+  <div style="margin-top:4px; font-size:11px;"><a href="radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> • <a href="radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
   <div style="margin-top:4px; color:#94a3b8; font-size:11px;">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
 </div>
 <script>
@@ -261,7 +261,7 @@
 
 <div id="ai-panel" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; font-size: 14px; line-height: 1.6;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-        <strong style="color: #0f766e;">BIST AI Asistan</strong>
+        <strong style="color: #0f766e;">🤖 BIST AI Asistan</strong>
         <a href="javascript:void(0)" onclick="document.getElementById('ai-panel').style.display='none'" style="color: #64748b; text-decoration: none; font-size: 18px; line-height: 1;">×</a>
     </div>
     <div id="ai-answer"></div>
@@ -332,16 +332,16 @@ async function aiSor() {
 Wave Trend osilatörü ve 60 günlük regresyon kanalı konumu. Kanal konumu 0%=alt bant, 1%00=üst bant demektir;
 1%00'ün üzeri fiyatın bandın üstüne çıktığını (aşırı), 0'ın altı bandın altına düştüğünü gösterir.
 Pearson (r) son 60 gündeki trendin yönünü/gücünü gösterir (negatif r, fiyatın aşağı yönlü trendini ifade eder;
-sinyal yalnızca yön göstergelerine dayanır). <strong>Son güncelleme: 21.09 18:29 (İstanbul)</strong>piyasa
+sinyal yalnızca yön göstergelerine dayanır). <strong>Son güncelleme: 21.09 18:29 (İstanbul)</strong> — piyasa
 saatlerinde 30 dakikada bir TradingView canlı fiyatlarıyla (~15 dk gecikmeli); piyasa kapalıyken son işlem
 gününün kapanış verisiyle güncellenir. Bu sayfa EMA/Wave Trend/regresyon kanalı yöntemine dayanır;
 "Borsapy Sinyal" sayfası TradingView osilatör oylarını kullandığı için aynı hissede farklı sinyal
-gösterebilir. <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong>Tüm sinyaller otomatik taramadan üretilir; yatırım tavsiyesi değildir.</p>
-<button type="button" class="ses-btn" onclick="sesliOkuToggle(this,'teknik-ses-metin')" aria-label="Teknik tarama özetini sesli oku">Sesli Özeti Dinle</button>
+gösterebilir. <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</strong> Tüm sinyaller otomatik taramadan üretilir; yatırım tavsiyesi değildir.</p>
+<button type="button" class="ses-btn" onclick="sesliOkuToggle(this,'teknik-ses-metin')" aria-label="Teknik tarama özetini sesli oku">🔊 Sesli Özeti Dinle</button>
 <div id="teknik-ses-metin" hidden>Bugün 30 hisse tarandı. Güçlü al sinyali veren 2 hisse: TUPRS, 414.75 TL; BIMAS, 432.00 TL. Al sinyalindeki 3 hisse: KRDMD, TRALT, TOASO. Sat sinyalindeki 22 hisse: PETKM, ASELS, GARAN, TAVHL, YKBNK, ISCTR, AEFES, TCELL, MGROS, THYAO, GUBRF, SASA, SAHOL, ASTOR, EKGYO, ENKAI, DSTKF, SISE, FROTO, TTKOM, EREGL, PGSUS. Tüm hisselerin sinyal ve göstergeleri tabloda yer alıyor.</div>
 </div>
 
-<h2 class="section-title">Sektörel Isı Haritası <span style="font-size:12px; color:var(--muted); font-weight:400">günlük değişim ortalaması)</span></h2>
+<h2 class="section-title">Sektörel Isı Haritası <span style="font-size:12px; color:var(--muted); font-weight:400">(günlük değişim ortalaması)</span></h2>
 <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:10px; margin-bottom:8px;"><div style='background:rgba(4,120,87,0.73); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Holding</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>+3.08%</div><div style='font-size:11px; opacity:.75;'>2 hisse</div></div><div style='background:rgba(4,120,87,0.67); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Metal &amp; Madencilik</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>+2.77%</div><div style='font-size:11px; opacity:.75;'>2 hisse</div></div><div style='background:rgba(4,120,87,0.66); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Perakende</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>+2.70%</div><div style='font-size:11px; opacity:.75;'>2 hisse</div></div><div style='background:rgba(4,120,87,0.59); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Bankacılık</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>+2.33%</div><div style='font-size:11px; opacity:.75;'>5 hisse</div></div><div style='background:rgba(4,120,87,0.58); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Telekom</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>+2.29%</div><div style='font-size:11px; opacity:.75;'>2 hisse</div></div><div style='background:rgba(4,120,87,0.55); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Havacılık &amp; Ulaştırma</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>+2.11%</div><div style='font-size:11px; opacity:.75;'>3 hisse</div></div><div style='background:rgba(4,120,87,0.53); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Otomotiv</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>+2.02%</div><div style='font-size:11px; opacity:.75;'>2 hisse</div></div><div style='background:rgba(4,120,87,0.50); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Sanayi (Diğer)</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>+1.89%</div><div style='font-size:11px; opacity:.75;'>1 hisse</div></div><div style='background:rgba(4,120,87,0.50); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Cam &amp; Seramik</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>+1.87%</div><div style='font-size:11px; opacity:.75;'>1 hisse</div></div><div style='background:rgba(4,120,87,0.45); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Gıda &amp; İçecek</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>+1.60%</div><div style='font-size:11px; opacity:.75;'>1 hisse</div></div><div style='background:rgba(4,120,87,0.40); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Enerji &amp; Petrokimya</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>+1.34%</div><div style='font-size:11px; opacity:.75;'>4 hisse</div></div><div style='background:rgba(4,120,87,0.36); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Savunma</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>+1.14%</div><div style='font-size:11px; opacity:.75;'>1 hisse</div></div><div style='background:rgba(4,120,87,0.30); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Gayrimenkul</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>+0.79%</div><div style='font-size:11px; opacity:.75;'>1 hisse</div></div><div style='background:rgba(185,28,28,0.32); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Kimya &amp; Gübre</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>-0.91%</div><div style='font-size:11px; opacity:.75;'>2 hisse</div></div><div style='background:rgba(185,28,28,0.90); border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'><div style='font-weight:700; font-size:13px;'>Finans (Diğer)</div><div style='font-size:17px; font-weight:800; margin-top:4px;'>-9.98%</div><div style='font-size:11px; opacity:.75;'>1 hisse</div></div></div>
 
 <h2 class="section-title">Günlük Isı Haritası</h2>
@@ -355,7 +355,7 @@ gösterebilir. <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</str
 </table>
 </div>
 <p style="margin:12px 0 4px; color:var(--muted); font-size:13px">Bugün 30 hisse tarandı; 2 hisse GÜÇLÜ AL sinyalinde. Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
-<p style="margin:0 0 6px"><a href="sinyal-karnesi.html">📊 <strong>Сводка сигналов</strong>geçmiş AL sinyalleri 5 işlem günü sonra ne yapmış? →</a></p>
+<p style="margin:0 0 6px"><a href="sinyal-karnesi.html">📊 <strong>Сводка сигналов</strong> — geçmiş AL sinyalleri 5 işlem günü sonra ne yapmış? →</a></p>
 </div>
 
 <div id="tv-modal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,.65); z-index:999; padding:20px;">

@@ -80,8 +80,8 @@
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
     <div class="site-widgets">
         <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <span id="current-date-time">Yükleniyor...</span>
-            <span id="istanbul-weather">İstanbul Hava Durumu...</span>
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
         </div>
 
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
@@ -97,12 +97,12 @@
 
 <div id="bist-radyo" style="display:none; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; min-width:250px; max-width:330px;" oncontextmenu="return false;">
   <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-    <strong style="font-size:13px; color:#0f172a;">BIST Radyo</strong>
+    <strong style="font-size:13px; color:#0f172a;">📻 BIST Radyo</strong>
     <span style="background:#f0fdfa; color:#0f766e; border:1px solid #99f6e4; border-radius:999px; padding:1px 8px; font-size:11px;">AI sunucular</span>
   </div>
   <audio id="radyo-audio" controls preload="none" controlslist="nodownload noremoteplayback" style="width:100%; height:34px;" oncontextmenu="return false;"></audio>
   <div id="radyo-liste" style="margin-top:6px; font-size:12.5px; color:#475569;"></div>
-  <div style="margin-top:4px; font-size:11px;"><a href="radyo/index.html">Tüm yayınlar &amp; Podcast sayfası</a> • <a href="radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
+  <div style="margin-top:4px; font-size:11px;"><a href="radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> • <a href="radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
   <div style="margin-top:4px; color:#94a3b8; font-size:11px;">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
 </div>
 <script>
@@ -260,7 +260,7 @@
 
 <div id="ai-panel" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; font-size: 14px; line-height: 1.6;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-        <strong style="color: #0f766e;">BIST AI Asistan</strong>
+        <strong style="color: #0f766e;">🤖 BIST AI Asistan</strong>
         <a href="javascript:void(0)" onclick="document.getElementById('ai-panel').style.display='none'" style="color: #64748b; text-decoration: none; font-size: 18px; line-height: 1;">×</a>
     </div>
     <div id="ai-answer"></div>
@@ -331,13 +331,13 @@ async function aiSor() {
 hafta içi her sabah bir önceki işlem gününün kapanış fiyatlarıyla otomatik güncellenir.</p>
 </div>
 <details class="card" style="margin-bottom:22px">
-<summary style="cursor:pointer; font-weight:700">Metodoloji — bu portföy nasıl hesaplanıyor?</summary>
+<summary style="cursor:pointer; font-weight:700">📐 Metodoloji — bu portföy nasıl hesaplanıyor?</summary>
 <div style="margin-top:10px; font-size:14px; display:grid; gap:6px">
-<p style="margin:0">2026-09-06 tarihinde 100,000 TL, BIST 30 hisselerine <strong>eşit dağıtıldı</strong>adetler fraksiyoneldir, gerçek uygulamada tam lota yuvarlama gerekir.</p>
-<p style="margin:0">Hafta içi her sabah <strong>bir önceki işlem gününün kapanış fiyatlarıyla</strong>güncellenir; tatil günlerinde değer değişmez, hiç alım-satım yapılmaz.</p>
-<p style="margin:0">• <strong>Temettü, bedelsiz ve bölünmeler şu an hesaba katılmaz</strong>bu olayların geçtiği günlerde getiri sapması olabilir.</p>
-<p style="margin:0">Karşılaştırma çizgileri (altın, dolar, mevduat, BIST 100, BIST 30, enflasyon) aynı 100,000 TL tabanına normalize edilir; enflasyon değeri TradingView ekonomik takviminden gelen son TÜİK yıllık okumadır ve grafiğe dönem tarihiyle yansır.</p>
-<p style="margin:0">Toplam getiri, tekil hisse yüzdelerinin ortalaması değil, portföyün toplam değer değişimidir. Sinyal Karnesi sayfasındaki net getiri senaryosu ~0%.10 komisyon+BSMV varsayımı kullanır.</p>
+<p style="margin:0">• 2026-09-06 tarihinde 100,000 TL, BIST 30 hisselerine <strong>eşit dağıtıldı</strong>; adetler fraksiyoneldir, gerçek uygulamada tam lota yuvarlama gerekir.</p>
+<p style="margin:0">• Hafta içi her sabah <strong>bir önceki işlem gününün kapanış fiyatlarıyla</strong> güncellenir; tatil günlerinde değer değişmez, hiç alım-satım yapılmaz.</p>
+<p style="margin:0">• <strong>Temettü, bedelsiz ve bölünmeler şu an hesaba katılmaz</strong>; bu olayların geçtiği günlerde getiri sapması olabilir.</p>
+<p style="margin:0">• Karşılaştırma çizgileri (altın, dolar, mevduat, BIST 100, BIST 30, enflasyon) aynı 100,000 TL tabanına normalize edilir; enflasyon değeri TradingView ekonomik takviminden gelen son TÜİK yıllık okumadır ve grafiğe dönem tarihiyle yansır.</p>
+<p style="margin:0">• Toplam getiri, tekil hisse yüzdelerinin ortalaması değil, portföyün toplam değer değişimidir. Sinyal Karnesi sayfasındaki net getiri senaryosu ~0%.10 komisyon+BSMV varsayımı kullanır.</p>
 <p style="margin:0; color:var(--muted)">Bu bir sanal deneme portföyüdür; yatırım tavsiyesi değildir. Geçmiş performans gelecekteki sonuçların garantisi değildir.</p>
 </div>
 </details>
@@ -353,7 +353,7 @@ hafta içi her sabah bir önceki işlem gününün kapanış fiyatlarıyla otoma
 <div style="position:relative; height:340px; min-width:640px;">
 <canvas id="portfoy-grafik-911309"></canvas>
 </div>
-<p class="pgrafik-ipucu">Grafiği sağa-sola kaydırabilirsiniz</p>
+<p class="pgrafik-ipucu">↔ Grafiği sağa-sola kaydırabilirsiniz</p>
 </div>
 <style>
 .pgrafik-sarmal{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -423,7 +423,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <table><tr><th>Tarih*</th><th>Toplam Değer</th><th>Toplam %</th><th>Günlük %</th></tr><tr><td>2026-09-21</td><td>98.907.56 TL</td><td class='neg'>-1.09%</td><td class='neg'>-0.98%</td></tr><tr><td>2026-09-18</td><td>99.889.37 TL</td><td class='neg'>-0.11%</td><td class='pos'>+2.43%</td></tr><tr><td>2026-09-17</td><td>97.523.70 TL</td><td class='neg'>-2.48%</td><td class='neg'>-4.68%</td></tr><tr><td>2026-09-16</td><td>102.312.18 TL</td><td class='pos'>+2.31%</td><td class='neg'>-2.80%</td></tr><tr><td>2026-09-15</td><td>105.257.55 TL</td><td class='pos'>+5.26%</td><td class='neg'>-1.58%</td></tr><tr><td>2026-09-14</td><td>106.949.37 TL</td><td class='pos'>+6.95%</td><td class='pos'>+1.55%</td></tr><tr><td>2026-09-11</td><td>105.320.34 TL</td><td class='pos'>+5.32%</td><td class='neg'>-0.38%</td></tr><tr><td>2026-09-10</td><td>105.721.90 TL</td><td class='pos'>+5.72%</td><td class='pos'>+0.56%</td></tr><tr><td>2026-09-09</td><td>105.135.98 TL</td><td class='pos'>+5.14%</td><td class='pos'>+2.72%</td></tr><tr><td>2026-09-08</td><td>102.352.27 TL</td><td class='pos'>+2.35%</td><td class='pos'>+2.34%</td></tr><tr><td>2026-09-07</td><td>100.013.04 TL</td><td class='pos'>+0.01%</td><td class='pos'>+0.00%</td></tr><tr><td>2026-09-06</td><td>100.013.04 TL</td><td class='pos'>+0.01%</td><td class='pos'>+0.01%</td></tr></table>
 </div>
 </div>
-<p style="margin:10px 0 0; color:var(--muted); font-size:12.5px">Portföy hafta içi her sabah otomatik olarak, bir önceki işlem gününün kapanış fiyatlarıyla güncellenir; hafta sonu ve tatil günlerinde değer değişmez. Canlı fiyatlar için üstteki fiyat şeridine bakınız. Getiri, başlangıçta eşit dağıtılan 100,000 TL'nin güncel değerine göre hesaplanır; tablodaki tekil hisse yüzdelerinin basit ortalaması değildir. Karşılaştırma çizgileri (altın/dolar/mevduat/endeks/enflasyon) da aynı 100,000 TL tabanına normalize edilmiştir.<br>Tarih sütunu, portföyün güncellendiği günü gösterir; fiyatlar bir önceki işlem gününün kapanışına aittir.
+<p style="margin:10px 0 0; color:var(--muted); font-size:12.5px">Portföy hafta içi her sabah otomatik olarak, bir önceki işlem gününün kapanış fiyatlarıyla güncellenir; hafta sonu ve tatil günlerinde değer değişmez. Canlı fiyatlar için üstteki fiyat şeridine bakınız. Getiri, başlangıçta eşit dağıtılan 100,000 TL'nin güncel değerine göre hesaplanır; tablodaki tekil hisse yüzdelerinin basit ortalaması değildir. Karşılaştırma çizgileri (altın/dolar/mevduat/endeks/enflasyon) da aynı 100,000 TL tabanına normalize edilmiştir.<br>
+* Tarih sütunu, portföyün güncellendiği günü gösterir; fiyatlar bir önceki işlem gününün kapanışına aittir.
 Hafta sonu ve tatil günlerinde değer değişmez.</p>
 </main>
 
