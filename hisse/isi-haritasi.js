@@ -219,13 +219,13 @@
       var h = harita[kart.getAttribute("data-kod")];
       if (!h || typeof h.f !== "number") return;
       var alt = kart.querySelectorAll(".sub");
-      if (alt.length < 3) return;
-      var sinyal = (alt[1].textContent.split("•")[0] || "").trim();
-      alt[1].textContent = sinyal + " • " +
+      if (alt.length < 2) return;
+      var sinyal = (alt[0].textContent.split("•")[0] || "").trim();
+      alt[0].textContent = sinyal + " • " +
         h.f.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
-      alt[2].textContent = (h.d > 0 ? "+" : h.d < 0 ? "-" : "") +
+      alt[1].textContent = (h.d > 0 ? "+" : h.d < 0 ? "-" : "") +
         Math.abs(h.d).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
-      alt[2].className = "sub " + (h.d >= 0 ? "pos" : "neg");
+      alt[1].className = "sub " + (h.d >= 0 ? "pos" : "neg");
     });
   }
   function yuzde(d) {
