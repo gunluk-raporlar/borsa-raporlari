@@ -3002,21 +3002,11 @@ function arsivAc(btn) {{
 <p style="margin:0 0 6px; color:var(--muted); font-size:12.5px">{PORTFOY_NOTU}</p>
 </div>"""
 
-    # Dil secici: EN/DE/ZH surumlerin giris sayfalarina kisa yol
-    dil_bolumu = """
-<div class="card" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:12px 20px; margin-bottom:24px; font-size:14.5px">
-<span aria-hidden="true">🌐</span><strong style="font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px">Diller</strong>
-<a href="en/index.html" hreflang="en" style="text-decoration:none">🇬🇧 English</a>
-<a href="de/index.html" hreflang="de" style="text-decoration:none">🇩🇪 Deutsch</a>
-<a href="zh/index.html" hreflang="zh" style="text-decoration:none">🇨🇳 中文</a>
-<a href="ru/index.html" hreflang="ru" style="text-decoration:none">🇷🇺 Русский</a>
-</div>"""
     icerik = f"""
 <div class="hero">
 <h1>BIST 30 Günlük Piyasa Raporları</h1>
 <p>Hafta içi her sabah 08:00'de otomatik üretilen, yapay zeka destekli BIST 30 analizleri ve sanal portföy takibi. (Hafta sonu yayın yok — piyasa kapalı.)</p>
 </div>
-{dil_bolumu}
 {arsiv_bolumu}
 {derin_bolumu}
 {haftasonu_bolumu}
@@ -4653,9 +4643,6 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
         ("sozluk.html", "weekly"),
         ("takvim.html", "weekly"),
         ("hisse/index.html", "daily"),
-        ("haftasonu-egitimi.html", "weekly"),
-        ("sirket-haberleri.html", "daily"),
-        ("radyo/index.html", "daily"),
     ]
     bugun = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%Y-%m-%d")
     url_blokleri = []
@@ -4682,28 +4669,6 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
                     f"<changefreq>daily</changefreq><priority>0.6</priority></url>"
                 )
     except OSError:
-        pass
-    # Haftasonu raporlari ve borsa okulu dersleri; lastmod dosya adindaki
-    # tarihten okunur (2026-09-19.html -> 2026-09-19), adinda tarih olmayan
-    # dosyalarda bot kosma tarihi kullanilir.
-    for klasor in ("haftasonu", "haftasonu-egitimi"):
-        try:
-            for fn in sorted(os.listdir(klasor)):
-                if not fn.endswith(".html"):
-                    continue
-                stem = fn[:-5]
-                lm = stem if re.fullmatch(r"\d{4}-\d{2}-\d{2}", stem) else bugun
-                url_blokleri.append(
-                    f"  <url><loc>{SITE_URL}{klasor}/{fn}</loc><lastmod>{lm}</lastmod>"
-                    f"<changefreq>monthly</changefreq><priority>0.6</priority></url>"
-                )
-        except OSError:
-            pass
-    # Cok dilli (en/de/zh) sayfalar: klasorler varsa sitemap'e eklenir
-    try:
-        import cok_dil
-        url_blokleri.extend(cok_dil.sitemap_satirlari())
-    except Exception:
         pass
     with open("sitemap.xml", "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -4924,17 +4889,6 @@ if __name__ == "__main__":
         rapor_podcast_yaz()
     except Exception:
         logger.exception("[Podcast] rapor RSS'i yazilamadi.")
-
-    # Cok dilli sayfalar (en/de/zh): bagimsiz modul (cok_dil.py); bot.py'yi
-    # import etmez, her seyi parametreyle alir. Bu noktada Turkce ciktilar
-    # hazir oldugu icin olasi bir hata Turkce siteyi asla etkilemez.
-    try:
-        import cok_dil
-        cok_dil.uret(report=report, date_str=date_str,
-                     teknik_satirlar=teknik_satirlar or [],
-                     llm=llm_call, log=logger.exception)
-    except Exception:
-        logger.exception("[CokDil] cok dilli sayfalar uretilemedi; Turkce site etkilenmez.")
 
     # SEO: arama motorlari dosyalari her kosuda taze lastmod ile yeniden yazilir
     try:
