@@ -218,6 +218,14 @@ class Cevirmen:
         self.onbellek_yolu = Path(onbellek_yolu if self.gecerli_onbellek
                                   else f"i18n-cache-{provider}.json")
         self.onbellek = {}
+        # Elle yazilmis ceviriler (asistan): onbellekten ONCE gelir, kosudan bagimsiz yasar.
+        self.elle = {}
+        self.elle_yolu = Path("i18n-elle.json")
+        if self.elle_yolu.exists():
+            try:
+                self.elle = json.loads(self.elle_yolu.read_text(encoding="utf-8"))
+            except Exception:
+                self.elle = {}
         if self.gecerli_onbellek and self.onbellek_yolu.exists():
             try:
                 self.onbellek = json.loads(self.onbellek_yolu.read_text(encoding="utf-8"))
@@ -233,6 +241,7 @@ class Cevirmen:
         self.sure_doldu = False
         self.yeni = 0
         self.onbellekten = 0
+        self.elle_adedi = 0
         self.sozlukten = 0
 
     # -- onbellek --------------------------------------------------------
@@ -263,6 +272,12 @@ class Cevirmen:
                 self.sozlukten += 1
                 continue
             k = self._anahtar(dil, saf)
+            if k in self.elle and self.elle[k]:
+                # Elle yazilmis ceviri (asistan) en yuksek oncelik: insan denetiminden gecti.
+                _saf, onek = metni_ayikla(m)
+                sonuc[i] = (onek + self.elle[k]) if onek else self.elle[k]
+                self.elle_adedi += 1
+                continue
             # onbellekteki deger kaynakla AYNI ise gecersiz say (zehirli kayitlari etkisiz kilar)
             if k in self.onbellek and self.onbellek[k] and self.onbellek[k].strip() != saf.strip():
                 _saf, onek = metni_ayikla(m)
@@ -1227,7 +1242,10 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
 
     # En az cevrilmis dil once islenir: sure butcesi dolarsa tum diller dengeli ilerler.
     def _kapsam(d: str) -> int:
-        return sum(1 for k in getattr(cevirmen, "onbellek", {}) if str(k).startswith(d + ":"))
+        kume = set()
+        for kaynak in (getattr(cevirmen, "elle", {}), getattr(cevirmen, "onbellek", {})):
+            kume.update(k for k in kaynak if str(k).startswith(d + ":"))
+        return len(kume)
 
     try:
         diller = sorted(diller, key=_kapsam)
