@@ -1209,6 +1209,18 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
     agac = dil_agac_kumesi(kok, hedef_liste)
     medya = medya_kumesi(kok)
     ozet = {"sayfa": 0, "dil": {}, "aktarilan_metin": 0, "onarilan_baglanti": 0, "medya_baglantisi": 0}
+
+    # En az cevrilmis dil once islenir: sure butcesi dolarsa tum diller dengeli ilerler.
+    def _kapsam(d: str) -> int:
+        return sum(1 for k in getattr(cevirmen, "onbellek", {}) if str(k).startswith(d + ":"))
+
+    try:
+        diller = sorted(diller, key=_kapsam)
+        print("[i18n] dil sirasi (en az cevrilmis once): " +
+              ", ".join(f"{d}={_kapsam(d)}" for d in diller), flush=True)
+    except Exception:
+        pass
+
     for dil in diller:
         n = 0
         print(f"[i18n] --- {dil}: {len(hedef_liste)} sayfa cevirilecek ---", flush=True)

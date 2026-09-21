@@ -64,9 +64,10 @@ jobs:
         env:
           # 20 istek/dk sinirinin altinda kal (3.5 sn -> ~17/dk)
           I18N_ARALIK: "3.5"
-          I18N_PENCERE: "10"
+          I18N_ARALIK_ZAI: "0.15"
+          I18N_PENCERE: "20"
           I18N_TIMEOUT: "60"
-          I18N_SURE_SINIRI_DK: "45"
+          I18N_SURE_SINIRI_DK: "60"
           # Sira: DeepSeek (birincil, daha guclu) -> Qwen (yedek). Kapasite doluysa 20 sn icinde devreder.
           # Z.AI (GLM) — kullanicinin kayitli anahtari; ceviride birincil
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
