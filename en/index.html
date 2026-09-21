@@ -7,10 +7,10 @@
 <meta name="description" content="AI-powered daily reports for BIST 30, technical screening and oscillator signals, model portfolio recommendations, and tracking of a 100.000 TL virtual demo portfolio.">
 <link rel="canonical" href="https://borsa-raporlari.pages.dev/en/">
 <link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/">
-<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/">
-<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/">
 <link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/">
 <link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/">
 <link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
@@ -80,8 +80,8 @@
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
     <div class="site-widgets">
         <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <span id="current-date-time">Loading...</span>
-            <span id="istanbul-weather">Istanbul Weather...</span>
+            <span id="current-date-time">⏳ Loading...</span>
+            <span id="istanbul-weather">🌤️ Istanbul Weather...</span>
         </div>
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
 <nav class="dil-linkler" aria-label="Sayfa dili seçin">
@@ -190,7 +190,7 @@
   <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Play / Pause">▶</button>
   <audio id="radyo-ses" preload="none"></audio>
   <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Volume level" title="Sound">
-  <span class="radyo-linkler"><a href="radyo/index.html">All broadcasts &amp; Podcast page</a> <span class="ayrac">•</span> <a href="radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-linkler"><a href="radyo/index.html">📻 All broadcasts &amp; Podcast page</a> <span class="ayrac">•</span> <a href="radyo/podcast.xml">RSS</a></span>
   <span class="radyo-uyari">For listening purposes only • Fictional AI servers • For informational purposes, not investment advice.</span>
 </div>
 <script>
@@ -268,7 +268,7 @@ function arsivAc(btn) {
 <div style="position:relative; height:340px; min-width:640px;">
 <canvas id="portfoy-grafik-139199"></canvas>
 </div>
-<p class="pgrafik-ipucu">You can scroll the chart left and right</p>
+<p class="pgrafik-ipucu">↔ You can scroll the chart left and right</p>
 </div>
 <style>
 .pgrafik-sarmal{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <table><tr><th>Stock</th><th>Qty</th><th>Entry price</th><th>Last price</th><th>Return</th></tr><tr><td><strong>TUPRS</strong></td><td>8.58</td><td>388.50 TL</td><td>417.25 TL</td><td class='pos'>+7.40%</td></tr><tr><td><strong>PETKM</strong></td><td>166.17</td><td>20.06 TL</td><td>21.44 TL</td><td class='pos'>+6.88%</td></tr><tr><td><strong>TOASO</strong></td><td>12.15</td><td>274.25 TL</td><td>284.50 TL</td><td class='pos'>+3.74%</td></tr><tr><td><strong>TAVHL</strong></td><td>12.43</td><td>268.25 TL</td><td>276.25 TL</td><td class='pos'>+2.98%</td></tr><tr><td><strong>SASA</strong></td><td>1,455.60</td><td>2.29 TL</td><td>2.35 TL</td><td class='pos'>+2.62%</td></tr><tr><td><strong>ISCTR</strong></td><td>256.21</td><td>13.01 TL</td><td>13.26 TL</td><td class='pos'>+1.92%</td></tr><tr><td><strong>AEFES</strong></td><td>180.67</td><td>18.45 TL</td><td>18.79 TL</td><td class='pos'>+1.84%</td></tr><tr><td><strong>SISE</strong></td><td>85.30</td><td>39.08 TL</td><td>39.62 TL</td><td class='pos'>+1.38%</td></tr></table>
 </div>
 <p style="margin:12px 0 4px"><a href="portfolio.html">Detailed portfolio history →</a>
-<span style="color:var(--muted); font-size:12.5px">All 30 stocks are on the portfolio page)</span></p>
+<span style="color:var(--muted); font-size:12.5px">( All 30 stocks are on the portfolio page)</span></p>
 <p style="margin:0 0 6px; color:var(--muted); font-size:12.5px">The portfolio is automatically updated every weekday morning with the closing prices of the previous trading day; it does not change on weekends and holidays. For live prices, please refer to the price bar above. The return is calculated based on the current value of the 100.000 TL, which was initially distributed equally; it is not the simple average of individual stock percentages in the table. Comparison lines (gold/dollar/deposit/index/inflation) are also normalized to the same 100.000 TL base.</p>
 </div>
 </main>
