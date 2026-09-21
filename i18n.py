@@ -470,9 +470,12 @@ class Cevirmen:
         if not anahtar:
             raise SystemExit("[i18n] HATA: DeepL icin DEEPL_API_KEY gerekli.")
         hedef = hedef or {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
+        # Free anahtarlar (:fx) -> api-free; Pro anahtarlar -> api.deepl.com
+        # (Pro'ya gecersen DEEPL_BASE_URL=https://api.deepl.com ayarlaman yeterli)
+        taban = os.environ.get("DEEPL_BASE_URL", "https://api-free.deepl.com").rstrip("/")
         govde = "&".join([f"text={urllib.parse.quote(p)}" for p in parcalar])
         govde += f"&target_lang={hedef}&source_lang=TR&preserve_formatting=1"
-        istek = urllib.request.Request("https://api-free.deepl.com/v2/translate", data=govde.encode("utf-8"), headers={
+        istek = urllib.request.Request(taban + "/v2/translate", data=govde.encode("utf-8"), headers={
             "Authorization": f"DeepL-Auth-Key {anahtar}",
             "Content-Type": "application/x-www-form-urlencoded",
         })
