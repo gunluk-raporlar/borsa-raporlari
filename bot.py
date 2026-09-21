@@ -3009,6 +3009,7 @@ function arsivAc(btn) {{
 <a href="en/index.html" hreflang="en" style="text-decoration:none">🇬🇧 English</a>
 <a href="de/index.html" hreflang="de" style="text-decoration:none">🇩🇪 Deutsch</a>
 <a href="zh/index.html" hreflang="zh" style="text-decoration:none">🇨🇳 中文</a>
+<a href="ru/index.html" hreflang="ru" style="text-decoration:none">🇷🇺 Русский</a>
 </div>"""
     icerik = f"""
 <div class="hero">
