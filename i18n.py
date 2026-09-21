@@ -862,6 +862,23 @@ def sitemap_dogrula(kok: Path, diller: list[str]) -> dict:
     }
 
 
+def _modelleri_al(url: str, anahtar: str, timeout: float = 30) -> list:
+    """Saglayicinin /models ucundan erisilebilir model kimliklerini ceker."""
+    istek = urllib.request.Request(url, headers={"Authorization": f"Bearer {anahtar}"})
+    with urllib.request.urlopen(istek, timeout=timeout) as yanit:
+        veri = json.loads(yanit.read().decode("utf-8"))
+    ham = veri.get("data") or veri.get("models") or []
+    cikti = []
+    for m in ham:
+        if isinstance(m, dict):
+            kim = m.get("id") or m.get("model") or m.get("name")
+            if kim:
+                cikti.append(str(kim))
+        elif isinstance(m, str):
+            cikti.append(m)
+    return cikti
+
+
 def saglayici_test() -> int:
     """Her saglayiciye ve modeline TEK kisa istek atar; durum kodunu ve hata mesajini yazar.
 
@@ -873,10 +890,41 @@ def saglayici_test() -> int:
     if not uclar:
         print("Hic saglayici yapilandirilmamis (env bos).")
         return 2
+
+    def ev_ad(url):
+        if "amd" in url:
+            return "AMD"
+        if "z.ai" in url:
+            return "Z.AI"
+        if "groq" in url:
+            return "Groq/ALT"
+        return "OpenRouter"
+
+    # 0) Her saglayicinin GERCEK model listesi (destekliyorsa)
+    for url, anahtar, _m in uclar:
+        ev = ev_ad(url)
+        if "groq" in url:
+            print(f"--- {ev}: model listesi sorgulanmiyor (403/engelli)")
+            continue
+        models_url = url.replace("/chat/completions", "/models")
+        try:
+            liste = _modelleri_al(models_url, anahtar)
+            ilgi = [m for m in liste if any(k in m.lower() for k in ("glm", "deepseek", "qwen", "flash"))]
+            goster = ilgi if ilgi else liste
+            print(f"--- {ev}: {len(liste)} model erisilebilir ---")
+            for m in goster[:45]:
+                print("    ", m)
+            if len(goster) > 45:
+                print(f"     ... (+{len(goster) - 45} model daha)")
+        except urllib.error.HTTPError as h:
+            print(f"--- {ev}: model listesi alinamadi (HTTP {h.code})")
+        except Exception as h:
+            print(f"--- {ev}: model listesi alinamadi ({h})")
+
     sistem = "Cevirmen. Sana verilen JSON dizisini ayni uzunlukta cevrilmis JSON dizisi olarak dondur."
     dilim = ["BIST 30 gunluk rapor: destek ve direnc seviyeleri"]
     for url, anahtar, modeller in uclar:
-        ev = "AMD" if "amd" in url else ("Groq/ALT" if "groq" in url else "OpenRouter")
+        ev = ev_ad(url)
         print(f"--- {ev} ({url.split('/')[2]}) ---")
         for model in modeller:
             baslangic = time.time()
