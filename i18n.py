@@ -866,18 +866,22 @@ def saglayici_test() -> int:
         ev = "AMD" if "amd" in url else ("Groq/ALT" if "groq" in url else "OpenRouter")
         print(f"--- {ev} ({url.split('/')[2]}) ---")
         for model in modeller:
+            baslangic = time.time()
             try:
                 sonuc = Cevirmen._llm_istek(url, anahtar, model, sistem, dilim, 30)
+                sure = (time.time() - baslangic) * 1000
                 ok = isinstance(sonuc, list) and len(sonuc) == 1
-                print(f"   {model}: OK -> {str(sonuc[0])[:60] if ok else sonuc}")
+                print(f"   {model}: OK ({sure:.0f} ms) -> {str(sonuc[0])[:60] if ok else sonuc}")
             except urllib.error.HTTPError as h:
+                sure = (time.time() - baslangic) * 1000
                 try:
                     govde = h.read().decode("utf-8", errors="replace")[:160]
                 except Exception:
                     govde = ""
-                print(f"   {model}: HTTP {h.code} :: {govde}")
+                print(f"   {model}: HTTP {h.code} ({sure:.0f} ms) :: {govde}")
             except Exception as h:
-                print(f"   {model}: HATA :: {h}")
+                sure = (time.time() - baslangic) * 1000
+                print(f"   {model}: HATA ({sure:.0f} ms) :: {h}")
     return 0
 
 
