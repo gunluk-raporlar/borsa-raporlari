@@ -225,9 +225,9 @@
         if (alt.length < 2) return;
         var sinyal = sinyalHarita[kod] || (alt[0].textContent.split("•")[0] || "").trim();
         alt[0].textContent = sinyal + " • " +
-          h.f.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
+          h.f.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
         alt[1].textContent = (h.d > 0 ? "+" : h.d < 0 ? "-" : "") +
-          Math.abs(h.d).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
+          Math.abs(h.d).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
         alt[1].className = "sub " + (h.d >= 0 ? "pos" : "neg");
       });
     });

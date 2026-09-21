@@ -1495,6 +1495,41 @@ app = workflow.compile()
 SITE_URL = "https://borsa-raporlari.pages.dev/"
 
 
+
+
+def _tr_bicim(metin):
+    """1,234.56 -> 1.234,56 (Turkce sayi bicimi)."""
+    return metin.replace(",", "@").replace(".", ",").replace("@", ".")
+
+
+def _ts(x, hane=2):
+    """Turkce binlik ayracli sayi: 1234.5 -> 1.234,50"""
+    try:
+        return _tr_bicim(f"{x:,.{hane}f}")
+    except Exception:
+        return str(x)
+
+
+def _ts0(x):
+    return _ts(x, 0)
+
+
+def _ts1(x):
+    return _ts(x, 1)
+
+
+def _ty(x, hane=2):
+    """Isaretli Turkce sayi/yuzde: 1.25 -> +1,25"""
+    try:
+        return _tr_bicim(f"{x:+,.{hane}f}")
+    except Exception:
+        return str(x)
+
+
+def _ty1(x):
+    return _ty(x, 1)
+
+
 def _guzel_url(yol):
     """Cloudflare Pages, .html'li adresleri uzantısız adrese 308 ile
     yonlendirir. Canonical/og:url/sitemap adresleri bu hedefle ayni olsun
@@ -2609,14 +2644,14 @@ def _pano_html(satirlar, kok=""):
         if p and p.get("history"):
             rates = (p["history"][-1].get("rates") or {})
             if rates.get("USD"):
-                usd = f'{rates["USD"]:.2f}'.replace(".", ",")
+                usd = f'{_ts(rates["USD"])}'.replace(".", ",")
             if rates.get("GOLD"):
-                altin = f'{rates["GOLD"]:.0f}'
+                altin = f'{_ts0(rates["GOLD"])}'
     except Exception:
         pass
 
     def _fmt(v):
-        return f"{v:+.2f}%".replace(".", ",")
+        return f"{_ty(v)}%".replace(".", ",")
 
     sektor_ort = {}
     for s in satirlar:
@@ -2633,10 +2668,10 @@ def _pano_html(satirlar, kok=""):
     satir_html = "\n".join(
         f"<tr><td>{i}</td>"
         f"<td><a href='{kok}hisse/{s['hisse']}.html'><strong>{s['hisse']}</strong></a></td>"
-        f"<td>{s.get('son', 0):,.2f}</td>"
+        f"<td>{_ts(s.get('son', 0))}</td>"
         f"<td class='{_renk(s.get('gunluk', 0))}'><strong>{_fmt(s.get('gunluk', 0) or 0)}</strong></td>"
-        f"<td class='{_renk(s.get('deg60', 0))}'>{(s.get('deg60', 0) or 0):+.1f}%</td>"
-        f"<td>%{(s.get('konum', 0) or 0):.0f}</td>"
+        f"<td class='{_renk(s.get('deg60', 0))}'>{_ty1((s.get('deg60', 0) or 0))}%</td>"
+        f"<td>%{_ts0((s.get('konum', 0) or 0))}</td>"
         f"<td class='{_sinyal(s.get('genel', ''))}'><strong>{s.get('genel', '')}</strong></td></tr>"
         for i, s in enumerate(sirali, 1))
 
@@ -2863,10 +2898,10 @@ def _portfoy_satirlari(p, limit=None, en_iyi=False):
     if limit:
         satirlar = satirlar[:limit]
     return "".join(
-        f"<tr><td><strong>{h}</strong></td><td>{p['shares'][h]:,.2f}</td>"
-        f"<td>{p['initial_prices'].get(h, 0):.2f} TL</td>"
-        f"<td>{son['prices'].get(h, p['initial_prices'].get(h, 0)):.2f} TL</td>"
-        f"<td class='{_renk(fark)}'>{fark:+.2f}%</td></tr>"
+        f"<tr><td><strong>{h}</strong></td><td>{_ts(p['shares'][h])}</td>"
+        f"<td>{_ts(p['initial_prices'].get(h, 0))} TL</td>"
+        f"<td>{_ts(son['prices'].get(h, p['initial_prices'].get(h, 0)))} TL</td>"
+        f"<td class='{_renk(fark)}'>{_ty(fark)}%</td></tr>"
         for h, fark in satirlar
     )
 
@@ -2875,9 +2910,9 @@ def _portfoy_istatistikleri(p):
     son = p["history"][-1]
     return f"""
 <div class="stats">
-<div class="stat"><div class="label">Güncel Değer</div><div class="value">{son['total']:,.0f} TL</div></div>
-<div class="stat"><div class="label">Günlük Değişim</div><div class="value {_renk(son['daily_pct'])}">{son['daily_pct']:+.2f}%</div></div>
-<div class="stat"><div class="label">Toplam Getiri</div><div class="value {_renk(son['pct'])}">{son['pct']:+.2f}%</div></div>
+<div class="stat"><div class="label">Güncel Değer</div><div class="value">{_ts0(son['total'])} TL</div></div>
+<div class="stat"><div class="label">Günlük Değişim</div><div class="value {_renk(son['daily_pct'])}">{_ty(son['daily_pct'])}%</div></div>
+<div class="stat"><div class="label">Toplam Getiri</div><div class="value {_renk(son['pct'])}">{_ty(son['pct'])}%</div></div>
 <div class="stat"><div class="label">Başlangıç</div><div class="value" style="font-size:16px">{p['start_date']}</div></div>
 </div>"""
 
@@ -2985,7 +3020,7 @@ function arsivAc(btn) {{
     if teknik_oneriler:
         kart = "".join(
             f'<a class="rcard" href="teknik-analiz.html"><span class="date">{s["hisse"]}</span>'
-            f'<span class="sub">{s["genel"]} &bull; {s["son"]:,.2f} TL &bull; kanal %{s["konum"]:.0f} &bull; r={s["r"]:.2f}</span></a>'
+            f'<span class="sub">{s["genel"]} &bull; {_ts(s["son"])} TL &bull; kanal %{_ts0(s["konum"])} &bull; r={_ts(s["r"])}</span></a>'
             for s in teknik_oneriler
         )
         teknik_bolumu = f"""
@@ -3037,15 +3072,15 @@ def build_portfolio_html(p):
     grafik = sparkline_svg(p["history"])
     grafik_html = f'<div class="card" style="margin-bottom:22px">{grafik}</div>' if grafik else ""
     gecmis = "".join(
-        f"<tr><td>{g['date']}</td><td>{g['total']:,.2f} TL</td>"
-        f"<td class='{_renk(g['pct'])}'>{g['pct']:+.2f}%</td>"
-        f"<td class='{_renk(g['daily_pct'])}'>{g['daily_pct']:+.2f}%</td></tr>"
+        f"<tr><td>{g['date']}</td><td>{_ts(g['total'])} TL</td>"
+        f"<td class='{_renk(g['pct'])}'>{_ty(g['pct'])}%</td>"
+        f"<td class='{_renk(g['daily_pct'])}'>{_ty(g['daily_pct'])}%</td></tr>"
         for g in reversed(p["history"])
     )
     icerik = f"""
 <div class="hero">
 <h1>Deneme Portföyü</h1>
-<p>BIST 30 hisselerine eşit dağıtılmış {p['initial_capital']:,.0f} TL'lik sanal portföy. Alım-satım yapılmaz, sadece takip edilir;
+<p>BIST 30 hisselerine eşit dağıtılmış {_ts0(p['initial_capital'])} TL'lik sanal portföy. Alım-satım yapılmaz, sadece takip edilir;
 hafta içi her sabah bir önceki işlem gününün kapanış fiyatlarıyla otomatik güncellenir.</p>
 </div>
 <details class="card" style="margin-bottom:22px">
@@ -3375,12 +3410,12 @@ def build_teknik_html(satirlar, date_str):
     # Günlük ısı haritası: değişime göre renk derinliği (yeşil yükselen, kırmızı düşen)
     def _isi_renk(deg):
         a = min(0.15 + abs(deg) / 3.0 * 0.80, 0.92)
-        return ("4,120,87" if deg >= 0 else "185,28,28") + f",{a:.2f}"
+        return ("4,120,87" if deg >= 0 else "185,28,28") + f",{_ts(a)}"
 
     sirali = sorted(satirlar, key=lambda x: x.get("gunluk", 0), reverse=True)
     isi = "".join(
         f"<div class='isi-hucre' style=\"background:rgba({_isi_renk(s.get('gunluk', 0))})\">"
-        f"<b>{s['hisse']}</b><span>{s.get('gunluk', 0):+.2f}%</span></div>"
+        f"<b>{s['hisse']}</b><span>{_ty(s.get('gunluk', 0))}%</span></div>"
         for s in sirali
     )
     isi_bolumu = f"""
@@ -3390,12 +3425,12 @@ def build_teknik_html(satirlar, date_str):
 
     satir_html = "".join(
         f"<tr style='cursor:pointer' onclick=\"tvAc('{s['hisse']}')\"><td><a style='color:inherit; text-decoration:none; font-weight:700' href='hisse/{s['hisse']}.html'>{s['hisse']}</a></td>"
-        f"<td>{s['son']:,.2f} TL</td>"
-        f"<td class='{_renk(s['gunluk'])}'>{s['gunluk']:+.2f}%</td>"
-        f"<td class='{_renk(s['deg60'])}'>{s['deg60']:+.1f}%</td>"
+        f"<td>{_ts(s['son'])} TL</td>"
+        f"<td class='{_renk(s['gunluk'])}'>{_ty(s['gunluk'])}%</td>"
+        f"<td class='{_renk(s['deg60'])}'>{_ty1(s['deg60'])}%</td>"
         f"{_teknik_sinyal_hucre(s['kisa'])}{_teknik_sinyal_hucre(s['orta'])}{_teknik_sinyal_hucre(s['uzun'])}"
         f"{_teknik_sinyal_hucre(s['wt'])}"
-        f"<td>{s['konum']:.0f}%</td><td>{s['r']:.2f}</td>"
+        f"<td>{_ts0(s['konum'])}%</td><td>{_ts(s['r'])}</td>"
         f"{_teknik_sinyal_hucre(s['genel'])}</tr>"
         for s in satirlar
     )
@@ -3728,8 +3763,8 @@ def _bilanco_ozeti(kod):
                         return "&mdash;"
                     v = float(v)
                     if abs(v) >= 1e9:
-                        return f"{v / 1e9:,.1f}".replace(",", "X").replace(".", ",").replace("X", ".") + " mlr TL"
-                    return f"{v / 1e6:,.0f}".replace(",", ".") + " mln TL"
+                        return f"{_ts1(v / 1e9)}".replace(",", "X").replace(".", ",").replace("X", ".") + " mlr TL"
+                    return f"{_ts0(v / 1e6)}".replace(",", ".") + " mln TL"
                 toplam_borc = (b.get("kisa_borc") or 0) + (b.get("uzun_borc") or 0)
                 nk = b.get("net_kar") or 0
                 donem = b.get("donem", "")
@@ -3844,8 +3879,8 @@ def build_hisse_html(kod, satir, tarihler, veriler, haberler, sirket_haberleri=N
             ("Orta vade (EMA 34-55)", satir.get("orta", "—")),
             ("Uzun vade (EMA 89-144)", satir.get("uzun", "—")),
             ("Wave Trend", satir.get("wt", "—")),
-            ("Kanal konumu", f"%{satir.get('konum', 0):.0f}"),
-            ("Trend gücü (r)", f"{satir.get('r', 0):.2f}"),
+            ("Kanal konumu", f"%{_ts0(satir.get('konum', 0))}"),
+            ("Trend gücü (r)", f"{_ts(satir.get('r', 0))}"),
             ("Puan", satir.get("puan", "—")),
         ]
     )
@@ -3857,8 +3892,8 @@ def build_hisse_html(kod, satir, tarihler, veriler, haberler, sirket_haberleri=N
 <div class="hero">
 <h1>{kod} <span style="font-size:16px; color:var(--muted)">{satir.get('sektor', '')}</span></h1>
 <div class="meta"><span class="badge">{satir.get('genel', '—')}</span>
-<span><strong>{satir.get('son', 0):,.2f} TL</strong></span>
-<span class="{_renk(satir.get('gunluk', 0))}">{satir.get('gunluk', 0):+.2f}% (günlük)</span>
+<span><strong>{_ts(satir.get('son', 0))} TL</strong></span>
+<span class="{_renk(satir.get('gunluk', 0))}">{_ty(satir.get('gunluk', 0))}% (günlük)</span>
 {degisim_html}</div>
 </div>
 {grafik_karti}
@@ -4033,8 +4068,8 @@ def hisse_sayfalari_yaz(teknik_satirlar):
                                      sirket_haberleri=sirket_haber_map.get(kod, [])))
     kartlar = "".join(
         f'<a class="rcard" data-kod="{s["hisse"]}" href="{s["hisse"]}.html"><span class="date">{s["hisse"]}</span>'
-        f'<span class="sub">{s.get("genel", "")} &bull; {s.get("son", 0):,.2f} TL</span>'
-        f'<span class="sub {_renk(s.get("gunluk", 0))}">{s.get("gunluk", 0):+.2f}%</span></a>'
+        f'<span class="sub">{s.get("genel", "")} &bull; {_ts(s.get("son", 0))} TL</span>'
+        f'<span class="sub {_renk(s.get("gunluk", 0))}">{_ty(s.get("gunluk", 0))}%</span></a>'
         for s in teknik_satirlar
     )
     icerik = f"""
@@ -4043,7 +4078,7 @@ def hisse_sayfalari_yaz(teknik_satirlar):
 <p>Her hisse için güncel fiyat, teknik sinyal durumu, fiyat grafiği ve son 7 günün haberleri.</p>
 </div>
 <div id="isi-haritasi"></div>
-<script src="isi-haritasi.js?v=7" defer></script>
+<script src="isi-haritasi.js?v=8" defer></script>
 <h2 class="section-title">Hisse Kartları</h2>
 <div class="grid">{kartlar}</div>"""
     # DİKKAT: bu sayfa hisse/ alt klasorunde — kok="../" olmazsa CSS ve
@@ -4120,7 +4155,7 @@ def sinyal_karnesi_yaz(teknik_satirlar):
 
     tablo = "".join(
         f"<tr><td>{k['tarih']}</td><td><strong>{k['hisse']}</strong></td>"
-        f"<td>{k['giris']:,.2f} TL</td><td>{k['cikis']:,.2f} TL</td><td>{k['cikis_t']}</td>"
+        f"<td>{_ts(k['giris'])} TL</td><td>{_ts(k['cikis'])} TL</td><td>{k['cikis_t']}</td>"
         f"<td class='{_renk(k['getiri'])}' style='font-weight:700'>{k['getiri']:+.2f}%</td></tr>"
         for k in sorted(kayitlar, key=lambda k: k["tarih"], reverse=True)[:15]
     )
@@ -4129,9 +4164,9 @@ def sinyal_karnesi_yaz(teknik_satirlar):
 <h1>Sinyal Karnesi</h1>
 <p>Teknik taramanın verdiği <strong>AL</strong> sinyallerini 5 işlem günü sonra fiyata karşı test ediyoruz.
 Sinyal günü kapanışı alıp 5. işlem günü kapanışında satmış olsaydık sonuç: {len(kayitlar)} sinyal,
-ortalama <strong class="{_renk(ort)}">{ort:+.2f}%</strong> (brüt), isabet oranı <strong>{isabet:.0f}%</strong>.
-Komisyon+BSMV masrafı (~%0,10) sonrası: ortalama <strong class="{_renk(net_ort)}">{net_ort:+.2f}%</strong>,
-isabet <strong>{net_isabet:.0f}%</strong> (varsayımsal masraf senaryosu; gerçek oran aracı kuruma göre değişir).
+ortalama <strong class="{_renk(ort)}">{_ty(ort)}%</strong> (brüt), isabet oranı <strong>{_ts0(isabet)}%</strong>.
+Komisyon+BSMV masrafı (~%0,10) sonrası: ortalama <strong class="{_renk(net_ort)}">{_ty(net_ort)}%</strong>,
+isabet <strong>{_ts0(net_isabet)}%</strong> (varsayımsal masraf senaryosu; gerçek oran aracı kuruma göre değişir).
 (Geçmiş performans gelecek getirinin garantisi değildir; yöntem basit tutulmuştur.)</p>
 </div>
 <div class="grid">
@@ -4426,7 +4461,7 @@ def _ajanda_html(olaylar, limit=None, kok=""):
         if v in (None, "", 0):
             return "&mdash;"
         try:
-            return f"{float(v):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+            return f"{_ts(float(v))}".replace(",", "X").replace(".", ",").replace("X", ".")
         except (TypeError, ValueError):
             return str(v)
 
