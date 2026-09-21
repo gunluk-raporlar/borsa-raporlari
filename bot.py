@@ -1931,167 +1931,14 @@ def _ceviri_widget(kok="", yol=""):
 
 
 def _radyo_kutusu(kok=""):
-    """Ust widget cubugunda (ceviri secicisinin yaninda) BIST Radyo oynaticisi.
-
-    radyo/indeks.json'dan son yayinlari okur; yayin yoksa kutu gorunmez.
-    Yayinlar radyo.yml ile piyasa gunlerinde (acilis/ogle/kapanis) uretilir;
-    sunucular kurgusal YAPAY ZEKA karakterleridir."""
+    """Kompakt radyo satiri (2026-09-21): oynatici kaldirildi, yalnizca baglantilar + uyari.
+    Arama cubugu ile ayni satirda durur; tam yayin listesi radyo/ sayfasindadir."""
     return f"""
-<div id="bist-radyo" style="display:none; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; min-width:250px; max-width:330px;" oncontextmenu="return false;">
-  <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-    <strong style="font-size:13px; color:#0f172a;">📻 BIST Radyo</strong>
-    <span style="background:#f0fdfa; color:#0f766e; border:1px solid #99f6e4; border-radius:999px; padding:1px 8px; font-size:11px;">AI sunucular</span>
-  </div>
-  <audio id="radyo-audio" controls preload="none" controlslist="nodownload noremoteplayback" style="width:100%; height:34px;" oncontextmenu="return false;"></audio>
-  <div id="radyo-liste" style="margin-top:6px; font-size:12.5px; color:#475569;"></div>
-  <div style="margin-top:4px; font-size:11px;"><a href="{kok}radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> &bull; <a href="{kok}radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
-  <div style="margin-top:4px; color:#94a3b8; font-size:11px;">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
+<div class="radyo-mini">
+  <span class="radyo-linkler"><a href="{kok}radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> <span class="ayrac">•</span> <a href="{kok}radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</span>
 </div>
-<script>
-(function() {{
-  var kok = '{kok}';
-  var kutu = document.getElementById('bist-radyo');
-  if (!kutu) {{ return; }}
-  fetch(kok + 'radyo/indeks.json?t=' + Date.now())
-    .then(function(r) {{ return r.json(); }})
-    .then(function(d) {{
-      var bolumler = (d && d.bolumler) || [];
-      if (!bolumler.length) {{ return; }}
-      // Siralama: en yeni gun once; gun icinde acilis -> ogle -> kapanis.
-      // (indeks.json eski duzende kaydedilmis olabilir; burada da garantiye aliyoruz.)
-      var sira = {{ acilis: 0, ogle: 1, kapanis: 2 }};
-      bolumler.sort(function(a, b) {{
-        if (a.tarih !== b.tarih) return a.tarih < b.tarih ? 1 : -1;
-        var sa = (a.bolum in sira) ? sira[a.bolum] : 9;
-        var sb = (b.bolum in sira) ? sira[b.bolum] : 9;
-        return sa - sb;
-      }});
-      var sonGun = bolumler[0].tarih;
-      var ses = document.getElementById('radyo-audio');
-      var liste = document.getElementById('radyo-liste');
-      var secili = 0;
-      var eskiAcik = false;
-      function renderListe() {{
-        var gizli = 0;
-        var html = bolumler.map(function(b, ix) {{
-          if (b.tarih !== sonGun && !eskiAcik) {{ gizli++; return ''; }}
-          var sure = b.sure_sn ? Math.round(b.sure_sn / 60) + ' dk' : '';
-          return '<a href="javascript:void(0)" onclick="radyoSec(' + ix + ')" style="display:inline-block; margin:2px 6px 2px 0; ' +
-                 (ix === secili ? 'font-weight:700;' : '') + '">' + b.baslik + (sure ? ' (' + sure + ')' : '') + '</a>';
-        }}).join('');
-        if (gizli) {{
-          html += '<a href="javascript:void(0)" onclick="radyoEskiAc()" style="display:inline-block; margin:4px 0 2px; font-weight:600; color:#0f766e">' +
-                  (eskiAcik ? '⌃ Sadece son günü göster' : '⌄ Önceki günler (' + gizli + ')') + '</a>';
-        }}
-        liste.innerHTML = html;
-      }}
-      window.radyoSec = function(i) {{ secili = i; renderListe(); ses.src = kok + bolumler[i].dosya; ses.play().catch(function() {{}}); }};
-      window.radyoEskiAc = function() {{ eskiAcik = !eskiAcik; renderListe(); }};
-      // Baslangicta en yeni bolum yuklenir; sadece son gunun yayinlari listelenir.
-      ses.src = kok + bolumler[0].dosya;
-      secili = 0;
-      renderListe();
-      kutu.style.display = 'block';
-    }})
-    .catch(function() {{}});
-}})();
-</script>"""
-
-
-# ---------- KENDI SITE-ICI ARAMAMIZ (Cloudflare arama widget'i yerine) ----------
-# CF "search-modal-snippet" yalnizca yetkilendirilmis domainlerde aciliyordu;
-# onrender.com'da izinli olmadigi icin bos beyaz kutu render oluyordu. Bunun
-# yerine botun her kosuda urettigi site-arama.json uzerinden tamamen yerel,
-# hesapsiz, her domainde calisan bir arama kuruyoruz. Soru gorunumlu
-# sorgular icin sonuc panelindeki baglantiyla mevcut Puter asistanina
-# (aiSor) kopruleniir.
-_SITE_ARAMA_KUTUSU = """
-<div class="arama-kutusu">
-    <div style="display: flex; gap: 8px;">
-        <input type="text" id="site-arama-giris" placeholder="Sitede ara: hisse, konu, tarih... (ör. PETKM, RSI, portföy)" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
-        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Ara</button>
-    </div>
-    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
-</div>
-<script>
-(function() {
-  var KOK = '{KOK}';
-  var INDEKS = null;
-
-  function normalize(s) {
-    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
-                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
-                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
-    s = String(s).toLowerCase();
-    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
-  }
-
-  function indeksYukle() {
-    if (INDEKS) return Promise.resolve(INDEKS);
-    return fetch(KOK + 'site-arama.json?t=' + Date.now())
-      .then(function(r) { return r.json(); })
-      .then(function(d) { INDEKS = d; return d; });
-  }
-
-  function kacKez(haystack, needle) {
-    if (!needle) return 0;
-    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
-    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
-    return sayi;
-  }
-
-  window.siteAra = function() {
-    var giris = document.getElementById('site-arama-giris');
-    var panel = document.getElementById('site-arama-sonuc');
-    var q = (giris.value || '').trim();
-    if (!q) { panel.style.display = 'none'; return; }
-    panel.style.display = 'block';
-    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
-    indeksYukle().then(function(indeks) {
-      var terimler = q.split(/\\s+/).filter(Boolean);
-      var sonuc = (indeks.sayfalar || []).map(function(s) {
-        var puan = 0;
-        terimler.forEach(function(t) {
-          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
-        });
-        return { s: s, puan: puan };
-      }).filter(function(x) { return x.puan > 0; })
-        .sort(function(a, b) { return b.puan - a.puan; })
-        .slice(0, 6);
-
-      var html = '';
-      var nDil = normalize(q);
-      var soruMu = /\\?\\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\\.|mi|mı|icin)\\b/i.test(nDil);
-      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
-      if (!sonuc.length) {
-        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
-      } else {
-        sonuc.forEach(function(x) {
-          var metin = normalize(x.s.t);
-          var pos = -1;
-          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
-          var kesit = x.s.t;
-          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
-          else kesit = x.s.t.slice(0, 130);
-          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
-                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
-        });
-      }
-      panel.innerHTML = html;
-    }).catch(function() {
-      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';
-    });
-  };
-
-  window.siteAraAI = function() {
-    var giris = document.getElementById('site-arama-giris');
-    var ai = document.getElementById('ai-input');
-    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-  };
-})();
-</script>
 """
-
 
 def _site_arama_kutusu(kok=""):
     return _SITE_ARAMA_KUTUSU.replace("{KOK}", kok)
@@ -2369,12 +2216,12 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
             <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
         </div>
 {_ceviri_widget(kok, yol)}
-{_radyo_kutusu(kok)}
     </div>
 
     <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
     <div class="interactive-box">
 {_site_arama_kutusu(kok)}
+{_radyo_kutusu(kok)}
     </div>
 
     <!-- Asıl Sayfa İçeriği -->

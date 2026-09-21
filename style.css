@@ -159,12 +159,24 @@ html.dark .ticker-bant, html.dark .topbar { background:#0b1220; border-bottom:1p
                 font-size:12.5px; color:var(--muted); }
 .site-widgets #live-clock-weather { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
 /* Arama paneli widget seridiyle birlesik gorunur (tek panel) */
-.interactive-box { background:var(--card); border:1px solid var(--line); border-top:0;
-                   border-radius:0 0 10px 10px; padding:0 14px 10px; margin-bottom:18px; }
-.arama-kutusu { background:transparent; padding:0; border:0; }
+.interactive-box { display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+                   background:var(--card); border:1px solid var(--line); border-top:0;
+                   border-radius:0 0 10px 10px; padding:2px 14px 10px; margin-bottom:18px; }
+.arama-kutusu { flex:1 1 280px; min-width:0; background:transparent; padding:0; border:0; }
 .arama-kutusu input { width:100%; }
 @media (max-width: 768px) {
   .brand-row .brand { font-size:15px; }
   .site-widgets { justify-content:flex-start; padding:7px 12px 5px; }
   .interactive-box { padding:0 12px 9px; }
+}
+
+/* ---- Kompakt radyo satiri (arama cubuguyla ayni satirda) ---- */
+.radyo-mini { display:flex; flex-direction:column; gap:1px; flex:0 1 auto; max-width:300px;
+              font-size:11.5px; line-height:1.4; color:var(--muted); }
+.radyo-mini .radyo-linkler a { color:var(--muted); text-decoration:none; border-bottom:1px solid transparent; }
+.radyo-mini .radyo-linkler a:hover { color:var(--accent); border-bottom-color:var(--accent); }
+.radyo-mini .ayrac { color:var(--line); }
+.radyo-mini .radyo-uyari { font-size:10.5px; color:#94a3b8; }
+@media (max-width: 768px) {
+  .radyo-mini { max-width:none; }
 }
