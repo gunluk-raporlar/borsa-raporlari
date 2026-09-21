@@ -359,7 +359,7 @@ class Cevirmen:
 
         cikti: list[str] = []
         PENCERE = int(os.environ.get("I18N_PENCERE", "25"))  # istek basina dize sayisi
-        dil_hedefi = {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
+        dil_hedefi = {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH-HANS"}[dil]
         for bas in range(0, len(parcalar), PENCERE):
             # sure butcesi: asilirsa kalanlari cevirmeden don (site uretimi asla bloke olmasin)
             if time.time() - self.baslangic > self.sure_siniri:
@@ -469,7 +469,7 @@ class Cevirmen:
         anahtar = os.environ.get("DEEPL_API_KEY") or os.environ.get("DEEPL_KEY")
         if not anahtar:
             raise SystemExit("[i18n] HATA: DeepL icin DEEPL_API_KEY gerekli.")
-        hedef = hedef or {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
+        hedef = hedef or {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH-HANS"}[dil]
         # Free anahtarlar (:fx) -> api-free; Pro anahtarlar -> api.deepl.com
         # (Pro'ya gecersen DEEPL_BASE_URL=https://api.deepl.com ayarlaman yeterli)
         taban = os.environ.get("DEEPL_BASE_URL", "https://api-free.deepl.com").rstrip("/")
