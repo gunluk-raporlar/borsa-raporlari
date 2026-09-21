@@ -922,17 +922,23 @@ def saglayici_test() -> int:
     # 0) Her saglayicinin GERCEK model listesi (destekliyorsa)
     deepl_anahtar = os.environ.get("DEEPL_API_KEY") or os.environ.get("DEEPL_KEY")
     if deepl_anahtar:
-        print("--- DeepL ---")
+        # Anahtarin hangi plana ait oldugunu teshis et: ucretsiz anahtarlar ':fx' ile biter.
+        k = deepl_anahtar.strip()
+        print(f"--- DeepL anahtar teshisi: uzunluk={len(k)} son3='...{k[-3:]}' fx_eki={k.endswith(':fx')} ---")
         for uc in ("https://api-free.deepl.com", "https://api.deepl.com"):
             try:
-                istek = urllib.request.Request(uc + "/v2/usage", headers={"Authorization": f"DeepL-Auth-Key {deepl_anahtar}"})
+                istek = urllib.request.Request(uc + "/v2/usage", headers={"Authorization": f"DeepL-Auth-Key {k}"})
                 with urllib.request.urlopen(istek, timeout=30) as y:
                     u = json.loads(y.read().decode("utf-8"))
-                print(f"    {uc}: kullanilan={u.get('character_count')} / limit={u.get('character_limit')}")
+                print(f"    {uc}/v2/usage: OK :: {json.dumps(u, ensure_ascii=False)[:200]}")
             except urllib.error.HTTPError as h:
-                print(f"    {uc}: HTTP {h.code}")
+                try:
+                    govde = h.read().decode("utf-8", errors="replace")[:200]
+                except Exception:
+                    govde = ""
+                print(f"    {uc}/v2/usage: HTTP {h.code} :: {govde}")
             except Exception as h:
-                print(f"    {uc}: {h}")
+                print(f"    {uc}/v2/usage: {h}")
         bas = time.time()
         try:
             cev = Cevirmen._deepl(["BIST 30 gunluk rapor: destek ve direnc"], "en")
