@@ -666,10 +666,13 @@ def metrik_dosyasi_yaz(etiket="bot"):
         logger.exception("[Metrik] LLM metrik dosyalari yazilamadi; uretim etkilenmez.")
 
 
-def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
-    """_llm_call_ic icin gecikme olcumlu ince sarmalayici (imza ayni kalir)."""
+def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dil_kontrol=True):
+    """_llm_call_ic icin gecikme olcumlu ince sarmalayici (imza ayni kalir).
+    dil_kontrol=False: Turkce-olmayan cikti bekleyen cagrilar icin (ceviri)
+    Ingilizce-karisma suzgecini kapatir; dongu/sizma kontrolleri yine de calisir."""
     t0 = time.time()
-    sonuc = _llm_call_ic(prompt, max_deneme=max_deneme, fallback_on_fail=fallback_on_fail, sirasi=sirasi)
+    sonuc = _llm_call_ic(prompt, max_deneme=max_deneme, fallback_on_fail=fallback_on_fail,
+                         sirasi=sirasi, dil_kontrol=dil_kontrol)
     _metrik_kaydet("llm_call", time.time() - t0, bool(sonuc))
     return sonuc
 
@@ -682,7 +685,7 @@ def _zai_call(prompt):
     return sonuc
 
 
-def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
+def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dil_kontrol=True):
     """Daha saglam LLM cagrisi:
     - cok saglayicili: AMD modelleri + (tanimliysa) yedek saglayici modelleri
       sirayla denenir; bir saglayici tukendiginde digerine otomatik gecilir
@@ -746,7 +749,7 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
             secim = resp.choices[0]
             icerik = secim.message.content or ""
 
-            if _looks_degenerate(icerik) or _contains_prompt_leak(prompt, icerik) or _dil_karismis(icerik):
+            if _looks_degenerate(icerik) or _contains_prompt_leak(prompt, icerik) or (dil_kontrol and _dil_karismis(icerik)):
                 sebep = "tekrar dongusu" if _looks_degenerate(icerik) else ("prompt sizmasi" if _contains_prompt_leak(prompt, icerik) else "Ingilizce karisma")
                 logger.warning("%s/%s bozuk yanit uretti (%s); siradaki model denenecek.", etiket, model, sebep)
                 print(f"[Uyari] {etiket}/{model} bozuk yanit uretti ({sebep}), siradaki model deneniyor ({deneme}/{max_deneme})...", flush=True)
@@ -4932,7 +4935,8 @@ if __name__ == "__main__":
         import cok_dil
         cok_dil.uret(report=report, date_str=date_str,
                      teknik_satirlar=teknik_satirlar or [],
-                     llm=llm_call, log=logger.exception)
+                     llm=lambda p: llm_call(p, dil_kontrol=False),
+                     log=logger.exception)
     except Exception:
         logger.exception("[CokDil] cok dilli sayfalar uretilemedi; Turkce site etkilenmez.")
 
