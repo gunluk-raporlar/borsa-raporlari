@@ -208,25 +208,40 @@
     return f.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + sonek;
   }
 
-  // hisse/index.html'deki kartların fiyat + % bilgilerini ısı haritasının
-  // kullandığı aynı canlı veriyle güncelle (sinyal metni sabah analizinden kalır)
+  // hisse/index.html'deki kartların fiyat + % + sinyal bilgilerini güncelle:
+  // fiyat/% ısı haritasının canlı API'sinden; sinyal teknik-taramanın 30
+  // dakikada bir canlı fiyatlarla yeniden hesapladığı ticker.json'dan gelir.
   function kartGuncelle(veri) {
     var kartlar = document.querySelectorAll(".rcard[data-kod]");
     if (!kartlar.length) return;
-    var harita = {};
-    (veri.hisseler || []).forEach(function (h) { harita[h.h] = h; });
-    Array.prototype.forEach.call(kartlar, function (kart) {
-      var h = harita[kart.getAttribute("data-kod")];
-      if (!h || typeof h.f !== "number") return;
-      var alt = kart.querySelectorAll(".sub");
-      if (alt.length < 2) return;
-      var sinyal = (alt[0].textContent.split("•")[0] || "").trim();
-      alt[0].textContent = sinyal + " • " +
-        h.f.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
-      alt[1].textContent = (h.d > 0 ? "+" : h.d < 0 ? "-" : "") +
-        Math.abs(h.d).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
-      alt[1].className = "sub " + (h.d >= 0 ? "pos" : "neg");
+    var fiyatHarita = {};
+    (veri.hisseler || []).forEach(function (h) { fiyatHarita[h.h] = h; });
+    sinyallerAl(function (sinyalHarita) {
+      Array.prototype.forEach.call(kartlar, function (kart) {
+        var kod = kart.getAttribute("data-kod");
+        var h = fiyatHarita[kod];
+        if (!h || typeof h.f !== "number") return;
+        var alt = kart.querySelectorAll(".sub");
+        if (alt.length < 2) return;
+        var sinyal = sinyalHarita[kod] || (alt[0].textContent.split("•")[0] || "").trim();
+        alt[0].textContent = sinyal + " • " +
+          h.f.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
+        alt[1].textContent = (h.d > 0 ? "+" : h.d < 0 ? "-" : "") +
+          Math.abs(h.d).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
+        alt[1].className = "sub " + (h.d >= 0 ? "pos" : "neg");
+      });
     });
+  }
+
+  function sinyallerAl(geriCagri) {
+    fetch(KOK + "ticker.json?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (tj) {
+        var harita = {};
+        (tj.hisseler || []).forEach(function (h) { if (h.s) harita[h.h] = h.s; });
+        geriCagri(harita);
+      })
+      .catch(function () { geriCagri({}); });
   }
   function yuzde(d) {
     return (d > 0 ? "+" : d < 0 ? "-" : "") + sayi(Math.abs(d), "%");
