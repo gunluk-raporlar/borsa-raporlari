@@ -159,10 +159,10 @@ html.dark .ticker-bant, html.dark .topbar { background:#0b1220; border-bottom:1p
                 font-size:12.5px; color:var(--muted); }
 .site-widgets #live-clock-weather { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
 /* Arama paneli widget seridiyle birlesik gorunur (tek panel) */
-.interactive-box { display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+.interactive-box { display:flex; align-items:center; gap:12px; flex-wrap:nowrap;
                    background:var(--card); border:1px solid var(--line); border-top:0;
                    border-radius:0 0 10px 10px; padding:2px 14px 10px; margin-bottom:18px; }
-.arama-kutusu { flex:1 1 280px; min-width:0; background:transparent; padding:0; border:0; }
+.arama-kutusu { flex:0 1 340px; min-width:180px; background:transparent; padding:0; border:0; }
 .arama-kutusu input { width:100%; }
 @media (max-width: 768px) {
   .brand-row .brand { font-size:15px; }
@@ -182,7 +182,7 @@ html.dark .ticker-bant, html.dark .topbar { background:#0b1220; border-bottom:1p
 }
 
 /* ---- Radyo oynatici (kompakt satir) ---- */
-.radyo-mini { display:flex; flex-wrap:wrap; align-items:center; gap:8px; flex:1 1 320px;
+.radyo-mini { display:flex; flex-wrap:wrap; align-items:center; gap:8px; flex:1 1 260px;
               font-size:11.5px; line-height:1.4; color:var(--muted); }
 .radyo-mini .radyo-oynat { display:inline-flex; align-items:center; justify-content:center;
               width:26px; height:26px; border-radius:50%; border:1px solid var(--line);
@@ -193,3 +193,10 @@ html.dark .ticker-bant, html.dark .topbar { background:#0b1220; border-bottom:1p
 .radyo-mini .radyo-linkler a:hover { color:var(--accent); border-bottom-color:var(--accent); }
 .radyo-mini .ayrac { color:var(--line); }
 .radyo-mini .radyo-uyari { flex:1 1 100%; font-size:10.5px; color:#94a3b8; }
+
+/* Dar ekranda arama ve radyo alt alta gecsin */
+@media (max-width: 560px) {
+  .interactive-box { flex-wrap: wrap; }
+  .arama-kutusu { flex: 1 1 100%; }
+  .radyo-mini { flex: 1 1 100%; }
+}
