@@ -5,8 +5,13 @@ gerekli her seyi (rapor metni, teknik satirlar, LLM cagrisi) parametreyle alir.
 Bu moduldeki hicbir hata Turkce sitenin uretimini etkileyemez; yalnizca
 en/ de/ zh/ klasorleri altina yazar ve mevcut dosyalara dokunmaz.
 
-Kapsam (v1):
-  {dil}/index.html        - dile ozel giris sayfasi + son rapor listesi
+Gorsel kurgu: style.css'teki ayni siniflar (topbar, hero, card, rcard, grid,
+section-title, badge, meta, footer, altbar) kullanilarak Turkce sitenin ayni
+tasarim dilinde sayfalar uretilir; etiketler dil sozlugunden gelir.
+
+Kapsam:
+  {dil}/index.html        - giris sayfasi: snapshot + son rapor arsivi +
+                            teknik one cikanlar (Turkce ana sayfa yapisinda)
   {dil}/reports/TARIH.html - gunluk raporun LLM cevirisi (yalnizca metin;
                              tablolar/sayilar asla degistirilmez)
   {dil}/hisse/index.html  - BIST 30 teknik tablo (etiketler sozlukten;
@@ -38,17 +43,22 @@ _FAVICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBo
 DIL = {
     "en": {
         "ad": "English", "html_lang": "en", "og_locale": "en_US", "onluk": ".",
+        "yerel": "en-US", "yukleniyor": "Loading...", "hava_yukleniyor": "Istanbul weather...",
         "site_adi": "BIST 30 Daily Reports",
         "nav_ana": "Home", "nav_raporlar": "Reports", "nav_hisseler": "Stocks",
+        "diller": "Languages",
         "ana_baslik": "BIST 30 Daily Reports — AI-Powered Turkish Stock Market Analysis",
         "ana_tanim": "AI-powered daily BIST 30 (Borsa Istanbul) analysis in English: technical screening, oscillator signals, model portfolio and virtual portfolio tracking — generated every market day by a multi-agent AI system.",
         "hero_baslik": "AI-Powered BIST 30 Daily Analysis",
-        "hero_alt": "Borsa Istanbul's BIST 30 index, covered daily by a multi-agent AI system: market report, technical screening and oscillator signals.",
-        "son_raporlar": "Latest reports",
-        "rapor_link": "Market report — {t}",
+        "hero_alt": "Borsa Istanbul's BIST 30 index, covered daily by a multi-agent AI system: market report, technical screening and oscillator signals. New report every market day at 08:00 (Istanbul).",
+        "son_raporlar": "Report Archive",
+        "rapor_link": "Open the daily report &rarr;",
+        "arsiv_yok": "No reports yet — the first translated report appears after the next bot run.",
         "paket_basligi": "Today's BIST 30 snapshot",
         "yukselenler": "Top gainers", "dusenler": "Top losers",
-        "hisse_git": "Full BIST 30 technical table",
+        "hisse_git": "Open the full BIST 30 technical table &rarr;",
+        "one_cikanlar": "Featured in Technical Screening",
+        "one_cikanlar_not": "Detail pages currently in Turkish.",
         "hisse_baslik": "BIST 30 Stocks — Technical Signals",
         "hisse_tanim": "Daily technical signals for BIST 30 stocks: trend score, daily and 60-day performance, and overall signal.",
         "hisse_not": "Detailed per-stock pages are currently available in Turkish; the table below is the English overview.",
@@ -57,22 +67,27 @@ DIL = {
         "rapor_alt": "AI-powered daily BIST 30 analysis",
         "rapor_tanim": "AI-powered BIST 30 daily market report for {t}: executive summary, macro and news review, stock-level technical reading and model portfolio view.",
         "geri": "&larr; Back to all reports",
-        "tr_git": "This site in Turkish",
+        "tr_git": "Türkçe site",
         "footer": "All information, commentary and suggestions on this page are for informational purposes only and do not constitute investment advisory services or investment advice. Accuracy of the data cannot be guaranteed; responsibility for any decision taken rests with the user.",
     },
     "de": {
         "ad": "Deutsch", "html_lang": "de", "og_locale": "de_DE", "onluk": ",",
+        "yerel": "de-DE", "yukleniyor": "Laden...", "hava_yukleniyor": "Wetter in Istanbul...",
         "site_adi": "BIST 30 Tagesberichte",
         "nav_ana": "Start", "nav_raporlar": "Berichte", "nav_hisseler": "Aktien",
+        "diller": "Sprachen",
         "ana_baslik": "BIST 30 Tagesberichte — KI-gestützte Analyse des türkischen Aktienmarkts",
         "ana_tanim": "KI-gestützte tägliche BIST-30-Analysen (Börse Istanbul) auf Deutsch: technisches Screening, Oszillatorsignale, Modellportfolio und virtuelle Portfolio-Verfolgung — an jedem Handelstag von einem Multi-Agenten-KI-System erstellt.",
         "hero_baslik": "KI-gestützte BIST-30-Tagesanalyse",
-        "hero_alt": "Der BIST-30-Index der Börse Istanbul — täglich analysiert von einem Multi-Agenten-KI-System: Marktbericht, technisches Screening und Oszillatorsignale.",
-        "son_raporlar": "Neueste Berichte",
-        "rapor_link": "Marktbericht — {t}",
+        "hero_alt": "Der BIST-30-Index der Börse Istanbul — täglich analysiert von einem Multi-Agenten-KI-System: Marktbericht, technisches Screening und Oszillatorsignale. Neuer Bericht an jedem Handelstag um 08:00 (Istanbul).",
+        "son_raporlar": "Berichtarchiv",
+        "rapor_link": "Tagesbericht öffnen &rarr;",
+        "arsiv_yok": "Noch keine Berichte — der erste übersetzte Bericht erscheint nach dem nächsten Botlauf.",
         "paket_basligi": "Heutige BIST-30-Kurzübersicht",
         "yukselenler": "Top-Gewinner", "dusenler": "Top-Verlierer",
-        "hisse_git": "Vollständige BIST-30-Techniktabelle",
+        "hisse_git": "Vollständige BIST-30-Techniktabelle öffnen &rarr;",
+        "one_cikanlar": "Im technischen Screening hervorgehoben",
+        "one_cikanlar_not": "Detailseiten derzeit auf Türkisch.",
         "hisse_baslik": "BIST-30-Aktien — Technische Signale",
         "hisse_tanim": "Tägliche technische Signale für BIST-30-Aktien: Trendscore, Tages- und 60-Tage-Performance sowie Gesamtsignal.",
         "hisse_not": "Detaillierte Aktienseiten sind derzeit nur auf Türkisch verfügbar; die folgende Tabelle ist die deutsche Übersicht.",
@@ -81,22 +96,27 @@ DIL = {
         "rapor_alt": "KI-gestützte tägliche BIST-30-Analyse",
         "rapor_tanim": "KI-gestützter BIST-30-Tagesmarktbericht vom {t}: Zusammenfassung, Makro- und Nachrichtenreview, technische Einzeltitel-Lektüre und Modellportfolio.",
         "geri": "&larr; Zurück zu allen Berichten",
-        "tr_git": "Diese Seite auf Türkisch",
+        "tr_git": "Türkçe site",
         "footer": "Alle auf dieser Seite enthaltenen Informationen, Kommentare und Vorschläge dienen ausschließlich der Information und stellen keine Anlageberatung oder Anlageempfehlung dar. Für die Richtigkeit der Daten kann keine Garantie übernommen werden; die Verantwortung für jede getroffene Entscheidung liegt beim Nutzer.",
     },
     "zh": {
         "ad": "中文", "html_lang": "zh", "og_locale": "zh_CN", "onluk": ".",
+        "yerel": "zh-CN", "yukleniyor": "加载中...", "hava_yukleniyor": "伊斯坦布尔天气...",
         "site_adi": "BIST 30 每日报告",
         "nav_ana": "首页", "nav_raporlar": "报告", "nav_hisseler": "股票",
+        "diller": "语言",
         "ana_baslik": "BIST 30 每日报告 — AI 驱动的土耳其股市分析",
         "ana_tanim": "人工智能驱动的 BIST 30（伊斯坦布尔证券交易所）每日分析：技术筛选、振荡器信号、模型投资组合与虚拟组合跟踪——每个交易日由多智能体 AI 系统生成。",
         "hero_baslik": "AI 驱动的 BIST 30 每日分析",
-        "hero_alt": "伊斯坦布尔证券交易所 BIST 30 指数，由多智能体 AI 系统每日解读：市场报告、技术筛选与振荡器信号。",
-        "son_raporlar": "最新报告",
-        "rapor_link": "市场报告 — {t}",
+        "hero_alt": "伊斯坦布尔证券交易所 BIST 30 指数，由多智能体 AI 系统每日解读：市场报告、技术筛选与振荡器信号。每个交易日 08:00（伊斯坦布尔时间）发布新报告。",
+        "son_raporlar": "报告存档",
+        "rapor_link": "打开每日报告 &rarr;",
+        "arsiv_yok": "暂无报告——第一份翻译报告将在下次机器人运行后发布。",
         "paket_basligi": "今日 BIST 30 速览",
         "yukselenler": "涨幅榜", "dusenler": "跌幅榜",
-        "hisse_git": "完整 BIST 30 技术表",
+        "hisse_git": "打开完整 BIST 30 技术表 &rarr;",
+        "one_cikanlar": "技术筛选精选",
+        "one_cikanlar_not": "个股详情页目前为土耳其语。",
         "hisse_baslik": "BIST 30 股票 — 技术信号",
         "hisse_tanim": "BIST 30 股票每日技术信号：趋势评分、当日与 60 天表现以及综合信号。",
         "hisse_not": "个股详情页目前仅提供土耳其语版本；下表为中文概览。",
@@ -105,7 +125,7 @@ DIL = {
         "rapor_alt": "AI 驱动的 BIST 30 每日分析",
         "rapor_tanim": "{t} 的 AI 驱动 BIST 30 每日市场报告：执行摘要、宏观与新闻回顾、个股技术解读与模型投资组合观点。",
         "geri": "&larr; 返回全部报告",
-        "tr_git": "本站的土耳其语版本",
+        "tr_git": "Türkçe site",
         "footer": "本页面所载信息、评论和建议仅供参考，不构成投资咨询服务或投资建议。数据的准确性无法保证，因内容做出任何决策的责任由用户自行承担。",
     },
 }
@@ -181,14 +201,29 @@ def _hreflang_etiketleri(tr_yol, mevcut):
     return "\n".join(satir)
 
 
+def _dil_bar(kok, aktif):
+    """Diller arasi gecis barı (Turkce ana sayfadaki dil bolumunun karsiligi)."""
+    ogeler = [('<a href="{k}../index.html" hreflang="tr">🇹🇷 Türkçe</a>'
+               .format(k=kok), "tr" == aktif)]
+    for d, bayrak, ad in (("en", "🇬🇧", "English"), ("de", "🇩🇪", "Deutsch"), ("zh", "🇨🇳", "中文")):
+        cls = ' style="font-weight:700"' if d == aktif else ""
+        ogeler.append((f'<a href="{kok}{d}/index.html" hreflang="{d}"{cls}>{bayrak} {ad}</a>', d == aktif))
+    return (" <strong style=\"font-size:12px; color:var(--muted); "
+            "text-transform:uppercase; letter-spacing:.5px\">DİLLER</strong> "
+            + " &middot; ".join(o for o, _ in ogeler))
+
+
 def _sayfa(dil, title, tanim, icerik, kok, tr_yol, mevcut):
-    """Dil sayfalari icin sadelestirilmis iskelet. bot.py'nin _sayfa()'sindan
-    bagimsizdir; Turkce sayfalara dokunmadan ayni style.css'i kullanir."""
+    """Dil sayfalari icin iskelet — bot.py _sayfa() ile ayni tasarim dili
+    (topbar + widget cubugu + govde + altbar + footer), etiketler dilde.
+    bot.py'nin _sayfa()'sindan tamamen bagimsizdir; Turkce sayfalara dokunmaz."""
     d = DIL[dil]
     ld = json.dumps({
         "@context": "https://schema.org", "@type": "WebPage", "name": title,
         "description": tanim, "url": SITE_URL + tr_yol, "inLanguage": dil,
     }, ensure_ascii=False)
+    a_ana = ' class="active"' if tr_yol == "index.html" else ""
+    a_his = ' class="active"' if tr_yol == "hisse/index.html" else ""
     return f"""<!DOCTYPE html>
 <html lang="{d['html_lang']}">
 <head>
@@ -212,12 +247,28 @@ def _sayfa(dil, title, tanim, icerik, kok, tr_yol, mevcut):
 <body>
 <header class="topbar"><div class="inner">
 <a class="brand" href="{kok}index.html">{d['site_adi']}</a>
-<nav><a href="{kok}index.html">{d['nav_ana']}</a><a href="{kok}hisse/index.html">{d['nav_hisseler']}</a><a href="{kok}../index.html">{d['tr_git']}</a></nav>
+<nav><a href="{kok}index.html"{a_ana}>{d['nav_ana']}</a><a href="{kok}hisse/index.html"{a_his}>{d['nav_hisseler']}</a><a href="{kok}../index.html">{d['tr_git']}</a></nav>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Theme" aria-label="Theme">🌙</button>
 </div></header>
+
 <main class="wrap">
+<div class="site-widgets" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; background:var(--card); padding:10px 16px; border-radius:8px; margin-bottom:20px; font-size:13px; color:var(--muted); gap:15px; border:1px solid var(--line);">
+  <div id="live-clock-weather" style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+    <span id="current-date-time">⏳ {d['yukleniyor']}</span>
+    <span id="istanbul-weather">🌤️ {d['hava_yukleniyor']}</span>
+  </div>
+  <div style="font-size:13px">{_dil_bar(kok, dil)}</div>
+</div>
+
 {icerik}
 </main>
+
+<nav class="altbar" aria-label="Menu">
+<a href="{kok}index.html"{a_ana}><span class="i">📊</span>{d['nav_raporlar']}</a>
+<a href="{kok}hisse/index.html"{a_his}><span class="i">🏦</span>{d['nav_hisseler']}</a>
+<a href="{kok}../index.html"><span class="i">🇹🇷</span>{d['tr_git']}</a>
+</nav>
+
 <script>
 function temaDegistir() {{
   var r = document.documentElement;
@@ -230,6 +281,28 @@ function temaDegistir() {{
 (function() {{
   var b = document.getElementById('tema-btn');
   if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+}})();
+(function() {{
+  var bolge = '{d['yerel']}';
+  function updateClock() {{
+    var now = new Date();
+    var options = {{ timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' }};
+    var el = document.getElementById('current-date-time');
+    if (el) el.innerText = '📅 ' + new Intl.DateTimeFormat(bolge, options).format(now);
+  }}
+  setInterval(updateClock, 1000);
+  updateClock();
+  fetch('https://wttr.in/Istanbul?format=j1')
+    .then(function(r) {{ return r.json(); }})
+    .then(function(data) {{
+      var c = data.current_condition[0];
+      var temp = c.temp_C;
+      var dili = c['lang_{dil}'];
+      var desc = (dili && dili[0] && dili[0].value) ? dili[0].value : c.weatherDesc[0].value;
+      var el = document.getElementById('istanbul-weather');
+      if (el) el.innerText = '🌤️ Istanbul: ' + temp + '°C, ' + desc;
+    }})
+    .catch(function() {{}});
 }})();
 </script>
 <footer class="footer">{d['footer']}<br>
@@ -325,19 +398,10 @@ def _hisse_index_yaz(dil, teknik_satirlar):
 def _ana_sayfa_yaz(dil, teknik_satirlar):
     d = DIL[dil]
     os.makedirs(dil, exist_ok=True)
-    # Son rapor arsivi: dilin kendi reports/ klasorunden okunur
-    rapor_html = ""
-    klasor = os.path.join(dil, "reports")
-    if os.path.isdir(klasor):
-        dosyalar = sorted((fn for fn in os.listdir(klasor) if re.fullmatch(r"\d{4}-\d{2}-\d{2}\.html", fn)),
-                          reverse=True)[:20]
-        if dosyalar:
-            li = "\n".join(
-                f"<li><a href='reports/{fn}'>{d['rapor_link'].format(t=fn[:-5])}</a></li>"
-                for fn in dosyalar)
-            rapor_html = f"<div class='card'><h2>{d['son_raporlar']}</h2><ul>{li}</ul></div>"
+
     # Gunluk snapshot: en iyi 3 artan / 3 dusen (saf veri, ceviri gerekmez)
     snapshot = ""
+    one_cikanlar = ""
     if teknik_satirlar:
         sirali = sorted(teknik_satirlar, key=lambda s: (s.get("gunluk", 0) or 0), reverse=True)
         ust = sirali[:3]
@@ -348,17 +412,52 @@ def _ana_sayfa_yaz(dil, teknik_satirlar):
                 f"<li>{s['hisse']} <span class='{'pos' if (s.get('gunluk') or 0) > 0 else 'neg'}'>"
                 f"{_yuzde(s.get('gunluk', 0) or 0, d['onluk'])}</span></li>" for s in liste)
             return f"<div style='flex:1'><strong>{l}</strong><ul>{h}</ul></div>"
-        snapshot = (f"<div class='card'><h2>{d['paket_basligi']}</h2>"
-                    f"<div style='display:flex;gap:30px;flex-wrap:wrap'>"
+        snapshot = (f"<h2 class='section-title'>{d['paket_basligi']}</h2>"
+                    f"<div class='card' style='display:flex;gap:30px;flex-wrap:wrap'>"
                     f"{_satir(d['yukselenler'], ust)}{_satir(d['dusenler'], alt)}"
-                    f"</div><p style='margin-top:12px'><a href='hisse/index.html'>{d['hisse_git']}</a></p></div>")
+                    f"</div>"
+                    f"<p style='margin:10px 0 0'><a href='hisse/index.html'>{d['hisse_git']}</a></p>")
+
+        # Teknik taramada one cikanlar (Turkce ana sayfadaki bolumun aynisi;
+        # kartlar Turkce hisse detayina gider)
+        alci = [s for s in sirali if s.get("genel") in ("GÜÇLÜ AL", "AL")][:6]
+        if alci:
+            kart = "".join(
+                f"<a class='rcard' href='../hisse/{s['hisse']}.html'>"
+                f"<span class='date'>{s['hisse']}</span>"
+                f"<span class='sub'>{SINYAL[dil].get(s.get('genel',''), s.get('genel',''))} &bull; "
+                f"{_sayi(s.get('son', 0) or 0, d['onluk'])}</span></a>"
+                for s in alci)
+            one_cikanlar = (f"<h2 class='section-title'>{d['one_cikanlar']}</h2>"
+                            f"<div class='grid'>{kart}</div>"
+                            f"<p style='color:var(--muted); font-size:12.5px; margin:8px 0 0'>"
+                            f"{d['one_cikanlar_not']}</p>")
+
+    # Son rapor arsivi: dilin kendi reports/ klasorunden rcards olarak
+    arsiv_bolumu = ""
+    klasor = os.path.join(dil, "reports")
+    if os.path.isdir(klasor):
+        dosyalar = sorted((fn for fn in os.listdir(klasor) if re.fullmatch(r"\d{4}-\d{2}-\d{2}\.html", fn)),
+                          reverse=True)[:9]
+        if dosyalar:
+            kart = "".join(
+                f"<a class='rcard' href='reports/{fn}'><span class='date'>{fn[:-5]}</span>"
+                f"<span class='sub'>{d['rapor_link']}</span></a>"
+                for fn in dosyalar)
+            arsiv_bolumu = (f"<h2 class='section-title'>{d['son_raporlar']}</h2>"
+                            f"<div class='grid'>{kart}</div>")
+    if not arsiv_bolumu:
+        arsiv_bolumu = (f"<h2 class='section-title'>{d['son_raporlar']}</h2>"
+                        f"<p style='color:var(--muted)'>{d['arsiv_yok']}</p>")
+
     icerik = f"""
 <div class="hero">
 <h1>{d['hero_baslik']}</h1>
 <p>{d['hero_alt']}</p>
 </div>
 {snapshot}
-{rapor_html}"""
+{arsiv_bolumu}
+{one_cikanlar}"""
     with open(f"{dil}/index.html", "w", encoding="utf-8") as f:
         f.write(_sayfa(dil, d["ana_baslik"], d["ana_tanim"], icerik, "", "index.html", DILLER))
 
