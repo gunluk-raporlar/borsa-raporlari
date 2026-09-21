@@ -3882,10 +3882,11 @@ _HABER_GURULTU = re.compile(
 # Tüpraş Stadyumu" haberlerini getiriyor. Basligi spor baglaminda olanlar
 # sirket haberi sayilmaz (stadyum isim haklari, mac, derbi vb.).
 _SPOR_HABER_DESENI = re.compile(
-    r"\b(stad\w*|be[şs]ikta[şs]|galatasaray|fenerbah[çc]e|trabzonspor|"
+    r"\b(st(?:ad|at)\w*|be[şs]ikta[şs]|galatasaray|fenerbah[çc]e|trabzonspor|"
     r"ma[çc](?:[ıi]n)?|derbi|gol(?:[üu]|leri)?|fikst[üu]r|futbol|trib[üu]n|"
-    r"teknik direkt[öo]r|s[üu]per lig|uefa|champions league|europa league|"
-    r"penalt[ıi]|hakem|spor toto)\b",
+    r"teknik direkt[öo]r|s[üu]per (?:lig|kupas?)|dünya kupas?|türkiye kupas?|"
+    r"uefa|uel|champions league|europa league|penalt[ıi]|hakem|spor toto|"
+    r"play-?off)\b",
     re.I)
 
 
