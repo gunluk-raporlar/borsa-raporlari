@@ -40,6 +40,10 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Bozuk JSON kurtarici (istege bagli)
+        continue-on-error: true
+        run: python -m pip install --quiet json-repair
+
       - name: Saglayici testi (kotasiz)
         if: ${{ inputs.test }}
         env:

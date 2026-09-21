@@ -44,6 +44,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+
+try:  # istege bagli: bozuk JSON'lari kurtarir (pip install json-repair)
+    from json_repair import repair_json as _json_repair_kurtar
+except Exception:  # kurulu degilse kendi toleransli ayristiricimiz devrede
+    _json_repair_kurtar = None
 import os
 import re
 import shutil
@@ -370,6 +375,7 @@ class Cevirmen:
                 break
             dilim = parcalar[bas:bas + PENCERE]
             son = None
+            son_uc = None   # hangi saglayici cevirdi (gecikme ona gore)
             for url, anahtar, modeller in uclar:
                 if url in self.devre_disi:
                     continue
@@ -378,6 +384,7 @@ class Cevirmen:
                         aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, self.istek_timeout)
                         if aday and len(aday) == len(dilim):
                             son = aday
+                            son_uc = url
                             break
                     except urllib.error.HTTPError as hata:
                         kod = hata.code
@@ -391,18 +398,23 @@ class Cevirmen:
                             self.devre_disi.add(url)
                             print(f"[i18n] saglayici devre disi: {url} (HTTP {kod})", file=sys.stderr)
                             break
-                        if kod == 429:                        # hiz siniri: kisa bekle, bir kez daha dene
-                            bekle = min(float(hata.headers.get("Retry-After") or 5), 15)
+                        if kod == 429:                        # hiz siniri: bekle, bir kez daha dene
+                            # 429 = gecici yogunluk. Saglayiciyi devre disi BIRAKMA, sadece bekle.
+                            bekle = min(float(hata.headers.get("Retry-After") or 6), 30)
+                            print(f"[i18n] 429 hiz siniri ({model}); {bekle:.0f} sn bekleniyor", file=sys.stderr)
                             time.sleep(bekle)
                             try:
                                 aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, self.istek_timeout)
                                 if aday and len(aday) == len(dilim):
                                     son = aday
+                                    son_uc = url
                                     break
                             except Exception:
                                 pass
+                            son = None
+                            continue
                         self.hata_sayaci[url] = self.hata_sayaci.get(url, 0) + 1
-                        if self.hata_sayaci[url] >= 3:
+                        if self.hata_sayaci[url] >= 6:
                             self.devre_disi.add(url)
                             print(f"[i18n] saglayici devre disi (3 hata): {url}", file=sys.stderr)
                             break
@@ -410,7 +422,7 @@ class Cevirmen:
                     except Exception as hata:
                         print(f"[i18n] LLM hatasi ({model}): {hata}", file=sys.stderr)
                         self.hata_sayaci[url] = self.hata_sayaci.get(url, 0) + 1
-                        if self.hata_sayaci[url] >= 3:
+                        if self.hata_sayaci[url] >= 6:
                             self.devre_disi.add(url)
                             print(f"[i18n] saglayici devre disi (3 hata): {url}", file=sys.stderr)
                             break
@@ -423,6 +435,7 @@ class Cevirmen:
                     aday = self._deepl(dilim, dil, hedef=dil_hedefi)
                     if aday and len(aday) == len(dilim):
                         son = aday
+                        son_uc = "deepl"
                         print("[i18n] DeepL yedeginden cevrildi", file=sys.stderr)
                 except Exception as hata:
                     print(f"[i18n] DeepL hatasi: {hata}", file=sys.stderr)
@@ -431,10 +444,16 @@ class Cevirmen:
             # DIKKAT: cevrilemeyen parca icin kaynak metin yerine BOS dondurulur.
             # (Aksi halde cagiran taraf bunu "cevrildi" sanip onbellege yazar ve bir daha denemez.)
             cikti.extend(son if son else [""] * len(dilim))
-            # hiz sinirina karsi kucuk ara (AMD 429'un ana sebebi istek patlamasiydi)
-            aralik = float(os.environ.get("I18N_ARALIK", "1.0"))
-            if aralik > 0 and bas + PENCERE < len(parcalar):
-                time.sleep(aralik)
+            # hiz sinirina karsi ara: Z.AI hizli ve limiti yuksek -> kisa; AMD 20/dk -> uzun
+            if bas + PENCERE < len(parcalar):
+                if son_uc and "api.z.ai" in son_uc:
+                    aralik = float(os.environ.get("I18N_ARALIK_ZAI", "0.4"))
+                elif son_uc == "deepl":
+                    aralik = 0.1
+                else:
+                    aralik = float(os.environ.get("I18N_ARALIK", "1.0"))
+                if aralik > 0:
+                    time.sleep(aralik)
         return cikti
 
     @staticmethod
@@ -489,6 +508,13 @@ class Cevirmen:
                 d = json.loads(re.sub(r",\s*([\]\}])", r"\1", aday), strict=False)
                 if isinstance(d, list) and len(d) == beklenen:
                     return d
+            except Exception:
+                pass
+        if _json_repair_kurtar is not None:  # eksik virgul / kacissiz tirnak kurtarici
+            try:
+                d = _json_repair_kurtar(metin, return_objects=True)
+                if isinstance(d, list) and len(d) == beklenen:
+                    return [x if isinstance(x, str) else json.dumps(x, ensure_ascii=False) for x in d]
             except Exception:
                 pass
         satirlar = []  # son care: satir tabanli ('1. ceviri' / '"ceviri",')
