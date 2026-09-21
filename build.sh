@@ -9,7 +9,7 @@ rm -rf dist
 mkdir -p dist
 
 # Sayfa klasorleri (mp3'ler dahil)
-for d in hisse reports radyo haftasonu haftasonu-egitimi; do
+for d in hisse reports radyo haftasonu haftasonu-egitimi en de ru zh; do
   if [ -d "$d" ]; then cp -r "$d" dist/; fi
 done
 
