@@ -4038,7 +4038,7 @@ def hisse_sayfalari_yaz(teknik_satirlar):
     # DİKKAT: bu sayfa hisse/ alt klasorunde — kok="../" olmazsa CSS ve
     # nav linkleri kirilir (stilsiz 'bozuk' sayfa).
     with open(os.path.join("hisse", "index.html"), "w", encoding="utf-8") as f:
-        f.write(_sayfa("BIST 30 Hisseleri", icerik, "hisseler", kok="../", yol="hisse/index.html"))
+        f.write(_sayfa("BIST 30 Hisseleri", icerik, "hisseler", kok="../", yol="hisse/"))
     logger.info("[Hisseler] %d hisse sayfasi uretildi.", len(teknik_satirlar))
 
 
@@ -4663,7 +4663,7 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
         ("haberler.html", "hourly"),
         ("sozluk.html", "weekly"),
         ("takvim.html", "weekly"),
-        ("hisse/index.html", "daily"),
+        ("hisse/", "daily"),
         ("sirket-haberleri.html", "daily"),
         ("radyo/index.html", "weekly"),
         ("gizlilik.html", "monthly"),
