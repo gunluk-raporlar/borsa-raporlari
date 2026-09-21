@@ -431,8 +431,12 @@ class Cevirmen:
             "temperature": 0.2,
         }
         # Z.AI: ceviride "dusunme" modunu kapat (hiz + maliyet). bot.py de aynisini yapiyor.
+        # glm-5.3 ailesi dusunmeyi kapatmiyor (kod 1210): ona hafif seviye verilir.
         if "z.ai" in url:
-            istek_govdesi["thinking"] = {"type": "disabled"}
+            if model.startswith("glm-5.3"):
+                istek_govdesi["thinking"] = {"type": "low"}
+            else:
+                istek_govdesi["thinking"] = {"type": "disabled"}
         govde = json.dumps(istek_govdesi).encode("utf-8")
         istek = urllib.request.Request(url, data=govde, headers={
             "Content-Type": "application/json",
