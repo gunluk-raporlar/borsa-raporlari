@@ -34,6 +34,7 @@ jobs:
           I18N_SURE_SINIRI_DK: "25"
           I18N_TIMEOUT: "30"
           I18N_PENCERE: "25"
+          I18N_ARALIK: "2"
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}

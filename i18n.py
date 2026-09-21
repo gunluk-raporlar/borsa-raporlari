@@ -268,7 +268,9 @@ class Cevirmen:
             parcalar = [s for _, s in bekleyen]
             ham = self._saglayici(parcalar, dil)
             for (i, saf), cev in zip(bekleyen, ham):
-                if not cev or not isinstance(cev, str):
+                if not cev or not isinstance(cev, str) or cev.strip() == saf.strip():
+                    # ceviri gelmedi (saglayici dustu): onbellege YAZMA, kaynak metni koru
+                    self.atlanan_parca += 1
                     continue
                 self.onbellek[self._anahtar(dil, saf)] = cev
                 self.yeni += 1
@@ -398,7 +400,9 @@ class Cevirmen:
                     print(f"[i18n] DeepL hatasi: {hata}", file=sys.stderr)
             if not son:
                 self.atlanan_parca += len(dilim)
-            cikti.extend(son if son else dilim)
+            # DIKKAT: cevrilemeyen parca icin kaynak metin yerine BOS dondurulur.
+            # (Aksi halde cagiran taraf bunu "cevrildi" sanip onbellege yazar ve bir daha denemez.)
+            cikti.extend(son if son else [""] * len(dilim))
             # hiz sinirina karsi kucuk ara (AMD 429'un ana sebebi istek patlamasiydi)
             aralik = float(os.environ.get("I18N_ARALIK", "1.0"))
             if aralik > 0 and bas + PENCERE < len(parcalar):
@@ -708,20 +712,30 @@ def tr_hashleri(kok: Path) -> dict[str, str]:
     return {str(r): hashlib.sha256((kok / r).read_bytes()).hexdigest() for r in turkce_sayfalar(kok)}
 
 
+# Dil sayfalarina KOPYALANMAYACAK klasorler (site bunlari cagirmiyor; kopyalanirsa
+# data/ + functions/ her dil dizininde 150+ gereksiz dosya olusturuyordu).
+KOPYALAMA_DISLA = {"data", "pipeline", "web", "functions", ".github", ".git"}
+
+
 # Dil sayfalarindan kok varliklara (css/js/json/png) kopyalanacak dosya turleri
 KOPYALA_EKLERI = {".css", ".js", ".json", ".png", ".svg", ".webmanifest", ".ico", ".xml"}
 CEVRILMEYEN_MEDYA = {".mp3", ".mp4", ".webm", ".ogg"}
 
 
 def varliklari_kopyala(kok: Path, dil: str) -> int:
-    """Kok dizindeki statik varliklari dil dizinine kopyalar (medya haric)."""
+    """Kok dizindeki statik varliklari dil dizinine kopyalar (medya ve site disi klasorler haric)."""
     hedef_kok = kok / dil
     sayi = 0
+    # onceden yanlislikla kopyalanmis klasorleri temizle (or. data/ ve functions/)
+    for ad in KOPYALAMA_DISLA:
+        fazlalik = hedef_kok / ad
+        if fazlalik.exists():
+            shutil.rmtree(fazlalik)
     for dosya in kok.rglob("*"):
         if not dosya.is_file():
             continue
         rel = dosya.relative_to(kok)
-        if rel.parts[0] in DIL_DIZINLERI or rel.parts[0] in (".git", "web", "node_modules"):
+        if rel.parts[0] in DIL_DIZINLERI or rel.parts[0] in KOPYALAMA_DISLA:
             continue
         if dosya.suffix.lower() in CEVRILMEYEN_MEDYA or dosya.suffix.lower() == ".html":
             continue
