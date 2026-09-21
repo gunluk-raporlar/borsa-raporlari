@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模拟投资组合</title>
+<meta name="description" content="100,000 TL sermayeyle BIST 30 hisselerine eşit dağıtılmış sanal deneme portföyü: günlük değer takibi, hisse performansı ve altın/dolar/mevduat karşılaştırması.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/zh/portfolio">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/portfolio">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/portfolio">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/portfolio">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/portfolio">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/portfolio">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/portfolio">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Günlük Raporlar">
+<meta property="og:title" content="模拟投资组合">
+<meta property="og:description" content="100,000 TL sermayeyle BIST 30 hisselerine eşit dağıtılmış sanal deneme portföyü: günlük değer takibi, hisse performansı ve altın/dolar/mevduat karşılaştırması.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/zh/portfolio">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Günlük Raporlar kapak görseli">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="模拟投资组合">
+<meta name="twitter:description" content="100,000 TL sermayeyle BIST 30 hisselerine eşit dağıtılmış sanal deneme portföyü: günlük değer takibi, hisse performansı ve altın/dolar/mevduat karşılaştırması.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Deneme Portföyü", "description": "100.000 TL sermayeyle BIST 30 hisselerine eşit dağıtılmış sanal deneme portföyü: günlük değer takibi, hisse performansı ve altın/dolar/mevduat karşılaştırması.", "url": "https://borsa-raporlari.pages.dev/zh/portfolio", "inLanguage": "zh", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/zh/"}}</script>
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="style.css">
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="index.html">BIST 30 每日报告</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="浅色/深色主题" aria-label="切换主题">🌙</button></div>
+<nav><a href="index.html">报告</a><a href="hisse/index.html">股票</a><a href="derin-analiz.html">深度分析</a><a href="teknik-analiz.html">技术扫描</a><a href="sinyal-karnesi.html">信号记分卡</a><a href="borsapy-analiz.html">Borsapy 信号</a><a href="haberler.html">新闻</a><a href="sirket-haberleri.html">公司新闻</a><a href="portfolio.html" class="active">模拟投资组合</a><a href="haftasonu.html">周末</a><a href="haftasonu-egitimi.html">股市学堂</a><a href="takvim.html">📅 日历</a><a href="sozluk.html">术语表</a></nav>
+</div></header>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">正在加载价格…</span></div>
+</div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Sayfa dili seçin">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/portfolio" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/portfolio" hreflang="en" lang="en" data-dil="en">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/portfolio" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/portfolio" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/portfolio" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh" class="aktif" aria-current="true">简体中文</a>
+</nav>
+
+
+
+
+
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Hisse, konu veya tarih ara…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">搜索</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\?\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\.|mi|mı|icin)\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Oynat / Duraklat">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Ses seviyesi" title="Ses">
+  <span class="radyo-linkler"><a href="radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> <span class="ayrac">•</span> <a href="radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</span>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='';
+  if(!btn||!ses) return;
+  if(ayar){ ses.volume=(parseInt(ayar.value,10)||80)/100; }
+  var hazir=false;
+  function hazirla(geri){
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){return r.json();}).then(function(d){
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){ ses.src=kok+l[0].dosya; }
+      hazir=true; geri();
+    }).catch(function(){ hazir=true; geri(); });
+  }
+  btn.addEventListener('click',function(){
+    if(ses.paused){ hazirla(function(){ var p=ses.play(); if(p&&p.catch){p.catch(function(){});} }); }
+    else { ses.pause(); }
+  });
+  ses.addEventListener('play',function(){ btn.textContent='❚❚'; btn.setAttribute('aria-label','Duraklat'); });
+  ses.addEventListener('pause',function(){ btn.textContent='▶'; btn.setAttribute('aria-label','Oynat'); });
+  if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
+})();
+</script>
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>模拟投资组合</h1>
+<p>BIST 30 hisselerine eşit dağıtılmış 100.000 TL'lik sanal portföy. Alım-satım yapılmaz, sadece takip edilir;
+hafta içi her sabah bir önceki işlem gününün kapanış fiyatlarıyla otomatik güncellenir.</p>
+</div>
+<details class="card" style="margin-bottom:22px">
+<summary style="cursor:pointer; font-weight:700">📐 Metodoloji — bu portföy nasıl hesaplanıyor?</summary>
+<div style="margin-top:10px; font-size:14px; display:grid; gap:6px">
+<p style="margin:0">• 2026-09-06 tarihinde 100,000 TL, BIST 30 hisselerine <strong>eşit dağıtıldı</strong>; adetler fraksiyoneldir, gerçek uygulamada tam lota yuvarlama gerekir.</p>
+<p style="margin:0">• Hafta içi her sabah <strong>bir önceki işlem gününün kapanış fiyatlarıyla</strong> güncellenir; tatil günlerinde değer değişmez, hiç alım-satım yapılmaz.</p>
+<p style="margin:0">• <strong>Temettü, bedelsiz ve bölünmeler şu an hesaba katılmaz</strong>; bu olayların geçtiği günlerde getiri sapması olabilir.</p>
+<p style="margin:0">• Karşılaştırma çizgileri (altın, dolar, mevduat, BIST 100, BIST 30, enflasyon) aynı 100,000 TL tabanına normalize edilir; enflasyon değeri TradingView ekonomik takviminden gelen son TÜİK yıllık okumadır ve grafiğe dönem tarihiyle yansır.</p>
+<p style="margin:0">• Toplam getiri, tekil hisse yüzdelerinin ortalaması değil, portföyün toplam değer değişimidir. Sinyal Karnesi sayfasındaki net getiri senaryosu ~0%.10 komisyon+BSMV varsayımı kullanır.</p>
+<p style="margin:0; color:var(--muted)">Bu bir sanal deneme portföyüdür; yatırım tavsiyesi değildir. Geçmiş performans gelecekteki sonuçların garantisi değildir.</p>
+</div>
+</details>
+
+<div class="stats">
+<div class="stat"><div class="label">当前价值</div><div class="value">98.908 TL</div></div>
+<div class="stat"><div class="label">日变化</div><div class="value neg">-0.98%</div></div>
+<div class="stat"><div class="label">总收益率</div><div class="value neg">-1.09%</div></div>
+<div class="stat"><div class="label">开始</div><div class="value" style="font-size:16px">2026-09-06</div></div>
+</div>
+<div class="card" style="margin-bottom:22px">
+<div class="pgrafik-sarmal">
+<div style="position:relative; height:340px; min-width:640px;">
+<canvas id="portfoy-grafik-911309"></canvas>
+</div>
+<p class="pgrafik-ipucu">↔ Grafiği sağa-sola kaydırabilirsiniz</p>
+</div>
+<style>
+.pgrafik-sarmal{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.pgrafik-ipucu{display:none;margin:6px 0 0;color:var(--muted);font-size:12px;text-align:center}
+@media(max-width:700px){.pgrafik-ipucu{display:block}}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+(function() {
+    var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-21"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27, 105135.98, 105721.9, 105320.34, 106949.37, 105257.55, 102312.18, 97523.7, 99889.37, 98907.56], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100819.58, 100415.39, 101224.05, 100055.94, 99407.07, 98829.8, 98312.05, 98717.83, 100482.02, 100350.07], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100459.02, 100476.65, 100522.88, 100761.11, 100778.93, 100828.28, 100675.68, 100892.96, 101024.82, 101165.4], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73, 100370.32, 100494.06, 100617.96, 100990.57, 101115.08, 101239.74, 101364.56, 101489.53, 101865.36], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}, {"label": "BIST 100 Endeksi", "data": [100000.0, 100000.0, 99549.87, 101792.45, 102500.71, 101711.89, 102230.56, 100595.27, 98167.77, 92728.66, 95464.61, 93872.28], "borderColor": "#7c3aed", "backgroundColor": "#7c3aed", "borderDash": [2, 2]}, {"label": "BIST 30 Endeksi", "data": [100000.0, 100000.0, 102229.74, 103039.21, 102174.27, 103088.58, 101680.09, 99488.48, 99488.48, 93935.57, 97843.06, 96721.05], "borderColor": "#e11d48", "backgroundColor": "#e11d48", "borderDash": [2, 2]}, {"label": "Enflasyon (TÜİK yıllık %31.5, 2026-09-03)", "data": [100000.0, 100075.07, 100150.2, 100225.39, 100300.63, 100375.93, 100602.16, 100677.69, 100753.27, 100828.91, 100904.6, 101132.03], "borderColor": "#c026d3", "backgroundColor": "#c026d3", "borderDash": [4, 3]}]};
+    var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
+    var mobil = window.matchMedia('(max-width: 700px)').matches;
+    var ctx = document.getElementById('portfoy-grafik-911309').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: veri.labels,
+            datasets: veri.datasets.map(function(d) {
+                return Object.assign({}, d, {
+                    borderWidth: mobil ? 2 : 3,
+                    pointRadius: mobil ? 0 : 2,
+                    pointHitRadius: 14,
+                    tension: 0.15,
+                    fill: false,
+                });
+            })
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'nearest', intersect: false },
+            plugins: {
+                legend: { position: 'top', labels: { boxWidth: mobil ? 10 : 12, padding: mobil ? 6 : 10, font: { size: mobil ? 11 : 12, weight: '600' } } },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx2) {
+                            var idx = ctx2.datasetIndex;
+                            var ilk = baslangiclar[idx];
+                            var son = ctx2.parsed.y;
+                            var yuzde = ilk ? ((son - ilk) / ilk * 100) : 0;
+                            var isaret = yuzde >= 0 ? '+' : '';
+                            var sonStr = son.toLocaleString('tr-TR', {maximumFractionDigits: 2});
+                            return ctx2.dataset.label + ': ' + sonStr + ' TL (' + isaret + yuzde.toFixed(2) + '%)';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { ticks: { callback: function(v) { return v.toLocaleString('tr-TR') + (mobil ? '' : ' TL'); } } },
+                x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: mobil ? 6 : 8 } }
+            }
+        }
+    });
+})();
+});
+</script>
+</div>
+<h2 class="section-title">Hisse Performansı (ilk alım vs son fiyat)</h2>
+<div class="card" style="padding:8px 24px 16px">
+<div class="tbl-wrap">
+<table><tr><th>股票</th><th>数量</th><th>买入价</th><th>最新价</th><th>收益率</th></tr><tr><td><strong>AEFES</strong></td><td>180.67</td><td>18.45 TL</td><td>18.79 TL</td><td class='pos'>+1.84%</td></tr><tr><td><strong>AKBNK</strong></td><td>46.39</td><td>71.85 TL</td><td>70.70 TL</td><td class='neg'>-1.60%</td></tr><tr><td><strong>ASELS</strong></td><td>8.59</td><td>388.25 TL</td><td>372.75 TL</td><td class='neg'>-3.99%</td></tr><tr><td><strong>ASTOR</strong></td><td>11.30</td><td>295.00 TL</td><td>248.00 TL</td><td class='neg'>-15.93%</td></tr><tr><td><strong>BIMAS</strong></td><td>8.02</td><td>415.75 TL</td><td>419.75 TL</td><td class='pos'>+0.96%</td></tr><tr><td><strong>DSTKF</strong></td><td>1.44</td><td>2320.00 TL</td><td>1984.00 TL</td><td class='neg'>-14.48%</td></tr><tr><td><strong>EKGYO</strong></td><td>171.47</td><td>19.44 TL</td><td>19.01 TL</td><td class='neg'>-2.21%</td></tr><tr><td><strong>ENKAI</strong></td><td>38.20</td><td>87.25 TL</td><td>85.35 TL</td><td class='neg'>-2.18%</td></tr><tr><td><strong>EREGL</strong></td><td>89.61</td><td>37.20 TL</td><td>36.42 TL</td><td class='neg'>-2.10%</td></tr><tr><td><strong>FROTO</strong></td><td>43.18</td><td>77.20 TL</td><td>76.00 TL</td><td class='neg'>-1.55%</td></tr><tr><td><strong>GARAN</strong></td><td>25.37</td><td>131.40 TL</td><td>129.90 TL</td><td class='neg'>-1.14%</td></tr><tr><td><strong>GUBRF</strong></td><td>6.96</td><td>478.75 TL</td><td>443.50 TL</td><td class='neg'>-7.36%</td></tr><tr><td><strong>ISCTR</strong></td><td>256.21</td><td>13.01 TL</td><td>13.26 TL</td><td class='pos'>+1.92%</td></tr><tr><td><strong>KCHOL</strong></td><td>15.50</td><td>215.10 TL</td><td>214.70 TL</td><td class='neg'>-0.19%</td></tr><tr><td><strong>KRDMD</strong></td><td>76.59</td><td>43.52 TL</td><td>44.02 TL</td><td class='pos'>+1.15%</td></tr><tr><td><strong>MGROS</strong></td><td>6.33</td><td>527.00 TL</td><td>525.00 TL</td><td class='neg'>-0.38%</td></tr><tr><td><strong>PETKM</strong></td><td>166.17</td><td>20.06 TL</td><td>21.44 TL</td><td class='pos'>+6.88%</td></tr><tr><td><strong>PGSUS</strong></td><td>22.42</td><td>148.70 TL</td><td>147.60 TL</td><td class='neg'>-0.74%</td></tr><tr><td><strong>SAHOL</strong></td><td>36.00</td><td>92.60 TL</td><td>88.05 TL</td><td class='neg'>-4.91%</td></tr><tr><td><strong>SASA</strong></td><td>1.455.60</td><td>2.29 TL</td><td>2.35 TL</td><td class='pos'>+2.62%</td></tr><tr><td><strong>SISE</strong></td><td>85.30</td><td>39.08 TL</td><td>39.62 TL</td><td class='pos'>+1.38%</td></tr><tr><td><strong>TAVHL</strong></td><td>12.43</td><td>268.25 TL</td><td>276.25 TL</td><td class='pos'>+2.98%</td></tr><tr><td><strong>TCELL</strong></td><td>33.96</td><td>98.15 TL</td><td>97.20 TL</td><td class='neg'>-0.97%</td></tr><tr><td><strong>THYAO</strong></td><td>11.26</td><td>296.00 TL</td><td>285.50 TL</td><td class='neg'>-3.55%</td></tr><tr><td><strong>TOASO</strong></td><td>12.15</td><td>274.25 TL</td><td>284.50 TL</td><td class='pos'>+3.74%</td></tr><tr><td><strong>TRALT</strong></td><td>65.62</td><td>50.80 TL</td><td>50.20 TL</td><td class='neg'>-1.18%</td></tr><tr><td><strong>TTKOM</strong></td><td>64.23</td><td>51.90 TL</td><td>52.45 TL</td><td class='pos'>+1.06%</td></tr><tr><td><strong>TUPRS</strong></td><td>8.58</td><td>388.50 TL</td><td>417.25 TL</td><td class='pos'>+7.40%</td></tr><tr><td><strong>VAKBN</strong></td><td>99.15</td><td>33.62 TL</td><td>33.10 TL</td><td class='neg'>-1.55%</td></tr><tr><td><strong>YKBNK</strong></td><td>92.85</td><td>35.90 TL</td><td>36.24 TL</td><td class='pos'>+0.95%</td></tr></table>
+</div>
+</div>
+<h2 class="section-title">Günlük Geçmiş</h2>
+<div class="card" style="padding:8px 24px 16px">
+<div class="tbl-wrap">
+<table><tr><th>Tarih*</th><th>Toplam Değer</th><th>Toplam %</th><th>Günlük %</th></tr><tr><td>2026-09-21</td><td>98.907.56 TL</td><td class='neg'>-1.09%</td><td class='neg'>-0.98%</td></tr><tr><td>2026-09-18</td><td>99.889.37 TL</td><td class='neg'>-0.11%</td><td class='pos'>+2.43%</td></tr><tr><td>2026-09-17</td><td>97.523.70 TL</td><td class='neg'>-2.48%</td><td class='neg'>-4.68%</td></tr><tr><td>2026-09-16</td><td>102.312.18 TL</td><td class='pos'>+2.31%</td><td class='neg'>-2.80%</td></tr><tr><td>2026-09-15</td><td>105.257.55 TL</td><td class='pos'>+5.26%</td><td class='neg'>-1.58%</td></tr><tr><td>2026-09-14</td><td>106.949.37 TL</td><td class='pos'>+6.95%</td><td class='pos'>+1.55%</td></tr><tr><td>2026-09-11</td><td>105.320.34 TL</td><td class='pos'>+5.32%</td><td class='neg'>-0.38%</td></tr><tr><td>2026-09-10</td><td>105.721.90 TL</td><td class='pos'>+5.72%</td><td class='pos'>+0.56%</td></tr><tr><td>2026-09-09</td><td>105.135.98 TL</td><td class='pos'>+5.14%</td><td class='pos'>+2.72%</td></tr><tr><td>2026-09-08</td><td>102.352.27 TL</td><td class='pos'>+2.35%</td><td class='pos'>+2.34%</td></tr><tr><td>2026-09-07</td><td>100.013.04 TL</td><td class='pos'>+0.01%</td><td class='pos'>+0.00%</td></tr><tr><td>2026-09-06</td><td>100.013.04 TL</td><td class='pos'>+0.01%</td><td class='pos'>+0.01%</td></tr></table>
+</div>
+</div>
+<p style="margin:10px 0 0; color:var(--muted); font-size:12.5px">Portföy hafta içi her sabah otomatik olarak, bir önceki işlem gününün kapanış fiyatlarıyla güncellenir; hafta sonu ve tatil günlerinde değer değişmez. Canlı fiyatlar için üstteki fiyat şeridine bakınız. Getiri, başlangıçta eşit dağıtılan 100,000 TL'nin güncel değerine göre hesaplanır; tablodaki tekil hisse yüzdelerinin basit ortalaması değildir. Karşılaştırma çizgileri (altın/dolar/mevduat/endeks/enflasyon) da aynı 100,000 TL tabanına normalize edilmiştir.<br>
+* Tarih sütunu, portföyün güncellendiği günü gösterir; fiyatlar bir önceki işlem gününün kapanışına aittir.
+Hafta sonu ve tatil günlerinde değer değişmez.</p>
+</main>
+
+<nav class="altbar" aria-label="快捷菜单">
+<a href="index.html"><span class="i">📊</span>报告</a>
+<a href="teknik-analiz.html"><span class="i">📈</span>技术</a>
+<a href="hisse/index.html"><span class="i">🏦</span>股票</a>
+<a href="portfolio.html" class="active"><span class="i">💼</span>投资组合</a>
+<a href="haberler.html"><span class="i">📰</span>新闻</a>
+<a href="takvim.html"><span class="i">📅</span>日历</a>
+</nav>
+
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+
+<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları • Analiz: yapay zeka (çok-ajanlı sistem)<br><a href="gizlilik.html" style="color:inherit">隐私与数据保护</a></footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+</body></html>
