@@ -4951,9 +4951,15 @@ if __name__ == "__main__":
     except Exception:
         logger.exception("[Arama] site-arama.json uretilemedi; rapor uretimini etkilemez.")
 
-    # IndexNow: degisen sayfalari Bing/Yandex/Seznam/Naver'a aninda bildir
+    # IndexNow: degisen sayfalari Bing/Yandex/Seznam/Naver'a aninda bildir.
+    # Sitemap'teki TUM URL'ler bildirilir (hisse detay sayfalari, arsivler,
+    # sirket haberleri dahil); boylece yeni eklenen her sayfa da otomatik
+    # kapsama girer. IndexNow istek basina 10.000 URL kabul eder.
     try:
-        indexnow_ping(INDEXNOW_ANA_SAYFALAR + [f"reports/{fn}" for fn in raporlar[:5]])
+        sitemap_metni = open("sitemap.xml", encoding="utf-8").read()
+        tum_url = re.findall(r"<loc>([^<]+)</loc>", sitemap_metni) or \
+            INDEXNOW_ANA_SAYFALAR + [f"reports/{fn}" for fn in raporlar[:5]]
+        indexnow_ping(tum_url)
     except Exception:
         logger.exception("[IndexNow] ping atlamasi sorun degil.")
 
