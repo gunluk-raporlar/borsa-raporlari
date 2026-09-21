@@ -41,6 +41,10 @@ jobs:
           I18N_PENCERE: "40"
           I18N_ARALIK: "3.5"
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+          # Buyuk modeller "at capacity %100" gorunuyor (kuyruk -> timeout).
+          # Ceviri icin idle olan Qwen birincil, DeepSeek yedek.
+          AMD_MODEL: "Qwen3.8-Flash-Next"
+          AMD_FALLBACK_MODELS: "DeepSeek-V4-Flash"
           ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
