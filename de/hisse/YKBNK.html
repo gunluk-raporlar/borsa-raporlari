@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YKBNK — Hisse Analizi</title>
+<meta name="description" content="YKBNK (Bankacılık) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/de/hisse/YKBNK">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/hisse/YKBNK">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/hisse/YKBNK">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/hisse/YKBNK">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/hisse/YKBNK">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/hisse/YKBNK">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/YKBNK">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Günlük Raporlar">
+<meta property="og:title" content="YKBNK — Hisse Analizi">
+<meta property="og:description" content="YKBNK (Bankacılık) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/de/hisse/YKBNK">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Günlük Raporlar kapak görseli">
+<meta property="og:locale" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="YKBNK — Hisse Analizi">
+<meta name="twitter:description" content="YKBNK (Bankacılık) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "YKBNK — Hisse Analizi", "description": "YKBNK (Bankacılık) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/de/hisse/YKBNK", "inLanguage": "de", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/de/"}}</script>
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://js.puter.com" crossorigin>
+<link rel="stylesheet" href="../style.css">
+
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<a class="brand" href="../index.html">BIST 30 Tagesberichte</a>
+<nav><a href="../index.html">Berichte</a><a href="../hisse/index.html" class="active">Aktien</a><a href="../derin-analiz.html">Tiefenanalyse</a><a href="../teknik-analiz.html">Technischer Scan</a><a href="../sinyal-karnesi.html">Signal-Bilanz</a><a href="../borsapy-analiz.html">Borsapy-Signale</a><a href="../haberler.html">Nachrichten</a><a href="../sirket-haberleri.html">Unternehmensnachrichten</a><a href="../portfolio.html">Demo-Portfolio</a><a href="../haftasonu.html">Wochenende</a><a href="../haftasonu-egitimi.html">Börsenschule</a><a href="../takvim.html">📅 Kalender</a><a href="../sozluk.html">Glossar</a></nav>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Helles/dunkles Design" aria-label="Design wechseln">🌙</button>
+</div></header>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Preise werden geladen…</span></div>
+</div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; background: var(--card); padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: var(--muted); gap: 15px; border: 1px solid var(--line);">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">Yükleniyor...</span>
+            <span id="istanbul-weather">İstanbul Hava Durumu...</span>
+        </div>
+
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Sayfa dili seçin">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/hisse/YKBNK" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/hisse/YKBNK" hreflang="en" lang="en" data-dil="en">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/hisse/YKBNK" hreflang="de" lang="de" data-dil="de" class="aktif" aria-current="true">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/hisse/YKBNK" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/hisse/YKBNK" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+</nav>
+
+
+<div id="bist-radyo" style="display:none; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; min-width:250px; max-width:330px;" oncontextmenu="return false;">
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+    <strong style="font-size:13px; color:#0f172a;">BIST Radyo</strong>
+    <span style="background:#f0fdfa; color:#0f766e; border:1px solid #99f6e4; border-radius:999px; padding:1px 8px; font-size:11px;">AI sunucular</span>
+  </div>
+  <audio id="radyo-audio" controls preload="none" controlslist="nodownload noremoteplayback" style="width:100%; height:34px;" oncontextmenu="return false;"></audio>
+  <div id="radyo-liste" style="margin-top:6px; font-size:12.5px; color:#475569;"></div>
+  <div style="margin-top:4px; font-size:11px;"><a href="../radyo/index.html">Tüm yayınlar &amp; Podcast sayfası</a> • <a href="../radyo/podcast.xml" target="_blank" rel="noopener">RSS</a></div>
+  <div style="margin-top:4px; color:#94a3b8; font-size:11px;">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</div>
+</div>
+<script>
+(function() {
+  var kok = '../';
+  var kutu = document.getElementById('bist-radyo');
+  if (!kutu) { return; }
+  fetch(kok + 'radyo/indeks.json?t=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      var bolumler = (d && d.bolumler) || [];
+      if (!bolumler.length) { return; }
+      // Siralama: en yeni gun once; gun icinde acilis -> ogle -> kapanis.
+      // (indeks.json eski duzende kaydedilmis olabilir; burada da garantiye aliyoruz.)
+      var sira = { acilis: 0, ogle: 1, kapanis: 2 };
+      bolumler.sort(function(a, b) {
+        if (a.tarih !== b.tarih) return a.tarih < b.tarih ? 1 : -1;
+        var sa = (a.bolum in sira) ? sira[a.bolum] : 9;
+        var sb = (b.bolum in sira) ? sira[b.bolum] : 9;
+        return sa - sb;
+      });
+      var sonGun = bolumler[0].tarih;
+      var ses = document.getElementById('radyo-audio');
+      var liste = document.getElementById('radyo-liste');
+      var secili = 0;
+      var eskiAcik = false;
+      function renderListe() {
+        var gizli = 0;
+        var html = bolumler.map(function(b, ix) {
+          if (b.tarih !== sonGun && !eskiAcik) { gizli++; return ''; }
+          var sure = b.sure_sn ? Math.round(b.sure_sn / 60) + ' dk' : '';
+          return '<a href="javascript:void(0)" onclick="radyoSec(' + ix + ')" style="display:inline-block; margin:2px 6px 2px 0; ' +
+                 (ix === secili ? 'font-weight:700;' : '') + '">' + b.baslik + (sure ? ' (' + sure + ')' : '') + '</a>';
+        }).join('');
+        if (gizli) {
+          html += '<a href="javascript:void(0)" onclick="radyoEskiAc()" style="display:inline-block; margin:4px 0 2px; font-weight:600; color:#0f766e">' +
+                  (eskiAcik ? '⌃ Sadece son günü göster' : '⌄ Önceki günler (' + gizli + ')') + '</a>';
+        }
+        liste.innerHTML = html;
+      }
+      window.radyoSec = function(i) { secili = i; renderListe(); ses.src = kok + bolumler[i].dosya; ses.play().catch(function() {}); };
+      window.radyoEskiAc = function() { eskiAcik = !eskiAcik; renderListe(); };
+      // Baslangicta en yeni bolum yuklenir; sadece son gunun yayinlari listelenir.
+      ses.src = kok + bolumler[0].dosya;
+      secili = 0;
+      renderListe();
+      kutu.style.display = 'block';
+    })
+    .catch(function() {});
+})();
+</script>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+
+<div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Website durchsuchen: Aktie, Thema, Datum… (z. B. PETKM, RSI, Portfolio)" style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Suchen</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid #e2e8f0; padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '../';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\?\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\.|mi|mı|icin)\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+
+
+        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="ai-input" placeholder="Fragen Sie den BIST-KI-Assistenten…" style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') aiSor();">
+                <button onclick="aiSor()" id="ai-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Fragen</button>
+            </div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">
+                <span class="ai-chip" onclick="aiChip(this)">Piyasa özeti ne?</span>
+                <span class="ai-chip" onclick="aiChip(this)">RSI ve MACD nedir?</span>
+                <span class="ai-chip" onclick="aiChip(this)">Destek ve direnç nedir?</span>
+            </div>
+        </div>
+    </div>
+
+<div id="ai-panel" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; font-size: 14px; line-height: 1.6;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <strong style="color: #0f766e;">BIST AI Asistan</strong>
+        <a href="javascript:void(0)" onclick="document.getElementById('ai-panel').style.display='none'" style="color: #64748b; text-decoration: none; font-size: 18px; line-height: 1;">×</a>
+    </div>
+    <div id="ai-answer"></div>
+    <div style="margin-top: 8px; color: #64748b; font-size: 12px;">Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir. Model: GLM-Flash (Z.ai, Puter.js üzerinden — ilk kullanımda Puter oturumu isteyebilir).</div>
+</div>
+<style>
+.ai-chip { background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; border-radius: 999px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
+.ai-chip:hover { border-color: #0f766e; color: #0f766e; }
+</style>
+<script defer src="https://js.puter.com/v2/"></script>
+<script>
+function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
+function aiZamanAsimi(promise, ms) {
+    return Promise.race([
+        promise,
+        new Promise(function(_, reject) { setTimeout(function() { reject(new Error('yanıt zaman aşımı')); }, ms); })
+    ]);
+}
+async function aiSor() {
+    var giris = document.getElementById('ai-input');
+    var soru = (giris.value || '').trim();
+    if (!soru) return;
+    var btn = document.getElementById('ai-btn');
+    var cevap = document.getElementById('ai-answer');
+    var panel = document.getElementById('ai-panel');
+    panel.style.display = 'block';
+    cevap.innerHTML = '<em>Yanıt hazırlanıyor... (ilk kullanımda birkaç saniye sürebilir)</em>';
+    btn.disabled = true; giris.disabled = true;
+    var sistem = 'Sen "BIST 30 Günlük Raporlar" sitesinin Türkçe yapay zeka asistanısın. Görevin: Borsa İstanbul, makroekonomi ve teknik analiz (EMA, RSI, MACD, Wave Trend, destek/direnç vb.) konularında eğitici, kısa ve anlaşılır yanıtlar vermek. Canlı piyasa verine erişimin yok; güncel veriler için kullanıcıyı sitedeki Teknik Tarama, Borsapy Sinyal ve Günlük Rapor sayfalarına yönlendir. Kesin alım-satım tavsiyesi verme; bilgilendir. Yanıtlarını madde işaretleriyle yaz, en fazla 200 kelime tut.';
+    var modeller = ['z-ai/glm-4.7-flash', 'infron:z-ai/glm-4.7-flash', 'z-ai/glm-4.5-flash', 'infron:z-ai/glm-4.5-flash'];
+    var sonHata = '';
+    var zamanasimiSayisi = 0;
+    for (var i = 0; i < modeller.length; i++) {
+        try {
+            var r = await aiZamanAsimi(puter.ai.chat(
+                [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
+                { model: modeller[i] }
+            ), 20000);
+            var metin = (r && r.message && r.message.content) || (typeof r === 'string' ? r : '') || '';
+            if (!metin) { sonHata = 'Boş yanıt'; continue; }
+            metin = String(metin).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            cevap.innerHTML = metin.replace(/\n/g, '<br>');
+            giris.disabled = false; btn.disabled = false; giris.value = '';
+            return;
+        } catch (e) {
+            sonHata = (e && e.message) ? e.message : 'Bilinmeyen hata';
+            if (sonHata.indexOf('zaman aşımı') !== -1) {
+                zamanasimiSayisi++;
+                // Art arda 2 kez zaman aşımı = Puter erişilemiyor; diger
+                // modelleri denemek bekletir, hata mesajina gec.
+                if (zamanasimiSayisi >= 2) break;
+            }
+            if (sonHata.indexOf('auth') !== -1 || sonHata.indexOf('permission') !== -1) break;
+        }
+    }
+    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + ').</span> ' +
+        '<a href="javascript:void(0)" onclick="aiSor()" style="text-decoration:underline">Tekrar dene</a>' +
+        '<div style="margin-top:6px;color:#475569;font-size:12.5px">Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin (asistan, ücretsiz Puter kotanızı kullanır). Sorunuz tarayıcı sekmesinde korunuyor.</div>';
+    giris.disabled = false; btn.disabled = false;
+}
+</script>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>YKBNK <span style="font-size:16px; color:var(--muted)">Bankacılık</span></h1>
+<div class="meta"><span class="badge">SAT</span>
+<span><strong>36.26 TL</strong></span>
+<span class="pos">+ 0.06% (günlük)</span>
+<span class='pos' style='font-weight:700'>+ 0.9% (2026-09-06'ten beri)</span></div>
+</div>
+<div class="card" style="margin-bottom:16px">
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
+<strong style="font-size:14px">📊 YKBNK fiyat grafiği</strong>
+<span style="color:var(--muted); font-size:12px">son 12 gün • kapanış fiyatları</span>
+</div>
+<svg viewBox="0 0 520 90" class="chart" role="img" aria-label="YKBNK fiyat grafiği (son 12 gün)" style="max-width:520px"> <polyline fill="none" stroke="#047857" stroke-width="2.5" points="0.0,31.8 47.3,31.8 94.5,26.8 141.8,8.0 189.1,22.1 236.4,27.6 283.6,20.7 330.9,21.5 378.2,48.6 425.5,84.0 472.7,39.8 520.0,27.1" /></svg>
+<div style="color:var(--muted); font-size:12px">2026-09-06 tarihinden bugüne YKBNK kapanış fiyatları (TL). Karşılaştırma grafiği değildir.</div>
+</div>
+
+<div class="card" style="margin:0 0 18px">
+<h3 style="margin:0 0 6px">Şirket Profili</h3>
+<div style="font-weight:700; margin-bottom:4px">Yapı Kredi Bankası</div>
+<div class="meta" style="margin:0 0 8px"><span>Kuruluş: <strong>07.07,1944</strong></span><span>Ana ortak: <strong>Koç Holding &amp; UniCredit</strong></span><span>Ödenmiş sermaye: <strong>8,447,000,000 TL</strong> (2026/6)</span></div>
+<p style="margin:0; font-size:14px">Kurumsal, bireysel, uluslararası ve yatırım bankacılığı.</p>
+<div style="margin:8px 0 0"><div style="color:var(--muted); font-size:12px; margin-bottom:5px">Markalar &amp; iştirakler</div><span class="badge" style="margin:0 6px 6px 0; font-size:11.5px">Yapı Kredi Yatırım</span><span class="badge" style="margin:0 6px 6px 0; font-size:11.5px">Yapı Kredi Portföy</span></div><div style="margin:8px 0 0; font-size:13.5px">🌐 <a href="https://ykb.com" target="_blank" rel="noopener">ykb.com</a></div>
+<div style="margin:10px 0 0; padding-top:8px; border-top:1px solid var(--line)">
+<div style="color:var(--muted); font-size:12px; margin-bottom:2px">Bilanço — 2026/6 dönemi (2026-09-21 verisi)</div>
+<table style="font-size:12.5px">
+<tr><td>Toplam Varlıklar</td><td><strong>3.572.4 mlr TL</strong></td><td>Toplam Borç</td><td><strong>1.985.9 mlr TL</strong></td></tr>
+<tr><td>Dönen Varlıklar</td><td>543.3 mlr TL</td><td>Öz Sermaye</td><td><strong>286.5 mlr TL</strong></td></tr>
+<tr><td>Finansal Borç</td><td>—</td><td>Net Dönem Kârı</td><td class='pos'><strong>31.0 mlr TL</strong></td></tr>
+</table>
+</div>
+</div>
+<div class="grid-iki">
+<div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
+<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>SAT</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>BEKLE</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>BEKLE</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>BEKLE</strong></td></tr><tr><td>Wave Trend</td><td><strong>AL</strong></td></tr><tr><td>Kanal konumu</td><td><strong>6%2</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>-0.03</strong></td></tr><tr><td>Puan</td><td><strong>1</strong></td></tr></table>
+<p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Technischer Scan</a></p></div>
+<div class="card"><h3 style="margin:0 0 8px">Son 7 Gün Haberleri</h3>
+<ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMihwJBVV95cUxQZlB3dEtJcFdNc0E4ZTZhcmJUMHE4TFNjRlQwLUxDWFZ2Uzl5YVBSbk9DLVRRMWxpS2tSNVpOV1VhT0F6RDRlLS1waXY1MGNSRDBDalRCaG5acVFmVWVOdm9iamRacUlnMjdnc1Y2UW14WnljdDRycGJFNnRDWEtVcnI3NkNNMjNub251MUY1OURNN05rcjJUa0FIbXlUQS1NRkdCNTBPVVpjb190dkZ2VGVkT0hLdnNvWkFrVGg3ZW5pSzVBZ1gyYzNIZ240MjctRHA2NVJlUUdSN01OcVhmcDN1YnI0LUZzTEJleGh0RXMybXpEcUMxbG1Eb2I2a09UUUUyOFB2WQ?oc=5' target='_blank' rel='noopener'>YAPI KREDİ EMEKLİ MAAŞ PROMOSYON TUTARLARI! SSK, Bağ-Kur Yapı Kredi güncel emekli maaş promosyon rakamları! İşte maaş tutarlarına göre ödenecek rakamlar...</a> <span style='color:var(--muted); font-size:12px'>Uzmanpara · 18.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMic0FVX3lxTE5iOFk1c2RsamVEUHk5bEtNdGlSY2JYR2F5ZWRaenJVb2oyM2JkX1ljMEZ4TmNtWU9xdUx5SjE0Z045aW9HU3V1NUxsdGtYSkgyQmw3R2Zpc3o1TzFCZHlMclpSa3RhQTJxUkk1NlJHWXo3RXc?oc=5' target='_blank' rel='noopener'>YAPI VE KREDI BANK. (YKBNK) Hisse Senedi</a> <span style='color:var(--muted); font-size:12px'>Mynet Finans · 18.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMi4gFBVV95cUxOV0pPNVBGUi1CUTlYcFo0dXQ1VnpnWnVBX3JoRkN1MHdUdENsQkdxczdxeUFYbEdxOHdySkpJc25OMDdpak5pcDNJUHZWR2paV3gyMnNuTGFoOTVuRnMyZFhLTGJRNkhFSTdxaFlTMEZ1VUw1cmk5ZjBGRC00YmgxeWtwMkdVN19oQ3dIN05TY0xNenZtbVZMZ09tbVVmUzZOUUxxZUg2OTlsWFo5MDhSMjV4a09zYjkzRER4djRFTG9wZV9pODQ5aVFIalQ2ajUzcm45UEZfMV84aGczYk1EV1dB?oc=5' target='_blank' rel='noopener'>KAP *** YAPI KREDİ PORTFÖY KARAKÖY HİSSE SENEDİ SERBEST FON (HİSSE SENEDİ YOĞUN FON) *** KCP *** Kredi Kullanımı</a> <span style='color:var(--muted); font-size:12px'>GZT · 16.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMipgFBVV95cUxNY3duS1hOb0pxbWZhbXRnV3gyTkwtcG9qTjlpcWNVajJNN001QVRyZFRrbGFVZDNIa2N4SW5QcXJrT1J6T3NtOVNLVnFDU2Z0eDRKcGt4YzFQMFVoeElNdWpfUUdqX1FmODVaSnBQbHJvOWdJQmk4RFVMQzFGR1MtY0xwUEV1a2RGVDFJYWctNjlLbGFTLWhYdG81Ync4V2NwbDZLNGtn?oc=5' target='_blank' rel='noopener'>Yapı Kredi ve TÜBİTAK BİLGEM’den Dijital Egemenlik Yolunda Önemli Adım</a> <span style='color:var(--muted); font-size:12px'>— TeknoTalk · 15.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMijwFBVV95cUxOTTU1MGdLdll4ZXJRSUUwODBsVGlsTWl6Tk92aWY2QmhLVUdOM1RlRGExd3lkeElSWnZKV09FajlVN01ZbElmV0lOY3EtRDBnanJZRGNUVEdIWFpJeUZ5M3FaUmxmVWN5NEh1dHBGQ2RYZ0NjRG51YXI3dVRfLTlUM2RFcGg4WlVIY2tLSUlSaw?oc=5' target='_blank' rel='noopener'>Yapı Kredi Yatırım Strateji Notu: Yeni bir tartışma</a> <span style='color:var(--muted); font-size:12px'>— Para Analiz · 15.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiwwFBVV95cUxOY01IOXhocTdqd040OG1zNjVLcmhOYW5uQ3BRdFlVTzVxUzViVEVSNC1nWFZya1lTcnlEaDRuSU40YUs0ZjlqQkhQSklEenNHRURFd0pldWhyQUhNSE01Y2NEV202MS1jbk40UVdUaVBiN0dMNUV1SDdRODlmX0h5VWw0SFdDTVk0T1F4SDQwMkNCS3A1a1ZEdDRFTU9xajNFQ1VJNnN3UkpIelpEdUJ2dFR3ZXNqSTNVMW5nSUE1SnZXajA?oc=5' target='_blank' rel='noopener'>Yapı Kredi Faktoring, 4.5 milyar TL’lik 182 günlük bono ihracını tamamladı</a> <span style='color:var(--muted); font-size:12px'>Investing.com Türkiye · 14.09</span></li></ul>
+<p style="margin:8px 0 0; font-size:12.5px"><a href="../sirket-haberleri.html#H-YKBNK">Tüm şirket haberleri →</a></p></div>
+</div>
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 8px">YKBNK konulu içerikler</h3>
+<p style="margin:0"><a href="https://borsa-raporlari-web.pages.dev/ara?q=YKBNK" target="_blank" rel="noopener">🔍 Semantik aramada "YKBNK" geçen tüm rapor bölümleri →</a></p>
+<p style="margin:6px 0 0"><a href="../index.html">Günlük rapor arşivi →</a></p>
+</div>
+</main>
+
+<nav class="altbar" aria-label="Schnellmenü">
+<a href="../index.html"><span class="i">📊</span>Berichte</a>
+<a href="../teknik-analiz.html"><span class="i">📈</span>Technik</a>
+<a href="../hisse/index.html" class="active"><span class="i">🏦</span>Aktien</a>
+<a href="../portfolio.html"><span class="i">💼</span>Portfolio</a>
+<a href="../haberler.html"><span class="i">📰</span>Nachrichten</a>
+<a href="../takvim.html"><span class="i">📅</span>Kalender</a>
+</nav>
+
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+
+<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları • Analiz: yapay zeka (çok-ajanlı sistem)<br><a href="../gizlilik.html" style="color:inherit">Datenschutz</a></footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+</body></html>
