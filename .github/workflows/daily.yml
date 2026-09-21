@@ -31,6 +31,7 @@ jobs:
           GOOGLE_SITE_DOGRULAMA: ${{ secrets.GOOGLE_SITE_DOGRULAMA }}
           BING_SITE_DOGRULAMA: ${{ secrets.BING_SITE_DOGRULAMA }}
           BAIDU_SITE_DOGRULAMA: ${{ secrets.BAIDU_SITE_DOGRULAMA }}
+          YANDEX_SITE_DOGRULAMA: ${{ secrets.YANDEX_SITE_DOGRULAMA }}
         run: |
           for deneme in 1 2 3; do
             echo "=== Bot calistirma denemesi: $deneme/3 ==="

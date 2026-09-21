@@ -22,6 +22,7 @@ jobs:
           GOOGLE_SITE_DOGRULAMA: ${{ secrets.GOOGLE_SITE_DOGRULAMA }}
           BING_SITE_DOGRULAMA: ${{ secrets.BING_SITE_DOGRULAMA }}
           BAIDU_SITE_DOGRULAMA: ${{ secrets.BAIDU_SITE_DOGRULAMA }}
+          YANDEX_SITE_DOGRULAMA: ${{ secrets.YANDEX_SITE_DOGRULAMA }}
           ZAI_MODEL: ${{ vars.ZAI_MODEL }}
         run: python -u derin_analiz.py
       - name: Degisiklikleri yayinla

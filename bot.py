@@ -1551,6 +1551,7 @@ def _dogrulama_etiketleri():
         ("GOOGLE_SITE_DOGRULAMA", "google-site-verification"),
         ("BING_SITE_DOGRULAMA", "msvalidate.01"),
         ("BAIDU_SITE_DOGRULAMA", "baidu-site-verification"),
+        ("YANDEX_SITE_DOGRULAMA", "yandex-verification"),
     ):
         deger = (os.environ.get(env_adi) or "").strip() or SABIT_DOGRULAMALAR.get(meta_adi, "")
         if deger:
