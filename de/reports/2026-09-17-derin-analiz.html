@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="BIST 30 Günlük Raporlar kapak görseli">
+<meta property="og:image:alt" content="BIST 30 Tagesberichts Titelbild">
 <meta property="og:locale" content="de_DE">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Derin Analiz - 2026-09-17">
@@ -79,8 +79,8 @@
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
     <div class="site-widgets">
         <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <span id="current-date-time">⏳ Yükleniyor...</span>
-            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
+            <span id="current-date-time">Laden...</span>
+            <span id="istanbul-weather">Istanbul Wetter...</span>
         </div>
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
 <nav class="dil-linkler" aria-label="Sayfa dili seçin">
@@ -102,7 +102,7 @@
     <div class="interactive-box">
 <div class="arama-kutusu">
     <div style="display: flex; gap: 8px;">
-        <input type="text" id="site-arama-giris" placeholder="Hisse, konu veya tarih ara…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <input type="text" id="site-arama-giris" placeholder="Aktie, Thema oder Datum suchen..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
         <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Suchen</button>
     </div>
     <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
@@ -186,11 +186,11 @@
 </script>
 
 <div class="radyo-mini">
-  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Oynat / Duraklat">▶</button>
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Wiedergabe / Pause">▶</button>
   <audio id="radyo-ses" preload="none"></audio>
-  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Ses seviyesi" title="Ses">
-  <span class="radyo-linkler"><a href="../radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> <span class="ayrac">•</span> <a href="../radyo/podcast.xml">RSS</a></span>
-  <span class="radyo-uyari">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</span>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Lautstärke" title="Audio">
+  <span class="radyo-linkler"><a href="../radyo/index.html">Alle Sendungen &amp; Podcast-Seite</a> <span class="ayrac">•</span> <a href="../radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">Nur zum Hören • Fiktive KI-Server • Zu Informationszwecken, keine Anlageberatung.</span>
 </div>
 <script>
 (function(){
@@ -222,42 +222,42 @@
     
 <div class="hero">
 <h1>Tiefenanalyse</h1>
-<div class="meta"><span class="badge">2026-09-17</span><span>BIST 30 • Yapay zeka destekli derinlemesine analiz</span>
-<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button>
-<span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px"><a class="paylas" href="https://twitter.com/intent/tweet?text=Derin+Analiz+2026-09-17&url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-17-derin-analiz.html" target="_blank" rel="noopener" title="X'te paylaş">𝕏</a><a class="paylas" href="https://t.me/share/url?url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-17-derin-analiz.html&text=Derin+Analiz+2026-09-17" target="_blank" rel="noopener" title="Telegram'da paylaş">✈</a><a class="paylas" href="https://wa.me/?text=Derin+Analiz+2026-09-17%20https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-17-derin-analiz.html" target="_blank" rel="noopener" title="WhatsApp'ta paylaş">💬</a><a class="paylas" href="javascript:void(0)" title="Bağlantıyı kopyala" onclick="if(navigator.clipboard){navigator.clipboard.writeText('https://borsa-raporlari.pages.dev/de/reports/2026-09-17-derin-analiz.html');this.textContent='✓';}">🔗</a></span></div>
+<div class="meta"><span class="badge">2026-09-17</span><span>BIST 30 • KI-gestützte Tiefenanalyse</span>
+<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Bericht vorlesen">Vorlesen</button>
+<span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px"><a class="paylas" href="https://twitter.com/intent/tweet?text=Derin+Analiz+2026-09-17&url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-17-derin-analiz.html" target="_blank" rel="noopener" title="Auf X teilen">𝕏</a><a class="paylas" href="https://t.me/share/url?url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-17-derin-analiz.html&text=Derin+Analiz+2026-09-17" target="_blank" rel="noopener" title="&quot;Auf Telegram teilen&quot;">✈</a><a class="paylas" href="https://wa.me/?text=Derin+Analiz+2026-09-17%20https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-17-derin-analiz.html" target="_blank" rel="noopener" title="&quot;Auf WhatsApp teilen&quot;">💬</a><a class="paylas" href="javascript:void(0)" title="&quot;Link kopieren&quot;" onclick="if(navigator.clipboard){navigator.clipboard.writeText('https://borsa-raporlari.pages.dev/de/reports/2026-09-17-derin-analiz.html');this.textContent='✓';}">🔗</a></span></div>
 </div>
 
 <div class="card" style="margin:0 0 18px; padding:14px 18px">
 <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
-<strong style="font-size:14px">BIST 30 sepeti — son 8 gün</strong>
+<strong style="font-size:14px">BIST 30 Korb — letzte 8 Tage</strong>
 <span class="neg" style="font-weight:700">-5.48%</span>
 </div>
-<svg viewBox="0 0 520 90" class="chart" role="img" aria-label="BIST 30 sepeti fiyat grafiği (son 8 gün)" style="max-width:520px"> <polyline fill="none" stroke="#b91c1c" stroke-width="2.5" points="0.0,47.7 74.3,34.0 148.6,16.6 222.9,22.6 297.1,8.0 371.4,24.1 445.7,45.4 520.0,84.0" /></svg>
-<div style="color:var(--muted); font-size:12px">30 hissenin eşit ağırlıklı sepeti, ilk görüldüğü fiyata göre normalize edildi.</div>
+<svg viewBox="0 0 520 90" class="chart" role="img" aria-label="BIST 30 Korb Preisdiagramm (letzte 8 Tage)" style="max-width:520px"> <polyline fill="none" stroke="#b91c1c" stroke-width="2.5" points="0.0,47.7 74.3,34.0 148.6,16.6 222.9,22.6 297.1,8.0 371.4,24.1 445.7,45.4 520.0,84.0" /></svg>
+<div style="color:var(--muted); font-size:12px">"Gleichgewichtete Korb aus 30 Aktien, normalisiert zum ersten beobachteten Preis."</div>
 </div>
 
 
 
-<article class="report" id="rapor-govde"><h2>1. Piyasa Özeti ve Genel Bakış</h2>
+<article class="report" id="rapor-govde"><h2>"1. Marktzusammenfassung und Überblick"</h2>
 <p>Türkiye piyasaları, küresel ve yerel belirsizliklerin baskısı altında, temkinli ve konsolide bir seyir izlemektedir. BIST 30 endeksi, 4,200-4,250 direnç bandında soluklanma aşamasında kalmakta; bu kritik seviyenin altında kaldığı sürece net bir yükseliş trendi için zemin henüz oluşmamıştır. Önceki günlerde öne çıkan enerji ve perakende hisselerindeki kısa vadeli momentum, bugün büyük ölçüde zayıflamıştır. Tüm BIST 30 endeksindeki hisselerin 9%0'ı aşkın bir oranda "GÜÇLÜ SAT" veya "SAT" sinyali verirken, piyasa genelinde risk iştahı zayıflamıştır. Bu ortamda fon yönetiminin temel perspektifi, sermaye korumasını ön planda tutmak, nakit pozisyonunu yüksek tutmak ve sadece teknik olarak en dayanıklı görünen, sınırlı sayıda hissede kontrollü alım fırsatları aramaktır. Piyasaların ana odağı, Fed'in faiz kararının yaratağı volatilite ve jeopolitik gerilimin enerji fiyatları üzerindeki etkisi gibi makroekonomik risklere odaklanmıştır.</p>
-<h2>2. Sektör Bazlı Değerlendirme</h2>
+<h2>"2. Sektorale Bewertung"</h2>
 <p>Isı haritası ve sinyal yoğunluğu verileri, BIST 30'da sektörel dağılımda belirgin bir zayıflık ve risk yoğunlaşması olduğunu göstermektedir. Piyasayı domine eden temel tema, finansal sektörün ve enerji-sanayi kollarının genel bir satış baskısı altında olmasıdır. Bankacılık sektörü, VAKBN, YKBNK, GARAN, AKBNK ve ISCTR hisseleriyle tam bir "GÜÇLÜ SAT" baskısı yaşamaktadır. Bu hisselerin tamamında teknik göstergeler zayıf, momentum kaybı yaşanmakta ve 60 günlük getirilerinin çoğu 2%0'nin altında, hatta bazılarında 2%5'e varan kayıplar görülmektedir. Sektör, yüksek enflasyonun kredi talebini ve aktif kalitesini olumsuz etkileme endişesiyle baskı altındadır. Benzer şekilde, enerji ve petrokimya sektörü de ASTOR, PETKM, ENKAI ve TUPRS hisseleriyle zayıf seyretmektedir. Özellikle ASTOR, son 5 günde 1%8.10 gibi dramatik bir değer kaybıyla dikkat çekmektedir. Holdingler grubunda (KCHOL, SAHOL) da "SAT" ve "GÜÇLÜ SAT" sinyalleri hakimdir. Bu genel zayıflık ortamında, tek istisnayı BIMAS (BİM) oluşturmaktadır. BIMAS, diğer tüm hisselerden farklı olarak "NÖTR" sinyali vermektedir. Perakende sektörü, tüketici talebindeki istikrar ve enflasyona karşı dayanıklılığı nedeniyle göreceli bir direnç göstermektedir. Diğer sektörler olan savunma, otomotiv, telekomünikasyon, gayrimenkul ve havacılık ise neredeyse tamamıyla "GÜÇLÜ SAT" sinyalleriyle kapandığı için, piyasa geneline yayılan riskten nasibini almıştır. Bu durum, portföy oluştururken sektörel dağılımın kritik önem kazandığını ve finansal ve enerji ağırlıklı portföylerden kaçınılması gerektiğini vurgulamaktadır.</p>
-<h2>3. Teknik Görsel Analiz</h2>
+<h2>3. Technische Chartanalyse</h2>
 <p>Gün teknik analiz ışığında, BIST 30'da hisselerin büyük çoğunluğunda zayıf bir seyir gözlemlenmektedir. Önceki dönemlerde öne çıkan Tüpraş (TUPRS) ve BİM (BIMAS) gibi hisseler bile son 5 günde 3%-4 civarında değer kaybetmiş ve teknik göstergelerinde zayıflama sinyalleri yaymıştır. Hacim ve momentum açısından en dikkat çekici hisse, TUPRS olmuştur. TUPRS, son 401.75 TL seviyesinde işlem görmekte ve son 5 günde 3%.02 kaybetmesine rağmen, 60 günlük getirisine bakıldığında 8%2.3 gibi çarpıcı bir performans sergilemektedir. Teknik olarak, hisse RSI 60.43 seviyesinde aşırı alım bölgesine yakın bir konumdadır. MACD göstergesi ise 18.42 ile güçlü bir alım momentumu olduğunu göstermekte, Stochastic K ise 71.34 seviyesinde kısa vadeli bir yükseliş potansiyeli işaret etmektedir. Pearson korelasyon katsayısı (r=0.97) ile hissenin güçlü bir yükseliş kanalında olduğu teyit edilmektedir. Diğer taraftan, ASELS, GARAN, YKBNK gibi temel hisselerde ise "GÜÇLÜ SAT" sinyalleri hakimdir. Örneğin, ASELS'in RSI 38.46, MACD -0.54 ve Pearson katsayısı 0.46 ile zayıf bir performans sergilediği görülmektedir. Genel olarak, teknik tarama günün en önemli çıkarımı olarak, piyasanın büyük bir kısmında satış baskısının hakim olduğunu ve yatırımcıların korunma odaklı bir strateji izlediğini göstermektedir.</p>
-<h2>4. Osilatör ve Momentum Okumaları</h2>
+<h2>4. Oszillator- und Momentum-Lesungen</h2>
 <p>Osilatör ve momentum göstergeleri, piyasadaki mevcut durumu ve potansiyel dönüş noktalarını net bir şekilde ortaya koymaktadır. RSI (Göreceli Güç Endeksi) göstergesi, piyasanın aşırı satım bölgesine doğru hızla ilerlediğini göstermektedir. Örneğin, VAKBN (RSI: 43.46), YKBNK (RSI: 31.87), GARAN (RSI: 31.18) ve MGROS (RSI: 30.38) gibi hisseler, 30-40 aralığında aşırı satım sinyali vermektedir. Bu, bu hisselerde kısa vadeli bir toparlanma potansiyeli taşıdığını, ancak bu toparlanmanın sürdürülebilir olup olmayacağının ana trendin gücüne bağlı olduğunu düşündürmektedir. Özellikle MGROS'un RSI'sı 30.38 seviyesinde, son 5 günde 2%8.5 gibi ciddi bir değer kaybı sonrası teknik bir düzeltme beklentisini güçlendirmektedir. MACD (Hareketli Ortalamalar Yakınsama Iraksama) göstergesi ise trendin gücünü göstermektedir. TUPRS'te MACD'nin 18.42 gibi yüksek bir değer alması, alım momentumunun hala geçerli olduğunu gösterirken, ASELS'te -0.54, THYAO'da -5.78 gibi negatif değerler, bu hisselerde hakim olan satış momentumunu teyit etmektedir. Stochastic Osilatörü, kısa vadeli aşırı alım/satım noktalarını işaretlemektedir. TUPRS'te StochK 71.34 iken, ASTOR'da 0.92 gibi dip seviyeler bulunmaktadır. ADX (Ortalama Yönsel Endeks) ise piyasadaki trendin gücünü ölçmektedir. TUPRS'te ADX 41.54 ile güçlü bir yükseliş trendi olduğunu gösterirken, MGROS'ta 37.74 ile güçlü bir düşüş trendi yaşandığı görülmektedir. Bu osilatör okumaları bir arada değerlendirildiğinde, piyasanın iki kutuplu bir yapıya büründüğü, bazı hisselerde kısa vadeli toparlanma beklentileri olsa da ana trendin aşağı yönlü olduğu sonucuna varılmaktadır.</p>
-<h2>5. Risk Haritası ve Senaryolar</h2>
+<h2>5. Risikokarte und Szenarien</h2>
 <p>Mevcut piyasa koşullarında risk yönetimi, portföy değerini korumak için en kritik unsurdur. Kısa vadeli olası aşağı yönlü senaryolar arasında, Fed'in beklenenden daha sıkı bir politika izlemesi ve küresel resesyon endişelerinin artması yer almaktadır. Bu senaryo, BIST 30 endeksinin 4,000 destek seviyesini test etme riskini artırmaktadır. Diğer yandan, jeopolitik gerilimlerin tırmanması ve enerji fiyatlarının 71 €/MWh seviyesinin üzerine kalıcı olarak çıkması, enerji ve sanayi şirketleri üzerinde ek baskı yaratacaktır. Bu risklere karşı portföyü koruma kalkanları olarak, yüksek bir nakit oranı (4%0-50) tutmak ve yeni alımları son derece seçici yapmak esastır. Kaldıraç kullanımından tamamen kaçınılmalıdır. Portföydeki pozisyonların stop-loss seviyeleri mutlaka belirlenmelidir. Yukarı yönlü senaryolar ise daha kısıtlıdır. Senaryo 1: Fed'in faiz kararına yönelik pozitif bir sürprizle küresel risk iştahının artması ve BIST 30 endeksinin 4,250 direncini kırarak 4,350-4,400 bandına yükselmesi. Senaryo 2: Enerji fiyatlarındaki beklenmedik bir düşüşle petrokimya ve enerji sanayi şirketlerinde kar marjlarında iyileşme ve bu sektörlerde toparlanma yaşanması. Ancak bu senaryoların gerçekleşme olasılığı, mevcut makroekonomik veriler ışığında düşük görülmektedir. Bu nedenle, stratejinin temelinde "beka" ilkesi öne çıkmaktadır. Portföy, enflasyona dayanıklı ve temel finansal göstergeleri sağlam olan hisselerle, teknik olarak zayıf olanlardan ayrıştırılmalıdır. Bölünme stratejisi olarak, potansiyel yükseliş fırsatları için küçük pozisyonlar açılırken, portföyün büyük çoğunluğunu güvenli varlıklarda tutmak en mantıklı yaklaşım olacaktır.</p>
-<h2>6. Günün Önerilen Hisseleri</h2>
+<h2>6. Empfohlene Aktien des Tages</h2>
 <table>
 <thead>
 <tr>
 <th>Aktie</th>
 <th>Signal</th>
-<th>Giriş Bölgesi</th>
-<th>Hedef</th>
-<th>Stop</th>
-<th>Gerekçe</th>
+<th>Einstiegsbereich</th>
+<th>Ziel</th>
+<th>Stop-Loss</th>
+<th>Grund</th>
 </tr>
 </thead>
 <tbody>
@@ -279,7 +279,7 @@
 </tr>
 </tbody>
 </table></article>
-<p style="margin-top:18px"><a href="../index.html">← Tüm raporlara dön</a></p>
+<p style="margin-top:18px"><a href="../index.html">Zu allen Berichten zurück</a></p>
 <script>
 (function() {
   if (!('speechSynthesis' in window)) { return; }
@@ -339,7 +339,7 @@ function temaDegistir() {
 })();
 </script>
 
-<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları • Analiz: yapay zeka (çok-ajanlı sistem)<br><a href="../gizlilik.html" style="color:inherit">Datenschutz</a></footer>
+<footer class="footer">Die hier enthaltenen Informationen, Kommentare und Empfehlungen dienen zu Informationszwecken; sie stellen keine Anlageberatung dar und sind keine Anlageempfehlungen. Die Genauigkeit der Daten kann nicht garantiert werden, und die Verantwortung für jede Art von Entscheidung, die aus dem Inhalt entstehen könnte, liegt beim Nutzer.<br>Datenquellen: İş Yatırım, RSS-Nachrichtenströme • Analyse: künstliche Intelligenz (Multi-Agenten-System)<br><a href="../gizlilik.html" style="color:inherit">Datenschutz</a></footer>
 
 <!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
 <script>

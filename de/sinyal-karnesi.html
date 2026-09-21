@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sinyal Karnesi — AL Sinyalleri Backtest</title>
-<meta name="description" content="Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi.">
+<meta name="description" content="KI-gestützte tägliche BIST 30 Analysen: technische Scans, Oszillator-Signale, Modellportfolio und virtuelles Portfoliotracking.">
 <link rel="canonical" href="https://borsa-raporlari.pages.dev/de/sinyal-karnesi">
 <link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/sinyal-karnesi">
 <link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/sinyal-karnesi">
@@ -16,16 +16,16 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BIST 30 Günlük Raporlar">
 <meta property="og:title" content="Sinyal Karnesi — AL Sinyalleri Backtest">
-<meta property="og:description" content="Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi.">
+<meta property="og:description" content="KI-gestützte tägliche BIST 30 Analysen: technische Scans, Oszillator-Signale, Modellportfolio und virtuelles Portfoliotracking.">
 <meta property="og:url" content="https://borsa-raporlari.pages.dev/de/sinyal-karnesi">
 <meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="BIST 30 Günlük Raporlar kapak görseli">
+<meta property="og:image:alt" content="BIST 30 Tagesberichts Titelbild">
 <meta property="og:locale" content="de_DE">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Sinyal Karnesi — AL Sinyalleri Backtest">
-<meta name="twitter:description" content="Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi.">
+<meta name="twitter:description" content="KI-gestützte tägliche BIST 30 Analysen: technische Scans, Oszillator-Signale, Modellportfolio und virtuelles Portfoliotracking.">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Sinyal Karnesi — AL Sinyalleri Backtest", "description": "Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi.", "url": "https://borsa-raporlari.pages.dev/de/sinyal-karnesi", "inLanguage": "de", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/de/"}}</script>
@@ -79,8 +79,8 @@
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
     <div class="site-widgets">
         <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <span id="current-date-time">⏳ Yükleniyor...</span>
-            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
+            <span id="current-date-time">Laden...</span>
+            <span id="istanbul-weather">Istanbul Wetter...</span>
         </div>
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
 <nav class="dil-linkler" aria-label="Sayfa dili seçin">
@@ -102,7 +102,7 @@
     <div class="interactive-box">
 <div class="arama-kutusu">
     <div style="display: flex; gap: 8px;">
-        <input type="text" id="site-arama-giris" placeholder="Hisse, konu veya tarih ara…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <input type="text" id="site-arama-giris" placeholder="Aktie, Thema oder Datum suchen..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
         <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Suchen</button>
     </div>
     <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
@@ -186,11 +186,11 @@
 </script>
 
 <div class="radyo-mini">
-  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Oynat / Duraklat">▶</button>
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Wiedergabe / Pause">▶</button>
   <audio id="radyo-ses" preload="none"></audio>
-  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Ses seviyesi" title="Ses">
-  <span class="radyo-linkler"><a href="radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> <span class="ayrac">•</span> <a href="radyo/podcast.xml">RSS</a></span>
-  <span class="radyo-uyari">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</span>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Lautstärke" title="Audio">
+  <span class="radyo-linkler"><a href="radyo/index.html">Alle Sendungen &amp; Podcast-Seite</a> <span class="ayrac">•</span> <a href="radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">Nur zum Hören • Fiktive KI-Server • Zu Informationszwecken, keine Anlageberatung.</span>
 </div>
 <script>
 (function(){
@@ -266,7 +266,7 @@ function temaDegistir() {
 })();
 </script>
 
-<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları • Analiz: yapay zeka (çok-ajanlı sistem)<br><a href="gizlilik.html" style="color:inherit">Datenschutz</a></footer>
+<footer class="footer">Die hier enthaltenen Informationen, Kommentare und Empfehlungen dienen zu Informationszwecken; sie stellen keine Anlageberatung dar und sind keine Anlageempfehlungen. Die Genauigkeit der Daten kann nicht garantiert werden, und die Verantwortung für jede Art von Entscheidung, die aus dem Inhalt entstehen könnte, liegt beim Nutzer.<br>Datenquellen: İş Yatırım, RSS-Nachrichtenströme • Analyse: künstliche Intelligenz (Multi-Agenten-System)<br><a href="gizlilik.html" style="color:inherit">Datenschutz</a></footer>
 
 <!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
 <script>

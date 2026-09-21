@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Derin Analiz - 2026-09-21</title>
+<title>Tiefenanalyse - 2026-09-21</title>
 <meta name="description" content="2026-09-21 tarihli BIST 30 derin analiz raporu.">
 <link rel="canonical" href="https://borsa-raporlari.pages.dev/de/reports/2026-09-21-derin-analiz">
 <link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/reports/2026-09-21-derin-analiz">
@@ -15,16 +15,16 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BIST 30 Günlük Raporlar">
-<meta property="og:title" content="Derin Analiz - 2026-09-21">
+<meta property="og:title" content="Tiefenanalyse - 2026-09-21">
 <meta property="og:description" content="2026-09-21 tarihli BIST 30 derin analiz raporu.">
 <meta property="og:url" content="https://borsa-raporlari.pages.dev/de/reports/2026-09-21-derin-analiz">
 <meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="BIST 30 Günlük Raporlar kapak görseli">
+<meta property="og:image:alt" content="BIST 30 Tagesberichts Titelbild">
 <meta property="og:locale" content="de_DE">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Derin Analiz - 2026-09-21">
+<meta name="twitter:title" content="Tiefenanalyse - 2026-09-21">
 <meta name="twitter:description" content="2026-09-21 tarihli BIST 30 derin analiz raporu.">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
@@ -79,8 +79,8 @@
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
     <div class="site-widgets">
         <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <span id="current-date-time">⏳ Yükleniyor...</span>
-            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
+            <span id="current-date-time">Laden...</span>
+            <span id="istanbul-weather">Istanbul Wetter...</span>
         </div>
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
 <nav class="dil-linkler" aria-label="Sayfa dili seçin">
@@ -102,7 +102,7 @@
     <div class="interactive-box">
 <div class="arama-kutusu">
     <div style="display: flex; gap: 8px;">
-        <input type="text" id="site-arama-giris" placeholder="Hisse, konu veya tarih ara…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <input type="text" id="site-arama-giris" placeholder="Aktie, Thema oder Datum suchen..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
         <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Suchen</button>
     </div>
     <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
@@ -186,11 +186,11 @@
 </script>
 
 <div class="radyo-mini">
-  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Oynat / Duraklat">▶</button>
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Wiedergabe / Pause">▶</button>
   <audio id="radyo-ses" preload="none"></audio>
-  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Ses seviyesi" title="Ses">
-  <span class="radyo-linkler"><a href="../radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> <span class="ayrac">•</span> <a href="../radyo/podcast.xml">RSS</a></span>
-  <span class="radyo-uyari">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</span>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Lautstärke" title="Audio">
+  <span class="radyo-linkler"><a href="../radyo/index.html">Alle Sendungen &amp; Podcast-Seite</a> <span class="ayrac">•</span> <a href="../radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">Nur zum Hören • Fiktive KI-Server • Zu Informationszwecken, keine Anlageberatung.</span>
 </div>
 <script>
 (function(){
@@ -222,52 +222,52 @@
     
 <div class="hero">
 <h1>Tiefenanalyse</h1>
-<div class="meta"><span class="badge">2026-09-21</span><span>BIST 30 • Yapay zeka destekli derinlemesine analiz</span>
-<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button>
-<span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px"><a class="paylas" href="https://twitter.com/intent/tweet?text=Derin+Analiz+2026-09-21&url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-21-derin-analiz.html" target="_blank" rel="noopener" title="X'te paylaş">𝕏</a><a class="paylas" href="https://t.me/share/url?url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-21-derin-analiz.html&text=Derin+Analiz+2026-09-21" target="_blank" rel="noopener" title="Telegram'da paylaş">✈</a><a class="paylas" href="https://wa.me/?text=Derin+Analiz+2026-09-21%20https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-21-derin-analiz.html" target="_blank" rel="noopener" title="WhatsApp'ta paylaş">💬</a><a class="paylas" href="javascript:void(0)" title="Bağlantıyı kopyala" onclick="if(navigator.clipboard){navigator.clipboard.writeText('https://borsa-raporlari.pages.dev/de/reports/2026-09-21-derin-analiz.html');this.textContent='✓';}">🔗</a></span></div>
+<div class="meta"><span class="badge">2026-09-21</span><span>BIST 30 • KI-gestützte Tiefenanalyse</span>
+<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Bericht vorlesen">Vorlesen</button>
+<span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px"><a class="paylas" href="https://twitter.com/intent/tweet?text=Derin+Analiz+2026-09-21&url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-21-derin-analiz.html" target="_blank" rel="noopener" title="Auf X teilen">𝕏</a><a class="paylas" href="https://t.me/share/url?url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-21-derin-analiz.html&text=Derin+Analiz+2026-09-21" target="_blank" rel="noopener" title="&quot;Auf Telegram teilen&quot;">✈</a><a class="paylas" href="https://wa.me/?text=Derin+Analiz+2026-09-21%20https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-21-derin-analiz.html" target="_blank" rel="noopener" title="&quot;Auf WhatsApp teilen&quot;">💬</a><a class="paylas" href="javascript:void(0)" title="&quot;Link kopieren&quot;" onclick="if(navigator.clipboard){navigator.clipboard.writeText('https://borsa-raporlari.pages.dev/de/reports/2026-09-21-derin-analiz.html');this.textContent='✓';}">🔗</a></span></div>
 </div>
 
 <div class="card" style="margin:0 0 18px; padding:14px 18px">
 <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
-<strong style="font-size:14px">BIST 30 sepeti — son 12 gün</strong>
+<strong style="font-size:14px">"BIST 30 Korb — letzte 12 Tage"</strong>
 <span class="neg" style="font-weight:700">-1.10%</span>
 </div>
-<svg viewBox="0 0 520 90" class="chart" role="img" aria-label="BIST 30 sepeti fiyat grafiği (son 12 gün)" style="max-width:520px"> <polyline fill="none" stroke="#b91c1c" stroke-width="2.5" points="0.0,50.5 47.3,50.5 94.5,36.1 141.8,12.3 189.1,13.1 236.4,21.8 283.6,8.0 330.9,19.1 378.2,46.1 425.5,84.0 472.7,47.5 520.0,57.2" /></svg>
-<div style="color:var(--muted); font-size:12px">30 hissenin eşit ağırlıklı sepeti, ilk görüldüğü fiyata göre normalize edildi.</div>
+<svg viewBox="0 0 520 90" class="chart" role="img" aria-label="&quot;BIST 30 Korb Preisdiagramm (letzte 12 Tage)&quot;" style="max-width:520px"> <polyline fill="none" stroke="#b91c1c" stroke-width="2.5" points="0.0,50.5 47.3,50.5 94.5,36.1 141.8,12.3 189.1,13.1 236.4,21.8 283.6,8.0 330.9,19.1 378.2,46.1 425.5,84.0 472.7,47.5 520.0,57.2" /></svg>
+<div style="color:var(--muted); font-size:12px">"Gleichgewichtete Korb aus 30 Aktien, normalisiert zum ersten beobachteten Preis."</div>
 </div>
 
 
 
-<article class="report" id="rapor-govde"><h2>1. Piyasa Özeti ve Genel Bakış</h2>
-<p>Bugün BIST 30 endeksi, 18 Eylül 2026 tarihinde 4,200-4,250 direnç bandında "sert bir toparlanma" sinyali vererek haftaya başlamıştır. Endekste gözlemlenen bu atak, özellikle enerji ve perakende sektörlerindeki lider hisselerin performansıyla desteklenmektedir. Ancak, bu toparlanmanın sürdürülebilirliği için 4,250 seviyesinin yüksek hacimle ve kalıcı olarak kırılması kritik bir öneme haizdir. Bu seviyenin aşılması durumunda, endekste hedeflenen yükseliş hareketi ivme kazanabilir; aksi takdirde, 4,000 destek seviyesine doğru yaşanabilecek geri çekilmeler portföyler için önemli bir risk teşkil etmektedir. Piyasa genelinde, geçmiş haftalardaki temkinli ve yüksek nakit ağırlıklı yaklaşıma rağmen, son günlerde belirli sektörlerde oluşan teknik toparlanma sinyalleri, fon yönetiminin temel perspektifinde bir mikroeylemsel değişimin habercisi olarak değerlendirilmektedir. Bu bağlamda, piyasa yönünü belirleyecek en kritik gelişmeler; küresel merkez bankası politikaları, jeopolitik riskler ve enerji fiyatlarındaki seyir olacaktır.</p>
-<h2>2. Sektör Bazlı Değerlendirme</h2>
-<p>Verilen sinyal yoğunluğuna ve sektör performanslarına bakıldığında, piyasa genelinde belirgin bir ayrışma gözlemlenmektedir. Enerji ve Petrokimya sektörü, TUPRS (Tüpraş) liderliğinde en güçlü performansı göstermektedir. Şirketin genel sinyali "AL" seviyesinde olmasına rağmen, TradingView verilerine göre "GÜÇLÜ AL" sinyali almaktadır. Bu durum, sektörün diğer hisselerine kıyasla çok daha güçlü bir momentum ve talep potansiyeli olduğunu göstermektedir. Perakende sektöründe ise BIMAS (BİM) öne çıkmakta, genel sinyali "NÖTR" olsa da teknik göstergeler "AL" bölgesine işaret etmektedir. Holding sektöründe ise KCHOL (Koç Holding) ve SAHOL (Sabancı Holding) gibi dev şirketler genel sinyalleri "NÖTR" veya "SAT" seviyesinde olup, sektörde toparlanma sinyali zayıf görünmektedir. Bankacılık sektöründe ise AKBNK (Akbank), GARAN (Garanti BBVA) ve VAKBN (Vakıfbank) gibi lider bankalar genel sinyalleri "SAT" seviyesinde olup, sektörde baskılı bir seyir izlenmektedir. Metal &amp; Madencilik sektöründe ise KRDMD (Kardemir) genel sinyali "NÖTR" olsa da teknik göstergeler "SAT" sinyali vermektedir. Havacılık &amp; Ulaştırma sektöründe ise TAVHL (TAV Havalimanları) genel sinyali "SAT" olsa da teknik göstergeler "AL" sinyali vermektedir. Diğer sektörlerde ise hisseler genel sinyalleri "SAT" seviyesinde olup, piyasa genelinde baskılı bir seyir izlenmektedir.</p>
-<h2>3. Teknik Görsel Analiz</h2>
-<p>Lider hisselerin teknik analizi, piyasadaki ayrışmayı ve potansiyeli net bir şekilde ortaya koymaktadır. Tüm BIST 30 universe'ı içinde, teknik göstergeler açısından en güçlü performansı gösteren hisse TUPRS (Tüpraş) olmuştur. Şirket, son 60 günde 9%0.3'lük devasa bir getiri gerçekleştirmiş ve son işlem gününde 1%.27 artışla 417.25 TL seviyesine yükselmiştir. Teknik olarak, TUPRS RSI değeri 66.42 ile güçlü bir alım bölgesinde konumlanmakta ve MACD göstergesi 17.48 ile net bir yükseliş momentumu sergilemektedir. Stochastic Oscillator 70.54 seviyesinde, aşırı alım bölgesine yaklaştığını gösterse de trendin devam etme potansiyelini desteklemektedir. TradingView'tan gelen "GÜÇLÜ AL" sinyali, bu hissenin teknik anatomisindeki gücünü teyit etmektedir. Diğer taraftan, BIMAS (BİM) son 60 günde 1%2.5'lik bir getiri ile istikrarlı bir performans sergilemekte ve RSI 54.95 ile "AL" sinyali almaktadır. Ancak, KCHOL (Koç Holding) ve SAHOL (Sabancı Holding) gibi holding hisseleri teknik olarak zayıflamaya devam etmekte, RSI değerleri 50'nin altına inerek "NÖTR" ve "SAT" sinyalleri vermektedir. Bankacılık sektöründeki hisseler ise genel olarak zayıf bir seyir izlemektedir; AKBNK (Akbank) ve GARAN (Garanti BBVA) RSI değerleri 50 civarında olup, "SAT" sinyalleri almaktadır. Özellikle, enerji ve sanayi kollarında yer alan ASTOR, EREGL ve SISE gibi hisseler, RSI değerleri 40'ların altına inerek "GÜÇLÜ SAT" sinyalleri vererek piyasadaki en zayıf kısımlar olarak dikkat çekmektedir.</p>
-<h2>4. Osilatör ve Momentum Okumaları</h2>
-<p>Momentum göstergeleri, piyasadaki güçlü ve zayıf hisseleri net bir şekilde ortaya koymaktadır. TUPRS (Tüpraş), RSI değeri 66.42 ile güçlü bir alım bölgesinde konumlanmakta ve MACD 17.48 ile yükseliş momentumunu desteklemektedir. Stochastic Oscillator 70.54 seviyesinde, aşırı alım bölgesine yaklaştığını göstermektedir. CCI20 değeri 100.78 ile güçlü bir alım bölgesinde olup, ADX değeri 36.96 ile güçlü bir trend belirtileri göstermektedir. BIMAS (BİM), RSI değeri 54.95 ile "AL" sinyali almaktadır ve MACD 5.96 ile yükseliş momentumunu desteklemektedir. TAVHL (TAV Havalimanları), RSI değeri 53.63 ile "AL" sinyali almaktadır ve MACD -1.85 ile zayıf bir momentum göstermektedir. TOASO (Tofaş), RSI değeri 52.77 ile "AL" sinyali almaktadır ve MACD 2.54 ile yükseliş momentumunu desteklemektedir. ISCTR (İş Bankası), RSI değeri 51.52 ile "NÖTR" sinyali almaktadır ve MACD 0.13 ile yükseliş momentumunu desteklemektedir. VAKBN (Vakıfbank), RSI değeri 50.03 ile "NÖTR" sinyali almaktadır ve MACD 0.57 ile yükseliş momentumunu desteklemektedir. KCHOL (Koç Holding), RSI değeri 49.93 ile "NÖTR" sinyali almaktadır ve MACD 2.66 ile yükseliş momentumunu desteklemektedir. PETKM (Petkim), RSI değeri 49.41 ile "NÖTR" sinyali almaktadır ve MACD 0.61 ile yükseliş momentumunu desteklemektedir. AKBNK (Akbank), RSI değeri 49.76 ile "SAT" sinyali almaktadır ve MACD 0.12 ile yükseliş momentumunu desteklemektedir. KRDMD (Kardemir), RSI değeri 49.12 ile "SAT" sinyali almaktadır ve MACD 0.21 ile yükseliş momentumunu desteklemektedir. GARAN (Garanti BBVA), RSI değeri 48.49 ile "SAT" sinyali almaktadır ve MACD -0.23 ile zayıf bir momentum göstermektedir. TRALT (Türk Altın İşletmeleri), RSI değeri 47.92 ile "SAT" sinyali almaktadır ve MACD -0.11 ile zayıf bir momentum göstermektedir. AEFES (Anadolu Efes), RSI değeri 45.64 ile "SAT" sinyali almaktadır ve MACD -0.22 ile zayıf bir momentum göstermektedir. ASELS (Aselsan), RSI değeri 45.57 ile "SAT" sinyali almaktadır ve MACD -1.53 ile zayıf bir momentum göstermektedir. MGROS (Migros), RSI değeri 41.82 ile "SAT" sinyali almaktadır ve MACD -17.74 ile zayıf bir momentum göstermektedir. EREGL (Ereğli Demir Çelik), RSI değeri 41.7 ile "SAT" sinyali almaktadır ve MACD -0.65 ile zayıf bir momentum göstermektedir. DSTKF (Destek Finans Faktoring), RSI değeri 39.68 ile "SAT" sinyali almaktadır ve MACD 41.23 ile zayıf bir momentum göstermektedir. ASTOR (Astor Enerji), RSI değeri 30.82 ile "SAT" sinyali almaktadır ve MACD -16.51 ile zayıf bir momentum göstermektedir. TTKOM (Türk Telekom), RSI değeri 46.38 ile "GÜÇLÜ SAT" sinyali almaktadır ve MACD -0.22 ile zayıf bir momentum göstermektedir. ENKAI (Enka İnşaat), RSI değeri 46.0 ile "GÜÇLÜ SAT" sinyali almaktadır ve MACD -0.24 ile zayıf bir momentum göstermektedir. EKGYO (Emlak Konut GYO), RSI değeri 45.29 ile "GÜÇLÜ SAT" sinyali almaktadır ve MACD -0.0 ile zayıf bir momentum göstermektedir. SISE (Şişecam), RSI değeri 44.36 ile "GÜÇLÜ SAT" sinyali almaktadır ve MACD -0.05 ile zayıf bir momentum göstermektedir. GUBRF (Gübre Fabrikaları), RSI değeri 43.91 ile "GÜÇLÜ SAT" sinyali almaktadır ve MACD -1.84 ile zayıf bir momentum göstermektedir. PGSUS (Pegasus), RSI değeri 43.51 ile "GÜÇLÜ SAT" sinyali almaktadır ve MACD -1.32 ile zayıf bir momentum göstermektedir. SASA (Sasa Polyester), RSI değeri 42.91 ile "GÜÇLÜ SAT" sinyali almaktadır ve MACD 0.04 ile zayıf bir momentum göstermektedir. SAHOL (Sabancı Holding), RSI değeri 42.54 ile "GÜÇLÜ SAT" sinyali almaktadır ve MACD -0.32 ile zayıf bir momentum göstermektedir. FROTO (Ford Otosan), RSI değeri 42.34 ile "GÜÇLÜ SAT" sinyali almaktadır ve MACD -0.5 ile zayıf bir momentum göstermektedir. TCELL (Turkcell), RSI değeri 42.18 ile "GÜÇLÜ SAT" sinyali almaktadır ve MACD -1.27 ile zayıf bir momentum göstermektedir. THYAO (Türk Hava Yolları), RSI değeri 40.73 ile "GÜÇLÜ SAT" sinyali almaktadır ve MACD -5.87 ile zayıf bir momentum göstermektedir.</p>
-<h2>5. Risk Haritası ve Senaryolar</h2>
-<p>Mevcut piyasa koşulları, kısa vadeli senaryoların belirsizliğini artırmakta ve proaktif bir risk yönetimi stratejisi zorunlu kılmaktadır. Olası aşağı yönlü senaryolarda, endeksin 4,250 direncinin kırılamaması ve 4,000 destek seviyesine doğru geri çekilme riski en temel tehdittir. Bu senaryo gerçekleşirse, özellikle son dönemde tepki alımı gören enerji hisselerinde ve teknik olağanüstü durum (YO) sinyali veren holding hisselerinde ciddi zararlar görülebilir. Diğer yandan, yukarı yönlü senaryoda, küresel merkez bankası faiz kararlarının yumuşaması ve enerji fiyatlarında yaşanabilecek bir düşüşle birlikte, TUPRS (Tüpraş) ve BIMAS (BİM) gibi teknik olarak güçlü hisseler hedef seviyelere ulaşabilir. Enflasyonun yıllık bazda 3%1.5 olması, piyasa üzerinde uzun vadede ciddi bir baskı unsuru olarak kalacaktır. Bu nedenle, portföy yöneticileri, riskleri dağıtmak ve sadece en güçlü hisselerde (TUPRS, BIMAS, TAVHL, TOASO) odaklanmak için stratejilerini revize etmelidir.</p>
-<h2>6. Günün Önerilen Hisseleri</h2>
+<article class="report" id="rapor-govde"><h2>"1. Marktzusammenfassung und Überblick"</h2>
+<p>"Heute startete der BIST 30 Index mit einem 'harten Aufschwung'-Signal im Widerstandsbereich von 4,200-4,250 am 18. September 2026 in die Woche. Dieser Anstieg im Index wird insbesondere von der Performance der führenden Aktien in den Energie- und Einzelhandelssektoren unterstützt. Für die Nachhaltigkeit dieses Aufschwungs ist jedoch ein kritisch wichtiger Durchbruch der 4,250-Marke mit hohem Volumen und dauerhaft entscheidend. Sollte diese Marke überschritten werden, könnte die angestrebte Aufwärtsbewegung im Momentum gewinnen; andernfalls könnten Rücksetzer auf die Unterstützungslevel von 4,000 für Portfolios ein erhebliches Risiko darstellen. Auf dem allgemeinen Markt wird, angesichts der vorsichtigen und hoch liquiden Herangehensweise der vergangenen Wochen, die technische Erholungssignale in bestimmten Sektoren in jüngster Zeit als Hinweis auf eine mikroökonomische Veränderung in der grundlegenden Perspektive des Fondsmanagements betrachtet. In diesem Zusammenhang werden die entscheidendsten Entwicklungen, die die Marktrichtung bestimmen werden; globale Zentralbankpolitik, geopolitische Risiken und die Entwicklung der Energiepreise sein."</p>
+<h2>"2. Sektorale Bewertung"</h2>
+<p>"Beim Blick auf die gegebene Signalintensität und Sektorperformance zeigt sich im Markt insgesamt eine deutliche Differenzierung. Der Energie- und Petrochemiesektor zeigt mit TUPRS (Tüpraş) an der Spitze die stärkste Performance. Obwohl das allgemeine Signal des Unternehmens auf 'KAUF' liegt, erhält es gemäß TradingView-Daten ein 'STARK KAUF'-Signal. Dies zeigt eine viel stärkere Dynamik und Nachfragepotenzial im Vergleich zu anderen Aktien des Sektors. Im Einzelhandelsektor sticht BIMAS (BİM) hervor, wobei das allgemeine Signal 'NEUTRAL' ist, die technischen Indikatoren jedoch auf 'KAUF' hindeuten. Im Holdingsektor hingegen sind Großunternehmen wie KCHOL (Koç Holding) und SAHOL (Sabancı Holding) mit allgemeinen Signalen auf 'NEUTRAL' oder 'VERKAUF' Niveau, und das Erholungssignal im Sektor schwach erscheint. Im Bankensektor haben führende Banken wie AKBNK (Akbank), GARAN (Garanti BBVA) und VAKBN (Vakıfbank) allgemeine Signale auf 'VERKAUF' Niveau, und es wird ein unter Druck stehender Verlauf im Sektor beobachtet. Im Metall- &amp; Bergbausektor hat KRDMD (Kardemir) zwar ein allgemeines Signal auf 'NEUTRAL', die technischen Indikatoren geben jedoch ein 'VERKAUF'-Signal. Im Luftfahrt- &amp; Transportsektor hat TAVHL (TAV Havalimanları) ein allgemeines Signal auf 'VERKAUF', die technischen Indikatoren geben jedoch ein 'KAUF'-Signal. In anderen Sektoren haben Aktien allgemeine Signale auf 'VERKAUF' Niveau, und es wird ein unter Druck stehender Verlauf auf dem allgemeinen Markt beobachtet."]</p>
+<h2>3. Technische Chartanalyse</h2>
+<p>Die technische Analyse der führenden Aktien zeigt die Marktsegmentierung und das Potenzial klar auf. Innerhalb des gesamten BIST 30 Universums hat TUPRS (Tüpraş) die stärkste Leistung aus technischer Sicht erbracht. Das Unternehmen hat in den letzten 60 Tagen eine massive Rendite von 90.3 % erzielt und ist am letzten Handelstag um 1.27 % auf 417.25 TL gestiegen. Technisch gesehen befindet sich TUPRS mit einem RSI-Wert von 66.42 in einer starken Kaufzone und der MACD-Indikator zeigt mit 17.48 einen klaren Aufwärtstrend. Der Stochastic Oscillator steht bei 70.54, was darauf hindeutet, dass er sich der überkauften Zone nähert, unterstützt aber dennoch das Potenzial für einen Fortsetzung des Trends. Das "STARKE KAUF"-Signal von TradingView bestätigt die Stärke in der technischen Anatomie dieser Aktie. Auf der anderen Seite zeigt BIMAS (BİM) mit einer Rendite von 12.5 % in den letzten 60 Tagen eine stabile Performance und erhält ein "KAUF"-Signal mit einem RSI von 54.95. Allerdings setzen sich Holding-Aktien wie KCHOL (Koç Holding) und SAHOL (Sabancı Holding) technisch weiter schwach ab, mit RSI-Werten unter 50, die "NEUTRAL"- und "VERKAUF"-Signale geben. Die Bankaktien zeigen im Allgemeinen einen schwachen Verlauf; AKBNK (Akbank) und GARAN (Garanti BBVA) haben RSI-Werte um 50 und erhalten "VERKAUF"-Signale. Insbesondere Aktien aus den Energie- und Industriesektoren wie ASTOR, EREGL und SISE fallen mit RSI-Werten unter 40 auf, die "STARKE VERKAUF"-Signale geben, und gelten als die schwächsten Teile des Marktes.</p>
+<h2>4. Oszillator- und Momentum-Lesungen</h2>
+<p>Momentum-Indikatoren zeigen die starken und schwachen Aktien des Marktes klar auf. TUPRS (Tüpraş) befindet sich mit einem RSI-Wert von 66.42 in einer starken Kaufzone und der MACD von 17.48 unterstützt den Aufwärtstrend. Der Stochastic Oscillator steht bei 70.54, was darauf hindeutet, dass er sich der überkauften Zone nähert. Der CCI20-Wert von 100.78 befindet sich in einer starken Kaufzone und der ADX-Wert von 36.96 zeigt starke Trendindikatoren. BIMAS (BİM) erhält ein "KAUF"-Signal mit einem RSI von 54.95 und der MACD von 5.96 unterstützt den Aufwärtstrend. TAVHL (TAV Havalimanları) erhält ein "KAUF"-Signal mit einem RSI von 53.63 und der MACD von -1.85 zeigt ein schwaches Momentum. TOASO (Tofaş) erhält ein "KAUF"-Signal mit einem RSI von 52.77 und der MACD von 2.54 unterstützt den Aufwärtstrend. ISCTR (İş Bankası) erhält ein "NEUTRAL"-Signal mit einem RSI von 51.52 und der MACD von 0.13 unterstützt den Aufwärtstrend. VAKBN (Vakıfbank) erhält ein "NEUTRAL"-Signal mit einem RSI von 50.03 und der MACD von 0.57 unterstützt den Aufwärtstrend. KCHOL (Koç Holding) erhält ein "NEUTRAL"-Signal mit einem RSI von 49.93 und der MACD von 2.66 unterstützt den Aufwärtstrend. PETKM (Petkim) erhält ein "NEUTRAL"-Signal mit einem RSI von 49.41 und der MACD von 0.61 unterstützt den Aufwärtstrend. AKBNK (Akbank) erhält ein "VERKAUF"-Signal mit einem RSI von 49.76 und der MACD von 0.12 unterstützt den Aufwärtstrend. KRDMD (Kardemir) erhält ein "VERKAUF"-Signal mit einem RSI von 49.12 und der MACD von 0.21 unterstützt den Aufwärtstrend. GARAN (Garanti BBVA) erhält ein "VERKAUF"-Signal mit einem RSI von 48.49 und der MACD von -0.23 zeigt ein schwaches Momentum. TRALT (Türk Altın İşletmeleri) erhält ein "VERKAUF"-Signal mit einem RSI von 47.92 und der MACD von -0.11 zeigt ein schwaches Momentum. AEFES (Anadolu Efes) erhält ein "VERKAUF"-Signal mit einem RSI von 45.64 und der MACD von -0.22 zeigt ein schwaches Momentum. ASELS (Aselsan) erhält ein "VERKAUF"-Signal mit einem RSI von 45.57 und der MACD von -1.53 zeigt ein schwaches Momentum. MGROS (Migros) erhält ein "VERKAUF"-Signal mit einem RSI von 41.82 und der MACD von -17.74 zeigt ein schwaches Momentum. EREGL (Ereğli Demir Çelik) erhält ein "VERKAUF"-Signal mit einem RSI von 41.7 und der MACD von -0.65 zeigt ein schwaches Momentum. DSTKF (Destek Finans Faktoring) erhält ein "VERKAUF"-Signal mit einem RSI von 39.68 und der MACD von 41.23 zeigt ein schwaches Momentum. ASTOR (Astor Enerji) erhält ein "VERKAUF"-Signal mit einem RSI von 30.82 und der MACD von -16.51 zeigt ein schwaches Momentum. TTKOM (Türk Telekom) erhält ein "STARKE VERKAUF"-Signal mit einem RSI von 46.38 und der MACD von -0.22 zeigt ein schwaches Momentum. ENKAI (Enka İnşaat) erhält ein "STARKE VERKAUF"-Signal mit einem RSI von 46.0 und der MACD von -0.24 zeigt ein schwaches Momentum. EKGYO (Emlak Konut GYO) erhält ein "STARKE VERKAUF"-Signal mit einem RSI von 45.29 und der MACD von -0.0 zeigt ein schwaches Momentum. SISE (Şişecam) erhält ein "STARKE VERKAUF"-Signal mit einem RSI von 44.36 und der MACD von -0.05 zeigt ein schwaches Momentum. GUBRF (Gübre Fabrikaları) erhält ein "STARKE VERKAUF"-Signal mit einem RSI von 43.91 und der MACD von -1.84 zeigt ein schwaches Momentum. PGSUS (Pegasus) erhält ein "STARKE VERKAUF"-Signal mit einem RSI von 43.51 und der MACD von -1.32 zeigt ein schwaches Momentum. SASA (Sasa Polyester) erhält ein "STARKE VERKAUF"-Signal mit einem RSI von 42.91 und der MACD von 0.04 zeigt ein schwaches Momentum. SAHOL (Sabancı Holding) erhält ein "STARKE VERKAUF"-Signal mit einem RSI von 42.54 und der MACD von -0.32 zeigt ein schwaches Momentum. FROTO (Ford Otosan) erhält ein "STARKE VERKAUF"-Signal mit einem RSI von 42.34 und der MACD von -0.5 zeigt ein schwaches Momentum. TCELL (Turkcell) erhält ein "STARKE VERKAUF"-Signal mit einem RSI von 42.18 und der MACD von -1.27 zeigt ein schwaches Momentum. THYAO (Türk Hava Yolları) erhält ein "STARKE VERKAUF"-Signal mit einem RSI von 40.73 und der MACD von -5.87 zeigt ein schwaches Momentum.</p>
+<h2>5. Risikokarte und Szenarien</h2>
+<p>Die aktuellen Marktbedingungen erhöhen die Unsicherheit der kurzfristigen Szenarien und erfordern eine proaktive Risikomanagementstrategie. In möglichen Abwärtsszenarien ist die größte Bedrohung, dass der Widerstand von 4,250 Punkten nicht durchbrochen wird und eine Rückkehr auf die Unterstützungsebene von 4,000 Punkten droht. Wenn dieses Szenario eintritt, können erhebliche Verluste insbesondere bei Energieaktien, die in letzter Zeit eine Erholung erlebten, und bei Holding-Aktien, die technische Ausnahmesignale (YO) geben, auftreten. Andererseits könnte im Aufwärtsszenario, zusammen mit einer möglichen Lockerung der Zinsentscheidungen der globalen Zentralbanken und einem möglichen Rückgang der Energiepreise, technisch starke Aktien wie TUPRS (Tüpraş) und BIMAS (BİM) ihre Ziele erreichen. Die Inflation von 31.5 % auf Jahresbasis wird langfristig ein erheblicher Belastungsfaktor für den Markt bleiben. Daher sollten Portfoliomanager ihre Strategien überarbeiten, um Risiken zu diversifizieren und sich nur auf die stärksten Aktien (TUPRS, BIMAS, TAVHL, TOASO) zu konzentrieren.</p>
+<h2>6. Empfohlene Aktien des Tages</h2>
 <table>
 <thead>
 <tr>
 <th>Aktie</th>
 <th>Signal</th>
-<th>Giriş Bölgesi</th>
-<th>Hedef</th>
-<th>Stop</th>
-<th>Gerekçe</th>
+<th>Einstiegsbereich</th>
+<th>Ziel</th>
+<th>Stop-Loss</th>
+<th>Grund</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>TUPRS</td>
-<td>GÜÇLÜ AL</td>
+<td>STARK KAUF</td>
 <td>417.25 - 420.00</td>
 <td>440.00</td>
 <td>410.00</td>
-<td>RSI 66.42 ile güçlü momentum, MACD 17.48 yükseliş sinyali, ADX 36.96 ile güçlü trend.</td>
+<td>RSI 66.42 mit starkem Momentum, MACD 17.48 Aufwärtssignal, ADX 36.96 mit starkem Trend.</td>
 </tr>
 <tr>
 <td>BIMAS</td>
@@ -275,7 +275,7 @@
 <td>419.75 - 422.00</td>
 <td>435.00</td>
 <td>415.00</td>
-<td>RSI 54.95 ile alım bölgesi, MACD 5.96 yükseliş, 60 günlük 1%2.5 getiri ile toparlanma.</td>
+<td>RSI 54.95 im Kaufbereich, MACD 5.96 Aufwärtstrend, Erholung mit 12.5% Rendite in 60 Tagen.</td>
 </tr>
 <tr>
 <td>TAVHL</td>
@@ -283,7 +283,7 @@
 <td>276.25 - 278.00</td>
 <td>290.00</td>
 <td>270.00</td>
-<td>RSI 53.63, StochK 62.47 ile yükseliş sinyali, WT sinyali AL seviyesinde.</td>
+<td>RSI 53.63, StochK 62.47 mit Aufwärtssignal, WT-Signal auf AL-Niveau.</td>
 </tr>
 <tr>
 <td>TOASO</td>
@@ -291,11 +291,11 @@
 <td>284.50 - 286.00</td>
 <td>300.00</td>
 <td>280.00</td>
-<td>RSI 52.77, MACD 2.54 yükseliş, WT sinyali AL seviyesinde.</td>
+<td>RSI 52.77, MACD 2.54 Aufwärtstrend, WT-Signal auf AL-Niveau.</td>
 </tr>
 </tbody>
 </table></article>
-<p style="margin-top:18px"><a href="../index.html">← Tüm raporlara dön</a></p>
+<p style="margin-top:18px"><a href="../index.html">Zu allen Berichten zurück</a></p>
 <script>
 (function() {
   if (!('speechSynthesis' in window)) { return; }
@@ -355,7 +355,7 @@ function temaDegistir() {
 })();
 </script>
 
-<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları • Analiz: yapay zeka (çok-ajanlı sistem)<br><a href="../gizlilik.html" style="color:inherit">Datenschutz</a></footer>
+<footer class="footer">Die hier enthaltenen Informationen, Kommentare und Empfehlungen dienen zu Informationszwecken; sie stellen keine Anlageberatung dar und sind keine Anlageempfehlungen. Die Genauigkeit der Daten kann nicht garantiert werden, und die Verantwortung für jede Art von Entscheidung, die aus dem Inhalt entstehen könnte, liegt beim Nutzer.<br>Datenquellen: İş Yatırım, RSS-Nachrichtenströme • Analyse: künstliche Intelligenz (Multi-Agenten-System)<br><a href="../gizlilik.html" style="color:inherit">Datenschutz</a></footer>
 
 <!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
 <script>
