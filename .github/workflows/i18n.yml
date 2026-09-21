@@ -8,6 +8,11 @@ on:
     # Gunluk rapor 05:00 UTC'de baslar (en kotu 100 dk). Ceviri 2 saat sonra, bos pencerede.
     - cron: "0 7 * * 1-5"
   workflow_dispatch:
+    inputs:
+      test:
+        description: "Sadece saglayici testi calistir (ceviri yapmaz)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -39,7 +44,12 @@ jobs:
           ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
-        run: python i18n.py --diller en,de,ru,zh --provider llm --sitemap
+        run: |
+          if [ "${{ inputs.test }" = "true" ]; then
+            python i18n.py --saglayici-test
+          else
+            python i18n.py --diller en,de,ru,zh --provider llm --sitemap
+          fi
 
       - name: Degisiklikleri depoya kaydet
         run: |

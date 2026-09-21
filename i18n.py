@@ -292,6 +292,29 @@ class Cevirmen:
             return self._deepl(parcalar, dil)
         return self._llm(parcalar, dil)
 
+    def _uclari_kur(self) -> list:
+        """Saglayici + model listesi (oncelik sirasiyla). Test modu da bunu kullanir."""
+        uclar = []
+        amd_anahtar = os.environ.get("AMD_API_KEY")
+        if amd_anahtar:
+            modeller = [os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")]
+            modeller += [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "Qwen3.8-Flash-Next").split(",") if m.strip()]
+            uclar.append(("https://developer.amd.com.cn/radeon/api/v1/chat/completions", amd_anahtar, modeller))
+        alt_anahtar = os.environ.get("ALT_API_KEY") or os.environ.get("GROQ_API_KEY")
+        if alt_anahtar:
+            alt_url = os.environ.get("ALT_BASE_URL", "https://api.groq.com/openai/v1").rstrip("/") + "/chat/completions"
+            alt_modeller = [m.strip() for m in os.environ.get("ALT_MODELS", "llama-3.3-70b-versatile").split(",") if m.strip()]
+            uclar.append((alt_url, alt_anahtar, alt_modeller))
+        or_anahtar = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OR_API_KEY")
+        if or_anahtar:
+            or_url = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/") + "/chat/completions"
+            varsayilan_or = "meta-llama/llama-3.3-70b-instruct:free,deepseek/deepseek-chat-v3.1:free"
+            or_modeller = [m.strip() for m in
+                           os.environ.get("OR_MODELS", os.environ.get("OR_MODEL", varsayilan_or)).split(",")
+                           if m.strip()]
+            uclar.append((or_url, or_anahtar, or_modeller))
+        return uclar
+
     def _llm(self, parcalar: list[str], dil: str) -> list[str]:
         hedef = {
             "en": "English", "de": "German", "ru": "Russian", "zh": "Simplified Chinese",
@@ -303,29 +326,7 @@ class Cevirmen:
             "Keep stock tickers (KCHOL, PETKM, THYAO...), numbers, currency amounts, dates and indicator "
             "acronyms (RSI, MACD, EMA, ADX, CCI, WT) exactly as they are."
         )
-        uclar = []
-        # 1) AMD Radeon Developer Cloud (bot.py'nin ana saglayicisi)
-        amd_anahtar = os.environ.get("AMD_API_KEY")
-        if amd_anahtar:
-            modeller = [os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")]
-            modeller += [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "Qwen3.8-Flash-Next").split(",") if m.strip()]
-            uclar.append(("https://developer.amd.com.cn/radeon/api/v1/chat/completions", amd_anahtar, modeller))
-        # 2) Yedek saglayici (varsayilan Groq; ALT_BASE_URL/ALT_MODELS ile degistirilebilir)
-        alt_anahtar = os.environ.get("ALT_API_KEY") or os.environ.get("GROQ_API_KEY")
-        if alt_anahtar:
-            alt_url = os.environ.get("ALT_BASE_URL", "https://api.groq.com/openai/v1").rstrip("/") + "/chat/completions"
-            alt_modeller = [m.strip() for m in os.environ.get("ALT_MODELS", "llama-3.3-70b-versatile").split(",") if m.strip()]
-            uclar.append((alt_url, alt_anahtar, alt_modeller))
-        # 3) OpenRouter — DIKKAT: ucretsiz anahtar yalnizca ":free" modelleri kullanabilir.
-        #    (openai/gpt-4o-mini gibi ucretli model secilirse 402 Payment Required alinir.)
-        or_anahtar = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OR_API_KEY")
-        if or_anahtar:
-            or_url = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/") + "/chat/completions"
-            varsayilan_or = "meta-llama/llama-3.3-70b-instruct:free,deepseek/deepseek-chat-v3.1:free"
-            or_modeller = [m.strip() for m in
-                           os.environ.get("OR_MODELS", os.environ.get("OR_MODEL", varsayilan_or)).split(",")
-                           if m.strip()]
-            uclar.append((or_url, or_anahtar, or_modeller))
+        uclar = self._uclari_kur()
         if not uclar:
             raise SystemExit(
                 "[i18n] HATA: --provider llm icin AMD_API_KEY / ALT_API_KEY / OPENROUTER_API_KEY'den en az biri gerekli."
@@ -848,6 +849,38 @@ def sitemap_dogrula(kok: Path, diller: list[str]) -> dict:
     }
 
 
+def saglayici_test() -> int:
+    """Her saglayiciye ve modeline TEK kisa istek atar; durum kodunu ve hata mesajini yazar.
+
+    Amac: "hangi anahtar/hangi model su an calisiyor?" sorusunu kota yakmadan yanitlamak.
+    Hicbir dosya yazmaz, onbellek kullanmaz.
+    """
+    c = Cevirmen(provider="llm")
+    uclar = c._uclari_kur()
+    if not uclar:
+        print("Hic saglayici yapilandirilmamis (env bos).")
+        return 2
+    sistem = "Cevirmen. Sana verilen JSON dizisini ayni uzunlukta cevrilmis JSON dizisi olarak dondur."
+    dilim = ["BIST 30 gunluk rapor: destek ve direnc seviyeleri"]
+    for url, anahtar, modeller in uclar:
+        ev = "AMD" if "amd" in url else ("Groq/ALT" if "groq" in url else "OpenRouter")
+        print(f"--- {ev} ({url.split('/')[2]}) ---")
+        for model in modeller:
+            try:
+                sonuc = Cevirmen._llm_istek(url, anahtar, model, sistem, dilim, 30)
+                ok = isinstance(sonuc, list) and len(sonuc) == 1
+                print(f"   {model}: OK -> {str(sonuc[0])[:60] if ok else sonuc}")
+            except urllib.error.HTTPError as h:
+                try:
+                    govde = h.read().decode("utf-8", errors="replace")[:160]
+                except Exception:
+                    govde = ""
+                print(f"   {model}: HTTP {h.code} :: {govde}")
+            except Exception as h:
+                print(f"   {model}: HATA :: {h}")
+    return 0
+
+
 def dil_agac_kumesi(kok: Path, hedef_liste) -> set[str]:
     """Dil agacinda bulunacak TUM dosyalarin (sayfa + kopyalanan varlik) kumesi.
 
@@ -1187,6 +1220,8 @@ def main() -> int:
                     help="TR sayfa ile dil sayfasi yapisal olarak ayni mi (CSS/JS/class)")
     ap.add_argument("--sitemap-dogrula", action="store_true",
                     help="sitemap tam mi: her sayfa kayitli mi, her kayit gercek mi")
+    ap.add_argument("--saglayici-test", action="store_true",
+                    help="her saglayiciya/modeline tek istek atip durumunu gosterir")
     ap.add_argument("--temizle", action="store_true", help="uretilmis dil dizinlerini sil")
     ap.add_argument("--zorla", action="store_true", help="Turkce degisiklik korumasini atla")
     ap.add_argument("--varliklari-kopyala", action="store_true", default=True,
@@ -1216,6 +1251,9 @@ def main() -> int:
         print(json.dumps(rapor, ensure_ascii=False, indent=2))
         temiz = not (rapor["css_farki"] or rapor["js_farki"] or rapor["sinif_farki"] or rapor["eksik_varlik"])
         return 0 if temiz else 1
+
+    if args.saglayici_test:
+        return saglayici_test()
 
     if args.sitemap_dogrula:
         rapor = sitemap_dogrula(kok, diller)
