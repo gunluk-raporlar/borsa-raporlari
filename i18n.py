@@ -69,9 +69,9 @@ DILLER = {
 }
 
 # Sayfa uretimi disinda tutulacak dosyalar (dogrulama dosyalari vb.)
-HARIC_DOSYALAR = {"404.html"}
-# Arama motoru dogrulama dosyalari (google/yandex/bing/baidu...) cevrilmez
-HARIC_DESEN_RE = re.compile(r"^(google|yandex|baidu|bing|naver|indexnow|site-?verification)", re.I)
+HARIC_DOSYALAR = {"404.html", "onizleme-mobil.html"}
+# Arama motoru dogrulama dosyalari (google/yandex/bing/baidu...) ve gecici onizleme sayfalari cevrilmez
+HARIC_DESEN_RE = re.compile(r"^(google|yandex|baidu|bing|naver|indexnow|site-?verification|onizleme-)", re.I)
 
 # ----------------------------------------------------------------------------
 # 2) ARAYUZ SOZLUGU (elle yazilmis; makine cevirisine birakilmaz)
