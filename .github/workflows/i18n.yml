@@ -8,6 +8,13 @@ on:
     - cron: "0 7 * * 1-5"
   workflow_dispatch:
     inputs:
+      provider:
+        description: "Ceviri saglayici (llm | deepl)"
+        type: choice
+        options:
+          - llm
+          - deepl
+        default: llm
       test:
         description: "Sadece saglayici testi calistir (ceviri yapmaz)"
         type: boolean
@@ -67,7 +74,7 @@ jobs:
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OR_MODELS: "z-ai/glm-5.2:free"
           DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
-        run: python i18n.py --diller en,de,ru,zh --provider llm --sitemap
+        run: python i18n.py --diller en,de,ru,zh --provider ${{ inputs.provider || 'llm' }} --sitemap
 
       - name: Degisiklikleri depoya kaydet
         run: |

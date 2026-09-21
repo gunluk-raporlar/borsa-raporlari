@@ -906,6 +906,26 @@ def saglayici_test() -> int:
         return "OpenRouter"
 
     # 0) Her saglayicinin GERCEK model listesi (destekliyorsa)
+    deepl_anahtar = os.environ.get("DEEPL_API_KEY") or os.environ.get("DEEPL_KEY")
+    if deepl_anahtar:
+        print("--- DeepL ---")
+        for uc in ("https://api-free.deepl.com", "https://api.deepl.com"):
+            try:
+                istek = urllib.request.Request(uc + "/v2/usage", headers={"Authorization": f"DeepL-Auth-Key {deepl_anahtar}"})
+                with urllib.request.urlopen(istek, timeout=30) as y:
+                    u = json.loads(y.read().decode("utf-8"))
+                print(f"    {uc}: kullanilan={u.get('character_count')} / limit={u.get('character_limit')}")
+            except urllib.error.HTTPError as h:
+                print(f"    {uc}: HTTP {h.code}")
+            except Exception as h:
+                print(f"    {uc}: {h}")
+        bas = time.time()
+        try:
+            cev = Cevirmen._deepl(["BIST 30 gunluk rapor: destek ve direnc"], "en")
+            print(f"    ceviri testi: OK ({(time.time()-bas)*1000:.0f} ms) -> {str(cev[0])[:60]}")
+        except Exception as h:
+            print(f"    ceviri testi: HATA ({h})")
+
     for url, anahtar, _m in uclar:
         ev = ev_ad(url)
         if "groq" in url:
