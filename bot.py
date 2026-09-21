@@ -4643,6 +4643,9 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
         ("sozluk.html", "weekly"),
         ("takvim.html", "weekly"),
         ("hisse/index.html", "daily"),
+        ("haftasonu-egitimi.html", "weekly"),
+        ("sirket-haberleri.html", "daily"),
+        ("radyo/index.html", "daily"),
     ]
     bugun = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%Y-%m-%d")
     url_blokleri = []
@@ -4670,6 +4673,22 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
                 )
     except OSError:
         pass
+    # Haftasonu raporlari ve borsa okulu dersleri; lastmod dosya adindaki
+    # tarihten okunur (2026-09-19.html -> 2026-09-19), adinda tarih olmayan
+    # dosyalarda bot kosma tarihi kullanilir.
+    for klasor in ("haftasonu", "haftasonu-egitimi"):
+        try:
+            for fn in sorted(os.listdir(klasor)):
+                if not fn.endswith(".html"):
+                    continue
+                stem = fn[:-5]
+                lm = stem if re.fullmatch(r"\d{4}-\d{2}-\d{2}", stem) else bugun
+                url_blokleri.append(
+                    f"  <url><loc>{SITE_URL}{klasor}/{fn}</loc><lastmod>{lm}</lastmod>"
+                    f"<changefreq>monthly</changefreq><priority>0.6</priority></url>"
+                )
+        except OSError:
+            pass
     with open("sitemap.xml", "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
