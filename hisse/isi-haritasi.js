@@ -124,6 +124,7 @@
     apiCek()
       .then(function (v) {
         ciz(v, "canlı");
+        kartGuncelle(v);
         durum("Son güncelleme: " + (v.guncelleme || "--:--") + " · " + (v.etiket || "canlı"));
       })
       .catch(function () {
@@ -205,6 +206,27 @@
 
   function sayi(f, sonek) {
     return f.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + sonek;
+  }
+
+  // hisse/index.html'deki kartların fiyat + % bilgilerini ısı haritasının
+  // kullandığı aynı canlı veriyle güncelle (sinyal metni sabah analizinden kalır)
+  function kartGuncelle(veri) {
+    var kartlar = document.querySelectorAll(".rcard[data-kod]");
+    if (!kartlar.length) return;
+    var harita = {};
+    (veri.hisseler || []).forEach(function (h) { harita[h.h] = h; });
+    Array.prototype.forEach.call(kartlar, function (kart) {
+      var h = harita[kart.getAttribute("data-kod")];
+      if (!h || typeof h.f !== "number") return;
+      var alt = kart.querySelectorAll(".sub");
+      if (alt.length < 3) return;
+      var sinyal = (alt[1].textContent.split("•")[0] || "").trim();
+      alt[1].textContent = sinyal + " • " +
+        h.f.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
+      alt[2].textContent = (h.d > 0 ? "+" : h.d < 0 ? "-" : "") +
+        Math.abs(h.d).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
+      alt[2].className = "sub " + (h.d >= 0 ? "pos" : "neg");
+    });
   }
   function yuzde(d) {
     return (d > 0 ? "+" : d < 0 ? "-" : "") + sayi(Math.abs(d), "%");

@@ -22,7 +22,7 @@
 <meta name="twitter:description" content="DSTKF (Finans (Diğer)) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "DSTKF — Hisse Analizi", "description": "DSTKF (Finans (Diğer)) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/DSTKF.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "DSTKF — Hisse Analizi", "description": "DSTKF (Finans (Diğer)) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/DSTKF", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://js.puter.com" crossorigin>
@@ -55,17 +55,18 @@
     var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
     iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
   }
-  function yukle() {
-    fetch(kok + 'ticker.json?t=' + Date.now())
-      .then(function(r) { return r.json(); })
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(ciz)
       .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
         var iz2 = document.getElementById('ticker-iz');
         if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
       });
   }
-  yukle();
-  setInterval(yukle, 5 * 60 * 1000);
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
 })();  // IIFE: tanimlandigi anda calistir
 </script>
 

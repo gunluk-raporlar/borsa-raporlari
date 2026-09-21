@@ -22,7 +22,7 @@
 <meta name="twitter:description" content="TTKOM (Telekom) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "TTKOM — Hisse Analizi", "description": "TTKOM (Telekom) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/TTKOM.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "TTKOM — Hisse Analizi", "description": "TTKOM (Telekom) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/TTKOM", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://js.puter.com" crossorigin>
@@ -55,17 +55,18 @@
     var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
     iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
   }
-  function yukle() {
-    fetch(kok + 'ticker.json?t=' + Date.now())
-      .then(function(r) { return r.json(); })
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(ciz)
       .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
         var iz2 = document.getElementById('ticker-iz');
         if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
       });
   }
-  yukle();
-  setInterval(yukle, 5 * 60 * 1000);
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
 })();  // IIFE: tanimlandigi anda calistir
 </script>
 
@@ -404,8 +405,8 @@ async function aiSor() {
 <div class="hero">
 <h1>TTKOM <span style="font-size:16px; color:var(--muted)">Telekom</span></h1>
 <div class="meta"><span class="badge">GÜÇLÜ SAT</span>
-<span><strong>52.90 TL</strong></span>
-<span class="pos">+0.86% (günlük)</span>
+<span><strong>53.20 TL</strong></span>
+<span class="pos">+1.43% (günlük)</span>
 <span class='pos' style='font-weight:700'>+1.1% (2026-09-06'ten beri)</span></div>
 </div>
 <div class="card" style="margin-bottom:16px">
@@ -434,7 +435,7 @@ async function aiSor() {
 </div>
 <div class="grid-iki">
 <div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
-<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>GÜÇLÜ SAT</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>SAT</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>SAT</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>SAT</strong></td></tr><tr><td>Wave Trend</td><td><strong>SAT</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%61</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>-0.63</strong></td></tr><tr><td>Puan</td><td><strong>0</strong></td></tr></table>
+<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>GÜÇLÜ SAT</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>SAT</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>SAT</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>SAT</strong></td></tr><tr><td>Wave Trend</td><td><strong>SAT</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%64</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>-0.63</strong></td></tr><tr><td>Puan</td><td><strong>0</strong></td></tr></table>
 <p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a></p></div>
 <div class="card"><h3 style="margin:0 0 8px">Son 7 Gün Haberleri</h3>
 <ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMirAFBVV95cUxOcGRYQXdiVzMyUm1KVWp3ZEo2cUtqRDV2VGZDMDFXRHFaS2FkWGJJWDkwX2syaWtlenptZmNLZHZzbDRGSlhfMkNjdWdVNkNhZnBVQWNRRVZGd2FPZGYyOXVpX0puOU15SzJrbWlHcThhc1UtVzRCakJEdGFaSXlUWjZGaGZjdXFZZzFGVDl1cjhxR1pRazF2VWh1MzNZbU1WZ0kya0hLbDhzN2xf?oc=5' target='_blank' rel='noopener'>Türk Telekom’dan bilim kurulu hamlesi</a> <span style='color:var(--muted); font-size:12px'>&mdash; Bigpara &middot; 20.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMizAFBVV95cUxNbzV3WkZqeU00MjNHbm9aMTZUMFRKVmpqeXFna2U4WmVfYWctSDJUbFZpMUQxbHJ3U2NqS0NJbUdxMHhRZFJHV2pTclV1RWJzS25STkVCc2V4a0ZDYllocldYOG44d0xRMjdrQk9XVjR3YUhOTml4dnY4NHh3ZDRNbXJWdGxFa2NiaVhNX3lFS21mN3loZjZDSVBHbVBBQTZaZHNDbjZyVU9oQVRXQkwxbEpqTGdnRG52LWpXSDNMbVhEMUViNC1WNGU0aVY?oc=5' target='_blank' rel='noopener'>Türk Telekom, AR-GE ve İnovasyon Bilim Kurulu ile milli teknoloji üretimine katkı sağlayacak</a> <span style='color:var(--muted); font-size:12px'>&mdash; Anadolu Ajansı &middot; 19.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiTEFVX3lxTE5iYW1ob3pOeEtqV0ZlSVk5aWItTldlTGZEWThENGlBTVhnNnhqa0xuYmhvOW01RWtqd05sMEx4bnJvZllhY3hYdzcydmg?oc=5' target='_blank' rel='noopener'>Türk Telekom Yetkililerinden Rektörümüze Ziyaret</a> <span style='color:var(--muted); font-size:12px'>&mdash; togü haber &middot; 18.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMipwFBVV95cUxNVUxmY3cwelZSQlMwQ0RMcWltMzkzNE14VUNtRVk2YWJ3UTgxTnpZdVd1SnVrOXJJQzZtcm5FRldtNFoyOW85UnJiRHNRY0ZEZmNMcmJ0Wl9HeHVFQVRiQWpaclR5OGtHNl9Ld05jWGR1bFY4emtfUlNaalROcks2X05BWF9OcE9EWC1aQnVEU25xakFrcFVrSTBGLTlXeXRZdk51dENIdw?oc=5' target='_blank' rel='noopener'>Türk Telekom bölgesel teknoloji gücünü Orta Asya’ya taşıyor</a> <span style='color:var(--muted); font-size:12px'>&mdash; Dünya Gazetesi &middot; 16.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMilAFBVV95cUxOVDduT09oSlpMb0FlaFdQWFR6SjRoajFyRXZ1T3gwY2NfRVJIbXE2cUdfRkwxOE1HNkQxdFdxNXNnREpRV0dfQmd0NXFzWDJHTmV6SnIzS1Z2XzdjTFdTMmVVdEZpNmljTXRiV3pzUHprbzcyYnhqem5OT3JtOERHdlNEWkRDVjBaV2psT0xxc3JJSktE?oc=5' target='_blank' rel='noopener'>Türk Telekom teknolojisi geleceğin teminatı</a> <span style='color:var(--muted); font-size:12px'>&mdash; A Haber &middot; 14.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMirAFBVV95cUxObXFFLWdoTFNzNm1OMzVieWlpN3NpVFlPRU1adV8ydmI3LU5iQVJZdHM3T0R2YnZ2aG9NUGdhUm9UUzBYT0FONHBISjlyci0tN0VQQVNGSk9YYVRuWVdaWU44Sk9yRktHbHRsSUI4WkVXSU1vVGdYeTZLVTJFU0ZZNEp6R0lERF9mYVhsZ19LVnNWWUkyVVE3M3FBQml4Vk9kdTVOOENvV1VWdFhF?oc=5' target='_blank' rel='noopener'>Türk Telekom&#x27;dan 2,5 milyar liralık azami fon tutarlı geri alım programı</a> <span style='color:var(--muted); font-size:12px'>&mdash; bloomberght.com &middot; 14.09</span></li></ul>

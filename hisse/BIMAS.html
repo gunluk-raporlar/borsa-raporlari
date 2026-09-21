@@ -22,7 +22,7 @@
 <meta name="twitter:description" content="BIMAS (Perakende) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "BIMAS — Hisse Analizi", "description": "BIMAS (Perakende) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/BIMAS.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "BIMAS — Hisse Analizi", "description": "BIMAS (Perakende) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/BIMAS", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://js.puter.com" crossorigin>
@@ -55,17 +55,18 @@
     var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
     iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
   }
-  function yukle() {
-    fetch(kok + 'ticker.json?t=' + Date.now())
-      .then(function(r) { return r.json(); })
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(ciz)
       .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
         var iz2 = document.getElementById('ticker-iz');
         if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
       });
   }
-  yukle();
-  setInterval(yukle, 5 * 60 * 1000);
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
 })();  // IIFE: tanimlandigi anda calistir
 </script>
 
@@ -403,9 +404,9 @@ async function aiSor() {
     
 <div class="hero">
 <h1>BIMAS <span style="font-size:16px; color:var(--muted)">Perakende</span></h1>
-<div class="meta"><span class="badge">NÖTR</span>
-<span><strong>417.00 TL</strong></span>
-<span class="neg">-0.66% (günlük)</span>
+<div class="meta"><span class="badge">AL</span>
+<span><strong>421.50 TL</strong></span>
+<span class="pos">+0.42% (günlük)</span>
 <span class='pos' style='font-weight:700'>+1.0% (2026-09-05'ten beri)</span></div>
 </div>
 <div class="card" style="margin-bottom:16px">
@@ -434,7 +435,7 @@ async function aiSor() {
 </div>
 <div class="grid-iki">
 <div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
-<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>NÖTR</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>BEKLE</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>AL</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>AL</strong></td></tr><tr><td>Wave Trend</td><td><strong>SAT</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%35</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>0.87</strong></td></tr><tr><td>Puan</td><td><strong>2</strong></td></tr></table>
+<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>AL</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>AL</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>AL</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>AL</strong></td></tr><tr><td>Wave Trend</td><td><strong>SAT</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%45</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>0.87</strong></td></tr><tr><td>Puan</td><td><strong>3</strong></td></tr></table>
 <p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a></p></div>
 <div class="card"><h3 style="margin:0 0 8px">Son 7 Gün Haberleri</h3>
 <ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMikAFBVV95cUxOSTZYZ1drQ1VxQ1pWeU5zLUt4Zm5tM3VoTnVMRWVQX29TUHZ2MUZoM2tTNU5PMHZfSTZxcFQ0RG9xT0NmaC1ERXdYVGFMRWJMUDJOUVp1Y2pJdjh0OG11MVVkcE9VcFVNbDBlU0tkendRRFZsUHVibkNZMUJTMDcwT0JPZ0NHYkdqeWsxS0NuZjk?oc=5' target='_blank' rel='noopener'>BİM&#x27;den temettü ödemesi: Yatırımcıların hesabına geçti</a> <span style='color:var(--muted); font-size:12px'>&mdash; CNBC-e &middot; 18.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMibEFVX3lxTE5mdnU2cW5FMTVGamZFV1llVFgzNEQtakZMUjdCUGkxck1objV0U0pPcE9LTVVuQ2w0bERDeXpiUDBOWlFCclRoTlp6WmJrZlJQZDN1NHNmSHIybkZmdUJXYnZlbjBWV0wzemdleQ?oc=5' target='_blank' rel='noopener'>BIM MAGAZALAR Hisse Senedi Canlı Grafik</a> <span style='color:var(--muted); font-size:12px'>&mdash; Mynet Finans &middot; 18.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMitwFBVV95cUxOMThjRmRneEdhNm1xNGdPM3lWZXZzb0J5a0xxcVZldWVFYnJYb29rY3ZsTWpCd2JSdHl6RThuRlAtaWdzM0ZEekxCcFNzOUU1M1V4amoweTNDcHNTSHl3Nm01RWgwZ3B1NmRiRjJTVXVFeEYtVEpNNHFMcXlhMkZkNGZPeVBiTzFDTlRUMTk2ZnBDME5rWlJQZzVhdG9RcXR1cTBSbUFEVWFFWF9UMTY3bU1oVk5sV00?oc=5' target='_blank' rel='noopener'>KAP *** BİM BİRLEŞİK MAĞAZALAR A.Ş. *** BIMAS *** Şirket Genel Bilgi Formu</a> <span style='color:var(--muted); font-size:12px'>&mdash; Yeni Şafak &middot; 16.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMitgFBVV95cUxNMGx5Zzh0eWpRY3RoNnhkUHlLcmo5ZUJ4NkhtWmZDSU1XOGRCSGN3SVpxdmlBX0RwZVVqeFRjTTBPX1FyZXYzbmdrZU5nVEZRZktCa0ZGOGM1QVpyUHdCUmpWUkxjZ0tTbWJ5d3BHbDZ2R2JIUC0wd3VBM3ZMOFpEVEN6dGZ6YUFRMk9GeldHTE1iZUNQNEQ2R2F6aExlUzhlNkcyVUpxVUIwZks1aHpTWGtIeUo3dw?oc=5' target='_blank' rel='noopener'>KAP *** BİM BİRLEŞİK MAĞAZALAR A.Ş. *** BIMAS *** Finansal Duran Varlık Edinimi</a> <span style='color:var(--muted); font-size:12px'>&mdash; GZT &middot; 16.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMijAFBVV95cUxQV3d0N0huUDZNX1ZhWDEzaWxPeGl3SHJqOXhrTDluX0pfZVc1blp6WFM1WFMwbFdXWHJyQnNhZjJfRkM0cWlCWHIySGJZcFlyNFF1V0pnM2Z0NnlZRmNCNHdFT3FNZzlWZ2xLNS1MbFdhbTFSX2FpQ213Qjg2Y3dzWGNma1VnN3gwVDdUdQ?oc=5' target='_blank' rel='noopener'>BİM’den finans sektöründe yeni adım: Dost Katılım Bankası kuruldu</a> <span style='color:var(--muted); font-size:12px'>&mdash; Paratic Haber &middot; 16.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMivAFBVV95cUxOVU85dmw1X3hlaUt0UkM1MTg3NGJsZXhibTVmWTk1QnBrTHhIUGlINUs3Qld0dVpxaXRaVDlmMmllY3RpNzJDelZDQTIwZUhuTWRzVnZmc09jZDNSaWh4bllaUWVZZzhUX1FuTHVXYUFlRVV4NmQ2WFNmYkN0cTY4cmF3REdkdUFPeEg0aFpNNDh4UXVLaW9PbGZnaVE0YzBLUG9zVEI3QjhZcy1XUThoQ2pnaURILThweXVyUg?oc=5' target='_blank' rel='noopener'>BİM Mağazalar, hisse başına 2,50 TL temettü ile ex-dividend oluyor</a> <span style='color:var(--muted); font-size:12px'>&mdash; Investing.com Türkiye &middot; 15.09</span></li></ul>

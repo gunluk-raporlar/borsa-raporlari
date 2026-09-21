@@ -2263,17 +2263,18 @@ def _kendi_ticker(kok=""):
     var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
     iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
   }}
-  function yukle() {{
-    fetch(kok + 'ticker.json?t=' + Date.now())
-      .then(function(r) {{ return r.json(); }})
+  function yukle(adres) {{
+    fetch(adres, {{ cache: 'no-store' }})
+      .then(function(r) {{ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }})
       .then(ciz)
       .catch(function() {{
+        if (adres.indexOf('/api/') !== -1) {{ yukle(kok + 'ticker.json?t=' + Date.now()); return; }}
         var iz2 = document.getElementById('ticker-iz');
         if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
       }});
   }}
-  yukle();
-  setInterval(yukle, 5 * 60 * 1000);
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() {{ yukle('/api/fiyatlar?t=' + Date.now()); }}, 5 * 60 * 1000);
 }})();  // IIFE: tanimlandigi anda calistir
 </script>"""
 
@@ -4031,7 +4032,7 @@ def hisse_sayfalari_yaz(teknik_satirlar):
             f.write(build_hisse_html(kod, s, tarihler, veriler, haberler,
                                      sirket_haberleri=sirket_haber_map.get(kod, [])))
     kartlar = "".join(
-        f'<a class="rcard" href="{s["hisse"]}.html"><span class="date">{s["hisse"]}</span>'
+        f'<a class="rcard" data-kod="{s["hisse"]}" href="{s["hisse"]}.html"><span class="date">{s["hisse"]}</span>'
         f'<span class="sub">{s.get("genel", "")} &bull; {s.get("son", 0):,.2f} TL</span>'
         f'<span class="sub {_renk(s.get("gunluk", 0))}">{s.get("gunluk", 0):+.2f}%</span></a>'
         for s in teknik_satirlar
@@ -4042,7 +4043,7 @@ def hisse_sayfalari_yaz(teknik_satirlar):
 <p>Her hisse için güncel fiyat, teknik sinyal durumu, fiyat grafiği ve son 7 günün haberleri.</p>
 </div>
 <div id="isi-haritasi"></div>
-<script src="isi-haritasi.js?v=4" defer></script>
+<script src="isi-haritasi.js?v=5" defer></script>
 <h2 class="section-title">Hisse Kartları</h2>
 <div class="grid">{kartlar}</div>"""
     # DİKKAT: bu sayfa hisse/ alt klasorunde — kok="../" olmazsa CSS ve

@@ -22,7 +22,7 @@
 <meta name="twitter:description" content="THYAO (Havacılık & Ulaştırma) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "THYAO — Hisse Analizi", "description": "THYAO (Havacılık & Ulaştırma) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/THYAO.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "THYAO — Hisse Analizi", "description": "THYAO (Havacılık & Ulaştırma) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/THYAO", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://js.puter.com" crossorigin>
@@ -55,17 +55,18 @@
     var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
     iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
   }
-  function yukle() {
-    fetch(kok + 'ticker.json?t=' + Date.now())
-      .then(function(r) { return r.json(); })
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(ciz)
       .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
         var iz2 = document.getElementById('ticker-iz');
         if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
       });
   }
-  yukle();
-  setInterval(yukle, 5 * 60 * 1000);
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
 })();  // IIFE: tanimlandigi anda calistir
 </script>
 
@@ -404,8 +405,8 @@ async function aiSor() {
 <div class="hero">
 <h1>THYAO <span style="font-size:16px; color:var(--muted)">Havacılık & Ulaştırma</span></h1>
 <div class="meta"><span class="badge">SAT</span>
-<span><strong>286.75 TL</strong></span>
-<span class="pos">+0.44% (günlük)</span>
+<span><strong>289.00 TL</strong></span>
+<span class="pos">+1.23% (günlük)</span>
 <span class='neg' style='font-weight:700'>-3.5% (2026-09-05'ten beri)</span></div>
 </div>
 <div class="card" style="margin-bottom:16px">
@@ -434,7 +435,7 @@ async function aiSor() {
 </div>
 <div class="grid-iki">
 <div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
-<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>SAT</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>SAT</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>SAT</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>BEKLE</strong></td></tr><tr><td>Wave Trend</td><td><strong>AL</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%53</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>-0.91</strong></td></tr><tr><td>Puan</td><td><strong>1</strong></td></tr></table>
+<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>SAT</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>BEKLE</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>SAT</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>BEKLE</strong></td></tr><tr><td>Wave Trend</td><td><strong>AL</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%60</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>-0.91</strong></td></tr><tr><td>Puan</td><td><strong>1</strong></td></tr></table>
 <p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a></p></div>
 <div class="card"><h3 style="margin:0 0 8px">Son 7 Gün Haberleri</h3>
 <ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiwgFBVV95cUxOWXI2Zng4WVVmQi1HdHlsbUVUQ2NnSzdab2RKTEZ3Yjg2M0RQcnRDNmxDdHdWOHNfS1k5YXNuRGFpQlIyMHhyV1ZiMGVCbW5QaWFMM2RnTlNXbnpzRl9sdVNLNlhsX1lRVVhYakM4a2pFQURHaVdRdTBEMzVlQzdibl9IeE1GRktxZ2lZTm1kZEVFb1VMandSUGdvcE9LdE5jOFdDUVpOWlk5TzRKUW9pNWhCYnFuR2c3aU9TcGRBMHlCZw?oc=5' target='_blank' rel='noopener'>2026&#x27;nın En İyi Hava Yolları Şirketleri Arasında Türk Hava Yolları Avrupa&#x27;nın En İyisi Oldu</a> <span style='color:var(--muted); font-size:12px'>&mdash; Onedio &middot; 19.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiowFBVV95cUxOSVlEOEdRd1RaVk1wRVdHcm1wMmtDUmJBc2RoSkxwS0x5TldsaXZDUlJGSVQ3WjZsajJfWjFqRnNLVkhQTkpnRkF4aHB0enplRkI4cUNIWlhhSUNlLVdjaG00MHdqaVBEQWR1aXdZbEV4SndGdGpHUFFsTzZzY2FwNG1QbGlQMFVVcjJQaXM2bFB5MHZ1LXF6NzRWT1FTNWMzUW5B?oc=5' target='_blank' rel='noopener'>Dünyanın en iyi hava yolları belli oldu: THY ilk 5&#x27;e girdi</a> <span style='color:var(--muted); font-size:12px'>&mdash; Cumhuriyet &middot; 19.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMijgFBVV95cUxPeElHT29HQ1ptVE90b19TSnNObWFnSHZ2WFZkUDhSOXdVejV0c3ItdWVoYm02X1E2LXBxMENkYm5qWWJMX1FCNUY2dkJfRWk0N1JKdkM2SWFaRkVjbHVJOWtSejEzS0pvMzhIRGMzc0kyOWhLdldfdnNHMDhCRHhteHBpV2ZqZjlSTHBpc193?oc=5' target='_blank' rel='noopener'>THY 11. kez Avrupa&#x27;nın en iyi havayolu seçildi</a> <span style='color:var(--muted); font-size:12px'>&mdash; Anadolu Ajansı &middot; 19.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiqwFBVV95cUxOdmdfZmhLcl8tZTR4bWhxcXktNkRSRW5oRzBuZEp2cDBPNm50aklpajY4MzdPcFdKaTViYkhCTjdrREVycmwyaWRyUm1hVHJnQnl0ZHRKZGttRjF3aFhZaGpKRmVkSjZTN3JCekhHNkw4NFBCaTZGRllhM3RpU3hpc2NDWmxleWs5TzdtOHBaNEp3LUMtcFBSd3gzVnlaeVBaQ3BhWUVTRE85T1E?oc=5' target='_blank' rel='noopener'>Türk Hava Yolları, 11. Kez Avrupa’nın En İyi Havayolu Seçildi</a> <span style='color:var(--muted); font-size:12px'>&mdash; airporthaber2.com &middot; 19.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMingFBVV95cUxQY2EzYnhnbHM4RF9sT3J1VE1rdmxuTDVZNmttTUh0b3o3SmFEM2FybF9vYmt5WXpDQ0xJczVXekk2MVlZUS1INFlmeHdicVpBd1lOVm5rbEJqZ015ZXRHcUdDY0laSWtsaFFtMkZkek9HcW91Wm9LeDFSSEFWRnpiSHlGcERqRVhiUTlIZHVFdDNoQ0RrNFFOZmQ5WjE4QdIBowFBVV95cUxOb2JEemZpTUNDaVdnWFV3Y0V2cEw1OUUzRXhINldzaHh6ZG4zaG9TTDA5bDBwNm1QaXJrcjNhU1B5UVRjWHJnYUFkalY5RE9Hcm15MDFjam9XcEdwU3V5cXBXOE9YcTJNLWc3cjBGQURhSlRaLXdLendoM08xa2ppU0E4ZHUxZm9NMS1QU0haR0VkdjZEaF9RWllQekRBdnZvYWRN?oc=5' target='_blank' rel='noopener'>Dünyanın en iyileri açıklandı. Türk Hava Yolları devleri geçti, ilk sıralara yükseldi</a> <span style='color:var(--muted); font-size:12px'>&mdash; NTV Haber &middot; 19.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMijgFBVV95cUxNZzlvZk9nc05oRTRjSTRxQXhUVFN0SkhLQXNQVy1MVzVxWnQtNDB6Y1RDMEJLQ0NhNnE5VFRnd0NhdGNwaFMtbDgtb21FVFhrU2ZRdDRBb3pETGFjenNKV0Fub0JuX2RiNXV0STVVZEluT1c5QzNLY1FqX2dBYkV0S3lJcHVrZnV3SzJ6bXhB?oc=5' target='_blank' rel='noopener'>THY, Afrika&#x27;daki 5 hattını kalıcı olarak sonlandırdı</a> <span style='color:var(--muted); font-size:12px'>&mdash; Euronews.com &middot; 15.09</span></li></ul>

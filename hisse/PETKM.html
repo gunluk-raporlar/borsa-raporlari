@@ -22,7 +22,7 @@
 <meta name="twitter:description" content="PETKM (Enerji & Petrokimya) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "PETKM — Hisse Analizi", "description": "PETKM (Enerji & Petrokimya) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/PETKM.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "PETKM — Hisse Analizi", "description": "PETKM (Enerji & Petrokimya) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/PETKM", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://js.puter.com" crossorigin>
@@ -55,17 +55,18 @@
     var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
     iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
   }
-  function yukle() {
-    fetch(kok + 'ticker.json?t=' + Date.now())
-      .then(function(r) { return r.json(); })
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(ciz)
       .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
         var iz2 = document.getElementById('ticker-iz');
         if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
       });
   }
-  yukle();
-  setInterval(yukle, 5 * 60 * 1000);
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
 })();  // IIFE: tanimlandigi anda calistir
 </script>
 
@@ -404,8 +405,8 @@ async function aiSor() {
 <div class="hero">
 <h1>PETKM <span style="font-size:16px; color:var(--muted)">Enerji & Petrokimya</span></h1>
 <div class="meta"><span class="badge">SAT</span>
-<span><strong>21.10 TL</strong></span>
-<span class="neg">-1.59% (günlük)</span>
+<span><strong>21.28 TL</strong></span>
+<span class="neg">-0.75% (günlük)</span>
 <span class='pos' style='font-weight:700'>+6.9% (2026-09-06'ten beri)</span></div>
 </div>
 <div class="card" style="margin-bottom:16px">
@@ -434,7 +435,7 @@ async function aiSor() {
 </div>
 <div class="grid-iki">
 <div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
-<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>SAT</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>BEKLE</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>BEKLE</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>AL</strong></td></tr><tr><td>Wave Trend</td><td><strong>SAT</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%37</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>0.50</strong></td></tr><tr><td>Puan</td><td><strong>1</strong></td></tr></table>
+<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>SAT</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>BEKLE</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>BEKLE</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>AL</strong></td></tr><tr><td>Wave Trend</td><td><strong>SAT</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%39</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>0.51</strong></td></tr><tr><td>Puan</td><td><strong>1</strong></td></tr></table>
 <p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a></p></div>
 <div class="card"><h3 style="margin:0 0 8px">Son 7 Gün Haberleri</h3>
 <ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiuAFBVV95cUxNekUtVzRhNUlnZkI3ckEzcF9aWlRQNU93cWZNcXlNSnhFN0U1MTZkYlgyS1pGRU1mdVBqRFlxZHBJUm1rRGd0UF91MVZPRUJrdlNXSGg2R2JINHU0NzJEcjhpSVR3Q2tGMmw1Zlg5b0xnMTNnaWdsSXhUYmdUd3RJWDFsbzVnZjFsREFIUjNxQlNhMldKZ1ZKNU5vQlV2dzgzMnQ0VlN4SjVYb2lHQ2tGRHhTVVJhMWVj?oc=5' target='_blank' rel='noopener'>BIST kimya sektöründe 1 ayda yüzde 34 getiri: İlk 5 hisse yüzde 10’u aştı haberi</a> <span style='color:var(--muted); font-size:12px'>&mdash; borsaningundemi.com &middot; 19.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMi1wFBVV95cUxNcU41NEhSZ0FuUkowWVQ3NmdvMl9mejlWeXB2VzdRMk1tMWo4b3ZsTTVLbXk5a00tS2VyZmswS253NWUwOXNBM1ExSVp3blZaNlV5YnlXbWgxcXFRY24yUnNqS3BwSllBak5UUDFNaTFuTzc3SHZPR1FHLUNiZWNBa2R3N1ppQUE5azRpdlE0TW5UWUJBX2xaalFQS0xMaWdLSEhHZkdXUTRiYWstS0dFWHA2alpLaV8xM1BUeDQtV1N6Z0FiVXczYzNlVlctQ0Z0a0xuSWF2Yw?oc=5' target='_blank' rel='noopener'>Bank of America&#x27;dan Borsa İstanbul&#x27;da dikkat çeken işlemler</a> <span style='color:var(--muted); font-size:12px'>&mdash; Foreks.com &middot; 18.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMinAFBVV95cUxPLUdsQXBfOTRzbkhpRndrOS1TcUFhUEdDMUxIUktxdERUNGdHblMxZ203WFQtQjh5ZWx2cjM2YmJicEtjaFNPdDdrbmgzYi1LVlVQQjFURUx6anM0S3AwenZoNjZjb0txN2xhVkdRSGFoa0RqaWhjTGdYenlOSlk4Smh2UjN5UHdZYlcyY2J3cXdYX1k4YjAxN1BlR1fSAZwBQVVfeXFMTy1HbEFwXzk0c25IaUZ3azktU3FBYVBHQzFMSFJLcXREVDRnR25TMWdtN1hULUI4eWVsdnIzNmJiYnBLY2hTT3Q3a25oM2ItS1ZVUEIxVEVMempzNEtwMHp2aDY2Y29LcTdsYVZHUUhhaGtEamloY0xnWHp5TkpZOEpodlIzeVB3WWJXMmNid3F3WF9ZOGIwMTdQZUdX?oc=5' target='_blank' rel='noopener'>Aliağa&#x27;da İlköğretim Haftası etkinliklerle başladı, ilk zili Kaymakam Güney çaldı</a> <span style='color:var(--muted); font-size:12px'>&mdash; Son Dakika &middot; 18.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMi2AFBVV95cUxNYmk0aUU0b0dxWWhFaHdYWW1ld2hqSEVCSjFTc19QYzViVk1OU3c4dlRUbWpVRF9xcGFWVVZNU2tLQTF3VjBoUTEtZDcwV3R4Y1lwdDZLcm9BdGFFSGt4YTZqVmlncm96RXNlOE1JRnFkX0xpMy0wWXdKMEFHNWEwR214bUdWZENPZ3hhTmRZb2RoNUZERlI5ZEhMNmtRazhvM0o1V2M3MlRrZHRQb09zcGY5OFB4SVU5VDFFVDZ5c1AyTjlKaG5sOF9TQkdwUFY5UEpxMjVDQlk?oc=5' target='_blank' rel='noopener'>KAP *** BORSA İSTANBUL BISTECH DEVRE KESİCİ UYGULAMASI *** PETKM *** Pay Bazında Devre Kesici Bildirimi</a> <span style='color:var(--muted); font-size:12px'>&mdash; GZT &middot; 16.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiigFBVV95cUxPRXBwNDJYbmNPRHhGeVZTaEpOcGF6QllPX1VQNGR0MnphN3RqUnc1WnBHdU5vRE0xMXlwemVYaURIM181Wl94NW04RWU1Z0hianVacEt4d1R5VVRPME9KM1kxTmVsNXNCRmZORy1kSkhOY3FSejdoYml1MndpRThUX3VkMHFtUE9MY3c?oc=5' target='_blank' rel='noopener'>Petkim 4’te 4 yaptı, Karşıyaka yine kaybetti</a> <span style='color:var(--muted); font-size:12px'>&mdash; Ege Postası &middot; 16.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMicEFVX3lxTFB5dnpVOVdleExzMFJKbHh5RlpDc0JEd0NfTEJ1dFJVR0JvWEs5UmN4dldFTzhyUk9BUUl2RmxlWXJ6TzhhY1VHN0JzVVJiRmFuTXNCQkFDLV90Tm9VLUtJUE1heHAzYTZyNlNhQURfQmw?oc=5' target='_blank' rel='noopener'>Petkim, Karşıyaka’ya Galip</a> <span style='color:var(--muted); font-size:12px'>&mdash; Basketfaul &middot; 15.09</span></li></ul>

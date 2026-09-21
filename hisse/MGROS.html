@@ -22,7 +22,7 @@
 <meta name="twitter:description" content="MGROS (Perakende) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "MGROS — Hisse Analizi", "description": "MGROS (Perakende) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/MGROS.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "MGROS — Hisse Analizi", "description": "MGROS (Perakende) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/MGROS", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://js.puter.com" crossorigin>
@@ -55,17 +55,18 @@
     var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
     iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
   }
-  function yukle() {
-    fetch(kok + 'ticker.json?t=' + Date.now())
-      .then(function(r) { return r.json(); })
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(ciz)
       .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
         var iz2 = document.getElementById('ticker-iz');
         if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
       });
   }
-  yukle();
-  setInterval(yukle, 5 * 60 * 1000);
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
 })();  // IIFE: tanimlandigi anda calistir
 </script>
 
@@ -404,8 +405,8 @@ async function aiSor() {
 <div class="hero">
 <h1>MGROS <span style="font-size:16px; color:var(--muted)">Perakende</span></h1>
 <div class="meta"><span class="badge">SAT</span>
-<span><strong>525.00 TL</strong></span>
-<span class="pos">+0.10% (günlük)</span>
+<span><strong>528.50 TL</strong></span>
+<span class="pos">+0.67% (günlük)</span>
 <span class='neg' style='font-weight:700'>-0.4% (2026-09-06'ten beri)</span></div>
 </div>
 <div class="card" style="margin-bottom:16px">
@@ -434,7 +435,7 @@ async function aiSor() {
 </div>
 <div class="grid-iki">
 <div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
-<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>SAT</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>BEKLE</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>SAT</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>SAT</strong></td></tr><tr><td>Wave Trend</td><td><strong>AL</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%61</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>-0.91</strong></td></tr><tr><td>Puan</td><td><strong>1</strong></td></tr></table>
+<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>SAT</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>BEKLE</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>SAT</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>SAT</strong></td></tr><tr><td>Wave Trend</td><td><strong>AL</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%67</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>-0.91</strong></td></tr><tr><td>Puan</td><td><strong>1</strong></td></tr></table>
 <p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a></p></div>
 <div class="card"><h3 style="margin:0 0 8px">Son 7 Gün Haberleri</h3>
 <ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMifEFVX3lxTE1Hbm5zelNNbERhV2dOZDI2YWx4b2lUMGEydTZ3VG9VMGZEWmVkZUhMRmhURDNENmhJblE0eXVFWHp3ZGdsa1daY2xvMzZvTnJLT3VTdGtXS2VtRU5QNzN4T0FqWUxRTDI5bFpyaDI1RWItWDNxUjRkN3lUMlI?oc=5' target='_blank' rel='noopener'>Migros 2026 üçüncü çeyrek bilanço tarihi belli oldu</a> <span style='color:var(--muted); font-size:12px'>&mdash; Paratic Haber &middot; 18.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMimAFBVV95cUxORGgyNVNFZXJfZFpyZlJmRlo5NzM0bUhyVjM5LUd3ZTFDMmk2ME5hRnpkOHMxQkNKejB3dlB0cnhjRFpaWTREb1NDWnJQVy1ocWlNb0RXZnlZVUZsbUJpRklEQm5xVU0zaUQ1ZzRNam1fSGJIRk1tX0k2a2k1U0tZTkNRblpjN292TS1JdjBZeFVVU2R1UjFSeQ?oc=5' target='_blank' rel='noopener'>KAP *** MİGROS TİCARET A.Ş. *** MGROS *** Finansal Takvim</a> <span style='color:var(--muted); font-size:12px'>&mdash; GZT &middot; 18.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMipgFBVV95cUxNMUp1RDNqUHcyX1pDQ0hZN2h1YnBEeXpsUmVsLUhrVzdEN0VKd19fNjJtMGdiaXVCbHQzZWN6YzdLYU80amY3MWpvZG1qemdiRWJDUVdyV05WTlBVdkVTYmlHWG5hZEtJRlpReEtNLTB1REJIRXlUZXJ6WTVrNldCblBXeHNvY2gxMFEyek9rWVVra0ltZTZKZEJjWTM5UzRhcUFvdkR3?oc=5' target='_blank' rel='noopener'>Migros&#x27;tan devrim: Pestisit analiz sonuçları Sanal Market&#x27;te yayınlanıyor!</a> <span style='color:var(--muted); font-size:12px'>&mdash; Alanya Postası &middot; 14.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMipgFBVV95cUxNUnp0WDNvQWt0cXBSbWU2d3FZYUo5dnlqRFNLZHNDTDBMTlNqWGNTNFYyYnk0QVlMU2xBaU81bm5IOHMxOGEyN2tPbTJTWlctaVhJNXJVcGFmUU8xZTVKeUYwSy1VZkQ0ZEpDaHBrNF9jZ0ZmU09xb3BNNmVtY0IyU1dFeVpOZmRMSUI0Q1RGYUk0UDc0b0JoYWtVaUJyR0ZaVFVYVDBn0gGrAUFVX3lxTE1BRTV2ck9YaGJmZGJ0QkI1VThJTEhsaW5tcWV2cWVTV0hmYTUyUm5DREFEVS1nb3hUbHdRT1RNazNFUDg3NFNqNDFVRVJveE9NNlFEMklRaGxvRXhDUTQ4aHFxMVpvanVjRUR5QlBlLTUwWmttclNOVHlEU0Y0QzNiSWgwWGRSWUJBMnZPRTQ3QTlPc3dqUE9EMzhFdzNEdHFvMWNLc1ZlTEctQQ?oc=5' target='_blank' rel='noopener'>Migros meyve ve sebze pestisit analizlerini şeffaf şekilde paylaşıyor</a> <span style='color:var(--muted); font-size:12px'>&mdash; Aksiyon.com.TR &middot; 14.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMidEFVX3lxTFBCMzZhU1R5cm9xYldoaklfU25SemwxNzRZbFRBT2l4WEQ2cFktbWVXM1RucEVpM3otT3ByN2ZHXzNyN0xrNFZDcWN6N2JOaF9qU1RxS1MxSm53a1VwbWpvUUo0cDBub1EyMlVfeUJ3NVMxcVFo?oc=5' target='_blank' rel='noopener'>Migros’un planlarına Büyükşehir’den onay!</a> <span style='color:var(--muted); font-size:12px'>&mdash; Ege&#x27;de Sonsöz &middot; 14.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMi0gFBVV95cUxPeFgwU1E4WWNxSGoyMVVpMjZsVktwalZFNThzRm14LUxnYlZZcjRyZHVJT1V6STBMMVlqS1k2NFJtQUZnMk1kcjhLZExPVDZaU1BXRXFuNGZnYXZLSlJYWXhUV2M3LW1DcFU2U1pPNDV3ZVhBb0JNY3plbHg0Nzl5UHlFVjdDRHBaSTdKbS1RNnkyN0VNWlBtQUdIYXZ3QXhEYXU1UU9SSVdYQ1QyMDVqQWZ5UGVZVkhSdU9kNGlLOUtxUWVVdGVBTkY4RGZLb250Y2c?oc=5' target='_blank' rel='noopener'>Migros, meyve ve sebze pestisit kontrol sonuçlarını Sanal Market uygulamasında yayınlıyor</a> <span style='color:var(--muted); font-size:12px'>&mdash; Anadolu Ajansı &middot; 14.09</span></li></ul>

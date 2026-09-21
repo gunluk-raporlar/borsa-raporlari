@@ -22,7 +22,7 @@
 <meta name="twitter:description" content="PGSUS (Havacılık & Ulaştırma) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "PGSUS — Hisse Analizi", "description": "PGSUS (Havacılık & Ulaştırma) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/PGSUS.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "PGSUS — Hisse Analizi", "description": "PGSUS (Havacılık & Ulaştırma) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/PGSUS", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://js.puter.com" crossorigin>
@@ -55,17 +55,18 @@
     var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
     iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
   }
-  function yukle() {
-    fetch(kok + 'ticker.json?t=' + Date.now())
-      .then(function(r) { return r.json(); })
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(ciz)
       .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
         var iz2 = document.getElementById('ticker-iz');
         if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
       });
   }
-  yukle();
-  setInterval(yukle, 5 * 60 * 1000);
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
 })();  // IIFE: tanimlandigi anda calistir
 </script>
 
@@ -404,8 +405,8 @@ async function aiSor() {
 <div class="hero">
 <h1>PGSUS <span style="font-size:16px; color:var(--muted)">Havacılık & Ulaştırma</span></h1>
 <div class="meta"><span class="badge">GÜÇLÜ SAT</span>
-<span><strong>148.80 TL</strong></span>
-<span class="pos">+0.81% (günlük)</span>
+<span><strong>149.80 TL</strong></span>
+<span class="pos">+1.49% (günlük)</span>
 <span class='neg' style='font-weight:700'>-0.7% (2026-09-06'ten beri)</span></div>
 </div>
 <div class="card" style="margin-bottom:16px">
@@ -434,7 +435,7 @@ async function aiSor() {
 </div>
 <div class="grid-iki">
 <div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
-<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>GÜÇLÜ SAT</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>SAT</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>SAT</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>SAT</strong></td></tr><tr><td>Wave Trend</td><td><strong>SAT</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%75</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>-0.86</strong></td></tr><tr><td>Puan</td><td><strong>0</strong></td></tr></table>
+<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>GÜÇLÜ SAT</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>BEKLE</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>SAT</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>SAT</strong></td></tr><tr><td>Wave Trend</td><td><strong>SAT</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%80</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>-0.85</strong></td></tr><tr><td>Puan</td><td><strong>0</strong></td></tr></table>
 <p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a></p></div>
 <div class="card"><h3 style="margin:0 0 8px">Son 7 Gün Haberleri</h3>
 <ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMi2wFBVV95cUxQZXpoNWc0YmVubjk5VTdRYzllemxqREktSUMtVy03RlBHOUNkOVhueVNnWERYSkRFOHpTb2ktXy1CdWxqNkQwUG80Q3F3QnZOcWVsd2NjS09za2ZXclRadnZ2bHJKa2RjLWhTUDJ4LW40UFBneWkwOWZjZlF0Z21SQTRnWkNsYndzOExpcnQ1SXpfWURGUU9rOHdCanhIRVJEMWdING5RNDBPSEtjT3VCdXZZc1JhX21GM2xBZVM2OEdqUlNhdVVUQ2w3REpPNHlkVmNtMkVubUdWeVHSAeYBQVVfeXFMUHZ4dW9ReFBHd01Gb3hoLW1OaGlFY1BCMGM1c2Z3UnBmRkhZWW9DODJLRnhQS3ZWNkJncHY4aDB2LXdlWmlCeWVWOFBMbjAzUFJxdVlkRnV4ZDhNLTFkaDdrMVNienhWZ0d4T012Q1JfckJIYWNIblk0V2RDS1YyM0JSblJjWW9rc3ZsVzZsa1JJQW9iNGU1RHVYVkdaa0tHdUNBNlVJNk9mTDhqUTJINXU4b2ZyR2JXaW92dnIxVlp5c1FaN3VsY0pqNWg4S1JCRXdwcnREYTB0dkhjc3pITjJvWmZsV1E?oc=5' target='_blank' rel='noopener'>Pegasus&#x27;tan yurt dışı uçuşlarında büyük kampanya: Biletler 900 liradan başlayan fiyatlarla satışa çıktı</a> <span style='color:var(--muted); font-size:12px'>&mdash; Yeni Şafak &middot; 18.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMi3AFBVV95cUxOQ2ZsYnEzWHBBUVRKcnhhS2xDeXBpN2VVbWN4cGdqcFhZOHRNV1VxOHBQRWFqbjkwWG1tYWcxaHpMR09uRU5OMUpjZzBudXJPR2RBYTdfNF9lZDVWclVKaVhXYlU3X2R6Rjdsd05kSWRRd1hKSUZ2NFNOdnNJSENOWEswZTFhTEFRRzRYc0xjcnR1YXI4LVpKWS1ZZC1OeWNGMVo0N3lMaWZVQnhCSE9FWEk4NGNUTE1lNXd6NnhmUGxPcl9xSG9za3pyNUhYTXBqa0ctdTl0SFNuRmxE?oc=5' target='_blank' rel='noopener'>Pegasus kampanyası ne zaman, hangi uçuşlarda geçerli? 2026 Pegasus yurt dışı kampanyası tarihleri</a> <span style='color:var(--muted); font-size:12px'>&mdash; GZT &middot; 18.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMib0FVX3lxTE5fcjJPaFlOVGcyRjRNOEhPZ2dxbFFvVUw1U2ttMU04eXBxSThYLWpPZ282MGdWZ1BINVp4R1dUdWZMdGxoSXI5YlgtejM1ZUs5NTRzWWJJaTRKYkZWclhMVVM0bFRFV0NGY1I2YzRfUQ?oc=5' target='_blank' rel='noopener'>Pegasus’tan Yurt Dışı Kampanyası</a> <span style='color:var(--muted); font-size:12px'>&mdash; havasosyalmedya.com &middot; 18.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMioAFBVV95cUxPMkFDR29QRUJuQ1JYdy03UTdsLUJRQ2hRVEJ1MkJiUnBsZFVZMXFWZTRWYU9tWW0tYXZWdF9NdzZIeGtVRkpUNXVRRE80emVCTXNUaURxMWI5XzVtU05CVzQydlltaWdZOTFsRzFsYi0zVDZxZWpjS3VtQnBPVHl2Z3JyUXBINHlmZmRBbEdYSnJ0cXBaQkUzVXhVRFdONVMz0gGeAUFVX3lxTE16TlR0Nng2aGdPcXkyMnNMT0dsWGdFQkJweEtJdGNjdVNtTVFJRmFtNDlWTUNoSHE5ZGpoOWRoYXJ1Mk5SNVlybmpSQmM4emJHTFBfLWJfZzBDOWZvN2U2ZzN3YmowcldkVkxETnNySV9LNkQ1bHdDeUJNNDVROS04Q1NiWkwwNWxQdlh0dURSaUNSaUlBS0ZvMHBIY3V3?oc=5' target='_blank' rel='noopener'>Pegasus’tan Avrupa fırsatı: Bilet fiyatını gören şaşırıyor</a> <span style='color:var(--muted); font-size:12px'>&mdash; Turizm Ajansı &middot; 18.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMipgFBVV95cUxPSVlPaTZqazV5WlVyRzhDaVJjT24tYlo3UGRSeUhJU3JIVklSR21UQm9EMHJqTzlkdUs1VXZCbjU3bHpsZjdiOVpNQkpLbmdKUDFmTHN2ajdFWUhtMWxlZTZpNWR0cnhfQm5yaGxwSXZwX1hkUmI4LUFsWXZRNWwtMks1bHZRWkh5Z0lXMHFDT05hSzNaNGRGSDNWMV9IZm5DanVkdlFn?oc=5' target='_blank' rel='noopener'>Midas ile gün sonu: PLCE, PGSUS, RKLB, TKFEN, PLAY, TTKOM</a> <span style='color:var(--muted); font-size:12px'>&mdash; getmidas.com &middot; 15.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiigFBVV95cUxQM251WVRWZ0NkeGdQcGpGMzlzdFdIQzlFWldKQmhWWXFJWHR6MHN3UnhHWUwtWDRSSnpyV0xtNm9WTGFQc2xVZTJDRklqalRPWElqZ0VWRGpobFRKdUs3NVkwMW1OVlRlQ0w5MmpUY3V6Y2V4WWdtUk5aSUVncXptMkh0Nnk5X3RPRkE?oc=5' target='_blank' rel='noopener'>Pegasus iç hatlarda hızlandı: Uçuşlar yüzde 9 arttı</a> <span style='color:var(--muted); font-size:12px'>&mdash; Haber Aero &middot; 14.09</span></li></ul>

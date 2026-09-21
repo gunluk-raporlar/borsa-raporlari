@@ -22,7 +22,7 @@
 <meta name="twitter:description" content="ENKAI (Enerji & Petrokimya) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "ENKAI — Hisse Analizi", "description": "ENKAI (Enerji & Petrokimya) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/ENKAI.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "ENKAI — Hisse Analizi", "description": "ENKAI (Enerji & Petrokimya) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/ENKAI", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://js.puter.com" crossorigin>
@@ -55,17 +55,18 @@
     var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
     iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
   }
-  function yukle() {
-    fetch(kok + 'ticker.json?t=' + Date.now())
-      .then(function(r) { return r.json(); })
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(ciz)
       .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
         var iz2 = document.getElementById('ticker-iz');
         if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
       });
   }
-  yukle();
-  setInterval(yukle, 5 * 60 * 1000);
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
 })();  // IIFE: tanimlandigi anda calistir
 </script>
 
@@ -404,8 +405,8 @@ async function aiSor() {
 <div class="hero">
 <h1>ENKAI <span style="font-size:16px; color:var(--muted)">Enerji & Petrokimya</span></h1>
 <div class="meta"><span class="badge">GÜÇLÜ SAT</span>
-<span><strong>84.70 TL</strong></span>
-<span class="neg">-0.76% (günlük)</span>
+<span><strong>85.85 TL</strong></span>
+<span class="pos">+0.59% (günlük)</span>
 <span class='neg' style='font-weight:700'>-2.2% (2026-09-06'ten beri)</span></div>
 </div>
 <div class="card" style="margin-bottom:16px">
@@ -434,7 +435,7 @@ async function aiSor() {
 </div>
 <div class="grid-iki">
 <div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
-<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>GÜÇLÜ SAT</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>SAT</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>SAT</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>SAT</strong></td></tr><tr><td>Wave Trend</td><td><strong>SAT</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%46</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>-0.53</strong></td></tr><tr><td>Puan</td><td><strong>0</strong></td></tr></table>
+<table style="font-size:13.5px"><tr><td>Genel</td><td><strong>GÜÇLÜ SAT</strong></td></tr><tr><td>Kısa vade (EMA 5-8-13-21)</td><td><strong>BEKLE</strong></td></tr><tr><td>Orta vade (EMA 34-55)</td><td><strong>SAT</strong></td></tr><tr><td>Uzun vade (EMA 89-144)</td><td><strong>SAT</strong></td></tr><tr><td>Wave Trend</td><td><strong>SAT</strong></td></tr><tr><td>Kanal konumu</td><td><strong>%56</strong></td></tr><tr><td>Trend gücü (r)</td><td><strong>-0.52</strong></td></tr><tr><td>Puan</td><td><strong>0</strong></td></tr></table>
 <p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a></p></div>
 <div class="card"><h3 style="margin:0 0 8px">Son 7 Gün Haberleri</h3>
 <ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMijAFBVV95cUxNM3ExRUxJRm5scklybFFCdXM2X1FpTmt1V196WGxMQkVPVnA2MHlOcVZkb0Y3UllYTldwa1pteHhaOFEwUW1vbVpUWUx2T3pRWUZJT09hY3BYaUxJb3hFcXJaQ0pSTURqTTRjSzRSV1ZMR2toRmxfUkxQTUd5NTVhVVF2SE1PVk1HWTU0ag?oc=5' target='_blank' rel='noopener'>BULLS FONLARINDA BORSA VE TAHVİL DENGESİ</a> <span style='color:var(--muted); font-size:12px'>&mdash; Analiz Gazetesi &middot; 20.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMinwFBVV95cUxNbjdUb0NraFlGdUpXQnppTkVLeGU5UThJOXdBVEd4S3dYZVl4MHFYNUhHUlBMcE9xSXNaUllCTU1JV1lYMlQ2aHRLR2RBME1jMEtPY1dOdG95aU93MHpZQjM3akxzNGZQcE1jcE50LWVMU1ZpUC14RU10ZVRSQlpibmx5ajRwWXdKZ1p5ejdsZGhGUk9VZGhRVl9XYms3U3c?oc=5' target='_blank' rel='noopener'>2,7 milyarlık alım yapan Ak Yatırım üzerinden en fazla alım yapılan hisseler</a> <span style='color:var(--muted); font-size:12px'>&mdash; Rota Borsa &middot; 18.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMijwFBVV95cUxOeUNkM0xEcHhvSy1icnRkZ2R4VnhlYTFNMmNIODlFVUh2aFZPLVpsQ09aVHpJcUVEbkVHYXI2MTZtUWpBWU1CdV96RTdqM2phaHRPdUlkSWp2Zl9ZV0Jqc182c0FucExUWEJxT1QwTV95ZnVvZzVCVk9JUFRjTGZwakxkc1VuTW0taWQtRnlkNA?oc=5' target='_blank' rel='noopener'>Borsa İstanbul: İş Yatırım Hisselerde Alım-Satım Hareketliliği</a> <span style='color:var(--muted); font-size:12px'>&mdash; Finans Hattı &middot; 17.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiswFBVV95cUxPOXBTRGQtYWlkcHd5WkUyTzBYYkU0NDR5eGJQRktMbF9vMmNtdUdIWThtei0tOEtsNG5zeVZLWVpBSGV2OV9PaGVSZWxYTThPWUFodjJ0dEpBemdBVFZtazlMd21HYmtYcmVlTm5BWnZpMWFQeEpwdGNPcnlHZmFnWEM1dndWOE8tdkhpTDFOaGhjeWMxc1ZqdDhSTFgxM0dkLXpwOFRjQmU3RGtndUVGbFh1UdIBuAFBVV95cUxObEotQ25lcHVkSlBGa29ET19yc2FHaWVDM3JYelA0cE03MkpEU3Zqd1BRdGxRajdWRlV6ZUI3TG5GUFU1VnJITVRYdzlMSG5iZVQ2VDh5cHBLVmFZa2JSeTl3RU5KLWUyaXFOODNWRmIyRHVBOXV5Si1ucVVZb05Mbm1uam5fTk5tVnNDSmpmTVNDeWdmTWVUSFBOa3dSZ1VuMWVHNk9HY056UUxfRTVGTy1EMl9fbGpE?oc=5' target='_blank' rel='noopener'>Gürcistan ile ENKA arasında 400 milyon dolarlık krizde kritik karar</a> <span style='color:var(--muted); font-size:12px'>&mdash; Haber Hürriyeti &middot; 17.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMivAFBVV95cUxPQVBwTnFRVmk3VlpvZDExZFo1MS1DeFhZMTVSWmtEbVIzNkJBUGcyLW5IQnJmNE5jbDdLcWI1SHFNVnVOUXBvbFBhWU15YkFvZHRCZnhGblFzTTdlT1hLcGRrRXYwQ1JuWmpJVmF4WFdYaHZmYnBONmhuQzlxM1ZpT2JsYjdGQVR6YkR0akZJNUhaNGFpVUJNR1UwSENPcFl2UGpQOUdNVG8xR2ZLTFFMSFg2NEdWVHRBS1NpNw?oc=5' target='_blank' rel='noopener'>(ANALİZ- Günlük Hisse Senedi Piyasası Görünümü (Akbank))</a> <span style='color:var(--muted); font-size:12px'>&mdash; Bigpara &middot; 17.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMickFVX3lxTFBGbVktOThkVUNKZW1MQ1RBR2VNZHlWS1lwNjlKeFZ1dWlxSERSbVlBRlhpSWxSN0FOYk4tbS1TcUZPeGVBNVYwaHFueDNyN3lHaE80S1B4d2hqcnVQRkVObHA2dXdoRWtHYUZZZmV2TUcyZw?oc=5' target='_blank' rel='noopener'>Borsa İstanbul Neden Düşüyor?</a> <span style='color:var(--muted); font-size:12px'>&mdash; birgun.net &middot; 16.09</span></li></ul>
