@@ -250,10 +250,18 @@ def main():
     )
     with open("haftasonu.html", "w", encoding="utf-8") as f:
         f.write(html)
+    # Tarihli arsiv sayfasi KOK DIZIN sayfasinin kopyasi degil: kok="../"
+    # ile uretilir (CSS/menu linkleri alt klasorde calisir) ve canonical
+    # kendi URL'ini gosterir (aksi halde arama motorlari arsivi indekslemez).
     arsiv_dir = "haftasonu"
     os.makedirs(arsiv_dir, exist_ok=True)
+    alt_html = bot._sayfa(
+        f"Hafta Sonu Gündemi - {tarih}", icerik, aktif="haftasonu", yol=f"haftasonu/{tarih}.html",
+        kok="../",
+        aciklama="Hafta sonu ekonomi, finans, emlak, ticaret, para/döviz ve jeopolitik haberlerinin yapay zeka ile derlenmiş gündem değerlendirmesi ve yeni hafta ajandası.",
+    )
     with open(os.path.join(arsiv_dir, f"{tarih}.html"), "w", encoding="utf-8") as f:
-        f.write(html)
+        f.write(alt_html)
     print(f"HAFTA SONU GUNDEMI HAZIR: {tarih} | {sum(len(v) for v in kategoriler.values())} baslik", flush=True)
     return 0
 

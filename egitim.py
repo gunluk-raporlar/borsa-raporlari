@@ -269,9 +269,17 @@ def main():
     )
     with open("haftasonu-egitimi.html", "w", encoding="utf-8") as f:
         f.write(html)
+    # Tarihli arsiv sayfasi KOK DIZIN sayfasinin kopyasi degil: kok="../"
+    # ile uretilir (CSS/menu linkleri alt klasorde calisir) ve canonical
+    # kendi URL'ini gosterir (aksi halde arama motorlari arsivi indekslemez).
     os.makedirs(ARSIV_DIR, exist_ok=True)
+    alt_html = bot._sayfa(
+        f"Hafta Sonu Borsa Okulu - {tarih}", icerik, aktif="egitim", yol=f"haftasonu-egitimi/{tarih}.html",
+        kok="../",
+        aciklama="Hafta sonu borsa eğitimi: yapay zeka eğitmen her Cumartesi/Pazar bir terim, gösterge veya grafik konusunu gerçek BIST verisiyle anlatır.",
+    )
     with open(os.path.join(ARSIV_DIR, f"{tarih}.html"), "w", encoding="utf-8") as f:
-        f.write(html)
+        f.write(alt_html)
     print(f"BORSA OKULU DERSI HAZIR: {tarih} | {konu} | ders {idx + 1}/{len(MUFREDAT)}", flush=True)
     return 0
 
