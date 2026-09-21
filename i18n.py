@@ -1,0 +1,1091 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+borsa-raporlari · cok dilli katman (i18n)
+=========================================
+
+Amac: Turkce siteyi HIC DEGISTIRMEDEN /en/ /de/ /ru/ /zh/ alt dizinlerinde
+gercek (statik, indekslenebilir, hreflang'li) dil sayfalari uretmek.
+
+TASARIM KURALI
+--------------
+Bu betik Turkce sayfalari ASLA yazmaz. Yalnizca {dil}/... altina yeni dosya uretir.
+Calismanin basinda ve sonunda tum Turkce .html dosyalarinin sha256'si alinir;
+degisiklik varsa calisma HATA ile durur (--zorla ile gecilebilir).
+
+KULLANIM
+--------
+  # 1) Yapisal pilot (ceviri motoru yok, mekanik isaret koyar):
+  python i18n.py --diller en --sayfalar index.html --provider mock
+
+  # 2) Gercek uretim (mevcut LLM anahtarlariyla):
+  python i18n.py --diller en,de,ru,zh --provider llm
+
+  # 3) DeepL Free (500.000 karakter/ay):
+  python i18n.py --diller en,de,ru,zh --provider deepl
+
+  # 4) Uretilenleri dogrula (kirik ic baglanti + hreflang simetrisi):
+  python i18n.py --diller en,de,ru,zh --dogrula
+
+  # 5) Sitemap'e dil alternatiflerini ekle (opt-in, Turkce kayitlar korunur):
+  python i18n.py --diller en,de,ru,zh --sitemap
+
+  # 6) Uretilen dil dizinlerini sil:
+  python i18n.py --temizle
+
+ANAHTARLAR (env)
+----------------
+  OPENROUTER_API_KEY | GROQ_API_KEY  -> --provider llm
+  DEEPL_API_KEY                      -> --provider deepl  (free: <key>:fx)
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import shutil
+import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+from html.parser import HTMLParser
+from pathlib import Path
+
+# ----------------------------------------------------------------------------
+# 1) DIL TANIMLARI
+# ----------------------------------------------------------------------------
+
+SITE_URL = "https://borsa-raporlari.pages.dev/"
+
+DILLER = {
+    "tr": {"lang": "tr", "locale": "tr_TR", "hreflang": "tr", "ad": "Türkçe"},
+    "en": {"lang": "en", "locale": "en_US", "hreflang": "en", "ad": "English"},
+    "de": {"lang": "de", "locale": "de_DE", "hreflang": "de", "ad": "Deutsch"},
+    "ru": {"lang": "ru", "locale": "ru_RU", "hreflang": "ru", "ad": "Русский"},
+    "zh": {"lang": "zh-Hans", "locale": "zh_CN", "hreflang": "zh-Hans", "ad": "简体中文"},
+}
+
+# Sayfa uretimi disinda tutulacak dosyalar (dogrulama dosyalari vb.)
+HARIC_DOSYALAR = {"404.html"}
+# Arama motoru dogrulama dosyalari (google/yandex/bing/baidu...) cevrilmez
+HARIC_DESEN_RE = re.compile(r"^(google|yandex|baidu|bing|naver|indexnow|site-?verification)", re.I)
+
+# ----------------------------------------------------------------------------
+# 2) ARAYUZ SOZLUGU (elle yazilmis; makine cevirisine birakilmaz)
+#    Anahtar = Turkce kaynak metin (bastaki emoji/isaret ayiklandiktan sonraki hali)
+# ----------------------------------------------------------------------------
+
+SOZLUK = {
+    # --- ust menu ---
+    "Raporlar": {"en": "Reports", "de": "Berichte", "ru": "Отчёты", "zh": "报告"},
+    "Hisseler": {"en": "Stocks", "de": "Aktien", "ru": "Акции", "zh": "股票"},
+    "Derin Analiz": {"en": "Deep Analysis", "de": "Tiefenanalyse", "ru": "Глубокий анализ", "zh": "深度分析"},
+    "Teknik Tarama": {"en": "Technical Scan", "de": "Technischer Scan", "ru": "Технический анализ", "zh": "技术扫描"},
+    "Sinyal Karnesi": {"en": "Signal Scorecard", "de": "Signal-Bilanz", "ru": "Сводка сигналов", "zh": "信号记分卡"},
+    "Borsapy Sinyal": {"en": "Borsapy Signals", "de": "Borsapy-Signale", "ru": "Сигналы Borsapy", "zh": "Borsapy 信号"},
+    "Haberler": {"en": "News", "de": "Nachrichten", "ru": "Новости", "zh": "新闻"},
+    "Şirket Haberleri": {"en": "Company News", "de": "Unternehmensnachrichten", "ru": "Новости компаний", "zh": "公司新闻"},
+    "Deneme Portföyü": {"en": "Demo Portfolio", "de": "Demo-Portfolio", "ru": "Демо-портфель", "zh": "模拟投资组合"},
+    "Hafta Sonu": {"en": "Weekend", "de": "Wochenende", "ru": "Выходные", "zh": "周末"},
+    "Borsa Okulu": {"en": "Market School", "de": "Börsenschule", "ru": "Школа рынка", "zh": "股市学堂"},
+    "Takvim": {"en": "Calendar", "de": "Kalender", "ru": "Календарь", "zh": "日历"},
+    "Sözlük": {"en": "Glossary", "de": "Glossar", "ru": "Глоссарий", "zh": "术语表"},
+    # --- mobil alt menu ---
+    "Teknik": {"en": "Technical", "de": "Technik", "ru": "Технический", "zh": "技术"},
+    "Portföy": {"en": "Portfolio", "de": "Portfolio", "ru": "Портфель", "zh": "投资组合"},
+    # --- basliklar / bolum adlari ---
+    "BIST 30 Günlük Piyasa Raporları": {
+        "en": "BIST 30 Daily Market Reports",
+        "de": "BIST 30 Tagesmarktberichte",
+        "ru": "Ежедневные отчёты по рынку BIST 30",
+        "zh": "BIST 30 每日市场报告",
+    },
+    "Rapor Arşivi": {"en": "Report Archive", "de": "Berichtsarchiv", "ru": "Архив отчётов", "zh": "报告存档"},
+    "Güncel Derin Analiz": {"en": "Latest Deep Analysis", "de": "Aktuelle Tiefenanalyse", "ru": "Актуальный глубокий анализ", "zh": "最新深度分析"},
+    "Hafta Sonu Gündemi": {"en": "Weekend Agenda", "de": "Wochenendagenda", "ru": "Повестка выходных", "zh": "周末议程"},
+    "Hafta Sonu Borsa Okulu": {"en": "Weekend Market School", "de": "Wochenend-Börsenschule", "ru": "Школа рынка выходного дня", "zh": "周末股市学堂"},
+    "Teknik Taramada Öne Çıkanlar": {"en": "Technical Scan Highlights", "de": "Highlights des technischen Scans", "ru": "Лидеры технического анализа", "zh": "技术扫描亮点"},
+    "Hisse Kartları": {"en": "Stock Cards", "de": "Aktienkarten", "ru": "Карточки акций", "zh": "股票卡片"},
+    "Canlı Piyasa Isı Haritası": {"en": "Live Market Heatmap", "de": "Live-Markt-Heatmap", "ru": "Живая карта рынка", "zh": "实时市场热力图"},
+    # --- buton / baglanti metinleri ---
+    "Günlük raporu aç": {"en": "Open daily report", "de": "Tagesbericht öffnen", "ru": "Открыть дневной отчёт", "zh": "打开每日报告"},
+    "Tüm teknik tarama tablosu": {"en": "Full technical scan table", "de": "Vollständige Scan-Tabelle", "ru": "Полная таблица сканирования", "zh": "完整技术扫描表"},
+    "Detaylı portföy geçmişi": {"en": "Detailed portfolio history", "de": "Detaillierte Portfolio-Historie", "ru": "Подробная история портфеля", "zh": "详细投资组合历史"},
+    "Borsa Okulu sayfası": {"en": "Market School page", "de": "Seite der Börsenschule", "ru": "Страница школы рынка", "zh": "股市学堂页面"},
+    "Daha fazla göster": {"en": "Show more", "de": "Mehr anzeigen", "ru": "Показать больше", "zh": "显示更多"},
+    "Yenile": {"en": "Refresh", "de": "Aktualisieren", "ru": "Обновить", "zh": "刷新"},
+    "Şimdi yenile": {"en": "Refresh now", "de": "Jetzt aktualisieren", "ru": "Обновить сейчас", "zh": "立即刷新"},
+    "Ara": {"en": "Search", "de": "Suchen", "ru": "Поиск", "zh": "搜索"},
+    "Sor": {"en": "Ask", "de": "Fragen", "ru": "Спросить", "zh": "提问"},
+    "Fiyatlar yükleniyor...": {"en": "Loading prices…", "de": "Preise werden geladen…", "ru": "Загрузка цен…", "zh": "正在加载价格…"},
+    "Sayfa dili seçin": {"en": "Select page language", "de": "Seitensprache wählen", "ru": "Выберите язык страницы", "zh": "选择页面语言"},
+    "Hızlı menü": {"en": "Quick menu", "de": "Schnellmenü", "ru": "Быстрое меню", "zh": "快捷菜单"},
+    "Sitede ara: hisse, konu, tarih... (ör. PETKM, RSI, portföy)": {
+        "en": "Search the site: stock, topic, date… (e.g. PETKM, RSI, portfolio)",
+        "de": "Website durchsuchen: Aktie, Thema, Datum… (z. B. PETKM, RSI, Portfolio)",
+        "ru": "Поиск по сайту: акция, тема, дата… (напр. PETKM, RSI, портфель)",
+        "zh": "站内搜索：股票、主题、日期…（例如 PETKM、RSI、投资组合）",
+    },
+    "BIST AI asistanına sorun...": {
+        "en": "Ask the BIST AI assistant…",
+        "de": "Fragen Sie den BIST-KI-Assistenten…",
+        "ru": "Спросите ИИ-ассистента BIST…",
+        "zh": "询问 BIST AI 助手…",
+    },
+    "BIST 30 Günlük Raporlar": {
+        "en": "BIST 30 Daily Reports",
+        "de": "BIST 30 Tagesberichte",
+        "ru": "Ежедневные отчёты BIST 30",
+        "zh": "BIST 30 每日报告",
+    },
+    "Tema değiştir": {"en": "Change theme", "de": "Design wechseln", "ru": "Сменить тему", "zh": "切换主题"},
+    "Açık/Koyu tema": {"en": "Light/dark theme", "de": "Helles/dunkles Design", "ru": "Светлая/тёмная тема", "zh": "浅色/深色主题"},
+    "Gizlilik & KVKK": {"en": "Privacy & Data Protection", "de": "Datenschutz", "ru": "Конфиденциальность", "zh": "隐私与数据保护"},
+    "Güncel Değer": {"en": "Current value", "de": "Aktueller Wert", "ru": "Текущая стоимость", "zh": "当前价值"},
+    "Günlük Değişim": {"en": "Daily change", "de": "Tagesänderung", "ru": "Дневное изменение", "zh": "日变化"},
+    "Toplam Getiri": {"en": "Total return", "de": "Gesamtrendite", "ru": "Общая доходность", "zh": "总收益率"},
+    "Başlangıç": {"en": "Start", "de": "Start", "ru": "Старт", "zh": "开始"},
+    "Hisse": {"en": "Stock", "de": "Aktie", "ru": "Акция", "zh": "股票"},
+    "Adet": {"en": "Qty", "de": "Stück", "ru": "Кол-во", "zh": "数量"},
+    "İlk Alım": {"en": "Entry price", "de": "Einstiegspreis", "ru": "Цена входа", "zh": "买入价"},
+    "Son Fiyat": {"en": "Last price", "de": "Letzter Preis", "ru": "Последняя цена", "zh": "最新价"},
+    "Getiri": {"en": "Return", "de": "Rendite", "ru": "Доходность", "zh": "收益率"},
+    "Destek": {"en": "Support", "de": "Unterstützung", "ru": "Поддержка", "zh": "支撑"},
+    "Direnç": {"en": "Resistance", "de": "Widerstand", "ru": "Сопротивление", "zh": "阻力"},
+    "Sinyal": {"en": "Signal", "de": "Signal", "ru": "Сигнал", "zh": "信号"},
+    # --- hukuki uyari (elle sabitlenir; makineye birakilmaz) ---
+    "Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir.": {
+        "en": "The information, comments and suggestions here are for informational purposes only; they do not constitute investment advisory services or investment advice.",
+        "de": "Die hier enthaltenen Informationen, Kommentare und Empfehlungen dienen ausschließlich Informationszwecken; sie stellen keine Anlageberatung und keine Anlageempfehlung dar.",
+        "ru": "Приведённая здесь информация, комментарии и рекомендации носят исключительно информационный характер; они не являются инвестиционным консультированием или инвестиционной рекомендацией.",
+        "zh": "本页所载信息、评论与建议仅供信息参考；不构成投资顾问服务或投资建议。",
+    },
+}
+
+# Cevrilmeyecek metinler (ticker, sayi, kisaltma)
+TICKER_RE = re.compile(r"^[A-ZÇĞİÖŞÜ0-9]{2,6}$")
+SAYI_RE = re.compile(r"^[\s\d\.,%+\-–—()\[\]/|·•:;<>₺$€]*$")
+KISALTMA_RE = re.compile(r"^(RSI|MACD|EMA|SMA|ADX|CCI|WT|BIST|TL|USD|EUR)[\s\d%\.\-]*$", re.I)
+
+# Sayi bicimi: Turkce (1.234,56 / +2,55%) -> hedef dil (1,234.56 / +2.55%)
+SAYI_BICIM_RE = re.compile(r"\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+,\d+")
+
+
+def sayilari_cevir(metin: str, dil: str) -> str:
+    """Site 21.09.2026'dan beri tum sayilari Turkce bicimde yaziyor (1.234,56 / +2,55%).
+    Turkce disi dillerde bu bicim yanlistir; ayiricilar yer degistirir."""
+    if dil == "tr" or not metin:
+        return metin
+
+    def degistir(m):
+        s = m.group(0)
+        if "." in s and "," in s:
+            return s.replace(".", "\u0000").replace(",", ".").replace("\u0000", ",")
+        if "," in s:
+            return s.replace(",", ".")      # 21,44 -> 21.44
+        return s.replace(".", ",")          # 98.908 -> 98,908
+
+    metin = SAYI_BICIM_RE.sub(degistir, metin)
+    return re.sub(r"%(\d)", r"\1%", metin)  # %21 -> 21%
+
+
+# Tercume edilecek ozellikler
+OZELLIK_ANAHTARLARI = ("title", "alt", "placeholder", "aria-label", "content", "data-aciklama")
+# content="..." yalnizca bu meta/etiketlerde cevrilir
+ICERIK_META_RE = re.compile(r'<(?:meta)\b[^>]*\b(?:name|property)\s*=\s*"(description|og:description|og:title|og:image:alt|twitter:description|twitter:title|keywords)"[^>]*>', re.I)
+
+# ----------------------------------------------------------------------------
+# 3) CEVIRI SAGLAYICILARI
+# ----------------------------------------------------------------------------
+
+
+class Cevirmen:
+    """Onbellek + saglayici zinciri (llm -> deepl -> mock)."""
+
+    def __init__(self, provider: str = "mock", onbellek_yolu: str = "i18n-cache.json"):
+        self.provider = provider
+        # Onbellek yalnizca gercek saglayicilarda kullanilir; mock/off ciktilari
+        # gercek onbellege sizmamali (test isaretleri uretime karismasin).
+        self.gecerli_onbellek = provider in ("llm", "deepl")
+        self.onbellek_yolu = Path(onbellek_yolu if self.gecerli_onbellek
+                                  else f"i18n-cache-{provider}.json")
+        self.onbellek = {}
+        if self.gecerli_onbellek and self.onbellek_yolu.exists():
+            try:
+                self.onbellek = json.loads(self.onbellek_yolu.read_text(encoding="utf-8"))
+            except Exception:
+                self.onbellek = {}
+        self.yeni = 0
+        self.onbellekten = 0
+        self.sozlukten = 0
+
+    # -- onbellek --------------------------------------------------------
+    @staticmethod
+    def _anahtar(dil: str, metin: str) -> str:
+        return f"{dil}:{hashlib.sha1(metin.encode('utf-8')).hexdigest()[:20]}"
+
+    def kaydet(self):
+        if self.gecerli_onbellek:
+            self.onbellek_yolu.write_text(
+                json.dumps(self.onbellek, ensure_ascii=False, indent=0, sort_keys=True),
+                encoding="utf-8",
+            )
+
+    # -- ana giris -------------------------------------------------------
+    def cevir_liste(self, metinler: list[str], dil: str) -> list[str]:
+        """Metin listesini cevirir; sozluk > onbellek > saglayici sirasi."""
+        sonuc: list[str] = []
+        bekleyen: list[tuple[int, str]] = []
+
+        for i, m in enumerate(metinler):
+            sonuc.append(m)  # yer tutucu
+            saf, _onek = metni_ayikla(m)
+            if not cevrilecek_mi(saf):
+                continue
+            if saf in SOZLUK and dil in SOZLUK[saf]:
+                sonuc[i] = m.replace(saf, SOZLUK[saf][dil])
+                self.sozlukten += 1
+                continue
+            k = self._anahtar(dil, saf)
+            if k in self.onbellek and self.onbellek[k]:
+                sonuc[i] = self.onbellek[k]
+                self.onbellekten += 1
+                continue
+            bekleyen.append((i, saf))
+
+        if bekleyen:
+            parcalar = [s for _, s in bekleyen]
+            ham = self._saglayici(parcalar, dil)
+            for (i, saf), cev in zip(bekleyen, ham):
+                if not cev or not isinstance(cev, str):
+                    continue
+                self.onbellek[self._anahtar(dil, saf)] = cev
+                self.yeni += 1
+                # metnin basindaki emoji/isaret korunur
+                _saf, onek = metni_ayikla(metinler[i])
+                sonuc[i] = (onek + cev) if onek else cev
+        if dil != "tr":
+            sonuc = [sayilari_cevir(s, dil) for s in sonuc]
+        return sonuc
+
+    # -- saglayicilar ----------------------------------------------------
+    def _saglayici(self, parcalar: list[str], dil: str) -> list[str]:
+        if self.provider == "mock":
+            return [f"[{DILLER[dil]['ad']}] {p}" for p in parcalar]
+        if self.provider == "off":
+            return list(parcalar)  # gercek passthrough: hicbir sey eklenmez
+        if self.provider == "deepl":
+            return self._deepl(parcalar, dil)
+        return self._llm(parcalar, dil)
+
+    def _llm(self, parcalar: list[str], dil: str) -> list[str]:
+        hedef = {
+            "en": "English", "de": "German", "ru": "Russian", "zh": "Simplified Chinese",
+        }[dil]
+        sistem = (
+            "You are a professional translator for a Turkish finance website. "
+            "The user sends a JSON array of strings. Translate EVERY item into " + hedef + ". "
+            "Return ONLY a JSON array of the exact same length — no explanations, no markdown fences. "
+            "Keep stock tickers (KCHOL, PETKM, THYAO...), numbers, currency amounts, dates and indicator "
+            "acronyms (RSI, MACD, EMA, ADX, CCI, WT) exactly as they are."
+        )
+        uclar = []
+        # 1) AMD Radeon Developer Cloud (bot.py'nin ana saglayicisi)
+        amd_anahtar = os.environ.get("AMD_API_KEY")
+        if amd_anahtar:
+            modeller = [os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")]
+            modeller += [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "Qwen3.8-Flash-Next").split(",") if m.strip()]
+            uclar.append(("https://developer.amd.com.cn/radeon/api/v1/chat/completions", amd_anahtar, modeller))
+        # 2) Yedek saglayici (varsayilan Groq; ALT_BASE_URL/ALT_MODELS ile degistirilebilir)
+        alt_anahtar = os.environ.get("ALT_API_KEY") or os.environ.get("GROQ_API_KEY")
+        if alt_anahtar:
+            alt_url = os.environ.get("ALT_BASE_URL", "https://api.groq.com/openai/v1").rstrip("/") + "/chat/completions"
+            alt_modeller = [m.strip() for m in os.environ.get("ALT_MODELS", "llama-3.3-70b-versatile").split(",") if m.strip()]
+            uclar.append((alt_url, alt_anahtar, alt_modeller))
+        # 3) OpenRouter
+        or_anahtar = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OR_API_KEY")
+        if or_anahtar:
+            or_url = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/") + "/chat/completions"
+            uclar.append((or_url, or_anahtar, [os.environ.get("OR_MODEL", "openai/gpt-4o-mini")]))
+        if not uclar:
+            raise SystemExit(
+                "[i18n] HATA: --provider llm icin AMD_API_KEY / ALT_API_KEY / OPENROUTER_API_KEY'den en az biri gerekli."
+            )
+
+        cikti: list[str] = []
+        PENCERE = int(os.environ.get("I18N_PENCERE", "25"))  # istek basina dize sayisi
+        for bas in range(0, len(parcalar), PENCERE):
+            dilim = parcalar[bas:bas + PENCERE]
+            son = None
+            for url, anahtar, modeller in uclar:
+                for model in modeller:
+                    try:
+                        aday = self._llm_istek(url, anahtar, model, sistem, dilim)
+                        if aday and len(aday) == len(dilim):
+                            son = aday
+                            break
+                    except Exception as hata:
+                        print(f"[i18n] LLM hatasi ({model}): {hata}", file=sys.stderr)
+                        son = None
+                if son:
+                    break
+            cikti.extend(son if son else dilim)
+        return cikti
+
+    @staticmethod
+    def _llm_istek(url, anahtar, model, sistem, dilim):
+        govde = json.dumps({
+            "model": model,
+            "messages": [
+                {"role": "system", "content": sistem},
+                {"role": "user", "content": json.dumps(dilim, ensure_ascii=False)},
+            ],
+            "temperature": 0.2,
+        }).encode("utf-8")
+        istek = urllib.request.Request(url, data=govde, headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {anahtar}",
+        })
+        with urllib.request.urlopen(istek, timeout=120) as yanit:
+            veri = json.loads(yanit.read().decode("utf-8"))
+        icerik = veri["choices"][0]["message"]["content"].strip()
+        icerik = re.sub(r"^```(?:json)?\s*", "", icerik)
+        icerik = re.sub(r"\s*```$", "", icerik)
+        return json.loads(icerik)
+
+    @staticmethod
+    def _deepl(parcalar: list[str], dil: str) -> list[str]:
+        anahtar = os.environ.get("DEEPL_API_KEY") or os.environ.get("DEEPL_KEY")
+        if not anahtar:
+            raise SystemExit("[i18n] HATA: --provider deepl icin DEEPL_API_KEY gerekli.")
+        hedef = {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
+        govde = "&".join([f"text={urllib.parse.quote(p)}" for p in parcalar])
+        govde += f"&target_lang={hedef}&source_lang=TR&preserve_formatting=1"
+        istek = urllib.request.Request("https://api-free.deepl.com/v2/translate", data=govde.encode("utf-8"), headers={
+            "Authorization": f"DeepL-Auth-Key {anahtar}",
+            "Content-Type": "application/x-www-form-urlencoded",
+        })
+        with urllib.request.urlopen(istek, timeout=120) as yanit:
+            veri = json.loads(yanit.read().decode("utf-8"))
+        return [x.get("text", "") for x in veri.get("translations", [])]
+
+
+def metni_ayikla(metin: str) -> tuple[str, str]:
+    """'📅 Takvim' -> ('Takvim', '📅 '): bastaki emoji/isaretleri ayirir."""
+    m = re.match(r"^([^\wÇĞİÖŞÜçğıöşü]*)(.*)$", metin, re.S)
+    if m:
+        return m.group(2), metni_boslukla(m.group(1))
+    return metin, ""
+
+
+def metni_boslukla(onek: str) -> str:
+    return (onek + " ") if onek and not onek.endswith((" ", "\u00a0")) else onek
+
+
+# Ticker / kur / gosterge gibi sayisal metinler ceviriye GONDERILMEZ.
+# (Sayi bicimi ayrica sayilari_cevir ile duzeltilir; fiyatin LLM'e gitmesi risklidir.)
+BIRIMLER = ("TL", "TRY", "USD", "EUR", "RSI", "MACD", "EMA", "SMA", "ADX", "CCI", "WT")
+
+
+def sayisal_mi(metin: str) -> bool:
+    temiz = re.sub(r"[\d\.,%+\-–—()\[\]/|:;·•₺$€°\s]", "", metin)
+    if not temiz:
+        return True
+    return len(temiz) <= 4 and temiz.upper() in BIRIMLER
+
+
+def cevrilecek_mi(metin: str) -> bool:
+    m = metin.strip()
+    if len(m) < 2:
+        return False
+    if SAYI_RE.match(m) or TICKER_RE.match(m) or KISALTMA_RE.match(m):
+        return False
+    if sayisal_mi(m):        # fiyat, yuzde, oran, "TL" iceren sayisal metin
+        return False
+    # en az bir harf olmali
+    return bool(re.search(r"[A-Za-zÇĞİÖŞÜçğıöşüА-Яа-я]", m))
+
+
+# ----------------------------------------------------------------------------
+# 4) HTML DONUSTURUCU
+# ----------------------------------------------------------------------------
+
+
+class MetinToplayici(HTMLParser):
+    """Sayfayi tarar, cevrilecek metin/ozellik parcalarini toplar ve
+    yerlerine ⟦n⟧ yer tutucusu koyar."""
+
+    def __init__(self, dil: str = "tr"):
+        super().__init__(convert_charrefs=True)
+        self.dil = dil
+        self.parcalar: list[dict] = []
+        self.cikti: list[str] = []
+        self.korunan = 0  # script/style derinligi
+        self._ic_meta = False
+
+    def _kaydet(self, metin: str, tur: str) -> int:
+        self.parcalar.append({"kaynak": metin, "tur": tur})
+        return len(self.parcalar) - 1
+
+    # -- etiketler --
+    def handle_starttag(self, tag, attrs):
+        ham = self.get_starttag_text() or f"<{tag}>"
+        if tag in ("script", "style"):
+            self.korunan += 1
+            self.cikti.append(ham)
+            return
+        kapanis = ham.endswith("/>")
+        govde = ham[:-2] if kapanis else ham[:-1]
+
+        icerik_izi = ICERIK_META_RE.match(govde + ">") is not None
+
+        def degistir(m):
+            ad, deger = m.group(1), m.group(2)
+            if ad == "content" and not icerik_izi:
+                return m.group(0)
+            saf, onek = metni_ayikla(deger)
+            if not cevrilecek_mi(saf):
+                # ceviriye gitmiyor ama sayi bicimi yine de duzeltilir (fiyat, yuzde…)
+                return f'{ad}="{sayilari_cevir(deger, self.dil)}"'
+            i = self._kaydet(deger, "ozellik")
+            return f'{ad}="⟦{i}⟧"'
+
+        desen = r'(?<![\w-])(' + "|".join(re.escape(a) for a in OZELLIK_ANAHTARLARI) + r')="([^"]*)"'
+        yeni = re.sub(desen, degistir, govde)
+        self.cikti.append(yeni + ("/>" if kapanis else ">"))
+
+    def handle_startendtag(self, tag, attrs):
+        self.handle_starttag(tag, attrs)
+
+    def handle_endtag(self, tag):
+        if tag in ("script", "style") and self.korunan:
+            self.korunan -= 1
+        self.cikti.append(f"</{tag}>")
+
+    def handle_data(self, veri):
+        if self.korunan:
+            self.cikti.append(veri)  # script/style -> dokunma
+            return
+        saf, _onek = metni_ayikla(veri)
+        if not cevrilecek_mi(saf):
+            # ceviriye gitmeyen sayisal metinlerde de sayi bicimi duzeltilir
+            self.cikti.append(_kacir(sayilari_cevir(veri, self.dil)))
+            return
+        i = self._kaydet(veri, "metin")
+        self.cikti.append(f"⟦{i}⟧")
+
+    def handle_comment(self, veri):
+        self.cikti.append(f"<!--{veri}-->")
+
+    def handle_decl(self, decl):
+        self.cikti.append(f"<!{decl}>")
+
+    def handle_pi(self, veri):
+        self.cikti.append(f"<?{veri}>")
+
+    def bilinmeyen(self, veri):
+        self.cikti.append(veri)
+
+
+def _kacir(metin: str) -> str:
+    return metin.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+YER_TUTUCU_RE = re.compile(r"⟦(\d+)⟧")
+
+
+DIL_SW_RE = re.compile(r'<nav class="dil-linkler".*?</nav>', re.S)
+DIL_SW_TOKEN = "<!--@@DIL_SW@@-->"
+
+# Eski (Puter tabanli) anlik ceviri kutusu: sablon guncellenmeden uretilmis sayfalarda
+# bu blok bulunursa gercek dil baglantilarina cevrilir (gecis kolayligi).
+ESKI_WIDGET_RE = re.compile(
+    r'<select id="dil-sec".*?</select>\s*<span id="ceviri-durum".*?</span>\s*<script>.*?</script>',
+    re.S,
+)
+DIL_STIL = (
+    "<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}"
+    ".dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}"
+    ".dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}"
+    ".dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>"
+)
+DIL_ADLARI = (
+    ("tr", "tr", "Türkçe"),
+    ("en", "en", "English"),
+    ("de", "de", "Deutsch"),
+    ("ru", "ru", "Русский"),
+    ("zh", "zh-Hans", "简体中文"),
+)
+
+
+def dil_switcher_html(rel: Path, aktif: str) -> str:
+    """Dil degistirici blogu: ayni sayfanin her dildeki surumune gercek baglanti."""
+    y = seo_yol(rel)
+    parcalar = [DIL_STIL, '<nav class="dil-linkler" aria-label="Sayfa dili seçin">',
+                '<span aria-hidden="true">🌐</span>']
+    for kod, hl, ad in DIL_ADLARI:
+        url = f"{SITE_URL}{kod + '/' if kod != 'tr' else ''}{y}"
+        a = ' class="aktif" aria-current="true"' if kod == aktif else ""
+        parcalar.append(f'<a href="{url}" hreflang="{hl}" lang="{hl}" data-dil="{kod}"{a}>{ad}</a>')
+    parcalar.append("</nav>")
+    return "\n".join(parcalar)
+
+
+def dil_sw_aktif(sw: str, dil: str) -> str:
+    """Dil degistiricisinde aktif dili isaretler (baglantilar her dilde aynidir)."""
+    sw = sw.replace(' class="aktif" aria-current="true"', "")
+    return sw.replace(f'data-dil="{dil}"', f'data-dil="{dil}" class="aktif" aria-current="true"')
+
+
+def sayfayi_cevir(ham_html: str, dil: str, cevirmen: Cevirmen, diller: list[str] | None = None,
+                  rel: Path | None = None) -> str:
+    # (-1) eski widget varsa gercek dil baglantilarina cevir
+    if rel is not None and ESKI_WIDGET_RE.search(ham_html):
+        ham_html = ESKI_WIDGET_RE.sub(lambda _m: dil_switcher_html(rel, dil), ham_html, count=1)
+
+    # (0) dil degistiriciyi dokunulmaz bolgeye al: baglantilari mutlak ve TUM dillerde
+    #     ayni olmali; ayrica ceviriye de girmemeli (dil adlari kendi dilinde yazilir).
+    sw_eslesme = DIL_SW_RE.search(ham_html)
+    sw_blok = sw_eslesme.group(0) if sw_eslesme else None
+    if sw_blok:
+        ham_html = ham_html.replace(sw_blok, DIL_SW_TOKEN, 1)
+
+    # (a) mutlak SITE_URL baglantilari dil agacina tasinir (og-cover paylasilan varlik kalir)
+    govde = re.sub(
+        re.escape(SITE_URL) + r"(?!og-cover)",
+        SITE_URL + dil + "/",
+        ham_html,
+    )
+    # (b) head alanlari
+    d = DILLER[dil]
+    govde = re.sub(r'(<html[^>]*\blang=")[^"]*(")', lambda m: m.group(1) + d["lang"] + m.group(2), govde, count=1)
+    govde = re.sub(r'(<meta property="og:locale" content=")[^"]*(")', lambda m: m.group(1) + d["locale"] + m.group(2), govde, count=1)
+    govde = re.sub(r'("inLanguage"\s*:\s*")[^"]*(")', lambda m: m.group(1) + d["lang"].split("-")[0] + m.group(2), govde)
+
+    # (c) metinleri topla
+    p = MetinToplayici(dil)
+    p.feed(govde)
+    p.close()
+    sablon = "".join(p.cikti)
+
+    # (d) cevir
+    kaynaklar = [x["kaynak"] for x in p.parcalar]
+    ceviriler = cevirmen.cevir_liste(kaynaklar, dil) if kaynaklar else []
+
+    def yerlestir(m):
+        i = int(m.group(1))
+        if i >= len(ceviriler):
+            return m.group(0)
+        deger = ceviriler[i]
+        return _kacir(deger) if p.parcalar[i]["tur"] == "metin" else deger.replace('"', "&quot;")
+
+    sablon = YER_TUTUCU_RE.sub(yerlestir, sablon)
+
+    # (e) hreflang blogu (canonical'dan hemen sonra, bir kez)
+    sablon = hreflang_ekle(sablon, dil, diller)
+
+    # (f) dil degistiriciyi yerine geri koy (aktif dil isaretli)
+    if sw_blok is not None:
+        sablon = sablon.replace(DIL_SW_TOKEN, dil_sw_aktif(sw_blok, dil), 1)
+    return sablon
+
+
+def hreflang_ekle(html: str, dil: str, diller: list[str] | None = None) -> str:
+    """Yalnizca gercekten uretilmis diller + tr listelenir (olu hreflang uretmemek icin)."""
+    kume = ["tr"] + [d for d in (diller or list(DILLER.keys())) if d != "tr"]
+    satirlar = []
+    for kod in kume:
+        meta = DILLER[kod]
+        satirlar.append(f'<link rel="alternate" hreflang="{meta["hreflang"]}" href="@@URL_{kod}@@">')
+    satirlar.append('<link rel="alternate" hreflang="x-default" href="@@URL_tr@@">')
+    blok = "\n".join(satirlar)
+    if 'hreflang="x-default"' in html:
+        return html
+    return re.sub(r'(<link rel="canonical"[^>]*>)', lambda m: m.group(1) + "\n" + blok, html, count=1)
+
+
+# ----------------------------------------------------------------------------
+# 5) SAYFA KESFI + YAZIM
+# ----------------------------------------------------------------------------
+
+DIL_DIZINLERI = set(DILLER.keys())
+
+
+def turkce_sayfalar(kok: Path) -> list[Path]:
+    bulunan: list[Path] = []
+    for dosya in sorted(kok.rglob("*.html")):
+        rel = dosya.relative_to(kok)
+        parcalar = rel.parts
+        if parcalar[0] in DIL_DIZINLERI:      # uretilmis dil dizinleri
+            continue
+        if dosya.name in HARIC_DOSYALAR or HARIC_DESEN_RE.match(dosya.name):
+            continue
+        if any(x in ("web", "node_modules", "functions", ".git") for x in parcalar):
+            continue
+        try:  # dogrulama dosyalari gibi <html> icermeyen parcalari atla
+            if "<html" not in dosya.read_text(encoding="utf-8", errors="replace")[:4000].lower():
+                continue
+        except OSError:
+            continue
+        bulunan.append(rel)
+    return bulunan
+
+
+def tr_hashleri(kok: Path) -> dict[str, str]:
+    return {str(r): hashlib.sha256((kok / r).read_bytes()).hexdigest() for r in turkce_sayfalar(kok)}
+
+
+# Dil sayfalarindan kok varliklara (css/js/json/png) kopyalanacak dosya turleri
+KOPYALA_EKLERI = {".css", ".js", ".json", ".png", ".svg", ".webmanifest", ".ico", ".xml"}
+CEVRILMEYEN_MEDYA = {".mp3", ".mp4", ".webm", ".ogg"}
+
+
+def varliklari_kopyala(kok: Path, dil: str) -> int:
+    """Kok dizindeki statik varliklari dil dizinine kopyalar (medya haric)."""
+    hedef_kok = kok / dil
+    sayi = 0
+    for dosya in kok.rglob("*"):
+        if not dosya.is_file():
+            continue
+        rel = dosya.relative_to(kok)
+        if rel.parts[0] in DIL_DIZINLERI or rel.parts[0] in (".git", "web", "node_modules"):
+            continue
+        if dosya.suffix.lower() in CEVRILMEYEN_MEDYA or dosya.suffix.lower() == ".html":
+            continue
+        if dosya.suffix.lower() not in KOPYALA_EKLERI:
+            continue
+        hedef = hedef_kok / rel
+        hedef.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(dosya, hedef)
+        sayi += 1
+    return sayi
+
+
+def esdegerlik_denetle(kok: Path, diller: list[str]) -> dict:
+    """TR sayfa ile dil sayfasi arasinda YAPISAL esdegerlik denetimi.
+
+    Amac: "dil sayfasi Turkce sayfanin birebir kopyasi, sadece metni cevrilmis" iddiasini
+    olcmek. CSS bloklari, JS bloklari ve class kumesi ayni olmali; bagil varliklar yerinde olmali.
+    Bilincli farklar: dil degistirici blogu ve eski Puter ceviri bloku.
+    """
+    rapor = {"karsilastirilan_sayfa": 0, "css_farki": [], "js_farki": [], "sinif_farki": [],
+             "eksik_varlik": []}
+    style_re = re.compile(r"<style\b.*?</style>", re.S | re.I)
+    script_re = re.compile(r"<script\b.*?</script>", re.S | re.I)
+    for dil in diller:
+        for rel in turkce_sayfalar(kok):
+            dosya = kok / dil / rel
+            if not dosya.exists():
+                continue
+            tr = (kok / rel).read_text(encoding="utf-8", errors="replace")
+            d = dosya.read_text(encoding="utf-8", errors="replace")
+            rapor["karsilastirilan_sayfa"] += 1
+
+            tr_css = [b for b in style_re.findall(tr) if "dil-linkler" not in b]
+            d_css = [b for b in style_re.findall(d) if "dil-linkler" not in b]
+            if tr_css != d_css:
+                rapor["css_farki"].append(f"{dil}/{rel}")
+
+            tr_js = [b for b in script_re.findall(tr) if "dil-sec" not in b and "ld+json" not in b]
+            d_js = [b for b in script_re.findall(d) if "ld+json" not in b]
+            if tr_js != d_js:
+                rapor["js_farki"].append(f"{dil}/{rel}")
+
+            tr_sinif = set(re.findall(r'class="([^"]+)"', tr))
+            d_sinif = set(re.findall(r'class="([^"]+)"', d))
+            # dil degistirici blogunun kendi siniflari (bilincli fark)
+            for s in ("dil-linkler", "aktif"):
+                tr_sinif.discard(s)
+                d_sinif.discard(s)
+            if tr_sinif != d_sinif:
+                rapor["sinif_farki"].append(
+                    f"{dil}/{rel} (+{sorted(d_sinif - tr_sinif)[:3]} / -{sorted(tr_sinif - d_sinif)[:3]})"
+                )
+
+            # bagil varliklar: script/style icerigi haric (JS sablonlari sahte eslesme uretir)
+            govde = script_re.sub("", d)
+            govde = re.sub(r"<style\b.*?</style>", "", govde, flags=re.S | re.I)
+            for h in re.findall(r'(?:href|src)="([^"]+)"', govde):
+                if h.startswith(("http", "//", "#", "mailto", "data:", "javascript:")):
+                    continue
+                hedef = dosya.parent / h.split("#")[0].split("?")[0]
+                if not hedef.exists():
+                    rapor["eksik_varlik"].append(f"{dil}/{rel} -> {h}")
+    return rapor
+
+
+def dil_agac_kumesi(kok: Path, hedef_liste) -> set[str]:
+    """Dil agacinda bulunacak TUM dosyalarin (sayfa + kopyalanan varlik) kumesi.
+
+    Onarim karari dosya sisteminin o anki haline DEGIL, bu kumeye bakar:
+    sayfalar sirayla yazildigi icin 'henuz yazilmamis dosya' yanlis onarim uretirdi.
+    """
+    kume = {str(Path(r)) for r in hedef_liste}
+    for dosya in kok.rglob("*"):
+        if not dosya.is_file():
+            continue
+        rel = dosya.relative_to(kok)
+        if rel.parts[0] in DIL_DIZINLERI or rel.parts[0] in (".git", "web", "node_modules"):
+            continue
+        if dosya.suffix.lower() in CEVRILMEYEN_MEDYA or dosya.suffix.lower() == ".html":
+            continue
+        if dosya.suffix.lower() not in KOPYALA_EKLERI:
+            continue
+        kume.add(str(rel))
+    return kume
+
+
+def medya_kumesi(kok: Path) -> set[str]:
+    """Dil agacina KOPYALANMAYAN medya dosyalarinin Turkce yollari (or. mp3)."""
+    kume = set()
+    for dosya in kok.rglob("*"):
+        if not dosya.is_file():
+            continue
+        rel = dosya.relative_to(kok)
+        if rel.parts[0] in DIL_DIZINLERI or rel.parts[0] in (".git", "web", "node_modules"):
+            continue
+        if dosya.suffix.lower() in CEVRILMEYEN_MEDYA:
+            kume.add(str(rel))
+    return kume
+
+
+def baglantilari_onar(html: str, rel: Path, agac: set[str], medya: set[str] | None = None) -> tuple[str, int, int]:
+    """Dil agacinda cozulemeyen bagil baglantilari onarir.
+
+    1) '../' oneki eksik olan baglantilar bir ust dizine tasinir
+       (or. haftasonu/*.html -> 'index.html'; bu Turkce tarafta da kirik).
+    2) Dil agacina kopyalanmayan medya (mp3) Turkce mutlak adrese cevrilir.
+    """
+    medya = medya or set()
+    sayac = {"n": 0, "medya": 0}
+
+    def coz(hedef: str) -> str:
+        y = os.path.normpath(os.path.join(os.path.dirname(str(rel)), hedef))
+        return str(Path(y))
+
+    def onar(m):
+        nitelik, hedef = m.group(1), m.group(2)
+        if not hedef or hedef.startswith(("http", "//", "#", "mailto:", "data:", "javascript:")):
+            return m.group(0)
+        parcalar = hedef.split("#")[0].split("?")
+        sorgu = ("?" + parcalar[1]) if len(parcalar) > 1 else ""
+        saf = parcalar[0]
+        if not saf:
+            return m.group(0)
+        if coz(saf) in agac:
+            return m.group(0)
+        if coz("../" + saf) in agac:
+            sayac["n"] += 1
+            return f'{nitelik}="../{hedef}"'
+        if coz(saf) in medya:
+            sayac["medya"] += 1
+            return f'{nitelik}="{SITE_URL}{coz(saf).replace(chr(92), "/")}{sorgu}"'
+        return m.group(0)
+
+    return re.sub(r'(href|src)="([^"]+)"', onar, html), sayac["n"], sayac["medya"]
+
+
+def seo_yol(rel: Path) -> str:
+    """Sayfanin site kokune gore SEO yolu: site artik .html'siz canonical kullaniyor.
+
+    index.html            -> ''
+    hisse/index.html      -> 'hisse/'
+    teknik-analiz.html    -> 'teknik-analiz'
+    """
+    p = rel.as_posix()
+    if p.endswith("index.html"):
+        return p[: -len("index.html")]
+    if p.endswith(".html"):
+        return p[: -5]
+    return p
+
+
+def seo_url_formu(html: str) -> str:
+    """canonical / og:url / hreflang / JSON-LD url adreslerini .html'siz forma cevirir
+    (Turkce sayfalarin 21.09.2026'dan beri kullandigi bicim)."""
+
+    def temizle(u: str) -> str:
+        if u.endswith("/index.html"):
+            u = u[: -len("index.html")]
+        elif u.endswith("index.html"):
+            u = u[: -len("index.html")] + "/"
+        return re.sub(r"\.html(?=$|[#?])", "", u)
+
+    desenler = (
+        r'(<link rel="canonical" href=")([^"]+)(")',
+        r'(<meta property="og:url" content=")([^"]+)(")',
+        r'(<link rel="alternate" hreflang="[^"]+" href=")([^"]+)(")',
+        r'("url"\s*:\s*")([^"]+)(")',
+    )
+    for d in desenler:
+        html = re.sub(d, lambda m: m.group(1) + temizle(m.group(2)) + m.group(3), html)
+    return html
+
+
+def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | None,
+                      cevirmen: Cevirmen, onarim: bool = True) -> dict:
+    hedef_liste = sayfa_listesi or turkce_sayfalar(kok)
+    agac = dil_agac_kumesi(kok, hedef_liste)
+    medya = medya_kumesi(kok)
+    ozet = {"sayfa": 0, "dil": {}, "aktarilan_metin": 0, "onarilan_baglanti": 0, "medya_baglantisi": 0}
+    for dil in diller:
+        n = 0
+        for rel in hedef_liste:
+            kaynak = kok / rel
+            ham = kaynak.read_text(encoding="utf-8", errors="replace")
+            yeni = sayfayi_cevir(ham, dil, cevirmen, diller, rel)
+            # hreflang yer tutuculari: her sayfanin kendi yoluna gore doldurulur
+            for kod in DILLER:
+                yeni = yeni.replace("@@URL_" + kod + "@@", f"{SITE_URL}{kod + '/' if kod != 'tr' else ''}{rel.as_posix()}")
+            yeni = seo_url_formu(yeni)
+            if onarim:
+                yeni, onarilan, medya_n = baglantilari_onar(yeni, rel, agac, medya)
+                ozet["onarilan_baglanti"] += onarilan
+                ozet["medya_baglantisi"] += medya_n
+            hedef = kok / dil / rel
+            hedef.parent.mkdir(parents=True, exist_ok=True)
+            hedef.write_text(yeni, encoding="utf-8")
+            n += 1
+        ozet["dil"][dil] = n
+        ozet["sayfa"] += n
+    return ozet
+
+
+# ----------------------------------------------------------------------------
+# 6) SITEMAP ALTERNATIFLERI (opt-in)
+# ----------------------------------------------------------------------------
+
+
+def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
+    """Sitemap'e dil surumlerini ekler.
+
+    Her Turkce URL icin: alternatif listesi (hreflang) + her dil icin ayri <url> blogu.
+    Boylece IndexNow ping'i (sitemap'teki <loc>'lari okur) dil URL'lerini de bildirir.
+    """
+    yol = kok / "sitemap.xml"
+    if not yol.exists():
+        return {"durum": "sitemap.xml yok"}
+    xml = yol.read_text(encoding="utf-8")
+    if "xhtml:link" in xml:
+        return {"durum": "alternatifler zaten var"}
+    if "xmlns:xhtml" not in xml:
+        xml = xml.replace(
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+            'xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+            1,
+        )
+    sayac = {"turkce_url": 0, "dil_url": 0}
+
+    def ekle(m):
+        blok = m.group(0)
+        u = re.search(r"<loc>([^<]+)</loc>", blok)
+        if not u:
+            return blok
+        url = u.group(1).strip()
+        if SITE_URL not in url:
+            return blok
+        yol_kismi = url.split(SITE_URL, 1)[1]
+        if not yol_kismi or yol_kismi.split("/")[0] in DILLER:
+            return blok  # zaten dil URL'i
+        alternatifler = [
+            f'    <xhtml:link rel="alternate" hreflang="{DILLER[k]["hreflang"]}" '
+            f'href="{SITE_URL}{k + "/" if k != "tr" else ""}{yol_kismi}"/>'
+            for k in ["tr"] + diller
+        ]
+        alternatifler.append(
+            f'    <xhtml:link rel="alternate" hreflang="x-default" href="{url}"/>'
+        )
+        alt = "\n".join(alternatifler)
+        sayac["turkce_url"] += 1
+
+        parcalar = [blok.replace("</url>", alt + "\n  </url>")]
+        for k in diller:
+            d_url = f"{SITE_URL}{k}/{yol_kismi}"
+            d_blok = re.sub(r"<loc>[^<]+</loc>", f"<loc>{d_url}</loc>", blok, count=1)
+            parcalar.append(d_blok.replace("</url>", alt + "\n  </url>"))
+            sayac["dil_url"] += 1
+        return "\n  ".join(parcalar)
+
+    yeni = re.sub(r"<url>.*?</url>", ekle, xml, flags=re.S)
+    yol.write_text(yeni, encoding="utf-8")
+    return {"durum": "guncellendi", **sayac}
+
+
+# ----------------------------------------------------------------------------
+# 7) DOGRULAMA
+# ----------------------------------------------------------------------------
+
+
+def dogrula(kok: Path, diller: list[str]) -> dict:
+    rapor = {"kirik_baglanti": [], "hreflang_eksik": [], "canonical_hatali": [], "canonical_baska_sayfa": [], "uretilmemis": [], "kontrol": 0}
+    tr_sayfalar = {str(r): r for r in turkce_sayfalar(kok)}
+    for dil in diller:
+        for rel in tr_sayfalar.values():
+            dosya = kok / dil / rel
+            if not dosya.exists():
+                rapor["uretilmemis"].append(f"{dil}/{rel}")
+                continue
+            html = dosya.read_text(encoding="utf-8", errors="replace")
+            rapor["kontrol"] += 1
+            if 'hreflang="x-default"' not in html or f'hreflang="{DILLER[dil]["hreflang"]}"' not in html:
+                rapor["hreflang_eksik"].append(f"{dil}/{rel}")
+            beklenen = f'{SITE_URL}{dil}/{seo_yol(rel)}'
+            kok_url = f'{SITE_URL}{dil}/'
+            mc = re.search(r'rel="canonical" href="([^"]+)"', html)
+            if not mc:
+                rapor["canonical_hatali"].append(f"{dil}/{rel}: canonical etiketi yok")
+            elif not mc.group(1).startswith(kok_url):
+                rapor["canonical_hatali"].append(f"{dil}/{rel} -> {mc.group(1)}")
+            elif mc.group(1) not in (beklenen, kok_url):
+                # Tur tarafinda bilincli olarak hub sayfaya isaret ediyor olabilir
+                rapor["canonical_baska_sayfa"].append(f"{dil}/{rel} -> {mc.group(1)}")
+            # ic baglantilar (script/style icerigi haric — JS icindeki "href" metinleri sahte eslesme uretir)
+            govde = re.sub(r"<script\b.*?</script>", "", html, flags=re.S | re.I)
+            govde = re.sub(r"<style\b.*?</style>", "", govde, flags=re.S | re.I)
+            for href in re.findall(r'(?:href|src)="([^"]+)"', govde):
+                if href.startswith(("//", "mailto:", "data:", "#", "javascript:")):
+                    continue
+                if href.startswith(SITE_URL):  # site mutlak adresi -> uretilen dosyaya karsilik gelmeli
+                    kismi = href[len(SITE_URL):].split("#")[0].split("?")[0]
+                    adaylar = [kismi, kismi + ".html", kismi + "index.html"]
+                    if not any((kok / a).exists() for a in adaylar if a):
+                        rapor["kirik_baglanti"].append(f"{dil}/{rel} -> {href}")
+                    continue
+                if href.startswith("http"):
+                    continue
+                hedef = (dosya.parent / href.split("#")[0].split("?")[0]).resolve()
+                if not hedef.exists() and href.split("#")[0].split("?")[0]:
+                    rapor["kirik_baglanti"].append(f"{dil}/{rel} -> {href}")
+    return rapor
+
+
+# ----------------------------------------------------------------------------
+# 8) ANA AKIS
+# ----------------------------------------------------------------------------
+
+
+def uretim_calistir(kok: str | Path = ".", diller=("en", "de", "ru", "zh"), provider: str = "llm",
+                    sitemap: bool = True, onarim: bool = True) -> dict:
+    """bot.py icinden tek satirda cagrilacak giris noktasi.
+
+    Turkce sayfalar yazilmaz; yalnizca {dil}/... altina uretilir. Uretim sonunda
+    Turkce dosyalarin sha256'si tekrar kontrol edilir; degismisse hata yukseltilir.
+    """
+    kok = Path(kok).resolve()
+    diller = list(diller)
+    onceki = tr_hashleri(kok)
+    cevirmen = Cevirmen(provider=provider, onbellek_yolu=str(kok / "i18n-cache.json"))
+    kopya = 0
+    for d in diller:  # varliklar once kopyalanir: onarim karari bu kumeye dayanir
+        kopya += varliklari_kopyala(kok, d)
+    ozet = dil_sayfalari_yaz(kok, diller, None, cevirmen, onarim=onarim)
+    cevirmen.kaydet()
+    sm = sitemap_guncelle(kok, diller) if sitemap else None
+
+    sonraki = tr_hashleri(kok)
+    degisen = [k for k in onceki if onceki[k] != sonraki.get(k)]
+    if degisen:
+        raise RuntimeError("[i18n] Turkce sayfalar degisti: " + ", ".join(degisen[:5]))
+
+    return {
+        "diller": ozet["dil"],
+        "sayfa": ozet["sayfa"],
+        "kopyalanan_varlik": kopya,
+        "onarilan_baglanti": ozet["onarilan_baglanti"],
+        "medya_baglantisi": ozet["medya_baglantisi"],
+        "yeni_ceviri": cevirmen.yeni,
+        "onbellekten": cevirmen.onbellekten,
+        "sozlukten": cevirmen.sozlukten,
+        "sitemap": sm,
+    }
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description="borsa-raporlari cok dilli katman")
+    ap.add_argument("--kok", default=".", help="depo koku (varsayilan: .)")
+    ap.add_argument("--diller", default="en,de,ru,zh")
+    ap.add_argument("--provider", default="mock", choices=["mock", "llm", "deepl", "off"])
+    ap.add_argument("--sayfalar", default="", help="virgulle ayrilmis sayfa listesi (varsayilan: hepsi)")
+    ap.add_argument("--sitemap", action="store_true", help="sitemap.xml'e dil alternatiflerini ekle")
+    ap.add_argument("--dogrula", action="store_true", help="sadece dogrula, yazma")
+    ap.add_argument("--esdeger", action="store_true",
+                    help="TR sayfa ile dil sayfasi yapisal olarak ayni mi (CSS/JS/class)")
+    ap.add_argument("--temizle", action="store_true", help="uretilmis dil dizinlerini sil")
+    ap.add_argument("--zorla", action="store_true", help="Turkce degisiklik korumasini atla")
+    ap.add_argument("--varliklari-kopyala", action="store_true", default=True,
+                    help="css/js/json gibi kok varliklari dil dizinlerine kopyala (varsayilan: acik)")
+    args = ap.parse_args()
+
+    kok = Path(args.kok).resolve()
+    diller = [d.strip() for d in args.diller.split(",") if d.strip()]
+
+    if args.temizle:
+        for d in diller:
+            hedef = kok / d
+            if hedef.exists():
+                shutil.rmtree(hedef)
+                print(f"[i18n] silindi: {d}/")
+        return 0
+
+    tr_once = tr_hashleri(kok)
+
+    if args.dogrula:
+        rapor = dogrula(kok, diller)
+        print(json.dumps(rapor, ensure_ascii=False, indent=2))
+        return 0 if not (rapor["kirik_baglanti"] or rapor["hreflang_eksik"] or rapor["canonical_hatali"]) else 1
+
+    if args.esdeger:
+        rapor = esdegerlik_denetle(kok, diller)
+        print(json.dumps(rapor, ensure_ascii=False, indent=2))
+        temiz = not (rapor["css_farki"] or rapor["js_farki"] or rapor["sinif_farki"] or rapor["eksik_varlik"])
+        return 0 if temiz else 1
+
+    sayfa_listesi = None
+    if args.sayfalar:
+        sayfa_listesi = [Path(s.strip()) for s in args.sayfalar.split(",") if s.strip()]
+
+    cevirmen = Cevirmen(provider=args.provider, onbellek_yolu=str(kok / "i18n-cache.json"))
+
+    kopya = 0
+    if args.varliklari_kopyala and not sayfa_listesi:
+        for d in diller:  # varliklar once kopyalanir (onarim karari bu kumeye dayanir)
+            kopya += varliklari_kopyala(kok, d)
+
+    ozet = dil_sayfalari_yaz(kok, diller, sayfa_listesi, cevirmen)
+
+    cevirmen.kaydet()
+
+    if args.sitemap:
+        print("[i18n] sitemap:", json.dumps(sitemap_guncelle(kok, diller), ensure_ascii=False))
+
+    # --- Turkce koruma kontrolu ---
+    tr_sonra = tr_hashleri(kok)
+    degisen = [k for k in tr_once if tr_once[k] != tr_sonra.get(k)]
+    yeni_tr = [k for k in tr_sonra if k not in tr_once]
+    print(json.dumps({
+        "diller": ozet["dil"],
+        "toplam_sayfa": ozet["sayfa"],
+        "kopyalanan_varlik": kopya,
+        "onarilan_baglanti": ozet["onarilan_baglanti"],
+        "medya_baglantisi": ozet["medya_baglantisi"],
+        "sozlukten": cevirmen.sozlukten,
+        "onbellekten": cevirmen.onbellekten,
+        "yeni_ceviri": cevirmen.yeni,
+        "turkce_degisen": degisen,
+        "turkce_yeni_dosya": yeni_tr,
+    }, ensure_ascii=False, indent=2))
+
+    if degisen and not args.zorla:
+        print("[i18n] DURDU: Turkce sayfalar degismis! Bu bir hatadir.", file=sys.stderr)
+        return 2
+    print("[i18n] OK — Turkce sayfalar degismedi.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

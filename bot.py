@@ -1881,106 +1881,53 @@ html.dark .ticker-bant, html.dark .topbar { background:#0b1220; border-bottom:1p
 # cevirir: Puter.js uzerinden calisir, hicbir hesap/anahtar gerekmez,
 # ziyaretci kendi ucretsiz Puter kotasin kullanir. Cince basta olmak
 # uzere 5 dil + "Turkce'ye don" secenegi.
-_CEVIRI_DILLERI = """
-<select id="dil-sec" aria-label="Sayfa dili seçin" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; background: #fff; color: #334155; cursor: pointer;">
-  <option value="">🌐 Dil / 语言</option>
-  <option value="zh">🇨🇳 中文（简体）</option>
-  <option value="en">🇬🇧 English</option>
-  <option value="de">🇩🇪 Deutsch</option>
-  <option value="ru">🇷🇺 Русский</option>
-  <option value="ar">🇸🇦 العربية</option>
-  <option value="tr">🇹🇷 Türkçe (orijinal)</option>
-</select>
-<span id="ceviri-durum" style="font-size: 12px; color: #64748b;"></span>
-<script>
-(function() {
-  var DIL_ADLARI = { zh: 'Simplified Chinese', en: 'English', de: 'German', ru: 'Russian', ar: 'Arabic' };
-  var ORIJINALLER = null;
-  var mesgul = false;
-
-  function zamanAsimi(p, ms) {
-    return Promise.race([p, new Promise(function(_, rej) { setTimeout(function() { rej(new Error('zaman aşımı')); }, ms); })]);
-  }
-
-  function metinDugumleri() {
-    var sonuc = [];
-    var ana = document.querySelector('main') || document.body;
-    var walker = document.createTreeWalker(ana, NodeFilter.SHOW_TEXT, {
-      acceptNode: function(n) {
-        if (!n.nodeValue || !n.nodeValue.trim() || n.nodeValue.trim().length < 2) return NodeFilter.FILTER_REJECT;
-        var p = n.parentElement;
-        if (!p) return NodeFilter.FILTER_REJECT;
-        var tag = p.tagName;
-        if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT' || tag === 'TEXTAREA' || tag === 'INPUT') return NodeFilter.FILTER_REJECT;
-        return NodeFilter.FILTER_ACCEPT;
-      }
-    });
-    var n;
-    while ((n = walker.nextNode())) sonuc.push(n);
-    return sonuc;
-  }
-
-  function geriYukle() {
-    if (ORIJINALLER) ORIJINALLER.forEach(function(k) { k.node.nodeValue = k.org; });
-    document.getElementById('ceviri-durum').innerText = '';
-  }
-
-  async function sayfaCevir(dil) {
-    var durum = document.getElementById('ceviri-durum');
-    if (dil === '' || mesgul) return;
-    if (dil === 'tr') { geriYukle(); return; }
-    if (typeof puter === 'undefined') {
-      durum.innerHTML = '<span style="color:#b91c1c">Çeviri motoru henüz yüklenmedi, birkaç saniye sonra tekrar deneyin.</span>';
-      document.getElementById('dil-sec').value = '';
-      return;
-    }
-    mesgul = true;
-    try {
-      if (ORIJINALLER === null) {
-        ORIJINALLER = metinDugumleri().map(function(n) { return { node: n, org: n.nodeValue }; });
-      }
-      // Metinleri ~1800 karakterlik gruplara böl (istek başına)
-      var parcalar = [], suanki = [], uzunluk = 0;
-      ORIJINALLER.forEach(function(k) {
-        suanki.push(k); uzunluk += k.org.length;
-        if (uzunluk >= 1800) { parcalar.push(suanki); suanki = []; uzunluk = 0; }
-      });
-      if (suanki.length) parcalar.push(suanki);
-
-      var sistem = 'You are a professional translator for a Turkish finance website. The user sends a JSON array of strings. Translate EVERY array item into ' + DIL_ADLARI[dil] + '. Return ONLY a JSON array of the exact same length containing the translations — no explanations, no markdown fences. Keep stock ticker codes (KCHOL, PETKM, THYAO...), numbers, currency amounts, dates and indicator acronyms (RSI, MACD, EMA, ADX, CCI, WT) exactly as they are.';
-      for (var i = 0; i < parcalar.length; i++) {
-        durum.innerText = '🌐 Çevriliyor... (' + (i + 1) + '/' + parcalar.length + ')';
-        var r = await zamanAsimi(puter.ai.chat(
-          [ { role: 'system', content: sistem }, { role: 'user', content: JSON.stringify(parcalar[i].map(function(k) { return k.org; })) } ],
-          { model: 'z-ai/glm-4.7-flash' }
-        ), 45000);
-        var yanit = (r && r.message && r.message.content) || '';
-        yanit = yanit.replace(/^```(json)?\\s*/i, '').replace(/\\s*```\\s*$/, '').trim();
-        var cevrilen = JSON.parse(yanit);
-        if (!Array.isArray(cevrilen) || cevrilen.length !== parcalar[i].length) throw new Error('bozuk yanıt');
-        parcalar[i].forEach(function(k, idx) { if (typeof cevrilen[idx] === 'string') k.node.nodeValue = cevrilen[idx]; });
-      }
-      durum.innerText = '✓ ' + DIL_ADLARI[dil] + ' — Türkçe için listeden seçin';
-    } catch (e) {
-      var hata = (e && e.message) ? e.message : 'bilinmeyen hata';
-      durum.innerHTML = '<span style="color:#b91c1c">Çeviri tamamlanamadı (' + hata + ').</span> <span style="color:#475569">Türkçe için listeden seçin. Puter oturum penceresi açıldıysa giriş yapmayı deneyin.</span>';
-      document.getElementById('dil-sec').value = '';
-    }
-    mesgul = false;
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('dil-sec').addEventListener('change', function() { sayfaCevir(this.value); });
-  });
-})();
-</script>
-"""
+# ---------- DIL DEGISTIRICI (gercek dil sayfalari) ----------
+# Eski Puter tabanli "anlik ceviri" kutusunun yerini alir: her dil icin
+# GERCEK baglanti verir (/en/, /de/, /ru/, /zh/). Ceviri, sayfa uretimi
+# sirasinda i18n.py tarafindan yapilir; ziyaretci tarafinda ceviri calismaz.
+_DILLER = (
+    ("tr", "tr", "Türkçe"),
+    ("en", "en", "English"),
+    ("de", "de", "Deutsch"),
+    ("ru", "ru", "Русский"),
+    ("zh", "zh-Hans", "简体中文"),
+)
+_DIL_STIL = (
+    "<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}"
+    ".dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}"
+    ".dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}"
+    ".dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>"
+)
 
 
-def _ceviri_widget(kok=""):
-    """Ust widget cubuguna GLM ceviri secicisini koyar (kok parametresi
-    ileride gerekirse diye korunur; script zaten kendini baglar)."""
-    return _CEVIRI_DILLERI
+def _dil_yolu(yol, dil):
+    """Ayni sayfanin ilgili dil surumunun adresi (site .html'siz canonical kullaniyor)."""
+    p = (yol or "").lstrip("/")
+    if p.endswith("index.html"):
+        p = p[: -len("index.html")]
+    elif p.endswith(".html"):
+        p = p[:-5]
+    return f"{SITE_URL}{dil + '/' if dil else ''}{p}"
+
+
+def _ceviri_widget(kok="", yol=""):
+    """Dil degistirici: ayni sayfanin diger dil surumlerine gercek baglanti verir."""
+    parcalar = [
+        _DIL_STIL,
+        '<nav class="dil-linkler" aria-label="Sayfa dili seçin">',
+        '<span aria-hidden="true">🌐</span>',
+    ]
+    for kod, hreflang, ad in _DILLER:
+        aktif = ' class="aktif" aria-current="true"' if kod == "tr" else ""
+        parcalar.append(
+            f'<a href="{_dil_yolu(yol, "" if kod == "tr" else kod)}" '
+            f'hreflang="{hreflang}" lang="{hreflang}" data-dil="{kod}"{aktif}>{ad}</a>'
+        )
+    parcalar.append("</nav>")
+    return "\n".join(parcalar)
+
+
+
 
 
 def _radyo_kutusu(kok=""):
@@ -2500,7 +2447,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
             <span id="current-date-time">⏳ Yükleniyor...</span>
             <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
         </div>
-{_ceviri_widget(kok)}
+{_ceviri_widget(kok, yol)}
 {_radyo_kutusu(kok)}
     </div>
 
@@ -4996,6 +4943,16 @@ if __name__ == "__main__":
         site_arama_json_yaz(raporlar)
     except Exception:
         logger.exception("[Arama] site-arama.json uretilemedi; rapor uretimini etkilemez.")
+
+    # Cok dilli katman: Turkce sayfalara DOKUNMADAN /en/ /de/ /ru/ /zh/ uretir.
+    # Sitemap'e dil surumleri de burada eklenir; boylece asagidaki IndexNow ping'i
+    # (sitemap'teki <loc>'lari okur) dil URL'lerini de bildirir.
+    # Saglayici: I18N_PROVIDER (llm | deepl | mock | off). Hata olursa Turkce uretim etkilenmez.
+    try:
+        import i18n as _i18n
+        logger.info("[i18n] %s", _i18n.uretim_calistir(kok=".", provider=os.environ.get("I18N_PROVIDER", "llm")))
+    except Exception:
+        logger.exception("[i18n] dil sayfalari uretilemedi; Turkce site etkilenmez.")
 
     # IndexNow: degisen sayfalari Bing/Yandex/Seznam/Naver'a aninda bildir.
     # Sitemap'teki TUM URL'ler bildirilir (hisse detay sayfalari, arsivler,
