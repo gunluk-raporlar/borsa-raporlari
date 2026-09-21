@@ -53,7 +53,7 @@ jobs:
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OR_MODELS: "z-ai/glm-5.2:free"
           DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
-        run: python i18n.py --saglayici-test
+        run: python -u i18n.py --saglayici-test
 
       - name: Cok dilli sayfalari uret
         if: ${{ !inputs.test }}
@@ -74,7 +74,7 @@ jobs:
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OR_MODELS: "z-ai/glm-5.2:free"
           DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
-        run: python i18n.py --diller en,de,ru,zh --provider ${{ inputs.provider || 'llm' }} --sitemap
+        run: python -u i18n.py --diller en,de,ru,zh --provider ${{ inputs.provider || 'llm' }} --sitemap
 
       - name: Degisiklikleri depoya kaydet (hata olsa bile)
         if: always()
