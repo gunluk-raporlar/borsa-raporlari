@@ -4863,15 +4863,9 @@ if __name__ == "__main__":
     except Exception:
         logger.exception("[Arama] site-arama.json uretilemedi; rapor uretimini etkilemez.")
 
-    # Cok dilli katman: Turkce sayfalara DOKUNMADAN /en/ /de/ /ru/ /zh/ uretir.
-    # Sitemap'e dil surumleri de burada eklenir; boylece asagidaki IndexNow ping'i
-    # (sitemap'teki <loc>'lari okur) dil URL'lerini de bildirir.
-    # Saglayici: I18N_PROVIDER (llm | deepl | mock | off). Hata olursa Turkce uretim etkilenmez.
-    try:
-        import i18n as _i18n
-        logger.info("[i18n] %s", _i18n.uretim_calistir(kok=".", provider=os.environ.get("I18N_PROVIDER", "llm")))
-    except Exception:
-        logger.exception("[i18n] dil sayfalari uretilemedi; Turkce site etkilenmez.")
+    # NOT (2026-09-21): Cok dilli ceviri bu kosudan CIKARILDI.
+    # Gunluk rapor kosusu 100 dk sinirinda ceviri yuzunden iptal olmustu; artik
+    # ceviri ayri bir workflow'da (.github/workflows/i18n.yml) calisiyor.
 
     # IndexNow: degisen sayfalari Bing/Yandex/Seznam/Naver'a aninda bildir.
     # Sitemap'teki TUM URL'ler bildirilir (hisse detay sayfalari, arsivler,

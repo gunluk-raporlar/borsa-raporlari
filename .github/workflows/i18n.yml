@@ -1,0 +1,54 @@
+name: Cok Dilli Sayfa Guncelleme
+
+# Ceviri ayri bir kosuda yapilir: gunluk rapor kosusu ceviri yuzunden asla uzamaz/iptal olmaz.
+# (2026-09-21: gunluk kosu 100 dk sinirinda iptal oldugu icin ayrildi.)
+
+on:
+  schedule:
+    # Gunluk rapor 05:00 UTC'de baslar (en kotu 100 dk). Ceviri 2 saat sonra, bos pencerede.
+    - cron: "0 7 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: i18n
+  cancel-in-progress: false
+
+jobs:
+  cevir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cok dilli sayfalari uret
+        env:
+          I18N_SURE_SINIRI_DK: "25"
+          I18N_TIMEOUT: "30"
+          I18N_PENCERE: "25"
+          AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+          ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
+        run: python i18n.py --diller en,de,ru,zh --provider llm --sitemap
+
+      - name: Degisiklikleri depoya kaydet
+        run: |
+          git config user.name "borsa-bot"
+          git config user.email "borsa-bot@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Kaydedilecek degisiklik yok."
+          else
+            git commit -m "Cok dilli sayfalar guncellendi (ceviri kosusu)"
+            git pull --rebase --quiet -X theirs origin main || true
+            git push
+          fi

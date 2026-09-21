@@ -218,6 +218,14 @@ class Cevirmen:
                 self.onbellek = json.loads(self.onbellek_yolu.read_text(encoding="utf-8"))
             except Exception:
                 self.onbellek = {}
+        # --- koruma mekanizmalari (2026-09-21: kosu timeout'undan sonra eklendi) ---
+        self.baslangic = time.time()
+        self.sure_siniri = float(os.environ.get("I18N_SURE_SINIRI_DK", "20")) * 60
+        self.istek_timeout = float(os.environ.get("I18N_TIMEOUT", "30"))
+        self.devre_disi: set[str] = set()      # kalici hata alan saglayicilar (401/402/403)
+        self.hata_sayaci: dict[str, int] = {}  # gecici hatalar (timeout/429/5xx)
+        self.atlanan_parca = 0
+        self.sure_doldu = False
         self.yeni = 0
         self.onbellekten = 0
         self.sozlukten = 0
@@ -317,26 +325,78 @@ class Cevirmen:
 
         cikti: list[str] = []
         PENCERE = int(os.environ.get("I18N_PENCERE", "25"))  # istek basina dize sayisi
+        dil_hedefi = {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
         for bas in range(0, len(parcalar), PENCERE):
+            # sure butcesi: asilirsa kalanlari cevirmeden don (site uretimi asla bloke olmasin)
+            if time.time() - self.baslangic > self.sure_siniri:
+                self.sure_doldu = True
+                self.atlanan_parca += len(parcalar) - bas
+                print(f"[i18n] sure butcesi doldu ({self.sure_siniri/60:.0f} dk); kalan {len(parcalar)-bas} parca sonraki kosuya birakildi", file=sys.stderr)
+                break
             dilim = parcalar[bas:bas + PENCERE]
             son = None
             for url, anahtar, modeller in uclar:
+                if url in self.devre_disi:
+                    continue
                 for model in modeller:
                     try:
-                        aday = self._llm_istek(url, anahtar, model, sistem, dilim)
+                        aday = self._llm_istek(url, anahtar, model, sistem, dilim, self.istek_timeout)
                         if aday and len(aday) == len(dilim):
                             son = aday
                             break
+                    except urllib.error.HTTPError as hata:
+                        kod = hata.code
+                        print(f"[i18n] LLM hatasi ({model}): HTTP {kod}", file=sys.stderr)
+                        if kod in (401, 402, 403, 404):      # kalici: anahtar/kota/yetki
+                            self.devre_disi.add(url)
+                            print(f"[i18n] saglayici devre disi: {url} (HTTP {kod})", file=sys.stderr)
+                            break
+                        if kod == 429:                        # hiz siniri: kisa bekle, bir kez daha dene
+                            bekle = min(float(hata.headers.get("Retry-After") or 5), 15)
+                            time.sleep(bekle)
+                            try:
+                                aday = self._llm_istek(url, anahtar, model, sistem, dilim, self.istek_timeout)
+                                if aday and len(aday) == len(dilim):
+                                    son = aday
+                                    break
+                            except Exception:
+                                pass
+                        self.hata_sayaci[url] = self.hata_sayaci.get(url, 0) + 1
+                        if self.hata_sayaci[url] >= 3:
+                            self.devre_disi.add(url)
+                            print(f"[i18n] saglayici devre disi (3 hata): {url}", file=sys.stderr)
+                            break
+                        son = None
                     except Exception as hata:
                         print(f"[i18n] LLM hatasi ({model}): {hata}", file=sys.stderr)
+                        self.hata_sayaci[url] = self.hata_sayaci.get(url, 0) + 1
+                        if self.hata_sayaci[url] >= 3:
+                            self.devre_disi.add(url)
+                            print(f"[i18n] saglayici devre disi (3 hata): {url}", file=sys.stderr)
+                            break
                         son = None
                 if son:
                     break
+            # son yedek: DeepL (DEEPL_API_KEY varsa) — LLM'ler dusunce tek kurtaricimiz
+            if not son and (os.environ.get("DEEPL_API_KEY") or os.environ.get("DEEPL_KEY")):
+                try:
+                    aday = self._deepl(dilim, dil, hedef=dil_hedefi)
+                    if aday and len(aday) == len(dilim):
+                        son = aday
+                        print("[i18n] DeepL yedeginden cevrildi", file=sys.stderr)
+                except Exception as hata:
+                    print(f"[i18n] DeepL hatasi: {hata}", file=sys.stderr)
+            if not son:
+                self.atlanan_parca += len(dilim)
             cikti.extend(son if son else dilim)
+            # hiz sinirina karsi kucuk ara (AMD 429'un ana sebebi istek patlamasiydi)
+            aralik = float(os.environ.get("I18N_ARALIK", "1.0"))
+            if aralik > 0 and bas + PENCERE < len(parcalar):
+                time.sleep(aralik)
         return cikti
 
     @staticmethod
-    def _llm_istek(url, anahtar, model, sistem, dilim):
+    def _llm_istek(url, anahtar, model, sistem, dilim, timeout=30):
         govde = json.dumps({
             "model": model,
             "messages": [
@@ -349,7 +409,7 @@ class Cevirmen:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {anahtar}",
         })
-        with urllib.request.urlopen(istek, timeout=120) as yanit:
+        with urllib.request.urlopen(istek, timeout=timeout) as yanit:
             veri = json.loads(yanit.read().decode("utf-8"))
         icerik = veri["choices"][0]["message"]["content"].strip()
         icerik = re.sub(r"^```(?:json)?\s*", "", icerik)
@@ -357,11 +417,11 @@ class Cevirmen:
         return json.loads(icerik)
 
     @staticmethod
-    def _deepl(parcalar: list[str], dil: str) -> list[str]:
+    def _deepl(parcalar: list[str], dil: str, hedef: str | None = None) -> list[str]:
         anahtar = os.environ.get("DEEPL_API_KEY") or os.environ.get("DEEPL_KEY")
         if not anahtar:
-            raise SystemExit("[i18n] HATA: --provider deepl icin DEEPL_API_KEY gerekli.")
-        hedef = {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
+            raise SystemExit("[i18n] HATA: DeepL icin DEEPL_API_KEY gerekli.")
+        hedef = hedef or {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
         govde = "&".join([f"text={urllib.parse.quote(p)}" for p in parcalar])
         govde += f"&target_lang={hedef}&source_lang=TR&preserve_formatting=1"
         istek = urllib.request.Request("https://api-free.deepl.com/v2/translate", data=govde.encode("utf-8"), headers={
@@ -1083,6 +1143,9 @@ def uretim_calistir(kok: str | Path = ".", diller=("en", "de", "ru", "zh"), prov
         "yeni_ceviri": cevirmen.yeni,
         "onbellekten": cevirmen.onbellekten,
         "sozlukten": cevirmen.sozlukten,
+        "devre_disi_saglayici": sorted(cevirmen.devre_disi),
+        "cevrilmeyen_parca": cevirmen.atlanan_parca,
+        "sure_doldu": cevirmen.sure_doldu,
         "sitemap": sm,
     }
 
@@ -1159,6 +1222,9 @@ def main() -> int:
     yeni_tr = [k for k in tr_sonra if k not in tr_once]
     print(json.dumps({
         "diller": ozet["dil"],
+        "devre_disi_saglayici": sorted(cevirmen.devre_disi),
+        "cevrilmeyen_parca": cevirmen.atlanan_parca,
+        "sure_doldu": cevirmen.sure_doldu,
         "toplam_sayfa": ozet["sayfa"],
         "kopyalanan_varlik": kopya,
         "onarilan_baglanti": ozet["onarilan_baglanti"],
