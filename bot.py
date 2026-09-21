@@ -1493,6 +1493,15 @@ app = workflow.compile()
 
 # ---------- ORTAK SITE TASARIMI ----------
 SITE_URL = "https://borsa-raporlari.pages.dev/"
+
+
+def _guzel_url(yol):
+    """Cloudflare Pages, .html'li adresleri uzantısız adrese 308 ile
+    yonlendirir. Canonical/og:url/sitemap adresleri bu hedefle ayni olsun
+    diye yol guzel (uzantisiz) biçime cevrilir: 'hisse/index.html' ->
+    'hisse/', 'reports/x.html' -> 'reports/x'."""
+    yol = re.sub(r"index\.html$", "", yol or "")
+    return re.sub(r"\.html$", "", yol)
 SITE_ADI = "BIST 30 Günlük Raporlar"
 
 # ---------- INDEXNOW (Bing/Yandex/Seznam/Naver aninda indeksleme) ----------
@@ -2397,7 +2406,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     a_alt_hb = ' class="active"' if aktif == "haberler" else ""
     a_tkv = ' class="active"' if aktif == "takvim" else ""
     a_alt_tkv = ' class="active"' if aktif == "takvim" else ""
-    tam_url = SITE_URL + (yol.lstrip("/") if yol else "")
+    tam_url = SITE_URL + _guzel_url(yol.lstrip("/") if yol else "")
     if not aciklama:
         aciklama = "Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi."
     ld_ek_html = f'<script type="application/ld+json">{ld_ek}</script>' if ld_ek else ""
@@ -4674,7 +4683,7 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
     url_blokleri = []
     for yol, frekans in statik:
         url_blokleri.append(
-            f"  <url><loc>{SITE_URL}{yol}</loc><lastmod>{bugun}</lastmod>"
+            f"  <url><loc>{SITE_URL}{_guzel_url(yol)}</loc><lastmod>{bugun}</lastmod>"
             f"<changefreq>{frekans}</changefreq>"
             f"<priority>{oncelik.get(yol, '0.8')}</priority></url>"
         )
@@ -4684,7 +4693,7 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
         except OSError:
             lm = bugun
         url_blokleri.append(
-            f"  <url><loc>{SITE_URL}reports/{fn}</loc><lastmod>{lm}</lastmod>"
+            f"  <url><loc>{SITE_URL}reports/{_guzel_url(fn)}</loc><lastmod>{lm}</lastmod>"
             f"<changefreq>monthly</changefreq><priority>0.6</priority></url>"
         )
     # Hisse detay sayfalari
@@ -4692,7 +4701,7 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
         for fn in sorted(os.listdir("hisse")):
             if fn.endswith(".html") and fn != "index.html":
                 url_blokleri.append(
-                    f"  <url><loc>{SITE_URL}hisse/{fn}</loc><lastmod>{bugun}</lastmod>"
+                    f"  <url><loc>{SITE_URL}hisse/{_guzel_url(fn)}</loc><lastmod>{bugun}</lastmod>"
                     f"<changefreq>daily</changefreq><priority>0.6</priority></url>"
                 )
     except OSError:
@@ -4708,7 +4717,7 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
                 stem = fn[:-5]
                 lm = stem if re.fullmatch(r"\d{4}-\d{2}-\d{2}", stem) else bugun
                 url_blokleri.append(
-                    f"  <url><loc>{SITE_URL}{klasor}/{fn}</loc><lastmod>{lm}</lastmod>"
+                    f"  <url><loc>{SITE_URL}{klasor}/{_guzel_url(fn)}</loc><lastmod>{lm}</lastmod>"
                     f"<changefreq>monthly</changefreq><priority>0.6</priority></url>"
                 )
         except OSError:
