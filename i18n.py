@@ -265,7 +265,14 @@ class Cevirmen:
             k = self._anahtar(dil, saf)
             # onbellekteki deger kaynakla AYNI ise gecersiz say (zehirli kayitlari etkisiz kilar)
             if k in self.onbellek and self.onbellek[k] and self.onbellek[k].strip() != saf.strip():
-                sonuc[i] = self.onbellek[k]
+                _saf, onek = metni_ayikla(m)
+                sonuc[i] = (onek + self.onbellek[k]) if onek else self.onbellek[k]
+                self.onbellekten += 1
+                continue
+            if k in self.onbellek and self.onbellek[k] and len(saf) <= 60:
+                # kisa dizelerde (sayi/ticker/kod/tablo satiri) birebir ayni ceviri gecerlidir
+                _saf, onek = metni_ayikla(m)
+                sonuc[i] = (onek + self.onbellek[k]) if onek else self.onbellek[k]
                 self.onbellekten += 1
                 continue
             bekleyen.append((i, saf))
