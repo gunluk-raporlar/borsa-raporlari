@@ -298,7 +298,10 @@ class Cevirmen:
         # 1) Z.AI (GLM) — kullanicinin kayitli anahtari; bot.py ile ayni uc ve modeller
         zai_anahtar = os.environ.get("ZAI_API_KEY")
         if zai_anahtar:
-            zai_modeller = [os.environ.get("ZAI_MODEL", "glm-4.7-flash"), "glm-4.5-flash"]
+            # Not: glm-4.5-flash testte 1.2 sn, glm-4.7-flash 20.8 sn yanit verdi.
+            # Ceviride hiz onemli oldugu icin varsayilan hizli model; 4.7 yedekte.
+            zai_modeller = [os.environ.get("ZAI_MODEL", "glm-4.5-flash"), "glm-4.7-flash"]
+            zai_modeller = list(dict.fromkeys(zai_modeller))   # tekrarlari at
             uclar.append(("https://api.z.ai/api/paas/v4/chat/completions", zai_anahtar, zai_modeller))
         # 2) AMD Radeon Developer Cloud (bot.py'nin ana saglayicisi)
         amd_anahtar = os.environ.get("AMD_API_KEY")
