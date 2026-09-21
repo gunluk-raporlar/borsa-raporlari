@@ -4689,6 +4689,12 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
                 )
         except OSError:
             pass
+    # Cok dilli (en/de/zh) sayfalar: klasorler varsa sitemap'e eklenir
+    try:
+        import cok_dil
+        url_blokleri.extend(cok_dil.sitemap_satirlari())
+    except Exception:
+        pass
     with open("sitemap.xml", "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -4908,6 +4914,17 @@ if __name__ == "__main__":
         rapor_podcast_yaz()
     except Exception:
         logger.exception("[Podcast] rapor RSS'i yazilamadi.")
+
+    # Cok dilli sayfalar (en/de/zh): bagimsiz modul (cok_dil.py); bot.py'yi
+    # import etmez, her seyi parametreyle alir. Bu noktada Turkce ciktilar
+    # hazir oldugu icin olasi bir hata Turkce siteyi asla etkilemez.
+    try:
+        import cok_dil
+        cok_dil.uret(report=report, date_str=date_str,
+                     teknik_satirlar=teknik_satirlar or [],
+                     llm=llm_call, log=logger.exception)
+    except Exception:
+        logger.exception("[CokDil] cok dilli sayfalar uretilemedi; Turkce site etkilenmez.")
 
     # SEO: arama motorlari dosyalari her kosuda taze lastmod ile yeniden yazilir
     try:
