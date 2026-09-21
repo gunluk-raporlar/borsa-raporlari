@@ -295,6 +295,12 @@ class Cevirmen:
     def _uclari_kur(self) -> list:
         """Saglayici + model listesi (oncelik sirasiyla). Test modu da bunu kullanir."""
         uclar = []
+        # 1) Z.AI (GLM) — kullanicinin kayitli anahtari; bot.py ile ayni uc ve modeller
+        zai_anahtar = os.environ.get("ZAI_API_KEY")
+        if zai_anahtar:
+            zai_modeller = [os.environ.get("ZAI_MODEL", "glm-4.7-flash"), "glm-4.5-flash"]
+            uclar.append(("https://api.z.ai/api/paas/v4/chat/completions", zai_anahtar, zai_modeller))
+        # 2) AMD Radeon Developer Cloud (bot.py'nin ana saglayicisi)
         amd_anahtar = os.environ.get("AMD_API_KEY")
         if amd_anahtar:
             modeller = [os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")]
@@ -413,14 +419,18 @@ class Cevirmen:
 
     @staticmethod
     def _llm_istek(url, anahtar, model, sistem, dilim, timeout=30):
-        govde = json.dumps({
+        istek_govdesi = {
             "model": model,
             "messages": [
                 {"role": "system", "content": sistem},
                 {"role": "user", "content": json.dumps(dilim, ensure_ascii=False)},
             ],
             "temperature": 0.2,
-        }).encode("utf-8")
+        }
+        # Z.AI: ceviride "dusunme" modunu kapat (hiz + maliyet). bot.py de aynisini yapiyor.
+        if "z.ai" in url:
+            istek_govdesi["thinking"] = {"type": "disabled"}
+        govde = json.dumps(istek_govdesi).encode("utf-8")
         istek = urllib.request.Request(url, data=govde, headers={
             "Content-Type": "application/json",
             "Authorization": f"Bearer {anahtar}",
