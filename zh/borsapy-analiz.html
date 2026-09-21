@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>股市信号 - 2026-09-21</title>
-<meta name="description" content="来自TradingView指标的BIST 30振荡器摘要：买入/卖出/中性投票，RSI，MACD，随机指标%K，CCI和ADX值。每30分钟更新一次。">
+<title>Borsapy 信号 - 2026-09-21</title>
+<meta name="description" content="TradingView 指标的 BIST 30 振荡器摘要：买入/卖出/中性投票，RSI、MACD、随机 %K、CCI 和 ADX 值。每30分钟更新一次。">
 <link rel="canonical" href="https://borsa-raporlari.pages.dev/zh/borsapy-analiz">
 <link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/borsapy-analiz">
 <link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/borsapy-analiz">
@@ -15,17 +15,17 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="BIST 30 Günlük Raporlar">
-<meta property="og:title" content="股市信号 - 2026-09-21">
-<meta property="og:description" content="来自TradingView指标的BIST 30振荡器摘要：买入/卖出/中性投票，RSI，MACD，随机指标%K，CCI和ADX值。每30分钟更新一次。">
+<meta property="og:title" content="Borsapy 信号 - 2026-09-21">
+<meta property="og:description" content="TradingView 指标的 BIST 30 振荡器摘要：买入/卖出/中性投票，RSI、MACD、随机 %K、CCI 和 ADX 值。每30分钟更新一次。">
 <meta property="og:url" content="https://borsa-raporlari.pages.dev/zh/borsapy-analiz">
 <meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="BIST 30每日报告封面图片">
+<meta property="og:image:alt" content="BIST 30 日报封面图片">
 <meta property="og:locale" content="zh_CN">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="股市信号 - 2026-09-21">
-<meta name="twitter:description" content="来自TradingView指标的BIST 30振荡器摘要：买入/卖出/中性投票，RSI，MACD，随机指标%K，CCI和ADX值。每30分钟更新一次。">
+<meta name="twitter:title" content="Borsapy 信号 - 2026-09-21">
+<meta name="twitter:description" content="TradingView 指标的 BIST 30 振荡器摘要：买入/卖出/中性投票，RSI、MACD、随机 %K、CCI 和 ADX 值。每30分钟更新一次。">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
 <meta name="yandex-verification" content="2c8df12d0b97a734">
@@ -103,7 +103,7 @@
     <div class="interactive-box">
 <div class="arama-kutusu">
     <div style="display: flex; gap: 8px;">
-        <input type="text" id="site-arama-giris" placeholder="搜索股票、主题或日期..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <input type="text" id="site-arama-giris" placeholder="搜索股票、主题或日期…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
         <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">搜索</button>
     </div>
     <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
@@ -187,11 +187,11 @@
 </script>
 
 <div class="radyo-mini">
-  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="播放/暂停">▶</button>
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="播放 / 暂停">▶</button>
   <audio id="radyo-ses" preload="none"></audio>
   <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="音量" title="声音">
   <span class="radyo-linkler"><a href="radyo/index.html">📻 全部节目与播客页面</a> <span class="ayrac">•</span> <a href="radyo/podcast.xml">RSS</a></span>
-  <span class="radyo-uyari">仅供收听•虚构的人工智能服务器•仅供参考，不构成投资建议。</span>
+  <span class="radyo-uyari">仅供收听 • 虚构AI主播 • 仅供参考，不构成投资建议。</span>
 </div>
 <script>
 (function(){
@@ -222,21 +222,20 @@
     <!-- Asıl Sayfa İçeriği -->
     
 <div class="hero">
-<h1>股市信号</h1>
-<p>TradingView技术分析指标的BIST 30摘要（通过borsapy库提取）：
-基于总振荡器+移动平均投票的综合建议，RSI，MACD，随机指标%K，CCI和ADX。
-市场时间内与技术扫描一起每30分钟更新一次。
-<strong>点击表格中的股票查看蜡烛图。</strong> 信号自动生成；不构成投资建议。</p>
-<p style="color:var(--muted); font-size:13px; margin-top:8px">注意：本页面的投票基于TradingView的振荡器+移动平均摘要；
-与"技术扫描"页面中的EMA/波浪趋势/回归通道方法无关—因此同一股票
-在两个页面可能显示不同信号。RSI ≥70是"超买"区域；该区域内的"强买入"
-标签反映了动量投票的多数，但不消除超买风险。</p>
-<button type="button" class="ses-btn" onclick="sesliOkuToggle(this,'borsapy-ses-metin')" aria-label="语音读取信号摘要">🔊 收听语音摘要</button>
-<div id="borsapy-ses-metin" hidden>根据TradingView振荡器投票评估了30只股票。发出强买入信号的7只股票：TUPRS，BIMAS，KCHOL，TOASO，TAVHL，AKBNK，VAKBN。中性信号的股票：PGSUS，PETKM，MGROS。卖出信号的股票：TTKOM，TCELL，ASELS，SAHOL，THYAO，EREGL，ASTOR，ENKAI，FROTO，SISE，EKGYO，GUBRF，SASA，DSTKF。</div>
+<h1>Borsapy 信号</h1>
+<p>TradingView 技术分析指标的 BIST 30 摘要（通过 borsapy 库获取）：
+根据振荡器 + 移动平均线总投票得出的总体建议，RSI、MACD、随机 %K、CCI 和 ADX。
+交易时段内与技术扫描同步每30分钟更新一次。<strong>点击表格中的股票以查看K线图。</strong> 信号由自动扫描生成；不构成投资建议。</p>
+<p style="color:var(--muted); font-size:13px; margin-top:8px">注意：本页面的投票为 TradingView 的振荡器 + 移动平均线摘要；
+与"技术扫描"页面中的 EMA/Wave Trend/回归通道方法相互独立 — 因此同一
+股票在两个页面可能显示不同信号。RSI ≥70 为"超买"区域；该区域内的强力买入
+标签反映动量投票的多数意见，并不消除超买风险。</p>
+<button type="button" class="ses-btn" onclick="sesliOkuToggle(this,'borsapy-ses-metin')" aria-label="语音朗读信号摘要">🔊 收听语音摘要</button>
+<div id="borsapy-ses-metin" hidden>根据 TradingView 振荡器投票评估了30只股票。给出强力买入信号的7只股票：TUPRS, BIMAS, KCHOL, TOASO, TAVHL, AKBNK, VAKBN。中性信号股票：PGSUS, PETKM, MGROS。卖出信号股票：TTKOM, TCELL, ASELS, SAHOL, THYAO, EREGL, ASTOR, ENKAI, FROTO, SISE, EKGYO, GUBRF, SASA, DSTKF。</div>
 </div>
 
 <div class="card" style="margin-bottom:20px">
-<h3 style="margin:4px 0 10px">RSI (14) — 超买/超卖图</h3>
+<h3 style="margin:4px 0 10px">RSI (14) — 超买/超卖地图</h3>
 <div style="position:relative; height:540px">
 <canvas id="borsapy-rsi-276366"></canvas>
 </div>
@@ -299,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="card" style="padding:8px 24px 16px">
 <div class="tbl-wrap">
 <table>
-<tr><th>股票</th><th>建议</th><th>买入/卖出/中性</th><th>RSI</th><th>MACD</th><th>Stoch %K</th><th>CCI20</th><th>ADX</th></tr>
+<tr><th>股票</th><th>Öneri</th><th>买入/卖出/中性</th><th>RSI</th><th>MACD</th><th>Stoch %K</th><th>CCI20</th><th>ADX</th></tr>
 <tr style='cursor:pointer' onclick="tvAc('TUPRS')"><td><strong>TUPRS</strong></td><td class='pos'>强力买入</td><td><span class='pos'>17</span> / <span class='neg'>2</span> / 9</td><td>64.64</td><td>16.86</td><td>79.86</td><td>79.94</td><td>34.54</td></tr><tr style='cursor:pointer' onclick="tvAc('BIMAS')"><td><strong>BIMAS</strong></td><td class='pos'>强力买入</td><td><span class='pos'>18</span> / <span class='neg'>1</span> / 9</td><td>61.4</td><td>6.69</td><td>70.7</td><td>91.61</td><td>25.22</td></tr><tr style='cursor:pointer' onclick="tvAc('KCHOL')"><td><strong>KCHOL</strong></td><td class='pos'>强力买入</td><td><span class='pos'>17</span> / <span class='neg'>2</span> / 9</td><td>56.34</td><td>2.83</td><td>56.46</td><td>11.56</td><td>29.16</td></tr><tr style='cursor:pointer' onclick="tvAc('TOASO')"><td><strong>TOASO</strong></td><td class='pos'>强力买入</td><td><span class='pos'>17</span> / <span class='neg'>2</span> / 9</td><td>55.9</td><td>2.93</td><td>70.57</td><td>50.91</td><td>18.72</td></tr><tr style='cursor:pointer' onclick="tvAc('TAVHL')"><td><strong>TAVHL</strong></td><td class='pos'>强力买入</td><td><span class='pos'>16</span> / <span class='neg'>2</span> / 10</td><td>55.58</td><td>-0.92</td><td>87.18</td><td>31.39</td><td>12.89</td></tr><tr style='cursor:pointer' onclick="tvAc('AKBNK')"><td><strong>AKBNK</strong></td><td class='pos'>强力买入</td><td><span class='pos'>17</span> / <span class='neg'>3</span> / 8</td><td>53.68</td><td>0.23</td><td>64.94</td><td>-15.67</td><td>19.08</td></tr><tr style='cursor:pointer' onclick="tvAc('VAKBN')"><td><strong>VAKBN</strong></td><td class='pos'>强力买入</td><td><span class='pos'>18</span> / <span class='neg'>2</span> / 8</td><td>53.55</td><td>0.58</td><td>39.4</td><td>8.85</td><td>23.69</td></tr><tr style='cursor:pointer' onclick="tvAc('ISCTR')"><td><strong>ISCTR</strong></td><td class='pos'>AL</td><td><span class='pos'>15</span> / <span class='neg'>4</span> / 9</td><td>54.56</td><td>0.15</td><td>50.25</td><td>33.23</td><td>24.76</td></tr><tr style='cursor:pointer' onclick="tvAc('YKBNK')"><td><strong>YKBNK</strong></td><td class='pos'>AL</td><td><span class='pos'>16</span> / <span class='neg'>4</span> / 8</td><td>53.59</td><td>0.02</td><td>72.47</td><td>4.96</td><td>18.77</td></tr><tr style='cursor:pointer' onclick="tvAc('KRDMD')"><td><strong>KRDMD</strong></td><td class='pos'>AL</td><td><span class='pos'>16</span> / <span class='neg'>4</span> / 8</td><td>53.55</td><td>0.27</td><td>55.43</td><td>-21.2</td><td>20.3</td></tr><tr style='cursor:pointer' onclick="tvAc('GARAN')"><td><strong>GARAN</strong></td><td class='pos'>AL</td><td><span class='pos'>15</span> / <span class='neg'>4</span> / 9</td><td>52.76</td><td>-0.02</td><td>70.17</td><td>-20.53</td><td>18.84</td></tr><tr style='cursor:pointer' onclick="tvAc('TRALT')"><td><strong>TRALT</strong></td><td class='pos'>AL</td><td><span class='pos'>13</span> / <span class='neg'>6</span> / 9</td><td>50.29</td><td>-0.08</td><td>48.6</td><td>-52.42</td><td>15.84</td></tr><tr style='cursor:pointer' onclick="tvAc('AEFES')"><td><strong>AEFES</strong></td><td class='pos'>AL</td><td><span class='pos'>13</span> / <span class='neg'>7</span> / 8</td><td>49.93</td><td>-0.18</td><td>59.1</td><td>14.39</td><td>23.33</td></tr><tr style='cursor:pointer' onclick="tvAc('PGSUS')"><td><strong>PGSUS</strong></td><td class=''>NÖTR</td><td><span class='pos'>10</span> / <span class='neg'>10</span> / 8</td><td>48.95</td><td>-1.17</td><td>47.01</td><td>-48.11</td><td>16.29</td></tr><tr style='cursor:pointer' onclick="tvAc('PETKM')"><td><strong>PETKM</strong></td><td class=''>NÖTR</td><td><span class='pos'>10</span> / <span class='neg'>10</span> / 8</td><td>48.69</td><td>0.49</td><td>25.47</td><td>-20.58</td><td>21.9</td></tr><tr style='cursor:pointer' onclick="tvAc('MGROS')"><td><strong>MGROS</strong></td><td class=''>NÖTR</td><td><span class='pos'>9</span> / <span class='neg'>10</span> / 9</td><td>46.71</td><td>-15.72</td><td>65.28</td><td>-7.89</td><td>37.17</td></tr><tr style='cursor:pointer' onclick="tvAc('TTKOM')"><td><strong>TTKOM</strong></td><td class='neg'>SAT</td><td><span class='pos'>4</span> / <span class='neg'>15</span> / 9</td><td>48.65</td><td>-0.23</td><td>30.66</td><td>-17.76</td><td>18.09</td></tr><tr style='cursor:pointer' onclick="tvAc('TCELL')"><td><strong>TCELL</strong></td><td class='neg'>SAT</td><td><span class='pos'>8</span> / <span class='neg'>12</span> / 8</td><td>48.12</td><td>-1.14</td><td>49.43</td><td>-37.11</td><td>23.98</td></tr><tr style='cursor:pointer' onclick="tvAc('ASELS')"><td><strong>ASELS</strong></td><td class='neg'>SAT</td><td><span class='pos'>8</span> / <span class='neg'>11</span> / 9</td><td>48.0</td><td>-1.68</td><td>49.3</td><td>-88.54</td><td>19.7</td></tr><tr style='cursor:pointer' onclick="tvAc('SAHOL')"><td><strong>SAHOL</strong></td><td class='neg'>SAT</td><td><span class='pos'>6</span> / <span class='neg'>15</span> / 7</td><td>47.93</td><td>-0.36</td><td>46.17</td><td>-115.78</td><td>23.86</td></tr><tr style='cursor:pointer' onclick="tvAc('THYAO')"><td><strong>THYAO</strong></td><td class='neg'>SAT</td><td><span class='pos'>6</span> / <span class='neg'>14</span> / 8</td><td>47.02</td><td>-5.29</td><td>64.26</td><td>-64.48</td><td>23.16</td></tr><tr style='cursor:pointer' onclick="tvAc('EREGL')"><td><strong>EREGL</strong></td><td class='neg'>SAT</td><td><span class='pos'>5</span> / <span class='neg'>14</span> / 9</td><td>46.46</td><td>-0.61</td><td>37.27</td><td>-87.1</td><td>18.5</td></tr><tr style='cursor:pointer' onclick="tvAc('ASTOR')"><td><strong>ASTOR</strong></td><td class='neg'>SAT</td><td><span class='pos'>8</span> / <span class='neg'>14</span> / 6</td><td>37.7</td><td>-16.64</td><td>17.08</td><td>-117.2</td><td>28.6</td></tr><tr style='cursor:pointer' onclick="tvAc('ENKAI')"><td><strong>ENKAI</strong></td><td class='neg'>强力卖出</td><td><span class='pos'>3</span> / <span class='neg'>17</span> / 8</td><td>48.29</td><td>-0.27</td><td>52.82</td><td>-78.12</td><td>24.11</td></tr><tr style='cursor:pointer' onclick="tvAc('FROTO')"><td><strong>FROTO</strong></td><td class='neg'>强力卖出</td><td><span class='pos'>3</span> / <span class='neg'>17</span> / 8</td><td>47.11</td><td>-0.52</td><td>39.45</td><td>-62.79</td><td>26.56</td></tr><tr style='cursor:pointer' onclick="tvAc('SISE')"><td><strong>SISE</strong></td><td class='neg'>强力卖出</td><td><span class='pos'>2</span> / <span class='neg'>18</span> / 8</td><td>46.94</td><td>-0.12</td><td>23.12</td><td>-44.7</td><td>23.33</td></tr><tr style='cursor:pointer' onclick="tvAc('EKGYO')"><td><strong>EKGYO</strong></td><td class='neg'>强力卖出</td><td><span class='pos'>3</span> / <span class='neg'>18</span> / 7</td><td>46.56</td><td>-0.05</td><td>28.54</td><td>-111.7</td><td>22.83</td></tr><tr style='cursor:pointer' onclick="tvAc('GUBRF')"><td><strong>GUBRF</strong></td><td class='neg'>强力卖出</td><td><span class='pos'>3</span> / <span class='neg'>18</span> / 7</td><td>43.91</td><td>-3.3</td><td>40.78</td><td>-127.51</td><td>29.85</td></tr><tr style='cursor:pointer' onclick="tvAc('SASA')"><td><strong>SASA</strong></td><td class='neg'>强力卖出</td><td><span class='pos'>1</span> / <span class='neg'>18</span> / 9</td><td>41.48</td><td>0.02</td><td>15.66</td><td>-63.33</td><td>20.44</td></tr><tr style='cursor:pointer' onclick="tvAc('DSTKF')"><td><strong>DSTKF</strong></td><td class='neg'>强力卖出</td><td><span class='pos'>1</span> / <span class='neg'>18</span> / 9</td><td>35.03</td><td>-5.56</td><td>18.07</td><td>-177.9</td><td>18.92</td></tr>
 </table>
 </div>
