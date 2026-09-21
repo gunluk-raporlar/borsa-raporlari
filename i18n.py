@@ -298,9 +298,11 @@ class Cevirmen:
         # 1) Z.AI (GLM) — kullanicinin kayitli anahtari; bot.py ile ayni uc ve modeller
         zai_anahtar = os.environ.get("ZAI_API_KEY")
         if zai_anahtar:
-            # Not: glm-4.5-flash testte 1.2 sn, glm-4.7-flash 20.8 sn yanit verdi.
-            # Ceviride hiz onemli oldugu icin varsayilan hizli model; 4.7 yedekte.
-            zai_modeller = [os.environ.get("ZAI_MODEL", "glm-4.5-flash"), "glm-4.7-flash"]
+            # Not: glm-4.5-flash testte ~1.1 sn; glm-4.7-flash dalgali (1.4-25 sn).
+            # ZAI_MODELS (virgullu) ile birden fazla model denenebilir; test modu bunlari sirayla olcer.
+            ham = os.environ.get("ZAI_MODELS") or os.environ.get("ZAI_MODEL") or "glm-4.5-flash"
+            zai_modeller = [m.strip() for m in ham.split(",") if m.strip()] or ["glm-4.5-flash"]
+            zai_modeller.append("glm-4.7-flash")
             zai_modeller = list(dict.fromkeys(zai_modeller))   # tekrarlari at
             uclar.append(("https://api.z.ai/api/paas/v4/chat/completions", zai_anahtar, zai_modeller))
         # 2) AMD Radeon Developer Cloud (bot.py'nin ana saglayicisi)
@@ -421,7 +423,7 @@ class Cevirmen:
         return cikti
 
     @staticmethod
-    def _llm_istek(url, anahtar, model, sistem, dilim, timeout=30):
+    def _llm_istek(url, anahtar, model, sistem, dilim, timeout=30, usage_kutusu=None):
         istek_govdesi = {
             "model": model,
             "messages": [
@@ -430,13 +432,10 @@ class Cevirmen:
             ],
             "temperature": 0.2,
         }
-        # Z.AI: ceviride "dusunme" modunu kapat (hiz + maliyet). bot.py de aynisini yapiyor.
-        # glm-5.3 ailesi dusunmeyi kapatmiyor (kod 1210): ona hafif seviye verilir.
-        if "z.ai" in url:
-            if model.startswith("glm-5.3"):
-                istek_govdesi["thinking"] = {"type": "low"}
-            else:
-                istek_govdesi["thinking"] = {"type": "disabled"}
+        # Z.AI: glm-5.3 ailesi dusunmeyi kapatmiyor (kod 1210) -> alani hic gondermeyelim.
+        # Digerlerinde ceviri icin dusunme kapali (hiz + token tasarrufu).
+        if "z.ai" in url and not model.startswith("glm-5.3"):
+            istek_govdesi["thinking"] = {"type": "disabled"}
         govde = json.dumps(istek_govdesi).encode("utf-8")
         istek = urllib.request.Request(url, data=govde, headers={
             "Content-Type": "application/json",
@@ -444,6 +443,8 @@ class Cevirmen:
         })
         with urllib.request.urlopen(istek, timeout=timeout) as yanit:
             veri = json.loads(yanit.read().decode("utf-8"))
+        if usage_kutusu is not None and isinstance(veri.get("usage"), dict):
+            usage_kutusu.append(veri["usage"])
         icerik = veri["choices"][0]["message"]["content"].strip()
         icerik = re.sub(r"^```(?:json)?\s*", "", icerik)
         icerik = re.sub(r"\s*```$", "", icerik)
@@ -932,11 +933,17 @@ def saglayici_test() -> int:
         print(f"--- {ev} ({url.split('/')[2]}) ---")
         for model in modeller:
             baslangic = time.time()
+            kutu = []
             try:
-                sonuc = Cevirmen._llm_istek(url, anahtar, model, sistem, dilim, 30)
+                sonuc = Cevirmen._llm_istek(url, anahtar, model, sistem, dilim, 30, kutu)
                 sure = (time.time() - baslangic) * 1000
                 ok = isinstance(sonuc, list) and len(sonuc) == 1
-                print(f"   {model}: OK ({sure:.0f} ms) -> {str(sonuc[0])[:60] if ok else sonuc}")
+                tok = ""
+                if kutu:
+                    u = kutu[-1]
+                    tok = (f" | token: giris={u.get('prompt_tokens')} cikis={u.get('completion_tokens')} "
+                           f"toplam={u.get('total_tokens')}")
+                print(f"   {model}: OK ({sure:.0f} ms){tok} -> {str(sonuc[0])[:60] if ok else sonuc}")
             except urllib.error.HTTPError as h:
                 sure = (time.time() - baslangic) * 1000
                 try:
