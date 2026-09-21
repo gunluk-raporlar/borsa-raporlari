@@ -927,6 +927,7 @@ def saglayici_test() -> int:
     if deepl_anahtar:
         # Anahtarin hangi plana ait oldugunu teshis et: ucretsiz anahtarlar ':fx' ile biter.
         k = deepl_anahtar.strip()
+        taban_deepl = os.environ.get("DEEPL_BASE_URL", "https://api-free.deepl.com").rstrip("/")
         print(f"--- DeepL anahtar teshisi: uzunluk={len(k)} son3='...{k[-3:]}' fx_eki={k.endswith(':fx')} ---")
         for uc in ("https://api-free.deepl.com", "https://api.deepl.com"):
             try:
@@ -942,6 +943,20 @@ def saglayici_test() -> int:
                 print(f"    {uc}/v2/usage: HTTP {h.code} :: {govde}")
             except Exception as h:
                 print(f"    {uc}/v2/usage: {h}")
+        # DeepL'in destekledigi dil kodlarini sor: hedef kodlarimiz (EN-GB/DE/RU/ZH) gecerli mi?
+        for tip in ("target", "source"):
+            try:
+                istek = urllib.request.Request(f"{taban_deepl}/v2/languages?type={tip}",
+                                               headers={"Authorization": f"DeepL-Auth-Key {k}"})
+                with urllib.request.urlopen(istek, timeout=30) as y:
+                    dil_listesi = json.loads(y.read().decode("utf-8"))
+                kodlar = [d.get("language") for d in dil_listesi]
+                print(f"    {tip} diller ({len(kodlar)}): {kodlar[:40]}")
+                if tip == "target":
+                    for kod in ("EN-GB", "DE", "RU", "ZH", "ZH-HANS"):
+                        print(f"        {kod}: {'VAR' if kod in kodlar else 'YOK'}")
+            except Exception as h:
+                print(f"    {tip} diller: alinamadi ({h})")
         bas = time.time()
         try:
             cev = Cevirmen._deepl(["BIST 30 gunluk rapor: destek ve direnc"], "en")
