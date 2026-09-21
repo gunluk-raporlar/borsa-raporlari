@@ -1,0 +1,49 @@
+{
+ "tarih": "2026-09-21",
+ "etiket": "bot",
+ "cagrilar": [
+  {
+   "islev": "zai_call",
+   "model": "glm",
+   "sure_sn": 633.733,
+   "ok": true,
+   "saat": "2026-09-21T04:20:37+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 3.988,
+   "ok": true,
+   "saat": "2026-09-21T04:20:41+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 629.319,
+   "ok": true,
+   "saat": "2026-09-21T04:37:30+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 235.314,
+   "ok": true,
+   "saat": "2026-09-21T04:41:25+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 608.06,
+   "ok": true,
+   "saat": "2026-09-21T04:51:33+03:00"
+  }
+ ],
+ "ozet": {
+  "adet": 5,
+  "ortalama_sn": 422.083,
+  "p95_sn": 629.319,
+  "maks_sn": 633.733,
+  "basari_orani": 1.0,
+  "son_guncelleme": "2026-09-21T04:51:34+03:00"
+ }
+}
