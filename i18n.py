@@ -313,11 +313,16 @@ class Cevirmen:
             alt_url = os.environ.get("ALT_BASE_URL", "https://api.groq.com/openai/v1").rstrip("/") + "/chat/completions"
             alt_modeller = [m.strip() for m in os.environ.get("ALT_MODELS", "llama-3.3-70b-versatile").split(",") if m.strip()]
             uclar.append((alt_url, alt_anahtar, alt_modeller))
-        # 3) OpenRouter
+        # 3) OpenRouter — DIKKAT: ucretsiz anahtar yalnizca ":free" modelleri kullanabilir.
+        #    (openai/gpt-4o-mini gibi ucretli model secilirse 402 Payment Required alinir.)
         or_anahtar = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OR_API_KEY")
         if or_anahtar:
             or_url = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/") + "/chat/completions"
-            uclar.append((or_url, or_anahtar, [os.environ.get("OR_MODEL", "openai/gpt-4o-mini")]))
+            varsayilan_or = "meta-llama/llama-3.3-70b-instruct:free,deepseek/deepseek-chat-v3.1:free"
+            or_modeller = [m.strip() for m in
+                           os.environ.get("OR_MODELS", os.environ.get("OR_MODEL", varsayilan_or)).split(",")
+                           if m.strip()]
+            uclar.append((or_url, or_anahtar, or_modeller))
         if not uclar:
             raise SystemExit(
                 "[i18n] HATA: --provider llm icin AMD_API_KEY / ALT_API_KEY / OPENROUTER_API_KEY'den en az biri gerekli."
@@ -346,7 +351,12 @@ class Cevirmen:
                             break
                     except urllib.error.HTTPError as hata:
                         kod = hata.code
-                        print(f"[i18n] LLM hatasi ({model}): HTTP {kod}", file=sys.stderr)
+                        # hata govdesini de yaz: 403/402'nin gercek sebebi (anahtar mi, model mi, bolge mi) gorunsun
+                        try:
+                            govde_hata = hata.read().decode("utf-8", errors="replace")[:200]
+                        except Exception:
+                            govde_hata = ""
+                        print(f"[i18n] LLM hatasi ({model}): HTTP {kod} :: {govde_hata}", file=sys.stderr)
                         if kod in (401, 402, 403, 404):      # kalici: anahtar/kota/yetki
                             self.devre_disi.add(url)
                             print(f"[i18n] saglayici devre disi: {url} (HTTP {kod})", file=sys.stderr)
