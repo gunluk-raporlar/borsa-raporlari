@@ -374,6 +374,8 @@ class Cevirmen:
                 print(f"[i18n] sure butcesi doldu ({self.sure_siniri/60:.0f} dk); kalan {len(parcalar)-bas} parca sonraki kosuya birakildi", file=sys.stderr)
                 break
             dilim = parcalar[bas:bas + PENCERE]
+            if bas % (PENCERE * 10) == 0:
+                print(f"[i18n] {dil}: {bas}/{len(parcalar)} dize (atlanan: {self.atlanan_parca})", flush=True)
             son = None
             son_uc = None   # hangi saglayici cevirdi (gecikme ona gore)
             for url, anahtar, modeller in uclar:
@@ -1209,6 +1211,7 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
     ozet = {"sayfa": 0, "dil": {}, "aktarilan_metin": 0, "onarilan_baglanti": 0, "medya_baglantisi": 0}
     for dil in diller:
         n = 0
+        print(f"[i18n] --- {dil}: {len(hedef_liste)} sayfa cevirilecek ---", flush=True)
         for rel in hedef_liste:
             kaynak = kok / rel
             ham = kaynak.read_text(encoding="utf-8", errors="replace")
@@ -1225,6 +1228,8 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
             hedef.parent.mkdir(parents=True, exist_ok=True)
             hedef.write_text(yeni, encoding="utf-8")
             n += 1
+            if n % 20 == 0:
+                print(f"[i18n] {dil}: {n}/{len(hedef_liste)} sayfa yazildi", flush=True)
         ozet["dil"][dil] = n
         ozet["sayfa"] += n
     return ozet
