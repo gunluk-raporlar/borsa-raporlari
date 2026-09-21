@@ -258,7 +258,8 @@ class Cevirmen:
                 self.sozlukten += 1
                 continue
             k = self._anahtar(dil, saf)
-            if k in self.onbellek and self.onbellek[k]:
+            # onbellekteki deger kaynakla AYNI ise gecersiz say (zehirli kayitlari etkisiz kilar)
+            if k in self.onbellek and self.onbellek[k] and self.onbellek[k].strip() != saf.strip():
                 sonuc[i] = self.onbellek[k]
                 self.onbellekten += 1
                 continue
