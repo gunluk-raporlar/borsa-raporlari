@@ -3002,11 +3002,20 @@ function arsivAc(btn) {{
 <p style="margin:0 0 6px; color:var(--muted); font-size:12.5px">{PORTFOY_NOTU}</p>
 </div>"""
 
+    # Dil secici: EN/DE/ZH surumlerin giris sayfalarina kisa yol
+    dil_bolumu = """
+<div class="card" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:12px 20px; margin-bottom:24px; font-size:14.5px">
+<span aria-hidden="true">🌐</span><strong style="font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px">Diller</strong>
+<a href="en/index.html" hreflang="en" style="text-decoration:none">🇬🇧 English</a>
+<a href="de/index.html" hreflang="de" style="text-decoration:none">🇩🇪 Deutsch</a>
+<a href="zh/index.html" hreflang="zh" style="text-decoration:none">🇨🇳 中文</a>
+</div>"""
     icerik = f"""
 <div class="hero">
 <h1>BIST 30 Günlük Piyasa Raporları</h1>
 <p>Hafta içi her sabah 08:00'de otomatik üretilen, yapay zeka destekli BIST 30 analizleri ve sanal portföy takibi. (Hafta sonu yayın yok — piyasa kapalı.)</p>
 </div>
+{dil_bolumu}
 {arsiv_bolumu}
 {derin_bolumu}
 {haftasonu_bolumu}
