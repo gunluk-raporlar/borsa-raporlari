@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sayfa bulunamadı — BIST 30 Günlük Raporlar</title>
+<meta name="robots" content="noindex, follow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/style.css">
+<style>
+  .hata-kutu { max-width: 720px; margin: 48px auto; padding: 0 20px; }
+  .hata-kod { font-size: 64px; font-weight: 700; line-height: 1; color: var(--accent); margin: 0 0 8px; }
+  .hata-baslik { font-size: 24px; margin: 0 0 12px; }
+  .hata-metin { color: var(--muted); margin: 0 0 26px; line-height: 1.6; }
+  .hata-linkler { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 26px; }
+  .hata-linkler a { display: block; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px;
+                    text-decoration: none; color: var(--ink); background: var(--card); }
+  .hata-linkler a:hover { border-color: var(--accent); color: var(--accent); }
+  .dil-linkler { display: flex; gap: 10px; align-items: center; font-size: 12.5px; flex-wrap: wrap; }
+  .dil-linkler a { color: var(--muted); text-decoration: none; border-bottom: 1px solid transparent; }
+  .dil-linkler a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  .dil-linkler a.aktif { color: var(--accent); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="wrap hata-kutu">
+  <p class="hata-kod">404</p>
+  <h1 class="hata-baslik">Aradığınız sayfa bulunamadı</h1>
+  <p class="hata-metin">
+    Adres yanlış yazılmış ya da sayfa taşınmış olabilir. Aşağıdaki bölümlerden devam edebilirsiniz.
+    Günlük raporlar arşivinde tarih bazlı arama yapmak için <a href="/index.html">ana sayfadaki</a>
+    rapor arşivini kullanın.
+  </p>
+
+  <div class="hata-linkler">
+    <a href="/index.html">Raporlar (ana sayfa)</a>
+    <a href="/teknik-analiz.html">Teknik Tarama</a>
+    <a href="/hisse/index.html">Hisseler</a>
+    <a href="/portfolio.html">Deneme Portföyü</a>
+    <a href="/haberler.html">Haberler</a>
+    <a href="/derin-analiz.html">Derin Analiz</a>
+    <a href="/sozluk.html">Sözlük</a>
+    <a href="/takvim.html">Takvim</a>
+  </div>
+
+  <nav class="dil-linkler" aria-label="Sayfa dili seçin">
+    <span aria-hidden="true">🌐</span>
+    <a href="/" hreflang="tr" lang="tr" data-dil="tr" class="aktif" aria-current="true">Türkçe</a>
+    <a href="/en/" hreflang="en" lang="en" data-dil="en">English</a>
+    <a href="/de/" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+    <a href="/ru/" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+    <a href="/zh/" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+  </nav>
+</div>
+
+</body>
+</html>

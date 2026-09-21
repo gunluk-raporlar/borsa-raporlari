@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  issues: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -56,6 +57,18 @@ jobs:
           # Insan veya diger isler araya commit atarsa (fetch first) cakismasin:
           git pull --rebase -X theirs origin main
           git push origin main
+      - name: Hata bildirimi (is akisi basarisiz olursa)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BASLIK="Gunluk bot basarisiz: $(date -u +%Y-%m-%d)"
+          VAR=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "$BASLIK" --json title -q '.[].title' 2>/dev/null | grep -cF "$BASLIK" || true)
+          if [ "$VAR" = "0" ]; then
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$BASLIK" \
+              --body "Gunluk BIST 30 uretimi basarisiz oldu. Kosu kaydi: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" || true
+          fi
+
       # Not: Netlify yayini kaldirildi (kota doldu); site Cloudflare Pages uzerinden
       # yayinlanmaya devam eder. Yeni Next.js arayuzu ayri olarak 'Web (Next.js) Deploy'
       # workflow'u ile borsa-raporlari-web.pages.dev adresine gider.

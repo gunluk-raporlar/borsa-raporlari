@@ -2098,93 +2098,15 @@ def _site_arama_kutusu(kok=""):
 
 
 def _ai_kutu():
-    """AI asistan soru kutusu (interactive-box'in sag sutunu). Puter.js
-    kullanildigi icin anahtar gerekmez; kutu her zaman aktiftir."""
-    return """
-        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <div style="display: flex; gap: 8px;">
-                <input type="text" id="ai-input" placeholder="BIST AI asistanına sorun..." style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') aiSor();">
-                <button onclick="aiSor()" id="ai-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Sor</button>
-            </div>
-            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">
-                <span class="ai-chip" onclick="aiChip(this)">Piyasa özeti ne?</span>
-                <span class="ai-chip" onclick="aiChip(this)">RSI ve MACD nedir?</span>
-                <span class="ai-chip" onclick="aiChip(this)">Destek ve direnç nedir?</span>
-            </div>
-        </div>"""
+    """Eski Puter tabanli AI soru kutusu KALDIRILDI (2026-09-21).
+    Ziyaretcinin Puter kotasini/oturumunu gerektirdigi icin yayindan cikarildi.
+    Ileride sunucu tarafi bir ucnokta (functions/api/...) ile geri gelebilir."""
+    return ""
 
 
 def _ai_panel():
-    """AI asistan yanit paneli + Puter.js uzerinden GLM cagrisi.
-
-    Puter.js "kullanici-oder" modeliyle calisir: gelistirici anahtar eklemez
-    ve odeme yapmaz; kullanici kendi Puter ucretsiz kotasini kullanir
-    (kota dolarsa Puter oturum acma penceresi acar)."""
-    return """
-<div id="ai-panel" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; font-size: 14px; line-height: 1.6;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-        <strong style="color: #0f766e;">🤖 BIST AI Asistan</strong>
-        <a href="javascript:void(0)" onclick="document.getElementById('ai-panel').style.display='none'" style="color: #64748b; text-decoration: none; font-size: 18px; line-height: 1;">&times;</a>
-    </div>
-    <div id="ai-answer"></div>
-    <div style="margin-top: 8px; color: #64748b; font-size: 12px;">Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir. Model: GLM-Flash (Z.ai, Puter.js üzerinden — ilk kullanımda Puter oturumu isteyebilir).</div>
-</div>
-<style>
-.ai-chip { background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; border-radius: 999px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
-.ai-chip:hover { border-color: #0f766e; color: #0f766e; }
-</style>
-<script defer src="https://js.puter.com/v2/"></script>
-<script>
-function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
-function aiZamanAsimi(promise, ms) {
-    return Promise.race([
-        promise,
-        new Promise(function(_, reject) { setTimeout(function() { reject(new Error('yanıt zaman aşımı')); }, ms); })
-    ]);
-}
-async function aiSor() {
-    var giris = document.getElementById('ai-input');
-    var soru = (giris.value || '').trim();
-    if (!soru) return;
-    var btn = document.getElementById('ai-btn');
-    var cevap = document.getElementById('ai-answer');
-    var panel = document.getElementById('ai-panel');
-    panel.style.display = 'block';
-    cevap.innerHTML = '<em>Yanıt hazırlanıyor... (ilk kullanımda birkaç saniye sürebilir)</em>';
-    btn.disabled = true; giris.disabled = true;
-    var sistem = 'Sen "BIST 30 Günlük Raporlar" sitesinin Türkçe yapay zeka asistanısın. Görevin: Borsa İstanbul, makroekonomi ve teknik analiz (EMA, RSI, MACD, Wave Trend, destek/direnç vb.) konularında eğitici, kısa ve anlaşılır yanıtlar vermek. Canlı piyasa verine erişimin yok; güncel veriler için kullanıcıyı sitedeki Teknik Tarama, Borsapy Sinyal ve Günlük Rapor sayfalarına yönlendir. Kesin alım-satım tavsiyesi verme; bilgilendir. Yanıtlarını madde işaretleriyle yaz, en fazla 200 kelime tut.';
-    var modeller = ['z-ai/glm-4.7-flash', 'infron:z-ai/glm-4.7-flash', 'z-ai/glm-4.5-flash', 'infron:z-ai/glm-4.5-flash'];
-    var sonHata = '';
-    var zamanasimiSayisi = 0;
-    for (var i = 0; i < modeller.length; i++) {
-        try {
-            var r = await aiZamanAsimi(puter.ai.chat(
-                [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
-                { model: modeller[i] }
-            ), 20000);
-            var metin = (r && r.message && r.message.content) || (typeof r === 'string' ? r : '') || '';
-            if (!metin) { sonHata = 'Boş yanıt'; continue; }
-            metin = String(metin).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            cevap.innerHTML = metin.replace(/\\n/g, '<br>');
-            giris.disabled = false; btn.disabled = false; giris.value = '';
-            return;
-        } catch (e) {
-            sonHata = (e && e.message) ? e.message : 'Bilinmeyen hata';
-            if (sonHata.indexOf('zaman aşımı') !== -1) {
-                zamanasimiSayisi++;
-                // Art arda 2 kez zaman aşımı = Puter erişilemiyor; diger
-                // modelleri denemek bekletir, hata mesajina gec.
-                if (zamanasimiSayisi >= 2) break;
-            }
-            if (sonHata.indexOf('auth') !== -1 || sonHata.indexOf('permission') !== -1) break;
-        }
-    }
-    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + ').</span> ' +
-        '<a href="javascript:void(0)" onclick="aiSor()" style="text-decoration:underline">Tekrar dene</a>' +
-        '<div style="margin-top:6px;color:#475569;font-size:12.5px">Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin (asistan, ücretsiz Puter kotanızı kullanır). Sorunuz tarayıcı sekmesinde korunuyor.</div>';
-    giris.disabled = false; btn.disabled = false;
-}
-</script>"""
+    """AI yanit paneli + Puter cagrisi KALDIRILDI (2026-09-21)."""
+    return ""
 
 
 def _piyasa_etiketi():
@@ -2428,7 +2350,6 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 {_dogrulama_etiketleri()}<script type="application/ld+json">{ld_json}</script>{ld_ek_html}
 <script>(function(){{try{{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){{document.documentElement.classList.add('dark');}}}}catch(e){{}}}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="preconnect" href="https://js.puter.com" crossorigin>
 <link rel="stylesheet" href="{kok}style.css">
 {_chart_js_script(grafik)}
 </head>
@@ -2452,23 +2373,21 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     </div>
 
     <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
-    <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+    <div class="interactive-box" style="margin-bottom: 20px;">
 {_site_arama_kutusu(kok)}
-{_ai_kutu()}
     </div>
-{_ai_panel()}
 
     <!-- Asıl Sayfa İçeriği -->
     {icerik}
 </main>
 
 <nav class="altbar" aria-label="Hızlı menü">
-<a href="{kok}index.html"{a_alt_r}><span class="i">📊</span>Raporlar</a>
-<a href="{kok}teknik-analiz.html"{a_alt_t}><span class="i">📈</span>Teknik</a>
-<a href="{kok}hisse/index.html"{a_alt_his}><span class="i">🏦</span>Hisseler</a>
-<a href="{kok}portfolio.html"{a_alt_p}><span class="i">💼</span>Portföy</a>
-<a href="{kok}haberler.html"{a_alt_hb}><span class="i">📰</span>Haberler</a>
-<a href="{kok}takvim.html"{a_alt_tkv}><span class="i">📅</span>Takvim</a>
+<a href="{kok}index.html"{a_alt_r}><span class="i" aria-hidden="true">📊</span>Raporlar</a>
+<a href="{kok}teknik-analiz.html"{a_alt_t}><span class="i" aria-hidden="true">📈</span>Teknik</a>
+<a href="{kok}hisse/index.html"{a_alt_his}><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
+<a href="{kok}portfolio.html"{a_alt_p}><span class="i" aria-hidden="true">💼</span>Portföy</a>
+<a href="{kok}haberler.html"{a_alt_hb}><span class="i" aria-hidden="true">📰</span>Haberler</a>
+<a href="{kok}takvim.html"{a_alt_tkv}><span class="i" aria-hidden="true">📅</span>Takvim</a>
 </nav>
 
 <script>

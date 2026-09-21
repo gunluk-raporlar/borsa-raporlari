@@ -49,7 +49,6 @@ import re
 import shutil
 import sys
 import time
-import urllib.error
 import urllib.parse
 import urllib.request
 from html.parser import HTMLParser
@@ -718,6 +717,52 @@ def esdegerlik_denetle(kok: Path, diller: list[str]) -> dict:
     return rapor
 
 
+def sitemap_dogrula(kok: Path, diller: list[str]) -> dict:
+    """Sitemap tam mi? Her sayfa kayitli mi, kayitli her adres gercek mi?
+
+    Amac: 'bilinmeyen yol kalmasin' — sitemap'teki her <loc> var olan bir dosyaya
+    karsilik gelmeli, her HTML sayfa da (TR + dil) sitemap'te bulunmali.
+    """
+    from collections import Counter
+
+    yol = kok / "sitemap.xml"
+    if not yol.exists():
+        return {"durum": "sitemap.xml yok"}
+    xml = yol.read_text(encoding="utf-8")
+    loclar = re.findall(r"<loc>([^<]+)</loc>", xml)
+    kayitli = set(loclar)
+
+    def dosya_var(u: str) -> bool:
+        if SITE_URL not in u:
+            return True
+        kismi = u.split(SITE_URL, 1)[1].split("#")[0].split("?")[0]
+        adaylar = [kismi, kismi + ".html", kismi + "index.html"] if kismi else ["index.html"]
+        return any((kok / a).exists() for a in adaylar)
+
+    yok = [u for u in loclar if not dosya_var(u)]
+    tekrar = [u for u, n in Counter(loclar).items() if n > 1]
+
+    eksik_kayit, dil_eksik = [], []
+    for rel in turkce_sayfalar(kok):
+        if SITE_URL + seo_yol(rel) not in kayitli and SITE_URL + rel.as_posix() not in kayitli:
+            eksik_kayit.append(seo_yol(rel) or "/")
+        for dil in diller:
+            if f"{SITE_URL}{dil}/{seo_yol(rel)}" not in kayitli:
+                dil_eksik.append(f"{dil}/{seo_yol(rel)}")
+
+    return {
+        "sitemap_loc": len(loclar),
+        "benzersiz_loc": len(kayitli),
+        "dosyasi_olmayan_loc": yok[:20],
+        "tekrarlanan_loc": tekrar[:10],
+        "sitemap_te_olmayan_turkce_sayfa": eksik_kayit[:20],
+        "sitemap_te_olmayan_dil_sayfasi": dil_eksik[:20],
+        "eksik_sayilar": {"dosyasi_olmayan": len(yok), "tekrar": len(tekrar),
+                          "turkce_eksik": len(eksik_kayit), "dil_eksik": len(dil_eksik)},
+        "hreflang_alternatif_satiri": len(re.findall(r'hreflang="', xml)),
+    }
+
+
 def dil_agac_kumesi(kok: Path, hedef_liste) -> set[str]:
     """Dil agacinda bulunacak TUM dosyalarin (sayfa + kopyalanan varlik) kumesi.
 
@@ -860,60 +905,97 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
 # ----------------------------------------------------------------------------
 
 
-def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
-    """Sitemap'e dil surumlerini ekler.
+def _etiket(blok: str, ad: str) -> str | None:
+    m = re.search(rf"<{ad}>([^<]+)</{ad}>", blok)
+    return m.group(1).strip() if m else None
 
-    Her Turkce URL icin: alternatif listesi (hreflang) + her dil icin ayri <url> blogu.
-    Boylece IndexNow ping'i (sitemap'teki <loc>'lari okur) dil URL'lerini de bildirir.
+
+def _url_bloku(loc: str, attr: dict, alternatifler: list[str]) -> str:
+    parcalar = [f"  <url>", f"    <loc>{loc}</loc>"]
+    if attr.get("lastmod"):
+        parcalar.append(f"    <lastmod>{attr['lastmod']}</lastmod>")
+    if attr.get("changefreq"):
+        parcalar.append(f"    <changefreq>{attr['changefreq']}</changefreq>")
+    if attr.get("priority"):
+        parcalar.append(f"    <priority>{attr['priority']}</priority>")
+    parcalar.extend(alternatifler)
+    parcalar.append("  </url>")
+    return "\n".join(parcalar)
+
+
+def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
+    """Sitemap'i "her sayfa kayitli olsun" ilkesine gore yeniden kurar.
+
+    - Mevcut Turkce kayitlarin lastmod/changefreq/priority degerleri korunur.
+    - Sitemap'te OLMAYAN Turkce sayfalar eklenir (or. haftasonu-egitimi.html).
+    - Her kayit icin hreflang alternatifleri + her dil icin ayri <url> blogu yazilir.
+    - Islem idempotent: tekrar calistirildiginda ciktii ayni kalir.
     """
     yol = kok / "sitemap.xml"
     if not yol.exists():
         return {"durum": "sitemap.xml yok"}
     xml = yol.read_text(encoding="utf-8")
-    if "xhtml:link" in xml:
-        return {"durum": "alternatifler zaten var"}
-    if "xmlns:xhtml" not in xml:
-        xml = xml.replace(
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
-            'xmlns:xhtml="http://www.w3.org/1999/xhtml">',
-            1,
-        )
-    sayac = {"turkce_url": 0, "dil_url": 0}
 
-    def ekle(m):
-        blok = m.group(0)
-        u = re.search(r"<loc>([^<]+)</loc>", blok)
-        if not u:
-            return blok
-        url = u.group(1).strip()
-        if SITE_URL not in url:
-            return blok
-        yol_kismi = url.split(SITE_URL, 1)[1]
-        if not yol_kismi or yol_kismi.split("/")[0] in DILLER:
-            return blok  # zaten dil URL'i
+    # 1) mevcut kayitlari oku
+    tr_kayitlar: dict[str, dict] = {}
+    dis_bloklar: list[str] = []
+    for blok in re.findall(r"<url>.*?</url>", xml, re.S):
+        loc = _etiket(blok, "loc")
+        if not loc:
+            continue
+        attr = {k: _etiket(blok, k) for k in ("lastmod", "changefreq", "priority")}
+        if SITE_URL in loc:
+            kismi = loc.split(SITE_URL, 1)[1]
+            if kismi.split("/")[0] in DILLER:
+                continue  # dil kaydi; yeniden uretilecek
+            tr_kayitlar[kismi] = attr
+        else:
+            dis_bloklar.append(blok)
+
+    # 2) eksik Turkce sayfalari ekle
+    son_lastmod = max((a.get("lastmod") or "" for a in tr_kayitlar.values()), default="") \
+        or time.strftime("%Y-%m-%d")
+    eklenen: list[str] = []
+    for rel in turkce_sayfalar(kok):
+        sy = seo_yol(rel)
+        if sy not in tr_kayitlar:
+            tr_kayitlar[sy] = {"lastmod": son_lastmod, "changefreq": "weekly", "priority": "0.6"}
+            eklenen.append(sy or "/")
+
+    # 3) yeniden yaz
+    bloklar: list[str] = []
+    dil_sayisi = 0
+    for sy in sorted(tr_kayitlar):
+        attr = tr_kayitlar[sy]
         alternatifler = [
             f'    <xhtml:link rel="alternate" hreflang="{DILLER[k]["hreflang"]}" '
-            f'href="{SITE_URL}{k + "/" if k != "tr" else ""}{yol_kismi}"/>'
+            f'href="{SITE_URL}{k + "/" if k != "tr" else ""}{sy}"/>'
             for k in ["tr"] + diller
         ]
         alternatifler.append(
-            f'    <xhtml:link rel="alternate" hreflang="x-default" href="{url}"/>'
+            f'    <xhtml:link rel="alternate" hreflang="x-default" href="{SITE_URL}{sy}"/>'
         )
-        alt = "\n".join(alternatifler)
-        sayac["turkce_url"] += 1
+        bloklar.append(_url_bloku(f"{SITE_URL}{sy}", attr, alternatifler))
+        for d in diller:
+            bloklar.append(_url_bloku(f"{SITE_URL}{d}/{sy}", attr, alternatifler))
+            dil_sayisi += 1
+    bloklar.extend("  " + b.strip() for b in dis_bloklar)
 
-        parcalar = [blok.replace("</url>", alt + "\n  </url>")]
-        for k in diller:
-            d_url = f"{SITE_URL}{k}/{yol_kismi}"
-            d_blok = re.sub(r"<loc>[^<]+</loc>", f"<loc>{d_url}</loc>", blok, count=1)
-            parcalar.append(d_blok.replace("</url>", alt + "\n  </url>"))
-            sayac["dil_url"] += 1
-        return "\n  ".join(parcalar)
-
-    yeni = re.sub(r"<url>.*?</url>", ekle, xml, flags=re.S)
+    yeni = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+        'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+        + "\n".join(bloklar)
+        + "\n</urlset>\n"
+    )
     yol.write_text(yeni, encoding="utf-8")
-    return {"durum": "guncellendi", **sayac}
+    return {
+        "durum": "guncellendi",
+        "turkce_url": len(tr_kayitlar),
+        "dil_url": dil_sayisi,
+        "toplam_loc": len(tr_kayitlar) * (1 + len(diller)) + len(dis_bloklar),
+        "eklenen_turkce": eklenen,
+    }
 
 
 # ----------------------------------------------------------------------------
@@ -1015,6 +1097,8 @@ def main() -> int:
     ap.add_argument("--dogrula", action="store_true", help="sadece dogrula, yazma")
     ap.add_argument("--esdeger", action="store_true",
                     help="TR sayfa ile dil sayfasi yapisal olarak ayni mi (CSS/JS/class)")
+    ap.add_argument("--sitemap-dogrula", action="store_true",
+                    help="sitemap tam mi: her sayfa kayitli mi, her kayit gercek mi")
     ap.add_argument("--temizle", action="store_true", help="uretilmis dil dizinlerini sil")
     ap.add_argument("--zorla", action="store_true", help="Turkce degisiklik korumasini atla")
     ap.add_argument("--varliklari-kopyala", action="store_true", default=True,
@@ -1044,6 +1128,12 @@ def main() -> int:
         print(json.dumps(rapor, ensure_ascii=False, indent=2))
         temiz = not (rapor["css_farki"] or rapor["js_farki"] or rapor["sinif_farki"] or rapor["eksik_varlik"])
         return 0 if temiz else 1
+
+    if args.sitemap_dogrula:
+        rapor = sitemap_dogrula(kok, diller)
+        print(json.dumps(rapor, ensure_ascii=False, indent=2))
+        eksik = rapor.get("eksik_sayilar", {})
+        return 0 if not any(eksik.values()) else 1
 
     sayfa_listesi = None
     if args.sayfalar:
