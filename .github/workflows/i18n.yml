@@ -38,7 +38,7 @@ jobs:
         env:
           # Z.AI (GLM) — kullanicinin kayitli anahtari; ceviride birincil
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
-          ZAI_MODEL: "glm-4.7-flash"
+          ZAI_MODEL: "glm-4.5-flash"
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           AMD_MODEL: "DeepSeek-V4-Flash"
           AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
@@ -58,7 +58,7 @@ jobs:
           # Sira: DeepSeek (birincil, daha guclu) -> Qwen (yedek). Kapasite doluysa 20 sn icinde devreder.
           # Z.AI (GLM) — kullanicinin kayitli anahtari; ceviride birincil
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
-          ZAI_MODEL: "glm-4.7-flash"
+          ZAI_MODEL: "glm-4.5-flash"
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           AMD_MODEL: "DeepSeek-V4-Flash"
           AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
