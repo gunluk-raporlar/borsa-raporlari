@@ -1,7 +1,7 @@
 name: Cok Dilli Sayfa Guncelleme
 
 # Ceviri ayri bir kosuda yapilir; gunluk rapor kosusu ceviri yuzunden uzamaz/iptal olmaz.
-# AMD: RPM limiti 20/dk ve buyuk modeller %100 kapasitede -> istekler arasi 3.5 sn, idle model birincil.
+# AMD: RPM limiti 20/dk -> istekler arasi 3.5 sn. Buyuk model kapasite doluysa yedege devreder.
 
 on:
   schedule:
@@ -37,8 +37,8 @@ jobs:
         if: ${{ inputs.test }}
         env:
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
-          AMD_MODEL: "Qwen3.8-Flash-Next"
-          AMD_FALLBACK_MODELS: "DeepSeek-V4-Flash"
+          AMD_MODEL: "DeepSeek-V4-Flash"
+          AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
           ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
@@ -50,12 +50,12 @@ jobs:
           # 20 istek/dk sinirinin altinda kal (3.5 sn -> ~17/dk)
           I18N_ARALIK: "3.5"
           I18N_PENCERE: "40"
-          I18N_TIMEOUT: "30"
+          I18N_TIMEOUT: "20"
           I18N_SURE_SINIRI_DK: "45"
-          # Buyuk modeller %100 kapasitede (kuyruk -> timeout): ceviride idle model birincil
+          # Sira: DeepSeek (birincil, daha guclu) -> Qwen (yedek). Kapasite doluysa 20 sn icinde devreder.
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
-          AMD_MODEL: "Qwen3.8-Flash-Next"
-          AMD_FALLBACK_MODELS: "DeepSeek-V4-Flash"
+          AMD_MODEL: "DeepSeek-V4-Flash"
+          AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
           ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
