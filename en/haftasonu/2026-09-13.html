@@ -166,7 +166,7 @@ body { overflow-x: hidden; }
 
 <main class="wrap">
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
-    <div class="site-widgets" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; background: #f8fafc; padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #475569; gap: 15px; border: 1px solid #e2e8f0;">
+    <div class="site-widgets">
         <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
             <span id="current-date-time">Yükleniyor...</span>
             <span id="istanbul-weather">İstanbul Hava Durumu...</span>
@@ -224,14 +224,14 @@ body { overflow-x: hidden; }
     </div>
 
     <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
-    <div class="interactive-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+    <div class="interactive-box">
 
-<div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+<div class="arama-kutusu">
     <div style="display: flex; gap: 8px;">
-        <input type="text" id="site-arama-giris" placeholder="Search the site: stock, topic, date… (e.g. PETKM, RSI, portfolio)" style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') siteAra();">
+        <input type="text" id="site-arama-giris" placeholder="Search the site: stock, topic, date… (e.g. PETKM, RSI, portfolio)" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
         <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
     </div>
-    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid #e2e8f0; padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
 </div>
 <script>
 (function() {
@@ -312,9 +312,9 @@ body { overflow-x: hidden; }
 </script>
 
 
-        <div style="background: #ffffff; padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+        <div class="arama-kutusu">
             <div style="display: flex; gap: 8px;">
-                <input type="text" id="ai-input" placeholder="Ask the BIST AI assistant…" style="flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;" onkeypress="if(event.key === 'Enter') aiSor();">
+                <input type="text" id="ai-input" placeholder="Ask the BIST AI assistant…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') aiSor();">
                 <button onclick="aiSor()" id="ai-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Ask</button>
             </div>
             <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">

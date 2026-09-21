@@ -156,7 +156,174 @@
 </script>
     </div>
 
-    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) --><!-- Asıl Sayfa İçeriği -->
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
+
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Поиск по сайту: акция, тема, дата… (напр. PETKM, RSI, портфель)" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Поиск</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\?\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\.|mi|mı|icin)\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+
+
+        <div class="arama-kutusu">
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="ai-input" placeholder="Спросите ИИ-ассистента BIST…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') aiSor();">
+                <button onclick="aiSor()" id="ai-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Спросить</button>
+            </div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">
+                <span class="ai-chip" onclick="aiChip(this)">Piyasa özeti ne?</span>
+                <span class="ai-chip" onclick="aiChip(this)">RSI ve MACD nedir?</span>
+                <span class="ai-chip" onclick="aiChip(this)">Destek ve direnç nedir?</span>
+            </div>
+        </div>
+    </div>
+
+<div id="ai-panel" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px 16px; margin: 0 0 20px; font-size: 14px; line-height: 1.6;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <strong style="color: #0f766e;">BIST AI Asistan</strong>
+        <a href="javascript:void(0)" onclick="document.getElementById('ai-panel').style.display='none'" style="color: #64748b; text-decoration: none; font-size: 18px; line-height: 1;">×</a>
+    </div>
+    <div id="ai-answer"></div>
+    <div style="margin-top: 8px; color: #64748b; font-size: 12px;">Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir. Model: GLM-Flash (Z.ai, Puter.js üzerinden — ilk kullanımda Puter oturumu isteyebilir).</div>
+</div>
+<style>
+.ai-chip { background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569; border-radius: 999px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
+.ai-chip:hover { border-color: #0f766e; color: #0f766e; }
+</style>
+<script defer src="https://js.puter.com/v2/"></script>
+<script>
+function aiChip(el) { document.getElementById('ai-input').value = el.textContent; aiSor(); }
+function aiZamanAsimi(promise, ms) {
+    return Promise.race([
+        promise,
+        new Promise(function(_, reject) { setTimeout(function() { reject(new Error('yanıt zaman aşımı')); }, ms); })
+    ]);
+}
+async function aiSor() {
+    var giris = document.getElementById('ai-input');
+    var soru = (giris.value || '').trim();
+    if (!soru) return;
+    var btn = document.getElementById('ai-btn');
+    var cevap = document.getElementById('ai-answer');
+    var panel = document.getElementById('ai-panel');
+    panel.style.display = 'block';
+    cevap.innerHTML = '<em>Yanıt hazırlanıyor... (ilk kullanımda birkaç saniye sürebilir)</em>';
+    btn.disabled = true; giris.disabled = true;
+    var sistem = 'Sen "BIST 30 Günlük Raporlar" sitesinin Türkçe yapay zeka asistanısın. Görevin: Borsa İstanbul, makroekonomi ve teknik analiz (EMA, RSI, MACD, Wave Trend, destek/direnç vb.) konularında eğitici, kısa ve anlaşılır yanıtlar vermek. Canlı piyasa verine erişimin yok; güncel veriler için kullanıcıyı sitedeki Teknik Tarama, Borsapy Sinyal ve Günlük Rapor sayfalarına yönlendir. Kesin alım-satım tavsiyesi verme; bilgilendir. Yanıtlarını madde işaretleriyle yaz, en fazla 200 kelime tut.';
+    var modeller = ['z-ai/glm-4.7-flash', 'infron:z-ai/glm-4.7-flash', 'z-ai/glm-4.5-flash', 'infron:z-ai/glm-4.5-flash'];
+    var sonHata = '';
+    var zamanasimiSayisi = 0;
+    for (var i = 0; i < modeller.length; i++) {
+        try {
+            var r = await aiZamanAsimi(puter.ai.chat(
+                [ { role: 'system', content: sistem }, { role: 'user', content: soru } ],
+                { model: modeller[i] }
+            ), 20000);
+            var metin = (r && r.message && r.message.content) || (typeof r === 'string' ? r : '') || '';
+            if (!metin) { sonHata = 'Boş yanıt'; continue; }
+            metin = String(metin).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            cevap.innerHTML = metin.replace(/\n/g, '<br>');
+            giris.disabled = false; btn.disabled = false; giris.value = '';
+            return;
+        } catch (e) {
+            sonHata = (e && e.message) ? e.message : 'Bilinmeyen hata';
+            if (sonHata.indexOf('zaman aşımı') !== -1) {
+                zamanasimiSayisi++;
+                // Art arda 2 kez zaman aşımı = Puter erişilemiyor; diger
+                // modelleri denemek bekletir, hata mesajina gec.
+                if (zamanasimiSayisi >= 2) break;
+            }
+            if (sonHata.indexOf('auth') !== -1 || sonHata.indexOf('permission') !== -1) break;
+        }
+    }
+    cevap.innerHTML = '<span style="color:#b91c1c">Asistan şu anda yanıt veremedi (' + sonHata + ').</span> ' +
+        '<a href="javascript:void(0)" onclick="aiSor()" style="text-decoration:underline">Tekrar dene</a>' +
+        '<div style="margin-top:6px;color:#475569;font-size:12.5px">Puter oturum açma penceresi açıldıysa giriş yapmayı deneyin (asistan, ücretsiz Puter kotanızı kullanır). Sorunuz tarayıcı sekmesinde korunuyor.</div>';
+    giris.disabled = false; btn.disabled = false;
+}
+</script>
+
+    <!-- Asıl Sayfa İçeriği -->
     
 <div class="hero">
 <h1>Haber Arşivi</h1>

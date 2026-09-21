@@ -2370,6 +2370,10 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
         </div>
 {_ceviri_widget(kok, yol)}
 {_radyo_kutusu(kok)}
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
 {_site_arama_kutusu(kok)}
     </div>
 
