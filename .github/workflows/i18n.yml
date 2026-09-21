@@ -76,7 +76,8 @@ jobs:
           DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
         run: python i18n.py --diller en,de,ru,zh --provider ${{ inputs.provider || 'llm' }} --sitemap
 
-      - name: Degisiklikleri depoya kaydet
+      - name: Degisiklikleri depoya kaydet (hata olsa bile)
+        if: always()
         run: |
           git config user.name "borsa-bot"
           git config user.email "borsa-bot@users.noreply.github.com"

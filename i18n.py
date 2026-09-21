@@ -289,7 +289,21 @@ class Cevirmen:
         if self.provider == "off":
             return list(parcalar)  # gercek passthrough: hicbir sey eklenmez
         if self.provider == "deepl":
-            return self._deepl(parcalar, dil)
+            try:
+                return self._deepl(parcalar, dil)
+            except urllib.error.HTTPError as h:
+                # 456 = kota bitti / duzeltilemez hata: kosuyu cokertmesin, bos donup devam etsin
+                try:
+                    govde = h.read().decode("utf-8", errors="replace")[:200]
+                except Exception:
+                    govde = ""
+                print(f"[i18n] DeepL hatasi HTTP {h.code} :: {govde}", file=sys.stderr)
+                if h.code in (456, 403, 401, 429):
+                    self.devre_disi.add("deepl")
+                return [""] * len(parcalar)
+            except Exception as h:
+                print(f"[i18n] DeepL hatasi: {h}", file=sys.stderr)
+                return [""] * len(parcalar)
         return self._llm(parcalar, dil)
 
     def _uclari_kur(self) -> list:
@@ -462,7 +476,7 @@ class Cevirmen:
             "Authorization": f"DeepL-Auth-Key {anahtar}",
             "Content-Type": "application/x-www-form-urlencoded",
         })
-        with urllib.request.urlopen(istek, timeout=120) as yanit:
+        with urllib.request.urlopen(istek, timeout=float(os.environ.get("I18N_TIMEOUT", "60"))) as yanit:
             veri = json.loads(yanit.read().decode("utf-8"))
         return [x.get("text", "") for x in veri.get("translations", [])]
 
