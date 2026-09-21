@@ -1,0 +1,16 @@
+# Cloudflare Pages: bu dosyalar statik varlık olarak YAYINLANMAZ.
+# Kaynak kod, log arşivleri ve site dışı klasörler herkese açık olmasın.
+# (Site dosyaları: *.html, style.css, *.json verileri, og-cover.png, doğrulama dosyaları yayında kalır.)
+
+*.py
+*.zip
+joblog.txt
+README.md
+requirements.txt
+data/
+pipeline/
+web/
+.github/
+functions/
+
+# IndexNow dogrulama dosyasi (ba8235...txt) ve arama motoru dogrulama dosyalari KORUNUR.
