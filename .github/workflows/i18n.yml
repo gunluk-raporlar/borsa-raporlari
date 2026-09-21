@@ -5,6 +5,7 @@ name: Cok Dilli Sayfa Guncelleme
 
 on:
   schedule:
+    - cron: "0 */2 * * *"   # 2 saatte bir: ceviri kuyrugu kendiliginden ilerler
     - cron: "0 7 * * 1-5"
   workflow_dispatch:
     inputs:
