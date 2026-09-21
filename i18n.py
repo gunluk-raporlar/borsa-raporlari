@@ -348,6 +348,7 @@ class Cevirmen:
             "You are a professional translator for a Turkish finance website. "
             "The user sends a JSON array of strings. Translate EVERY item into " + hedef + ". "
             "Return ONLY a JSON array of the exact same length — no explanations, no markdown fences. "
+            "Every element must be a JSON string: escape any double quote as \\\" and never put a raw line break inside a string. "
             "Keep stock tickers (KCHOL, PETKM, THYAO...), numbers, currency amounts, dates and indicator "
             "acronyms (RSI, MACD, EMA, ADX, CCI, WT) exactly as they are."
         )
@@ -358,8 +359,8 @@ class Cevirmen:
             )
 
         cikti: list[str] = []
-        PENCERE = int(os.environ.get("I18N_PENCERE", "25"))  # istek basina dize sayisi
-        dil_hedefi = {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH-HANS"}[dil]
+        PENCERE = int(os.environ.get("I18N_PENCERE", "10"))  # istek basina dize sayisi (kucuk parti = daha az JSON bozulmasi)
+        dil_hedefi = {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
         for bas in range(0, len(parcalar), PENCERE):
             # sure butcesi: asilirsa kalanlari cevirmeden don (site uretimi asla bloke olmasin)
             if time.time() - self.baslangic > self.sure_siniri:
@@ -374,7 +375,7 @@ class Cevirmen:
                     continue
                 for model in modeller:
                     try:
-                        aday = self._llm_istek(url, anahtar, model, sistem, dilim, self.istek_timeout)
+                        aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, self.istek_timeout)
                         if aday and len(aday) == len(dilim):
                             son = aday
                             break
@@ -394,7 +395,7 @@ class Cevirmen:
                             bekle = min(float(hata.headers.get("Retry-After") or 5), 15)
                             time.sleep(bekle)
                             try:
-                                aday = self._llm_istek(url, anahtar, model, sistem, dilim, self.istek_timeout)
+                                aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, self.istek_timeout)
                                 if aday and len(aday) == len(dilim):
                                     son = aday
                                     break
@@ -460,16 +461,67 @@ class Cevirmen:
         if usage_kutusu is not None and isinstance(veri.get("usage"), dict):
             usage_kutusu.append(veri["usage"])
         icerik = veri["choices"][0]["message"]["content"].strip()
-        icerik = re.sub(r"^```(?:json)?\s*", "", icerik)
-        icerik = re.sub(r"\s*```$", "", icerik)
-        return json.loads(icerik)
+        sonuc = Cevirmen._json_ayikla(icerik, len(dilim))
+        if not isinstance(sonuc, list) or len(sonuc) != len(dilim):
+            raise ValueError("LLM ciktisi ayristirilamadi")
+        return [x if isinstance(x, str) else json.dumps(x, ensure_ascii=False) for x in sonuc]
+
+    @staticmethod
+    def _json_ayikla(icerik: str, beklenen: int):
+        """LLM ciktisindan ceviri listesini dayanikli sekilde cikarir (yaygin JSON bozulmalarini onarir)."""
+        metin = icerik.strip()
+        metin = re.sub(r"^```(?:json)?\s*", "", metin)
+        metin = re.sub(r"\s*```$", "", metin)
+        adaylar = [metin]
+        try:
+            i, j = metin.index("["), metin.rindex("]")
+            adaylar.append(metin[i:j + 1])
+        except Exception:
+            pass
+        for aday in adaylar:
+            try:  # strict=False: dize icindeki ham satir sonu / kontrol karakterine izin ver
+                d = json.loads(aday, strict=False)
+                if isinstance(d, list) and len(d) == beklenen:
+                    return d
+            except Exception:
+                pass
+            try:  # sondaki fazla virgulleri temizle
+                d = json.loads(re.sub(r",\s*([\]\}])", r"\1", aday), strict=False)
+                if isinstance(d, list) and len(d) == beklenen:
+                    return d
+            except Exception:
+                pass
+        satirlar = []  # son care: satir tabanli ('1. ceviri' / '"ceviri",')
+        for s in metin.splitlines():
+            s = s.strip().rstrip(",")
+            if not s or s in ("[", "]"):
+                continue
+            m = re.match(r'^(?:\d+\s*[\.\)]\s*)?"?(.*?)"?$', s, re.S)
+            if m and m.group(1).strip():
+                satirlar.append(m.group(1))
+        return satirlar if len(satirlar) == beklenen else None
+
+    @classmethod
+    def _llm_istek_dayanikli(cls, url, anahtar, model, sistem, dilim, timeout=30, usage_kutusu=None):
+        """Parti bozulursa ikiye bolup yeniden dener; kucuk partilerde JSON bozulmasi cogu kez kaybolur."""
+        try:
+            return cls._llm_istek(url, anahtar, model, sistem, dilim, timeout, usage_kutusu)
+        except (json.JSONDecodeError, ValueError):
+            if len(dilim) <= 1:
+                raise
+            orta = len(dilim) // 2
+            a = cls._llm_istek_dayanikli(url, anahtar, model, sistem, dilim[:orta], timeout, usage_kutusu)
+            b = cls._llm_istek_dayanikli(url, anahtar, model, sistem, dilim[orta:], timeout, usage_kutusu)
+            if a and b and len(a) == orta and len(b) == len(dilim) - orta:
+                return list(a) + list(b)
+            raise
 
     @staticmethod
     def _deepl(parcalar: list[str], dil: str, hedef: str | None = None) -> list[str]:
         anahtar = os.environ.get("DEEPL_API_KEY") or os.environ.get("DEEPL_KEY")
         if not anahtar:
             raise SystemExit("[i18n] HATA: DeepL icin DEEPL_API_KEY gerekli.")
-        hedef = hedef or {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH-HANS"}[dil]
+        hedef = hedef or {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
         # Free anahtarlar (:fx) -> api-free; Pro anahtarlar -> api.deepl.com
         # (Pro'ya gecersen DEEPL_BASE_URL=https://api.deepl.com ayarlaman yeterli)
         taban = os.environ.get("DEEPL_BASE_URL", "https://api-free.deepl.com").rstrip("/")
