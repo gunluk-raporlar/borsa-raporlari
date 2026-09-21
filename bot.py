@@ -3816,7 +3816,7 @@ def build_hisse_html(kod, satir, tarihler, veriler, haberler, sirket_haberleri=N
         haber_ogeleri = "".join(
             f"<li style='margin:6px 0'><a href='{html.escape(h['link'], quote=True)}' target='_blank' rel='noopener'>{html.escape(h['baslik'])}</a>"
             f" <span style='color:var(--muted); font-size:12px'>&mdash; {html.escape(h['kaynak'])}"
-            + (f" &middot; {datetime.fromtimestamp(h['ts']).strftime('%d.%m')}" if h.get("ts") else "")
+            + (f" &middot; {datetime.fromtimestamp(h['ts'], zoneinfo.ZoneInfo('Europe/Istanbul')).strftime('%d.%m')}" if h.get("ts") else "")
             + "</span></li>"
             for h in sirket_haberleri[:6])
     else:
@@ -3878,6 +3878,21 @@ _HABER_GURULTU = re.compile(
     r"destek-direnç|sinyal listesi|sinyalleri|osilatör|news by matriks|tradingview)",
     re.I)
 
+# Spor gundemi sirket haberlerine siziyor: or. "Tüpraş" aramasi "Beşiktaş
+# Tüpraş Stadyumu" haberlerini getiriyor. Basligi spor baglaminda olanlar
+# sirket haberi sayilmaz (stadyum isim haklari, mac, derbi vb.).
+_SPOR_HABER_DESENI = re.compile(
+    r"\b(stad\w*|be[şs]ikta[şs]|galatasaray|fenerbah[çc]e|trabzonspor|"
+    r"ma[çc](?:[ıi]n)?|derbi|gol(?:[üu]|leri)?|fikst[üu]r|futbol|trib[üu]n|"
+    r"teknik direkt[öo]r|s[üu]per lig|uefa|champions league|europa league|"
+    r"penalt[ıi]|hakem|spor toto)\b",
+    re.I)
+
+
+def _spor_haberi_mi(baslik):
+    """Baslik spor gundemine mi ait — sirket haberleri icin eleme testi."""
+    return bool(_SPOR_HABER_DESENI.search(baslik or ""))
+
 
 def _sirket_haberleri_cek(profiller):
     """Her BIST30 sirketi icin Google News RSS'ten son 7 gunun haberlerini
@@ -3903,6 +3918,8 @@ def _sirket_haberleri_cek(profiller):
             for e in f.entries:
                 baslik = (e.title or "").strip()
                 if not baslik or _HABER_GURULTU.search(baslik):
+                    continue
+                if _spor_haberi_mi(baslik):
                     continue
                 # 'Baslik - Kaynak' kalibindan kaynagi soy
                 kaynak = baslik.rsplit(" - ", 1)[-1].strip()
@@ -3936,6 +3953,8 @@ def _sirket_haberleri_yukle():
         return {}
     harita = {}
     for k in sorted(kayitlar, key=lambda x: x.get("ts", 0), reverse=True):
+        if _spor_haberi_mi(k.get("baslik", "")):
+            continue
         harita.setdefault(k["kod"], []).append(k)
     return harita
 
@@ -3995,7 +4014,8 @@ def hisse_sayfalari_yaz(teknik_satirlar):
     sirket_haber_map = _sirket_haberleri_yukle()
     for s in teknik_satirlar:
         kod = s["hisse"]
-        haberler = [h for h in haber_toplu if kod.lower() in h.lower()]
+        haberler = [h for h in haber_toplu if kod.lower() in h.lower()
+                    and not _spor_haberi_mi(h)]
         with open(os.path.join("hisse", f"{kod}.html"), "w", encoding="utf-8") as f:
             f.write(build_hisse_html(kod, s, tarihler, veriler, haberler,
                                      sirket_haberleri=sirket_haber_map.get(kod, [])))
@@ -4643,13 +4663,19 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
         ("sozluk.html", "weekly"),
         ("takvim.html", "weekly"),
         ("hisse/index.html", "daily"),
+        ("sirket-haberleri.html", "daily"),
+        ("radyo/index.html", "weekly"),
+        ("gizlilik.html", "monthly"),
     ]
+    # ozel oncelikler: belirtilmeyenler 0.8 kalir
+    oncelik = {"index.html": "1.0", "gizlilik.html": "0.3", "radyo/index.html": "0.7"}
     bugun = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%Y-%m-%d")
     url_blokleri = []
     for yol, frekans in statik:
         url_blokleri.append(
             f"  <url><loc>{SITE_URL}{yol}</loc><lastmod>{bugun}</lastmod>"
-            f"<changefreq>{frekans}</changefreq><priority>{'1.0' if yol == 'index.html' else '0.8'}</priority></url>"
+            f"<changefreq>{frekans}</changefreq>"
+            f"<priority>{oncelik.get(yol, '0.8')}</priority></url>"
         )
     for fn in rapor_dosyalari:
         try:
@@ -4670,6 +4696,22 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
                 )
     except OSError:
         pass
+    # Tarihli arsiv sayfalari: hafta sonu gundemi + borsa okulu dersleri.
+    # lastmod dosya adindaki tarihten okunur (2026-09-20.html -> 2026-09-20);
+    # adinda tarih olmayan dosyalarda bot kosma tarihi kullanilir.
+    for klasor in ("haftasonu", "haftasonu-egitimi"):
+        try:
+            for fn in sorted(os.listdir(klasor)):
+                if not fn.endswith(".html"):
+                    continue
+                stem = fn[:-5]
+                lm = stem if re.fullmatch(r"\d{4}-\d{2}-\d{2}", stem) else bugun
+                url_blokleri.append(
+                    f"  <url><loc>{SITE_URL}{klasor}/{fn}</loc><lastmod>{lm}</lastmod>"
+                    f"<changefreq>monthly</changefreq><priority>0.6</priority></url>"
+                )
+        except OSError:
+            pass
     with open("sitemap.xml", "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
