@@ -180,3 +180,16 @@ html.dark .ticker-bant, html.dark .topbar { background:#0b1220; border-bottom:1p
 @media (max-width: 768px) {
   .radyo-mini { max-width:none; }
 }
+
+/* ---- Radyo oynatici (kompakt satir) ---- */
+.radyo-mini { display:flex; flex-wrap:wrap; align-items:center; gap:8px; flex:1 1 320px;
+              font-size:11.5px; line-height:1.4; color:var(--muted); }
+.radyo-mini .radyo-oynat { display:inline-flex; align-items:center; justify-content:center;
+              width:26px; height:26px; border-radius:50%; border:1px solid var(--line);
+              background:var(--card); color:var(--accent); font-size:11px; cursor:pointer; }
+.radyo-mini .radyo-oynat:hover { border-color:var(--accent); }
+.radyo-mini .radyo-ses { width:74px; height:14px; accent-color:var(--accent); cursor:pointer; }
+.radyo-mini .radyo-linkler a { color:var(--muted); text-decoration:none; border-bottom:1px solid transparent; }
+.radyo-mini .radyo-linkler a:hover { color:var(--accent); border-bottom-color:var(--accent); }
+.radyo-mini .ayrac { color:var(--line); }
+.radyo-mini .radyo-uyari { flex:1 1 100%; font-size:10.5px; color:#94a3b8; }

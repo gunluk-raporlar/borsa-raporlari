@@ -25,7 +25,6 @@
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "TAVHL — Hisse Analizi", "description": "TAVHL (Havacılık & Ulaştırma) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.", "url": "https://borsa-raporlari.pages.dev/hisse/TAVHL", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="preconnect" href="https://js.puter.com" crossorigin>
 <link rel="stylesheet" href="../style.css">
 
 </head>
@@ -78,98 +77,7 @@
             <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
         </div>
 
-<select id="dil-sec" aria-label="Sayfa dili seçin" style="padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink); background: #fff; color: #334155; cursor: pointer;">
-  <option value="">🌐 Dil / 语言</option>
-  <option value="zh">🇨🇳 中文（简体）</option>
-  <option value="en">🇬🇧 English</option>
-  <option value="de">🇩🇪 Deutsch</option>
-  <option value="ru">🇷🇺 Русский</option>
-  <option value="ar">🇸🇦 العربية</option>
-  <option value="tr">🇹🇷 Türkçe (orijinal)</option>
-</select>
-<span id="ceviri-durum" style="font-size: 12px; color: #64748b;"></span>
-<script>
-(function() {
-  var DIL_ADLARI = { zh: 'Simplified Chinese', en: 'English', de: 'German', ru: 'Russian', ar: 'Arabic' };
-  var ORIJINALLER = null;
-  var mesgul = false;
 
-  function zamanAsimi(p, ms) {
-    return Promise.race([p, new Promise(function(_, rej) { setTimeout(function() { rej(new Error('zaman aşımı')); }, ms); })]);
-  }
-
-  function metinDugumleri() {
-    var sonuc = [];
-    var ana = document.querySelector('main') || document.body;
-    var walker = document.createTreeWalker(ana, NodeFilter.SHOW_TEXT, {
-      acceptNode: function(n) {
-        if (!n.nodeValue || !n.nodeValue.trim() || n.nodeValue.trim().length < 2) return NodeFilter.FILTER_REJECT;
-        var p = n.parentElement;
-        if (!p) return NodeFilter.FILTER_REJECT;
-        var tag = p.tagName;
-        if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT' || tag === 'TEXTAREA' || tag === 'INPUT') return NodeFilter.FILTER_REJECT;
-        return NodeFilter.FILTER_ACCEPT;
-      }
-    });
-    var n;
-    while ((n = walker.nextNode())) sonuc.push(n);
-    return sonuc;
-  }
-
-  function geriYukle() {
-    if (ORIJINALLER) ORIJINALLER.forEach(function(k) { k.node.nodeValue = k.org; });
-    document.getElementById('ceviri-durum').innerText = '';
-  }
-
-  async function sayfaCevir(dil) {
-    var durum = document.getElementById('ceviri-durum');
-    if (dil === '' || mesgul) return;
-    if (dil === 'tr') { geriYukle(); return; }
-    if (typeof puter === 'undefined') {
-      durum.innerHTML = '<span style="color:#b91c1c">Çeviri motoru henüz yüklenmedi, birkaç saniye sonra tekrar deneyin.</span>';
-      document.getElementById('dil-sec').value = '';
-      return;
-    }
-    mesgul = true;
-    try {
-      if (ORIJINALLER === null) {
-        ORIJINALLER = metinDugumleri().map(function(n) { return { node: n, org: n.nodeValue }; });
-      }
-      // Metinleri ~1800 karakterlik gruplara böl (istek başına)
-      var parcalar = [], suanki = [], uzunluk = 0;
-      ORIJINALLER.forEach(function(k) {
-        suanki.push(k); uzunluk += k.org.length;
-        if (uzunluk >= 1800) { parcalar.push(suanki); suanki = []; uzunluk = 0; }
-      });
-      if (suanki.length) parcalar.push(suanki);
-
-      var sistem = 'You are a professional translator for a Turkish finance website. The user sends a JSON array of strings. Translate EVERY array item into ' + DIL_ADLARI[dil] + '. Return ONLY a JSON array of the exact same length containing the translations — no explanations, no markdown fences. Keep stock ticker codes (KCHOL, PETKM, THYAO...), numbers, currency amounts, dates and indicator acronyms (RSI, MACD, EMA, ADX, CCI, WT) exactly as they are.';
-      for (var i = 0; i < parcalar.length; i++) {
-        durum.innerText = '🌐 Çevriliyor... (' + (i + 1) + '/' + parcalar.length + ')';
-        var r = await zamanAsimi(puter.ai.chat(
-          [ { role: 'system', content: sistem }, { role: 'user', content: JSON.stringify(parcalar[i].map(function(k) { return k.org; })) } ],
-          { model: 'z-ai/glm-4.7-flash' }
-        ), 45000);
-        var yanit = (r && r.message && r.message.content) || '';
-        yanit = yanit.replace(/^```(json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
-        var cevrilen = JSON.parse(yanit);
-        if (!Array.isArray(cevrilen) || cevrilen.length !== parcalar[i].length) throw new Error('bozuk yanıt');
-        parcalar[i].forEach(function(k, idx) { if (typeof cevrilen[idx] === 'string') k.node.nodeValue = cevrilen[idx]; });
-      }
-      durum.innerText = '✓ ' + DIL_ADLARI[dil] + ' — Türkçe için listeden seçin';
-    } catch (e) {
-      var hata = (e && e.message) ? e.message : 'bilinmeyen hata';
-      durum.innerHTML = '<span style="color:#b91c1c">Çeviri tamamlanamadı (' + hata + ').</span> <span style="color:#475569">Türkçe için listeden seçin. Puter oturum penceresi açıldıysa giriş yapmayı deneyin.</span>';
-      document.getElementById('dil-sec').value = '';
-    }
-    mesgul = false;
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('dil-sec').addEventListener('change', function() { sayfaCevir(this.value); });
-  });
-})();
-</script>
 
 
 
@@ -177,7 +85,6 @@
 
     <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
     <div class="interactive-box">
-
 <div class="arama-kutusu">
     <div style="display: flex; gap: 8px;">
         <input type="text" id="site-arama-giris" placeholder="Sitede ara: hisse, konu, tarih... (ör. PETKM, RSI, portföy)" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
@@ -263,14 +170,38 @@
 })();
 </script>
 
-
-        <div class="radyo-mini">
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Oynat / Duraklat">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Ses seviyesi" title="Ses">
   <span class="radyo-linkler"><a href="../radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> <span class="ayrac">•</span> <a href="../radyo/podcast.xml">RSS</a></span>
   <span class="radyo-uyari">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</span>
-</div>';
-    giris.disabled = false; btn.disabled = false;
-}
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='../';
+  if(!btn||!ses) return;
+  if(ayar){ ses.volume=(parseInt(ayar.value,10)||80)/100; }
+  var hazir=false;
+  function hazirla(geri){
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){return r.json();}).then(function(d){
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){ ses.src=kok+l[0].dosya; }
+      hazir=true; geri();
+    }).catch(function(){ hazir=true; geri(); });
+  }
+  btn.addEventListener('click',function(){
+    if(ses.paused){ hazirla(function(){ var p=ses.play(); if(p&&p.catch){p.catch(function(){});} }); }
+    else { ses.pause(); }
+  });
+  ses.addEventListener('play',function(){ btn.textContent='❚❚'; btn.setAttribute('aria-label','Duraklat'); });
+  ses.addEventListener('pause',function(){ btn.textContent='▶'; btn.setAttribute('aria-label','Oynat'); });
+  if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
+})();
 </script>
+    </div>
 
     <!-- Asıl Sayfa İçeriği -->
     

@@ -1931,13 +1931,40 @@ def _ceviri_widget(kok="", yol=""):
 
 
 def _radyo_kutusu(kok=""):
-    """Kompakt radyo satiri (2026-09-21): oynatici kaldirildi, yalnizca baglantilar + uyari.
-    Arama cubugu ile ayni satirda durur; tam yayin listesi radyo/ sayfasindadir."""
+    """Kompakt radyo satiri (2026-09-21): oynat/duraklat + ses ayari + yayin linkleri.
+    Arama cubuguyla ayni satirda durur; tam yayin listesi radyo/ sayfasindadir."""
     return f"""
 <div class="radyo-mini">
-  <span class="radyo-linkler"><a href="{kok}radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> <span class="ayrac">•</span> <a href="{kok}radyo/podcast.xml">RSS</a></span>
-  <span class="radyo-uyari">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</span>
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Oynat / Duraklat">\u25B6</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Ses seviyesi" title="Ses">
+  <span class="radyo-linkler"><a href="{kok}radyo/index.html">\U0001F4FB T\u00fcm yay\u0131nlar &amp; Podcast sayfas\u0131</a> <span class="ayrac">\u2022</span> <a href="{kok}radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">Yaln\u0131zca dinlemek i\u00e7indir \u2022 Kurgusal yapay zeka sunucular \u2022 Bilgilendirme ama\u00e7l\u0131d\u0131r, yat\u0131r\u0131m tavsiyesi de\u011fildir.</span>
 </div>
+<script>
+(function(){{
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='{kok}';
+  if(!btn||!ses) return;
+  if(ayar){{ ses.volume=(parseInt(ayar.value,10)||80)/100; }}
+  var hazir=false;
+  function hazirla(geri){{
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){{return r.json();}}).then(function(d){{
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){{ ses.src=kok+l[0].dosya; }}
+      hazir=true; geri();
+    }}).catch(function(){{ hazir=true; geri(); }});
+  }}
+  btn.addEventListener('click',function(){{
+    if(ses.paused){{ hazirla(function(){{ var p=ses.play(); if(p&&p.catch){{p.catch(function(){{}});}} }}); }}
+    else {{ ses.pause(); }}
+  }});
+  ses.addEventListener('play',function(){{ btn.textContent='\u275A\u275A'; btn.setAttribute('aria-label','Duraklat'); }});
+  ses.addEventListener('pause',function(){{ btn.textContent='\u25B6'; btn.setAttribute('aria-label','Oynat'); }});
+  if(ayar){{ ayar.addEventListener('input',function(){{ ses.volume=(parseInt(ayar.value,10)||0)/100; }}); }}
+}})();
+</script>
 """
 
 def _site_arama_kutusu(kok=""):
