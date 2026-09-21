@@ -4936,7 +4936,7 @@ if __name__ == "__main__":
         cok_dil.uret(report=report, date_str=date_str,
                      teknik_satirlar=teknik_satirlar or [],
                      llm=lambda p: llm_call(p, dil_kontrol=False),
-                     log=logger.exception)
+                     log=logger.error)
     except Exception:
         logger.exception("[CokDil] cok dilli sayfalar uretilemedi; Turkce site etkilenmez.")
 
