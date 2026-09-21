@@ -1,7 +1,7 @@
 name: Saglayici Model Listesi (gecici)
 
-# Ceza yok: her saglayicidan erisilebilir model listesini ister ve her modele TEK istek atar.
-# Ceviri kosusundan bagimsiz calisir (concurrency grubu yok).
+# Kotasiz: her saglayicidan erisilebilir model listesini ister, her modele TEK istek atar.
+# Ceviri kosusundan bagimsiz (concurrency grubu yok).
 
 on:
   workflow_dispatch:
@@ -20,12 +20,12 @@ jobs:
           python-version: "3.11"
       - name: Saglayici testi + model listesi
         env:
-          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
           ZAI_MODEL: "glm-4.5-flash"
-          AMD_API_KEY: ${{ secrets.AMD_API_KEY }
+          AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           AMD_MODEL: "DeepSeek-V4-Flash"
           AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
-          ALT_API_KEY: ${{ secrets.GROQ_API_KEY }
-          OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }
-          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }
+          ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
         run: python i18n.py --saglayici-test
