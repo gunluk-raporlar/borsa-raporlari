@@ -274,8 +274,16 @@ class Cevirmen:
             parcalar = [s for _, s in bekleyen]
             ham = self._saglayici(parcalar, dil)
             for (i, saf), cev in zip(bekleyen, ham):
-                if not cev or not isinstance(cev, str) or cev.strip() == saf.strip():
-                    # ceviri gelmedi (saglayici dustu): onbellege YAZMA, kaynak metni koru
+                # Ceviri yoksa saglayici BOS doner ("").
+                # Ama ceviri kaynakla birebir ayni olabilir: sayilar, ticker'lar, kodlar
+                # ("BIST 30", "414,75 TL", "RSI"), tablo satirlari. Bunlar GECERLI ceviridir;
+                # onbellege yazilmazsa her kosuda bosuna yeniden denenir.
+                if not cev or not isinstance(cev, str):
+                    self.atlanan_parca += 1
+                    continue
+                if cev.strip() == saf.strip() and len(saf) > 60:
+                    # Uzun metinde birebir ayni cikti suphelidir (model kopyalamis olabilir):
+                    # onbellege yazma, sonraki kosuda yeniden dene.
                     self.atlanan_parca += 1
                     continue
                 self.onbellek[self._anahtar(dil, saf)] = cev
