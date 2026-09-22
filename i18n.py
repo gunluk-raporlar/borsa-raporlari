@@ -161,6 +161,18 @@ SOZLUK = {
     "Destek": {"en": "Support", "de": "Unterstützung", "ru": "Поддержка", "zh": "支撑"},
     "Direnç": {"en": "Resistance", "de": "Widerstand", "ru": "Сопротивление", "zh": "阻力"},
     "Sinyal": {"en": "Signal", "de": "Signal", "ru": "Сигнал", "zh": "信号"},
+    # --- sinyal / kisa islem sozcukleri (ticker filtresine takilmamali) ---
+    "AL": {"en": "BUY", "de": "KAUFEN", "ru": "ПОКУПКА", "zh": "买入"},
+    "SAT": {"en": "SELL", "de": "VERKAUFEN", "ru": "ПРОДАЖА", "zh": "卖出"},
+    "TUT": {"en": "HOLD", "de": "HALTEN", "ru": "ДЕРЖАТЬ", "zh": "持有"},
+    "NÖTR": {"en": "NEUTRAL", "de": "NEUTRAL", "ru": "НЕЙТРАЛЬНО", "zh": "中性"},
+    "NAKİT": {"en": "CASH", "de": "BAR", "ru": "НАЛИЧНЫЕ", "zh": "现金"},
+    "GÜÇLÜ AL": {"en": "STRONG BUY", "de": "STARKER KAUF", "ru": "СИЛЬНАЯ ПОКУПКА", "zh": "强力买入"},
+    "GÜÇLÜ SAT": {"en": "STRONG SELL", "de": "STARKER VERKAUF", "ru": "СИЛЬНАЯ ПРОДАЖА", "zh": "强力卖出"},
+    "Günlük %": {"en": "Daily %", "de": "Täglich %", "ru": "За день %", "zh": "日涨跌 %"},
+    "60 Gün %": {"en": "60-Day %", "de": "60 Tage %", "ru": "60 дней %", "zh": "60 日 %"},
+    "Sayfa dili seçin": {"en": "Select page language", "de": "Seitensprache wählen", "ru": "Выбрать язык страницы", "zh": "选择页面语言"},
+    "BIST 30 Günlük Raporlar": {"en": "BIST 30 Daily Reports", "de": "BIST 30 Tagesberichte", "ru": "Ежедневные отчёты BIST 30", "zh": "BIST 30 每日报告"},
     # --- hukuki uyari (elle sabitlenir; makineye birakilmaz) ---
     "Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir.": {
         "en": "The information, comments and suggestions here are for informational purposes only; they do not constitute investment advisory services or investment advice.",
@@ -174,6 +186,13 @@ SOZLUK = {
 TICKER_RE = re.compile(r"^[A-ZÇĞİÖŞÜ0-9]{2,6}$")
 SAYI_RE = re.compile(r"^[\s\d\.,%+\-–—()\[\]/|·•:;<>₺$€]*$")
 KISALTMA_RE = re.compile(r"^(RSI|MACD|EMA|SMA|ADX|CCI|WT|BIST|TL|USD|EUR)[\s\d%\.\-]*$", re.I)
+
+# Ticker filtresine ragmen MUTLAKA cevrilecek kisa islem/sinyal sozcukleri.
+ZORLA_CEVIR = {
+    "AL", "SAT", "TUT", "NÖTR", "NAKİT", "GÜÇLÜ AL", "GÜÇLÜ SAT",
+    "ZAYIF AL", "ZAYIF SAT", "NÖTR-ZAYIF", "Günlük %", "60 Gün %",
+    "Sayfa dili seçin", "BIST 30 Günlük Raporlar",
+}
 
 # Sayi bicimi: Turkce (1.234,56 / +2,55%) -> hedef dil (1,234.56 / +2.55%)
 SAYI_BICIM_RE = re.compile(r"\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+,\d+")
@@ -200,7 +219,7 @@ def sayilari_cevir(metin: str, dil: str) -> str:
 # Tercume edilecek ozellikler
 OZELLIK_ANAHTARLARI = ("title", "alt", "placeholder", "aria-label", "content", "data-aciklama")
 # content="..." yalnizca bu meta/etiketlerde cevrilir
-ICERIK_META_RE = re.compile(r'<(?:meta)\b[^>]*\b(?:name|property)\s*=\s*"(description|og:description|og:title|og:image:alt|twitter:description|twitter:title|keywords)"[^>]*>', re.I)
+ICERIK_META_RE = re.compile(r'<(?:meta)\b[^>]*\b(?:name|property)\s*=\s*"(description|og:description|og:title|og:site_name|og:image:alt|twitter:description|twitter:title|keywords)"[^>]*>', re.I)
 
 # ----------------------------------------------------------------------------
 # 3) CEVIRI SAGLAYICILARI
@@ -622,6 +641,8 @@ def cevrilecek_mi(metin: str) -> bool:
     m = metin.strip()
     if len(m) < 2:
         return False
+    if m in ZORLA_CEVIR:
+        return True
     if SAYI_RE.match(m) or TICKER_RE.match(m) or KISALTMA_RE.match(m):
         return False
     if sayisal_mi(m):        # fiyat, yuzde, oran, "TL" iceren sayisal metin
@@ -1233,6 +1254,60 @@ def seo_url_formu(html: str) -> str:
     return html
 
 
+META_AD = {
+    "en": "BIST 30 Daily Reports", "de": "BIST 30 Tagesberichte",
+    "ru": "Ежедневные отчёты BIST 30", "zh": "BIST 30 每日报告",
+}
+META_ARIA = {
+    "tr": "Sayfa dili seçin", "en": "Select page language",
+    "de": "Seitensprache wählen", "ru": "Выбрать язык страницы",
+    "zh": "选择页面语言",
+}
+
+
+def yerelle_meta(html: str, dil: str) -> str:
+    """Korunan/atlanan bloklardaki Turkce meta metinleri yerellestirir:
+    og:site_name, JSON-LD ad/aciklama ve dil degistirici aria etiketi."""
+    ad = META_AD.get(dil)
+    if ad:
+        html = html.replace('content="BIST 30 Günlük Raporlar"', 'content="' + ad + '"')
+    html = html.replace('aria-label="Sayfa dili seçin"',
+                        'aria-label="' + META_ARIA.get(dil, "Sayfa dili seçin") + '"')
+
+    # sayfanin cevrilmis basligi ve meta aciklamasi (JSON-LD'yi bunlarla besleyecegiz)
+    mt = re.search(r"<title[^>]*>(.*?)</title>", html, re.S)
+    baslik = mt.group(1).strip() if mt else None
+    md = re.search(r"<meta[^>]*\bname=\"description\"[^>]*\bcontent=\"([^\"]*)\"", html)
+    aciklama = md.group(1) if md else None
+
+    # JSON-LD: script icinde oldugu icin normal akisa girmez -> elle yerellestir
+    def _ld(m):
+        try:
+            d = json.loads(m.group(1))
+        except Exception:
+            return m.group(0)
+
+        def gez(o):
+            if isinstance(o, dict):
+                for k, v in o.items():
+                    if k == "name" and isinstance(v, str) and v.strip() == "BIST 30 Günlük Raporlar" and ad:
+                        o[k] = ad
+                    else:
+                        gez(v)
+            elif isinstance(o, list):
+                for v in o:
+                    gez(v)
+        if baslik and isinstance(d.get("name"), str):
+            d["name"] = baslik
+        if aciklama and isinstance(d.get("description"), str) and "description" in d:
+            d["description"] = aciklama
+        gez(d)
+        return ('<script type="application/ld+json">' + json.dumps(d, ensure_ascii=False) + '</script>')
+
+    html = re.sub(r'<script type="application/ld\+json">(.*?)</script>', _ld, html, count=1, flags=re.S)
+    return html
+
+
 def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | None,
                       cevirmen: Cevirmen, onarim: bool = True) -> dict:
     hedef_liste = sayfa_listesi or turkce_sayfalar(kok)
@@ -1265,6 +1340,7 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
             for kod in DILLER:
                 yeni = yeni.replace("@@URL_" + kod + "@@", f"{SITE_URL}{kod + '/' if kod != 'tr' else ''}{rel.as_posix()}")
             yeni = seo_url_formu(yeni)
+            yeni = yerelle_meta(yeni, dil)
             if onarim:
                 yeni, onarilan, medya_n = baglantilari_onar(yeni, rel, agac, medya)
                 ozet["onarilan_baglanti"] += onarilan
