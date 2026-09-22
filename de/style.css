@@ -6,14 +6,12 @@ body { margin:0; font-family:"Segoe UI", system-ui, -apple-system, Roboto, Arial
       background:var(--bg); color:var(--ink); line-height:1.65; }
 a { color:var(--accent); }
 .topbar { background:var(--ink); }
-.topbar .inner { max-width:1080px; margin:0 auto; padding:8px 20px; display:flex;
-                 justify-content:space-between; align-items:center; flex-wrap:nowrap; gap:10px; }
-.topbar .brand { color:#fff; text-decoration:none; font-weight:700; font-size:16.5px; white-space:nowrap; }
-.brand-row { display:flex; align-items:center; gap:8px; min-width:0; }
-.topbar nav a { color:#cbd5e1; text-decoration:none; margin-left:0; font-size:13.5px; white-space:nowrap; }
-.topbar nav { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; flex:1; min-width:0; gap:0 14px; }
+.topbar .inner { max-width:1080px; margin:0 auto; padding:14px 20px; display:flex;
+                 justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+.topbar .brand { color:#fff; text-decoration:none; font-weight:700; font-size:18px; }
+.topbar nav a { color:#cbd5e1; text-decoration:none; margin-left:20px; font-size:14px; }
 .topbar nav a:hover, .topbar nav a.active { color:#fff; }
-.wrap { max-width:1080px; margin:0 auto; padding:22px 20px 48px; }
+.wrap { max-width:1080px; margin:0 auto; padding:32px 20px 48px; }
 .hero { margin-bottom:26px; }
 .hero h1 { margin:0 0 6px; font-size:27px; }
 .hero p { margin:0; color:var(--muted); font-size:14.5px; }
@@ -101,10 +99,8 @@ body { overflow-x: hidden; }
 .ticker-saat { color: #64748b; font-size: 11.5px; }
 @media (max-width: 640px) {
   .topbar .inner { padding: 10px 12px; }
-  .topbar nav { display:flex; flex-wrap:nowrap; overflow-x:auto; justify-content:flex-start; gap:0 12px;
-                -ms-overflow-style:none; scrollbar-width:none; }
+  .topbar nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
   .topbar nav a { margin-left: 0; font-size: 13px; padding: 4px 0; }
-  .topbar nav::-webkit-scrollbar { display: none; }
 }
 
 /* ---- Sesli okuma butonu ---- */
@@ -129,8 +125,8 @@ html.dark .footer { background:var(--card); }
    oldugu icin temayla birlikte acilmamali) */
 .topbar, .ticker-bant, .report thead th { background:#0f172a; }
 html.dark .ticker-bant, html.dark .topbar { background:#0b1220; border-bottom:1px solid var(--line); }
-.theme-btn { background:transparent; color:#cbd5e1; border:1px solid #475569; border-radius:7px;
-             padding:3px 8px; font-size:13px; line-height:1.15; cursor:pointer; }
+.theme-btn { background:transparent; color:#cbd5e1; border:1px solid #475569; border-radius:8px;
+             padding:4px 10px; font-size:14px; cursor:pointer; }
 .theme-btn:hover { color:#fff; border-color:#94a3b8; }
 
 /* ---- Mobil alt navigasyon ---- */
@@ -150,53 +146,3 @@ html.dark .ticker-bant, html.dark .topbar { background:#0b1220; border-bottom:1p
 .isi-hucre { border-radius:10px; padding:10px 6px; text-align:center; color:#fff; }
 .isi-hucre b { display:block; font-size:13.5px; letter-spacing:.4px; }
 .isi-hucre span { font-size:12px; font-weight:700; }
-
-/* ---- Baslik + ust panel sikilastirma (2026-09-21) ---- */
-.brand-row { display:flex; align-items:center; gap:8px; min-width:0; }
-.site-widgets { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
-                background:var(--card); border:1px solid var(--line); border-bottom:0;
-                border-radius:10px 10px 0 0; padding:8px 14px 6px; margin-bottom:0;
-                font-size:12.5px; color:var(--muted); }
-.site-widgets #live-clock-weather { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
-/* Arama paneli widget seridiyle birlesik gorunur (tek panel) */
-.interactive-box { display:flex; align-items:center; gap:12px; flex-wrap:nowrap;
-                   background:var(--card); border:1px solid var(--line); border-top:0;
-                   border-radius:0 0 10px 10px; padding:2px 14px 10px; margin-bottom:18px; }
-.arama-kutusu { flex:0 1 340px; min-width:180px; background:transparent; padding:0; border:0; }
-.arama-kutusu input { width:100%; }
-@media (max-width: 768px) {
-  .brand-row .brand { font-size:15px; }
-  .site-widgets { justify-content:flex-start; padding:7px 12px 5px; }
-  .interactive-box { padding:0 12px 9px; }
-}
-
-/* ---- Kompakt radyo satiri (arama cubuguyla ayni satirda) ---- */
-.radyo-mini { display:flex; flex-direction:column; gap:1px; flex:0 1 auto; max-width:300px;
-              font-size:11.5px; line-height:1.4; color:var(--muted); }
-.radyo-mini .radyo-linkler a { color:var(--muted); text-decoration:none; border-bottom:1px solid transparent; }
-.radyo-mini .radyo-linkler a:hover { color:var(--accent); border-bottom-color:var(--accent); }
-.radyo-mini .ayrac { color:var(--line); }
-.radyo-mini .radyo-uyari { font-size:10.5px; color:#94a3b8; }
-@media (max-width: 768px) {
-  .radyo-mini { max-width:none; }
-}
-
-/* ---- Radyo oynatici (kompakt satir) ---- */
-.radyo-mini { display:flex; flex-wrap:wrap; align-items:center; gap:8px; flex:1 1 260px;
-              font-size:11.5px; line-height:1.4; color:var(--muted); }
-.radyo-mini .radyo-oynat { display:inline-flex; align-items:center; justify-content:center;
-              width:26px; height:26px; border-radius:50%; border:1px solid var(--line);
-              background:var(--card); color:var(--accent); font-size:11px; cursor:pointer; }
-.radyo-mini .radyo-oynat:hover { border-color:var(--accent); }
-.radyo-mini .radyo-ses { width:74px; height:14px; accent-color:var(--accent); cursor:pointer; }
-.radyo-mini .radyo-linkler a { color:var(--muted); text-decoration:none; border-bottom:1px solid transparent; }
-.radyo-mini .radyo-linkler a:hover { color:var(--accent); border-bottom-color:var(--accent); }
-.radyo-mini .ayrac { color:var(--line); }
-.radyo-mini .radyo-uyari { flex:1 1 100%; font-size:10.5px; color:#94a3b8; }
-
-/* Dar ekranda arama ve radyo alt alta gecsin */
-@media (max-width: 560px) {
-  .interactive-box { flex-wrap: wrap; }
-  .arama-kutusu { flex: 1 1 100%; }
-  .radyo-mini { flex: 1 1 100%; }
-}

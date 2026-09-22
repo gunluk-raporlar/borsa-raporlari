@@ -7,8 +7,8 @@
 <meta name="description" content="AI-powered daily BIST 30 analyses: technical scan, oscillator signals, model portfolio and virtual portfolio tracking.">
 <link rel="canonical" href="https://borsa-raporlari.pages.dev/en/sinyal-karnesi">
 <link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/sinyal-karnesi">
-<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/sinyal-karnesi">
 <link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/sinyal-karnesi">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/sinyal-karnesi">
 <link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/sinyal-karnesi">
 <link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/sinyal-karnesi">
 <link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/sinyal-karnesi">
@@ -28,6 +28,7 @@
 <meta name="twitter:description" content="AI-powered daily BIST 30 analyses: technical scan, oscillator signals, model portfolio and virtual portfolio tracking.">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<meta name="yandex-verification" content="2c8df12d0b97a734">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Sinyal Karnesi — AL Sinyalleri Backtest", "description": "Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi.", "url": "https://borsa-raporlari.pages.dev/en/sinyal-karnesi", "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/en/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -91,15 +92,11 @@
 <a href="https://borsa-raporlari.pages.dev/ru/sinyal-karnesi" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
 <a href="https://borsa-raporlari.pages.dev/zh/sinyal-karnesi" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
 </nav>
-
-
-
-
-
     </div>
 
     <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
     <div class="interactive-box">
+
 <div class="arama-kutusu">
     <div style="display: flex; gap: 8px;">
         <input type="text" id="site-arama-giris" placeholder="Search stock, topic or date..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
@@ -185,6 +182,7 @@
 })();
 </script>
 
+
 <div class="radyo-mini">
   <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Play / Pause">▶</button>
   <audio id="radyo-ses" preload="none"></audio>
@@ -216,38 +214,39 @@
   if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
 })();
 </script>
+
     </div>
 
     <!-- Asıl Sayfa İçeriği -->
     
 <div class="hero">
 <h1>Signal Scorecard</h1>
-<p>The technical scan gives <strong>AL</strong> we test the signals against the price after 5 trading days.
-If we had bought at the signal-day close and sold at the 5th trading day's close, the result: 24 signals,
-average <strong class="neg">-5.60%</strong> ( brut), win rate <strong>12%</strong>.
- After commission+BSMV expense (~0%.10): average <strong class="neg">-5.70%</strong>,
- win <strong>12%</strong> ( hypothetical expense scenario; actual rate varies by broker).
+<p>The technical scan gives <strong>AL</strong> we test the signals against the price 5 trading days later.
+If we had bought at the close on the signal day and sold at the close on the 5th trading day, the result would be: 27 signals,
+average <strong class="neg">-7.03%</strong> ( brut), win rate <strong>11%</strong>.
+ After commission+BSMV expense (~0%.10): average <strong class="neg">-7.13%</strong>,
+ win <strong>11%</strong> ( hypothetical expense scenario; actual rate varies by broker).
 (Past performance is not a guarantee of future returns; method kept simple.)</p>
 </div>
 <div class="grid">
 <div class="card"><h3 style="margin:0 0 8px">🏆 Top 3</h3><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>TUPRS</strong><span class='pos' style='font-weight:700; white-space:nowrap'>+5.45%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 08.09,2026</div></div><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>SISE</strong><span class='pos' style='font-weight:700; white-space:nowrap'>+4.46%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 08.09,2026</div></div><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>SAHOL</strong><span class='pos' style='font-weight:700; white-space:nowrap'>+0.96%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 08.09,2026</div></div></div>
-<div class="card"><h3 style="margin:0 0 8px">📉 Worst 3</h3><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>DSTKF</strong><span class='neg' style='font-weight:700; white-space:nowrap'>-21.43%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 14.09,2026</div></div><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>GUBRF</strong><span class='neg' style='font-weight:700; white-space:nowrap'>-18.95%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 10.09,2026</div></div><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>SISE</strong><span class='neg' style='font-weight:700; white-space:nowrap'>-14.80%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 10.09,2026</div></div></div>
+<div class="card"><h3 style="margin:0 0 8px">📉 Worst 3</h3><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>DSTKF</strong><span class='neg' style='font-weight:700; white-space:nowrap'>-33.85%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 15.09,2026</div></div><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>SASA</strong><span class='neg' style='font-weight:700; white-space:nowrap'>-21.43%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 15.09,2026</div></div><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>DSTKF</strong><span class='neg' style='font-weight:700; white-space:nowrap'>-21.43%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 14.09,2026</div></div></div>
 </div>
 <h2 class="section-title">Last 15 Signals</h2>
 <div class="card" style="padding:8px 24px 16px"><div class="tbl-wrap"><table>
 <tr><th>Signal Day</th><th>Stock</th><th>Entry</th><th>Exit</th><th>Exit Day</th><th>Return</th></tr>
-<tr><td>2026-09-14</td><td><strong>TRALT</strong></td><td>53.65 TL</td><td>50.20 TL</td><td>2026-09-21</td><td class='neg' style='font-weight:700'>-6.43%</td></tr><tr><td>2026-09-14</td><td><strong>SAHOL</strong></td><td>95.30 TL</td><td>88.05 TL</td><td>2026-09-21</td><td class='neg' style='font-weight:700'>-7.61%</td></tr><tr><td>2026-09-14</td><td><strong>AKBNK</strong></td><td>72.70 TL</td><td>70.70 TL</td><td>2026-09-21</td><td class='neg' style='font-weight:700'>-2.75%</td></tr><tr><td>2026-09-14</td><td><strong>DSTKF</strong></td><td>2,525.00 TL</td><td>1,984.00 TL</td><td>2026-09-21</td><td class='neg' style='font-weight:700'>-21.43%</td></tr><tr><td>2026-09-11</td><td><strong>KRDMD</strong></td><td>46.50 TL</td><td>44.08 TL</td><td>2026-09-18</td><td class='neg' style='font-weight:700'>-5.20%</td></tr><tr><td>2026-09-11</td><td><strong>SAHOL</strong></td><td>94.80 TL</td><td>90.60 TL</td><td>2026-09-18</td><td class='neg' style='font-weight:700'>-4.43%</td></tr><tr><td>2026-09-11</td><td><strong>EKGYO</strong></td><td>20.80 TL</td><td>19.24 TL</td><td>2026-09-18</td><td class='neg' style='font-weight:700'>-7.50%</td></tr><tr><td>2026-09-11</td><td><strong>AKBNK</strong></td><td>72.75 TL</td><td>71.55 TL</td><td>2026-09-18</td><td class='neg' style='font-weight:700'>-1.65%</td></tr><tr><td>2026-09-11</td><td><strong>ENKAI</strong></td><td>91.05 TL</td><td>85.75 TL</td><td>2026-09-18</td><td class='neg' style='font-weight:700'>-5.82%</td></tr><tr><td>2026-09-11</td><td><strong>TOASO</strong></td><td>290.75 TL</td><td>287.00 TL</td><td>2026-09-18</td><td class='neg' style='font-weight:700'>-1.29%</td></tr><tr><td>2026-09-10</td><td><strong>GUBRF</strong></td><td>512.00 TL</td><td>415.00 TL</td><td>2026-09-17</td><td class='neg' style='font-weight:700'>-18.95%</td></tr><tr><td>2026-09-10</td><td><strong>VAKBN</strong></td><td>34.50 TL</td><td>30.86 TL</td><td>2026-09-17</td><td class='neg' style='font-weight:700'>-10.55%</td></tr><tr><td>2026-09-10</td><td><strong>DSTKF</strong></td><td>2,470.00 TL</td><td>2,448.00 TL</td><td>2026-09-17</td><td class='neg' style='font-weight:700'>-0.89%</td></tr><tr><td>2026-09-10</td><td><strong>SISE</strong></td><td>44.86 TL</td><td>38.22 TL</td><td>2026-09-17</td><td class='neg' style='font-weight:700'>-14.80%</td></tr><tr><td>2026-09-10</td><td><strong>TOASO</strong></td><td>292.75 TL</td><td>272.25 TL</td><td>2026-09-17</td><td class='neg' style='font-weight:700'>-7.00%</td></tr>
+<tr><td>2026-09-15</td><td><strong>TUPRS</strong></td><td>415.75 TL</td><td>414.75 TL</td><td>2026-09-22</td><td class='neg' style='font-weight:700'>-0.24%</td></tr><tr><td>2026-09-15</td><td><strong>SASA</strong></td><td>2.94 TL</td><td>2.31 TL</td><td>2026-09-22</td><td class='neg' style='font-weight:700'>-21.43%</td></tr><tr><td>2026-09-15</td><td><strong>DSTKF</strong></td><td>2,700.00 TL</td><td>1,786.00 TL</td><td>2026-09-22</td><td class='neg' style='font-weight:700'>-33.85%</td></tr><tr><td>2026-09-14</td><td><strong>TRALT</strong></td><td>53.65 TL</td><td>50.20 TL</td><td>2026-09-21</td><td class='neg' style='font-weight:700'>-6.43%</td></tr><tr><td>2026-09-14</td><td><strong>SAHOL</strong></td><td>95.30 TL</td><td>88.05 TL</td><td>2026-09-21</td><td class='neg' style='font-weight:700'>-7.61%</td></tr><tr><td>2026-09-14</td><td><strong>AKBNK</strong></td><td>72.70 TL</td><td>70.70 TL</td><td>2026-09-21</td><td class='neg' style='font-weight:700'>-2.75%</td></tr><tr><td>2026-09-14</td><td><strong>DSTKF</strong></td><td>2,525.00 TL</td><td>1,984.00 TL</td><td>2026-09-21</td><td class='neg' style='font-weight:700'>-21.43%</td></tr><tr><td>2026-09-11</td><td><strong>KRDMD</strong></td><td>46.50 TL</td><td>44.08 TL</td><td>2026-09-18</td><td class='neg' style='font-weight:700'>-5.20%</td></tr><tr><td>2026-09-11</td><td><strong>SAHOL</strong></td><td>94.80 TL</td><td>90.60 TL</td><td>2026-09-18</td><td class='neg' style='font-weight:700'>-4.43%</td></tr><tr><td>2026-09-11</td><td><strong>EKGYO</strong></td><td>20.80 TL</td><td>19.24 TL</td><td>2026-09-18</td><td class='neg' style='font-weight:700'>-7.50%</td></tr><tr><td>2026-09-11</td><td><strong>AKBNK</strong></td><td>72.75 TL</td><td>71.55 TL</td><td>2026-09-18</td><td class='neg' style='font-weight:700'>-1.65%</td></tr><tr><td>2026-09-11</td><td><strong>ENKAI</strong></td><td>91.05 TL</td><td>85.75 TL</td><td>2026-09-18</td><td class='neg' style='font-weight:700'>-5.82%</td></tr><tr><td>2026-09-11</td><td><strong>TOASO</strong></td><td>290.75 TL</td><td>287.00 TL</td><td>2026-09-18</td><td class='neg' style='font-weight:700'>-1.29%</td></tr><tr><td>2026-09-10</td><td><strong>GUBRF</strong></td><td>512.00 TL</td><td>415.00 TL</td><td>2026-09-17</td><td class='neg' style='font-weight:700'>-18.95%</td></tr><tr><td>2026-09-10</td><td><strong>VAKBN</strong></td><td>34.50 TL</td><td>30.86 TL</td><td>2026-09-17</td><td class='neg' style='font-weight:700'>-10.55%</td></tr>
 </table></div></div>
 <p style="color:var(--muted); font-size:12.5px">Method: every stock with a general "BUY" signal is measured against the closing price 5 trading days after the signal day. Signals are not investment advice.</p>
 </main>
 
 <nav class="altbar" aria-label="Quick menu">
-<a href="index.html"><span class="i">📊</span>Reports</a>
-<a href="teknik-analiz.html"><span class="i">📈</span>Technical</a>
-<a href="hisse/index.html"><span class="i">🏦</span>Stocks</a>
-<a href="portfolio.html"><span class="i">💼</span>Portfolio</a>
-<a href="haberler.html"><span class="i">📰</span>News</a>
-<a href="takvim.html"><span class="i">📅</span>Calendar</a>
+<a href="index.html"><span class="i" aria-hidden="true">📊</span>Reports</a>
+<a href="teknik-analiz.html"><span class="i" aria-hidden="true">📈</span>Technical</a>
+<a href="hisse/index.html"><span class="i" aria-hidden="true">🏦</span>Stocks</a>
+<a href="portfolio.html"><span class="i" aria-hidden="true">💼</span>Portfolio</a>
+<a href="haberler.html"><span class="i" aria-hidden="true">📰</span>News</a>
+<a href="takvim.html"><span class="i" aria-hidden="true">📅</span>Calendar</a>
 </nav>
 
 <script>
