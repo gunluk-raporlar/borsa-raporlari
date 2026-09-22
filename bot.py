@@ -995,6 +995,80 @@ def rapor_son_islem(metin: str) -> str:
     return metin.strip()
 
 
+# ---------- PIYASA VERISI (endeks + kur: rapor acilisi ve pano icin) ----------
+
+_piyasa_onbellek = None  # proses icinde bir kez hesaplanir
+
+
+def piyasa_verisi():
+    """XU030/XU100 son iki kapanisini, USD/TRY'yi ve endeksin dolar bazindaki
+    gunluk performansini hesaplar. Rapor prompt'u ile pano ayni kesin rakamlari
+    buradan alir; LLM'in tarih/seviye uydurmasi engellenir. Veri alinamazsa
+    None doner (cagiran taraf sessizce atlar). borsapy cagrisi yavas oldugundan
+    proses basina bir kez hesaplanip onbelleklenir."""
+    global _piyasa_onbellek
+    if _piyasa_onbellek is not None:
+        return _piyasa_onbellek or None
+    veri = {}
+    try:
+        import borsapy as bp
+        for kod in ("XU030", "XU100"):
+            try:
+                ixh = bp.index(kod).history(period="3mo")
+                kapanislar = ixh["Close"].astype(float).dropna() if ixh is not None else []
+                if len(kapanislar) >= 2:
+                    onceki, son = float(kapanislar.iloc[-2]), float(kapanislar.iloc[-1])
+                    if onceki > 0:
+                        veri[kod] = {"son": son, "onceki": onceki,
+                                     "deg": (son / onceki - 1) * 100}
+            except Exception as e:
+                logger.warning("[Uyari] %s endeks verisi alinamadi: %s", kod, e)
+    except Exception as e:
+        logger.warning("[Uyari] borsapy endeks verisi alinamadi: %s", e)
+    try:
+        import yfinance as yf
+        df_kur = yf.download("USDTRY=X", period="5d", progress=False)["Close"].ffill().dropna()
+        if len(df_kur) >= 2:
+            onceki, son = float(df_kur.iloc[-2]), float(df_kur.iloc[-1])
+            if onceki > 0:
+                veri["USDTRY"] = {"son": son, "onceki": onceki,
+                                  "deg": (son / onceki - 1) * 100}
+    except Exception as e:
+        logger.warning("[Uyari] USDTRY verisi alinamadi: %s", e)
+    if "XU030" in veri and "USDTRY" in veri:
+        # TL getirisi kur hareketiyle duzeltildiginde dolar bazindaki getiri kalir.
+        veri["XU030USD"] = {"deg": ((1 + veri["XU030"]["deg"] / 100)
+                                    / (1 + veri["USDTRY"]["deg"] / 100) - 1) * 100}
+    _piyasa_onbellek = veri if veri else False
+    return veri or None
+
+
+def piyasa_verisi_metni():
+    """Prompt'lara enjekte edilen tarih + kesin rakam blogu; veri yoksa ''."""
+    pv = piyasa_verisi()
+    if not pv:
+        return ""
+    bugun = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul"))
+    satirlar = [f"Bugunun tarihi: {bugun.day} {_AYLAR[bugun.month - 1]} "
+                f"{bugun.year}, {_GUN_ADLARI[bugun.weekday()]}"]
+    if "XU030" in pv:
+        v = pv["XU030"]
+        satirlar.append(f"XU030 (BIST 30): son kapanis {_ts(v['son'])} | "
+                        f"onceki kapanis {_ts(v['onceki'])} | gunluk {_ty(v['deg'])}%")
+    if "XU100" in pv:
+        v = pv["XU100"]
+        satirlar.append(f"XU100 (BIST 100): son kapanis {_ts(v['son'])} | "
+                        f"onceki kapanis {_ts(v['onceki'])} | gunluk {_ty(v['deg'])}%")
+    if "USDTRY" in pv:
+        v = pv["USDTRY"]
+        satirlar.append(f"USD/TRY: {_ts(v['son'])} | onceki {_ts(v['onceki'])} | "
+                        f"gunluk {_ty(v['deg'])}%")
+    if "XU030USD" in pv:
+        satirlar.append(f"XU030 dolar bazinda gunluk performans: {_ty(pv['XU030USD']['deg'])}% "
+                        "(TL getirisi kur hareketine gore duzeltilmis)")
+    return "\n".join(satirlar)
+
+
 def master_cio_agent(state: AgentState):
     logger.info("[Bas Analist] Rapor sentezleniyor...")
     print("[Bas Analist] Rapor sentezleniyor...", flush=True)
@@ -1004,6 +1078,28 @@ def master_cio_agent(state: AgentState):
         hafiza_metni = "\n[GECMIS GUNLERIN ANALIZ OZETLERI - HAFIZA]:\n"
         for g in gecmis_ozetler:
             hafiza_metni += f"-- {g['date']}: {g['data'].get('ozet', '')}\n"
+
+    # Tarih ve endeks seviyeleri kod tarafindan hesaplanir; LLM yalnizca bu
+    # kesin rakamlari kullanir. Veri cekilemezse eski "tarih yazma" yasaği
+    # devrede kalir (yanlis tarih yayinlama riskine karsi).
+    piyasa_blogu = piyasa_verisi_metni()
+    piyasa_bolumu = (f"\n[BUGUNUN TARIHI VE PIYASA VERILERI - KESIN RAKAMLAR; "
+                     f"tarih, gun adi, seviye ve yuzdeleri YALNIZCA buradan al]:\n"
+                     f"{piyasa_blogu}\n") if piyasa_blogu else ""
+    if piyasa_blogu:
+        tarih_kurallari = (
+            '- Rapor doğrudan "## 1." başlığıyla başlayacak; RAPOR ADI, Yayıncı, Konu gibi kimlik satırları EKLEME.\n'
+            "- Metinde köşeli parantezli [...] yer tutucu veya iç not kullanma.\n"
+            '- Kimlik satırı YAZMA: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri geçmeyecek.\n'
+            '- "## 1." başlığından sonraki İLK cümle tarih ve endeks verisiyle açılır: tarih, gün adı, endeks seviyesi ve yüzdeleri YALNIZCA [BUGUNUN TARIHI VE PIYASA VERILERI] bloğundan AYNEN alınır; kendi hafızandan tarih, gün adı veya rakam ÜRETME (tarih-gün eşleştirmesinde sık hata yapıyorsun). Örnek kalıp: "<tarih> — BIST 30 (XU030) <son kapanış> seviyesinde kapandı; bir önceki kapanış <önceki kapanış> idi (günlük %<değişim>); dolar bazında günlük performans %<değişim> olarak gerçekleşti."'
+        )
+    else:
+        tarih_kurallari = (
+            '- Rapor doğrudan "## 1." başlığıyla başlayacak; RAPOR ADI, Tarih, Yayıncı, Konu gibi kimlik satırları EKLEME (site şablonu tarihi zaten gösteriyor, yanlış tarihe düşme riski yaratma).\n'
+            "- Metinde köşeli parantezli [...] yer tutucu veya iç not kullanma.\n"
+            '- Kimlik satırı YAZMA: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri ve tarih ya da haftanın gün adı raporda GEÇMEYECEK (tarih-gün eşleştirmesinde sık hata yapıyorsun; şablon zaten tarihi gösteriyor).'
+        )
+
 
     prompt = f"""Sen Türkiye piyasalarında uzmanlaşmış bağımsız bir finansal analist yapay zekâsısın (gerçek bir kişi veya kurum değilsin; kendini öyle tanıtma). Aşağıdaki GERÇEK verileri kullanarak profesyonel okuyucuya hitap eden, derinlemesine ve uzun bir BIST 30 Yatırım ve Strateji Raporu kaleme al.
 Önceki günlere ait analiz özetlerini dikkatle incele; trendin devam edip etmediğini, önceki önerilerin performansını ve piyasa dinamiklerindeki değişimleri eleştirel bir gözle değerlendir.
@@ -1019,7 +1115,7 @@ def master_cio_agent(state: AgentState):
 
 [TEMEL / FİNANSAL VERİLER]:
 {state['fundamental_data']}
-
+{piyasa_bolumu}
 Raporu kesinlikle profesyonel bir finansal bülten formatında, her başlığı detaylı ve uzun cümlelerle açıklayarak şu alt başlıklar altında oluştur (her başlık "## " ile başlayan markdown başlığı olarak yazılacak):
 
 ## 1. Yönetici Özeti ve Piyasa Genel Bakışı: Günün en kritik gelişmeleri, endeksin genel yönü ve fon yönetiminin temel perspektifi.
@@ -1035,9 +1131,7 @@ Raporu kesinlikle profesyonel bir finansal bülten formatında, her başlığı 
 Tablo kuralları: En fazla 8 hisse pozisyonu + bir "NAKİT" satırı ekle; ağırlıklar %100'ü tamamlamalı (nakit dahil). Sadece AL/GÜÇLÜ AL sinyali veren ve gerekçesi verilerle desteklenen hisseleri seç; ağırlığı sinyal gücü, Pearson (r) ve kanal konumuna göre belirle. Giriş bölgesi, hedefler ve stop seviyelerini SADECE sağlanan gerçek fiyatlardan türet (kanal bantları ve son fiyat baz alın); dışarıdan hiçbir veri ekleme. Her satırın gerekçesi teknik + osilatör gerekçelerini birleştirsin.
 
 Biçim kuralları (zorunlu):
-- Rapor doğrudan "## 1." başlığıyla başlayacak; RAPOR ADI, Tarih, Yayıncı, Konu gibi kimlik satırları EKLEME (site şablonu tarihi zaten gösteriyor, yanlış tarihe düşme riski yaratma).
-- Metinde köşeli parantezli [...] yer tutucu veya iç not kullanma.
-- Kimlik satırı YAZMA: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri ve tarih ya da haftanın gün adı raporda GEÇMEYECEK (tarih-gün eşleştirmesinde sık hata yapıyorsun; şablon zaten tarihi gösteriyor).
+{tarih_kurallari}
 - TÜM metinde doğru Türkçe karakterler kullan (ç, ğ, ı, i, ö, ş, ü); "sinyal" gibi kelimeleri yanlış yazma ("sinyil" DEĞİL).
 - 5. bölümdeki nakit/likidite önerisi ile 6. bölümdeki NAKİT satırının ağırlığı ÇELİŞMEMELİ (örn. "%40 nakit tutun" deyip %0 nakitlik portföy verme).
 - Şirket adlarını YALNIZCA verilerde hisse kodunun yanında verilen resmi adla kullan (örn. YKBNK kodunun adı "Yapı Kredi"dir); hiçbir şirket için kendi hafızandan farklı bir isim, kısaltma ya da benzer bir ad yazma.
@@ -1396,6 +1490,16 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
     makro = (f"Enflasyon (TUIK yillik): {enflasyon['metin']} (donem: {enflasyon['donem']})"
              if enflasyon else "makro veri yok")
 
+    # Gunluk raporla ayni kesin tarih/rakam katmani; veri yoksa eski yasak durur.
+    piyasa_blogu = piyasa_verisi_metni()
+    piyasa_bolumu = (f"\n[BUGUNUN TARIHI VE PIYASA VERILERI - KESIN RAKAMLAR; "
+                     f"tarih, gun adi, seviye ve yuzdeleri YALNIZCA buradan al]:\n"
+                     f"{piyasa_blogu}\n") if piyasa_blogu else ""
+    if piyasa_blogu:
+        tarih_kurali = ('Metinde köşeli parantezli [...] yer tutucu kullanma; rapor doğrudan "## 1." başlığıyla başlasın. Kimlik satırı EKLEME: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri geçmeyecek. "## 1." başlığından sonraki İLK cümle tarih ve endeks verisiyle açılır: tarih, gün adı, seviye ve yüzdeleri YALNIZCA [BUGUNUN TARIHI VE PIYASA VERILERI] bloğundan AYNEN alınır; kendi hafızandan tarih, gün adı veya rakam ÜRETME (tarih-gün eşleştirmesinde sık hata yapıyorsun).')
+    else:
+        tarih_kurali = ('Metinde köşeli parantezli [...] yer tutucu kullanma; rapor doğrudan "## 1." başlığıyla başlasın. Kimlik satırı EKLEME: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri ve tarih ya da haftanın gün adı raporda GEÇMEYECEK (tarih-gün eşleştirmesinde sık hata yapıyorsun).')
+
     prompt = f"""Sen Türkiye piyasalarında uzmanlaşmış bağımsız bir finansal analist yapay zekâsısın (gerçek bir kişi veya kurum değilsin; kendini öyle tanıtma). Aşağıdaki BIST 30 verilerini kullanarak profesyonel okuyucuya hitap eden, DERİNLEMESİNE ve UZUN (en az 1200 kelime) bir günlük analiz raporu yaz. Rapor Türkçe olacak ve TÜM metinde doğru Türkçe karakterler (ç, ğ, ı, ö, ş, ü) kullanılacak; "sinyal" gibi kelimeler yanlış yazılmayacak.
 
 Yanıtını şu yapıda oluştur (başlıklar aynen bu şekilde, "## " ile):
@@ -1422,7 +1526,7 @@ Raporun SONUNDA aşağıdaki başlıklarla tam bir tablo oluştur:
 |-------|--------|---------------|-------|------|---------|
 | ... | ... | ... | ... | ... | ... |
 
-Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren hisseleri listeleyip her biri için gerekçe yaz. Rakamları yalnızca verilen fiyatlardan türet, asla dışarıdan veri ekleme. Şirket adlarını YALNIZCA verilerde hisse kodunun yanında verilen resmi adla kullan; hiçbir şirket için kendi hafızandan farklı bir isim yazma. Enflasyon oranını yalnızca [MAKRO GEREKLER] bölümündeki değerle an. Metinde köşeli parantezli [...] yer tutucu kullanma; rapor doğrudan "## 1." başlığıyla başlasın. Kimlik satırı EKLEME: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri ve tarih ya da haftanın gün adı raporda GEÇMEYECEK (tarih-gün eşleştirmesinde sık hata yapıyorsun).
+Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren hisseleri listeleyip her biri için gerekçe yaz. Rakamları yalnızca verilen fiyatlardan türet, asla dışarıdan veri ekleme. Şirket adlarını YALNIZCA verilerde hisse kodunun yanında verilen resmi adla kullan; hiçbir şirket için kendi hafızandan farklı bir isim yazma. Enflasyon oranını yalnızca [MAKRO GEREKLER] bölümündeki değerle an. {tarih_kurali}
 
 ### VERİLER
 
@@ -1437,6 +1541,7 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
 
 [MAKRO GEREKLER]
 {makro}
+{piyasa_bolumu}
 
 [GUNLUK RAPOR VE HABERLER]
 {rapor_state.get('news_data', '')}
@@ -2266,6 +2371,8 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     a_hb = ' class="active"' if aktif == "haberler" else ""
     a_shb = ' class="active"' if aktif == "sirkethaber" else ""
     a_s = ' class="active"' if aktif == "sozluk" else ""
+    a_trm = ' class="active"' if aktif == "terimler" else ""
+    a_muh = ' class="active"' if aktif == "muhasebe" else ""
     a_k = ' class="active"' if aktif == "karne" else ""
     a_alt_r = ' class="active"' if aktif == "raporlar" else ""
     a_alt_t = ' class="active"' if aktif == "teknik" else ""
@@ -2319,7 +2426,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <header class="topbar"><div class="inner">
 <div class="brand-row"><a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
-<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a></nav>
+<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a><a href="{kok}terimler.html"{a_trm}>Terimler</a><a href="{kok}muhasebe-terimleri.html"{a_muh}>Muhasebe</a></nav>
 </div></header>
 {_kendi_ticker(kok)}
 
@@ -2478,6 +2585,36 @@ def _pano_html(satirlar, kok=""):
     except Exception:
         pass
 
+    # Gercek endeks seviyeleri + dolar bazindaki performans. "BIST 30 Sepeti"
+    # 30 hissenin gunluk ortalamasidir; XU030 resmi endeksten ayridir.
+    bugun = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul"))
+    bugun_str = (f"{bugun.day} {_AYLAR[bugun.month - 1]} {bugun.year}, "
+                 f"{_GUN_ADLARI[bugun.weekday()]}")
+    endeks_hucreleri = ""
+    pv = piyasa_verisi()
+    if pv and "XU030" in pv:
+        v = pv["XU030"]
+        endeks_hucreleri += (
+            f'<div class="pano-hucre"><div class="pano-etiket">XU030 Endeks</div>'
+            f'<div class="pano-deger">{_ts(v["son"])} '
+            f'<span class="{_renk(v["deg"])}">{_ty(v["deg"])}%</span></div></div>'
+            f'<div class="pano-hucre"><div class="pano-etiket">XU030 Önceki Kapanış</div>'
+            f'<div class="pano-deger">{_ts(v["onceki"])}</div></div>'
+        )
+    if pv and "XU100" in pv:
+        v = pv["XU100"]
+        endeks_hucreleri += (
+            f'<div class="pano-hucre"><div class="pano-etiket">XU100</div>'
+            f'<div class="pano-deger">{_ts(v["son"])} '
+            f'<span class="{_renk(v["deg"])}">{_ty(v["deg"])}%</span></div></div>'
+        )
+    if pv and "XU030USD" in pv:
+        d = pv["XU030USD"]["deg"]
+        endeks_hucreleri += (
+            f'<div class="pano-hucre"><div class="pano-etiket">XU030 Dolar Bazında</div>'
+            f'<div class="pano-deger {_renk(d)}">{_ty(d)}%</div></div>'
+        )
+
     def _fmt(v):
         return f"{_ty(v)}%".replace(".", ",")
 
@@ -2505,8 +2642,9 @@ def _pano_html(satirlar, kok=""):
 
     return f"""
 <div class="pano">
-<div class="pano-baslik">📊 Günün Panosu — BIST 30</div>
+<div class="pano-baslik">📊 Günün Panosu — BIST 30 · {bugun_str}</div>
 <div class="pano-veri">
+  {endeks_hucreleri}
   <div class="pano-hucre"><div class="pano-etiket">BIST 30 Sepeti</div><div class="pano-deger {_renk(ort)}">{_fmt(ort)}</div></div>
   <div class="pano-hucre"><div class="pano-etiket">Yükselen / Düşen</div><div class="pano-deger">{yukselen} / {dusen}</div></div>
   <div class="pano-hucre"><div class="pano-etiket">$/TL</div><div class="pano-deger">{usd or '—'}</div></div>
@@ -4069,7 +4207,8 @@ def sozluk_yaz():
     icerik = f"""
 <div class="hero">
 <h1>Borsa Sözlüğü</h1>
-<p>Borsa Okulu derslerinde geçen temel kavramlar — arayarak süzgeçleyebilirsin.</p>
+<p>Borsa Okulu derslerinde geçen temel kavramlar — arayarak süzgeçleyebilirsin.
+Ekonomi ve finansın tam sözlüğü için <a href="terimler.html">Terimler ve Tanımlar</a> sayfasına bak.</p>
 </div>
 <div class="arama-form" style="margin:14px 0">
 <input type="text" id="sozluk-ara" placeholder="Terim ara: RSI, temettü, kaldıraç..." onkeyup="sozlukSuz()" style="flex:1; padding:10px 14px; border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink)">
@@ -4086,6 +4225,328 @@ function sozlukSuz() {{
     with open("sozluk.html", "w", encoding="utf-8") as f:
         f.write(_sayfa("Borsa Sözlüğü", icerik, "sozluk", yol="sozluk.html"))
     logger.info("[Sozluk] %d terim yazildi.", len(terimler))
+
+
+# ---------- TERIMLER VE TANIMLAR (finetune sozlugunden uretilen tam sozluk) ----------
+
+
+def _terim_yukle():
+    """data/terimler/*.jsonl dosyalarini birlestirip yayina hazir hale getirir.
+
+    Temizlikler: ders kitabi kalintisi '[Bölüm: ...]' etiketlerinin atilmasi,
+    satir sonlarinin/bosluklarin duzlestirilmesi, ayni terimin (buyuk/kucuk
+    harf farkinca) tek kayitta birlestirilmesi (kaynaklar birlestirilir).
+    Donus: terim sozlukleri listesi, Turkce alfabetik sirali."""
+    kayitlar = []
+    for ad in ("tr_terim_temiz.jsonl", "tr_terim_finans_ek.jsonl"):
+        yol = os.path.join("data", "terimler", ad)
+        try:
+            with open(yol, encoding="utf-8") as f:
+                for satir in f:
+                    satir = satir.strip()
+                    if not satir:
+                        continue
+                    try:
+                        kayitlar.append(json.loads(satir))
+                    except json.JSONDecodeError:
+                        continue
+        except OSError:
+            continue
+    birlesik = {}
+    for k in kayitlar:
+        terim = re.sub(r"\s+", " ", (k.get("terim_tr") or "").strip())
+        tanim = re.sub(r"\s*\[B[oö]l[uü]m:[^\]]*\]", "", k.get("tanim") or "")
+        tanim = re.sub(r"\s+", " ", tanim).strip()
+        if not terim or len(tanim) < 20:
+            continue
+        if tanim[:1].islower():
+            tanim = tanim[:1].upper() + tanim[1:]
+        anahtar = terim.casefold()
+        if anahtar in birlesik:
+            eski = birlesik[anahtar]
+            if k.get("kaynak") and k["kaynak"] not in eski["kaynak"]:
+                eski["kaynak"] += " + " + k["kaynak"]
+            if len(tanim) > len(eski["tanim"]):
+                eski["tanim"] = tanim
+            if not eski["en"] and k.get("terim_en"):
+                eski["en"] = k["terim_en"].strip()
+            continue
+        birlesik[anahtar] = {
+            "terim": terim,
+            "en": (k.get("terim_en") or "").strip(),
+            "tanim": tanim,
+            "kaynak": (k.get("kaynak") or "").strip(),
+        }
+    sonuc = sorted(birlesik.values(), key=lambda x: x["terim"].casefold())
+
+    # IFRS sozlugunden cikarilan zenginlestirme (EN tanim + ornek cumle);
+    # terim_zenginlestir.py ciktisi. Dosya yoksa sessizce atlanir.
+    zengin_yol = os.path.join("data", "terimler", "zengin.jsonl")
+    try:
+        with open(zengin_yol, encoding="utf-8") as f:
+            zenginler = {json.loads(s)["terim"].casefold(): json.loads(s)
+                         for s in f if s.strip()}
+        for v in sonuc:
+            z = zenginler.get(v["terim"].casefold())
+            if z:
+                v["en_tanim"] = z.get("en_tanim", "")
+                v["ornek"] = z.get("ornek", "")
+                v["ornek_en"] = z.get("ornek_en", "")
+    except OSError:
+        pass
+    return sonuc
+
+
+def _ifrs_yukle():
+    """data/terimler/muhasebe-terimleri.csv (autoclaw IFRS sozluguki; muhasebenews.com
+    kaynagi) okur. Donus: {'en', 'tr', 'en_tanim', 'ornek', 'ornek_en', 'bolum'}
+    listesi, EN terime gore alfabetik. Dosya yoksa bos liste doner.
+
+    Ayrica konumsal hizali EN/DE/ZH/RU dosyalari (muhasebe-en.csv, muhasebe-de.csv,
+    muhasebe-zh.csv, muhasebe-ru.jsonl; orijinal CSV satir sirasiyla) varsa her
+    kayda 'en2' (taze EN tanim), 'de', 'ru', 'zh' tanimlarini ekler."""
+    yol = os.path.join("data", "terimler", "muhasebe-terimleri.csv")
+
+    # Konumsal dil dosyalari: orijinal CSV satir sirasiyla hizalidir.
+    dil_verisi = {"en2": [], "de": [], "ru": [], "zh": []}
+    try:
+        import csv as _csv
+        with open(os.path.join("data", "terimler", "muhasebe-en.csv"),
+                  encoding="utf-8-sig", newline="") as f:
+            dil_verisi["en2"] = [re.sub(r"\s+", " ", (r.get("definition") or "").strip())
+                                 for r in _csv.DictReader(f)]
+    except OSError:
+        pass
+    try:
+        import csv as _csv
+        with open(os.path.join("data", "terimler", "muhasebe-de.csv"),
+                  encoding="utf-8-sig", newline="") as f:
+            dil_verisi["de"] = [re.sub(r"\s+", " ", (r.get("Almanca_Tanim") or "").strip())
+                                for r in _csv.DictReader(f)]
+    except OSError:
+        pass
+    try:
+        import csv as _csv
+        with open(os.path.join("data", "terimler", "muhasebe-zh.csv"),
+                  encoding="utf-8-sig", newline="") as f:
+            dil_verisi["zh"] = [re.sub(r"\s+", " ", (r.get("定义") or "").strip())
+                                for r in _csv.DictReader(f)]
+    except OSError:
+        pass
+    try:
+        with open(os.path.join("data", "terimler", "muhasebe-ru.jsonl"),
+                  encoding="utf-8") as f:
+            ru = [None] * 2000
+            for satir in f:
+                satir = satir.strip()
+                if not satir:
+                    continue
+                try:
+                    r = json.loads(satir)
+                    ru[r["i"]] = re.sub(r"\s+", " ", (r.get("def") or "").strip())
+                except (json.JSONDecodeError, KeyError):
+                    continue
+            dil_verisi["ru"] = ru
+    except OSError:
+        pass
+
+    kayitlar, gorulen = [], set()
+    try:
+        import csv as _csv
+        with open(yol, encoding="utf-8-sig", newline="") as f:
+            for satir_no, satir in enumerate(_csv.DictReader(f)):
+                en = re.sub(r"\s+", " ", (satir.get("Ingilizce_Terim") or "").strip())
+                tr = re.sub(r"\s+", " ", (satir.get("Turkce_Anlami") or "").strip())
+                if not en or not tr:
+                    continue
+                anahtar = en.casefold()
+                if anahtar in gorulen:
+                    continue
+                gorulen.add(anahtar)
+                kayit = {
+                    "en": en, "tr": tr,
+                    "en_tanim": re.sub(r"\s+", " ", (satir.get("Ingilizce_Tanim") or "").strip()),
+                    "ornek": re.sub(r"\s+", " ", (satir.get("Ornek_Turkce") or "").strip()),
+                    "ornek_en": re.sub(r"\s+", " ", (satir.get("Ornek_Ingilizce") or "").strip()),
+                    "bolum": (satir.get("Bolum") or "").strip()[:1].upper(),
+                }
+                for dil, liste in dil_verisi.items():
+                    if satir_no < len(liste) and liste[satir_no]:
+                        kayit[dil] = liste[satir_no]
+                kayitlar.append(kayit)
+    except OSError:
+        return []
+    return sorted(kayitlar, key=lambda x: x["en"].casefold())
+
+
+def terimler_yaz():
+    """Terimler ve Tanımlar (genel ekonomi) + Muhasebe Terimleri (IFRS): her set
+    kendi tek sayfasinda, sozluk.html gibi aramali kart listesi. Bireysel terim
+    sayfasi uretilmez; icerik statik oldugundan yalnizca degisen dosyalar yeniden
+    yazilir (gunluk commit gurultusu olusmasin)."""
+    # Kopyalama caydirici: terim kartlarinda metin secimi kapali; yine de
+    # kopyalanan uzun metne otomatik kaynak atfi eklenir. Not: tekniktir ve
+    # kararl kullanici/scrapertan korunmaz; amacli aceleci kopyalama engeli.
+    koruma = """
+<style>.hero, .terim-oge {-webkit-user-select:none; -moz-user-select:none; user-select:none;}</style>
+<script>
+document.addEventListener('contextmenu', function(e) {
+  if (e.target.closest && e.target.closest('.terim-oge')) e.preventDefault();
+});
+document.addEventListener('copy', function(e) {
+  var s = (window.getSelection ? String(window.getSelection()) : '') || '';
+  if (s.length > 60 && e.clipboardData) {
+    e.clipboardData.setData('text/plain', s +
+      '\\n\\nKaynak: BIST 30 Gunluk Raporlar - Terimler ve Tanimlar\\n' + location.href);
+    e.preventDefault();
+  }
+});
+</script>"""
+
+    def _yaz(yol, icerik):
+        try:
+            with open(yol, encoding="utf-8") as f:
+                if f.read() == icerik:
+                    return False
+        except OSError:
+            pass
+        with open(yol, "w", encoding="utf-8") as f:
+            f.write(icerik)
+        return True
+
+    def _arama_js(liste_id, input_id):
+        """Arama suzgeci: kartlari data-ara'ya gore gizler, bos kalan harf
+        basliklarini da saklar."""
+        return f"""
+<script>
+function terimSuz() {{
+  var q = (document.getElementById('{input_id}').value || '').toLowerCase();
+  document.querySelectorAll('#{liste_id} .terim-oge').forEach(function(el) {{
+    el.style.display = el.getAttribute('data-ara').indexOf(q) !== -1 ? '' : 'none';
+  }});
+  document.querySelectorAll('#{liste_id} h2').forEach(function(h) {{
+    var gorunur = 0, kardes = h.nextElementSibling;
+    while (kardes && kardes.tagName !== 'H2') {{
+      if (kardes.classList && kardes.classList.contains('terim-oge') && kardes.style.display !== 'none') gorunur++;
+      kardes = kardes.nextElementSibling;
+    }}
+    h.style.display = gorunur ? '' : 'none';
+  }});
+}}
+</script>"""
+
+    def _kart(govde, anahtar):
+        anahtar = anahtar.casefold().replace("'", "").replace('"', "")
+        return f"<div class='card terim-oge' data-ara='{anahtar}' style='margin:10px 0; padding:12px 16px'>{govde}</div>"
+
+    # --- 1) Terimler ve Tanımlar (genel ekonomi sozlugu) ---
+    veri = _terim_yukle()
+    if veri:
+        def _harf_sira(h):
+            # Turkce alfabe sirasi (casefold ASCII sort 'ç'yi 'c'den sonra atar)
+            sira = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
+            return (sira.index(h) if h in sira else 99, h)
+
+        harf_gruplari = {}
+        for v in veri:
+            harf_gruplari.setdefault(v["terim"][:1].upper(), []).append(v)
+        kartlar = ""
+        for harf in sorted(harf_gruplari, key=_harf_sira):
+            kartlar += f"<h2 class='section-title'>{harf}</h2>"
+            for v in harf_gruplari[harf]:
+                govde = (f"<strong style='color:var(--accent)'>{v['terim']}</strong>"
+                         + (f" <span style='color:var(--muted); font-size:13px'>{v['en']}</span>" if v["en"] else "")
+                         + f"<p style='margin:6px 0 0; font-size:14px'>{v['tanim']}</p>")
+                if v.get("ornek"):
+                    govde += (f"<p style='margin:6px 0 0; font-size:13.5px; font-style:italic'>Örnek: {v['ornek']}"
+                              + (f" <span style='color:var(--muted)'>({v['ornek_en']})</span>" if v.get("ornek_en") else "")
+                              + "</p>")
+                if v.get("en_tanim"):
+                    govde += (f"<p style='margin:6px 0 0; font-size:13px; color:var(--muted)'>"
+                              f"İngilizce tanım: {v['en_tanim']}</p>")
+                kartlar += _kart(govde, v["terim"] + " " + v["en"] + " " + v["tanim"])
+        icerik = f"""
+<div class="hero">
+<h1>Terimler ve Tanımlar</h1>
+<p>Ekonomi, finans ve borsa terminolojisinin {len(veri)} terimlik referans sözlüğü; tanımlar TCMB,
+Rekabet Kurumu, Kalkınma Ajansları ve iktisat sözlükleri gibi resmî kaynaklardan derlenmiştir.
+Temel kavramlar için <a href="sozluk.html">Borsa Sözlüğü</a>'ne, muhasebe terminolojisi için
+<a href="muhasebe-terimleri.html">Muhasebe Terimleri</a> sayfasına bakabilirsin.</p>
+</div>
+<div class="arama-form" style="margin:14px 0">
+<input type="text" id="terim-ara" placeholder="Terim ara: enflasyon, temettü, zorunlu karşılık..." onkeyup="terimSuz()"
+ style="width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink)">
+</div>
+<div id="terim-liste">{kartlar}</div>
+<p style="color:var(--muted); font-size:12.5px">Tanımlar ilgili kurumların kamuya açık sözlüklerinden alıntılanmıştır;
+yatırım tavsiyesi değildir.</p>
+{_arama_js('terim-liste', 'terim-ara')}
+{koruma}"""
+        _yaz("terimler.html", _sayfa(
+            "Terimler ve Tanımlar", icerik, "terimler",
+            aciklama=f"{len(veri)} terimlik ekonomi, finans ve borsa terimleri sözlüğü: "
+                     "TCMB, Rekabet Kurumu ve yatırım sözlüklerinden kaynaklı tanımlar.",
+            yol="terimler.html"))
+        logger.info("[Terimler] %d terim tek sayfada yazildi.", len(veri))
+
+    # --- 2) Muhasebe Terimleri (IFRS sozluguki; 5 dilli tanim kutulari) ---
+    ifrs = _ifrs_yukle()
+    if ifrs:
+        # Kaynak verideki bilinen yazim hatalari yalnizca GORUNTULEMEDE duzeltilir.
+        _yazim_duzelt = [("A mounts", "Amounts"), ("orbusinesses", "or businesses"),
+                         (" ıssues", " issues"), ("ıncome", "income")]
+
+        def _duzelt(metin):
+            for eski, yeni_ in _yazim_duzelt:
+                metin = metin.replace(eski, yeni_)
+            return metin
+
+        bolum_gruplari = {}
+        for v in ifrs:
+            bolum_gruplari.setdefault(v["bolum"] or "#", []).append(v)
+        kartlar = ""
+        for bolum in sorted(bolum_gruplari):
+            kartlar += f"<h2 class='section-title'>{bolum}</h2>"
+            for v in bolum_gruplari[bolum]:
+                en_gor = _duzelt(v["en"])
+                tanim_en = v.get("en2") or v["en_tanim"]
+                govde = (f"<strong style='color:var(--accent)'>{en_gor}</strong>"
+                         f" <span style='color:var(--muted); font-size:13px'>{v['tr']}</span>"
+                         f"<p style='margin:6px 0 0; font-size:14px'>{tanim_en}</p>")
+                if v["ornek"]:
+                    govde += (f"<p style='margin:6px 0 0; font-size:13.5px; font-style:italic'>Örnek: {v['ornek']}"
+                              + (f" <span style='color:var(--muted)'>({v['ornek_en']})</span>" if v.get("ornek_en") else "")
+                              + "</p>")
+                # Diger dillerdeki tanimlar (kaynak: denetlenmis autoclaw setleri)
+                for dil_kod, dil_etiket in (("de", "DE"), ("ru", "RU"), ("zh", "中文")):
+                    if v.get(dil_kod):
+                        govde += (f"<p style='margin:6px 0 0; font-size:13px; color:var(--muted)'>"
+                                  f"{dil_etiket}: {v[dil_kod]}</p>")
+                arama_anahtari = " ".join(v.get(d) or "" for d in ("en", "tr", "en_tanim", "de", "ru", "zh"))
+                kartlar += _kart(govde, _duzelt(arama_anahtari))
+        icerik = f"""
+<div class="hero">
+<h1>Muhasebe Terimleri</h1>
+<p>{len(ifrs)} terimlik muhasebe ve finansal raporlama sözlüğü; tanımlar İngilizce,
+terim karşılıkları ve örnek cümleler Türkçedir; Almanca, Rusça ve Çince tanımlar da
+her kartta yer alır. Genel ekonomi terimleri için
+<a href="terimler.html">Terimler ve Tanımlar</a> sayfasına bakabilirsin.</p>
+</div>
+<div class="arama-form" style="margin:14px 0">
+<input type="text" id="muhasebe-ara" placeholder="Terim ara: amortisman, şerefiye, goodwill..." onkeyup="terimSuz()"
+ style="width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink)">
+</div>
+<div id="muhasebe-liste">{kartlar}</div>
+<p style="color:var(--muted); font-size:12.5px">Tanımlar kamuya açık IFRS sözlüğünden alıntılanmıştır;
+yatırım tavsiyesi değildir.</p>
+{_arama_js('muhasebe-liste', 'muhasebe-ara')}
+{koruma}"""
+        _yaz("muhasebe-terimleri.html", _sayfa(
+            "Muhasebe Terimleri", icerik, "muhasebe",
+            aciklama=f"{len(ifrs)} terimlik IFRS muhasebe terimleri sözlüğü: İngilizce tanım, "
+                     "Türkçe karşılık ve örnek cümlelerle.",
+            yol="muhasebe-terimleri.html"))
+        logger.info("[Terimler] %d IFRS terimi tek sayfada yazildi.", len(ifrs))
 
 
 VARSAYILAN_ENFLASYON = 0.32  # TUIK verisi hic alinamazsa kullanilan yedek
@@ -4497,6 +4958,12 @@ def site_arama_json_yaz(rapor_dosyalari):
          "t": "haber arşivi borsa makro ekonomi başlıklar rss gündem"},
         {"b": "Borsa Sözlüğü", "u": "sozluk.html",
          "t": "sözlük terimler RSI MACD EMA temettü kaldıraç volatilite destek direnç borsa okulu kavramlar"},
+        {"b": "Terimler ve Tanımlar", "u": "terimler.html",
+         "t": "ekonomi finans terim sözlük tanım makro mikro muhasebe davranışsal finans " +
+              " ".join(v["terim"] for v in _terim_yukle())[:18000]},
+        {"b": "Muhasebe Terimleri", "u": "muhasebe-terimleri.html",
+         "t": "muhasebe IFRS terim sözlük finansal raporlama bilanço amortisman şerefiye goodwill " +
+              " ".join(v["en"] + " " + v["tr"] for v in _ifrs_yukle())[:18000]},
         {"b": "Ekonomik Takvim Rehberi", "u": "takvim.html",
          "t": "ekonomik takvim faiz enflasyon FOMC bilanço TCMB TÜİK veri açıklama rehber"},
     ]
@@ -4536,6 +5003,8 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
         ("sinyal-karnesi.html", "daily"),
         ("haberler.html", "hourly"),
         ("sozluk.html", "weekly"),
+        ("terimler.html", "weekly"),
+        ("muhasebe-terimleri.html", "weekly"),
         ("takvim.html", "weekly"),
         ("hisse/", "daily"),
         ("sirket-haberleri.html", "daily"),
@@ -4794,6 +5263,10 @@ if __name__ == "__main__":
         sozluk_yaz()
     except Exception:
         logger.exception("[Sozluk] uretilemedi.")
+    try:
+        terimler_yaz()
+    except Exception:
+        logger.exception("[Terimler] uretilemedi.")
     try:
         takvim_yaz()
     except Exception:

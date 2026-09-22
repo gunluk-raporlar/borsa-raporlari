@@ -75,6 +75,10 @@ DILLER = {
 
 # Sayfa uretimi disinda tutulacak dosyalar (dogrulama dosyalari vb.)
 HARIC_DOSYALAR = {"404.html", "onizleme-mobil.html"}
+# Dil KOPYASI uretilmeyecek ama sitemap'te TR canonical olarak kalacak sayfalar:
+# muhasebe-terimleri.html zaten 5 dilli (her kartta EN/DE/RU/ZH tanim kutulari);
+# makine cevirisi karisik dilli icerigi bozar.
+GENERASYON_HARIC = {"muhasebe-terimleri.html"}
 # Arama motoru dogrulama dosyalari (google/yandex/bing/baidu...) ve gecici onizleme sayfalari cevrilmez
 HARIC_DESEN_RE = re.compile(r"^(google|yandex|baidu|bing|naver|indexnow|site-?verification|onizleme-)", re.I)
 
@@ -98,6 +102,33 @@ SOZLUK = {
     "Borsa Okulu": {"en": "Market School", "de": "Börsenschule", "ru": "Школа рынка", "zh": "股市学堂"},
     "Takvim": {"en": "Calendar", "de": "Kalender", "ru": "Календарь", "zh": "日历"},
     "Sözlük": {"en": "Glossary", "de": "Glossar", "ru": "Глоссарий", "zh": "术语表"},
+    "Terimler": {"en": "Terms", "de": "Begriffe", "ru": "Термины", "zh": "术语"},
+    "Muhasebe": {"en": "Accounting", "de": "Rechnungswesen", "ru": "Бухучёт", "zh": "会计"},
+    "Muhasebe Terimleri": {"en": "Accounting Terms", "de": "Rechnungslegungsbegriffe",
+                           "ru": "Бухгалтерские термины", "zh": "会计术语"},
+    "Terim ara: amortisman, şerefiye, goodwill...": {
+        "en": "Search a term: depreciation, goodwill, deferred tax...",
+        "de": "Begriff suchen: Abschreibung, Firmenwert, latente Steuern...",
+        "ru": "Найти термин: амортизация, гудвилл, отложенный налог...",
+        "zh": "搜索术语：折旧、商誉、递延税项……"},
+    # --- terimler/sozluk sayfasi (elle sabitlenir) ---
+    "Terimler ve Tanımlar": {"en": "Terms & Definitions", "de": "Begriffe & Definitionen",
+                             "ru": "Термины и определения", "zh": "术语与定义"},
+
+    "İngilizce tanım": {"en": "English definition", "de": "Englische Definition",
+                        "ru": "Определение на английском", "zh": "英文定义"},
+    "Örnek": {"en": "Example", "de": "Beispiel", "ru": "Пример", "zh": "示例"},
+    "A–Z liste": {"en": "A–Z list", "de": "A–Z-Liste", "ru": "Список A–Я", "zh": "A–Z 列表"},
+    "Tanımlar ilgili kurumların kamuya açık sözlüklerinden alıntılanmıştır; yatırım tavsiyesi değildir.": {
+        "en": "Definitions are quoted from the publicly available glossaries of the respective institutions; they do not constitute investment advice.",
+        "de": "Die Definitionen sind Zitate aus den öffentlich zugänglichen Glossaren der jeweiligen Institutionen; sie stellen keine Anlageberatung dar.",
+        "ru": "Определения процитированы из общедоступных глоссариев соответствующих учреждений; они не являются инвестиционной рекомендацией.",
+        "zh": "定义引自相关机构的公开词汇表；不构成投资建议。"},
+    "Terim ara: enflasyon, temettü, zorunlu karşılık...": {
+        "en": "Search a term: inflation, dividend, reserve requirement...",
+        "de": "Begriff suchen: Inflation, Dividende, Mindestreserve...",
+        "ru": "Найти термин: инфляция, дивиденд, резервные требования...",
+        "zh": "搜索术语：通货膨胀、股息、存款准备金……"},
     # --- mobil alt menu ---
     "Teknik": {"en": "Technical", "de": "Technik", "ru": "Технический", "zh": "技术"},
     "Portföy": {"en": "Portfolio", "de": "Portfolio", "ru": "Портфель", "zh": "投资组合"},
@@ -213,7 +244,9 @@ def sayilari_cevir(metin: str, dil: str) -> str:
         return s.replace(".", ",")          # 98.908 -> 98,908
 
     metin = SAYI_BICIM_RE.sub(degistir, metin)
-    return re.sub(r"%(\d)", r"\1%", metin)  # %21 -> 21%
+    # %100 -> 100% (TAM sayiyi yakala; '%(\d)' tek rakami alip '%100'ü '1%00'a
+    # bozuyordu — 22.09 hata kaydi)
+    return re.sub(r"%(\d+(?:[.,]\d+)?)", r"\1%", metin)
 
 
 # Tercume edilecek ozellikler
@@ -1311,6 +1344,16 @@ def yerelle_meta(html: str, dil: str) -> str:
 def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | None,
                       cevirmen: Cevirmen, onarim: bool = True) -> dict:
     hedef_liste = sayfa_listesi or turkce_sayfalar(kok)
+    if not sayfa_listesi:
+        # Terim sozluklari (terimler.html + muhasebe-terimleri.html) buyuk tek
+        # sayfalar: kuyrugun sonuna aliniyor ki sure butcesi dolarsa gunluk
+        # rapor/hisse/teknik sayfalari her kosuda once guncellensin.
+        def _terim_sonda(r: Path) -> int:
+            ad = str(r)
+            return 0 if ad in ("terimler.html", "muhasebe-terimleri.html") else 1
+        hedef_liste = sorted(hedef_liste, key=lambda r: (_terim_sonda(r), str(r)))
+        # 5 dilli tek sayfa: dil kopyasi uretme (sitemap TR canonical olarak kalir)
+        hedef_liste = [r for r in hedef_liste if str(r) not in GENERASYON_HARIC]
     agac = dil_agac_kumesi(kok, hedef_liste)
     medya = medya_kumesi(kok)
     ozet = {"sayfa": 0, "dil": {}, "aktarilan_metin": 0, "onarilan_baglanti": 0, "medya_baglantisi": 0}
@@ -1423,6 +1466,11 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
     dil_sayisi = 0
     for sy in sorted(tr_kayitlar):
         attr = tr_kayitlar[sy]
+        if sy in {g[:-5] for g in GENERASYON_HARIC}:
+            # Dil kopyasi uretilmeyecek sayfalar: yalnizca TR canonical kaydi
+            # (sy uzantisiz URL yolu; GENERASYON_HARIC dosya adi tutar).
+            bloklar.append(_url_bloku(f"{SITE_URL}{sy}", attr, []))
+            continue
         alternatifler = [
             f'    <xhtml:link rel="alternate" hreflang="{DILLER[k]["hreflang"]}" '
             f'href="{SITE_URL}{k + "/" if k != "tr" else ""}{sy}"/>'
@@ -1602,6 +1650,17 @@ def main() -> int:
     sayfa_listesi = None
     if args.sayfalar:
         sayfa_listesi = [Path(s.strip()) for s in args.sayfalar.split(",") if s.strip()]
+
+    # Guvenlik kilidi (22.09 olayi): mock/off saglayiciyla TAM SITE uretimi,
+    # yerel anahtarsiz ortamda butun dil sayfalarini sahte ceviriyle
+    # yeniden yazmisti. Mock yalnizca --sayfalar ile tekil yapisal pilot
+    # icin serbest; tam kosuda acik --zorla ister.
+    if args.provider in ("mock", "off") and not sayfa_listesi and not args.zorla:
+        raise SystemExit(
+            "GUVENLIK: --provider mock/off ile tum site uretimi engellendi. "
+            "Yapisal pilot icin --sayfalar ile tek sayfa verin; gercek uretim "
+            "icin --provider llm (veya deepl) kullanin; bilincli overriding icin --zorla."
+        )
 
     cevirmen = Cevirmen(provider=args.provider, onbellek_yolu=str(kok / "i18n-cache.json"))
 
