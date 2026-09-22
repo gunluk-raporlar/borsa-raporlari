@@ -217,7 +217,7 @@ def sayilari_cevir(metin: str, dil: str) -> str:
 
 
 # Tercume edilecek ozellikler
-OZELLIK_ANAHTARLARI = ("title", "alt", "placeholder", "aria-label", "content", "data-aciklama")
+OZELLIK_ANAHTARLARI = ("title", "alt", "placeholder", "aria-label", "content", "data-aciklama", "data-fx")
 # content="..." yalnizca bu meta/etiketlerde cevrilir
 ICERIK_META_RE = re.compile(r'<(?:meta)\b[^>]*\b(?:name|property)\s*=\s*"(description|og:description|og:title|og:site_name|og:image:alt|twitter:description|twitter:title|keywords)"[^>]*>', re.I)
 
@@ -1304,7 +1304,7 @@ def yerelle_meta(html: str, dil: str) -> str:
         gez(d)
         return ('<script type="application/ld+json">' + json.dumps(d, ensure_ascii=False) + '</script>')
 
-    html = re.sub(r'<script type="application/ld\+json">(.*?)</script>', _ld, html, count=1, flags=re.S)
+    html = re.sub(r'<script type="application/ld\+json">(.*?)</script>', _ld, html, flags=re.S)
     return html
 
 
