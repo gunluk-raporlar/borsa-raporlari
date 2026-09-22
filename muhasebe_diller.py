@@ -73,7 +73,7 @@ DIL_CFG = {
         "dil_aria": "Select page language", "harf_aria": "Jump to letter section",
         "yok": "No term matched your search.",
         "kaynak": "Term list source: muhasebenews.com accounting dictionary (1691 terms).",
-        "nav_terimler": "Terms", "nav_muhasebe": "Accounting",
+        "nav_terimler": "Terms", "nav_muhasebe": "Accounting Terms",
         "footer": ("The information, comments and recommendations contained herein are for "
                    "informational purposes only; they do not constitute investment advisory or "
                    "investment advice. The accuracy of the data cannot be guaranteed and the "
@@ -102,7 +102,7 @@ DIL_CFG = {
         "dil_aria": "Seitensprache wählen", "harf_aria": "Zum Buchstabenabschnitt springen",
         "yok": "Kein Begriff entspricht Ihrer Suche.",
         "kaynak": "Quelle der Begriffsliste: muhasebenews.com (1691 Begriffe).",
-        "nav_terimler": "Begriffe", "nav_muhasebe": "Rechnungswesen",
+        "nav_terimler": "Begriffe", "nav_muhasebe": "Rechnungslegungsbegriffe",
         "footer": ("Die hier enthaltenen Informationen, Kommentare und Empfehlungen dienen zu "
                    "Informationszwecken; sie stellen keine Anlageberatung dar und sind keine "
                    "Anlageempfehlungen. Die Genauigkeit der Daten kann nicht garantiert werden, "
@@ -131,7 +131,7 @@ DIL_CFG = {
         "dil_aria": "Выбрать язык страницы", "harf_aria": "Перейти к разделу алфавита",
         "yok": "По вашему запросу терминов не найдено.",
         "kaynak": "Источник списка терминов: muhasebenews.com (1691 термин).",
-        "nav_terimler": "Термины", "nav_muhasebe": "Бухучёт",
+        "nav_terimler": "Термины", "nav_muhasebe": "Бухгалтерские термины",
         "footer": ("Приведённые здесь информация, комментарии и рекомендации носят "
                    "информационный характер; они не являются инвестиционным консультированием "
                    "и не являются инвестиционной рекомендацией. Точность данных не может быть "
@@ -156,7 +156,7 @@ DIL_CFG = {
         "dil_aria": "选择页面语言", "harf_aria": "跳转到字母分组",
         "yok": "没有找到与您的搜索匹配的术语。",
         "kaynak": "术语来源：muhasebenews.com（1691 条术语）。",
-        "nav_terimler": "术语", "nav_muhasebe": "会计",
+        "nav_terimler": "术语", "nav_muhasebe": "会计术语",
         "footer": ("此处所含的信息、评论和建议仅供参考；不属于投资顾问服务，不构成投资建议。无法保证数据的准确性，"
                    "因内容而产生的任何决定，责任均由用户自行承担。<br>数据来源：İş Yatırım、RSS 新闻源 "
                    "&bull; 分析：人工智能（多智能体系统）<br>"
