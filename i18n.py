@@ -79,6 +79,10 @@ HARIC_DOSYALAR = {"404.html", "onizleme-mobil.html"}
 # muhasebe-terimleri.html zaten 5 dilli (her kartta EN/DE/RU/ZH tanim kutulari);
 # makine cevirisi karisik dilli icerigi bozar.
 GENERASYON_HARIC = {"muhasebe-terimleri.html"}
+# Dil sayfasi makine cevirisiyle DEGIL, dogrudan veriden uretilen sayfalar:
+# bot.py -> muhasebe_diller.yaz() en/de/ru/zh surumlerini yazar; bu yuzden
+# sitemap'te dil alternatifleri ve ayri <url> kayitlari gecerlidir.
+DIL_SAYFASI_VERIDEN = {"muhasebe-terimleri.html"}
 # Arama motoru dogrulama dosyalari (google/yandex/bing/baidu...) ve gecici onizleme sayfalari cevrilmez
 HARIC_DESEN_RE = re.compile(r"^(google|yandex|baidu|bing|naver|indexnow|site-?verification|onizleme-)", re.I)
 
@@ -1466,7 +1470,8 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
     dil_sayisi = 0
     for sy in sorted(tr_kayitlar):
         attr = tr_kayitlar[sy]
-        if sy in {g[:-5] for g in GENERASYON_HARIC}:
+        if sy in {g[:-5] for g in GENERASYON_HARIC} \
+                and sy not in {g[:-5] for g in DIL_SAYFASI_VERIDEN}:
             # Dil kopyasi uretilmeyecek sayfalar: yalnizca TR canonical kaydi
             # (sy uzantisiz URL yolu; GENERASYON_HARIC dosya adi tutar).
             bloklar.append(_url_bloku(f"{SITE_URL}{sy}", attr, []))

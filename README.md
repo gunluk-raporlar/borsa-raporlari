@@ -103,3 +103,17 @@ python pipeline/embed.py --backfill         # tüm arşivi embed eder (secret is
   `borsa-raporlari-web.pages.dev`'e deploy eder (wrangler + mevcut CF secret'ları).
 
 Yasal uyarı: sitedeki hiçbir içerik yatırım tavsiyesi değildir.
+
+## Muhasebe Terimleri sözlüğü (çok dilli)
+
+- TR: `muhasebe-terimleri.html` — `bot.py` üretir (İngilizce terim + Türkçe karşılık/tanım/örnek,
+  her kartta EN/DE/RU/ZH tanım kutuları). Tek sayfa; makine çevirisi kapsamı dışındadır.
+- EN/DE/RU/ZH: `{en,de,ru,zh}/muhasebe-terimleri.html` — **her biri kendi dil verisinden**
+  üretilir (çeviri değil): `muhasebe-en.csv` (EN), `muhasebe-de.csv` (DE),
+  `muhasebe-zh.csv` (ZH), `muhasebe-ru.jsonl` (RU). 1691 terim/dil, alfabetik bölümler +
+  tarayıcı içi arama.
+- Üretici: `muhasebe_diller.py` (`tek başına: python muhasebe_diller.py`); `bot.py` içindeki
+  `terimler_yaz()` günlük koşuda otomatik çağırır, böylece sayfalar veriyle senkron kalır.
+- `i18n.py`: bu sayfa `GENERASYON_HARIC` ile makine çevirisinden muaf; ancak
+  `DIL_SAYFASI_VERIDEN` sayesinde sitemap'e dil alternatifleri ve ayrı `<url>` kayıtları
+  eklenir (sayfalar gerçekten var).

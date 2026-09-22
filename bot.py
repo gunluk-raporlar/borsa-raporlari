@@ -4548,6 +4548,18 @@ yatırım tavsiyesi değildir.</p>
             yol="muhasebe-terimleri.html"))
         logger.info("[Terimler] %d IFRS terimi tek sayfada yazildi.", len(ifrs))
 
+        # --- 2b) Muhasebe Terimleri: DIL SAYFALARI (ceviri degil, veri tabanli) ---
+        # /en /de /ru /zh surumleri kendi dil verisinden uretilir (muhasebe-en.csv,
+        # muhasebe-de.csv, muhasebe-zh.csv, muhasebe-ru.jsonl). Makine cevirisi bu
+        # sayfalar icin kapali (i18n.py GENERASYON_HARIC); sitemap dil alternatifleri
+        # i18n tarafinda eklenir.
+        try:
+            import muhasebe_diller
+            muhasebe_diller.yaz()
+            logger.info("[Terimler] Muhasebe dil sayfalari (en/de/ru/zh) guncellendi.")
+        except Exception:
+            logger.exception("[Terimler] Muhasebe dil sayfalari uretilemedi.")
+
 
 VARSAYILAN_ENFLASYON = 0.32  # TUIK verisi hic alinamazsa kullanilan yedek
 
@@ -4967,6 +4979,23 @@ def site_arama_json_yaz(rapor_dosyalari):
         {"b": "Ekonomik Takvim Rehberi", "u": "takvim.html",
          "t": "ekonomik takvim faiz enflasyon FOMC bilanço TCMB TÜİK veri açıklama rehber"},
     ]
+    # Muhasebe terimleri DIL SAYFALARI: her biri kendi dil verisiyle indekslenir.
+    _ifrs_dil = _ifrs_yukle()
+    if _ifrs_dil:
+        sayfalar += [
+            {"b": "Accounting Terms Glossary (English)", "u": "en/muhasebe-terimleri.html",
+             "t": "accounting terms glossary IFRS accounting terminology definition example " +
+                  " ".join((v["en"] + " " + (v.get("en2") or v["en_tanim"])) for v in _ifrs_dil)[:18000]},
+            {"b": "Buchhaltungslexikon (Deutsch)", "u": "de/muhasebe-terimleri.html",
+             "t": "Buchhaltungslexikon Rechnungswesen IFRS Abschreibung Bilanz Definition Beispiel " +
+                  " ".join((v["en"] + " " + (v.get("de") or "")) for v in _ifrs_dil)[:18000]},
+            {"b": "Словарь бухгалтерских терминов", "u": "ru/muhasebe-terimleri.html",
+             "t": "бухгалтерские термины словарь МСФО бухгалтерский учёт определение пример " +
+                  " ".join((v.get("ru") or "") for v in _ifrs_dil)[:18000]},
+            {"b": "会计术语词典", "u": "zh/muhasebe-terimleri.html",
+             "t": "会计术语 词典 IFRS 国际财务报告准则 定义 例句 " +
+                  " ".join((v.get("zh") or "") for v in _ifrs_dil)[:18000]},
+        ]
     haftasonu_metin = makale_metni("haftasonu.html")
     if haftasonu_metin:
         sayfalar.append({"b": "Hafta Sonu Gündemi (haftalık bülten)", "u": "haftasonu.html",
