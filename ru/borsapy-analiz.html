@@ -7,10 +7,10 @@
 <meta name="description" content="Сводный осциллятор BIST 30 с индикаторов TradingView: голоса ПОКУПАТЬ/PROДАТЬ/НЕЙТРАЛЬНО, значения RSI, MACD, Стохастический %K, CCI и ADX. Обновляется каждые 30 минут.">
 <link rel="canonical" href="https://borsa-raporlari.pages.dev/ru/borsapy-analiz">
 <link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/borsapy-analiz">
-<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/borsapy-analiz">
-<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/borsapy-analiz">
 <link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/borsapy-analiz">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/borsapy-analiz">
 <link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/borsapy-analiz">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/borsapy-analiz">
 <link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/borsapy-analiz">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
@@ -191,7 +191,7 @@
   <audio id="radyo-ses" preload="none"></audio>
   <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Уровень громкости" title="Звук">
   <span class="radyo-linkler"><a href="radyo/index.html">📻 Все выпуски и страница подкаста</a> <span class="ayrac">•</span> <a href="radyo/podcast.xml">RSS</a></span>
-  <span class="radyo-uyari">Только для прослушивания • Виртуальные серверы искусственного интеллекта • Информационные цели, не является инвестиционным советом.</span>
+  <span class="radyo-uyari">Только для прослушивания • Вымышленные ИИ-ведущие • Носит информационный характер, не является инвестиционной рекомендацией.</span>
 </div>
 <script>
 (function(){
@@ -222,15 +222,15 @@
     <!-- Asıl Sayfa İçeriği -->
     
 <div class="hero">
-<h1>Сигналы биржи</h1>
-<p>Сводный анализ BIST 30 по техническим индикаторам TradingView (извлекается с библиотекой borsapy):
+<h1>Сигналы Borsapy</h1>
+<p>Сводный анализ BIST 30 на основе технических индикаторов TradingView (извлекается с помощью библиотеки borsapy):
 общая рекомендация на основе общего количества голосов осцилляторов + скользящих средних, RSI, MACD, Стохастический %K, CCI и ADX.
-Обновляется каждые 30 минут вместе с техническим сканированием в рыночные часы.
-<strong>Нажмите на акцию в таблице для графика японских свечей.</strong> Сигналы генерируются автоматически при сканировании; не является инвестиционным советом.</p>
-<p style="color:var(--muted); font-size:13px; margin-top:8px">Примечание: Голоса на этой странице являются сводным осциллятором + скользящим средним TradingView;
-отличаются от метода EMA/Wave Trend/регрессионного канала на странице "Техническое сканирование" — поэтому для одной и тойже акции две страницы могут показывать разные сигналы. RSI ≥70 — зона "перекупленности"; метки СИЛЬНЫЙ ПОКУПКА в этой зоне отражают большинство голосов импульса, но не устраняют риск перекупленности.</p>
+Обновляется каждые 30 минут вместе с техническим сканированием в рыночное время.
+<strong>Нажмите на любую акцию в таблице, чтобы открыть свечной график.</strong> Сигналы генерируются автоматически при сканировании; не является инвестиционным советом.</p>
+<p style="color:var(--muted); font-size:13px; margin-top:8px">Примечание: Голоса на этой странице представляют собой сводку осцилляторов + скользящих средних TradingView;
+отличаются от метода EMA/Wave Trend/регрессионного канала на странице "Техническое сканирование" — поэтому для одной и той же акции на двух страницах могут отображаться разные сигналы. RSI ≥70 — зона "перекупленности"; метки СИЛЬНЫЙ ПОКУПКА в этой зоне отражают большинство голосов импульса, но не устраняют риск перекупленности.</p>
 <button type="button" class="ses-btn" onclick="sesliOkuToggle(this,'borsapy-ses-metin')" aria-label="Озвучить сводку сигналов">🔊 Прослушать аудиообзор</button>
-<div id="borsapy-ses-metin" hidden>Оценено 30 акций по голосам осцилляторов TradingView. 7 акций с сильным сигналом ПОКУПАТЬ: TUPRS, BIMAS, KCHOL, TOASO, TAVHL, AKBNK, VAKBN. Акции с нейтральным сигналом: PGSUS, PETKM, MGROS. Акции с сигналом ПРОДАТЬ: TTKOM, TCELL, ASELS, SAHOL, THYAO, EREGL, ASTOR, ENKAI, FROTO, SISE, EKGYO, GUBRF, SASA, DSTKF.</div>
+<div id="borsapy-ses-metin" hidden>Оценено 30 акций на основе голосов осцилляторов TradingView. 7 акций дали сигнал СИЛЬНЫЙ ПОКУПКА: TUPRS, BIMAS, KCHOL, TOASO, TAVHL, AKBNK, VAKBN. Акции с нейтральным сигналом: PGSUS, PETKM, MGROS. Акции с сигналом ПРОДАТЬ: TTKOM, TCELL, ASELS, SAHOL, THYAO, EREGL, ASTOR, ENKAI, FROTO, SISE, EKGYO, GUBRF, SASA, DSTKF.</div>
 </div>
 
 <div class="card" style="margin-bottom:20px">
@@ -404,7 +404,7 @@ function temaDegistir() {
 })();
 </script>
 
-<footer class="footer">Приведенная здесь информация, комментарии и рекомендации носят информационный характер; не являются инвестиционным консультированием и не являются инвестиционной рекомендацией. Точность данных не гарантируется, и ответственность за любые решения, принятые на основе этого контента, лежит на пользователе.<br>Источники данных: İş Yatırım, RSS новостные ленты • Анализ: искусственный интеллект (многоагентная система)<br><a href="gizlilik.html" style="color:inherit">Конфиденциальность</a></footer>
+<footer class="footer">Приведённые здесь информация, комментарии и рекомендации носят информационный характер; они не являются инвестиционным консультированием и не являются инвестиционной рекомендацией. Точность данных не может быть гарантирована, и ответственность за любые решения, вытекающие из содержания, лежит на пользователе.<br>Источники данных: İş Yatırım, RSS-ленты новостей • Анализ: искусственный интеллект (мультиагентная система)<br><a href="gizlilik.html" style="color:inherit">Конфиденциальность</a></footer>
 
 <!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
 <script>
