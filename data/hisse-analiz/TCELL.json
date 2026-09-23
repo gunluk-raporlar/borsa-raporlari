@@ -1,8 +1,8 @@
 {
   "kod": "TCELL",
   "guncelleme": "2026-09-23",
-  "teknik_analiz": "100,30 TL ile 60 günlük zirvesi 103,70 TL'nin %3,3 altında, dip seviyesi 95,75 TL'nin %4,8 üzerinde. Kısa vade BEKLE; orta ve uzun vadeli EMA dizilimi SAT, Wave Trend AL ve genel puan 1/4 (SAT). 60 günlük değişim -%6,0 ve trend korelasyonu r=-0,77 ile güçlü negatif; kanal konumu %75. 95,75 TL ana destek, 103,70 TL direnç olarak izlenmeli.",
-  "makro_degerlendirme": "Telekom sektörü son seansı %0,85 ortalama yükselişle en güçlü sektörlerden biri olarak geçirdi. Abonelik tabanlı gelir yapısı enflasyona karşı dayanıklılık sağlıyor; tarifelerdeki enflasyon endeksli güncellemeler ARPU'yu destekliyor. 5G yatırımları ve frekans ödemeleri sermaye harcamalarını yüksek tutmaya devam ediyor. Yıllık enflasyon %31,5 ortamında nakit akışı ve borç çevirme maliyetleri belirleyici.",
+  "teknik_analiz": "100,40 TL ile 60 günlük zirvesi 112,20 TL'nin %10,5 altında, dip seviyesi 95,05 TL'nin %5,6 üzerinde. Kısa vade BEKLE; orta ve uzun vadeli EMA dizilimi SAT, Wave Trend AL ve genel puan 1/4 (SAT). 60 günlük değişim -%6,5 ve trend korelasyonu r=-0,77 ile güçlü negatif; kanal konumu %71. Son seans +%0,10 ile yatay; 95,05 TL ana destek, 112,20 TL direnç olarak izlenmeli.",
+  "makro_degerlendirme": "Telekom sektörü son seansı %0,28 ortalama yükselişle ılımlı geçirdi. Abonelik tabanlı gelir yapısı enflasyona karşı dayanıklılık sağlıyor; tarifelerdeki enflasyon endeksli güncellemeler ARPU'yu destekliyor. 5G yatırımları ve frekans ödemeleri sermaye harcamalarını yüksek tutmaya devam ediyor. Yıllık enflasyon %31,5 ortamında nakit akışı ve borç çevirme maliyetleri belirleyici; USD/TL 48,83 seviyesinde kur, döviz borcu üzerinden izlenmeli.",
   "bilanco_degerlendirmesi": "2026 ilk yarıda satış gelirleri 137,5 mlr TL (+%5,7) ve net kâr 10,2 mlr TL (+%3,3) ile ılımlı büyüme; kâr marjı %7,4. Finansal borç 212,1 mlr TL ve kaldıraç %68,5; özkaynak 309,6 mlr TL. Yıllıklandırılmış özkaynak kârlılığı %6,6. 2025 tam yıl kârı 20,7 mlr TL'ydi; yatırım harcamaları ile finansman giderlerinin kâr artışını sınırladığı görülüyor. Serbest nakit akışı ve borçluluk seyri izlenmeli.",
   "bilanco": [
     {
