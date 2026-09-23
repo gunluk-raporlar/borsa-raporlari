@@ -1708,23 +1708,28 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
     return None
 
 
-def makro_analiz_yap():
+def makro_analiz_yap(yedek_amd=False):
     """Makroekonomik Degerlendirme sayfasinin uzun analiz metnini uretir.
 
     Kaynak veri: makro_cek() ile data/makro.json'daki KESIN gostergeler
     (TR/ABD/Euro Bolgesi enflasyon, UFE, politika faizi, issizlik, buyume,
     cari denge, rezerv) + piyasa_verisi + portfoy risk olcutleri. Model
     yalnizca bu rakamlari kullanir; uydurma sayi yazmasi hem prompt kuraliyla
-    hem de yayin oncesi dogrulama katmaniyla engellenir. Anahtar yoksa None.
+    hem de yayin oncesi dogrulama katmaniyla engellenir.
+
+    Birincil saglayici Z.ai GLM'dir (ZAI_API_KEY). Alinamazsa/basarisizsa
+    yedek_omcu olarak AMD DeepSeek-V4-Flash denenir (yedek_amd=True ve
+    AMD_API_KEY gercek anahtarsa; makro_analiz.py import sirasinda sahte
+    anahtar koydugu icin yedek yalnizca gercek anahtarla acilir). Iki yol da
+    metin uretmezse None.
     """
     anahtar = os.environ.get("ZAI_API_KEY", "")
-    if not anahtar:
-        logger.warning("[Makro Analiz] ZAI_API_KEY tanimli degil; sayfa uretilmeyecek.")
-        return None
-
     model = os.environ.get("ZAI_MODEL") or "glm-4.7-flash"
-    client = OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/paas/v4/",
-                    timeout=300.0, max_retries=1)
+    glm_istemci = (OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/paas/v4/",
+                          timeout=300.0, max_retries=1) if anahtar else None)
+    if not anahtar:
+        logger.warning("[Makro Analiz] ZAI_API_KEY yok; yedek AMD yolu denenecek (yedek_amd=%s).",
+                       yedek_amd)
 
     # --- Kesin veri bloklari ---
     makro_tablo = makro_metni() or "(makro veri su an alinamadi)"
@@ -1787,12 +1792,13 @@ Biçim kuralları (zorunlu):
 {portfoy_ozet}
 """
 
-    son_hata = None
-    denenecekler = [model] + (["glm-4.5-flash"] if model != "glm-4.5-flash" else [])
+    son_hata = "ZAI anahtari yok" if glm_istemci is None else None
+    denenecekler = ([model] + (["glm-4.5-flash"] if model != "glm-4.5-flash" else [])
+                    if glm_istemci is not None else [])
     for deneme, mdl in enumerate(denenecekler):
         try:
             logger.info("[Makro Analiz] GLM cagrisi (%s), deneme %d", mdl, deneme + 1)
-            resp = client.chat.completions.create(
+            resp = glm_istemci.chat.completions.create(
                 model=mdl,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.4,
@@ -1813,7 +1819,29 @@ Biçim kuralları (zorunlu):
             son_hata = str(e)[:200]
             logger.warning("[Makro Analiz] %s basarisiz: %s", mdl, son_hata)
             time.sleep(3)
-    logger.error("[Makro Analiz] tum modeller basarisiz (%s)", son_hata)
+    if son_hata is None:
+        son_hata = "glm bos yanit"
+    logger.warning("[Makro Analiz] GLM metin uretmedi (%s); yedek denenir: %s",
+                   son_hata, "AMD" if yedek_amd else "yedek kapali")
+
+    # --- Yedek: AMD DeepSeek-V4-Flash (llm_call altyapisiyla AMD havuzu) ---
+    if yedek_amd:
+        if client is None:
+            logger.warning("[Makro Analiz] AMD istemcisi yok (AMD_API_KEY); yedek kullanilamadi.")
+        else:
+            try:
+                amd_model = AMD_MODEL_LIST[0] if AMD_MODEL_LIST else AMD_MODEL
+                logger.info("[Makro Analiz] AMD yedek cagrisi (%s)", amd_model)
+                icerik = _llm_call_ic(prompt, max_deneme=4, fallback_on_fail=False,
+                                      sirasi=("AMD",))
+                if icerik and icerik.strip():
+                    icerik = rapor_son_islem(icerik)
+                    return _metin_dogrula_ve_kaydet(icerik, " / makro analiz")
+                son_hata = f"{son_hata} / amd bos yanit"
+            except Exception as e:
+                son_hata = str(e)[:200]
+                logger.warning("[Makro Analiz] AMD yedek basarisiz: %s", son_hata)
+    logger.error("[Makro Analiz] metin uretilemedi (GLM/AMD): %s", son_hata)
     return None
 
 

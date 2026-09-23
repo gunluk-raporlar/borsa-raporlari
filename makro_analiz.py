@@ -1,15 +1,20 @@
 """Makroekonomik Degerlendirme sayfasini uretir (makro-analiz.html).
 
 derin_analiz.py desenini izler: gunluk bottan BAGIMSIZ calisir, ZAI_API_KEY
-secret'iyla GLM'den uzun makro analizi ister. Veri tabani bot.makro_cek()
+secret'iyla GLM'den uzun makro analizi ister; GLM alinamazsa gercek
+AMD_API_KEY ile DeepSeek-V4-Flash yedegine duser. Veri tabani bot.makro_cek()
 (TradingView ekonomik takvimi -> data/makro.json) uzerinden beslenir; model
-yalnizca bu kesin rakamlari kullanir. ZAI_API_KEY yoksa sayfa 404 VERMESIN
+yalnizca bu kesin rakamlari kullanir. Hiç anahtar yoksa sayfa 404 VERMESIN
 diye veri tablosuyla placeholder yazar (var olan iyi sayfayi bozmaz).
 Haftada bir (Pazartesi) ve workflow_dispatch ile calisir; makro veri
 gunluk degismez.
 """
 import os
 
+# CI'da secrets AMD_API_KEY gercek anahtari bu satirdan ONCE ortama konmus olur;
+# lokal/anahtarsiz ortamda bot import'unun anahtar zorunluluunu karsilamak icin
+# sahte bir deger koyariz — yedek yol yalnizca GERCEK anahtar goruldugunde acilir.
+_GERCEK_AMD = bool(os.environ.get("AMD_API_KEY", "").strip())
 os.environ.setdefault("AMD_API_KEY", "makro-analiz")
 
 import logging
@@ -88,13 +93,14 @@ def main():
         return
     logger.info("%d makro gosterge hazir.", len(makro["gostergeler"]))
 
-    if not os.environ.get("ZAI_API_KEY"):
-        logger.warning("ZAI_API_KEY tanimli degil; tam analiz uretilemeyecek.")
+    zai = bool(os.environ.get("ZAI_API_KEY"))
+    if not zai and not _GERCEK_AMD:
+        logger.warning("ZAI_API_KEY/AMD_API_KEY yok; tam analiz uretilemeyecek.")
         _placeholder_yaz(makro, eksik_anahtar=True)
         return
 
-    logger.info("GLM ile makroekonomik degerlendirme uretiliyor...")
-    analiz = bot.makro_analiz_yap()
+    logger.info("Makroekonomik degerlendirme uretiliyor (GLM ana, DeepSeek yedek)...")
+    analiz = bot.makro_analiz_yap(yedek_amd=_GERCEK_AMD)
     if not analiz:
         logger.warning("Makro analiz uretilemedi; mevcut sayfa korunuyor/placeholder.")
         _placeholder_yaz(makro, eksik_anahtar=False)
