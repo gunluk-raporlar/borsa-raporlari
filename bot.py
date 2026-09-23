@@ -3375,8 +3375,11 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') tvKap
 def build_teknik_html(satirlar, date_str):
     # Günlük ısı haritası: değişime göre renk derinliği (yeşil yükselen, kırmızı düşen)
     def _isi_renk(deg):
+        # DIKKAT: CSS rgba() ondalik ayirici olarak NOKTA ister. _ts() Turkce
+        # bicim (virgul) urettigi icin burada KULLANILMAZ; aksi halde
+        # 'rgba(4,120,87,0,77)' gecersiz olur ve hucreler renksiz kalir.
         a = min(0.15 + abs(deg) / 3.0 * 0.80, 0.92)
-        return ("4,120,87" if deg >= 0 else "185,28,28") + f",{_ts(a)}"
+        return ("4,120,87" if deg >= 0 else "185,28,28") + f",{a:.2f}"
 
     sirali = sorted(satirlar, key=lambda x: x.get("gunluk", 0), reverse=True)
     isi = "".join(
