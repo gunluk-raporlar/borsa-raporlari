@@ -1352,6 +1352,51 @@ MAKRO_AKTARIM_KILAVUZU = (
 )
 
 
+# Gunluk rapor ve derin analiz promptlarina ortak gomulen veri-guvenligi
+# envanteri: modelin kesinlikle uydurmamasi gereken alanlar ve blogta rakam
+# olmadiginda ne yapacagi. 8-21 Eylul 2026 tarihli uydurma endeks seviyeleri
+# (3.600-4.400 araligi) prompt'a gercek piyasa verisi girilmedigi icin
+# uretilmisti; bu blog o acigi kapatir.
+VERI_DAYANAK_ENVANTERI = (
+    "[VERI GUVENLIGI - ASLA UYDURMAYACAGIN ALANLAR]\n"
+    "Asagidaki alanlarda her rakam yalnizca VERILER bolumundeki karsilik blogdan alinir; "
+    "kendi hafizandan, egitim verinden veya tahminle rakam URETME:\n"
+    "  1) Endeks seviyeleri ve yuzdeleri (XU030, XU100, dolar bazli getiri), USD/TRY kuru -> [BUGUNUN TARIHI VE PIYASA VERILERI]\n"
+    "  2) Hisse fiyatlari, yuzdelik degisimler, direnç/destek ve kanal seviyeleri, osilator degerleri -> teknik tarama ve osilator bloglari\n"
+    "  3) Bilanco, kar, satis, rasyo, piyasa degeri -> [TEMEL / FINSANSAL VERILER] (bu blog raporda mevcutsa)\n"
+    "  4) Enflasyon, faiz, PMI, istihdam, kur, tahvil faizi gibi makro sayilar -> [MAKRO GEREKLER]\n"
+    "  5) Tarih ve gun adi -> yalnizca [BUGUNUN TARIHI VE PIYASA VERILERI]\n"
+    "  6) Sirket unvanlari -> yalnizca verideki hisse kodunun yanindaki resmi ad\n"
+    "  7) Portfoy agirliklari ve performans rakamlari -> [PORTFOY DURUMU] / portfoy tablosu\n"
+    "  8) Gecmis gunlere ait bilgiler -> [HAFIZA] ozetleri; bunlari bugunun verisi gibi sunma.\n"
+    "BLOKTA OLMAYAN bir rakami asla tahmin etme, yuvarlayarak tamamlama veya hatirladigin eski bir degerle "
+    "ikame etme: o rakami YAZMA. Gerekirse nitel ifade kullan ('veri setinde yer almiyor', 'bugun olculmedi') "
+    "ya da o rakami gerektirmeyen bir cumle kur. Bloglar celisirse [BUGUNUN TARIHI VE PIYASA VERILERI] "
+    "bloğundaki kesin deger esastir; celiskiyi metinde acikca belirt."
+)
+
+
+# Raporun genel yazim kalitesi: profesyonel bulten / bas analist seviyesi;
+# VERI_DAYANAK_ENVANTERI'ndeki veri disiplininin yaninda kullanilir.
+PROFESYONEL_YAZIM_KURALLARI = (
+    "[PROFESYONEL YAZIM STANDARTI - BAS ANALIST / PORTFOY YONETIMI SEVIYESI]\n"
+    "  - Kanit once: her iddia, tavsife ve sayisal atif bir VERI satirina dayanir; dayanagi olmayan "
+    "yargi cumlesi kurma ('veride su goruluyor -> su anlamina gelir -> su kosulda gecersiz olur').\n"
+    "  - Kesinlik ve abarti dili yasak: 'kesin', 'garanti', 'mutlaka', 'kacinilmaz', 'ucacak', 'dibi gorecek' "
+    "yerine olasilik ve kosul dili kullan; firsatlarla riskleri ayni agirlikta yaz.\n"
+    "  - Birim ve bicim tutarliligi: her rakam birimiyle yazilsin (TL, bin TL, milyar TL, %, baz puan); "
+    "metin boyunca binlik/ayrac bicimi degistirmez (TR raporu: 16.217, %2,4 bicimi).\n"
+    "  - Ic tutarliblik: metinde tekrar eden her rakam birebir ayni olmali; bolum sonuclari, tablolar, "
+    "portfoy agirliklari, nakit orani ve senaryolar birbirini yalanlamamali.\n"
+    "  - Kesin olmayan degerleri 'yaklasik', '~' veya aralikla isaretle; veri setindeki yuvarlamayi ve "
+    "ondalık basamak sayisini keyfi degistirme.\n"
+    "  - Uslup: sakin, olculu, profesyonel bulten dili; dolgu ve tekrar cumlesi yok; her bolum diger "
+    "bolumlerle ayni tonda; okur 'neden boyle dusunuluyor' sorusunun cevabini metinde bulabilmeli.\n"
+    "  - Portfoy yonetimi perspektifi: onerileri getiri-risk dengesi ve pozisyon etkisiyle gerekcelendir; "
+    "yalnizca yon degil, oneri hangi somut kosulda gecersizlesir de yaz."
+)
+
+
 def makro_metni(veri=None):
     """Makro veriyi promptlara gomulecek kisa metne cevirir."""
     veri = veri or makro_cek()
@@ -1500,6 +1545,10 @@ Biçim kuralları (zorunlu):
 - 5. bölümdeki nakit/likidite önerisi ile 6. bölümdeki NAKİT satırının ağırlığı ÇELİŞMEMELİ (örn. "%40 nakit tutun" deyip %0 nakitlik portföy verme).
 - Şirket adlarını YALNIZCA verilerde hisse kodunun yanında verilen resmi adla kullan (örn. YKBNK kodunun adı "Yapı Kredi"dir); hiçbir şirket için kendi hafızandan farklı bir isim, kısaltma ya da benzer bir ad yazma.
 - Enflasyon gibi makro göstergeleri yalnızca [MAKRO GEREKLER] bölümündeki değerlerle an; kendi genel bilginden sayı yazma.
+
+{VERI_DAYANAK_ENVANTERI}
+
+{PROFESYONEL_YAZIM_KURALLARI}
 
 Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek verileri ve geçmiş hafızayı baz al. Raporu zengin finansal terimler kullanarak Türkçe kaleme al."""
 
@@ -1901,6 +1950,10 @@ Raporun SONUNDA aşağıdaki başlıklarla tam bir tablo oluştur:
 | ... | ... | ... | ... | ... | ... |
 
 Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren hisseleri listeleyip her biri için gerekçe yaz. "Giriş/hedef/stop" emir dili kullanma; koşullu senaryo dili kullan (baz senaryo = en olası patika; iyimser senaryo = görünümü güçlendiren somut koşul; geçersizlik koşulu = senaryoyu çürüten somut gelişme). Rakamları yalnızca verilen fiyatlardan türet, asla dışarıdan veri ekleme. Şirket adlarını YALNIZCA verilerde hisse kodunun yanında verilen resmi adla kullan; hiçbir şirket için kendi hafızandan farklı bir isim yazma. Enflasyon oranını yalnızca [MAKRO GEREKLER] bölümündeki değerle an. {tarih_kurali}
+
+{VERI_DAYANAK_ENVANTERI}
+
+{PROFESYONEL_YAZIM_KURALLARI}
 
 ### VERİLER
 
