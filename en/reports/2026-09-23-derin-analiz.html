@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Analysis - 2026-09-23</title>
+<meta name="description" content="2026-09-23 date BIST 30 deep analysis report.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/en/reports/2026-09-23-derin-analiz">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/reports/2026-09-23-derin-analiz">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/reports/2026-09-23-derin-analiz">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/reports/2026-09-23-derin-analiz">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/reports/2026-09-23-derin-analiz">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/reports/2026-09-23-derin-analiz">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/reports/2026-09-23-derin-analiz">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Daily Reports">
+<meta property="og:title" content="Deep Analysis - 2026-09-23">
+<meta property="og:description" content="2026-09-23 date BIST 30 deep analysis report.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/en/reports/2026-09-23-derin-analiz">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Daily Reports cover image">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Deep Analysis - 2026-09-23">
+<meta name="twitter:description" content="2026-09-23 date BIST 30 deep analysis report.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<meta name="yandex-verification" content="2c8df12d0b97a734">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Deep Analysis - 2026-09-23", "description": "2026-09-23 date BIST 30 deep analysis report.", "url": "https://borsa-raporlari.pages.dev/en/reports/2026-09-23-derin-analiz", "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Derin Analiz — 2026-09-23", "datePublished": "2026-09-23", "inLanguage": "en", "description": "2026-09-23 date BIST 30 deep analysis report.", "author": {"@type": "Organization", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}, "publisher": {"@type": "Organization", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}, "mainEntityOfPage": "https://borsa-raporlari.pages.dev/en/reports/2026-09-23-derin-analiz.html"}</script>
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="../style.css">
+
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="../index.html">BIST 30 Daily Reports</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Light/dark theme" aria-label="Change theme">🌙</button></div>
+<nav><a href="../index.html" class="active">Reports</a><a href="../hisse/index.html">Stocks</a><a href="../derin-analiz.html">Deep Analysis</a><a href="../teknik-analiz.html">Technical Scan</a><a href="../sinyal-karnesi.html">Signal Scorecard</a><a href="../borsapy-analiz.html">Borsapy Signals</a><a href="../haberler.html">News</a><a href="../sirket-haberleri.html">Company News</a><a href="../portfolio.html">Demo Portfolio</a><a href="../haftasonu.html">Weekend</a><a href="../haftasonu-egitimi.html">Market School</a><a href="../takvim.html">📅 Calendar</a><a href="../sozluk.html">Glossary</a><a href="../terimler.html">Terms</a><a href="../muhasebe-terimleri.html">Accounting Terms</a></nav>
+</div></header>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Loading prices…</span></div>
+</div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Loading...</span>
+            <span id="istanbul-weather">🌤️ Istanbul Weather...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Select page language">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/reports/2026-09-23-derin-analiz" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/reports/2026-09-23-derin-analiz" hreflang="en" lang="en" data-dil="en" class="aktif" aria-current="true">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/reports/2026-09-23-derin-analiz" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/reports/2026-09-23-derin-analiz" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/reports/2026-09-23-derin-analiz" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+</nav>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
+
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Search stock, topic or date..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '../';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\?\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\.|mi|mı|icin)\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+
+
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Play / Pause">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Volume level" title="Sound">
+  <span class="radyo-linkler"><a href="../radyo/index.html">📻 All broadcasts &amp; Podcast page</a> <span class="ayrac">•</span> <a href="../radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">For listening purposes only • Fictional AI servers • For informational purposes, not investment advice.</span>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='../';
+  if(!btn||!ses) return;
+  if(ayar){ ses.volume=(parseInt(ayar.value,10)||80)/100; }
+  var hazir=false;
+  function hazirla(geri){
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){return r.json();}).then(function(d){
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){ ses.src=kok+l[0].dosya; }
+      hazir=true; geri();
+    }).catch(function(){ hazir=true; geri(); });
+  }
+  btn.addEventListener('click',function(){
+    if(ses.paused){ hazirla(function(){ var p=ses.play(); if(p&&p.catch){p.catch(function(){});} }); }
+    else { ses.pause(); }
+  });
+  ses.addEventListener('play',function(){ btn.textContent='❚❚'; btn.setAttribute('aria-label','Duraklat'); });
+  ses.addEventListener('pause',function(){ btn.textContent='▶'; btn.setAttribute('aria-label','Oynat'); });
+  if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
+})();
+</script>
+
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>Deep Analysis</h1>
+<div class="meta"><span class="badge">2026-09-23</span><span>BIST 30 • AI-powered in-depth analysis</span>
+<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Read report aloud">🔊 Read Aloud</button>
+<span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px"><a class="paylas" href="https://twitter.com/intent/tweet?text=Derin+Analiz+2026-09-23&url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-23-derin-analiz.html" target="_blank" rel="noopener" title="Share on X">𝕏</a><a class="paylas" href="https://t.me/share/url?url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-23-derin-analiz.html&text=Derin+Analiz+2026-09-23" target="_blank" rel="noopener" title="Share on Telegram">✈</a><a class="paylas" href="https://wa.me/?text=Derin+Analiz+2026-09-23%20https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-09-23-derin-analiz.html" target="_blank" rel="noopener" title="Share on WhatsApp">💬</a><a class="paylas" href="javascript:void(0)" title="Copy link" onclick="if(navigator.clipboard){navigator.clipboard.writeText('https://borsa-raporlari.pages.dev/en/reports/2026-09-23-derin-analiz.html');this.textContent='✓';}">🔗</a></span></div>
+</div>
+
+<div class="card" style="margin:0 0 18px; padding:14px 18px">
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
+<strong style="font-size:14px">BIST 30 basket — last 14 days</strong>
+<span class="neg" style="font-weight:700">-0.16%</span>
+</div>
+<svg viewBox="0 0 520 90" class="chart" role="img" aria-label="BIST 30 basket price chart (last 14 days)" style="max-width:520px"> <polyline fill="none" stroke="#b91c1c" stroke-width="2.5" points="0.0,51.3 40.0,51.3 80.0,36.9 120.0,12.6 160.0,14.1 200.0,21.9 240.0,8.0 280.0,19.3 320.0,46.1 360.0,84.0 400.0,48.4 440.0,58.0 480.0,48.6 520.0,52.3" /></svg>
+<div style="color:var(--muted); font-size:12px">Equal-weighted basket of 30 stocks, normalized to the first seen price.</div>
+</div>
+
+
+
+<article class="report" id="rapor-govde"><h2>1. Market Summary and Overview</h2>
+<p>On Wednesday, September 23, 2026, the BIST 30 index (XU030) closed at 16.217.83, experiencing a 1.06% drop from the previous day amid volatility. In an environment where global geopolitical tensions and inflationary pressures are intensifying, markets are technically undergoing a critical consolidation and divergence process. The index rose above the 16.000 level to 16.391.39 before pulling back, losing the opportunity for a daily recovery. The red candle formed on the daily chart shows a consolidation tendency in the 4.200-4.250 band despite the 60-day technical trend being at "STRONG BUY" level. The upward breakout of this consolidation zone will be one of the most important indicators determining the index's future trend direction, while a failure to break could lead to a pullback toward the 4.000 level and weakening buying power. Based on macro data, the annual inflation rate of 31.5% according to TUIK data negatively affects company profitability, while Goldman Sachs' assessment that financial conditions are easing in Turkey carries the potential to provide liquidity to markets. However, news such as Germany's economic measures package for China and Fed interest rate pressures are dampening global risk appetite. In this environment, a stock picking strategy in BIST 30 emerges as the safest and most profitable approach.</p>
+<h2>2. Sector-Based Evaluation</h2>
+<p>A clear decoupling is observed between sectors in the market. According to technical analysis data and signal intensity, the strongest and most positively positioned sectors are:</p>
+<ul>
+<li>
+<p><strong>Retail:</strong> Sector leader <strong>BİM (BIMAS)</strong>, is in the strongest position both technically and fundamentally. BİM, which dominates the sector with its 60-day return, is at "STRONG BUY" level in TradingView signals. <strong>Koç Holding (KCHOL)</strong> is the most solid name within the holding group, continuing its upward movement without diverging from the index with its strong correlation (r=0.90).</p>
+</li>
+<li>
+<p><strong>Metal &amp; Mining:</strong> <strong>Kardemir (KRDMD)</strong>, is one of the stocks giving the strongest signal in the sector. The technical trend being at "BUY" level and the WT (Wave Trend) signal being "BUY" reflect the potential in iron and steel demand.</p>
+</li>
+<li>
+<p><strong>Banking:</strong> Although there are recovery signals in the sector overall, <strong>Akbank (AKBNK)</strong> and<strong>Garanti BBVA (GARAN)</strong>, are at "BUY" level in their short-term trends but at "WAIT" level in medium and long-term trends. This situation indicates that the banking sector has not yet entered a clear upward trend.</p>
+</li>
+</ul>
+<p>On the other hand, <strong>Energy &amp; Petrochemicals</strong>, <strong>Automotive</strong>, <strong>Telecom</strong>, <strong>Aviation</strong> and<strong>Real Estate</strong> sectors are giving intense "SELL" or "STRONG SELL" signals in technical and fundamental data, carrying market risk. Especially <strong>Tüpraş (TUPRS)</strong>, carries a technical correction risk due to its high recent return (81%).<strong>Petkim (PETKM)</strong> and<strong>Şişecam (SISE)</strong> are also notable for their strong downtrends.</p>
+<h2>3. Technical Visual Analysis</h2>
+<p>EMA (Moving Average) sequences and Wave Trend (WT) analyses clarify the positions of the stocks. Pearson correlation (r) shows how dependent the stock is on the index, while the regression channel determines its current position.</p>
+<ul>
+<li>
+<p><strong>KCHOL (Koç Holding):</strong> While EMA sequences place the stock within an upward trend, the WT signal is at "BUY" level. Although the channel position is at 36%, in the lower band of the upward channel, it is very strongly correlated with the index at r=0.90. This indicates that the stock will follow the index's upward movement.</p>
+</li>
+<li>
+<p><strong>BIMAS (BİM):</strong> EMA's and WT signal at "BUY" level. Channel position at 61%, in the middle region of the upward channel. Strongly correlated with the index at r=0.88. This stock proves its inflation resistance.</p>
+</li>
+<li>
+<p><strong>AKBNK (Akbank):</strong> Short-term EMA's are at "BUY" level but long-term EMA's are at "WAIT" level. WT at "BUY" level. Channel position at 67%, in the upper band of the channel. Nearly independent from the index at r=0.14. This shows that the stock moves independently of the index, determining its own dynamics.</p>
+</li>
+<li>
+<p><strong>TUPRS (Tüpraş):</strong> EMA's are at "WAIT" level in the short term. WT signal at "SELL" level. Channel position at %-10, in the lower band of the upward channel. Perfectly correlated with the index at r=0.96. This indicates that the stock follows the index's decline.</p>
+</li>
+<li>
+<p><strong>ASELS (Aselsan):</strong> EMA's are at "SELL" level in the short term. WT signal at "SELL" level. Channel position at 30%, in the lower band of the channel. Moderately correlated with the index at r=0.41. Horizontal movement and correction risk are present in defense industry stocks.</p>
+</li>
+</ul>
+<h2>4. Oscillator and Momentum Readings</h2>
+<p>RSI, MACD, Stochastic and CCI values reveal the overbought/oversold areas and momentum of the stocks.</p>
+<ul>
+<li>
+<p><strong>BIMAS:</strong> RSI (59.5) and MACD (6.97) are taking positive values. Stochastic K (76.25) is in the upper band of the upward channel. CCI (151.87) is in the overbought zone. This shows that the stock is in a strong upward trend.</p>
+</li>
+<li>
+<p><strong>KCHOL:</strong> RSI (55.14) and MACD (2.84) are moderately positive. Stochastic K (58.96) is in neutral zone. CCI (59.66) is in neutral zone. Momentum is healthy.</p>
+</li>
+<li>
+<p><strong>AKBNK:</strong> RSI (55.08) and MACD (0.37) are giving recovery signals. Stochastic K (68.77) is in the upward channel. CCI (63.24) is in neutral zone. There is a short-term buying opportunity.</p>
+</li>
+<li>
+<p><strong>TUPRS:</strong> RSI (53.63) and MACD (14.76) are high values. Stochastic K (67.86) is in the upward channel. CCI (13.62) is in neutral zone. There is a recovery risk after excessive rise.</p>
+</li>
+<li>
+<p><strong>TAVHL (TAV Havalimanları):</strong> RSI (54.55) and MACD (-0.28) in neutral territory. Stochastic K (89.54) in overbought zone. CCI (71.8) in uptrend channel. This indicates the stock is technically overbought and a short-term correction is expected.</p>
+</li>
+<li>
+<p><strong>GUBRF (Gübre Fabrikaları):</strong> RSI (43.0) and MACD (-4.68) negative. Stochastic K (43.23) in downtrend channel. CCI (-92.62) in oversold zone. This indicates the stock is technically very weak.</p>
+</li>
+</ul>
+<h2>5. Risk Map and Scenarios</h2>
+<p>Market risk map clarifies upside and downside scenarios.</p>
+<ul>
+<li>
+<p><strong>Upside Scenario:</strong> If BIST 30 successfully breaks above 16.391.39 and reaches the 16.500 band, the index could start an uptrend towards the 16.800-17.000 band. In this scenario, strong stocks like KCHOL, BIMAS, and AKBNK will stand out.</p>
+</li>
+<li>
+<p><strong>Downside Scenario:</strong> If the index breaks above 16.217.83 and tests the 16.000 level, the index could experience a pullback towards the 15.500-15.800 band. In this scenario, weak stocks like TUPRS, PETKM, SISE, and ASTOR could suffer further losses.</p>
+</li>
+<li>
+<p><strong>Levels to Watch:</strong></p>
+<ul>
+<li>
+<p><strong>Resistance:</strong> 16.391.39 (previous close), 16.500, 16.800</p>
+</li>
+<li>
+<p><strong>Support:</strong> 16,000, 15,800, 15,500</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Split Strategy:</strong> If the index falls below 16.000, the divergence among stocks could deepen. In this case, only the strongest stocks (BIMAS, KCHOL) may provide protection, while other stocks could suffer greater losses.</p>
+</li>
+</ul>
+<h2>6. Recommended Stocks for the Day</h2>
+<table>
+<thead>
+<tr>
+<th>Stock</th>
+<th>Signal</th>
+<th>Entry Area</th>
+<th>Target</th>
+<th>Stop</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BIMAS</td>
+<td>STRONG BUY</td>
+<td>425.00 - 430.00</td>
+<td>445.00</td>
+<td>415.00</td>
+<td>RSI 59.5, MACD positive, WT AL, 60g +16.7, StochK 76.25 (near overbought)</td>
+</tr>
+<tr>
+<td>KCHOL</td>
+<td>STRONG BUY</td>
+<td>215.00 - 220.00</td>
+<td>235.00</td>
+<td>205.00</td>
+<td>RSI 55.14, WT AL, high correlation (r=0.90), 60g +13.0, channel 36%</td>
+</tr>
+<tr>
+<td>AKBNK</td>
+<td>BUY</td>
+<td>70.00 - 72.00</td>
+<td>78.00</td>
+<td>68.00</td>
+<td>RSI 55.08, MACD 0.37, WT AL, short-term trend AL, channel 67%</td>
+</tr>
+<tr>
+<td>KRDMD</td>
+<td>BUY</td>
+<td>43.00 - 45.00</td>
+<td>50.00</td>
+<td>40.00</td>
+<td>RSI 53.19, WT AL, 60g +12.9, StochK 60.03, ADX 19.04 (trend beginning)</td>
+</tr>
+</tbody>
+</table></article>
+<p style="margin-top:18px"><a href="../index.html">← Back to all reports</a></p>
+<script>
+(function() {
+  if (!('speechSynthesis' in window)) { return; }
+  // Chrome bazi sesleri gec yukler; sayfa acilir acilmaz ses listesini isit.
+  var sesleriIsit = function() { try { window.speechSynthesis.getVoices(); } catch (e) {} };
+  sesleriIsit();
+  if (window.speechSynthesis.onvoiceschanged === null) {
+    window.speechSynthesis.onvoiceschanged = sesleriIsit;
+  }
+  window.sesliOkuToggle = function(btn, kaynakId) {
+    var S = window.speechSynthesis;
+    var durum = btn.getAttribute('data-durum') || 'durdu';
+    if (durum === 'okunuyor') { S.pause(); btn.textContent = '\u25b6 Devam'; btn.setAttribute('data-durum', 'bekliyor'); return; }
+    if (durum === 'bekliyor') { S.resume(); btn.textContent = '\u23f8 Duraklat'; btn.setAttribute('data-durum', 'okunuyor'); return; }
+    S.cancel();
+    var kaynak = document.getElementById(kaynakId);
+    var metin = kaynak ? (kaynak.textContent || '') : '';
+    metin = metin.replace(/\s+/g, ' ').trim();
+    if (!metin) { return; }
+    var u = new SpeechSynthesisUtterance(metin);
+    u.lang = 'tr-TR';
+    var sesListe = S.getVoices() || [];
+    var trSes = sesListe.filter(function(v) { return v.lang && v.lang.toLowerCase().indexOf('tr') === 0; })[0] || null;
+    if (trSes) { u.voice = trSes; }
+    u.rate = 1.0;
+    u.onend = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    u.onerror = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    btn.textContent = '\u23f8 Duraklat';
+    btn.setAttribute('data-durum', 'okunuyor');
+    S.speak(u);
+  };
+})();
+</script>
+</main>
+
+<nav class="altbar" aria-label="Quick menu">
+<a href="../index.html" class="active"><span class="i" aria-hidden="true">📊</span>Reports</a>
+<a href="../teknik-analiz.html"><span class="i" aria-hidden="true">📈</span>Technical</a>
+<a href="../hisse/index.html"><span class="i" aria-hidden="true">🏦</span>Stocks</a>
+<a href="../portfolio.html"><span class="i" aria-hidden="true">💼</span>Portfolio</a>
+<a href="../haberler.html"><span class="i" aria-hidden="true">📰</span>News</a>
+<a href="../takvim.html"><span class="i" aria-hidden="true">📅</span>Calendar</a>
+</nav>
+
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+
+<footer class="footer">The information, comments and recommendations contained herein are for informational purposes only; they do not constitute investment advisory or investment advice. The accuracy of the data cannot be guaranteed and the user is responsible for any decisions that may arise from the content.<br>Data sources: İş Yatırım, RSS news feeds • Analysis: artificial intelligence (multi-agent system)<br><a href="../gizlilik.html" style="color:inherit">Privacy &amp; Data Protection</a></footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+</body></html>
