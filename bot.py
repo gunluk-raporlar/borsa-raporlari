@@ -1243,10 +1243,10 @@ Raporu kesinlikle profesyonel bir finansal bülten formatında, her başlığı 
 ## 5. Risk Yönetimi ve Strateji: Kısa vadeli olası aşağı/yukarı yönlü senaryolar ve portföyü koruma kalkanları.
 ## 6. Önerilen Model Portföy: Raporun SONUNDA, yukarıdaki sinyal ve analizlere DAYANARAK kendinin kurduğu somut bir model portföyü tablosu oluştur. Tablo şu sütunlarla olmalı:
 
-| Hisse | Sektör | Ağırlık (%) | İşlem | Giriş Bölgesi | Hedef-1 | Hedef-2 (3 Ay) | Stop | Gerekçe |
-|-------|--------|-------------|-------|---------------|---------|----------------|------|---------|
+| Hisse | Sektör | Ağırlık (%) | İşlem | Baz Senaryo | İyimser Senaryo | Geçersizlik Koşulu | Gerekçe |
+|-------|--------|-------------|-------|-------------|-----------------|--------------------|---------|
 
-Tablo kuralları: En fazla 8 hisse pozisyonu + bir "NAKİT" satırı ekle; ağırlıklar %100'ü tamamlamalı (nakit dahil). Sadece AL/GÜÇLÜ AL sinyali veren ve gerekçesi verilerle desteklenen hisseleri seç; ağırlığı sinyal gücü, Pearson (r) ve kanal konumuna göre belirle. Giriş bölgesi, hedefler ve stop seviyelerini SADECE sağlanan gerçek fiyatlardan türet (kanal bantları ve son fiyat baz alın); dışarıdan hiçbir veri ekleme. Her satırın gerekçesi teknik + osilatör gerekçelerini birleştirsin.
+Tablo kuralları: En fazla 8 hisse pozisyonu + bir "NAKİT" satırı ekle; ağırlıklar %100'ü tamamlamalı (nakit dahil). Sadece AL/GÜÇLÜ AL sinyali veren ve gerekçesi verilerle desteklenen hisseleri seç; ağırlığı sinyal gücü, Pearson (r) ve kanal konumuna göre belirle. "Giriş bölgesi / hedef / stop" gibi emir dili KULLANMA; bunun yerine koşullu senaryo dili kullan: Baz Senaryo = mevcut veri setinin işaret ettiği en olası patika (örn. "kanal orta bandına doğru toparlanma"), İyimser Senaryo = görünümü güçlendiren somut koşul (örn. "kanal üst bandı üzerinde hacimli kapanış"), Geçersizlik Koşulu = senaryoyu çürüten somut gelişme (örn. "kanal alt bandı altında kapanış"). Anılan seviyeleri SADECE sağlanan gerçek fiyatlardan türet (kanal bantları ve son fiyat baz alın); dışarıdan hiçbir veri ekleme. Her satırın gerekçesi teknik + osilatör gerekçelerini birleştirsin.
 
 Biçim kuralları (zorunlu):
 {tarih_kurallari}
@@ -1650,11 +1650,11 @@ Yanıtını şu yapıda oluştur (başlıklar aynen bu şekilde, "## " ile):
 ## 6. Günün Önerilen Hisseleri
 Raporun SONUNDA aşağıdaki başlıklarla tam bir tablo oluştur:
 
-| Hisse | Sinyal | Giriş Bölgesi | Hedef | Stop | Gerekçe |
-|-------|--------|---------------|-------|------|---------|
+| Hisse | Sinyal | Baz Senaryo | İyimser Senaryo | Geçersizlik Koşulu | Gerekçe |
+|-------|--------|-------------|-----------------|--------------------|---------|
 | ... | ... | ... | ... | ... | ... |
 
-Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren hisseleri listeleyip her biri için gerekçe yaz. Rakamları yalnızca verilen fiyatlardan türet, asla dışarıdan veri ekleme. Şirket adlarını YALNIZCA verilerde hisse kodunun yanında verilen resmi adla kullan; hiçbir şirket için kendi hafızandan farklı bir isim yazma. Enflasyon oranını yalnızca [MAKRO GEREKLER] bölümündeki değerle an. {tarih_kurali}
+Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren hisseleri listeleyip her biri için gerekçe yaz. "Giriş/hedef/stop" emir dili kullanma; koşullu senaryo dili kullan (baz senaryo = en olası patika; iyimser senaryo = görünümü güçlendiren somut koşul; geçersizlik koşulu = senaryoyu çürüten somut gelişme). Rakamları yalnızca verilen fiyatlardan türet, asla dışarıdan veri ekleme. Şirket adlarını YALNIZCA verilerde hisse kodunun yanında verilen resmi adla kullan; hiçbir şirket için kendi hafızandan farklı bir isim yazma. Enflasyon oranını yalnızca [MAKRO GEREKLER] bölümündeki değerle an. {tarih_kurali}
 
 ### VERİLER
 
@@ -1705,6 +1705,115 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
             logger.warning("[Derin Analiz] %s basarisiz: %s", mdl, son_hata)
             time.sleep(3)
     logger.error("[Derin Analiz] tum modeller basarisiz (%s)", son_hata)
+    return None
+
+
+def makro_analiz_yap():
+    """Makroekonomik Degerlendirme sayfasinin uzun analiz metnini uretir.
+
+    Kaynak veri: makro_cek() ile data/makro.json'daki KESIN gostergeler
+    (TR/ABD/Euro Bolgesi enflasyon, UFE, politika faizi, issizlik, buyume,
+    cari denge, rezerv) + piyasa_verisi + portfoy risk olcutleri. Model
+    yalnizca bu rakamlari kullanir; uydurma sayi yazmasi hem prompt kuraliyla
+    hem de yayin oncesi dogrulama katmaniyla engellenir. Anahtar yoksa None.
+    """
+    anahtar = os.environ.get("ZAI_API_KEY", "")
+    if not anahtar:
+        logger.warning("[Makro Analiz] ZAI_API_KEY tanimli degil; sayfa uretilmeyecek.")
+        return None
+
+    model = os.environ.get("ZAI_MODEL") or "glm-4.7-flash"
+    client = OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/paas/v4/",
+                    timeout=300.0, max_retries=1)
+
+    # --- Kesin veri bloklari ---
+    makro_tablo = makro_metni() or "(makro veri su an alinamadi)"
+    enflasyon = _enflasyon_fakt()
+    enf_satir = (f"Enflasyon (TUIK yillik): {enflasyon['metin']} (donem: {enflasyon['donem']})"
+                 if enflasyon else "")
+    piyasa_blogu = piyasa_verisi_metni() or ""
+
+    portfoy_ozet = ""
+    p = load_portfolio()
+    if p and p.get("history"):
+        risk = _portfoy_risk(p) or {}
+        son = p["history"][-1]
+        portfoy_ozet = (f"Deneme portfoyu: toplam {son['total']} TL (%{son['pct']:+.2f}); "
+                        f"maksimum dusus %{risk.get('dd', 0):.1f}, yillik volatilite "
+                        f"%{risk.get('vol', 0):.1f}; kiyaslamalar: {son.get('benchmarks')}")
+
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    bugun = datetime.now(tz).strftime("%d.%m.%Y")
+
+    prompt = f"""Sen makroekonomi alanında uzman, akademik derinlikte ama anlaşılır yazan bağımsız bir analist yapay zekâsısın (gerçek bir kişi veya kurum değilsin; kendini öyle tanıtma). Aşağıdaki KESİN verileri kullanarak Türkiye ve küresel makroekonomik görünümü değerlendiren, DERİNLEMESİNE ve UZUN (en az 1000 kelime) bir "Makroekonomik Değerlendirme" yazısı kaleme al. Yazı Türkçe olacak ve TÜM metinde doğru Türkçe karakterler (ç, ğ, ı, ö, ş, ü) kullanılacak.
+
+Üslup: Bir makroekonomi profesörü gibi yaz — kavramları kısaca açıkla, mekanizmaları (aktarım kanallarını) adım adım kur, tek yönlü kehanet yerine koşullu senaryolar sun. Somut rakam YALNIZCA aşağıdaki veri bloklarından alınır; kendi hafızandan makro sayı (enflasyon, faiz, büyüme, kur, işsizlik vb.) ÜRETME. Veri bloğunda olmayan bir göstergeye ihtiyaç duyarsan sayı vermeden niteliksel konuş.
+
+Yanıtını şu yapıda oluştur (başlıklar aynen bu şekilde, "## " ile):
+
+## 1. Küresel Makroekonomik Görünüm
+(ABD ve Euro Bölgesi verileri: enflasyon, politika faizi, büyüme, işsizlik; küresel likidite ve risk iştahına etkileri)
+
+## 2. Türkiye Makroekonomik Görünümü
+(TÜİK enflasyon/ÜFE, TCMB politika faizi, büyüme, işsizlik, cari denge, rezervler; dezenflasyon sürecinin hangi aşamasında olunduğu)
+
+## 3. Aktarım Mekanizmaları: Makrodan Piyasaya
+(Şu zincirleri veriye bağlayarak anlat: politika faizi -> mevduat/kredi maliyeti -> iç talep -> şirket satışları -> marjlar -> değerleme; kur kanalı -> ithal girdi maliyeti -> enflasyon; küresel faiz -> yabancı sermaye akımı -> risk primi)
+
+## 4. BIST 30'a Yansımalar: Sektör Kanalları
+(Banka, sanayi, holding, perakende gibi ana sektörlerin makro veriye duyarlılığı; yüksek faiz ortamında kim kazanır kim kaybeder)
+
+## 5. Senaryolar ve İzleme Çerçevesi
+(Baz/iyimser/kötümser senaryo; her senaryoyu geçersiz kılacak somut veri gelişmesi; önümüzdeki dönemde izlenecek göstergeler. "Al/sat/giriş/hedef/stop" gibi emir dili KULLANMA.)
+
+## 6. Sonuç ve Değerlendirme
+
+Biçim kuralları (zorunlu):
+- Kimlik satırı YAZMA: "Profesör", "Dr.", "Analist:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri geçmeyecek.
+- Metinde köşeli parantezli [...] yer tutucu kullanma; yazı doğrudan "## 1." başlığıyla başlasın.
+- Bugünün tarihi: {bugun}. Bunun dışında tarih/gün adı üretme.
+- Bu bir yatırım tavsiyesi değildir; eğitim ve analiz amaçlıdır — bunu son bölümde kısaca belirt.
+
+### VERİLER (KESİN RAKAMLAR — yalnızca bunları kullan)
+
+[MAKRO GÖSTERGELER]
+{makro_tablo}
+{enf_satir}
+
+[PİYASA VERİLERİ]
+{piyasa_blogu}
+
+[PORTFÖY RİSK BAĞLAMI]
+{portfoy_ozet}
+"""
+
+    son_hata = None
+    denenecekler = [model] + (["glm-4.5-flash"] if model != "glm-4.5-flash" else [])
+    for deneme, mdl in enumerate(denenecekler):
+        try:
+            logger.info("[Makro Analiz] GLM cagrisi (%s), deneme %d", mdl, deneme + 1)
+            resp = client.chat.completions.create(
+                model=mdl,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.4,
+                max_tokens=8000,
+                extra_body={"thinking": {"type": "disabled"}},
+            )
+            icerik = resp.choices[0].message.content or ""
+            if icerik.strip():
+                if _derin_dongu_var(icerik):
+                    son_hata = "tekrar dongusu"
+                    logger.warning("[Makro Analiz] %s tekrar dongusune girdi; siradaki model deneniyor.", mdl)
+                    time.sleep(3)
+                    continue
+                icerik = rapor_son_islem(icerik)
+                return _metin_dogrula_ve_kaydet(icerik, " / makro analiz")
+            son_hata = "bos yanit"
+        except Exception as e:
+            son_hata = str(e)[:200]
+            logger.warning("[Makro Analiz] %s basarisiz: %s", mdl, son_hata)
+            time.sleep(3)
+    logger.error("[Makro Analiz] tum modeller basarisiz (%s)", son_hata)
     return None
 
 
@@ -1780,7 +1889,7 @@ SITE_ADI = "BIST 30 Günlük Raporlar"
 # asagida ENV ile desteklenir.)
 INDEXNOW_KEY = "ba8235ea226b9c95831f13f37a9e223f"
 INDEXNOW_ANA_SAYFALAR = [
-    "index.html", "derin-analiz.html", "teknik-analiz.html",
+    "index.html", "derin-analiz.html", "makro-analiz.html", "teknik-analiz.html",
     "borsapy-analiz.html", "portfolio.html", "haftasonu.html",
 ]
 
@@ -1877,7 +1986,26 @@ def _enflasyon_fakt():
 # Dogrulama istatistikleri: metrik_dosyasi_yaz bunlari data/metrics/latest.json
 # icindeki "dogrulama" anahtarina yazar (izleme sayfasinin gosterdigi).
 DOGRULAMA_IST = {"isim": 0, "enflasyon": 0, "toplam_metin": 0, "endeks": 0,
-                 "endeks_uyari": 0, "son_guncelleme": ""}
+                 "endeks_uyari": 0, "faiz": 0, "son_guncelleme": ""}
+
+
+def _faiz_oranlari():
+    """data/makro.json'daki politika faizlerini ulke bazli sozluk olarak dondurur.
+
+    makro_cek() proses icinde bir kez cekilir, sonraki cagrilarda onbellekten
+    okunur; hata durumunda None (faiz denetimi devre disi kalir, rapor bozulmaz).
+    """
+    try:
+        veri = makro_cek() or {}
+        oranlar = {}
+        for g in veri.get("gostergeler", []):
+            if g.get("ad") == "Politika faizi":
+                anahtar = {"Türkiye": "tr", "ABD": "us", "Euro Bölgesi": "eu"}.get(g.get("ulke"))
+                if anahtar:
+                    oranlar[anahtar] = float(g["deger"])
+        return oranlar or None
+    except Exception:
+        return None
 
 
 def _metin_dogrula_ve_kaydet(metin, etiket=""):
@@ -1898,16 +2026,21 @@ def _metin_dogrula_ve_kaydet(metin, etiket=""):
             endeks = None
         sonuc = dogrulama.metin_dogrula(
             metin, HISSE_ADLARI, enflasyon["yuzde"] if enflasyon else None,
-            endeks_seviyesi=endeks)
-        if sonuc["isim_duzeltme"] or sonuc["enflasyon_duzeltme"] or sonuc["endeks_duzeltme"]:
+            endeks_seviyesi=endeks, faiz_oranlari=_faiz_oranlari())
+        if (sonuc["isim_duzeltme"] or sonuc["enflasyon_duzeltme"]
+                or sonuc["endeks_duzeltme"] or sonuc["faiz_duzeltme"]):
             DOGRULAMA_IST["isim"] += len(sonuc["isim_duzeltme"])
             DOGRULAMA_IST["enflasyon"] += len(sonuc["enflasyon_duzeltme"])
             DOGRULAMA_IST["endeks"] += len(sonuc["endeks_duzeltme"])
+            DOGRULAMA_IST["faiz"] += len(sonuc["faiz_duzeltme"])
             for yanlis, dogru, kod in sonuc["isim_duzeltme"]:
                 logger.warning("[Dogrulama%s] sirket adi duzeltildi: '%s' -> '%s (%s)'",
                                etiket, yanlis, dogru, kod)
             for eski, yeni in sonuc["enflasyon_duzeltme"]:
                 logger.warning("[Dogrulama%s] enflasyon sayisi duzeltildi: %s -> %s",
+                               etiket, eski, yeni)
+            for eski, yeni in sonuc["faiz_duzeltme"]:
+                logger.warning("[Dogrulama%s] politika faizi duzeltildi: %s -> %s",
                                etiket, eski, yeni)
             for eski, yeni in sonuc["endeks_duzeltme"]:
                 logger.warning("[Dogrulama%s] endeks seviyesi duzeltildi: %s -> %s",
@@ -2583,6 +2716,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     a_t = ' class="active"' if aktif == "teknik" else ""
     a_b = ' class="active"' if aktif == "borsapy" else ""
     a_d = ' class="active"' if aktif == "derin" else ""
+    a_mk = ' class="active"' if aktif == "makro" else ""
     a_h = ' class="active"' if aktif == "haftasonu" else ""
     a_e = ' class="active"' if aktif == "egitim" else ""
     a_his = ' class="active"' if aktif == "hisseler" else ""
@@ -2644,7 +2778,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <header class="topbar"><div class="inner">
 <div class="brand-row"><a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
-<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a><a href="{kok}terimler.html"{a_trm}>Terimler</a><a href="{kok}muhasebe-terimleri.html"{a_muh}>Muhasebe Terimleri</a></nav>
+<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}makro-analiz.html"{a_mk}>Makro Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a><a href="{kok}terimler.html"{a_trm}>Terimler</a><a href="{kok}muhasebe-terimleri.html"{a_muh}>Muhasebe Terimleri</a></nav>
 </div></header>
 {_kendi_ticker(kok)}
 {_kendi_ticker2(kok)}
@@ -5358,6 +5492,10 @@ def site_arama_json_yaz(rapor_dosyalari):
     if derin_metin:
         sayfalar.append({"b": "Derin Analiz (günlük derinlemesine inceleme)", "u": "derin-analiz.html",
                          "t": derin_metin[:3500]})
+    makro_metin = makale_metni("makro-analiz.html")
+    if makro_metin:
+        sayfalar.append({"b": "Makroekonomik Değerlendirme (enflasyon, faiz, büyüme)", "u": "makro-analiz.html",
+                         "t": makro_metin[:3500]})
     for fn in rapor_dosyalari:
         metin = makale_metni(os.path.join("reports", fn))
         if metin:
@@ -5378,6 +5516,7 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
     statik = [
         ("index.html", "daily"),
         ("derin-analiz.html", "daily"),
+        ("makro-analiz.html", "weekly"),
         ("teknik-analiz.html", "hourly"),
         ("borsapy-analiz.html", "hourly"),
         ("portfolio.html", "daily"),

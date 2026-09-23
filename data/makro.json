@@ -1,0 +1,118 @@
+{
+ "guncelleme": "23.09 19:53",
+ "kaynak": "TradingView ekonomik takvimi",
+ "gostergeler": [
+  {
+   "ulke": "Türkiye",
+   "ad": "Enflasyon (yıllık)",
+   "deger": 31.51,
+   "birim": "%",
+   "donem": "2026-09-03"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "Politika faizi",
+   "deger": 37.0,
+   "birim": "%",
+   "donem": "2026-09-10"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "İşsizlik oranı",
+   "deger": 8.1,
+   "birim": "%",
+   "donem": "2026-08-31"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "Büyüme (yıllık)",
+   "deger": 2.3,
+   "birim": "%",
+   "donem": "2026-08-31"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "Cari denge",
+   "deger": 0.04,
+   "birim": "",
+   "donem": "2026-09-11"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "Döviz rezervleri",
+   "deger": 68.44,
+   "birim": "",
+   "donem": "2026-09-17"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "Enflasyon (yıllık)",
+   "deger": 3.4,
+   "birim": "%",
+   "donem": "2026-09-11"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "Politika faizi",
+   "deger": 4.0,
+   "birim": "%",
+   "donem": "2026-09-16"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "İşsizlik oranı",
+   "deger": 7.7,
+   "birim": "%",
+   "donem": "2026-09-04"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "Büyüme (yıllık)",
+   "deger": 1.5,
+   "birim": "%",
+   "donem": "2026-08-26"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "Cari denge",
+   "deger": -226.8,
+   "birim": "",
+   "donem": "2026-06-24"
+  },
+  {
+   "ulke": "Euro Bölgesi",
+   "ad": "Enflasyon (yıllık)",
+   "deger": 3.2,
+   "birim": "%",
+   "donem": "2026-09-17"
+  },
+  {
+   "ulke": "Euro Bölgesi",
+   "ad": "Politika faizi",
+   "deger": 2.65,
+   "birim": "%",
+   "donem": "2026-09-10"
+  },
+  {
+   "ulke": "Euro Bölgesi",
+   "ad": "İşsizlik oranı",
+   "deger": 6.4,
+   "birim": "%",
+   "donem": "2026-09-01"
+  },
+  {
+   "ulke": "Euro Bölgesi",
+   "ad": "Büyüme (yıllık)",
+   "deger": 1.2,
+   "birim": "%",
+   "donem": "2026-09-07"
+  },
+  {
+   "ulke": "Euro Bölgesi",
+   "ad": "Cari denge",
+   "deger": 27.6,
+   "birim": "",
+   "donem": "2026-09-18"
+  }
+ ]
+}

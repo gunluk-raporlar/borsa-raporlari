@@ -1,0 +1,42 @@
+name: Makro Analiz (Z.ai GLM)
+on:
+  # Makro veri gunluk degismez; Pazartesi 07:00 TSİ (04:00 UTC) yeterli.
+  schedule:
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  analiz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Kutuphaneleri kur
+        run: pip install -r requirements.txt
+      - name: Makro analizi uret
+        env:
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          GOOGLE_SITE_DOGRULAMA: ${{ secrets.GOOGLE_SITE_DOGRULAMA }}
+          BING_SITE_DOGRULAMA: ${{ secrets.BING_SITE_DOGRULAMA }}
+          BAIDU_SITE_DOGRULAMA: ${{ secrets.BAIDU_SITE_DOGRULAMA }}
+          YANDEX_SITE_DOGRULAMA: ${{ secrets.YANDEX_SITE_DOGRULAMA }}
+          ZAI_MODEL: ${{ vars.ZAI_MODEL }}
+        run: python -u makro_analiz.py
+      - name: Degisiklikleri yayinla
+        run: |
+          git config user.name "borsa-bot"
+          git config user.email "borsa-bot@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Degisiklik yok; commit atlanır."
+            exit 0
+          fi
+          git commit -m "Makroekonomik degerlendirme guncellemesi"
+          git pull --rebase -X theirs origin main
+          git push origin main

@@ -110,7 +110,87 @@ def enflasyon_duzelt(metin, oran_yuzde, tolerans=0.25):
     return "\n".join(cikti), duzeltmeler
 
 
-# --- Endeks seviyesi denetimi -------------------------------------------------
+# --- Politika faizi denetimi ---------------------------------------------------
+# "TCMB politika faizi %43" gibi cumlelerdeki yanlis oran data/makro.json'daki
+# GERCEK oranla (makro_cek -> TradingView) karsilastirilir; tolerans disindaysa
+# duzeltilir. Coklu-yuzde cumlelerde ("enflasyon %31,5 iken faiz %45") hangi
+# sayinin hangi konuya ait oldugunu KELIME MESAFESI belirler; boylece iki
+# denetim birbirinin cumlesine karismaz. "Beklenti/hedef" gecen cümleler (gercek
+# oran degildir) enflasyon denetiminde oldugu gibi atlanir.
+_FAIZ_KELIME = re.compile(
+    r"\b(politika faiz|faiz oran|faizlerin|faizi|faiz|TCMB|Fed|merkez bankas)",
+    re.IGNORECASE)
+_ENFLASYON_KELIME_DOKU = re.compile(r"\b(enflasyon|tüfe|tufe|üfe|ufe)", re.IGNORECASE)
+_ULKE_BAGLAM = re.compile(r"\b(Fed|ABD|Amerika)\b|\b(avrupa|euro bölgesi|ECB)\b", re.IGNORECASE)
+_ULKE_FED = re.compile(r"\b(Fed|ABD|Amerika)\b", re.IGNORECASE)
+_ULKE_EU = re.compile(r"\b(avrupa merkez bankası|euro bölgesi|ECB)\b", re.IGNORECASE)
+
+
+def _kelime_mesafesi(cumle, pos, desen):
+    """pos konumundaki sayiya cumledeki en yakin desen eslesmesinin uzakligi."""
+    en_yakin = None
+    for k in desen.finditer(cumle):
+        d = abs(k.start() - pos)
+        if en_yakin is None or d < en_yakin:
+            en_yakin = d
+    return en_yakin
+
+
+def faiz_duzelt(metin, oranlar, tolerans=0.5):
+    """Politika faizi cumlelerinde gercek orandan sapan sayiyi duzeltir.
+
+    oranlar: {"tr": 37.0, "us": 4.0, "eu": 2.65} biciminde ulke bazli oranlar
+    (None/eksik ulke o denetimi devredisi birakir). Donus: (yeni_metin, duzeltmeler).
+    """
+    if not metin or not oranlar:
+        return metin, []
+    duzeltmeler = []
+    cikti = []
+    for satir in metin.split("\n"):
+        parcalar = re.split(r"(?<=[.!?])\s+", satir)
+        yeni_parcalar = []
+        for cumle in parcalar:
+            if (_FAIZ_KELIME.search(cumle) and not _BEKLENTI.search(cumle)
+                    and _SAYI.search(cumle)):
+                if _ULKE_FED.search(cumle):
+                    oran = oranlar.get("us")
+                elif _ULKE_EU.search(cumle):
+                    oran = oranlar.get("eu")
+                elif _ULKE_BAGLAM.search(cumle) and not re.search(
+                        r"TCMB|türkiye|merkez bankası", cumle, re.IGNORECASE):
+                    oran = oranlar.get("eu")  # yalnizca avrupa/ipucu varsa
+                else:
+                    oran = oranlar.get("tr")
+                if oran is None:
+                    yeni_parcalar.append(cumle)
+                    continue
+                dogru_yazi = ("%.2f" % oran).rstrip("0").rstrip(".").replace(".", ",")
+                # Enflasyona daha yakin yuzdeler enflasyon denetimine aittir;
+                # faize en yakin adayi sec.
+                aday = None
+                for m in _SAYI.finditer(cumle):
+                    ef = _kelime_mesafesi(cumle, m.start(), _ENFLASYON_KELIME_DOKU)
+                    ff = _kelime_mesafesi(cumle, m.start(), _FAIZ_KELIME)
+                    if ef is not None and (ff is None or ef < ff):
+                        continue  # bu yuzde enflasyona ait
+                    if ff is None:
+                        continue  # faiz kelimesiyle arada iliski yok
+                    aday = m
+                    break
+                if aday is not None:
+                    yazi = aday.group(0)
+                    try:
+                        sayi = float(yazi.replace("%", "").replace(",", ".").strip())
+                    except ValueError:
+                        sayi = None
+                    if sayi is not None and abs(sayi - oran) > tolerans:
+                        dogru = "%" + dogru_yazi if yazi.startswith("%") else dogru_yazi + "%"
+                        cumle = cumle[: aday.start()] + dogru + cumle[aday.end():]
+                        duzeltmeler.append((yazi, dogru))
+            yeni_parcalar.append(cumle)
+        cikti.append(" ".join(yeni_parcalar) if len(parcalar) > 1 else yeni_parcalar[0])
+    return "\n".join(cikti), duzeltmeler
+
 # Raporlarda gecen "BIST 30 endeksi 4.200-4.250 direnc bandi" gibi ifadeler,
 # endeksin gercek seviyesiyle (or. 16.372) karsilastirilir. Sayi, toleransin
 # disindaysa DOGRU seviyeyle degistirilir; "destek > direnc" gibi mantik
@@ -211,17 +291,20 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15):
     return "\n".join(cikti), duzeltmeler, uyarilar
 
 
-def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None):
+def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
+                   faiz_oranlari=None):
     """Tum dogrulama zinciri. Donus sozlugu:
     {"metin": ..., "isim_duzeltme": [...], "enflasyon_duzeltme": [...],
-     "endeks_duzeltme": [...], "endeks_uyari": [...]}.
+     "endeks_duzeltme": [...], "endeks_uyari": [...], "faiz_duzeltme": [...]}.
+    faiz_oranlari: {"tr": .., "us": .., "eu": ..} — makro.json politika faizleri.
     Hicbir durumda istisna yukseltmez; cagiran taraf zaten sarmaladi.
     """
     metin, isim = isim_duzelt(metin, adlar)
     metin, enf = enflasyon_duzelt(metin, enflasyon_yuzde)
+    metin, faiz = faiz_duzelt(metin, faiz_oranlari)
     metin, endeks, uyari = endeks_seviye_duzelt(metin, endeks_seviyesi)
     return {"metin": metin, "isim_duzeltme": isim, "enflasyon_duzeltme": enf,
-            "endeks_duzeltme": endeks, "endeks_uyari": uyari}
+            "endeks_duzeltme": endeks, "endeks_uyari": uyari, "faiz_duzeltme": faiz}
 
 
 if __name__ == "__main__":
@@ -237,6 +320,22 @@ if __name__ == "__main__":
     assert "İş Bankası (ISCTR)" in sonuc["metin"], "ISCTR duzelmedi!"
     assert "Akbank (AKBNK)" in sonuc["metin"], "dogru ad bozuldu!"
     assert "Garanti Bankası (GARAN)" in sonuc["metin"], "kabul edilebilir takma ad bozuldu!"
+
+    # Politika faizi: yanlis oran duzeltilir, dogru/abarti oranlara dokunulmaz,
+    # enflasyon+faiz karisik cumlelerde iki denetim birbirine karismaz.
+    ORAN = {"tr": 37.0, "us": 4.0, "eu": 2.65}
+    faiz_ornek = ("TCMB politika faizi %43 seviyesinde tutuldu. "
+                  "Fed faizi %5 düzeyinde. "
+                  "Enflasyon %31,5 iken politika faizi %37 olarak açıklandı. "
+                  "Yeni yıl enflasyon beklentisi %24.")
+    s = faiz_duzelt(faiz_ornek, ORAN)
+    print(s[0])
+    assert "%37" in s[0] and ("%43" not in s[0]), "politika faizi duzeltilmedi!"
+    assert "%5" not in s[0] and "%4" in s[0], "Fed faizi duzeltilmedi!"
+    assert "%31,5" in s[0], "enflasyon yuzdesi faiz denetimince bozuldu!"
+    assert "%24" in s[0], "beklenti cumlesine dokunuldu!"
+    assert len(s[1]) == 2, f"beklenen 2 duzeltme, gelen {len(s[1])}"
+    print("dogrulama.py: tum kendini testler gecti.")
 
     ornek2 = "Enflasyon %28,4 seviyesinde yatay seyrediyor."
     sonuc2 = metin_dogrula(ornek2, ADLAR, enflasyon_yuzde=31.51)

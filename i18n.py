@@ -96,6 +96,7 @@ SOZLUK = {
     "Raporlar": {"en": "Reports", "de": "Berichte", "ru": "Отчёты", "zh": "报告"},
     "Hisseler": {"en": "Stocks", "de": "Aktien", "ru": "Акции", "zh": "股票"},
     "Derin Analiz": {"en": "Deep Analysis", "de": "Tiefenanalyse", "ru": "Глубокий анализ", "zh": "深度分析"},
+    "Makro Analiz": {"en": "Macro Analysis", "de": "Makroanalyse", "ru": "Макроанализ", "zh": "宏观分析"},
     "Teknik Tarama": {"en": "Technical Scan", "de": "Technischer Scan", "ru": "Технический анализ", "zh": "技术扫描"},
     "Sinyal Karnesi": {"en": "Signal Scorecard", "de": "Signal-Bilanz", "ru": "Сводка сигналов", "zh": "信号记分卡"},
     "Borsapy Sinyal": {"en": "Borsapy Signals", "de": "Borsapy-Signale", "ru": "Сигналы Borsapy", "zh": "Borsapy 信号"},
