@@ -1910,10 +1910,25 @@ tr:last-child td { border-bottom:none; }
   .grid-iki { grid-template-columns:1fr; }
 }
 
+/* ---- Ust widget seridi: solda saat + hava durumu, sagda dil baglantilari ---- */
+.site-widgets { display:flex; align-items:center; justify-content:space-between;
+                gap:8px 18px; flex-wrap:wrap; margin:0 0 12px; }
+.site-widgets #live-clock-weather { min-width:0; }
+.site-widgets .dil-linkler { margin-left:auto; justify-content:flex-end; }
+
+/* ---- Etkilesimli satir: solda arama (yarim genislik), sagda radyo kutusu ---- */
+.interactive-box { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+                   gap:10px 18px; align-items:start; margin:0 0 16px; }
+.interactive-box > * { min-width:0; }
+.arama-kutusu { min-width:0; }
+.radyo-mini { display:flex; align-items:center; gap:10px; flex-wrap:wrap; min-width:0; }
+.radyo-mini .radyo-uyari { flex-basis:100%; font-size:11.5px; color:var(--muted); line-height:1.35; }
+
 @media (max-width: 768px) {
     .interactive-box {
         grid-template-columns: 1fr !important;
     }
+    .site-widgets { align-items:flex-start; }
 }
 
 /* ---- Mobil tasima duzeltmeleri ---- */
