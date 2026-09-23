@@ -1,0 +1,92 @@
+{
+  "kod": "YKBNK",
+  "guncelleme": "2026-09-23",
+  "teknik_analiz": "36,76 TL ile 60 günlük zirvesi 37,62 TL'nin %2,3 altında, dip seviyesi 32,12 TL'nin %14,4 üzerinde. Kısa vadeli EMA ve Wave Trend AL, orta ve uzun vade BEKLE; genel puan 2/4 (NÖTR). Kanal konumu %62, trend korelasyonu r=0,16 zayıf. 32,12 TL güçlü destek, 37,62 TL direnç; kısa vadede zirve testi için 37,62 TL üzeri kapanış gerekiyor.",
+  "makro_degerlendirme": "Bankacılık sektörü son seansı yatay (+%0,05) geçirdi; Yapı Kredi günlük bazda da yatay seyretti. Sektörde net faiz marjı, ücret-komisyon gelirlerinin gücü ve aktif kalitesi 2026 görünümünün belirleyicileri. %31,5 enflasyon ve sıkı finansal koşullar marjları desteklerken, faiz indirim döngüsü beklentileri fiyatlamayı şekillendiriyor. USD/TL 48,83 seviyesinde kur oynaklığı sınırlı; jeopolitik haber akışı risk iştahını dalgalandırıyor.",
+  "bilanco_degerlendirmesi": "2026 ilk yarıda gelirler 107,8 mlr TL (+%88,6 artış) ve net kâr 31,0 mlr TL (+%36,3); %28,8 net marj güçlü. Aktif büyüklüğü 3,57 trilyon TL, özkaynak 286,5 mlr TL ve yıllıklandırılmış özkaynak kârlılığı %21,6 ile grup içinde üst sıralarda. 2025 tam yıl kârı 47,1 mlr TL'ydi; ilk yarı performansı yıllık kâr artışının sürebileceğine işaret ediyor. Ücret ve komisyon gelirlerinin seyri ile aktif kalitesi izlenmeli.",
+  "bilanco": [
+    {
+      "donem": "2024/3",
+      "satis": 22628226000.0,
+      "net_kar": 10301888000.0,
+      "toplam_varlik": 2010767453000.0,
+      "ozsermaye": 180582970000.0,
+      "odenmis_sermaye": 8447051000.0
+    },
+    {
+      "donem": "2024/6",
+      "satis": 39653758000.0,
+      "net_kar": 17404573000.0,
+      "toplam_varlik": 2178172997000.0,
+      "ozsermaye": 183093005000.0,
+      "odenmis_sermaye": 8447051000.0
+    },
+    {
+      "donem": "2024/9",
+      "satis": 53811555000.0,
+      "net_kar": 22405414000.0,
+      "toplam_varlik": 2330974595000.0,
+      "ozsermaye": 190967149000.0,
+      "odenmis_sermaye": 8447051000.0
+    },
+    {
+      "donem": "2024/12",
+      "satis": 75913557000.0,
+      "net_kar": 29016823000.0,
+      "toplam_varlik": 2380585799000.0,
+      "ozsermaye": 192804048000.0,
+      "odenmis_sermaye": 8447051000.0
+    },
+    {
+      "donem": "2025/3",
+      "satis": 26167003000.0,
+      "net_kar": 11418148000.0,
+      "toplam_varlik": 2543778326000.0,
+      "ozsermaye": 205672126000.0,
+      "odenmis_sermaye": 8447051000.0
+    },
+    {
+      "donem": "2025/6",
+      "satis": 57152000000.0,
+      "net_kar": 22748000000.0,
+      "toplam_varlik": 2806307230000.0,
+      "ozsermaye": 221692309000.0,
+      "odenmis_sermaye": 8447051000.0
+    },
+    {
+      "donem": "2025/9",
+      "satis": 97155628000.0,
+      "net_kar": 37809867000.0,
+      "toplam_varlik": 3040766954000.0,
+      "ozsermaye": 241282997000.0,
+      "odenmis_sermaye": 8447051000.0
+    },
+    {
+      "donem": "2025/12",
+      "satis": 144627073000.0,
+      "net_kar": 47090151000.0,
+      "toplam_varlik": 3171615932000.0,
+      "ozsermaye": 255605021000.0,
+      "odenmis_sermaye": 8447051000.0
+    },
+    {
+      "donem": "2026/3",
+      "satis": 53573842000.0,
+      "net_kar": 20294752000.0,
+      "toplam_varlik": 3402258902000.0,
+      "ozsermaye": 271123220000.0,
+      "odenmis_sermaye": 8447051000.0
+    },
+    {
+      "donem": "2026/6",
+      "satis": 107770000000.0,
+      "net_kar": 31010000000.0,
+      "toplam_varlik": 3572390000000.0,
+      "ozsermaye": 286488000000.0,
+      "odenmis_sermaye": 8447000000.0
+    }
+  ],
+  "tip": "banka",
+  "kaynak": "İş Yatırım mali tabloları (KAP bildirimleri esas alınır)",
+  "bilanco_guncelleme": "2026-09-23"
+}

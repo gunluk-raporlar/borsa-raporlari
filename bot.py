@@ -18,6 +18,10 @@ import logging
 # Yayin oncesi sirket adi / makro sayi denetimi (bkz. dogrulama.py)
 import dogrulama
 
+# Elle eklenen hisse analiz bolumleri: aciklanan bilancolar + degerlendirmeler
+# (bkz. hisse_analiz.py; veri: data/hisse-analiz/<KOD>.json)
+import hisse_analiz
+
 # Ag takilmalarinda sonsuza kadar beklememek icin genel soket zaman asimi.
 socket.setdefaulttimeout(30)
 
@@ -366,7 +370,9 @@ def _df_bilanco_satiri(df, bu_yil):
                 hucre[hedef] = v
             if "toplam_varlik" not in hucre and ("AKTİF TOPLAM" in ad or "TOPLAM VARLIK" in ad):
                 hucre["toplam_varlik"] = v
-            if "ozsermaye" not in hucre and "ÖZKAY" in ad:
+            # Not: 'Özkaynak Yöntemiyle Değerlenen Yatırımlar' (1BD) satiri da
+            # 'ÖZKAY' icerir; ozsermaye sanilmasin diye YÖNTEM haric tutulur.
+            if "ozsermaye" not in hucre and "ÖZKAY" in ad and "YÖNTEM" not in ad:
                 hucre["ozsermaye"] = v
             if "net_kar" not in hucre and "NET DÖNEM KAR" in ad:
                 hucre["net_kar"] = v
@@ -4209,6 +4215,7 @@ def build_hisse_html(kod, satir, tarihler, veriler, haberler, sirket_haberleri=N
 </div>
 {grafik_karti}
 {_sirket_profili_html(kod)}
+{hisse_analiz.bilanco_tablosu_html(kod)}
 <div class="grid-iki">
 <div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
 <table style="font-size:13.5px">{teknik_ogeler}</table>
@@ -4217,6 +4224,7 @@ def build_hisse_html(kod, satir, tarihler, veriler, haberler, sirket_haberleri=N
 <ul style="margin:0; padding-left:18px; font-size:13.5px">{haber_ogeleri}</ul>
 <p style="margin:8px 0 0; font-size:12.5px"><a href="../sirket-haberleri.html#H-{kod}">Tüm şirket haberleri &rarr;</a></p></div>
 </div>
+{hisse_analiz.degerlendirmeler_html(kod)}
 <div class="card" style="margin-top:14px">
 <h3 style="margin:0 0 8px">{kod} konulu içerikler</h3>
 <p style="margin:0"><a href="https://borsa-raporlari-web.pages.dev/ara?q={kod}" target="_blank" rel="noopener">🔍 Semantik aramada "{kod}" geçen tüm rapor bölümleri &rarr;</a></p>

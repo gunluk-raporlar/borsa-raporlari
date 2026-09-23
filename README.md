@@ -31,6 +31,43 @@ GitHub Actions (cron) ──▶ bot.py rapor üretir ──▶ reports/*.html �
 | `.github/workflows/embedding.yml` | Gecelik embedding işi (hafta içi 08:35 TR + manuel) |
 | `.github/workflows/web-deploy.yml` | web/'i ayrı bir Pages projesine deploy eder: **borsa-raporlari-web.pages.dev** |
 | `data/metrics/latest.json` | İzleme sayfasının okuduğu özet metrikler |
+| `hisse_analiz.py` | Elle eklenen hisse bölümleri: açıklanan bilanço tablosu (İş Yatırım'dan çekilir) + değerlendirme metinleri (veri: `data/hisse-analiz/<KOD>.json`) |
+| `hisse_yenile.py` | Bilanço/metin güncellendikten sonra hisse sayfalarını CI beklemeden yerelde yeniden üretir |
+
+## Elle güncellenen hisse analizleri (bilanço + değerlendirme)
+
+`hisse/<KOD>.html` sayfalarında iki bölüm **elle** yönetilir; günlük bot koşuları
+bu içeriğe dokunmaz, yalnızca veri dosyasından sayfaya geri yazar:
+
+1. **Açıklanan Bilançolar** — `data/hisse-analiz/<KOD>.json` içindeki `bilanco`
+   listesinden üretilen tablo (satış/gelir, net kâr, marj, aktif, özkaynak,
+   finansal borç; yıllık değişimler otomatik hesaplanır). Rakamlar İş Yatırım
+   mali tablolarından çekilir:
+
+   ```bash
+   python hisse_analiz.py --bilanco-cek              # 30 hissenin tablosunu yenile
+   python hisse_analiz.py --bilanco-cek ASELS AKBNK  # yalnızca seçili hisseler
+   ```
+
+2. **Değerlendirmeler** — teknik analiz, makroekonomik değerlendirme ve bilanço
+   değerlendirmesi metinleri; aynı JSON dosyasının `teknik_analiz`,
+   `makro_degerlendirme`, `bilanco_degerlendirmesi` alanlarına **elle** yazılır.
+
+Denetim ve yayın:
+
+```bash
+python hisse_analiz.py --kontrol   # 30 hisse kapsam/tutarlılık denetimi
+python hisse_yenile.py             # hisse sayfalarını yerelde yeniden üret (CI beklemeden)
+```
+
+Notlar:
+- Metin boşsa ilgili bölüm sayfada sessizce gizlenir; bozuk/yarım bölüm oluşmaz.
+- Bankalar (AKBNK, GARAN, ISCTR, VAKBN, YKBNK) banka mali tablo şablonundan
+  çekilir; tabloda "Net Faiz Geliri / Toplam Aktifler" başlıkları kullanılır.
+- DSTKF için kaynakta mali tablo verisi bulunmadığından tablo eklenmez; durum
+  `--kontrol` çıktısında bilgi satırı olarak raporlanır.
+- Gelir tablosu kalemleri (satış, net kâr) yıl başından itibaren kümülatiftir;
+  bilanço kalemleri dönem sonu bakiyesidir.
 
 ## Kurulum secret'ları
 
