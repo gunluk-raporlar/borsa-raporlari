@@ -5,13 +5,13 @@
 // FX_IDC:EURTRY, FX_IDC:GBPTRY, ICEEUR:BRN1! (Brent vadeli).
 
 const GOSTERGELER = [
-  { k: "XU030",  ad: "BIST 30",      tv: "BIST:XU030",   birim: "",   o: 2 },
-  { k: "XU100",  ad: "BIST 100",     tv: "BIST:XU100",   birim: "",   o: 2 },
-  { k: "ONS",    ad: "Ons Altın",    tv: "TVC:GOLD",     birim: "$",  o: 2 },
-  { k: "USDTRY", ad: "Dolar",        tv: "FX_IDC:USDTRY", birim: "TL", o: 4 },
-  { k: "EURTRY", ad: "Euro",         tv: "FX_IDC:EURTRY", birim: "TL", o: 4 },
-  { k: "GBPTRY", ad: "Sterlin",      tv: "FX_IDC:GBPTRY", birim: "TL", o: 4 },
-  { k: "BRENT",  ad: "Brent Petrol", tv: "ICEEUR:BRN1!",  birim: "$",  o: 2 },
+  { k: "XU030",  ad: "BIST 30",      tv: "BIST:XU030",   b: "",   o: 2 },
+  { k: "XU100",  ad: "BIST 100",     tv: "BIST:XU100",   b: "",   o: 2 },
+  { k: "ONS",    ad: "Ons Altın",    tv: "TVC:GOLD",     b: "$",  o: 2 },
+  { k: "USDTRY", ad: "Dolar",        tv: "FX_IDC:USDTRY", b: "TL", o: 4 },
+  { k: "EURTRY", ad: "Euro",         tv: "FX_IDC:EURTRY", b: "TL", o: 4 },
+  { k: "GBPTRY", ad: "Sterlin",      tv: "FX_IDC:GBPTRY", b: "TL", o: 4 },
+  { k: "BRENT",  ad: "Brent Petrol", tv: "ICEEUR:BRN1!",  b: "$",  o: 2 },
 ];
 
 const ONS_GRAM = 31.1034768;      // 1 ons = 31,1034768 gram
@@ -64,7 +64,7 @@ async function piyasaCek() {
   const ham = await Promise.all(GOSTERGELER.map(async (g) => {
     try {
       const v = await sembolCek(g.tv);
-      return { k: g.k, ad: g.ad, birim: g.birim, o: g.o, f: v.f, d: v.d };
+      return { k: g.k, ad: g.ad, b: g.b, o: g.o, f: v.f, d: v.d };
     } catch (e) {
       return null;   // tek gösterge düşerse şeridin tamamı düşmesin
     }
@@ -81,7 +81,7 @@ async function piyasaCek() {
     const gram = (ons.f / ONS_GRAM) * usd.f;
     const konum = liste.findIndex((g) => g.k === "USDTRY");
     liste.splice(konum, 0, {
-      k: "GRAM", ad: "Gram Altın", birim: "TL", o: 2,
+      k: "GRAM", ad: "Gram Altın", b: "TL", o: 2,
       f: Math.round(gram * 100) / 100,
       d: Math.round((ons.d + usd.d) * 100) / 100,
     });

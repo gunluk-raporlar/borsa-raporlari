@@ -180,7 +180,8 @@ body { overflow-x: hidden; }
       ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
         Number(g.d).toFixed(2) + '%</span>'
       : '';
-    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (g.b ? ' ' + g.b : '') + rozet + '</span>';
+    var birim = g.b || g.birim || '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (birim ? ' ' + birim : '') + rozet + '</span>';
   }
   function ciz(veri) {
     var ogeler = (veri.gostergeler || []).map(bicim).join('');
