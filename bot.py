@@ -3085,15 +3085,91 @@ def _portfoy_satirlari(p, limit=None, en_iyi=False):
     )
 
 
+def _portfoy_risk(p):
+    """Gecmis veriden risk/getiri olcutleri: maksimum dusus, volatilite
+    (yilliklandirilmis), yilliklandirilmis getiri, kazanan/kaybeden hisse sayisi."""
+    hist = [g for g in (p.get("history") or []) if g.get("total")]
+    if len(hist) < 3:
+        return None
+    toplamlar = [float(g["total"]) for g in hist]
+    tepe, dd = toplamlar[0], 0.0
+    for t in toplamlar:
+        tepe = max(tepe, t)
+        if tepe > 0:
+            dd = min(dd, t / tepe - 1.0)
+    gunluk = [float(g.get("daily_pct", 0) or 0) / 100.0 for g in hist[1:]]
+    ort = sum(gunluk) / len(gunluk) if gunluk else 0.0
+    varyans = (sum((x - ort) ** 2 for x in gunluk) / (len(gunluk) - 1)
+               if len(gunluk) > 1 else 0.0)
+    vol = (varyans ** 0.5) * (252 ** 0.5) * 100
+    gun_sayisi = len(toplamlar) - 1
+    yillik = (((toplamlar[-1] / toplamlar[0]) ** (252.0 / gun_sayisi) - 1) * 100
+              if gun_sayisi > 0 and toplamlar[0] > 0 else 0.0)
+    baslangic = p.get("initial_prices") or {}
+    sonuncu = hist[-1].get("prices") or {}
+    kazanan = kaybeden = 0
+    for kod, ilk in baslangic.items():
+        son_f = sonuncu.get(kod)
+        if not ilk or son_f is None:
+            continue
+        if son_f >= ilk:
+            kazanan += 1
+        else:
+            kaybeden += 1
+    return {"dd": dd * 100, "vol": vol, "yillik": yillik,
+            "kazanan": kazanan, "kaybeden": kaybeden, "gun": gun_sayisi}
+
+
 def _portfoy_istatistikleri(p):
     son = p["history"][-1]
+    risk = _portfoy_risk(p) or {}
+    risk_html = ""
+    if risk:
+        risk_html = (
+            f'<div class="stat"><div class="label">Maksimum Düşüş</div>'
+            f'<div class="value neg">{_ty(risk["dd"])}%</div></div>'
+            f'<div class="stat"><div class="label">Volatilite (yıllık)</div>'
+            f'<div class="value">{_ts1(risk["vol"])}%</div></div>'
+            f'<div class="stat"><div class="label">Yıllıklandırılmış Getiri</div>'
+            f'<div class="value {_renk(risk["yillik"])}">{_ty(risk["yillik"])}%</div>'
+            f'<div style="font-size:11px;color:var(--muted)">kısa dönem — ihtiyatlı okunmalı</div></div>'
+            f'<div class="stat"><div class="label">Kazanan / Kaybeden</div>'
+            f'<div class="value">{risk["kazanan"]} / {risk["kaybeden"]}</div>'
+            f'<div style="font-size:11px;color:var(--muted)">{risk["gun"]} işlem günü</div></div>'
+        )
+    kiyas = ""
+    bm = (son.get("benchmarks") or {})
+    adlar = {"XU030": "BIST 30", "XU100": "BIST 100", "GOLD": "Gram altın",
+             "USD": "Dolar", "DEPOSIT": "Mevduat (faiz)"}
+    if bm:
+        satir = [f"<tr><td><strong>Bu portföy</strong></td>"
+                 f"<td class='{_renk(son['pct'])}'>{_ty(son['pct'])}%</td><td>—</td></tr>"]
+        for anahtar in ("XU030", "XU100", "GOLD", "USD", "DEPOSIT"):
+            deger = bm.get(anahtar)
+            if not deger:
+                continue
+            yuzde = (float(deger) / float(p["initial_capital"]) - 1) * 100
+            fark = son["pct"] - yuzde
+            satir.append(
+                f"<tr><td>{adlar.get(anahtar, anahtar)} (aynı dönem)</td>"
+                f"<td class='{_renk(yuzde)}'>{_ty(yuzde)}%</td>"
+                f"<td class='{_renk(fark)}'>{_ty(fark)} puan</td></tr>")
+        kiyas = ("<h3 class=\"section-title\">Piyasa Karşılaştırması"
+                 "<span style=\"font-size:12px;color:var(--muted);font-weight:400\">"
+                 "(aynı 100.000 TL tabanı; son sütun portföyün farkı)</span></h3>"
+                 "<div class=\"card\" style=\"padding:8px 24px 16px\"><div class=\"tbl-wrap\">"
+                 "<table><tr><th>Karşılaştırma</th><th>Getiri</th><th>Portföy farkı</th></tr>"
+                 + "".join(satir) + "</table></div></div>")
     return f"""
 <div class="stats">
 <div class="stat"><div class="label">Güncel Değer</div><div class="value">{_ts0(son['total'])} TL</div></div>
 <div class="stat"><div class="label">Günlük Değişim</div><div class="value {_renk(son['daily_pct'])}">{_ty(son['daily_pct'])}%</div></div>
 <div class="stat"><div class="label">Toplam Getiri</div><div class="value {_renk(son['pct'])}">{_ty(son['pct'])}%</div></div>
 <div class="stat"><div class="label">Başlangıç</div><div class="value" style="font-size:16px">{p['start_date']}</div></div>
-</div>"""
+{risk_html}
+</div>
+{kiyas}
+<p style="color:var(--muted); font-size:12px; margin:0 0 18px">Getiri tek başına başarı göstergesi değildir: portföy aynı dönemde BIST 30/100 ve altın/dolar ile karşılaştırılır. Pozitif getiri, endeksin altında kalıyorsa görece zayıftır.</p>"""
 
 
 # Turkce tarih bicimi (locale bagimliligi olmadan): "8 Eylul 2026, Sali"
