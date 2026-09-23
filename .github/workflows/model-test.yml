@@ -21,6 +21,7 @@ jobs:
       - name: Saglayici testi + model listesi
         env:
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
           ZAI_MODELS: "glm-4.5-flash,glm-4.7-flash"
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           AMD_MODEL: "DeepSeek-V4-Flash"

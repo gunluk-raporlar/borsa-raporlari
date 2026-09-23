@@ -1023,13 +1023,251 @@ MAKRO_KALIPLAR = (
 )
 _MAKRO_ONBELLEK = None
 
+# ---------- TUIK SDMX (TR resmi teyit / bosluk doldurma) ----------
+# TradingView ana kaynak kalmaya devam eder; TUIK yalnizca Turkiye
+# satirlarini resmi degerle dogrular (fark >0.05 puan ise TUIK kazanir)
+# ve TV'nin vermedigi UFE satirini tamamlar. TUIK_API_KEY yoksa veya
+# istek hata verirse adim sessizce atlanir, TV verisi oldugu gibi yazilir.
+# Kimlik: Keycloak (giris.tuik.gov.tr, client_id=nsi-ws-consumer, 300 sn
+# token) + SDMX REST (nsiws.tuik.gov.tr/rest/data/...); kutuphane gerekmez.
+_TUIK_TOKEN = {"deger": "", "bitis": 0.0}
+TUIK_DATAFLOW = {
+    "Enflasyon (yıllık)": "DF_TUFE_SDMX_TT03",  # TUEFE genel, yillik degisim
+    "ÜFE (yıllık)": "DF_UFE_SANAYI_V2",          # Toplam UFE (Yİ-ÜFE+YD-ÜFE)
+}
+_TUIK_TOPLAM = ("genel", "toplam", "all items", "total")
+_TUIK_YILLIK = ("yillik", "annual", "same period", "onceki yil", "yoy")
+
+
+def _tuik_duz(metin):
+    """Aksansiz kucuk harf bicimi ('Yillik'/'yıllık' -> 'yillik' eslesmesi)."""
+    import unicodedata
+    m = unicodedata.normalize("NFKD", str(metin)).lower().replace("ı", "i")
+    return "".join(ch for ch in m if not unicodedata.combining(ch))
+
+
+def _tuik_token(tazele=False):
+    """TUIK_API_KEY ile Keycloak access token alir (300 sn onbellek).
+
+    Anahtar yoksa bos doner (TUIK adimi pas gecilir); `tazele=True` ile
+    süresi dolmak uzere olan token yeniden alinir.
+    """
+    anahtar = os.environ.get("TUIK_API_KEY", "").strip()
+    if not anahtar:
+        return ""
+    simdi = time.time()
+    if not tazele and _TUIK_TOKEN["deger"] and simdi < _TUIK_TOKEN["bitis"]:
+        return _TUIK_TOKEN["deger"]
+    import urllib.request
+    import urllib.parse
+    veri = urllib.parse.urlencode({
+        "grant_type": "password",
+        "client_id": "nsi-ws-consumer",
+        "api_key": anahtar,
+    }).encode("utf-8")
+    istek = urllib.request.Request(
+        "https://giris.tuik.gov.tr/realms/web/protocol/openid-connect/token",
+        data=veri,
+        headers={"Content-Type": "application/x-www-form-urlencoded"})
+    with urllib.request.urlopen(istek, timeout=20) as yanit:
+        cevap = json.loads(yanit.read().decode("utf-8"))
+    _TUIK_TOKEN["deger"] = cevap["access_token"]
+    _TUIK_TOKEN["bitis"] = simdi + max(60, int(cevap.get("expires_in", 300)) - 30)
+    return _TUIK_TOKEN["deger"]
+
+
+def _tuik_satir_bul(ham):
+    """SDMX-JSON govdesinden genel + yillik en yeni (deger, donem) satirini secer.
+
+    Boyut adlari yanittaki structure uzerinden cozulur; toplam serisi
+    (genel/toplam) ve yillik degisim satiri kalip eslesmesiyle filtrelenir.
+    Iki filtre birden bulunamazsa ya da secim belirsizse None doner:
+    yanlis rakam yazmaktansa TUIK adimi atlanir.
+    """
+    yapi = (ham.get("structure") or {}).get("dimensions") or {}
+    seri_boyut = sorted(yapi.get("series", []),
+                        key=lambda d: d.get("keyPosition", d.get("position", 0)))
+    goz_boyut = sorted(yapi.get("observation", []),
+                       key=lambda d: d.get("keyPosition", d.get("position", 0)))
+    donem_pos = next((i for i, d in enumerate(goz_boyut)
+                      if d.get("id") == "TIME_PERIOD"), None)
+    if donem_pos is None:
+        return None
+
+    def _esles(boyut, kaliplar):
+        bulunan = []
+        for idx, v in enumerate(boyut.get("values", [])):
+            metin = _tuik_duz(f"{v.get('id', '')} {v.get('name', '')}")
+            if any(k in metin for k in kaliplar):
+                bulunan.append((idx, metin))
+        return bulunan
+
+    toplam_f = {}   # (kapsam, boyut_pos) -> izinli deger indexleri
+    yillik_f = {}
+    for kapsam, boyutlar in (("seri", seri_boyut), ("gozlem", goz_boyut)):
+        for pos, d in enumerate(boyutlar):
+            if kapsam == "gozlem" and d.get("id") == "TIME_PERIOD":
+                continue
+            t = [i for i, _ in _esles(d, _TUIK_TOPLAM)]
+            if t:
+                toplam_f[(kapsam, pos)] = t
+            y = _esles(d, _TUIK_YILLIK)
+            # "Yillik katki (puan)" gibi katki satirlari deger degildir
+            oran = [i for i, m in y
+                    if "katki" not in m and "contribution" not in m
+                    and "puan" not in m]
+            if oran:
+                yillik_f[(kapsam, pos)] = oran
+            elif y:
+                yillik_f[(kapsam, pos)] = [i for i, _ in y]
+    if not yillik_f:
+        logger.debug("[Makro] TÜİK yillik boyutu bulunamadi")
+        return None
+    seri_sayisi = sum(len(v.get("series", {}) or {})
+                      for v in (ham.get("dataSets") or []))
+    if not toplam_f and seri_sayisi != 1:
+        logger.debug("[Makro] TÜİK toplam serisi secilemedi (%d seri)",
+                     seri_sayisi)
+        return None
+
+    kisitlar = list(toplam_f.items()) + list(yillik_f.items())
+    satirlar = []
+    for veri_seti in (ham.get("dataSets") or []):
+        for seri_anahtar, seri in (veri_seti.get("series") or {}).items():
+            if not seri_boyut:
+                seri_idx = []
+            else:
+                try:
+                    seri_idx = [int(p) for p in str(seri_anahtar).split(":")]
+                except ValueError:
+                    continue
+            if any(kapsam == "seri" and pos < len(seri_idx)
+                   and seri_idx[pos] not in izinli
+                   for (kapsam, pos), izinli in kisitlar):
+                continue
+            for goz_anahtar, goz_deger in (seri.get("observations") or {}).items():
+                try:
+                    goz_idx = [int(p) for p in str(goz_anahtar).split(":")]
+                except ValueError:
+                    continue
+                if len(goz_idx) <= donem_pos:
+                    continue
+                if any(kapsam == "gozlem" and pos < len(goz_idx)
+                       and goz_idx[pos] not in izinli
+                       for (kapsam, pos), izinli in kisitlar):
+                    continue
+                try:
+                    donem = goz_boyut[donem_pos]["values"][
+                        goz_idx[donem_pos]]["id"]
+                    deger = float(goz_deger[0])
+                except (KeyError, IndexError, TypeError, ValueError):
+                    continue
+                satirlar.append((str(donem), deger))
+    if not satirlar:
+        return None
+    en_yeni = max(d for d, _ in satirlar)
+    adaylar = {round(v, 4) for d, v in satirlar if d == en_yeni}
+    if len(adaylar) != 1:
+        logger.debug("[Makro] TÜİK secim belirsiz (%d farkli deger)",
+                     len(adaylar))
+        return None
+    return (next(v for d, v in satirlar if d == en_yeni), en_yeni)
+
+
+def _tuik_resmi(akis_id, baslangic_ay=14):
+    """Bir dataflow icin en guncel genel/yillik (deger, donem) satirini ceker.
+
+    Bos anahtar (tum seriler) + lastNObservations ile sinirli govde alinir;
+    401/403'te token bir kez tazelenir. Alinamazsa None.
+    """
+    import urllib.request
+    import urllib.error
+    token = _tuik_token()
+    if not token:
+        return None
+    bas = (datetime.now() - timedelta(days=31 * baslangic_ay)).strftime("%Y-%m")
+    import urllib.parse
+    sorgu = urllib.parse.urlencode({"startPeriod": bas,
+                                    "lastNObservations": "3"})
+    url = (f"https://nsiws.tuik.gov.tr/rest/data/TR,{akis_id},1.0/"
+           f"?{sorgu}")
+
+    def _cek(jeton):
+        istek = urllib.request.Request(
+            url, headers={"Authorization": f"Bearer {jeton}",
+                          "Accept": "application/json"})
+        with urllib.request.urlopen(istek, timeout=60) as yanit:
+            return json.loads(yanit.read().decode("utf-8"))
+
+    try:
+        try:
+            ham = _cek(token)
+        except urllib.error.HTTPError as e:
+            if e.code not in (401, 403):
+                raise
+            ham = _cek(_tuik_token(tazele=True))
+    except Exception as e:
+        logger.warning("[Makro] TÜİK %s alinamadi: %s", akis_id, e)
+        return None
+    sonuc = _tuik_satir_bul(ham)
+    if sonuc:
+        logger.info("[Makro] TÜİK %s: %s (%s)", akis_id,
+                    round(sonuc[0], 2), sonuc[1])
+    return sonuc
+
+
+def _tuik_teyit(gostergeler):
+    """TUIK resmi degerlerini TR satirlariyla karsilastirir/girer.
+
+    Var satirda fark > 0.05 puan ise resmi deger yazilir (TUIK kazanir);
+    TV'nin vermedigi satir (UFE) TR bloğuna tamamlanir. En az bir TUIK
+    teyidi/katkisi uygulandiginda True doner (kaynak etiketi icin).
+    """
+    if not os.environ.get("TUIK_API_KEY", "").strip():
+        return False
+    katki = False
+    for ad, akis_id in TUIK_DATAFLOW.items():
+        resmi = _tuik_resmi(akis_id)
+        if not resmi:
+            continue
+        deger, donem = resmi
+        mevcut = next((g for g in gostergeler
+                       if g.get("ulke") == "Türkiye"
+                       and g.get("ad") == ad), None)
+        if mevcut is None:
+            yeni = {"ulke": "Türkiye", "ad": ad, "deger": round(deger, 2),
+                    "birim": "%", "donem": donem, "teyit": "TÜİK"}
+            son_tr = max((i for i, g in enumerate(gostergeler)
+                          if g.get("ulke") == "Türkiye"),
+                         default=len(gostergeler) - 1)
+            gostergeler.insert(son_tr + 1, yeni)
+            logger.info("[Makro] TÜİK %s satiri tamamlandi: %s (%s)",
+                        ad, yeni["deger"], donem)
+            katki = True
+            continue
+        try:
+            fark = abs(float(mevcut.get("deger")) - float(deger))
+        except (TypeError, ValueError):
+            fark = 999.0
+        if fark > 0.05:
+            logger.warning(
+                "[Makro] %s farki: TradingView %s / TÜİK %.2f (%s)"
+                " -> TÜİK alindi", ad, mevcut.get("deger"), deger, donem)
+            mevcut["deger"] = round(deger, 2)
+            mevcut["donem"] = donem
+        mevcut["teyit"] = "TÜİK"
+        katki = True
+    return katki
+
 
 def makro_cek(gun=170, yol="data/makro.json"):
     """Ulke bazinda son yayinlanan makro verileri ceker.
 
     Kaynak: TradingView ekonomik takvimi (anahtarsiz). Her ulke icin son 170
     gunun olaylari alinir; MAKRO_KALIPLAR icindeki basliklarla eslesen, 'actual'
-    degeri dolu en yeni kayitlar secilir. Basarili cekimde data/makro.json'a
+    degeri dolu en yeni kayitlar secilir. TUIK_API_KEY varsa TR satirlari
+    TÜİK SDMX'ten teyit edilir (farkta resmi deger kazanir, eksik UFE
+    satiri tamamlanir). Basarili cekimde data/makro.json'a
     yazilir; cekim basarisizsa onceki cache okunur. Donus: {"guncelleme",
     "gostergeler": [{"ulke", "ad", "deger", "birim", "donem"}]} | None
     """
@@ -1070,8 +1308,16 @@ def makro_cek(gun=170, yol="data/makro.json"):
     except Exception as e:
         logger.warning("[Makro] ekonomik takvim alinamadi: %s", e)
     if gostergeler:
+        # TÜİK resmi teyidi (yalnızca TR): farkta resmi deger yazilir,
+        # eksik UFE satiri tamamlanir; anahtar/hata yoksa TV verisi aynen kalir.
+        tuik_ek = ""
+        try:
+            if _tuik_teyit(gostergeler):
+                tuik_ek = " + TÜİK SDMX teyitli"
+        except Exception as e:
+            logger.warning("[Makro] TÜİK teyidi atlandi: %s", e)
         govde = {"guncelleme": datetime.now(tz).strftime("%d.%m %H:%M"),
-                 "kaynak": "TradingView ekonomik takvimi",
+                 "kaynak": "TradingView ekonomik takvimi" + tuik_ek,
                  "gostergeler": gostergeler}
         try:
             with open(yol, "w", encoding="utf-8") as f:

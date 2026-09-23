@@ -22,6 +22,7 @@ jobs:
       - name: Makro analizi uret
         env:
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
           ZAI_MODEL: ${{ vars.ZAI_MODEL }}
           # Yedek: GLM alinamazsa AMD DeepSeek-V4-Flash ile uretilir
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
