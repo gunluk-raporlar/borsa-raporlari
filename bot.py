@@ -2224,6 +2224,53 @@ def ticker_json_yaz(satirlar, etiket=None):
         json.dump(veri, f, ensure_ascii=False)
 
 
+def _kendi_ticker2(kok=""):
+    """Ikinci kayan serit: endeksler, altin, doviz ve petrol.
+
+    Veri /api/piyasa ucundan (Cloudflare Pages Function -> TradingView) gelir ve
+    hisse seridi gibi 5 dk'da bir tazelenir. Uc erisilemezse gunluk bot kosusunun
+    yazdigi piyasa-serit.json yedegine duser."""
+    return f"""
+<div class="ticker-bant" id="ticker-bant2" data-kok="{kok}" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Piyasa verileri yükleniyor...</span></div>
+</div>
+<script>
+(function() {{
+  var kutu = document.getElementById('ticker-bant2');
+  if (!kutu) return;
+  var kok = kutu.dataset.kok || '';
+  var iz = document.getElementById('ticker-iz2');
+
+  function bicim(g) {{
+    var deger = Number(g.f).toLocaleString('tr-TR', {{minimumFractionDigits: g.o, maximumFractionDigits: g.o}});
+    var rozet = (typeof g.d === 'number')
+      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+        Number(g.d).toFixed(2) + '%</span>'
+      : '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (g.b ? ' ' + g.b : '') + rozet + '</span>';
+  }}
+  function ciz(veri) {{
+    var ogeler = (veri.gostergeler || []).map(bicim).join('');
+    if (!ogeler) throw new Error('bos');
+    var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
+               (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }}
+  function yukle(adres) {{
+    fetch(adres, {{ cache: 'no-store' }})
+      .then(function(r) {{ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }})
+      .then(ciz)
+      .catch(function() {{
+        if (adres.indexOf('/api/') !== -1) {{ yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }}
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Piyasa verileri geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+      }});
+  }}
+  yukle('/api/piyasa?t=' + Date.now());
+  setInterval(function() {{ yukle('/api/piyasa?t=' + Date.now()); }}, 5 * 60 * 1000);
+}})();
+</script>"""
+
+
 def _kendi_ticker(kok=""):
     """Kendi kayan hisse seridimiz: TradingView'in ucretsiz widget'i BIST
     verisini hic vermedigi icin (isim + kirmizi unlem gorunuyordu) kendi
@@ -2444,6 +2491,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a><a href="{kok}terimler.html"{a_trm}>Terimler</a><a href="{kok}muhasebe-terimleri.html"{a_muh}>Muhasebe Terimleri</a></nav>
 </div></header>
 {_kendi_ticker(kok)}
+{_kendi_ticker2(kok)}
 
 <main class="wrap">
     <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
@@ -3642,6 +3690,46 @@ def style_css_yaz():
     (sayfalar kuculur, tarayici CSS'i cache'ler)."""
     with open("style.css", "w", encoding="utf-8") as f:
         f.write(BASE_CSS)
+
+
+def piyasa_serit_yaz():
+    """Ikinci seridin YEDEK verisi (gunluk kosuda bir kez).
+
+    /api/piyasa erisilemezse istemci bu dosyaya duser. Endeksler ve USD/TRY
+    piyasa_verisi()'nden, gram altin _benchmarks_cek()'ten gelir; ons altin,
+    doviz caprazlari ve Brent yalnizca canli ucda bulunur (botun kaynagi yok).
+    """
+    veri = piyasa_verisi() or {}
+    gostergeler = []
+    for anahtar, ad, birim, o in (("XU030", "BIST 30", "", 2), ("XU100", "BIST 100", "", 2)):
+        v = veri.get(anahtar)
+        if v and v.get("son"):
+            gostergeler.append({"k": anahtar, "ad": ad, "f": round(v["son"], 2),
+                                "d": round(v.get("deg", 0), 2), "b": birim, "o": o})
+    try:
+        _usd_yedek, gram, _kaynak = _benchmarks_cek()
+    except Exception:
+        gram = None
+    if gram:
+        gostergeler.append({"k": "GRAM", "ad": "Gram Altın", "f": round(gram, 2),
+                            "d": None, "b": "TL", "o": 2})
+    usd = veri.get("USDTRY")
+    if usd and usd.get("son"):
+        gostergeler.append({"k": "USDTRY", "ad": "Dolar", "f": round(usd["son"], 4),
+                            "d": round(usd.get("deg", 0), 2), "b": "TL", "o": 4})
+    if not gostergeler:
+        logger.info("[Piyasa] serit yedegi icin veri bulunamadi.")
+        return False
+    govde = {
+        "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M"),
+        "etiket": "gun sonu / gecikmeli",
+        "kaynak": "bot",
+        "gostergeler": gostergeler,
+    }
+    with open("piyasa-serit.json", "w", encoding="utf-8") as f:
+        json.dump(govde, f, ensure_ascii=False)
+    logger.info("[Piyasa] piyasa-serit.json yazildi (%d gosterge)", len(gostergeler))
+    return True
 
 
 def _fiyat_gecmisi(gun=None):
@@ -5280,6 +5368,10 @@ if __name__ == "__main__":
         style_css_yaz()
     except Exception:
         logger.exception("[CSS] style.css yazilamadi; sayfalar etkilenmez.")
+    try:
+        piyasa_serit_yaz()
+    except Exception:
+        logger.exception("[Piyasa] serit yedegi yazilamadi.")
     # Sirket haberleri: hisse detay sayfalari + sirket-haberleri.html icin
     # hisse sayfalarindan ONCE cekilir (~40sn; Google News RSS, anahtarsiz).
     sirket_haber_map = {}
