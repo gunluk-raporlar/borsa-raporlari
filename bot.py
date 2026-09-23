@@ -1000,6 +1000,118 @@ def rapor_son_islem(metin: str) -> str:
 _piyasa_onbellek = None  # proses icinde bir kez hesaplanir
 
 
+# ---------- MAKRO VERI TABANI (TradingView ekonomik takvimi) ----------
+# Raporlarin makroekonomik omurgasi: TUIK/TCMB/Fed/Eurostat verileri tek yerde
+# toplanir, data/makro.json'a yazilir ve promptlara "KESIN RAKAMLAR" blogu
+# olarak enjekte edilir. Boylece model makro sayilari kendi hafizasindan
+# uydurmaz. Ag erisilemezse onceki cache kullanilir.
+MAKRO_ULKELER = {"TR": "Türkiye", "US": "ABD", "EU": "Euro Bölgesi"}
+MAKRO_KALIPLAR = (
+    ("inflation rate yoy", "Enflasyon (yıllık)", "%"),
+    ("producer prices", "ÜFE (yıllık)", "%"),
+    ("interest rate decision", "Politika faizi", "%"),
+    ("unemployment rate", "İşsizlik oranı", "%"),
+    ("gdp growth rate", "Büyüme (yıllık)", "%"),
+    ("current account", "Cari denge", ""),
+    ("foreign exchange reserves", "Döviz rezervleri", ""),
+)
+_MAKRO_ONBELLEK = None
+
+
+def makro_cek(gun=170, yol="data/makro.json"):
+    """Ulke bazinda son yayinlanan makro verileri ceker.
+
+    Kaynak: TradingView ekonomik takvimi (anahtarsiz). Her ulke icin son 170
+    gunun olaylari alinir; MAKRO_KALIPLAR icindeki basliklarla eslesen, 'actual'
+    degeri dolu en yeni kayitlar secilir. Basarili cekimde data/makro.json'a
+    yazilir; cekim basarisizsa onceki cache okunur. Donus: {"guncelleme",
+    "gostergeler": [{"ulke", "ad", "deger", "birim", "donem"}]} | None
+    """
+    global _MAKRO_ONBELLEK
+    if _MAKRO_ONBELLEK is not None:
+        return _MAKRO_ONBELLEK or None
+    import urllib.request
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    bugun = datetime.now(tz).strftime("%Y-%m-%d")
+    frm = (datetime.now(tz) - timedelta(days=gun)).strftime("%Y-%m-%d")
+    gostergeler = []
+    try:
+        for kod, ulke_ad in MAKRO_ULKELER.items():
+            url = ("https://economic-calendar.tradingview.com/events"
+                   f"?from={frm}T00%3A00%3A00.000Z&to={bugun}T00%3A00%3A00.000Z&countries={kod}")
+            req = urllib.request.Request(
+                url, headers={"User-Agent": "Mozilla/5.0",
+                              "Origin": "https://www.tradingview.com"})
+            with urllib.request.urlopen(req, timeout=25) as r:
+                d = json.load(r)
+            olaylar = d.get("result")
+            if isinstance(olaylar, dict):
+                olaylar = olaylar.get("events", [])
+            for kalip, ad, birim in MAKRO_KALIPLAR:
+                adaylar = [e for e in olaylar
+                           if kalip in str(e.get("title", "")).lower()
+                           and e.get("actual") not in (None, "", 0)]
+                if not adaylar:
+                    continue
+                son = max(adaylar, key=lambda e: str(e.get("date", "")))
+                try:
+                    deger = float(son["actual"])
+                except (TypeError, ValueError):
+                    continue
+                gostergeler.append({"ulke": ulke_ad, "ad": ad,
+                                    "deger": round(deger, 2), "birim": birim,
+                                    "donem": str(son.get("date", ""))[:10]})
+    except Exception as e:
+        logger.warning("[Makro] ekonomik takvim alinamadi: %s", e)
+    if gostergeler:
+        govde = {"guncelleme": datetime.now(tz).strftime("%d.%m %H:%M"),
+                 "kaynak": "TradingView ekonomik takvimi",
+                 "gostergeler": gostergeler}
+        try:
+            with open(yol, "w", encoding="utf-8") as f:
+                json.dump(govde, f, ensure_ascii=False, indent=1)
+        except OSError:
+            logger.warning("[Makro] %s yazilamadi", yol)
+        _MAKRO_ONBELLEK = govde
+        return govde
+    try:  # ag yoksa son bilinen veri
+        with open(yol, encoding="utf-8") as f:
+            govde = json.load(f)
+        if govde.get("gostergeler"):
+            logger.info("[Makro] canli veri yok; cache kullaniliyor (%d gosterge)",
+                        len(govde["gostergeler"]))
+            _MAKRO_ONBELLEK = govde
+            return govde
+    except (OSError, json.JSONDecodeError):
+        pass
+    _MAKRO_ONBELLEK = False
+    return None
+
+
+MAKRO_AKTARIM_KILAVUZU = (
+    "[MAKRO AKTARIM ZINCIRI - UZMAN USLUBU]\n"
+    "Makro veriyi hisse/sektor sonucuna baglarken su zinciri kur, atlama:\n"
+    "  Enflasyon -> faiz beklentisi -> reel faiz -> kredi buyumesi -> ic talep -> sirket satislari -> marjlar -> degerleme\n"
+    "  Banka: politika faizi -> mevduat maliyeti -> kredi fiyatlamasi -> net faiz marji -> takipteki alacaklar -> ozkaynak karliligi\n"
+    "  Sanayi: kur -> ithal girdi maliyeti -> ihracat geliri -> brut marj -> isletme sermayesi -> borcluluk\n"
+    "Her bolumde uc soruya net cevap ver:\n"
+    "  1) Bugun dunden farkli olan ne? 2) Hangi veri bu gorusu destekliyor? 3) Bu gorus hangi kosulda gecersiz olur?\n"
+    "Makro veri ile sinyal celisirse bunu ACIKCA yaz (orn. 'teknik sinyal pozitif ama net faiz marji teyidi yok')."
+)
+
+
+def makro_metni(veri=None):
+    """Makro veriyi promptlara gomulecek kisa metne cevirir."""
+    veri = veri or makro_cek()
+    if not veri or not veri.get("gostergeler"):
+        return ""
+    satirlar = ["[MAKRO VERI - KESIN RAKAMLAR; makro sayilari YALNIZCA buradan al]",
+                f"Kaynak: {veri.get('kaynak', '')} | guncelleme: {veri.get('guncelleme', '')}"]
+    for g in veri["gostergeler"]:
+        satirlar.append(f"- {g['ulke']} {g['ad']}: {g['deger']}{g['birim']} ({g['donem']})")
+    return "\n".join(satirlar)
+
+
 def piyasa_verisi():
     """XU030/XU100 son iki kapanisini, USD/TRY'yi ve endeksin dolar bazindaki
     gunluk performansini hesaplar. Rapor prompt'u ile pano ayni kesin rakamlari
@@ -1163,13 +1275,23 @@ Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek veril
     if sinyaller:
         prompt = prompt.replace("Kurallar: Asla uydurma", sinyaller + "\n\nKurallar: Asla uydurma")
 
-    # Makro gercekler tek kaynaktan: model kendi hafizasindan enflasyon yazmasin.
+    # Makro gercekler tek kaynaktan: model kendi hafizasindan makro sayi yazmasin.
+    makro_satirlar = []
     enflasyon = _enflasyon_fakt()
     if enflasyon:
+        makro_satirlar.append(
+            f"Enflasyon (TUIK yillik): {enflasyon['metin']} (donem: {enflasyon['donem']})")
+    try:
+        _mk = makro_cek()
+        if _mk:
+            makro_satirlar.append(makro_metni(_mk))
+    except Exception:
+        logger.warning("[Makro] veri prompta eklenemedi.")
+    if makro_satirlar:
         prompt = prompt.replace(
             "Kurallar: Asla uydurma",
-            "[MAKRO GEREKLER]\nEnflasyon (TUIK yillik): "
-            f"{enflasyon['metin']} (donem: {enflasyon['donem']})\n\nKurallar: Asla uydurma")
+            "[MAKRO GEREKLER]\n" + "\n".join(makro_satirlar) + "\n\n"
+            + MAKRO_AKTARIM_KILAVUZU + "\n\nKurallar: Asla uydurma")
 
     # once kullanici Z.ai anahtari (buyuk GLM modeli), olmazsa yedek zincir
     response = _zai_call(prompt)
@@ -1748,26 +1870,45 @@ def _enflasyon_fakt():
 
 # Dogrulama istatistikleri: metrik_dosyasi_yaz bunlari data/metrics/latest.json
 # icindeki "dogrulama" anahtarina yazar (izleme sayfasinin gosterdigi).
-DOGRULAMA_IST = {"isim": 0, "enflasyon": 0, "toplam_metin": 0, "son_guncelleme": ""}
+DOGRULAMA_IST = {"isim": 0, "enflasyon": 0, "toplam_metin": 0, "endeks": 0,
+                 "endeks_uyari": 0, "son_guncelleme": ""}
 
 
 def _metin_dogrula_ve_kaydet(metin, etiket=""):
-    """Yayin oncesi deterministik dogrulama: sirket adi eslesmeleri ve
-    enflasyon sayisi. Duzeltmeler loglanip sayilir; beklenmeyen hatada metin
-    duzenlenmemis olarak gecirilir (uretim asla bu katmandan dolayi durmaz)."""
+    """Yayin oncesi deterministik dogrulama: sirket adi eslesmeleri, enflasyon
+    sayisi ve ENDEKS SEVIYESI. Duzeltmeler loglanip sayilir; beklenmeyen hatada
+    metin duzenlenmemis olarak gecirilir (uretim asla bu katmandan durmaz)."""
     try:
         enflasyon = _enflasyon_fakt()
+        # Endeks seviyesi: XU030 gunluk kapanisi (piyasa_verisi proses icinde
+        # bir kez hesaplanir). Rapor metninde bunun disindaki seviyeler
+        # (or. 4.200) otomatik olarak dogru degerle degistirilir.
+        endeks = None
+        try:
+            pv = piyasa_verisi() or {}
+            if pv.get("XU030", {}).get("son"):
+                endeks = float(pv["XU030"]["son"])
+        except Exception:
+            endeks = None
         sonuc = dogrulama.metin_dogrula(
-            metin, HISSE_ADLARI, enflasyon["yuzde"] if enflasyon else None)
-        if sonuc["isim_duzeltme"] or sonuc["enflasyon_duzeltme"]:
+            metin, HISSE_ADLARI, enflasyon["yuzde"] if enflasyon else None,
+            endeks_seviyesi=endeks)
+        if sonuc["isim_duzeltme"] or sonuc["enflasyon_duzeltme"] or sonuc["endeks_duzeltme"]:
             DOGRULAMA_IST["isim"] += len(sonuc["isim_duzeltme"])
             DOGRULAMA_IST["enflasyon"] += len(sonuc["enflasyon_duzeltme"])
+            DOGRULAMA_IST["endeks"] += len(sonuc["endeks_duzeltme"])
             for yanlis, dogru, kod in sonuc["isim_duzeltme"]:
                 logger.warning("[Dogrulama%s] sirket adi duzeltildi: '%s' -> '%s (%s)'",
                                etiket, yanlis, dogru, kod)
             for eski, yeni in sonuc["enflasyon_duzeltme"]:
                 logger.warning("[Dogrulama%s] enflasyon sayisi duzeltildi: %s -> %s",
                                etiket, eski, yeni)
+            for eski, yeni in sonuc["endeks_duzeltme"]:
+                logger.warning("[Dogrulama%s] endeks seviyesi duzeltildi: %s -> %s",
+                               etiket, eski, yeni)
+        for uyari in sonuc.get("endeks_uyari", []):
+            DOGRULAMA_IST["endeks_uyari"] += 1
+            logger.warning("[Dogrulama%s] seviye mantigi: %s", etiket, uyari)
         DOGRULAMA_IST["toplam_metin"] += 1
         return sonuc["metin"]
     except Exception:
@@ -1909,6 +2050,14 @@ tr:last-child td { border-bottom:none; }
   th, td { padding:7px 8px; }
   .grid-iki { grid-template-columns:1fr; }
 }
+
+/* ---- Arsiv duzeltme isaretleri (hatali endeks seviyeleri) ---- */
+.gecersiz-seviye { text-decoration: line-through; text-decoration-color: var(--neg);
+                   color: var(--muted); }
+.duzeltme-kutu { margin: 0 0 20px; padding: 12px 16px; background: var(--card);
+                 border: 1px solid var(--line); border-left: 3px solid var(--neg);
+                 border-radius: 10px; font-size: 13.5px; line-height: 1.55; color: var(--ink); }
+.duzeltme-kutu strong { color: var(--neg); }
 
 /* ---- Ust widget seridi: solda saat + hava durumu, sagda dil baglantilari ---- */
 .site-widgets { display:flex; align-items:center; justify-content:space-between;
@@ -5373,6 +5522,10 @@ if __name__ == "__main__":
         piyasa_serit_yaz()
     except Exception:
         logger.exception("[Piyasa] serit yedegi yazilamadi.")
+    try:
+        makro_cek()          # data/makro.json (raporlarin makro omurgasi)
+    except Exception:
+        logger.exception("[Makro] veri tabani guncellenemedi.")
     # Sirket haberleri: hisse detay sayfalari + sirket-haberleri.html icin
     # hisse sayfalarindan ONCE cekilir (~40sn; Google News RSS, anahtarsiz).
     sirket_haber_map = {}
