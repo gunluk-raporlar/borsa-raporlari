@@ -5,8 +5,8 @@
 // FX_IDC:EURTRY, FX_IDC:GBPTRY, ICEEUR:BRN1! (Brent vadeli).
 
 const GOSTERGELER = [
-  { k: "XU030",  ad: "BIST 30",      tv: "BIST:XU030",   b: "",   o: 2 },
-  { k: "XU100",  ad: "BIST 100",     tv: "BIST:XU100",   b: "",   o: 2 },
+  { k: "XU030",  ad: "BIST 30 (TL)",  tv: "BIST:XU030",   b: "",   o: 2 },
+  { k: "XU100",  ad: "BIST 100 (TL)", tv: "BIST:XU100",   b: "",   o: 2 },
   { k: "ONS",    ad: "Ons Altın",    tv: "TVC:GOLD",     b: "$",  o: 2 },
   { k: "USDTRY", ad: "Dolar",        tv: "FX_IDC:USDTRY", b: "TL", o: 4 },
   { k: "EURTRY", ad: "Euro",         tv: "FX_IDC:EURTRY", b: "TL", o: 4 },
@@ -84,6 +84,20 @@ async function piyasaCek() {
       k: "GRAM", ad: "Gram Altın", b: "TL", o: 2,
       f: Math.round(gram * 100) / 100,
       d: Math.round((ons.d + usd.d) * 100) / 100,
+    });
+  }
+
+  // Dolar bazli endeks: XU030 / USDTRY (TradingView'in "BIST-XU030.USD"
+  // sayfasindaki mantik; o sembol scanner ucunda tanimli degil, biz hesapliyoruz).
+  const xu030 = liste.find((g) => g.k === "XU030");
+  if (xu030 && usd) {
+    const dolar_endeks = xu030.f / usd.f;
+    const degisim = ((1 + xu030.d / 100) / (1 + usd.d / 100) - 1) * 100;
+    const konum = liste.findIndex((g) => g.k === "XU100");
+    liste.splice(konum + 1, 0, {
+      k: "XU030USD", ad: "BIST 30 ($)", b: "$", o: 2,
+      f: Math.round(dolar_endeks * 100) / 100,
+      d: Math.round(degisim * 100) / 100,
     });
   }
 

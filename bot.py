@@ -3927,7 +3927,8 @@ def piyasa_serit_yaz():
     """
     veri = piyasa_verisi() or {}
     gostergeler = []
-    for anahtar, ad, birim, o in (("XU030", "BIST 30", "", 2), ("XU100", "BIST 100", "", 2)):
+    for anahtar, ad, birim, o in (("XU030", "BIST 30 (TL)", "", 2),
+                                  ("XU100", "BIST 100 (TL)", "", 2)):
         v = veri.get(anahtar)
         if v and v.get("son"):
             gostergeler.append({"k": anahtar, "ad": ad, "f": round(v["son"], 2),
@@ -3943,6 +3944,18 @@ def piyasa_serit_yaz():
     if usd and usd.get("son"):
         gostergeler.append({"k": "USDTRY", "ad": "Dolar", "f": round(usd["son"], 4),
                             "d": round(usd.get("deg", 0), 2), "b": "TL", "o": 4})
+    # Dolar bazli endeks (XU030 / USDTRY) — TL ile birlikte gosterilir.
+    x30 = veri.get("XU030") or {}
+    if usd and usd.get("son") and x30.get("son"):
+        try:
+            gostergeler.append({
+                "k": "XU030USD", "ad": "BIST 30 ($)", "b": "$", "o": 2,
+                "f": round(x30["son"] / usd["son"], 2),
+                "d": round(((1 + x30.get("deg", 0) / 100)
+                             / (1 + usd.get("deg", 0) / 100) - 1) * 100, 2),
+            })
+        except (TypeError, ZeroDivisionError):
+            pass
     if not gostergeler:
         logger.info("[Piyasa] serit yedegi icin veri bulunamadi.")
         return False
