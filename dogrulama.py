@@ -138,8 +138,17 @@ def _kelime_mesafesi(cumle, pos, desen):
 
 
 def _yuzde_degeri(yazi):
+    """'31,51' -> 31.51 ; Turkce binlik ayracli '4.286' -> 4286.0.
+
+    Turkce raporlarda NOKTA her zaman binlik ayracligidir, ondalik VIRGULDUR.
+    Nokta-tam-3-hane kalibi ("16.372", "1.234.567") binlik sayilir; kalan
+    durumda virgul ondaliga cevrilir ("3.4" -> 3.4 sayilmaz, "3,4" -> 3.4).
+    """
+    metin = yazi.replace("%", "").strip()
     try:
-        return float(yazi.replace("%", "").replace(",", ".").strip())
+        if re.fullmatch(r"-?\d{1,3}(?:\.\d{3})+(?:,\d+)?", metin):
+            return float(metin.replace(".", "").replace(",", "."))
+        return float(metin.replace(",", "."))
     except ValueError:
         return None
 
@@ -182,12 +191,16 @@ def _ulke_anahtari(cumle, sayi_pos):
     return "tr"
 
 
-def enflasyon_duzelt(metin, oran_yuzde, tolerans=0.005, oranlar=None):
+def enflasyon_duzelt(metin, oran_yuzde, tolerans=0.005, oranlar=None,
+                     oranlar_aylik=None):
     """Enflasyon/TUFE yuzdelerini ulke ve gosterge baglamindan duzeltir.
 
     `oranlar` = {"tr": .., "us": .., "eu": ..}. Verilmedigi ulke icin
     o cumledeki orana dokunulmaz. Ayni cumlede birden fazla ulke orani
     varsa her ulkenin enflasyona en yakin yuzdesi ayri ayri denetlenir.
+    `oranlar_aylik` snapshot'taki ENFLASYON (aylik) kirilimidir; cumledeki
+    en yakin frekans ipucu "aylik" ise yillik orana degil bu deger gore
+    denetlenir (yoksa o yuzdeye dokunulmaz).
     """
     oranlar = dict(oranlar or {})
     if oran_yuzde is not None and "tr" not in oranlar:
@@ -222,6 +235,10 @@ def enflasyon_duzelt(metin, oran_yuzde, tolerans=0.005, oranlar=None):
                 if anahtar is None:
                     continue
                 hedef = oranlar.get(anahtar)
+                # "Aylik enflasyon %1,84" yillik orana gore degil snapshot'taki
+                # aylik kirilima gore denetlenir; aylik deger yoksa dokunulmaz.
+                if _siklik_bul(cumle, m.start()) == "aylık":
+                    hedef = (oranlar_aylik or {}).get(anahtar)
                 if hedef is None or abs(deger - hedef) <= tolerans:
                     continue
                 # Ayni ulke icin yalnizca enflasyona en yakin yuzdeyi duzelt.
@@ -328,6 +345,39 @@ def faiz_duzelt(metin, oranlar, tolerans=0.005):
     return "\n".join(cikti), duzeltmeler
 
 
+# Frekans ipuclari: "aylik enflasyon %1,84" sayisi yillik orana gore
+# DENETLENMEMELI; aday seciminde en yakin ipucu sayinin hangi kirilima
+# (aylik/yillik/ceyreklik) ait oldugunu belirler.
+_SIKLIK_AYLIK = re.compile(r"\b(?:aylık|aylik|monthly)\b", re.IGNORECASE)
+_SIKLIK_YILLIK = re.compile(r"\b(?:yıllık|yillik|annual)\b", re.IGNORECASE)
+_SIKLIK_CEYREKLIK = re.compile(r"\b(?:çeyreklik|ceyreklik|quarterly)\b", re.IGNORECASE)
+_SIKLIK_DESENLERI = (("aylık", _SIKLIK_AYLIK), ("yıllık", _SIKLIK_YILLIK),
+                     ("çeyreklik", _SIKLIK_CEYREKLIK))
+
+
+def _siklik_bul(cumle, pos):
+    """Sayiya en yakin frekans ipucunu ('aylik'/'yillik'/'ceyreklik') dondurur."""
+    adaylar = []
+    for etiket, desen in _SIKLIK_DESENLERI:
+        d = _kelime_mesafesi(cumle, pos, desen)
+        if d is not None:
+            adaylar.append((d, etiket))
+    if not adaylar:
+        return None
+    return min(adaylar)[1]
+
+
+def _gosterge_sikligi(kod):
+    """Gosterge kodundan beklenen frekans (_yoy->yillik, _mom->aylik...)."""
+    if kod.endswith("_yoy"):
+        return "yıllık"
+    if kod.endswith("_mom"):
+        return "aylık"
+    if kod.endswith("_qoq"):
+        return "çeyreklik"
+    return None
+
+
 # Snapshot'taki kalan makro gostergeleri icin genel deterministik denetim.
 _GOSTERGE_KELIMELER = {
     "producer_prices_yoy": re.compile(r"\b(?:ÜFE|üretici fiyat)\w*", re.IGNORECASE),
@@ -364,12 +414,34 @@ _GOSTERGE_KELIMELER = {
     "budget_gdp": re.compile(r"\bbütçe\s*/\s*GSYH\w*", re.IGNORECASE),
     "fx_reserves": re.compile(r"\b(?:döviz\s+)?rezerv\w*", re.IGNORECASE),
     "m3_yoy": re.compile(r"\bM3\s+para arzı\w*", re.IGNORECASE),
-    "consumer_credit": re.compile(r"\btüketici kredisi\w*", re.IGNORECASE),
+    "consumer_credit": re.compile(r"\btüketici kredisi(?! faizi)\w*", re.IGNORECASE),
     "initial_jobless_claims": re.compile(r"\bilk işsizlik başvurusu\w*", re.IGNORECASE),
     "continuing_jobless_claims": re.compile(r"\bdevam eden işsizlik başvurusu\w*", re.IGNORECASE),
     "job_openings": re.compile(r"\b(?:JOLTs|açık iş sayısı)\w*", re.IGNORECASE),
     "new_home_sales": re.compile(r"\byeni konut satış\w*", re.IGNORECASE),
     "durable_goods": re.compile(r"\bdayanıklı mal sipariş\w*", re.IGNORECASE),
+    # Yeni makro bloklari (TV/EVDS): her biri kendi kirilim etiketiyle.
+    "producer_prices_mom": re.compile(
+        r"\baylık\s+(?:ÜFE|üretici fiyat)\w*|\bÜFE\s*\(aylık\)\w*", re.IGNORECASE),
+    "tourism_revenues": re.compile(r"\bturizm\s+gelir\w*", re.IGNORECASE),
+    "tourist_arrivals_yoy": re.compile(
+        r"\bturist(?:lerin)?\s+(?:sayısı|girişi|varışı)\w*", re.IGNORECASE),
+    "capacity_utilization": re.compile(r"\bkapasite\s+kullanım\w*", re.IGNORECASE),
+    "debt_gdp": re.compile(r"\bborç\s*/\s*GSYH\w*", re.IGNORECASE),
+    "loans_companies_yoy": re.compile(r"\bşirketlere\s+krediler?\w*", re.IGNORECASE),
+    "loans_households_yoy": re.compile(r"\bhanehalkına\s+krediler?\w*", re.IGNORECASE),
+    "consumer_spending_qoq": re.compile(r"\btüketici\s+harcamalar\w*", re.IGNORECASE),
+    "rate_projection_1y": re.compile(
+        r"\bfaiz\s+projeksiyonu\w*\s*\(?\s*1\b|\b(?:1\.\s*yıl|ilk\s+yıl)",
+        re.IGNORECASE),
+    "rate_projection_2y": re.compile(
+        r"\bfaiz\s+projeksiyonu\w*\s*\(?\s*2\b|\b(?:2\.\s*yıl|ikinci\s+yıl)",
+        re.IGNORECASE),
+    "deposit_rate": re.compile(r"\bmevduat\s+faizi\w*", re.IGNORECASE),
+    "consumer_loan_rate": re.compile(r"\btüketici\s+kredisi\s+faizi\w*", re.IGNORECASE),
+    "credit_growth_yoy": re.compile(r"\bkredi\s+büyümesi\w*|\bbanka\s+kredileri\w*",
+                                    re.IGNORECASE),
+    "reer": re.compile(r"\breel\s+efektif\s+döviz\s+kuru\w*", re.IGNORECASE),
 }
 _SAYI_YUZDELI = re.compile(
     r"(?<![\w.])(?:%\s*-?\d{1,3}(?:[.,]\d{1,3})?"
@@ -381,8 +453,19 @@ _SAYI_ONLIKLI = re.compile(
 
 
 def _sayi_bicimle(deger, yazi, birim):
-    """Kaynak ondalik duzenini koruyarak snapshot degerini yazar."""
-    if deger == int(deger):
+    """Kaynak ondalik duzenini koruyarak snapshot degerini yazar.
+
+    Kaynak binlik ayracli Turkce duzende ("4.286", "6.731,74") cikti da
+    binlik nokta + ondalik virgul ile yazilir; boylece "4.200" gibi bir
+    seviye "4200" formatina dusmez.
+    """
+    if re.fullmatch(r"-?\d{1,3}(?:\.\d{3})+(?:,\d+)?", yazi.strip()):
+        tam, _, kir = ("%.2f" % deger).partition(".")
+        sayi = "{:,}".format(int(tam)).replace(",", ".")
+        kir = kir.rstrip("0")
+        if kir:
+            sayi += "," + kir
+    elif deger == int(deger):
         sayi = str(int(deger))
     else:
         sayi = ("%.3f" % deger).rstrip("0").rstrip(".")
@@ -412,7 +495,8 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005):
                 continue
             duzeltilecek = []
             yuzdeli_gostergeler = {
-                "producer_prices_yoy", "core_inflation_yoy",
+                "producer_prices_yoy", "producer_prices_mom",
+                "core_inflation_yoy",
                 "pce_inflation_yoy", "pce_inflation_mom", "core_pce_yoy",
                 "core_pce_mom", "inflation_expectation_1y",
                 "inflation_expectation_5y", "growth_yoy", "growth_qoq",
@@ -421,6 +505,11 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005):
                 "industrial_production_yoy", "industrial_production_mom",
                 "retail_sales_yoy", "retail_sales_mom", "budget_gdp",
                 "m3_yoy", "consumer_credit", "durable_goods",
+                "tourist_arrivals_yoy", "capacity_utilization", "debt_gdp",
+                "loans_companies_yoy", "loans_households_yoy",
+                "consumer_spending_qoq", "rate_projection_1y",
+                "rate_projection_2y", "deposit_rate", "consumer_loan_rate",
+                "credit_growth_yoy",
             }
             for gosterge, desen in _GOSTERGE_KELIMELER.items():
                 if not desen.search(cumle):
@@ -437,6 +526,11 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005):
                     d_ind = _kelime_mesafesi(cumle, sayi_m.start(), desen)
                     if d_ind is None or d_ind > 50:
                         continue
+                    # Frekans ayrimi: "aylik ... %x" sayisi yillik gostergeye
+                    # (ve tersi) yazilmaz; ipucu yoksa gosterge kirilimi esas.
+                    sikil = _gosterge_sikligi(gosterge)
+                    if sikil and _siklik_bul(cumle, sayi_m.start()) not in (None, sikil):
+                        continue
                     ulke = _ulke_anahtari(cumle, sayi_m.start())
                     hedef = (gostergeler.get(ulke) or {}).get(gosterge) if ulke else None
                     if hedef is not None:
@@ -446,6 +540,16 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005):
                         adaylar, key=lambda x: x[0])
                     if abs(deger - hedef) > tolerans:
                         duzeltilecek.append((gosterge, yakin, sayi_m, hedef))
+            # Ayni sayi birden fazla gosterge adayinda gorundugunde eski
+            # uygulama ayni konuma iki kez yaziyordu (metin kaymasi); yalnizca
+            # ilk aday uygulanir (sozluk sirasi yillik tercih eder).
+            gorulen, tek_aday = set(), []
+            for aday in sorted(duzeltilecek, key=lambda x: x[2].start()):
+                if aday[2].start() in gorulen:
+                    continue
+                gorulen.add(aday[2].start())
+                tek_aday.append(aday)
+            duzeltilecek = tek_aday
             for gosterge, _, m, hedef in sorted(
                     duzeltilecek, key=lambda x: x[2].start(), reverse=True):
                 yazi = m.group(0)
@@ -461,43 +565,79 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005):
 _SAYI_MARKET = re.compile(r"(?<![\w.])-?\d{1,8}(?:[.,]\d+)?(?![\w])")
 
 
+def _etiket_cekirdegi(etiket):
+    """'Gram Altın (türetilmiş)' -> 'Gram Altın' (raporlar parantezi yazmaz)."""
+    return re.sub(r"\s*\([^)]*\)\s*$", "", etiket).strip()
+
+
 def piyasa_serileri_duzelt(metin, seriler, tolerans=0.005):
-    """Gece piyasa snapshot'ındaki değerleri metinde deterministik düzeltir."""
+    """Gece piyasa snapshot'ındaki değerleri metinde deterministik düzeltir.
+
+    Etiketler en uzun cekirdekten eslesir; bir serinin etiketi diger bir
+    serinin etiketi icinde geciyorsa ("Altin" icinde "Gram altin") o bulus
+    atlanir, boylece gram altin sayisi ons altinla karismaz. Yuvarlama
+    toleransi buyuk degerlerde oransal olarak genisler (4.286 vs 4286,30).
+    """
     if not metin or not seriler:
         return metin, []
+    aday_seriler = [r for r in seriler
+                    if r.get("indicator") not in {"bist30", "bist100"}
+                    and str(r.get("label", "")).strip()]
+    if not aday_seriler:
+        return metin, []
+    sirali = sorted(
+        aday_seriler,
+        key=lambda r: len(_etiket_cekirdegi(str(r.get("label", "")))),
+        reverse=True)
     duzeltmeler, cikti = [], []
     for satir in metin.split("\n"):
         cumleler = re.split(r"(?<=[.!?])\s+", satir)
         yeni = []
         for cumle in cumleler:
-            duzeltilecek = []
-            for r in seriler:
-                if r.get("indicator") in {"bist30", "bist100"}:
-                    continue
-                etiket = str(r.get("label", ""))
-                if not etiket:
-                    continue
-                etiket_m = re.search(r"(?<!\w)" + re.escape(etiket) + r"(?!\w)",
-                                     cumle, re.IGNORECASE)
-                if not etiket_m:
-                    continue
-                sonra = cumle[etiket_m.end():]
-                ayrac = re.match(
-                    r"\s*(?:endeksi|değeri|seviyesi|fiyatı|kapanışı|getirisi|"
-                    r"endekse|at|level|price)?\s*(?:[:=-]\s*|[ \t]+)?",
-                    sonra, re.IGNORECASE)
-                sayi_bas = etiket_m.end() + (ayrac.end() if ayrac else 0)
-                sayi_m = _SAYI_MARKET.match(cumle, sayi_bas)
-                if not sayi_m:
-                    continue
-                deger = _yuzde_degeri(sayi_m.group(0))
-                if deger is None:
-                    continue
-                hedef = float(r["value"])
-                if abs(deger - hedef) > tolerans:
-                    duzeltilecek.append((sayi_m, hedef, r.get("unit", ""), etiket))
+            # Cumledeki tum etiket buluslari bir kez bulunur (kapsama kontrolu).
+            buluslar = {}
+            for r in sirali:
+                ck = _etiket_cekirdegi(str(r.get("label", "")))
+                if ck not in buluslar:
+                    buluslar[ck] = list(re.finditer(
+                        r"(?<!\w)" + re.escape(ck) + r"(?!\w)", cumle,
+                        re.IGNORECASE))
+            adaylar, kapali = [], []
+            for r in sirali:
+                ck = _etiket_cekirdegi(str(r.get("label", "")))
+                for etiket_m in buluslar[ck]:
+                    # Daha uzun bir etiketin icindeyse bu bulus diger serinin.
+                    if any(
+                        len(dk) > len(ck)
+                        and d2.start() <= etiket_m.start()
+                        and etiket_m.end() <= d2.end()
+                        for dk, lst in buluslar.items() if dk != ck
+                        for d2 in lst
+                    ):
+                        continue
+                    sonra = cumle[etiket_m.end():]
+                    ayrac = re.match(
+                        r"\s*(?:endeksi|değeri|seviyesi|fiyatı|kapanışı|getirisi|"
+                        r"endekse|gramı|at|level|price)?\s*(?:[:=-]\s*|[ \t]+)?",
+                        sonra, re.IGNORECASE)
+                    sayi_bas = etiket_m.end() + (ayrac.end() if ayrac else 0)
+                    sayi_m = _SAYI_MARKET.match(cumle, sayi_bas)
+                    if not sayi_m:
+                        continue
+                    # Ayni sayi zaten baska bir serinin adayi tarafindan alindi.
+                    if any(s < sayi_m.end() and sayi_m.start() < e
+                           for s, e in kapali):
+                        continue
+                    deger = _yuzde_degeri(sayi_m.group(0))
+                    if deger is None:
+                        continue
+                    kapali.append((sayi_m.start(), sayi_m.end()))
+                    hedef = float(r["value"])
+                    if abs(deger - hedef) > max(tolerans, abs(hedef) * 0.0005):
+                        adaylar.append((sayi_m, hedef, r.get("unit", ""),
+                                        str(r.get("label", ""))))
             for m, hedef, birim, etiket in sorted(
-                    duzeltilecek, key=lambda x: x[0].start(), reverse=True):
+                    adaylar, key=lambda x: x[0].start(), reverse=True):
                 yazi = m.group(0)
                 dogru = _sayi_bicimle(hedef, yazi, birim)
                 cumle = cumle[:m.start()] + dogru + cumle[m.end():]
@@ -609,7 +749,8 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15):
 
 def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
                    faiz_oranlari=None, enflasyon_oranlari=None,
-                   makro_gostergeleri=None, piyasa_serileri=None):
+                   makro_gostergeleri=None, piyasa_serileri=None,
+                   enflasyon_aylik_oranlari=None):
     """Tum dogrulama zinciri. Donus sozlugu:
     {"metin": ..., "isim_duzeltme": [...], "enflasyon_duzeltme": [...],
      "endeks_duzeltme": [...], "endeks_uyari": [...], "faiz_duzeltme": [...],
@@ -618,7 +759,8 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
     Hicbir durumda istisna yukseltmez; cagiran taraf zaten sarmaladi.
     """
     metin, isim = isim_duzelt(metin, adlar)
-    metin, enf = enflasyon_duzelt(metin, enflasyon_yuzde, oranlar=enflasyon_oranlari)
+    metin, enf = enflasyon_duzelt(metin, enflasyon_yuzde, oranlar=enflasyon_oranlari,
+                                  oranlar_aylik=enflasyon_aylik_oranlari)
     metin, faiz = faiz_duzelt(metin, faiz_oranlari)
     metin, makro = makro_gosterge_duzelt(metin, makro_gostergeleri)
     metin, piyasa = piyasa_serileri_duzelt(metin, piyasa_serileri)
@@ -751,5 +893,54 @@ if __name__ == "__main__":
     ornek7 = "Endeks 16.000 destek, 15.000 direnç seviyesi arasında."  # destek > direnc
     sonuc7 = metin_dogrula(ornek7, ADLAR, endeks_seviyesi=16372.4)
     assert sonuc7["endeks_uyari"], "destek>direnc uyarisi uretilmedi!"
+
+    # --- Turkce binlik ayracli sayi okumasi ---
+    assert _yuzde_degeri("4.286") == 4286.0, "binlik ayracli sayi okunamadi!"
+    assert _yuzde_degeri("31,51") == 31.51, "ondalik virgul bozuldu!"
+    assert _yuzde_degeri("16.372,83") == 16372.83, "binlik+ondalik okunamadi!"
+    assert _yuzde_degeri("3.4") == 3.4, "noktali ondalik bozuldu!"
+
+    # --- Gram altin etiketi "Altin" ile karismaz; dogru deger yazilir ---
+    seriler = [
+        {"indicator": "gold_try", "label": "Gram Altın (türetilmiş)",
+         "value": 6731.74, "unit": "TL/gram"},
+        {"indicator": "gold_usd", "label": "Altın", "value": 4286.30,
+         "unit": "USD/ons"},
+    ]
+    gram, gram_d = piyasa_serileri_duzelt(
+        "Gram altın 5.000 TL'den, ons altın 4.280 dolardan işlem gördü.",
+        seriler)
+    assert "6.731,74" in gram, f"gram altin duzeltilmedi: {gram}"
+    assert "4.286,3" in gram, f"ons altin duzeltilmedi: {gram}"
+    assert len(gram_d) == 2, f"beklenen 2 piyasa duzeltmesi: {gram_d}"
+    _, dokunma_d = piyasa_serileri_duzelt(
+        "Gram altın 6.731 TL, ons altın 4.286 dolar.", seriler)
+    assert dokunma_d == [], f"dogru degere dokunuldu: {dokunma_d}"
+
+    # --- Frekans ayrimi: aylik/yillik/ceyreklik kendi gostergesine yazilir ---
+    GOST = {"tr": {"industrial_production_yoy": 4.5,
+                   "industrial_production_mom": 1.2,
+                   "growth_yoy": 2.3, "growth_qoq": 1.1}}
+    ay1, ay1d = makro_gosterge_duzelt("Sanayi üretimi aylık %5,0 arttı.", GOST)
+    assert "%1,2" in ay1 and len(ay1d) == 1, f"aylik sanayi ayrimi: {ay1} {ay1d}"
+    yl1, yl1d = makro_gosterge_duzelt("Sanayi üretimi yıllık %5,0 arttı.", GOST)
+    assert "%4,5" in yl1 and len(yl1d) == 1, f"yillik sanayi ayrimi: {yl1} {yl1d}"
+    cq1, cq1d = makro_gosterge_duzelt("Çeyreklik büyüme %5,0 arttı.", GOST)
+    assert "%1,1" in cq1 and len(cq1d) == 1, f"ceyreklik buyume ayrimi: {cq1} {cq1d}"
+    vt1, vt1d = makro_gosterge_duzelt("Sanayi üretimi %5,0 arttı.", GOST)
+    # Ipucu yoksa yillik varsayilir; ayni sayiya IKINCI bir aday uygulanmaz.
+    assert "%4,5" in vt1 and len(vt1d) == 1, f"varsayilan yillik/dedupe: {vt1} {vt1d}"
+
+    # --- Enflasyon frekans kirilimi ---
+    AYLIK, YILLIK = {"tr": 0.22}, {"tr": 31.51}
+    e1, e1d = enflasyon_duzelt("Aylık enflasyon %1,84 olarak açıklandı.",
+                               31.51, oranlar=YILLIK, oranlar_aylik=AYLIK)
+    assert "%0,22" in e1 and len(e1d) == 1, f"aylik enflasyon kirilimi: {e1}"
+    e2, e2d = enflasyon_duzelt("Aylık enflasyon %1,84 olarak açıklandı.",
+                               31.51, oranlar=YILLIK)
+    assert "%1,84" in e2 and e2d == [], f"aylik veri yokken dokunuldu: {e2}"
+    e3, e3d = enflasyon_duzelt("Yıllık enflasyon %28,4 seviyesinde.",
+                               31.51, oranlar=YILLIK, oranlar_aylik=AYLIK)
+    assert "%31,51" in e3 and len(e3d) == 1, f"yillik enflasyon kirilimi: {e3}"
 
     print("dogrulama.py: tum kendini testler gecti.")

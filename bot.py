@@ -1118,6 +1118,9 @@ TUIK_SERIE_TANIMLARI = {
         "dataflow": "DF_SANAYI_URETIM_ENDEKS_ANA_C",
         "select": ("total", "monthly rate of change"),
         "match": ("total", "month", "change"),
+        # Endeks seviyesi satiri ("... index (2021=100)") ayni donemde
+        # % degisim satiriyla yarisiyordu; kesinlikle eleme yapilir.
+        "exclude": ("index", "endeks", "=100", "annual rate of change"),
     },
 }
 _TUIK_YAPI_ONBELLEK = {}
@@ -1371,6 +1374,9 @@ def _tuik_seride_guncel(gosterge, as_of=None):
         if match_any and not any(_tuik_duz(token) in row_text
                                  for token in match_any):
             continue
+        exclude = tanim.get("exclude")
+        if exclude and any(_tuik_duz(token) in row_text for token in exclude):
+            continue
         donem = _tuik_donem(row.get("TIME_PERIOD"))
         try:
             datetime.strptime(donem, "%Y-%m-%d")
@@ -1587,7 +1593,8 @@ def _tv_birim(gosterge, event):
     if katalog_birimi:
         return katalog_birimi
     kaynak_birimi = str(event.get("unit") or "").strip()
-    if gosterge in {"current_account", "trade_balance", "exports", "imports", "fx_reserves"}:
+    if gosterge in {"current_account", "trade_balance", "exports", "imports",
+                    "fx_reserves", "tourism_revenues"}:
         return {"$": "milyar $", "€": "milyar €",
                 "TRY": "milyar TRY"}.get(kaynak_birimi, kaynak_birimi)
     if gosterge == "budget_balance" and kaynak_birimi == "TRY":
@@ -1679,6 +1686,15 @@ def makro_cek(gun=170, yol="data/makro.json", as_of=None):
                 tuik_ek = " + TÜİK SDMX teyitli"
         except Exception as e:
             logger.warning("[Makro] TÜİK teyidi atlandi: %s", e)
+        # EVDS (opsiyonel): anahtar/kesif yoksa hicbir sey eklenmez; snapshot
+        # TV/TÜİK verisiyle aynen yazilir. Eklenen kayitlar ayni semadan gece.
+        try:
+            import evds_veri
+            evds_sayi = evds_veri.gostergeleri_ekle(gostergeler, bugun)
+            if evds_sayi:
+                tuik_ek += f" + EVDS({evds_sayi})"
+        except Exception as e:
+            logger.warning("[Makro] EVDS atlandi: %s", e)
         govde = {"guncelleme": bugun + " " + datetime.now(tz).strftime("%H:%M"),
                  "kaynak": "TradingView ekonomik takvimi" + tuik_ek,
                  "gostergeler": gostergeler}
@@ -1933,6 +1949,34 @@ def _fred_son_tahvil_getirileri(snapshot_date):
         return satirlar[-2:]
 
 
+def _fred_son_kapanislar(seri_ids, snapshot_date):
+    """FRED anahtarsız CSV'sinden verilen serilerin son iki ortak gözlemi."""
+    import csv
+    import io
+    import urllib.request
+    import pandas as pd
+    url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=" + ",".join(seri_ids)
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    with urllib.request.urlopen(req, timeout=30) as yanit:
+        tablo = csv.DictReader(io.StringIO(yanit.read().decode("utf-8")))
+        satirlar = []
+        for row in tablo:
+            try:
+                tarih = pd.Timestamp(row["observation_date"]).date()
+                if tarih > pd.Timestamp(snapshot_date).date():
+                    continue
+                degerler = [float(row[s]) for s in seri_ids]
+            except (KeyError, TypeError, ValueError):
+                continue
+            satirlar.append((tarih.isoformat(), *degerler))
+        return satirlar[-2:]
+
+
+def _gram_altin_fiyati(ons_usd, usdtry):
+    """Ons altin (USD) + USD/TRY -> TL/gram. 1 troy unce = 31.1034768 gram."""
+    return ons_usd * usdtry / 31.1034768
+
+
 def piyasa_serileri_ce(snapshot_date):
     """Akşam piyasa snapshot'ını gerçekten yayınlanan serilerle üretir."""
     import borsapy as bp
@@ -1958,11 +2002,12 @@ def piyasa_serileri_ce(snapshot_date):
                 "Piyasa serisi %s alinamadi: %s", symbol, exc)
 
     # Altın/TL doğrudan Yahoo sembolü yok; USD/ons x USD/TRY türetilir.
+    # (Eski hata: 1000.0 carpani gram fiyatini milyon katina sistiriyordu.)
     try:
         altin = next(r for r in kayitlar if r["indicator"] == "gold_usd")
         usdtry = next(r for r in kayitlar if r["indicator"] == "usdtry")
-        gram = altin["value"] * usdtry["value"] * 1000.0 / 31.1034768
-        onceki_gram = altin["previous"] * usdtry["previous"] * 1000.0 / 31.1034768
+        gram = _gram_altin_fiyati(altin["value"], usdtry["value"])
+        onceki_gram = _gram_altin_fiyati(altin["previous"], usdtry["previous"])
         kayitlar.append({
             "symbol": "GC=F*USDTRY=X", "indicator": "gold_try",
             "label": "Gram Altın (türetilmiş)", "value": round(gram, 4),
@@ -1992,6 +2037,36 @@ def piyasa_serileri_ce(snapshot_date):
     except Exception as exc:
         _logging.getLogger("makro-snapshot").warning(
             "FRED tahvil getirileri alinamadi: %s", exc)
+
+    # FRED kredi marjlari (OAS): investment grade + yüksek getirili.
+    try:
+        marjlar = _fred_son_kapanislar(
+            ("BAMLC0A0CM", "BAMLH0A0HYM2"), snapshot_date)
+        if len(marjlar) >= 2:
+            (_, mprev0, mprev1) = marjlar[-2]
+            mdate, m0, m1 = marjlar[-1]
+            for kod, ad, deger, onceki in (
+                ("corp_oas", "Şirket Tahvili Marjı", m0, mprev0),
+                ("hy_oas", "Yüksek Getirili Tahvil Marjı", m1, mprev1),
+            ):
+                kayitlar.append({
+                    "symbol": kod.upper(), "indicator": kod, "label": ad,
+                    "value": round(deger, 4), "previous": round(onceki, 4),
+                    "change": round(deger - onceki, 4), "unit": "%",
+                    "period": mdate, "category": "küresel risk",
+                    "source": "FRED", "status": "close",
+                })
+    except Exception as exc:
+        _logging.getLogger("makro-snapshot").warning(
+            "FRED kredi marjlari alinamadi: %s", exc)
+
+    # EVDS TR tahvil getirileri (opsiyonel; anahtar/kesif yoksa bos doner).
+    try:
+        import evds_veri
+        kayitlar.extend(evds_veri.piyasa_kayitlari(snapshot_date))
+    except Exception as exc:
+        _logging.getLogger("makro-snapshot").warning(
+            "EVDS piyasa serileri atlandi: %s", exc)
 
     for symbol, kod, ad, birim in (
         ("XU030", "bist30", "BIST 30", "puan"),
@@ -2588,18 +2663,30 @@ Yanıtını şu yapıda oluştur (başlıklar aynen bu şekilde, "## " ile):
 (ABD ve Euro Bölgesi verileri: enflasyon, politika faizi, büyüme, işsizlik; küresel likidite ve risk iştahına etkileri)
 
 ## 2. Türkiye Makroekonomik Görünümü
-(TÜİK enflasyon/ÜFE, TCMB politika faizi, büyüme, işsizlik, cari denge, rezervler; dezenflasyon sürecinin hangi aşamasında olunduğu)
+(TÜİK enflasyon/ÜFE, TCMB politika faizi, büyüme, işsizlik; dezenflasyon sürecinin hangi aşamasında olunduğu)
 
-## 3. Aktarım Mekanizmaları: Makrodan Piyasaya
+## 3. İç Talep, Kredi ve Likidite
+(Veri bloğunda varsa: mevduat faizi, tüketici kredisi faizi, banka kredileri büyümesi, M3 para arzı; politika faizinden kredi maliyetine ve iç talebe giden kanalı anlat. Veri yoksa bu bölümü niteliksel geç.)
+
+## 4. Küresel Risk İştahı ve Faiz Beklentileri
+(Veri bloğunda varsa: VIX, DXY, ABD tahvil getirileri, yatırım-grade ve yüksek getirili kredi marjları, Fed faiz projeksiyonları; risk iştahının BIST'e olası yansımasını bağla. Veri yoksa niteliksel geç.)
+
+## 5. Bütçe ve Dış Denge
+(Veri bloğunda varsa: bütçe dengesi, bütçe/GSYH, cari denge, ticaret dengesi, ihracat-ithalat, turizm gelirleri, döviz rezervler; dış finansman kırılganlığını değerlendir. Veri yoksa niteliksel geç.)
+
+## 6. Enerji, Emtia, Döviz ve Tahvil Piyasaları
+(Veri bloğunda varsa: Brent/WTI, altın, USD/TRY-EUR/TRY, tahvil getirileri ve gram altın; enerji-fiyat ve kur-enflasyon etkileşimini anlat. Veri yoksa niteliksel geç.)
+
+## 7. Aktarım Mekanizmaları: Makrodan Piyasaya
 (Şu zincirleri veriye bağlayarak anlat: politika faizi -> mevduat/kredi maliyeti -> iç talep -> şirket satışları -> marjlar -> değerleme; kur kanalı -> ithal girdi maliyeti -> enflasyon; küresel faiz -> yabancı sermaye akımı -> risk primi)
 
-## 4. BIST 30'a Yansımalar: Sektör Kanalları
+## 8. BIST 30'a Yansımalar: Sektör Kanalları
 (Banka, sanayi, holding, perakende gibi ana sektörlerin makro veriye duyarlılığı; yüksek faiz ortamında kim kazanır kim kaybeder)
 
-## 5. Senaryolar ve İzleme Çerçevesi
+## 9. Senaryolar ve İzleme Çerçevesi
 (Baz/iyimser/kötümser senaryo; her senaryoyu geçersiz kılacak somut veri gelişmesi; önümüzdeki dönemde izlenecek göstergeler. "Al/sat/giriş/hedef/stop" gibi emir dili KULLANMA.)
 
-## 6. Sonuç ve Değerlendirme
+## 10. Sonuç ve Değerlendirme
 
 Biçim kuralları (zorunlu):
 - Kimlik satırı YAZMA: "Profesör", "Dr.", "Analist:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri geçmeyecek.
@@ -2884,6 +2971,7 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None):
             metin, HISSE_ADLARI, enflasyon["yuzde"] if enflasyon else None,
             endeks_seviyesi=endeks, faiz_oranlari=faiz_oranlari,
             enflasyon_oranlari=enflasyon_oranlari,
+            enflasyon_aylik_oranlari=makro_veri.inflation_mom_map(snapshot),
             makro_gostergeleri=gostergeler,
             piyasa_serileri=piyasa_serileri)
         if (sonuc["isim_duzeltme"] or sonuc["enflasyon_duzeltme"]
@@ -5498,7 +5586,8 @@ def _makro_duyarlilik_karti(kod):
         g = makro_rejim.gostergeleri_yukle()
         if not g:
             return ""
-        rejim = makro_rejim.rejim_hesapla(g)
+        rejim = makro_rejim.rejim_hesapla(
+            g, piyasa=makro_rejim.piyasa_yukle())
         aktarim = makro_rejim.sektor_aktarimi(rejim)
         sektor = _hisse_sektoru(kod)
         d = aktarim.get(sektor)

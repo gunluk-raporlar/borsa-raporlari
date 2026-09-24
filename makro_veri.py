@@ -351,6 +351,16 @@ def rate_maps(snapshot):
     return enflasyon, faiz, gosterge
 
 
+def inflation_mom_map(snapshot):
+    """Ulke bazli AYLIK enflasyon kirilimi (dogrulayicinin frekans ayrimi icin)."""
+    validate(snapshot)
+    sonuc = {}
+    for r in snapshot["records"]:
+        if r["indicator"] == "inflation_mom":
+            sonuc[r["country_code"].lower()] = r["value"]
+    return sonuc
+
+
 def piyasa_map(snapshot):
     """Snapshot piyasa kayıtlarını doğrulayıcı için listeye çevirir."""
     validate(snapshot)

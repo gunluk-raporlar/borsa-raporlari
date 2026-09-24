@@ -27,7 +27,9 @@ GOSTERGE_TANIMLARI = [
     ("inflation_expectation_5y", "Enflasyon Beklentisi (5 yıl)", "%",
      ("michigan 5 year inflation expectations final",), "aylık"),
     ("producer_prices_yoy", "ÜFE (yıllık)", "%",
-     ("producer prices", "producer prices yoy"), "aylık"),
+     ("producer prices", "producer prices yoy", "ppi yoy"), "aylık"),
+    ("producer_prices_mom", "ÜFE (aylık)", "%",
+     ("ppi mom", "producer prices mom"), "aylık"),
     ("policy_rate", "Politika faizi", "%",
      ("interest rate decision", "fed interest rate decision",
       "ecb interest rate decision", "tcmb interest rate decision"), "olay"),
@@ -53,7 +55,8 @@ GOSTERGE_TANIMLARI = [
      ("retail sales mom",), "aylık"),
     ("pmi_manufacturing", "İmalat PMI", "puan",
      ("ism manufacturing pmi", "s&p global manufacturing pmi final",
-      "s&p global manufacturing pmi flash", "chicago pmi"), "aylık"),
+      "s&p global manufacturing pmi flash", "chicago pmi",
+      "istanbul chamber of industry manufacturing pmi"), "aylık"),
     ("pmi_services", "Hizmetler PMI", "puan",
      ("ism services pmi", "s&p global services pmi final",
       "s&p global services pmi flash"), "aylık"),
@@ -100,6 +103,30 @@ GOSTERGE_TANIMLARI = [
      ("new home sales",), "aylık"),
     ("durable_goods", "Dayanıklı Mal Siparişleri (aylık)", "%",
      ("durable goods orders mom",), "aylık"),
+    # --- Genisletilmis makro bloglari (TV basliklari dogrulanmis) ---
+    ("tourism_revenues", "Turizm Gelirleri", "",
+     ("tourism revenues",), "üç aylık"),
+    ("tourist_arrivals_yoy", "Turist Sayısı (yıllık)", "%",
+     ("tourist arrivals yoy",), "aylık"),
+    ("capacity_utilization", "Kapasite Kullanım Oranı", "%",
+     ("capacity utilization",), "aylık"),
+    ("debt_gdp", "Borç / GSYH", "%",
+     ("government debt to gdp",), "yıllık"),
+    ("loans_companies_yoy", "Şirketlere Krediler (yıllık)", "%",
+     ("loans to companies yoy",), "aylık"),
+    ("loans_households_yoy", "Hanehalkına Krediler (yıllık)", "%",
+     ("loans to households yoy",), "aylık"),
+    ("consumer_spending_qoq", "Tüketici Harcamaları (çeyreklik)", "%",
+     ("real consumer spending qoq adv", "real consumer spending qoq"), "üç aylık"),
+    ("rate_projection_1y", "Faiz Projeksiyonu (1. yıl)", "%",
+     ("interest rate projection - 1st yr",), "üç aylık"),
+    ("rate_projection_2y", "Faiz Projeksiyonu (2. yıl)", "%",
+     ("interest rate projection - 2nd yr",), "üç aylık"),
+    # --- EVDS akilli (TV'de karsiligi yok; evds_veri.py doldurur) ---
+    ("deposit_rate", "Mevduat Faizi", "%", (), "aylık"),
+    ("consumer_loan_rate", "Tüketici Kredisi Faizi", "%", (), "aylık"),
+    ("credit_growth_yoy", "Kredi Büyümesi (yıllık)", "%", (), "aylık"),
+    ("reer", "Reel Efektif Döviz Kuru", "", (), "aylık"),
 ]
 
 GOSTERGE_KOD = {item[1]: item[0] for item in GOSTERGE_TANIMLARI}
@@ -122,6 +149,10 @@ PIYASA_SERILERI = (
 
 PIYASA_KOD = {item[1] for item in PIYASA_SERILERI} | {
     "gold_try", "ust2y", "ust10y", "bist30", "bist100",
+    # FRED kredi marjlari (BAMLC0A0CM / BAMLH0A0HYM2)
+    "corp_oas", "hy_oas",
+    # TCMB EVDS tahvil getirileri (2 yil / 10 yil)
+    "tr2y", "tr10y",
 }
 
 REQUIRED = {

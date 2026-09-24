@@ -246,6 +246,292 @@ class MakroSnapshotTest(unittest.TestCase):
         self.assertEqual(gostergeler[0]["teyit"], "TÜİK")
         self.assertEqual(gostergeler[0]["kaynak_durumu"], "TÜİK resmi verisi")
 
+    def test_tuik_sanayi_endeks_seviyesi_degil_degisim_secilir(self):
+        # Endeks seviyesi satiri ("Monthly Change Index (2021=100)") ayni
+        # donemde % degisim satiriyla yarisir; exclude kutusu onu elemeli.
+        rows = [
+            {"KAPSAM": "Total", "OLCU": "Monthly Change Index (2021=100)",
+             "TIME_PERIOD": "2026-08", "value": 113.8051},
+            {"KAPSAM": "Total", "OLCU": "Monthly rate of change",
+             "TIME_PERIOD": "2026-08", "value": 1.2},
+            {"KAPSAM": "Total", "OLCU": "Annual rate of change",
+             "TIME_PERIOD": "2026-08", "value": 11.5},
+        ]
+        with mock.patch.dict(os.environ, {"TUIK_API_KEY": "test-key"}):
+            with mock.patch.object(bot, "_tuik_veri", return_value=rows):
+                resmi = bot._tuik_seride_guncel(
+                    "industrial_production_mom", "2026-09-23")
+        self.assertIsNotNone(resmi)
+        self.assertEqual(resmi["value"], 1.2)
+        self.assertEqual(resmi["period"], "2026-08-01")
+        self.assertEqual(resmi["unit"], "%")
+
+
+class RejimTest(unittest.TestCase):
+    """makro_rejim: _bul yillik tercihi (bug 1) + piyasa kanallari (Faz 2)."""
+
+    G = {
+        ("Türkiye", "Enflasyon (aylık)"): 0.22,
+        ("Türkiye", "Enflasyon (yıllık)"): 33.79,
+        ("Türkiye", "Politika faizi"): 37.0,
+        ("Türkiye", "Büyüme (çeyreklik)"): 1.1,
+        ("Türkiye", "Büyüme (yıllık)"): 2.3,
+        ("Türkiye", "İşsizlik oranı"): 8.1,
+        ("Türkiye", "Cari denge"): 0.04,
+        ("Türkiye", "Bütçe Dengesi"): 12.9,
+        ("ABD", "Enflasyon (yıllık)"): 3.4,
+        ("ABD", "Politika faizi"): 4.0,
+        ("Euro Bölgesi", "Enflasyon (yıllık)"): 3.2,
+        ("Euro Bölgesi", "Politika faizi"): 2.65,
+    }
+
+    def test_bul_yillik_kirilimi_secer(self):
+        import makro_rejim
+        # Snapshot sirasinda aylik satir once gelir; yillik secilmeli.
+        self.assertEqual(makro_rejim._bul(self.G, "Türkiye", "Enflasyon"), 33.79)
+        self.assertEqual(makro_rejim._bul(self.G, "Türkiye", "Büyüme"), 2.3)
+        self.assertEqual(makro_rejim._bul(self.G, "Türkiye", "Politika faizi"), 37.0)
+        self.assertIsNone(makro_rejim._bul(self.G, "Türkiye", "Sanayi"))
+        self.assertEqual(
+            makro_rejim._bul({("Türkiye", "Cari denge"): 0.0},
+                             "Türkiye", "Cari denge"),
+            0.0)
+
+    def test_rejim_reel_faiz_yillik_enflasyonla_hesaplanir(self):
+        import makro_rejim
+        rejim = makro_rejim.rejim_hesapla(self.G, piyasa={})
+        self.assertEqual(rejim["enflasyon"], 33.79)
+        self.assertEqual(rejim["buyume"], 2.3)
+        self.assertEqual(rejim["reel_faiz"], 3.21)
+        self.assertIn("yüksek enflasyon", rejim["etiket"])
+        self.assertIn("nötr para politikası", rejim["etiket"])
+
+    def test_piyasa_kanallari_ve_dinamik_eksik_listesi(self):
+        import makro_rejim
+        piyasa = {"usdtry": {"value": 48.85, "change": 0.35},
+                  "brent": {"value": 103.08, "change": 3.86},
+                  "vix": {"value": 15.6, "change": 2.63},
+                  "dxy": {"value": 101.1, "change": 0.7},
+                  "ust10y": {"value": 4.21, "change": 0.05}}
+        rejim = makro_rejim.rejim_hesapla(self.G, piyasa=piyasa)
+        self.assertEqual(rejim["piyasa_sinyalleri"], {"kur": 1, "emtia": 1})
+        self.assertEqual(rejim["global_risk"]["vix"], 15.6)
+        for kanal in ("bütçe", "kur (TL değişimi)", "emtia",
+                      "global risk (VIX/DXY/UST10Y/Brent)"):
+            self.assertNotIn(kanal, rejim["eksik_kanallar"])
+        self.assertIn("CDS", rejim["eksik_kanallar"])
+        self.assertIn("REER", rejim["eksik_kanallar"])
+        self.assertIn("kredi büyümesi / M3", rejim["eksik_kanallar"])
+        sinyal = makro_rejim.sinyaller(rejim)
+        self.assertEqual((sinyal["kur"], sinyal["emtia"]), (1, 1))
+        aktarim = makro_rejim.sektor_aktarimi(rejim)
+        self.assertTrue(any("kur" in k
+                            for k in aktarim["Perakende"]["kanallar"]))
+        # Piyasa blogu yoksa kanallar None; eski davranis korunur.
+        rejim2 = makro_rejim.rejim_hesapla(self.G, piyasa={})
+        self.assertEqual(rejim2["piyasa_sinyalleri"],
+                         {"kur": None, "emtia": None})
+        self.assertIn("emtia", rejim2["eksik_kanallar"])
+
+
+class FrekansVeEtiketTest(unittest.TestCase):
+    """dogrulama: binlik sayi, frekans kirilimi, gram altin etiketi."""
+
+    def test_yuzde_degeri_turkce_binlik_ayraci(self):
+        self.assertEqual(dogrulama._yuzde_degeri("4.286"), 4286.0)
+        self.assertEqual(dogrulama._yuzde_degeri("31,51"), 31.51)
+        self.assertEqual(dogrulama._yuzde_degeri("16.372,83"), 16372.83)
+        self.assertEqual(dogrulama._yuzde_degeri("3.4"), 3.4)
+
+    def test_aylik_enflasyon_yillik_oranla_karistirilmaz(self):
+        metin = "Türkiye'de aylık enflasyon %1,84 olarak hesaplandı."
+        aylik = dogrulama.metin_dogrula(
+            metin, {}, enflasyon_yuzde=31.51,
+            enflasyon_oranlari={"tr": 31.51},
+            enflasyon_aylik_oranlari={"tr": 0.22})
+        self.assertIn("aylık enflasyon %0,22", aylik["metin"])
+        self.assertEqual(len(aylik["enflasyon_duzeltme"]), 1)
+        # Aylik kirilim verisi yoksa yillik orani yazmak yerine dokunulmaz.
+        verisiz = dogrulama.metin_dogrula(
+            metin, {}, enflasyon_yuzde=31.51,
+            enflasyon_oranlari={"tr": 31.51})
+        self.assertEqual(verisiz["enflasyon_duzeltme"], [])
+        yillik = dogrulama.metin_dogrula(
+            "Türkiye'de yıllık enflasyon %28,4.", {}, enflasyon_yuzde=31.51,
+            enflasyon_oranlari={"tr": 31.51},
+            enflasyon_aylik_oranlari={"tr": 0.22})
+        self.assertIn("yıllık enflasyon %31,51", yillik["metin"])
+
+    def test_sanayi_uretimi_frekans_kirilimi_ve_dedupe(self):
+        gost = {"tr": {"industrial_production_yoy": 4.5,
+                       "industrial_production_mom": 1.2,
+                       "growth_yoy": 2.3, "growth_qoq": 1.1}}
+        aylik, ay_d = dogrulama.makro_gosterge_duzelt(
+            "Sanayi üretimi aylık %5,0 arttı.", gost)
+        self.assertIn("%1,2", aylik)
+        self.assertEqual(len(ay_d), 1)
+        yillik, yl_d = dogrulama.makro_gosterge_duzelt(
+            "Sanayi üretimi yıllık %5,0 arttı.", gost)
+        self.assertIn("%4,5", yillik)
+        self.assertEqual(len(yl_d), 1)
+        ceyrek, cq_d = dogrulama.makro_gosterge_duzelt(
+            "Çeyreklik büyüme %5,0 arttı.", gost)
+        self.assertIn("%1,1", ceyrek)
+        self.assertEqual(len(cq_d), 1)
+        # Ipucu yoksa yillik varsayilir; ayni sayiya ikinci aday uygulanmaz.
+        varsayilan, vt_d = dogrulama.makro_gosterge_duzelt(
+            "Sanayi üretimi %5,0 arttı.", gost)
+        self.assertIn("%4,5", varsayilan)
+        self.assertEqual(len(vt_d), 1)
+
+    def test_gram_altin_etiketi_altinla_karismaz(self):
+        seriler = [
+            {"indicator": "gold_try", "label": "Gram Altın (türetilmiş)",
+             "value": 6731.74, "unit": "TL/gram"},
+            {"indicator": "gold_usd", "label": "Altın", "value": 4286.30,
+             "unit": "USD/ons"},
+        ]
+        cikti, duzeltme = dogrulama.piyasa_serileri_duzelt(
+            "Gram altın 5.000 TL'den, ons altın 4.280 dolardan işlem gördü.",
+            seriler)
+        self.assertIn("6.731,74", cikti)
+        self.assertIn("4.286,3", cikti)
+        self.assertEqual(len(duzeltme), 2)
+        _, dokunma = dogrulama.piyasa_serileri_duzelt(
+            "Gram altın 6.731 TL, ons altın 4.286 dolar.", seriler)
+        self.assertEqual(dokunma, [])
+
+    def test_gram_altin_fiyati_formulu(self):
+        import bot
+        # 4.286 USD/ons x 48,85 TL/USD -> ~6.731 TL/gram (milyon kat degil).
+        deger = bot._gram_altin_fiyati(4286.0, 48.85)
+        self.assertAlmostEqual(deger, 4286.0 * 48.85 / 31.1034768, places=6)
+        self.assertLess(deger, 10000)
+
+
+class EvdsTest(unittest.TestCase):
+    """evds_veri: anahtarsiz atlama, kesif, sutun dogrulamasi."""
+
+    def setUp(self):
+        import pathlib
+        import tempfile
+        import evds_veri
+        self.evds = evds_veri
+        self._tmp = tempfile.TemporaryDirectory()
+        kod_yolu = pathlib.Path(self._tmp.name) / "evds-kodlar.json"
+        self._yamalar = [
+            mock.patch.dict(os.environ, {"EVDS_API_KEY": "test-anahtar"}),
+            mock.patch.object(evds_veri, "KOD_DOSYA", kod_yolu),
+        ]
+        for y in self._yamalar:
+            y.start()
+
+    def tearDown(self):
+        for y in reversed(self._yamalar):
+            y.stop()
+        self._tmp.cleanup()
+
+    def test_anahtar_yoksa_hicbir_sey_eklenmez(self):
+        with mock.patch.dict(os.environ, {"EVDS_API_KEY": ""}):
+            liste = []
+            self.assertEqual(self.evds.gostergeleri_ekle(liste, "2026-09-24"), 0)
+            self.assertEqual(liste, [])
+            self.assertEqual(self.evds.piyasa_kayitlari("2026-09-24"), [])
+
+    def test_anahtar_gecersizse_kesif_dahil_atlanir(self):
+        def hatali(url, parametreler=None, anahtar_deger=None):
+            raise self.evds.EvdsHata("EVDS anahtari gecersiz (HTTP 401)",
+                                     durum="anahtar")
+        with mock.patch.object(self.evds, "_istek", side_effect=hatali):
+            liste = []
+            self.assertEqual(self.evds.gostergeleri_ekle(liste, "2026-09-24"), 0)
+            self.assertEqual(liste, [])
+            self.assertEqual(self.evds.piyasa_kayitlari("2026-09-24"), [])
+
+    def test_kesif_onbellegi_ve_makro_kaydi(self):
+        def sahte(url, parametreler=None, anahtar_deger=None):
+            if url.endswith("datagroups/"):
+                return [{"CATEGORY_ID": 4, "DATAGROUP_CODE": "bie_mevduat",
+                         "DATAGROUP_NAME": "Mevduat Faizleri",
+                         "DATAGROUP_NAME_ENG": "Deposit Rates"}]
+            if url.endswith("serieList/"):
+                return [{"SERIE_CODE": "TP.MBM.TUM",
+                         "SERIE_NAME": "Tüm Bankalar Mevduat Faizi (Aylık, %)"},
+                        {"SERIE_CODE": "TP.MBM.TL",
+                         "SERIE_NAME": "TL Vadeli Mevduat Faizi"}]
+            if url == self.evds.KOK:
+                return {"items": [
+                    {"DATE": "01-08-2026 00:00:00", "TP_MBM_TUM": "35.5"},
+                    {"DATE": "01-09-2026 00:00:00", "TP_MBM_TUM": "36.25"}]}
+            return None
+
+        with mock.patch.object(self.evds, "_istek", side_effect=sahte):
+            liste = []
+            sayi = self.evds.gostergeleri_ekle(liste, "2026-09-24")
+        # Diger EVDS hedefleri bu sahte katalogda eslesmez -> yalniz mevduat.
+        self.assertEqual(sayi, 1)
+        kayit = liste[0]
+        self.assertEqual(kayit["ulke"], "Türkiye")
+        self.assertEqual(kayit["ad"], "Mevduat Faizi")
+        self.assertEqual(kayit["deger"], 36.25)
+        self.assertEqual(kayit["onceki"], 35.5)
+        self.assertEqual(kayit["birim"], "%")
+        self.assertEqual(kayit["donem"], "2026-09-01")
+        self.assertIn("TP.MBM.TUM", kayit["kaynak_baslik"])
+        # Kesfedilen kod onbellege yazildi (sonraki calismada dogrudan kullanilir).
+        onbellek = self.evds._kod_onbellegi()
+        self.assertEqual(onbellek["deposit_rate"]["kod"], "TP.MBM.TUM")
+
+    def test_sutun_anahtari_eslesmezse_uydurma_deger_yazilmaz(self):
+        def sahte(url, parametreler=None, anahtar_deger=None):
+            if url.endswith("datagroups/"):
+                return [{"DATAGROUP_CODE": "bie_mevduat",
+                         "DATAGROUP_NAME": "Mevduat Faizleri"}]
+            if url.endswith("serieList/"):
+                return [{"SERIE_CODE": "TP.MBM.TUM",
+                         "SERIE_NAME": "Tüm Bankalar Mevduat Faizi"}]
+            if url == self.evds.KOK:
+                return {"items": [{"DATE": "01-09-2026 00:00:00",
+                                   "YANLIS_KOLON": "36.25"}]}
+            return None
+
+        with mock.patch.object(self.evds, "_istek", side_effect=sahte):
+            liste = []
+            self.assertEqual(self.evds.gostergeleri_ekle(liste, "2026-09-24"), 0)
+            self.assertEqual(liste, [])
+
+    def test_piyasa_kayitlari_sekli(self):
+        def sahte(url, parametreler=None, anahtar_deger=None):
+            if url.endswith("datagroups/"):
+                return [{"DATAGROUP_CODE": "bie_tbtgv",
+                         "DATAGROUP_NAME": "Gösterge Niteliğindeki Tahviller"}]
+            if url.endswith("serieList/"):
+                return [{"SERIE_CODE": "TP.TB.02",
+                         "SERIE_NAME": "2 Yıllık Tahvil Getirisi"},
+                        {"SERIE_CODE": "TP.TB.10",
+                         "SERIE_NAME": "10 Yıllık Tahvil Getirisi"}]
+            if url == self.evds.KOK:
+                seri = str(parametreler.get("series", ""))
+                deger, onceki = ("34.6", "34.4") if seri == "TP.TB.02" \
+                    else ("36.1", "35.9")
+                kolon = seri.replace(".", "_")
+                return {"items": [
+                    {"DATE": "23-09-2026 00:00:00", kolon: onceki},
+                    {"DATE": "24-09-2026 00:00:00", kolon: deger}]}
+            return None
+
+        with mock.patch.object(self.evds, "_istek", side_effect=sahte):
+            kayitlar = self.evds.piyasa_kayitlari("2026-09-24")
+        self.assertEqual([k["indicator"] for k in kayitlar],
+                         ["tr2y", "tr10y"])
+        ilk = kayitlar[0]
+        self.assertEqual(ilk["label"], "TR 2 Yıllık Tahvil")
+        self.assertEqual(ilk["value"], 34.6)
+        self.assertEqual(ilk["previous"], 34.4)
+        self.assertEqual(ilk["change"], 0.2)
+        self.assertEqual(ilk["unit"], "%")
+        self.assertEqual(ilk["period"], "2026-09-24")
+
 
 if __name__ == "__main__":
     unittest.main()
