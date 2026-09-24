@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-09-24 20:45",
+ "guncelleme": "2026-09-24 23:05",
  "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli",
  "gostergeler": [
   {
@@ -23,6 +23,30 @@
    "tahmin": 1.93,
    "onceki": 1.78,
    "kaynak_baslik": "Inflation Rate MoM",
+   "kaynak_periyot": "Aug",
+   "frekans": "aylık"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "ÜFE (yıllık)",
+   "deger": 27.95,
+   "birim": "%",
+   "donem": "2026-09-03",
+   "tahmin": null,
+   "onceki": 27.83,
+   "kaynak_baslik": "PPI YoY",
+   "kaynak_periyot": "Aug",
+   "frekans": "aylık"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "ÜFE (aylık)",
+   "deger": 2.57,
+   "birim": "%",
+   "donem": "2026-09-03",
+   "tahmin": null,
+   "onceki": 1.52,
+   "kaynak_baslik": "PPI MoM",
    "kaynak_periyot": "Aug",
    "frekans": "aylık"
   },
@@ -81,16 +105,14 @@
   {
    "ulke": "Türkiye",
    "ad": "Sanayi Üretimi (aylık)",
-   "deger": -0.3234,
+   "deger": -1.0,
    "birim": "%",
-   "donem": "2026-07-01",
+   "donem": "2026-09-10",
    "tahmin": null,
-   "onceki": null,
-   "kaynak_baslik": "DF_SANAYI_URETIM_ENDEKS_ANA_C",
-   "kaynak_periyot": "2026-07",
-   "frekans": "TÜİK",
-   "teyit": "TÜİK",
-   "kaynak_durumu": "TÜİK resmi verisi"
+   "onceki": 0.2,
+   "kaynak_baslik": "Industrial Production MoM",
+   "kaynak_periyot": "Jul",
+   "frekans": "aylık"
   },
   {
    "ulke": "Türkiye",
@@ -249,6 +271,42 @@
    "frekans": "haftalık"
   },
   {
+   "ulke": "Türkiye",
+   "ad": "Turizm Gelirleri",
+   "deger": 15.9,
+   "birim": "milyar $",
+   "donem": "2026-07-31",
+   "tahmin": null,
+   "onceki": 9.9,
+   "kaynak_baslik": "Tourism Revenues",
+   "kaynak_periyot": "Q2",
+   "frekans": "üç aylık"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "Turist Sayısı (yıllık)",
+   "deger": -0.3,
+   "birim": "%",
+   "donem": "2026-08-21",
+   "tahmin": null,
+   "onceki": -4.02,
+   "kaynak_baslik": "Tourist Arrivals YoY",
+   "kaynak_periyot": "Jul",
+   "frekans": "aylık"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "Kapasite Kullanım Oranı",
+   "deger": 74.2,
+   "birim": "%",
+   "donem": "2026-09-21",
+   "tahmin": null,
+   "onceki": 73.5,
+   "kaynak_baslik": "Capacity Utilization",
+   "kaynak_periyot": "Sep",
+   "frekans": "aylık"
+  },
+  {
    "ulke": "ABD",
    "ad": "Enflasyon (yıllık)",
    "deger": 3.4,
@@ -353,6 +411,30 @@
    "tahmin": 3.3,
    "onceki": 3.3,
    "kaynak_baslik": "Michigan 5 Year Inflation Expectations Final",
+   "kaynak_periyot": "Aug",
+   "frekans": "aylık"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "ÜFE (yıllık)",
+   "deger": 5.4,
+   "birim": "%",
+   "donem": "2026-09-10",
+   "tahmin": 5.3,
+   "onceki": 4.8,
+   "kaynak_baslik": "PPI YoY",
+   "kaynak_periyot": "Aug",
+   "frekans": "aylık"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "ÜFE (aylık)",
+   "deger": 0.4,
+   "birim": "%",
+   "donem": "2026-09-10",
+   "tahmin": 0.4,
+   "onceki": 0.1,
+   "kaynak_baslik": "PPI MoM",
    "kaynak_periyot": "Aug",
    "frekans": "aylık"
   },
@@ -657,6 +739,54 @@
    "frekans": "aylık"
   },
   {
+   "ulke": "ABD",
+   "ad": "Kapasite Kullanım Oranı",
+   "deger": 76.3,
+   "birim": "%",
+   "donem": "2026-09-18",
+   "tahmin": 76.4,
+   "onceki": 76.3,
+   "kaynak_baslik": "Capacity Utilization",
+   "kaynak_periyot": "Aug",
+   "frekans": "aylık"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "Tüketici Harcamaları (çeyreklik)",
+   "deger": 3.2,
+   "birim": "%",
+   "donem": "2026-07-30",
+   "tahmin": null,
+   "onceki": 0.5,
+   "kaynak_baslik": "Real Consumer Spending QoQ Adv",
+   "kaynak_periyot": "Q2",
+   "frekans": "üç aylık"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "Faiz Projeksiyonu (1. yıl)",
+   "deger": 4.1,
+   "birim": "%",
+   "donem": "2026-09-16",
+   "tahmin": null,
+   "onceki": 3.6,
+   "kaynak_baslik": "Interest Rate Projection - 1st Yr",
+   "kaynak_periyot": "",
+   "frekans": "üç aylık"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "Faiz Projeksiyonu (2. yıl)",
+   "deger": 3.9,
+   "birim": "%",
+   "donem": "2026-09-16",
+   "tahmin": null,
+   "onceki": 3.4,
+   "kaynak_baslik": "Interest Rate Projection - 2nd Yr",
+   "kaynak_periyot": "",
+   "frekans": "üç aylık"
+  },
+  {
    "ulke": "Euro Bölgesi",
    "ad": "Enflasyon (yıllık)",
    "deger": 3.2,
@@ -702,6 +832,30 @@
    "onceki": 2.9,
    "kaynak_baslik": "ECB Consumer Inflation Expectations",
    "kaynak_periyot": "Aug",
+   "frekans": "aylık"
+  },
+  {
+   "ulke": "Euro Bölgesi",
+   "ad": "ÜFE (yıllık)",
+   "deger": 5.8,
+   "birim": "%",
+   "donem": "2026-09-03",
+   "tahmin": null,
+   "onceki": 4.6,
+   "kaynak_baslik": "PPI YoY",
+   "kaynak_periyot": "Jul",
+   "frekans": "aylık"
+  },
+  {
+   "ulke": "Euro Bölgesi",
+   "ad": "ÜFE (aylık)",
+   "deger": 1.6,
+   "birim": "%",
+   "donem": "2026-09-03",
+   "tahmin": 1.2,
+   "onceki": -0.3,
+   "kaynak_baslik": "PPI MoM",
+   "kaynak_periyot": "Jul",
    "frekans": "aylık"
   },
   {
@@ -881,6 +1035,42 @@
    "tahmin": 3.4,
    "onceki": 3.3,
    "kaynak_baslik": "M3 Money Supply YoY",
+   "kaynak_periyot": "Jul",
+   "frekans": "aylık"
+  },
+  {
+   "ulke": "Euro Bölgesi",
+   "ad": "Borç / GSYH",
+   "deger": 87.8,
+   "birim": "%",
+   "donem": "2026-04-22",
+   "tahmin": null,
+   "onceki": 87.0,
+   "kaynak_baslik": "Government Debt to GDP",
+   "kaynak_periyot": "2025",
+   "frekans": "yıllık"
+  },
+  {
+   "ulke": "Euro Bölgesi",
+   "ad": "Şirketlere Krediler (yıllık)",
+   "deger": 4.4,
+   "birim": "%",
+   "donem": "2026-08-27",
+   "tahmin": null,
+   "onceki": 4.0,
+   "kaynak_baslik": "Loans to Companies YoY",
+   "kaynak_periyot": "Jul",
+   "frekans": "aylık"
+  },
+  {
+   "ulke": "Euro Bölgesi",
+   "ad": "Hanehalkına Krediler (yıllık)",
+   "deger": 3.1,
+   "birim": "%",
+   "donem": "2026-08-27",
+   "tahmin": 2.9,
+   "onceki": 3.0,
+   "kaynak_baslik": "Loans to Households YoY",
    "kaynak_periyot": "Jul",
    "frekans": "aylık"
   },
