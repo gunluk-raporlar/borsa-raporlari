@@ -7,7 +7,7 @@ yalnizca LLM metninin icinde geciyordu. Ayni veriyle ayni etiketi veren,
 kaydedilebilen ve zaman icinde karsilastirilabilen bir katman yoktu.
 
 Bu modul:
-  1) data/makro.json'daki son gostergelerden kural tabanli rejim etiketi uretir,
+  1) data/makro-snapshot.json'daki kilitli gostergelerden kural tabanli rejim etiketi uretir,
   2) sektor aktarim matrisini hesaplar (site SEKTORLER tanimiyla ayni adlar),
   3) her kosuda data/makro-rejim/<tarih>.json olarak kaydeder -> rejim zaman
      serisi boylece birikmeye baslar (dezenflasyon gibi "degisim" temelli
@@ -23,7 +23,7 @@ import os
 import sys
 from datetime import datetime, timezone, timedelta
 
-MAKRO_YOL = "data/makro.json"
+MAKRO_YOL = "data/makro-snapshot.json"
 REJIM_DIR = "data/makro-rejim"
 
 # --- Sektor duyarliliklari: +2 = kanal yukselince sektor kazanir, -2 = kaybeder.
@@ -70,13 +70,20 @@ SEKTOR_HISSELER = {
 
 # --------------------------------------------------------------------------
 def gostergeleri_yukle(yol=MAKRO_YOL):
-    """data/makro.json -> {(ulke, ad): deger}. Okunamazsa {}."""
+    """Snapshot -> {(ulke, ad): deger}. Okunamazsa {}."""
     try:
         with io.open(yol, encoding="utf-8") as f:
             d = json.load(f)
     except Exception:
         return {}
     out = {}
+    if d.get("schema") == "borsa-raporlari/makro-snapshot":
+        for g in (d.get("records") or []):
+            try:
+                out[(str(g.get("country", "")), str(g.get("label", "")))] = float(g.get("value"))
+            except (TypeError, ValueError):
+                continue
+        return out
     for g in (d.get("gostergeler") or []):
         try:
             out[(str(g.get("ulke", "")), str(g.get("ad", "")))] = float(g.get("deger"))
@@ -245,9 +252,11 @@ def kaydet(rejim, dizin=REJIM_DIR):
         return None
 
 
-def son_kayit(dizin=REJIM_DIR):
+def son_kayit(dizin=REJIM_DIR, tarih=None):
     try:
         dosyalar = sorted(f for f in os.listdir(dizin) if f.endswith(".json"))
+        if tarih:
+            dosyalar = [f for f in dosyalar if f[:-5] < tarih]
         if not dosyalar:
             return None
         with io.open(os.path.join(dizin, dosyalar[-1]), encoding="utf-8") as f:
@@ -260,7 +269,8 @@ def uret(yol=MAKRO_YOL, kaydet_mi=True):
     g = gostergeleri_yukle(yol)
     if not g:
         return None
-    rejim = rejim_hesapla(g, onceki=son_kayit())
+    bugun = datetime.now(timezone(timedelta(hours=3))).strftime("%Y-%m-%d")
+    rejim = rejim_hesapla(g, onceki=son_kayit(tarih=bugun))
     aktarim = sektor_aktarimi(rejim)
     if kaydet_mi:
         rejim["kayit_yolu"] = kaydet(rejim)
@@ -270,7 +280,7 @@ def uret(yol=MAKRO_YOL, kaydet_mi=True):
 if __name__ == "__main__":
     sonuc = uret(kaydet_mi="--kaydet" in sys.argv)
     if not sonuc:
-        print("makro verisi okunamadi (data/makro.json).")
+        print("makro snapshot okunamadi (data/makro-snapshot.json).")
         sys.exit(1)
     print(ozet_metin(sonuc["rejim"], sonuc["aktarim"]))
     if sonuc["rejim"].get("kayit_yolu"):

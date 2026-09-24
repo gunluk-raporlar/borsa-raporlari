@@ -1,6 +1,6 @@
 name: Makro Analiz (GLM + DeepSeek yedek)
 on:
-  # Makro veri gunluk degismez; Pazartesi 07:00 TSİ (04:00 UTC) yeterli.
+  # 20:30 TSİ akşam snapshot'ı; Pazartesi 07:00 TSİ makro analizi bu kaydı okur.
   schedule:
     - cron: '0 4 * * 1'
   workflow_dispatch:

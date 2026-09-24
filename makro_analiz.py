@@ -2,12 +2,12 @@
 
 derin_analiz.py desenini izler: gunluk bottan BAGIMSIZ calisir, ZAI_API_KEY
 secret'iyla GLM'den uzun makro analizi ister; GLM alinamazsa gercek
-AMD_API_KEY ile DeepSeek-V4-Flash yedegine duser. Veri tabani bot.makro_cek()
-(TradingView ekonomik takvimi -> data/makro.json) uzerinden beslenir; model
-yalnizca bu kesin rakamlari kullanir. Hiç anahtar yoksa sayfa 404 VERMESIN
+AMD_API_KEY ile DeepSeek-V4-Flash yedegine duser. Veri tabani yalnizca
+rapor tarihinden bir önceki aksam snapshot'ından gelir; model bu kilitli
+cercevedeki rakamlari kullanir. Hiç anahtar yoksa sayfa 404 VERMESIN
 diye veri tablosuyla placeholder yazar (var olan iyi sayfayi bozmaz).
-Haftada bir (Pazartesi) ve workflow_dispatch ile calisir; makro veri
-gunluk degismez.
+Haftada bir (Pazartesi) ve workflow_dispatch ile calisir; veri bir gun onceki
+aksam snapshot'indan okunur.
 """
 import os
 
@@ -22,26 +22,45 @@ from datetime import datetime
 import zoneinfo
 
 import bot
+import makro_veri
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 logger = logging.getLogger("makro-analiz")
 
 
+def _birlestir(deger, birim):
+    if deger is None:
+        return "—"
+    if birim == "%":
+        return f"{deger}%"
+    if birim:
+        return f"{deger} {birim}"
+    return str(deger)
+
+
 def _veri_tablosu(makro):
-    """Gosterge tablosu HTML'i (sayfanin alt bolumu; her uretimde guncel)."""
+    """Genişletilmiş göstergeler, tahmin/önceki ve kaynak bilgisi tablosu."""
     satirlar = "".join(
-        f"<tr><td>{g['ulke']}</td><td>{g['ad']}</td>"
-        f"<td><strong>{g['deger']}{g['birim']}</strong></td><td>{g['donem']}</td></tr>"
+        "<tr>"
+        f"<td>{g['ulke']}</td><td>{g['ad']}</td>"
+        f"<td><strong>{_birlestir(g['deger'], g['birim'])}</strong></td>"
+        f"<td>{_birlestir(g.get('tahmin'), g['birim'])}</td>"
+        f"<td>{_birlestir(g.get('onceki'), g['birim'])}</td>"
+        f"<td>{g['donem']}</td><td>{g.get('frekans') or '—'}</td>"
+        f"<td>{g.get('kaynak', 'TradingView')}</td>"
+        "</tr>"
         for g in makro["gostergeler"]
     )
     return (
-        '<h2 class="section-title">Veri Tabanı (bu analizde kullanılan kesin rakamlar)</h2>'
+        '<h2 class="section-title">Veri Tabanı (analizde kullanılan kilitli göstergeler)</h2>'
         '<div class="card" style="padding:8px 24px 16px"><div class="tbl-wrap"><table>'
-        "<tr><th>Ülke</th><th>Gösterge</th><th>Son Değer</th><th>Dönem</th></tr>"
+        "<tr><th>Kapsam/Ülke</th><th>Gösterge</th><th>Gerçekleşen</th>"
+        "<th>Tahmin</th><th>Önceki</th><th>Dönem</th><th>Frekans</th><th>Kaynak</th></tr>"
         f"{satirlar}</table></div>"
         f'<p style="color:var(--muted);font-size:12.5px">Kaynak: {makro.get("kaynak", "")}'
-        f' &bull; güncelleme: {makro.get("guncelleme", "")}. Analiz metni yalnızca bu '
-        "tablodaki rakamlarla üretilir ve yayın öncesi doğrulama katmanından geçer.</p></div>"
+        f' &bull; snapshot: {makro.get("guncelleme", "")}. Analiz metni yalnızca bu '
+        "tablodaki rakamlarla üretilir; yoksa sayı yazılmaz ve yayın öncesi "
+        "deterministik doğrulamadan geçirilir.</p></div>"
     )
 
 
@@ -86,12 +105,15 @@ def main():
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     date_str = datetime.now(tz).strftime("%Y-%m-%d")
 
-    logger.info("Makro veri tabani guncelleniyor...")
-    makro = bot.makro_cek()
-    if not makro or not makro.get("gostergeler"):
-        logger.warning("Makro veri alinamadi; cikiliyor.")
-        return
-    logger.info("%d makro gosterge hazir.", len(makro["gostergeler"]))
+    logger.info("Onceki aksam makro snapshot'i yukleniyor...")
+    try:
+        snapshot = bot.makro_snapshot_cek(expected_report_date=date_str)
+        makro = makro_veri.legacy_data(snapshot)
+    except makro_veri.SnapshotError as exc:
+        logger.error("Geçerli makro snapshot yok: %s", exc)
+        return 1
+    logger.info("%d makro gosterge hazir (%s).", len(makro["gostergeler"]),
+                snapshot["snapshot_id"])
 
     zai = bool(os.environ.get("ZAI_API_KEY"))
     if not zai and not _GERCEK_AMD:
@@ -100,7 +122,7 @@ def main():
         return
 
     logger.info("Makroekonomik degerlendirme uretiliyor (GLM ana, DeepSeek yedek)...")
-    analiz = bot.makro_analiz_yap(yedek_amd=_GERCEK_AMD)
+    analiz = bot.makro_analiz_yap(yedek_amd=_GERCEK_AMD, snapshot=snapshot)
     if not analiz:
         logger.warning("Makro analiz uretilemedi; mevcut sayfa korunuyor/placeholder.")
         _placeholder_yaz(makro, eksik_anahtar=False)

@@ -76,67 +76,191 @@ def isim_duzelt(metin, adlar):
     return kalip.sub(_bak, metin), duzeltmeler
 
 
-# Enflasyon cumlelerindeki sayilar; "%31,5" ve "31,5%" bicimlerini yakalar.
-_SAYI = re.compile(r"%\s*(\d{1,2}(?:[.,]\d{1,2})?)|(?:\d{1,2}(?:[.,]\d{1,2})?)\s*%")
-_ENFLASYON_KELIME = re.compile(r"\b(enflasyon|tüfe|tufe)", re.IGNORECASE)  # ek almali kelimeler: "enflasyondaki"...
-# "yil sonu enflasyon BEKLENTISI %24" gercek oran degildir; dokunma.
-_BEKLENTI = re.compile(r"\b(beklenti|öngörü|ongoru|hedef)", re.IGNORECASE)
+# Enflasyon cumlelerindeki yuzdeler. Yuzde iki konumda da olabilir; en az bir
+# tanesi yuzde isareti icermelidir. Uc haneli degerleri de kapsar.
+_SAYI = re.compile(
+    r"(?:%\s*\d{1,3}(?:[.,]\d{1,3})?|\b\d{1,3}(?:[.,]\d{1,3})?\s*%)",
+    re.IGNORECASE,
+)
+_ENFLASYON_KELIME = re.compile(r"\b(enflasyon|tüfe|tufe)", re.IGNORECASE)
+_ENFLASYON_KELIME_DOKU = re.compile(
+    r"\b(enflasyon|tüfe|tufe|üfe|ufe)", re.IGNORECASE
+)
+# Ayni cumlede baska gostergeye ait yuzde varsa onu enflasyon sanmamak icin.
+_DIGER_GOSTERGE = re.compile(
+    r"\b(politika faiz[a-zçğıöşü]*|faiz[a-zçğıöşü]*|büyüme[a-zçğıöşü]*|"
+    r"işsizlik[a-zçğıöşü]*|cari denge|döviz rezerv[a-zçğıöşü]*)\b",
+    re.IGNORECASE,
+)
+# "yil sonu enflasyon BEKLENTISI %24" gercek oran degildir. Cumle genelinde
+# beklenti kelimesi varsa tum cumleyi atmak yerine, ilgili yuzdeyi atla.
+_BEKLENTI = re.compile(
+    r"\b(?:beklenti|öngörü|onguru|hedef)[a-zçğıöşü]*\b", re.IGNORECASE
+)
+# Veri tabanindaki ulke oranlarini cumledeki ulke ipucuna gore sec.
+_ULKE_FED = re.compile(
+    r"\b(?:ABD|Amerika(?:n)?|US|U\.S\.)\b", re.IGNORECASE
+)
+_ULKE_EU = re.compile(
+    r"\b(?:Euro(?: Bölgesi)?|Avrupa|ECB|Eurozone|Euro area|Bölgede)\b",
+    re.IGNORECASE,
+)
+# Merkez bankasi adlari, karsilastirma yapan cumlede de sahibi gosterir.
+_MERKEZ_FED = re.compile(r"\b(?:Federal Reserve|Fed)\b", re.IGNORECASE)
+_MERKEZ_EU = re.compile(
+    r"\b(?:Avrupa Merkez Bankası|ECB|European Central Bank|EZB)\b", re.IGNORECASE
+)
+# Veri tabaninda olmayan enflasyon kırılımlarını genel TUIK oranina zorlama.
+# Bir cumlede bu kırılımlardan biri varsa tum cumleyi temkinli olarak atla.
+_ALT_ENFLASYON = re.compile(
+    r"\b(çekirdek|enerji|gıda|hizmet|üretici|tüketici)\b", re.IGNORECASE
+)
 
 
-def enflasyon_duzelt(metin, oran_yuzde, tolerans=0.25):
-    """Enflasyon/TUFE gecen cumlelerde gercek orandan (puan bazinda) sapan
-    sayiyi duzeltir. Donus: (yeni_metin, duzeltmeler); duzeltme = (eski, yeni).
+def _kelime_mesafesi(cumle, pos, desen):
+    """Sayı ile gösterge kelimesi arasındaki yönlü karakter mesafesi.
+
+    Sayının hem solunda hem sağında gösterge kelimesi varsa mutlak başlangıç
+    mesafesi yanlış eşleşme yapabilir. Bu yüzden ilgili kenara olan mesafe
+    ölçülür: `%9,9 ve işsizlik %8,8` içinde işsizlik için `%8,8` seçilir.
     """
-    if not metin or oran_yuzde is None:
+    en_yakin = None
+    for k in desen.finditer(cumle):
+        if k.end() <= pos:
+            d = pos - k.end()
+        elif k.start() >= pos:
+            d = k.start() - pos
+        else:
+            d = 0
+        if en_yakin is None or d < en_yakin:
+            en_yakin = d
+    return en_yakin
+
+
+def _yuzde_degeri(yazi):
+    try:
+        return float(yazi.replace("%", "").replace(",", ".").strip())
+    except ValueError:
+        return None
+
+
+def _enflasyon_yuzde_temizle(yazi, dogru):
+    """Mevcut yuzde bicimini koruyarak dogru degeri yazar."""
+    return "%" + dogru if yazi.lstrip().startswith("%") else dogru + "%"
+
+
+def _ulke_anahtari(cumle, sayi_pos):
+    """Yuzdenin ulke ipucunu tr/us/eu olarak dondurur; belirsizse None.
+
+    Once sayidan once gelen acik merkez bankasi adi, sonra sayidan once gelen
+    en yakin ulke adi kullanilir. Boylece "ECB ... ABD'deki gibi" karsilastirmasi
+    Euro kipinda, "ABD enflasyonu %3,4, Euro enflasyonu %3,2" ise iki ayri
+    ulke olarak cozulur.
+    """
+    merkezler = []
+    for desen, anahtar in ((_MERKEZ_EU, "eu"), (_MERKEZ_FED, "us")):
+        for m in desen.finditer(cumle, 0, sayi_pos):
+            merkezler.append((sayi_pos - m.start(), anahtar))
+    if merkezler:
+        return min(merkezler)[1]
+
+    onceki = []
+    for desen, anahtar in ((_ULKE_FED, "us"), (_ULKE_EU, "eu")):
+        for m in desen.finditer(cumle, 0, sayi_pos):
+            onceki.append((m.start(), anahtar))
+    if onceki:
+        return max(onceki)[1]
+
+    sonraki = set()
+    for desen, anahtar in ((_ULKE_FED, "us"), (_ULKE_EU, "eu")):
+        if desen.search(cumle, sayi_pos):
+            sonraki.add(anahtar)
+    if len(sonraki) == 1:
+        return next(iter(sonraki))
+    if len(sonraki) > 1:
+        return None
+    return "tr"
+
+
+def enflasyon_duzelt(metin, oran_yuzde, tolerans=0.005, oranlar=None):
+    """Enflasyon/TUFE yuzdelerini ulke ve gosterge baglamindan duzeltir.
+
+    `oranlar` = {"tr": .., "us": .., "eu": ..}. Verilmedigi ulke icin
+    o cumledeki orana dokunulmaz. Ayni cumlede birden fazla ulke orani
+    varsa her ulkenin enflasyona en yakin yuzdesi ayri ayri denetlenir.
+    """
+    oranlar = dict(oranlar or {})
+    if oran_yuzde is not None and "tr" not in oranlar:
+        oranlar["tr"] = oran_yuzde
+    if not metin or not oranlar:
         return metin, []
-    dogru_yazi = ("%{:.1f}".format(oran_yuzde)).replace(".", ",")
+
     duzeltmeler = []
     cikti = []
     for satir in metin.split("\n"):
         parcalar = re.split(r"(?<=[.!?])\s+", satir)
         yeni_parcalar = []
         for cumle in parcalar:
-            if _ENFLASYON_KELIME.search(cumle) and not _BEKLENTI.search(cumle):
-                for m in _SAYI.finditer(cumle):
-                    yazi = m.group(0)
-                    sayi = float(yazi.replace("%", "").replace(",", ".").strip())
-                    if abs(sayi - oran_yuzde) > tolerans:
-                        dogru = dogru_yazi if yazi.startswith("%") else dogru_yazi[1:] + "%"
-                        cumle = cumle[: m.start()] + dogru + cumle[m.end():]
-                        duzeltmeler.append((yazi, dogru))
-                        break  # cumle basina tek duzeltme yeter
+            if _ALT_ENFLASYON.search(cumle):
+                yeni_parcalar.append(cumle)
+                continue
+            en_iyi = {}
+            for m in _SAYI.finditer(cumle):
+                deger = _yuzde_degeri(m.group(0))
+                if deger is None:
+                    continue
+                d_enf = _kelime_mesafesi(cumle, m.start(), _ENFLASYON_KELIME)
+                if d_enf is None:
+                    continue
+                # Beklenti/hedef veya baska gostergeye daha yakin yuzdeyi alma.
+                d_bek = _kelime_mesafesi(cumle, m.start(), _BEKLENTI)
+                d_diger = _kelime_mesafesi(cumle, m.start(), _DIGER_GOSTERGE)
+                if ((d_bek is not None and d_bek < d_enf)
+                        or (d_diger is not None and d_diger < d_enf)):
+                    continue
+                anahtar = _ulke_anahtari(cumle, m.start())
+                if anahtar is None:
+                    continue
+                hedef = oranlar.get(anahtar)
+                if hedef is None or abs(deger - hedef) <= tolerans:
+                    continue
+                # Ayni ulke icin yalnizca enflasyona en yakin yuzdeyi duzelt.
+                if anahtar not in en_iyi or d_enf < en_iyi[anahtar][0]:
+                    en_iyi[anahtar] = (d_enf, m, hedef)
+
+            for _, m, hedef in sorted(en_iyi.values(), key=lambda x: x[1].start(),
+                                      reverse=True):
+                yazi = m.group(0)
+                dogru_yazi = ("%.3f" % hedef).rstrip("0").rstrip(".").replace(".", ",")
+                dogru = _enflasyon_yuzde_temizle(yazi, dogru_yazi)
+                cumle = cumle[:m.start()] + dogru + cumle[m.end():]
+                duzeltmeler.append((yazi, dogru))
             yeni_parcalar.append(cumle)
         cikti.append(" ".join(yeni_parcalar) if len(parcalar) > 1 else yeni_parcalar[0])
     return "\n".join(cikti), duzeltmeler
 
 
 # --- Politika faizi denetimi ---------------------------------------------------
-# "TCMB politika faizi %43" gibi cumlelerdeki yanlis oran data/makro.json'daki
-# GERCEK oranla (makro_cek -> TradingView) karsilastirilir; tolerans disindaysa
+# "TCMB politika faizi %43" gibi cumlelerdeki yanlis oran akşam makro
+# snapshot'indaki GERCEK oranla karsilastirilir; tolerans disindaysa
 # duzeltilir. Coklu-yuzde cumlelerde ("enflasyon %31,5 iken faiz %45") hangi
 # sayinin hangi konuya ait oldugunu KELIME MESAFESI belirler; boylece iki
-# denetim birbirinin cumlesine karismaz. "Beklenti/hedef" gecen cümleler (gercek
-# oran degildir) enflasyon denetiminde oldugu gibi atlanir.
+# denetim birbirinin cumlesine karismaz. Beklenti/hedef yuzdesi aday
+# elemesinde atlanir; ayni cumledeki gercek faiz yine duzeltilebilir.
 _FAIZ_KELIME = re.compile(
-    r"\b(politika faiz|faiz oran|faizlerin|faizi|faiz|TCMB|Fed|merkez bankas)",
+    r"\b(politika faiz[a-zçğıöşü]*|faiz[a-zçğıöşü]*|TCMB|Fed|"
+    r"merkez bankas[a-zçğıöşü]*)\b",
     re.IGNORECASE)
-_ENFLASYON_KELIME_DOKU = re.compile(r"\b(enflasyon|tüfe|tufe|üfe|ufe)", re.IGNORECASE)
-_ULKE_BAGLAM = re.compile(r"\b(Fed|ABD|Amerika)\b|\b(avrupa|euro bölgesi|ECB)\b", re.IGNORECASE)
-_ULKE_FED = re.compile(r"\b(Fed|ABD|Amerika)\b", re.IGNORECASE)
-_ULKE_EU = re.compile(r"\b(avrupa merkez bankası|euro bölgesi|ECB)\b", re.IGNORECASE)
+# "Merkez bankasi %2 hedefi" ifadesinde hedefi faiz sanmamak icin
+# yalnizca fiili faiz sahibi ifadeleri kullanilir.
+_FAIZ_SAHIP_KELIME = re.compile(
+    r"\b(politika faiz[a-zçğıöşü]*|faiz[a-zçğıöşü]*|TCMB|Fed)\b",
+    re.IGNORECASE)
+# Genel Avrupa ipucu, "Avrupa faizi" gibi yalnizca bolgesel ifadeler icin.
+_ULKE_BAGLAM = re.compile(r"\b(avrupa|euro bölgesi|ECB)\b", re.IGNORECASE)
 
 
-def _kelime_mesafesi(cumle, pos, desen):
-    """pos konumundaki sayiya cumledeki en yakin desen eslesmesinin uzakligi."""
-    en_yakin = None
-    for k in desen.finditer(cumle):
-        d = abs(k.start() - pos)
-        if en_yakin is None or d < en_yakin:
-            en_yakin = d
-    return en_yakin
-
-
-def faiz_duzelt(metin, oranlar, tolerans=0.5):
+def faiz_duzelt(metin, oranlar, tolerans=0.005):
     """Politika faizi cumlelerinde gercek orandan sapan sayiyi duzeltir.
 
     oranlar: {"tr": 37.0, "us": 4.0, "eu": 2.65} biciminde ulke bazli oranlar
@@ -150,9 +274,12 @@ def faiz_duzelt(metin, oranlar, tolerans=0.5):
         parcalar = re.split(r"(?<=[.!?])\s+", satir)
         yeni_parcalar = []
         for cumle in parcalar:
-            if (_FAIZ_KELIME.search(cumle) and not _BEKLENTI.search(cumle)
-                    and _SAYI.search(cumle)):
-                if _ULKE_FED.search(cumle):
+            if _FAIZ_KELIME.search(cumle) and _SAYI.search(cumle):
+                if _MERKEZ_FED.search(cumle):
+                    oran = oranlar.get("us")
+                elif _MERKEZ_EU.search(cumle):
+                    oran = oranlar.get("eu")
+                elif _ULKE_FED.search(cumle):
                     oran = oranlar.get("us")
                 elif _ULKE_EU.search(cumle):
                     oran = oranlar.get("eu")
@@ -170,11 +297,20 @@ def faiz_duzelt(metin, oranlar, tolerans=0.5):
                 aday = None
                 for m in _SAYI.finditer(cumle):
                     ef = _kelime_mesafesi(cumle, m.start(), _ENFLASYON_KELIME_DOKU)
-                    ff = _kelime_mesafesi(cumle, m.start(), _FAIZ_KELIME)
+                    ff = _kelime_mesafesi(cumle, m.start(), _FAIZ_SAHIP_KELIME)
+                    fb = _kelime_mesafesi(cumle, m.start(), _BEKLENTI)
+                    if ff is None:
+                        ff = _kelime_mesafesi(cumle, m.start(), _FAIZ_KELIME)
+                        # "Merkez bankasi %2 hedefi" cumlesinde genel kurum
+                        # adini faiz sahibi sayma.
+                        if fb is not None and (ff is None or fb <= ff + 5):
+                            continue
                     if ef is not None and (ff is None or ef < ff):
                         continue  # bu yuzde enflasyona ait
                     if ff is None:
                         continue  # faiz kelimesiyle arada iliski yok
+                    if fb is not None and fb <= ff:
+                        continue  # bu yuzde faiz beklentisi/hedefi
                     aday = m
                     break
                 if aday is not None:
@@ -190,6 +326,186 @@ def faiz_duzelt(metin, oranlar, tolerans=0.5):
             yeni_parcalar.append(cumle)
         cikti.append(" ".join(yeni_parcalar) if len(parcalar) > 1 else yeni_parcalar[0])
     return "\n".join(cikti), duzeltmeler
+
+
+# Snapshot'taki kalan makro gostergeleri icin genel deterministik denetim.
+_GOSTERGE_KELIMELER = {
+    "producer_prices_yoy": re.compile(r"\b(?:ÜFE|üretici fiyat)\w*", re.IGNORECASE),
+    "core_inflation_yoy": re.compile(r"\bçekirdek\s+enflasyon\w*", re.IGNORECASE),
+    "pce_inflation_yoy": re.compile(r"\byıllık\s+(?:PCE enflasyon|PCE fiyat endeksi)\w*", re.IGNORECASE),
+    "pce_inflation_mom": re.compile(r"\baylık\s+(?:PCE enflasyon|PCE fiyat endeksi)\w*", re.IGNORECASE),
+    "core_pce_yoy": re.compile(r"\bçekirdek\s+yıllık\s+PCE\w*", re.IGNORECASE),
+    "core_pce_mom": re.compile(r"\bçekirdek\s+aylık\s+PCE\w*", re.IGNORECASE),
+    "inflation_expectation_1y": re.compile(r"\b1 yıllık\s+enflasyon beklentisi\w*", re.IGNORECASE),
+    "inflation_expectation_5y": re.compile(r"\b5 yıllık\s+enflasyon beklentisi\w*", re.IGNORECASE),
+    "growth_yoy": re.compile(r"\b(?:yıllık büyüme|GSYH büyümesi|büyüme)\w*", re.IGNORECASE),
+    "growth_qoq": re.compile(r"\bçeyreklik\s+büyüme\w*", re.IGNORECASE),
+    "unemployment_rate": re.compile(r"\bişsizlik(?:\s+oranı)?\w*", re.IGNORECASE),
+    "u6_unemployment": re.compile(r"\bU-6\s+işsizlik\w*", re.IGNORECASE),
+    "participation_rate": re.compile(r"\b(?:ekonomik katılım|katılım oranı)\w*", re.IGNORECASE),
+    "nonfarm_payroll": re.compile(r"\b(?:NFP|işsizlik dışı istihdam)\w*", re.IGNORECASE),
+    "wage_growth_yoy": re.compile(r"\b(?:yıllık ücret artışı|ücret artışı)\w*", re.IGNORECASE),
+    "wage_growth_mom": re.compile(r"\b(?:aylık ücret artışı|ücret artışı)\w*", re.IGNORECASE),
+    "industrial_production_yoy": re.compile(r"\b(?:yıllık sanayi üretimi|sanayi üretimi)\w*", re.IGNORECASE),
+    "industrial_production_mom": re.compile(r"\b(?:aylık sanayi üretimi|sanayi üretimi)\w*", re.IGNORECASE),
+    "retail_sales_yoy": re.compile(r"\b(?:yıllık perakende satış|perakende satış)\w*", re.IGNORECASE),
+    "retail_sales_mom": re.compile(r"\b(?:aylık perakende satış|perakende satış)\w*", re.IGNORECASE),
+    "pmi_manufacturing": re.compile(r"\b(?:imalat PMI|üretim PMI)\w*", re.IGNORECASE),
+    "pmi_services": re.compile(r"\b(?:hizmetler PMI|hizmet PMI)\w*", re.IGNORECASE),
+    "pmi_composite": re.compile(r"\b(?:bileşik PMI|composite PMI)\w*", re.IGNORECASE),
+    "consumer_confidence": re.compile(r"\btüketici güven\w*", re.IGNORECASE),
+    "business_confidence": re.compile(r"\biş güven\w*", re.IGNORECASE),
+    "economic_sentiment": re.compile(r"\b(?:ekonomik beklenti endeksi|ekonomik güven)\w*", re.IGNORECASE),
+    "current_account": re.compile(r"\bcari\s+(?:denge|işlem dengesi)\w*", re.IGNORECASE),
+    "trade_balance": re.compile(r"\bticaret dengesi\w*", re.IGNORECASE),
+    "exports": re.compile(r"\b(?:mal ihracatı|ihracat)\w*", re.IGNORECASE),
+    "imports": re.compile(r"\b(?:mal ithalatı|ithalat)\w*", re.IGNORECASE),
+    "budget_balance": re.compile(r"\bbütçe dengesi\w*", re.IGNORECASE),
+    "budget_gdp": re.compile(r"\bbütçe\s*/\s*GSYH\w*", re.IGNORECASE),
+    "fx_reserves": re.compile(r"\b(?:döviz\s+)?rezerv\w*", re.IGNORECASE),
+    "m3_yoy": re.compile(r"\bM3\s+para arzı\w*", re.IGNORECASE),
+    "consumer_credit": re.compile(r"\btüketici kredisi\w*", re.IGNORECASE),
+    "initial_jobless_claims": re.compile(r"\bilk işsizlik başvurusu\w*", re.IGNORECASE),
+    "continuing_jobless_claims": re.compile(r"\bdevam eden işsizlik başvurusu\w*", re.IGNORECASE),
+    "job_openings": re.compile(r"\b(?:JOLTs|açık iş sayısı)\w*", re.IGNORECASE),
+    "new_home_sales": re.compile(r"\byeni konut satış\w*", re.IGNORECASE),
+    "durable_goods": re.compile(r"\bdayanıklı mal sipariş\w*", re.IGNORECASE),
+}
+_SAYI_YUZDELI = re.compile(
+    r"(?<![\w.])(?:%\s*-?\d{1,3}(?:[.,]\d{1,3})?"
+    r"|-?\d{1,3}(?:[.,]\d{1,3})?\s*%)(?!\w)"
+)
+_SAYI_ONLIKLI = re.compile(
+    r"(?<![\w.])(?:%\s*-?\d+[.,]\d+|-?\d+[.,]\d+\s*%?)(?!\w)"
+)
+
+
+def _sayi_bicimle(deger, yazi, birim):
+    """Kaynak ondalik duzenini koruyarak snapshot degerini yazar."""
+    if deger == int(deger):
+        sayi = str(int(deger))
+    else:
+        sayi = ("%.3f" % deger).rstrip("0").rstrip(".")
+        if "." in yazi and "," not in yazi:
+            sayi = sayi.replace(".", ".")
+        else:
+            sayi = sayi.replace(".", ",")
+    yuzde = birim == "%"
+    if yazi.lstrip().startswith("%"):
+        return ("%" + sayi) if yuzde else sayi
+    if yazi.endswith("%"):
+        return (sayi + "%") if yuzde else sayi
+    return ("%" + sayi) if yuzde else sayi
+
+
+def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005):
+    """Snapshot'taki diger gercek gostergeleri ulke/indikator baglaminda duzeltir."""
+    if not metin or not gostergeler:
+        return metin, []
+    duzeltmeler, cikti = [], []
+    for satir in metin.split("\n"):
+        parcalar = re.split(r"(?<=[.!?])\s+", satir)
+        yeni_parcalar = []
+        for cumle in parcalar:
+            if _BEKLENTI.search(cumle):
+                yeni_parcalar.append(cumle)
+                continue
+            duzeltilecek = []
+            yuzdeli_gostergeler = {
+                "producer_prices_yoy", "core_inflation_yoy",
+                "pce_inflation_yoy", "pce_inflation_mom", "core_pce_yoy",
+                "core_pce_mom", "inflation_expectation_1y",
+                "inflation_expectation_5y", "growth_yoy", "growth_qoq",
+                "unemployment_rate", "u6_unemployment", "participation_rate",
+                "wage_growth_yoy", "wage_growth_mom",
+                "industrial_production_yoy", "industrial_production_mom",
+                "retail_sales_yoy", "retail_sales_mom", "budget_gdp",
+                "m3_yoy", "consumer_credit", "durable_goods",
+            }
+            for gosterge, desen in _GOSTERGE_KELIMELER.items():
+                if not desen.search(cumle):
+                    continue
+                if gosterge == "unemployment_rate" and "U-6" in cumle:
+                    continue
+                adaylar = []
+                sayi_deseni = (_SAYI_YUZDELI if gosterge in yuzdeli_gostergeler
+                               else _SAYI_ONLIKLI)
+                for sayi_m in sayi_deseni.finditer(cumle):
+                    deger = _yuzde_degeri(sayi_m.group(0))
+                    if deger is None:
+                        continue
+                    d_ind = _kelime_mesafesi(cumle, sayi_m.start(), desen)
+                    if d_ind is None or d_ind > 50:
+                        continue
+                    ulke = _ulke_anahtari(cumle, sayi_m.start())
+                    hedef = (gostergeler.get(ulke) or {}).get(gosterge) if ulke else None
+                    if hedef is not None:
+                        adaylar.append((d_ind, sayi_m, hedef, deger))
+                if adaylar:
+                    yakin, sayi_m, hedef, deger = min(
+                        adaylar, key=lambda x: x[0])
+                    if abs(deger - hedef) > tolerans:
+                        duzeltilecek.append((gosterge, yakin, sayi_m, hedef))
+            for gosterge, _, m, hedef in sorted(
+                    duzeltilecek, key=lambda x: x[2].start(), reverse=True):
+                yazi = m.group(0)
+                birim = "%" if gosterge in yuzdeli_gostergeler else ""
+                dogru = _sayi_bicimle(hedef, yazi, birim)
+                cumle = cumle[:m.start()] + dogru + cumle[m.end():]
+                duzeltmeler.append((gosterge, yazi, dogru))
+            yeni_parcalar.append(cumle)
+        cikti.append(" ".join(yeni_parcalar) if len(parcalar) > 1 else yeni_parcalar[0])
+    return "\n".join(cikti), duzeltmeler
+
+
+_SAYI_MARKET = re.compile(r"(?<![\w.])-?\d{1,8}(?:[.,]\d+)?(?![\w])")
+
+
+def piyasa_serileri_duzelt(metin, seriler, tolerans=0.005):
+    """Gece piyasa snapshot'ındaki değerleri metinde deterministik düzeltir."""
+    if not metin or not seriler:
+        return metin, []
+    duzeltmeler, cikti = [], []
+    for satir in metin.split("\n"):
+        cumleler = re.split(r"(?<=[.!?])\s+", satir)
+        yeni = []
+        for cumle in cumleler:
+            duzeltilecek = []
+            for r in seriler:
+                if r.get("indicator") in {"bist30", "bist100"}:
+                    continue
+                etiket = str(r.get("label", ""))
+                if not etiket:
+                    continue
+                etiket_m = re.search(r"(?<!\w)" + re.escape(etiket) + r"(?!\w)",
+                                     cumle, re.IGNORECASE)
+                if not etiket_m:
+                    continue
+                sonra = cumle[etiket_m.end():]
+                ayrac = re.match(
+                    r"\s*(?:endeksi|değeri|seviyesi|fiyatı|kapanışı|getirisi|"
+                    r"endekse|at|level|price)?\s*(?:[:=-]\s*|[ \t]+)?",
+                    sonra, re.IGNORECASE)
+                sayi_bas = etiket_m.end() + (ayrac.end() if ayrac else 0)
+                sayi_m = _SAYI_MARKET.match(cumle, sayi_bas)
+                if not sayi_m:
+                    continue
+                deger = _yuzde_degeri(sayi_m.group(0))
+                if deger is None:
+                    continue
+                hedef = float(r["value"])
+                if abs(deger - hedef) > tolerans:
+                    duzeltilecek.append((sayi_m, hedef, r.get("unit", ""), etiket))
+            for m, hedef, birim, etiket in sorted(
+                    duzeltilecek, key=lambda x: x[0].start(), reverse=True):
+                yazi = m.group(0)
+                dogru = _sayi_bicimle(hedef, yazi, birim)
+                cumle = cumle[:m.start()] + dogru + cumle[m.end():]
+                duzeltmeler.append((etiket, yazi, dogru))
+            yeni.append(cumle)
+        cikti.append(" ".join(yeni) if len(yeni) > 1 else yeni[0])
+    return "\n".join(cikti), duzeltmeler
+
 
 # Raporlarda gecen "BIST 30 endeksi 4.200-4.250 direnc bandi" gibi ifadeler,
 # endeksin gercek seviyesiyle (or. 16.372) karsilastirilir. Sayi, toleransin
@@ -292,19 +608,25 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15):
 
 
 def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
-                   faiz_oranlari=None):
+                   faiz_oranlari=None, enflasyon_oranlari=None,
+                   makro_gostergeleri=None, piyasa_serileri=None):
     """Tum dogrulama zinciri. Donus sozlugu:
     {"metin": ..., "isim_duzeltme": [...], "enflasyon_duzeltme": [...],
-     "endeks_duzeltme": [...], "endeks_uyari": [...], "faiz_duzeltme": [...]}.
-    faiz_oranlari: {"tr": .., "us": .., "eu": ..} — makro.json politika faizleri.
+     "endeks_duzeltme": [...], "endeks_uyari": [...], "faiz_duzeltme": [...],
+     "makro_duzeltme": [...], "piyasa_duzeltme": [...]}.
+    `makro_gostergeleri`: makro snapshot'inin ulke/indikator deger sozlugu.
     Hicbir durumda istisna yukseltmez; cagiran taraf zaten sarmaladi.
     """
     metin, isim = isim_duzelt(metin, adlar)
-    metin, enf = enflasyon_duzelt(metin, enflasyon_yuzde)
+    metin, enf = enflasyon_duzelt(metin, enflasyon_yuzde, oranlar=enflasyon_oranlari)
     metin, faiz = faiz_duzelt(metin, faiz_oranlari)
+    metin, makro = makro_gosterge_duzelt(metin, makro_gostergeleri)
+    metin, piyasa = piyasa_serileri_duzelt(metin, piyasa_serileri)
     metin, endeks, uyari = endeks_seviye_duzelt(metin, endeks_seviyesi)
     return {"metin": metin, "isim_duzeltme": isim, "enflasyon_duzeltme": enf,
-            "endeks_duzeltme": endeks, "endeks_uyari": uyari, "faiz_duzeltme": faiz}
+            "endeks_duzeltme": endeks, "endeks_uyari": uyari,
+            "faiz_duzeltme": faiz, "makro_duzeltme": makro,
+            "piyasa_duzeltme": piyasa}
 
 
 if __name__ == "__main__":
@@ -335,14 +657,77 @@ if __name__ == "__main__":
     assert "%31,5" in s[0], "enflasyon yuzdesi faiz denetimince bozuldu!"
     assert "%24" in s[0], "beklenti cumlesine dokunuldu!"
     assert len(s[1]) == 2, f"beklenen 2 duzeltme, gelen {len(s[1])}"
+
+    # Ayni cumlede merkez bankasi hedefi ve gercek Federal Reserve faizi vardir;
+    # yalnizca gercek faiz duzeltilir.
+    hedefli_faiz = ("Merkez bankasının %2 hedefi varken Federal Reserve "
+                    "politika faizi %37 seviyesindedir.")
+    hf = faiz_duzelt(hedefli_faiz, ORAN)
+    assert "%2" in hf[0] and "%4" in hf[0] and "%37" not in hf[0], "hedef/faiz ayrimi basarisiz!"
+
+    # Ayni durum ayri cumlelerde oldugunda da hedef oranı korunur.
+    ayri_hedefli_faiz = (
+        "Merkez bankasının %2 hedefi hâlâ uzak. "
+        "Bu bağlamda Federal Reserve politika faizi %37 seviyesindedir.")
+    ahf = faiz_duzelt(ayri_hedefli_faiz, ORAN)
+    assert "%2" in ahf[0] and "%4" in ahf[0] and "%37" not in ahf[0], "ayri hedef/faiz ayrimi basarisiz!"
     print("dogrulama.py: tum kendini testler gecti.")
 
     ornek2 = "Enflasyon %28,4 seviyesinde yatay seyrediyor."
-    sonuc2 = metin_dogrula(ornek2, ADLAR, enflasyon_yuzde=31.51)
+    sonuc2 = metin_dogrula(ornek2, ADLAR, enflasyon_yuzde=31.51,
+                           enflasyon_oranlari={"tr": 31.51})
     print(sonuc2["metin"])
-    assert "%31,5" in sonuc2["metin"], "enflasyon duzelmedi!"
+    assert "%31,51" in sonuc2["metin"], "enflasyon duzelmedi!"
 
-    ornek3 = "Yıl sonu enflasyon beklentisi %24 olarak korunmalı."  # beklenti: dokunma
+    # Ulke baglami: ABD/Euro enflasyonu Turkiye oraniyla degistirilmemeli.
+    ENF_ORAN = {"tr": 31.51, "us": 3.4, "eu": 3.2}
+    ulke_ornek = ("ABD'de yıllık enflasyon %3,3 seviyesinde. "
+                  "Euro Bölgesi'nde yıllık enflasyon %3,2 olarak açıklandı. "
+                  "Türkiye'de yıllık enflasyon %28,4 seviyesinde.")
+    su = metin_dogrula(ulke_ornek, ADLAR, enflasyon_yuzde=31.51,
+                       enflasyon_oranlari=ENF_ORAN)
+    print(su["metin"])
+    assert "%3,4" in su["metin"], "ABD enflasyonu duzeltilmedi!"
+    assert "%3,2" in su["metin"], "Euro enflasyonu bozuldu!"
+    assert "%31,51" in su["metin"], "Turkiye enflasyonu duzeltilmedi!"
+    print("uluslararasi enflasyon baglami testi gecti.")
+
+    # Canli sayfadaki hatanin birebir regresyonu: iki yabanci ulke orani
+    # yanlis olarak Turkiye oranina cevrilmemeli.
+    canli_hata = ("ABD'deki yıllık enflasyon oranı %31,5 seviyesinde. "
+                  "Avrupa Merkez Bankası (ECB) yıllık enflasyon oranını %31,5 "
+                  "olarak açıkladı.")
+    sh = metin_dogrula(canli_hata, ADLAR, enflasyon_yuzde=31.51,
+                       enflasyon_oranlari=ENF_ORAN)
+    assert "%3,4" in sh["metin"] and "%3,2" in sh["metin"], "canli hata duzelmedi!"
+    assert len(sh["enflasyon_duzeltme"]) == 2, "iki yanlis oran kaydedilmedi!"
+
+    # Karsilastirma yapan cumlede ECB sahibi olmali; "ABD'deki gibi" ifadesi
+    # Euro oranini ABD oranina cevirmemeli.
+    karsilastirma = ("ECB, enflasyonu ABD'deki gibi kontrol altına alamadı; "
+                     "yıllık enflasyon %31,5 olarak gerçekleşti.")
+    sk = metin_dogrula(karsilastirma, ADLAR, enflasyon_yuzde=31.51,
+                       enflasyon_oranlari=ENF_ORAN)
+    assert "%3,2" in sk["metin"] and "%3,4" not in sk["metin"], "ECB baglami bozuk!"
+
+    # Ayni cumlede iki ulke varsa her oran kendi ulkesine gore duzeltilir.
+    iki_ulke = "ABD enflasyonu %31,5, Euro Bölgesi enflasyonu %31,5."
+    si = metin_dogrula(iki_ulke, ADLAR, enflasyon_yuzde=31.51,
+                       enflasyon_oranlari=ENF_ORAN)
+    assert si["metin"] == "ABD enflasyonu %3,4, Euro Bölgesi enflasyonu %3,2.", si["metin"]
+
+    # Beklenti/hedef orani, alt enflasyon ve baska gosterge oranlari genel
+    # (TUIK) oraniyla degistirilmemeli.
+    korumalar = (
+        "Yıl sonu enflasyon beklentisi %24 olarak korunmalı. "
+        "Enerji enflasyonu %25 seviyesinde. "
+        "Enflasyon %28,4. Büyüme %2,3.")
+    sp = metin_dogrula(korumalar, ADLAR, enflasyon_yuzde=31.51,
+                       enflasyon_oranlari=ENF_ORAN)
+    assert "%24" in sp["metin"] and "%25" in sp["metin"], "beklenti/alt enflasyon bozuldu!"
+    assert "%31,51" in sp["metin"] and "%2,3" in sp["metin"], "gosterge karisimi bozuldu!"
+
+    ornek3 = "Yıl sonu enflasyon beklentisi %24 olarak korunmalı."  # geriye uyumluluk
     sonuc3 = metin_dogrula(ornek3, ADLAR, enflasyon_yuzde=31.51)
     assert "%24" in sonuc3["metin"], "beklenti cumlesine dokunulmamaliydi!"
 

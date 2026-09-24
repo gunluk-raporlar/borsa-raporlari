@@ -1,0 +1,40 @@
+name: Makro Akşam Snapshot
+on:
+  schedule:
+    # 20:30 Türkiye saati (UTC+3) = 17:30 UTC. Rapor bu veriyi ertesi sabah okur.
+    - cron: '30 17 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: makro-snapshot
+  cancel-in-progress: false
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Kutuphaneleri kur
+        run: pip install -r requirements.txt
+      - name: Canli makro verisini akşam snapshot'a yaz
+        env:
+          TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
+        run: python -u makro_snapshot.py
+      - name: Snapshot degisikliklerini yayinla
+        run: |
+          git config user.name "borsa-bot"
+          git config user.email "borsa-bot@users.noreply.github.com"
+          git add data/makro.json data/makro-snapshot.json data/makro-gecmis data/enflasyon.json data/makro-rejim
+          if git diff --cached --quiet; then
+            echo "Snapshot degismedi; commit atlandi."
+            exit 0
+          fi
+          git commit -m "Aksam makro snapshot guncellemesi"
+          git pull --rebase -X theirs origin main
+          git push origin main

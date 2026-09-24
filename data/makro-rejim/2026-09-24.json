@@ -1,6 +1,6 @@
 {
- "buyume": 2.3,
- "cari_denge": 0.04,
+ "buyume": 1.1,
+ "cari_denge": 0.036,
  "eksik_kanallar": [
   "kur (TL değişimi)",
   "emtia",
@@ -13,26 +13,26 @@
   "global risk (VIX/DXY/UST10Y/Brent)",
   "yabancı takas oranı / forward P/E"
  ],
- "enflasyon": 31.51,
- "enflasyon_seviyesi": "yüksek",
+ "enflasyon": 1.84,
+ "enflasyon_seviyesi": "düşük",
  "enflasyon_yonu": "seri yeni (kayit birikiyor)",
- "etiket": "yüksek enflasyon + sıkı para politikası (5.49 puan reel faiz) · ılımlı iç talep",
+ "etiket": "düşük enflasyon + sıkı para politikası (35.16 puan reel faiz) · zayıf iç talep",
  "globall": {
   "ABD": {
-   "enflasyon": 3.4,
+   "enflasyon": 2.4,
    "faiz": 4.0
   },
   "Euro Bölgesi": {
-   "enflasyon": 3.2,
+   "enflasyon": 2.4,
    "faiz": 2.65
   }
  },
- "ic_talep": "ılımlı",
+ "ic_talep": "zayıf",
  "issizlik": 8.1,
- "olusturma": "2026-09-24T08:15:43+03:00",
+ "olusturma": "2026-09-24T17:45:32+03:00",
  "para_durusu": "sıkı",
  "politika_faizi": 37.0,
- "reel_faiz": 5.49,
- "rezerv": 68.44,
+ "reel_faiz": 35.16,
+ "rezerv": 68.444,
  "tarih": "2026-09-24"
 }

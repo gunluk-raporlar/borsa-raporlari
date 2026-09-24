@@ -34,6 +34,45 @@ GitHub Actions (cron) ──▶ bot.py rapor üretir ──▶ reports/*.html �
 | `hisse_analiz.py` | Elle eklenen hisse bölümleri: açıklanan bilanço tablosu (İş Yatırım'dan çekilir) + değerlendirme metinleri (veri: `data/hisse-analiz/<KOD>.json`) |
 | `hisse_yenile.py` | Bilanço/metin güncellendikten sonra hisse sayfalarını CI beklemeden yerelde yeniden üretir |
 
+## Akşam makro snapshot akışı
+
+Makro sayıları artık doğrudan canlı kaynaktan rapora karıştırılmaz:
+
+1. `.github/workflows/makro-snapshot.yml` her gün **20:30 TSİ**'de canlı veriyi çeker.
+2. `makro_snapshot.py`, semayı doğrulayıp `data/makro-snapshot.json` ve
+   `data/makro-gecmis/YYYY-MM-DD.json` dosyalarına yazar. Cache'e düşerse yeni
+   akşam snapshot'ı üretilmez.
+3. D+1 günkü günlük rapor, derin analiz ve haftalık makro analizi yalnızca
+   `data/makro-gecmis/D.json` kaydını okur. Böylece aynı akşam 20:30'dan sonra
+   elle çalıştırılan raporlar da veri kaymasına uğramaz.
+4. Prompt, HTML veri tablosu, `makro_rejim.py` ve `dogrulama.py` aynı snapshot
+   TÜİK SDMX'ten alınan Türkiye verileri resmi kaynak olarak işaretlenir.
+   `TUIK_API_KEY` GitHub Secret olarak tanımlanmalıdır; anahtar repoya yazılmaz.
+   TÜİK akışları: TÜFE (`DF_TUFE_SDMX_TT03`), toplam ÜFE
+   (`DF_UFE_SANAYI_V2`), sanayi üretim endeksi, aylık temel/tamamlayıcı işgücü.
+   SDMX seçicisi bulunamayan veya veri dönemi belirsiz akışlar atlanır; değer
+   uydurulmaz.
+5. Doğrulama; ülke/gösterge eşleşmesine göre enflasyon, politika faizi, ÜFE,
+   büyüme, işsizlik, cari denge ve rezerv değerlerini deterministik kontrol eder.
+
+Snapshot şeması v2 ortak `makro_katalog.py` kataloğunu kullanır. Katalog 43 makro
+göstergede çekirdek enflasyon/PCE, PMI, üretim, perakende satış, ücret, güven,
+bütçe, ticaret, M3 ve kredi gibi kaynağı doğrulanmış serileri eşler. ABD'de
+başlıksız işsizlik oranı ile U-6 farklı kodludur. CDS, REER, doğrudan yatırım veya
+Türkiye banka kredisi için güvenilir/erişilebilir yayımlanmış veri yoksa sayı
+uydurulmaz.
+
+Aynı snapshot 15 piyasa serisi de taşır: USD/TRY, EUR/TRY, altın, gram altın
+(türetilmiş), WTI, Brent, DXY, VIX, ABD 3/5/30 yıllık tahviller, FRED DGS2/DGS10
+ve Borsapy BIST 30/BIST 100. Her kayıt kapanış, önceki değer, değişim, tarih ve
+kaynağını taşır. Yayınlanmayan seri snapshot'a girmez.
+
+```bash
+python makro_snapshot.py
+python -m unittest -v test_makro_veri.py
+python dogrulama.py
+```
+
 ## Elle güncellenen hisse analizleri (bilanço + değerlendirme)
 
 `hisse/<KOD>.html` sayfalarında iki bölüm **elle** yönetilir; günlük bot koşuları
