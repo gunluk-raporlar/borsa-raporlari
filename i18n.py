@@ -1303,6 +1303,29 @@ META_ARIA = {
 }
 
 
+# Sablon icine gomulu (script icinde oldugu icin ceviri akisindan gecmeyen)
+# kisa arayuz metinleri; i18n calisirken elle degistirilir.
+JS_UI_METINLERI = {
+    "Piyasa verileri geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.": {
+        "en": "Market data could not be loaded temporarily; it will be retried shortly.",
+        "de": "Marktdaten konnten vorübergehend nicht geladen werden; ein erneuter Versuch folgt in Kürze.",
+        "ru": "Рыночные данные временно недоступны; повторная попытка будет выполнена в ближайшее время.",
+        "zh": "市场数据暂时无法加载，稍后将自动重试。",
+    },
+    "Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.": {
+        "en": "Prices could not be loaded temporarily; they will be retried shortly.",
+        "de": "Preise konnten vorübergehend nicht geladen werden; ein erneuter Versuch folgt in Kürze.",
+        "ru": "Цены временно недоступны; повторная попытка будет выполнена в ближайшее время.",
+        "zh": "价格暂时无法加载，稍后将自动重试。",
+    },
+    "Arama indeksi yüklenemedi.": {
+        "en": "Search index could not be loaded.",
+        "de": "Der Suchindex konnte nicht geladen werden.",
+        "ru": "Не удалось загрузить поисковый индекс.",
+        "zh": "无法加载搜索索引。",
+    },
+}
+
 def yerelle_meta(html: str, dil: str) -> str:
     """Korunan/atlanan bloklardaki Turkce meta metinleri yerellestirir:
     og:site_name, JSON-LD ad/aciklama ve dil degistirici aria etiketi."""
@@ -1337,12 +1360,21 @@ def yerelle_meta(html: str, dil: str) -> str:
                     gez(v)
         if baslik and isinstance(d.get("name"), str):
             d["name"] = baslik
+        if baslik and isinstance(d.get("headline"), str):
+            d["headline"] = baslik
         if aciklama and isinstance(d.get("description"), str) and "description" in d:
             d["description"] = aciklama
         gez(d)
         return ('<script type="application/ld+json">' + json.dumps(d, ensure_ascii=False) + '</script>')
 
     html = re.sub(r'<script type="application/ld\+json">(.*?)</script>', _ld, html, flags=re.S)
+
+    # script icindeki kisa arayuz metinleri (ceviri akisi bunlara dokunmaz)
+    if dil != "tr":
+        for _tr_metin, _ceviriler in JS_UI_METINLERI.items():
+            _hedef = _ceviriler.get(dil)
+            if _hedef:
+                html = html.replace(_tr_metin, _hedef)
     return html
 
 

@@ -191,7 +191,13 @@ HABER_KAYNAKLARI = {
 FINANS_DISI_KELIMELER = [
     "masterchef", "survivor", "on numara", "sayisal loto", "milli piyango",
     "hava durumu", "magazin", "dizi", "burc", "futbol", "mac sonucu",
-    # gundem/magazin/kaza haberleri borsayi ilgilendirmiyor (kredibilite)
+    # 2026-09 eklentisi: gozlenen gurultu ornekleri (super loto, mac saatleri,
+# magazin pozlari, tv yayin akisi) ve Turkce karakterli karsiliklari.
+"süper loto", "süperloto", "loto", "iddaa", "bahis", "maç", "maç sonucu",
+"hangi kanalda", "canlı izle", "canlı izlenir", "yayın akışı", "tv yayın",
+"aile pozu", "mutlu aile", "pozu", "ünlü şarkıcı", "ünlü oyuncu", "oyuncu", "şarkıcı", "sporcu",
+"astroloji", "transfer haberi", "iddaa tahmin", "puan durumu",
+# gundem/magazin/kaza haberleri borsayi ilgilendirmiyor (kredibilite)
     "cinayet", "olümüne", "ölümüne", "oldur", "öldür", "intihar", "tecavüz",
     "darp", "kavga", "tutukland", "gözaltına", "uyuşturucu", "taciz",
     "babası kendisini", "yardım iste", "bebek", "gelin", "damat", "nişanlı",
@@ -214,6 +220,18 @@ logger = logging.getLogger("bot")
 
 
 # ---------- HABER AJANI ----------
+
+# Genel akis veren kaynaklar (magazin/spor/loto tasiyor): bu kaynaklarda baslik
+# finans sozluguyle eslesmiyorsa alinmaz.
+GENEL_AKIS_KAYNAKLARI = {"Haberturk", "Dunya", "Capital", "Forbes TR", "Ekonomist"}
+FINANS_ANAHTARLARI = [
+    "borsa", "hisse", "endeks", "faiz", "enflasyon", "dolar", "kur", "tl", "bütçe",
+    "cari", "ihracat", "ithalat", "kap ", "bilanço", "kâr", "zarar", "banka", "kredi",
+    "tahvil", "altın", "petrol", "ekonomi", "sanayi", "üretim", "büyüme", "istihdam",
+    "işsizlik", "vergi", "yatırım", "fon", "merkez bankası", "tcmb", "ihale",
+    "temettü", "halka arz", "reel getiri", "portföy", "swap", "rezerv", "maliyet",
+]
+
 def news_agent(state: AgentState):
     logger.info("[Haber Ajani] Finans haberleri toplaniyor...")
     print("[Haber Ajani] Finans haberleri toplaniyor...", flush=True)
@@ -225,6 +243,16 @@ def news_agent(state: AgentState):
     def _norm(t):
         return re.sub(r"[^a-z0-9çğıöşü]", "", t.lower())
 
+    # Son 4 gunde yayinlanan basliklari tekrar yayinlamayalim: RSS'in ilk
+    # maddeleri gunlerce ayni kaliyor ve arsivde ayni haber 10+ kez gorunuyordu.
+    onceki = set()
+    for _g in load_recent("news", gun=4):
+        if _g.get("date") == bugun:
+            continue
+        for _satir in (_g.get("data") or []):
+            _m = re.match(r"^\[[^\]]+\]\s*(.*)$", _satir)
+            onceki.add(_norm(_m.group(1) if _m else _satir))
+
     for ad, url in HABER_KAYNAKLARI.items():
         logger.info("[Haber Ajani] Kaynak: %s", ad)
         print(f"[Haber Ajani] Kaynak: {ad}", flush=True)
@@ -234,8 +262,13 @@ def news_agent(state: AgentState):
                 baslik = e.title
                 if any(k.lower() in baslik.lower() for k in FINANS_DISI_KELIMELER):
                     continue
+                # Genel akis kaynaklari (Haberturk genel, Dunya genel vb.) spor/
+                # magazin tasiyor: baslik finans sozluguyle eslesmiyorsa alma.
+                if ad in GENEL_AKIS_KAYNAKLARI and not any(
+                        k in baslik.lower() for k in FINANS_ANAHTARLARI):
+                    continue
                 anahtar = _norm(baslik)
-                if not anahtar or anahtar in gorulen:
+                if not anahtar or anahtar in gorulen or anahtar in onceki:
                     continue  # mukerrer / bos baslik
                 gorulen.add(anahtar)
                 toplanan.append(f"[{ad}] {baslik}")
@@ -383,6 +416,22 @@ def _df_bilanco_satiri(df, bu_yil):
     kod_deger = kolon_degerler[son_kolon]
     if "toplam_varlik" not in kod_deger and "ozsermaye" not in kod_deger:
         return {}, ""
+    # Ozkaynak dogrulamasi: saglayicinin satiri bazen yanlis kalemi getiriyor
+    # (KCHOL 2026/6 icin 145,4 mlr; ozdeslik 1.292,0 mlr veriyor ve cok donemli
+    # Is Yatirim verisi de 1.292,0 diyor). Ozdeslik varsa o deger kullanilir.
+    try:
+        _tv = kod_deger.get("toplam_varlik")
+        _kb, _ub = kod_deger.get("kisa_borc"), kod_deger.get("uzun_borc")
+        if _tv and _kb is not None and _ub is not None:
+            _oz = float(_tv) - float(_kb) - float(_ub)
+            if _oz > 0:
+                _eski = kod_deger.get("ozsermaye")
+                if _eski and abs(float(_eski) - _oz) / _oz > 0.10:
+                    logger.warning("[Bilanco] ozkaynak saglayicidan %.4g, ozdeslikten %.4g; ozdeslik kullanildi.",
+                                   float(_eski), _oz)
+                kod_deger["ozsermaye"] = _oz
+    except Exception:
+        pass
     finansal_borc = kod_deger.pop("fin_borc_kisa", 0.0) + kod_deger.pop("fin_borc_uzun", 0.0)
     if finansal_borc:
         kod_deger["finansal_borc"] = finansal_borc
@@ -1325,6 +1374,14 @@ def makro_cek(gun=170, yol="data/makro.json"):
         except OSError:
             logger.warning("[Makro] %s yazilamadi", yol)
         _MAKRO_ONBELLEK = govde
+        # Makro rejim kaydi: kural tabanli etiket + sektor aktarimi.
+        # Sayfa uretimini etkilemez; rejim zaman serisi boylece birikmeye baslar
+        # (dezenflasyon gibi degisim temelli etiketler seri gerektirir).
+        try:
+            import makro_rejim
+            makro_rejim.uret(kaydet_mi=True)
+        except Exception:
+            logger.warning("[Makro Rejim] kayit uretilemedi.")
         return govde
     try:  # ag yoksa son bilinen veri
         with open(yol, encoding="utf-8") as f:
@@ -1459,7 +1516,8 @@ def piyasa_verisi_metni():
         return ""
     bugun = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul"))
     satirlar = [f"Bugunun tarihi: {bugun.day} {_AYLAR[bugun.month - 1]} "
-                f"{bugun.year}, {_GUN_ADLARI[bugun.weekday()]}"]
+                f"{bugun.year}, {_GUN_ADLARI[bugun.weekday()]}, "
+                f"saat {bugun.strftime('%H:%M')} (Turkiye saati)"]
     if "XU030" in pv:
         v = pv["XU030"]
         satirlar.append(f"XU030 (BIST 30): son kapanis {_ts(v['son'])} | "
@@ -1500,7 +1558,7 @@ def master_cio_agent(state: AgentState):
             '- Rapor doğrudan "## 1." başlığıyla başlayacak; RAPOR ADI, Yayıncı, Konu gibi kimlik satırları EKLEME.\n'
             "- Metinde köşeli parantezli [...] yer tutucu veya iç not kullanma.\n"
             '- Kimlik satırı YAZMA: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri geçmeyecek.\n'
-            '- "## 1." başlığından sonraki İLK cümle tarih ve endeks verisiyle açılır: tarih, gün adı, endeks seviyesi ve yüzdeleri YALNIZCA [BUGUNUN TARIHI VE PIYASA VERILERI] bloğundan AYNEN alınır; kendi hafızandan tarih, gün adı veya rakam ÜRETME (tarih-gün eşleştirmesinde sık hata yapıyorsun). Örnek kalıp: "<tarih> — BIST 30 (XU030) <son kapanış> seviyesinde kapandı; bir önceki kapanış <önceki kapanış> idi (günlük %<değişim>); dolar bazında günlük performans %<değişim> olarak gerçekleşti."'
+            '- "## 1." başlığından sonraki İLK cümle tarih ve endeks verisiyle açılır: tarih, gün adı, endeks seviyesi ve yüzdeleri YALNIZCA [BUGUNUN TARIHI VE PIYASA VERILERI] bloğundan AYNEN alınır; kendi hafızandan tarih, gün adı veya rakam ÜRETME (tarih-gün eşleştirmesinde sık hata yapıyorsun). Raporun yazıldığı saat de ilk cümlede geçer (bloktaki "saat HH:MM" değerini aynen kullan). Örnek kalıp: "<tarih>, saat <HH:MM> itibarıyla — BIST 30 (XU030) son kapanış <son kapanış>; bir önceki kapanış <önceki kapanış> (günlük %<değişim>); dolar bazında günlük performans %<değişim>."'
         )
     else:
         tarih_kurallari = (
@@ -1527,12 +1585,13 @@ def master_cio_agent(state: AgentState):
 {piyasa_bolumu}
 Raporu kesinlikle profesyonel bir finansal bülten formatında, her başlığı detaylı ve uzun cümlelerle açıklayarak şu alt başlıklar altında oluştur (her başlık "## " ile başlayan markdown başlığı olarak yazılacak):
 
-## 1. Yönetici Özeti ve Piyasa Genel Bakışı: Günün en kritik gelişmeleri, endeksin genel yönü ve fon yönetiminin temel perspektifi.
-## 2. Haber ve Makroekonomik Değerlendirme: Akışların BIST 30 şirketlerine yansımaları, enflasyon, kur ve faiz sarmalının yatırımcı psikolojisine etkisi.
-## 3. Teknik Değerlendirme (Hisse Bazlı): En çok ayrışan, hacim kazanan veya direnç/destek noktalarını test eden lider hisselerin teknik anatomisi. Aşağıdaki SİNYAL TABLOSU verilerini mutlaka kullan.
-## 4. Şirket ve Finansal Değerlendirme: Temel veriler ışığında şirketlerin karlılık, bilanço yapıları ve rasyo bazlı öne çıkan detayları.
-## 5. Risk Yönetimi ve Strateji: Kısa vadeli olası aşağı/yukarı yönlü senaryolar ve portföyü koruma kalkanları.
-## 6. Önerilen Model Portföy: Raporun SONUNDA, yukarıdaki sinyal ve analizlere DAYANARAK kendinin kurduğu somut bir model portföyü tablosu oluştur. Tablo şu sütunlarla olmalı:
+## 1. Günün Verileri (özet): YALNIZCA rakamlar. Her satır "veri: değer" biçiminde, tek satır olsun: endeks seviyeleri ve günlük değişimler, USD/TRY, gram altın, yükselen/düşen hisse sayısı, sinyal dağılımı. Bu bölümde YORUM, tahmin veya değerlendirme cümlesi YAZMA; yalnızca verilen bloklardaki kesin rakamları listele.
+## 2. Bunun Anlamı — Aktarım Zinciri: 1. bölümdeki rakamların nedenini ve piyasaya aktarımını kur. Zinciri şu sırayla ve açık bağlaçlarla yaz: veri → neden → mekanizma → sektör etkisi → hisse etkisi → risk. Örnek biçim: "kur artışı → ithal girdi maliyeti → marj baskısı → iç talep hassasiyeti → şirket bazında farklılaşma". Bu bölümde YENİ RAKAM ÜRETME; yalnızca 1. bölümdeki ve verilen bloklardaki rakamlara atıf yap.
+## 3. Haber ve Makroekonomik Değerlendirme: Haber akışının ve makro verilerin BIST 30 şirketlerine yansımaları; enflasyon, kur ve faiz sarmalının yatırımcı psikolojisine etkisi. Her paragrafta önce gözlemi, sonra yorumu yaz.
+## 4. Teknik Değerlendirme (Hisse Bazlı): En çok ayrışan, hacim kazanan veya direnç/destek noktalarını test eden lider hisselerin teknik anatomisi. Aşağıdaki SİNYAL TABLOSU verilerini kullan.
+## 5. Şirket ve Finansal Değerlendirme: Temel veriler ışığında şirketlerin karlılık, bilanço yapıları ve rasyo bazlı öne çıkan detayları.
+## 6. Risk Yönetimi ve Strateji: Kısa vadeli olası aşağı/yukarı yönlü senaryolar ve portföyü koruma kalkanları.
+## 7. Önerilen Model Portföy: Raporun SONUNDA, yukarıdaki sinyal ve analizlere DAYANARAK kendinin kurduğu somut bir model portföyü tablosu oluştur. Tablo şu sütunlarla olmalı:
 
 | Hisse | Sektör | Ağırlık (%) | İşlem | Baz Senaryo | İyimser Senaryo | Geçersizlik Koşulu | Gerekçe |
 |-------|--------|-------------|-------|-------------|-----------------|--------------------|---------|
@@ -1541,8 +1600,9 @@ Tablo kuralları: En fazla 8 hisse pozisyonu + bir "NAKİT" satırı ekle; ağı
 
 Biçim kuralları (zorunlu):
 {tarih_kurallari}
+- KATMAN AYRIMI (zorunlu): 1. bölüm yalnız VERİdir (yorum yok); 2. bölüm yalnız YORUMdur ve aktarım zincirini (veri → neden → mekanizma → sektör etkisi → hisse etkisi → risk) eksiksiz kurar. Diğer bölümlerde her paragraf önce gözlemi, sonra yorumu yazar.
 - TÜM metinde doğru Türkçe karakterler kullan (ç, ğ, ı, i, ö, ş, ü); "sinyal" gibi kelimeleri yanlış yazma ("sinyil" DEĞİL).
-- 5. bölümdeki nakit/likidite önerisi ile 6. bölümdeki NAKİT satırının ağırlığı ÇELİŞMEMELİ (örn. "%40 nakit tutun" deyip %0 nakitlik portföy verme).
+- 6. bölümdeki nakit/likidite önerisi ile 7. bölümdeki NAKİT satırının ağırlığı ÇELİŞMEMELİ (örn. "%40 nakit tutun" deyip %0 nakitlik portföy verme).
 - Şirket adlarını YALNIZCA verilerde hisse kodunun yanında verilen resmi adla kullan (örn. YKBNK kodunun adı "Yapı Kredi"dir); hiçbir şirket için kendi hafızandan farklı bir isim, kısaltma ya da benzer bir ad yazma.
 - Enflasyon gibi makro göstergeleri yalnızca [MAKRO GEREKLER] bölümündeki değerlerle an; kendi genel bilginden sayı yazma.
 
@@ -1919,7 +1979,7 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
                      f"tarih, gun adi, seviye ve yuzdeleri YALNIZCA buradan al]:\n"
                      f"{piyasa_blogu}\n") if piyasa_blogu else ""
     if piyasa_blogu:
-        tarih_kurali = ('Metinde köşeli parantezli [...] yer tutucu kullanma; rapor doğrudan "## 1." başlığıyla başlasın. Kimlik satırı EKLEME: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri geçmeyecek. "## 1." başlığından sonraki İLK cümle tarih ve endeks verisiyle açılır: tarih, gün adı, seviye ve yüzdeleri YALNIZCA [BUGUNUN TARIHI VE PIYASA VERILERI] bloğundan AYNEN alınır; kendi hafızandan tarih, gün adı veya rakam ÜRETME (tarih-gün eşleştirmesinde sık hata yapıyorsun).')
+        tarih_kurali = ('Metinde köşeli parantezli [...] yer tutucu kullanma; rapor doğrudan "## 1." başlığıyla başlasın. Kimlik satırı EKLEME: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri geçmeyecek. "## 1." başlığından sonraki İLK cümle tarih ve endeks verisiyle açılır: tarih, gün adı, seviye ve yüzdeleri YALNIZCA [BUGUNUN TARIHI VE PIYASA VERILERI] bloğundan AYNEN alınır; raporun yazıldığı saat de aynı ilk cümlede geçer (bloktaki "saat HH:MM" değerini aynen kullan); kendi hafızandan tarih, gün adı, saat veya rakam ÜRETME (tarih-gün eşleştirmesinde sık hata yapıyorsun).')
     else:
         tarih_kurali = ('Metinde köşeli parantezli [...] yer tutucu kullanma; rapor doğrudan "## 1." başlığıyla başlasın. Kimlik satırı EKLEME: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri ve tarih ya da haftanın gün adı raporda GEÇMEYECEK (tarih-gün eşleştirmesinde sık hata yapıyorsun).')
 
@@ -3312,9 +3372,18 @@ def _pano_html(satirlar, kok=""):
         f"<td class='{_sinyal(s.get('genel', ''))}'><strong>{s.get('genel', '')}</strong></td></tr>"
         for i, s in enumerate(sirali, 1))
 
+    kapsam = f"{len(sirali)}/{len(HISSELER)}"
+    eksik_sembol = sorted({h for h in HISSELER} - {s["hisse"] for s in satirlar})
+    gecikmeli = sorted(s["hisse"] for s in satirlar if s.get("stale"))
+    uyari_html = ""
+    if eksik_sembol:
+        uyari_html += (' <strong style="color:#b91c1c">UYARI: ' + str(len(eksik_sembol)) +
+                       ' hisse verisi alinamadi: ' + ", ".join(eksik_sembol) + '</strong>')
+    if gecikmeli:
+        uyari_html += ' <span style="color:#8a6512">Yerel seriden hesaplandi: ' + ", ".join(gecikmeli) + '.</span>'
     return f"""
 <div class="pano">
-<div class="pano-baslik">📊 Günün Panosu — BIST 30 · {bugun_str}</div>
+<div class="pano-baslik">📊 Günün Panosu — BIST 30 · {kapsam} hisse · {bugun_str}, {bugun.strftime('%H:%M')} (TSİ)</div>
 <div class="pano-veri">
   {endeks_hucreleri}
   <div class="pano-hucre"><div class="pano-etiket">BIST 30 Sepeti</div><div class="pano-deger {_renk(ort)}">{_fmt(ort)}</div></div>
@@ -3337,8 +3406,14 @@ def _pano_html(satirlar, kok=""):
 </tbody>
 </table>
 </div>
-<p class="pano-not">Tablo, site teknik taramasından derlenmiştir; eğitim amaçlıdır, yatırım tavsiyesi değildir.</p>
+<p class="pano-not">Tablo, site teknik taramasından derlenmiştir; eğitim amaçlıdır, yatırım tavsiyesi değildir.{uyari_html}</p>
 </div>"""
+
+
+def _yazim_ani_str():
+    """Raporun yazildigi ani Turkiye saatiyle kisa etiket olarak dondurur."""
+    an = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul"))
+    return f"Yaz\u0131m saati: {an.strftime('%H:%M')} (TS\u0130)"
 
 
 def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
@@ -3364,7 +3439,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
     icerik = f"""
 <div class="hero">
 <h1>{baslik}</h1>
-<div class="meta"><span class="badge">{date_str}</span><span>{alt_baslik}</span>
+<div class="meta"><span class="badge">{date_str}</span><span class="badge">{_yazim_ani_str()}</span><span>{alt_baslik}</span>
 <button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button>
 {paylas_html(baslik + ' ' + date_str, SITE_URL + (kok_yol or f"reports/{date_str}.html"))}</div>
 </div>
@@ -3378,6 +3453,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
     ld_ek = json.dumps({
         "@context": "https://schema.org", "@type": "Article",
         "headline": f"{baslik} — {date_str}", "datePublished": date_str,
+        "dateModified": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).isoformat(timespec="seconds"),
         "inLanguage": "tr", "description": aciklama,
         "author": {"@type": "Organization", "name": SITE_ADI, "url": SITE_URL},
         "publisher": {"@type": "Organization", "name": SITE_ADI, "url": SITE_URL},
@@ -3883,6 +3959,38 @@ _SON_TEKNIK = []
 _SON_BORSPY = []
 
 
+FIYAT_DEPO_DIR = os.path.join(DATA_DIR, "fiyat")
+FIYAT_DEPO_SINIR = 420
+
+
+def fiyat_deposu_oku(hisse):
+    """data/fiyat/<HISSE>.json icerigini {tarih: kapanis} olarak doner."""
+    try:
+        with open(os.path.join(FIYAT_DEPO_DIR, hisse + ".json"), encoding="utf-8") as f:
+            d = json.load(f)
+        return {str(k): float(v) for k, v in d.items()} if isinstance(d, dict) else {}
+    except Exception:
+        return {}
+
+
+def fiyat_deposu_yaz(hisse, seri):
+    """{tarih: kapanis} ciftlerini depoya birlestirir; en yeni FIYAT_DEPO_SINIR gunu tutar."""
+    try:
+        d = fiyat_deposu_oku(hisse)
+        for t, k in seri.items():
+            try:
+                d[str(t)] = round(float(k), 4)
+            except (TypeError, ValueError):
+                continue
+        if len(d) > FIYAT_DEPO_SINIR:
+            for t in sorted(d)[:-FIYAT_DEPO_SINIR]:
+                d.pop(t, None)
+        os.makedirs(FIYAT_DEPO_DIR, exist_ok=True)
+        with open(os.path.join(FIYAT_DEPO_DIR, hisse + ".json"), "w", encoding="utf-8") as f:
+            json.dump(d, f, ensure_ascii=False, sort_keys=True)
+    except Exception:
+        logger.warning("[Fiyat Deposu] %s yazilamadi.", hisse)
+
 def teknik_tarama_yap():
     """BIST 30 icin teknik tarama tablosunu uretir; satir listesi (dict) doner."""
     try:
@@ -3915,14 +4023,15 @@ def teknik_tarama_yap():
         return []
 
     # 30/30 kapsam hedefi: kutuphanenin dahili 10 sn zaman asimina takilan
-    # semboller icin iki ek deneme turu yapilir ve sonuclar birlestirilir.
-    for ek_deneme in range(2):
+    # semboller icin ek deneme turlari yapilir; aralarda artan bekleme uygulanir.
+    for ek_deneme in range(4):
         mevcut = set(df[kod_kolonu].astype(str).str.upper().unique())
         eksikler = [h for h in HISSELER if h not in mevcut]
         if not eksikler:
             break
-        logger.info("[Teknik Tarama] %d hisse icin ek deneme (%d): %s", len(eksikler), ek_deneme + 1, ", ".join(eksikler))
-        print(f"[Teknik Tarama] {len(eksikler)} hisse icin ek deneme: {', '.join(eksikler)}", flush=True)
+        logger.warning("[Teknik Tarama] %d hisse eksik, ek deneme %d: %s",
+                       len(eksikler), ek_deneme + 1, ", ".join(eksikler))
+        print(f"[Teknik Tarama] {len(eksikler)} hisse icin ek deneme ({ek_deneme + 1}): {', '.join(eksikler)}", flush=True)
         try:
             df2 = fetch_stock_data(eksikler, start_date=baslangic, end_date=bitis)
             if df2 is not None and not df2.empty:
@@ -3930,7 +4039,40 @@ def teknik_tarama_yap():
                 df = pd.concat([df, df2], ignore_index=True)
         except Exception as e:
             logger.warning("[Teknik Tarama] Ek deneme basarisiz: %s", e)
-            time.sleep(3)
+        time.sleep(min(4 * (ek_deneme + 1), 15))
+
+    # Son care: hala gelmeyen sembolleri tek tek dene (toptan cagride zaman
+    # asimina takilan sembol, tek cagride genelde geri doner).
+    mevcut = set(df[kod_kolonu].astype(str).str.upper().unique())
+    for h in [x for x in HISSELER if x not in mevcut]:
+        try:
+            dfh = fetch_stock_data([h], start_date=baslangic, end_date=bitis)
+            if dfh is not None and not dfh.empty:
+                dfh.columns = [str(c).upper() for c in dfh.columns]
+                df = pd.concat([df, dfh], ignore_index=True)
+                logger.info("[Teknik Tarama] %s tek tek alindi.", h)
+        except Exception as e:
+            logger.warning("[Teknik Tarama] %s tek tek de alinamadi: %s", h, str(e)[:80])
+        time.sleep(2)
+
+    # Fiyat serisi deposu: ham gunluk kapanislar yerelde tutulur
+    # (data/fiyat/<HISSE>.json). Boylece kaynak zaman asimina takilsa bile
+    # gostergeler yerelden hesaplanabilir; kaynak yalnizca tazeleme icin gerekir.
+    tarih_kolonu = next((c for c in ["HGDG_TARIH", "TARIH", "HGDG_TARIH_T", "DATE"] if c in df.columns), None)
+    if tarih_kolonu:
+        depo_yazilan = 0
+        for hisse in HISSELER:
+            alt = df[df[kod_kolonu] == hisse][[tarih_kolonu, kapanis_kolonu]].dropna()
+            if alt.empty:
+                continue
+            kayit = {}
+            for _, satir in alt.iterrows():
+                kayit[str(satir[tarih_kolonu])[:10]] = satir[kapanis_kolonu]
+            fiyat_deposu_yaz(hisse, kayit)
+            depo_yazilan += 1
+        logger.info("[Fiyat Deposu] %d hisse icin kapanis serisi guncellendi.", depo_yazilan)
+    else:
+        logger.warning("[Fiyat Deposu] tarih kolonu bulunamadi; seri onbellegi atlandi.")
 
     # Gun ici canli fiyatlari TradingView'den al: isyatirimhisse gun sonu (EOD)
     # veri servis eder, piyasa acikken fiyatlar akmaz. borsapy (TradingView)
@@ -3953,16 +4095,26 @@ def teknik_tarama_yap():
         logger.warning("[Teknik Tarama] borsapy yok; gun ici canli fiyat kullanilamayacak.")
 
     satirlar = []
+    atlanan = []
     for sira, hisse in enumerate(HISSELER, 1):
         seri = df[df[kod_kolonu] == hisse][kapanis_kolonu].astype(float).dropna()
         if len(seri) < 145:  # EMA144 anlamlı olsun
-            logger.info("[Teknik Tarama] %d/%d %s: yetersiz gecmis (%d gun), atlandi", sira, len(HISSELER), hisse, len(seri))
-            continue
+            depo = fiyat_deposu_oku(hisse)
+            if len(depo) >= 145:
+                seri = pd.Series([depo[t] for t in sorted(depo)])
+                yerel = True
+                logger.warning("[Teknik Tarama] %d/%d %s: kaynaktan veri gelmedi; %d gunluk YEREL seriden hesaplandi.", sira, len(HISSELER), hisse, len(seri))
+            else:
+                logger.warning("[Teknik Tarama] %d/%d %s: yetersiz gecmis (%d gun), atlandi", sira, len(HISSELER), hisse, len(seri))
+                atlanan.append(hisse)
+                continue
+        else:
+            yerel = False
         # Is Yatirim serisinin sonuna canli fiyati ekle (kapanistan farkliyse):
         # boylece EMA/WT/regresyon tum gostergeler gun ici hareketle hesaplanir.
         iy_son = float(seri.iloc[-1])
         tv = canli.get(hisse)
-        if tv and abs(tv - iy_son) > 0.005:
+        if (not yerel) and tv and abs(tv - iy_son) > 0.005:
             seri = pd.concat([seri, pd.Series([tv])], ignore_index=True)
         son = float(seri.iloc[-1])
         emalar = {p: _ema(seri, p) for p in (5, 8, 13, 21, 34, 55, 89, 144)}
@@ -4023,7 +4175,7 @@ def teknik_tarama_yap():
             "kisa": kisa, "orta": orta, "uzun": uzun,
             "wt": wt_sinyal, "wt1": round(w1, 1),
             "konum": round(konum, 0), "r": round(r, 2),
-            "puan": puansay, "genel": genel,
+            "puan": puansay, "genel": genel, "stale": yerel,
         })
 
     # Guclu AL'ler one, iclerinde trend gucu (Pearson) yuksek olanlar basta
@@ -4031,6 +4183,9 @@ def teknik_tarama_yap():
     save_daily("teknik", bugun, satirlar)
     global _SON_TEKNIK
     _SON_TEKNIK = satirlar
+    if atlanan:
+        logger.warning("[Teknik Tarama] EVREN EKSIK: %d/%d hisse uretilemedi: %s",
+                       len(atlanan), len(HISSELER), ", ".join(atlanan))
     logger.info("[Teknik Tarama] %d hisse tarandi; guclu AL: %d", len(satirlar),
                 sum(1 for s in satirlar if s["genel"] in ("GÜÇLÜ AL", "AL")))
     print(f"[Teknik Tarama] {len(satirlar)} hisse tarandi.", flush=True)
@@ -4610,6 +4765,277 @@ def _sirket_profili_html(kod):
 </div>"""
 
 
+TEMEL_VERI_YOL = "data/temel-veri.json"
+# TradingView scanner alanlari (2026-09 canli test: hepsi dolu donuyor).
+# TL bazinda; "ttm" = son 12 ay. Kaynak: scanner.tradingview.com (anahtarsiz).
+_TV_ALANLAR = ["name", "close", "market_cap_basic", "ebitda_ttm",
+               "total_revenue_ttm", "net_income_ttm", "price_earnings_ttm",
+               "price_book_fq", "enterprise_value_ebitda_ttm",
+               "enterprise_value_fq", "total_debt_fq", "cash_n_equivalents_fq",
+               "gross_profit_ttm", "debt_to_equity_fq", "current_ratio_fq",
+               "dividends_yield"]
+
+
+def temel_veri_cek(iller=None, zaman_asimi=25):
+    """30 hissenin FAVÖK/TTM/çarpan verisini tek istekte çekip diske yazar.
+
+    Dönüş: {"guncelleme", "kaynak", "hisseler": {KOD: {...}}} | None
+    Ağ hatasında None döner; çağıran taraf önbelleği kullanır.
+    """
+    import urllib.request
+    kodlar = iller or HISSELER
+    govde = {"symbols": {"tickers": ["BIST:" + k for k in kodlar],
+                          "query": {"types": []}},
+             "columns": _TV_ALANLAR}
+    try:
+        istek = urllib.request.Request(
+            "https://scanner.tradingview.com/turkey/scan",
+            data=json.dumps(govde).encode(),
+            headers={"User-Agent": "Mozilla/5.0",
+                     "Content-Type": "application/json"})
+        with urllib.request.urlopen(istek, timeout=zaman_asimi) as r:
+            ham = json.loads(r.read().decode())
+    except Exception as e:
+        logger.warning("[Temel Veri] cekilemedi: %s", str(e)[:120])
+        return None
+    hisseler = {}
+    for satir in ham.get("data", []):
+        d = satir.get("d") or []
+        if not d or not d[0]:
+            continue
+        k = str(d[0])
+        h = {}
+        for ad, deg in zip(_TV_ALANLAR, d):
+            if ad != "name":
+                h[ad] = deg
+        # hesaplanan alanlar
+        try:
+            if h.get("ebitda_ttm") and h.get("total_revenue_ttm"):
+                h["ebitda_marj"] = h["ebitda_ttm"] / h["total_revenue_ttm"] * 100
+            if h.get("total_debt_fq") is not None and h.get("cash_n_equivalents_fq") is not None:
+                h["net_borc"] = h["total_debt_fq"] - h["cash_n_equivalents_fq"]
+        except Exception:
+            pass
+        hisseler[k] = h
+    if not hisseler:
+        return None
+    govde2 = {"guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%Y-%m-%d %H:%M"),
+              "kaynak": "TradingView (konsolide, TTM)",
+              "hisseler": hisseler}
+    try:
+        with open(TEMEL_VERI_YOL, "w", encoding="utf-8") as f:
+            json.dump(govde2, f, ensure_ascii=False, indent=1)
+    except OSError:
+        logger.warning("[Temel Veri] yazilamadi")
+    logger.info("[Temel Veri] %d hisse icin FAVOK/carpan verisi alindi.", len(hisseler))
+    return govde2
+
+
+def temel_veri():
+    """Son kaydedilen temel veri (yoksa {})."""
+    try:
+        with open(TEMEL_VERI_YOL, encoding="utf-8") as f:
+            return json.load(f) or {}
+    except Exception:
+        return {}
+
+def _ondalik(metin):
+    """'2.536.000.000 TL' -> 2536000000.0"""
+    try:
+        t = re.sub(r"[^0-9,\.]", "", str(metin))
+        t = t.replace(".", "").replace(",", ".")
+        return float(t) if t else None
+    except Exception:
+        return None
+
+
+def _para_tl(v):
+    """Buyuk TL tutarini okunur yazar: 1.292.000.000.000 -> 1.292,0 mlr TL."""
+    try:
+        v = float(v)
+    except (TypeError, ValueError):
+        return "\u2014"
+    if abs(v) >= 1e9:
+        return ("%.1f" % (v / 1e9)).replace(".", ",") + " mlr TL"
+    if abs(v) >= 1e6:
+        return ("%.0f" % (v / 1e6)).replace(",", ".") + " mln TL"
+    return "%.0f TL" % v
+
+
+def _bilanco_kaydi(kod):
+    """data/bilanco/<son tarih>.json icinden tek hisse kaydi."""
+    try:
+        d = sorted(f for f in os.listdir("data/bilanco") if f.endswith(".json"))[-1]
+        with open(os.path.join("data/bilanco", d), encoding="utf-8") as f:
+            return (json.load(f) or {}).get(kod) or {}
+    except Exception:
+        return {}
+
+
+def _fund_kayitlari(kod):
+    """data/hisse-analiz/<KOD>.json donem listesi (eskiden yeniye) + kaynak adi.
+
+    Tek kaynak kurali: temel veriler bu dosyadan okunur. Ayni dosya bilanco
+    tablosunu da besledigi icin sayfadaki rakamlar birbiriyle celismez.
+    """
+    try:
+        with open(os.path.join("data", "hisse-analiz", kod + ".json"), encoding="utf-8") as f:
+            d = json.load(f)
+    except Exception:
+        return [], ""
+    def _sira(x):
+        try:
+            y, c = str(x.get("donem", "")).split("/")
+            return int(y) * 10 + int(c)
+        except Exception:
+            return 0
+    kayitlar = sorted([x for x in (d.get("bilanco") or []) if x.get("donem")], key=_sira)
+    return kayitlar, str(d.get("kaynak") or "")
+
+
+def _ttm(kayitlar, alan):
+    """Son 12 ay degeri: son donem + onceki yil tamami - onceki yil ayni donem."""
+    if not kayitlar:
+        return None
+    son = kayitlar[-1]
+    try:
+        y, c = str(son.get("donem")).split("/")
+    except Exception:
+        return None
+    if c == "12":
+        try:
+            return float(son.get(alan))
+        except (TypeError, ValueError):
+            return None
+    tam = [k for k in kayitlar if k.get("donem") == "%d/12" % (int(y) - 1)]
+    ayni = [k for k in kayitlar if k.get("donem") == "%d/%s" % (int(y) - 1, c)]
+    if not (tam and ayni):
+        return None
+    try:
+        return float(son.get(alan)) + float(tam[0].get(alan)) - float(ayni[0].get(alan))
+    except (TypeError, ValueError):
+        return None
+
+
+def _degerleme_verisi(kod, son_fiyat):
+    """Piyasa degeri, F/K, PD/DD, ROE - TEK kaynaktan (Is Yatirim XI_29).
+
+    Kar ve hasilat TTM (son 12 ay) tabanlidir; donem kari yilliklandirilmaz.
+    Boylece sayfadaki elle yazilan degerlendirme metinleriyle ayni sonuc cikar.
+    """
+    if not son_fiyat:
+        return None
+    kayitlar, kaynak = _fund_kayitlari(kod)
+    if not kayitlar:
+        return None
+    son = kayitlar[-1]
+    prof = _sirket_profilleri().get(kod) or {}
+    sermaye = son.get("odenmis_sermaye") or _ondalik(prof.get("sermaye"))
+    ozkaynak = son.get("ozsermaye")
+    if not (sermaye and ozkaynak):
+        return None
+    ozkaynak = float(ozkaynak)
+    piyasa = float(son_fiyat) * float(sermaye)
+    ttm_kar = _ttm(kayitlar, "net_kar")
+    ttm_satis = _ttm(kayitlar, "satis")
+    fborc = son.get("finansal_borc")
+    if fborc is None and son.get("fin_borc_kisa") is not None:
+        fborc = (son.get("fin_borc_kisa") or 0) + (son.get("fin_borc_uzun") or 0)
+    d = {"donem": son.get("donem"), "kaynak": kaynak, "piyasa_degeri": piyasa,
+         "ozkaynak": ozkaynak, "net_kar": son.get("net_kar"), "ttm_kar": ttm_kar,
+         "ttm_satis": ttm_satis, "finansal_borc": fborc, "donem_sayisi": len(kayitlar),
+         "fk": None, "pddd": None, "roe": None, "borc_ozkaynak": None}
+    if ttm_kar and ttm_kar > 0:
+        d["fk"] = piyasa / ttm_kar
+    if ozkaynak > 0:
+        d["pddd"] = piyasa / ozkaynak
+        if ttm_kar:
+            d["roe"] = ttm_kar / ozkaynak * 100
+        if fborc:
+            d["borc_ozkaynak"] = float(fborc) / ozkaynak * 100
+    return d
+
+def _degerleme_karti(kod, satir, seri=None):
+    """Hesaplanmis degerleme/karlilik karti (tek kaynak, TTM tabanli)."""
+    v = _degerleme_verisi(kod, satir.get("son"))
+    if not v:
+        return ('<div class="card"><h3 style="margin:0 0 8px">Değerleme ve Kârlılık</h3>'
+                '<p style="margin:0;color:var(--muted);font-size:13px">Bilanço verisi bulunamadı.</p></div>')
+    duz = lambda s: ("%.1f" % s).replace(".", ",") if s is not None else "\u2014"
+    satirlar = [
+        ("Piyasa değeri", _para_tl(v["piyasa_degeri"])),
+        ("Özkaynak (%s)" % v["donem"], _para_tl(v["ozkaynak"])),
+        ("Net kâr (son 12 ay)", _para_tl(v["ttm_kar"])),
+        ("F/K (son 12 ay)", duz(v["fk"])),
+        ("PD/DD", ("%.2f" % v["pddd"]).replace(".", ",") if v["pddd"] else "\u2014"),
+        ("ROE (son 12 ay)", (("%.1f" % v["roe"]).replace(".", ",") + "%") if v["roe"] else "\u2014"),
+        ("Finansal borç / özkaynak", (("%.0f" % v["borc_ozkaynak"]).replace(".", ",") + "%") if v["borc_ozkaynak"] else "\u2014"),
+    ]
+    getiri = ""
+    if seri and len(seri) >= 6 and seri[-6][1]:
+        g = (seri[-1][1] / seri[-6][1] - 1) * 100
+        getiri = ('<p style="margin:0 0 8px;font-size:13px">Son 5 işlem günü getirisi: '
+                  '<strong class="%s">%+.1f%%</strong></p>' % (_renk(g), g))
+    govde = "".join("<tr><td>%s</td><td><strong>%s</strong></td></tr>" % (a, b) for a, b in satirlar)
+    return ('<div class="card"><h3 style="margin:0 0 8px">Değerleme ve Kârlılık '
+            '<span style="font-weight:400;color:var(--muted);font-size:12.5px">'
+            '&middot; tek kaynak, son 12 ay</span></h3>' + getiri +
+            '<table style="font-size:13.5px">' + govde + '</table>'
+            '<p style="margin:8px 0 0;color:var(--muted);font-size:12px">Kaynak: İş Yatırım mali '
+            'tabloları (KAP bildirimleri) — sayfadaki bilanço tablosuyla aynı kaynak. Kâr ve '
+            'hasılat son 12 ay (TTM) tabanlıdır; özkaynak bilanço özdeşliğinden doğrulanır.</p>' +
+            _tv_blogu(kod) + '</div>')
+
+def _tv_blogu(kod):
+    """FAVÖK alt bloğu. Yalnızca BAŞKA YERDE OLMAYAN kalemler gösterilir ki
+    sayfada aynı metrik iki farklı değerle görünmesin (F/K, PD/DD, hasılat,
+    net borç bilinçli olarak dışarıda bırakıldı)."""
+    d = (temel_veri().get("hisseler") or {}).get(kod)
+    if not d:
+        return ""
+    duz = lambda x, h=1: ("%.*f" % (h, x)).replace(".", ",")
+    satirlar = []
+    if d.get("ebitda_ttm") is not None:
+        satirlar.append(("FAVÖK (son 12 ay)", _para_tl(d["ebitda_ttm"])))
+    if d.get("ebitda_marj") is not None:
+        satirlar.append(("FAVÖK marjı", duz(d["ebitda_marj"]) + "%"))
+    if d.get("enterprise_value_ebitda_ttm") is not None:
+        satirlar.append(("EV / FAVÖK", duz(d["enterprise_value_ebitda_ttm"])))
+    if not satirlar:
+        return ""
+    govde = "".join("<tr><td>%s</td><td><strong>%s</strong></td></tr>" % (a, b) for a, b in satirlar)
+    return ('<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)">'
+            '<div style="font-size:12.5px;color:var(--muted);margin-bottom:6px">FAVÖK · '
+            'TradingView konsolide (TTM)</div><table style="font-size:13.5px">' + govde +
+            '</table><p style="margin:6px 0 0;color:var(--muted);font-size:11.5px">FAVÖK marjı, '
+            'faiz/amortisman/vergi öncesi kârlılıktır; net kâr marjı ile karıştırılmamalıdır.</p></div>')
+
+def _makro_duyarlilik_karti(kod):
+    """Sektorun makro rejim duyarliligi (makro_rejim cekirdeginden)."""
+    try:
+        import makro_rejim
+        g = makro_rejim.gostergeleri_yukle()
+        if not g:
+            return ""
+        rejim = makro_rejim.rejim_hesapla(g)
+        aktarim = makro_rejim.sektor_aktarimi(rejim)
+        sektor = _hisse_sektoru(kod)
+        d = aktarim.get(sektor)
+        if not d:
+            return ""
+    except Exception:
+        return ""
+    renk = {"olumlu": "pos", "olumsuz": "neg", "nötr": ""}[d["egilim"]]
+    return ('<div class="card"><h3 style="margin:0 0 8px">Makro Duyarlılık '
+            '<span style="font-weight:400;color:var(--muted);font-size:12.5px">'
+            '&middot; %s sektörü</span></h3>' % sektor +
+            '<p style="margin:0 0 8px;font-size:13.5px">Rejim: <strong>%s</strong></p>' % rejim["etiket"] +
+            '<table style="font-size:13.5px"><tr><td>Eğilim</td><td><strong class="%s">%s</strong></td></tr>' % (renk, d["egilim"]) +
+            '<tr><td>Skor</td><td><strong>%+d</strong></td></tr>' % d["skor"] +
+            '<tr><td>Kanallar</td><td>%s</td></tr></table>' % ", ".join(d["kanallar"]) +
+            '<p style="margin:8px 0 0;color:var(--muted);font-size:12px">Sektör duyarlılık matrisi x '
+            'güncel makro rejim; detay <a href="../makro-analiz.html">Makroekonomik Değerlendirme</a>.</p></div>')
+
 def build_hisse_html(kod, satir, tarihler, veriler, haberler, sirket_haberleri=None):
     seri = [(t, v.get(kod)) for t, v in zip(tarihler, veriler) if v.get(kod)]
     grafik = (_mini_sparkline([f for _, f in seri], etiket=f"{kod} fiyat grafiği (son {len(seri)} gün)")
@@ -4670,6 +5096,10 @@ def build_hisse_html(kod, satir, tarihler, veriler, haberler, sirket_haberleri=N
 {_sirket_profili_html(kod)}
 {hisse_analiz.bilanco_tablosu_html(kod)}
 <div class="grid-iki">
+{_degerleme_karti(kod, satir, seri)}
+{_makro_duyarlilik_karti(kod)}
+</div>
+<div class="grid-iki">
 <div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
 <table style="font-size:13.5px">{teknik_ogeler}</table>
 <p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a></p></div>
@@ -4700,11 +5130,14 @@ _HABER_GURULTU = re.compile(
 # Tüpraş Stadyumu" haberlerini getiriyor. Basligi spor baglaminda olanlar
 # sirket haberi sayilmaz (stadyum isim haklari, mac, derbi vb.).
 _SPOR_HABER_DESENI = re.compile(
-    r"\b(st(?:ad|at)\w*|be[şs]ikta[şs]|galatasaray|fenerbah[çc]e|trabzonspor|"
-    r"ma[çc](?:[ıi]n)?|derbi|gol(?:[üu]|leri)?|fikst[üu]r|futbol|trib[üu]n|"
-    r"teknik direkt[öo]r|s[üu]per (?:lig|kupas?)|dünya kupas?|türkiye kupas?|"
-    r"uefa|uel|champions league|europa league|penalt[ıi]|hakem|spor toto|"
-    r"play-?off)\b",
+    r"\b(st(?:ad|at)\w*|be[şs]ikta[şs]\w*|galatasaray\w*|fenerbah[çc]e\w*|trabzonspor\w*|"
+    r"ma[çc]\w*|derbi\w*|gol\w*|fikst[üu]r\w*|futbol\w*|trib[üu]n\w*|"
+    r"teknik direkt[öo]r\w*|s[üu]per (?:lig|kupas)\w*|d[üu]nya kupas\w*|"
+    r"t[üu]rkiye kupas\w*|uefa\w*|uel\b|champions league|europa league|"
+    r"penalt[ıi]\w*|hakem\w*|spor toto|play-?off\w*|basket\w*|euroleague|"
+    r"eurocup|saha\w*|[şs]ampiyon\w*|forma\w*|antren[öo]r\w*|voleybol\w*|"
+    r"g[üu]re[şs]\w*|olimpiyat\w*|turnuva\w*|kadro\w*|hangi kanalda|"
+    r"canl[ıi] izle\w*|ma[çc] saat\w*|transfermarkt|\btff\b|\bfifa\b)",
     re.I)
 
 
@@ -4712,6 +5145,61 @@ def _spor_haberi_mi(baslik):
     """Baslik spor gundemine mi ait — sirket haberleri icin eleme testi."""
     return bool(_SPOR_HABER_DESENI.search(baslik or ""))
 
+
+
+# Hisse kodlarinin gundelik kisaltmalari: basliklarda sirket adi yerine kisaltma
+# kullanilabiliyor (or. 'THY ilk 5e girdi'). Tumu KUCUK harfle yazilir; kapi
+# kelime siniri ile arar, boylece 'tav' -> 'tavsiye' gibi yanlis eslesme olmaz.
+SIRKET_KISALTMALARI = {
+    "THYAO": ["thy"],
+    "KCHOL": ["koç"],
+    "SAHOL": ["sabancı"],
+    "ISCTR": ["iş bankası", "işbank"],
+    "YKBNK": ["yapı kredi"],
+    "AKBNK": ["akbank"],
+    "GARAN": ["garanti bankası", "garanti bbva"],
+    "VAKBN": ["vakıfbank"],
+    "TUPRS": ["tüpraş"],
+    "FROTO": ["ford otosan"],
+    "TOASO": ["tofaş"],
+    "TTKOM": ["türk telekom"],
+    "TCELL": ["turkcell"],
+    "MGROS": ["migros"],
+    "PGSUS": ["pegasus"],
+    "ASELS": ["aselsan"],
+    "EREGL": ["ereğli demir", "erdeğli"],
+    "PETKM": ["petkim"],
+    "EKGYO": ["emlak konut"],
+    "GUBRF": ["güfre fabrikaları"],
+    "KRDMD": ["kardemir"],
+    "SISE": ["şişecam"],
+    "AEFES": ["anadolu efes"],
+    "TRALT": ["türk altın"],
+    "TAVHL": ["tav havaliman", "tav airport"],
+}
+
+def _sirket_adi_geciyor_mu(baslik, p, kod):
+    """Baslikta sirketin adi geciyor mu? Ticker ile arama kisa kodlarin
+    siradan kelimelerle cakismasina yol aciyor: or. SISE -> 'yagis ve sise
+    dikkat' ya da ALTIN -> emtia haberleri. Bu yuzden baslikta sirket adi
+    aranir; ticker yalnizca baslikta BUYUK harfle geciyorsa kabul edilir."""
+    baslik = baslik or ""
+    adaylar = []
+    for anahtar in ("unvan", "sorgu"):
+        deger = (p.get(anahtar) or "").strip()
+        if deger:
+            adaylar.append(deger)
+    ilk = (p.get("sorgu") or p.get("unvan") or "").strip().split()
+    if len(ilk) >= 2:
+        adaylar.append(" ".join(ilk[:2]))
+    adaylar += SIRKET_KISALTMALARI.get(kod or "", [])
+    for aday in adaylar:
+        aday = (aday or "").strip().lower()
+        if aday and re.search(r"\b" + re.escape(aday) + r"\b", baslik.lower()):
+            return True
+    if kod and kod in baslik:  # KAP/bulten basliklari ticker'i buyuk harfle yazar
+        return True
+    return not adaylar  # profil yoksa eleme yapma
 
 def _sirket_haberleri_cek(profiller):
     """Her BIST30 sirketi icin Google News RSS'ten son 7 gunun haberlerini
@@ -4739,6 +5227,8 @@ def _sirket_haberleri_cek(profiller):
                 if not baslik or _HABER_GURULTU.search(baslik):
                     continue
                 if _spor_haberi_mi(baslik):
+                    continue
+                if not _sirket_adi_geciyor_mu(baslik, p, kod):
                     continue
                 # 'Baslik - Kaynak' kalibindan kaynagi soy
                 kaynak = baslik.rsplit(" - ", 1)[-1].strip()
@@ -4822,6 +5312,11 @@ def hisse_sayfalari_yaz(teknik_satirlar):
     if not teknik_satirlar:
         return
     os.makedirs("hisse", exist_ok=True)
+    # FAVÖK/çarpan verisi (tek istek, 30 hisse). Hata olursa önceki dosya kullanılır.
+    try:
+        temel_veri_cek()
+    except Exception:
+        logger.warning("[Temel Veri] guncellenemedi; onceki veri kullanilacak.")
     tarihler, veriler = _fiyat_gecmisi()
     haber_toplu = []
     try:
