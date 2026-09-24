@@ -28,7 +28,7 @@
 <meta name="twitter:description" content="Глубокий аналитический отчет по BIST 30 от 2026-09-17.">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Глубокий анализ - 2026-09-17", "description": "Глубокий аналитический отчет по BIST 30 от 2026-09-17.", "url": "https://borsa-raporlari.pages.dev/ru/reports/2026-09-17-derin-analiz", "inLanguage": "ru", "isPartOf": {"@type": "WebSite", "name": "Ежедневные отчёты BIST 30", "url": "https://borsa-raporlari.pages.dev/ru/"}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Derin Analiz — 2026-09-17", "datePublished": "2026-09-17", "inLanguage": "ru", "description": "Глубокий аналитический отчет по BIST 30 от 2026-09-17.", "author": {"@type": "Organization", "name": "Ежедневные отчёты BIST 30", "url": "https://borsa-raporlari.pages.dev/ru/"}, "publisher": {"@type": "Organization", "name": "Ежедневные отчёты BIST 30", "url": "https://borsa-raporlari.pages.dev/ru/"}, "mainEntityOfPage": "https://borsa-raporlari.pages.dev/ru/reports/2026-09-17-derin-analiz.html"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Глубокий анализ - 2026-09-17", "description": "Глубокий аналитический отчет по BIST 30 от 2026-09-17.", "url": "https://borsa-raporlari.pages.dev/ru/reports/2026-09-17-derin-analiz", "inLanguage": "ru", "isPartOf": {"@type": "WebSite", "name": "Ежедневные отчёты BIST 30", "url": "https://borsa-raporlari.pages.dev/ru/"}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Глубокий анализ - 2026-09-17", "datePublished": "2026-09-17", "inLanguage": "ru", "description": "Глубокий аналитический отчет по BIST 30 от 2026-09-17.", "author": {"@type": "Organization", "name": "Ежедневные отчёты BIST 30", "url": "https://borsa-raporlari.pages.dev/ru/"}, "publisher": {"@type": "Organization", "name": "Ежедневные отчёты BIST 30", "url": "https://borsa-raporlari.pages.dev/ru/"}, "mainEntityOfPage": "https://borsa-raporlari.pages.dev/ru/reports/2026-09-17-derin-analiz.html"}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="../style.css">
@@ -67,7 +67,7 @@
       .catch(function() {
         if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
         var iz2 = document.getElementById('ticker-iz');
-        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Цены временно недоступны; повторная попытка будет выполнена в ближайшее время.</span>';
       });
   }
   yukle('/api/fiyatlar?t=' + Date.now());
@@ -107,7 +107,7 @@
       .then(ciz)
       .catch(function() {
         if (adres.indexOf('/api/') !== -1) { yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }
-        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Piyasa verileri geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Рыночные данные временно недоступны; повторная попытка будет выполнена в ближайшее время.</span>';
       });
   }
   yukle('/api/piyasa?t=' + Date.now());
@@ -212,7 +212,7 @@
       }
       panel.innerHTML = html;
     }).catch(function() {
-      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Не удалось загрузить поисковый индекс.</span>';
     });
   };
 

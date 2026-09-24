@@ -67,7 +67,7 @@
       .catch(function() {
         if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
         var iz2 = document.getElementById('ticker-iz');
-        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Prices could not be loaded temporarily; they will be retried shortly.</span>';
       });
   }
   yukle('/api/fiyatlar?t=' + Date.now());
@@ -107,7 +107,7 @@
       .then(ciz)
       .catch(function() {
         if (adres.indexOf('/api/') !== -1) { yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }
-        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Piyasa verileri geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Market data could not be loaded temporarily; it will be retried shortly.</span>';
       });
   }
   yukle('/api/piyasa?t=' + Date.now());
@@ -212,7 +212,7 @@
       }
       panel.innerHTML = html;
     }).catch(function() {
-      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Search index could not be loaded.</span>';
     });
   };
 

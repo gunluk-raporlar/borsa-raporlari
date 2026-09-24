@@ -29,7 +29,7 @@
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
 <meta name="yandex-verification" content="2c8df12d0b97a734">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Deep Analysis - 2026-09-23", "description": "2026-09-23 date BIST 30 deep analysis report.", "url": "https://borsa-raporlari.pages.dev/en/reports/2026-09-23-derin-analiz", "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Derin Analiz — 2026-09-23", "datePublished": "2026-09-23", "inLanguage": "en", "description": "2026-09-23 date BIST 30 deep analysis report.", "author": {"@type": "Organization", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}, "publisher": {"@type": "Organization", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}, "mainEntityOfPage": "https://borsa-raporlari.pages.dev/en/reports/2026-09-23-derin-analiz.html"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Deep Analysis - 2026-09-23", "description": "2026-09-23 date BIST 30 deep analysis report.", "url": "https://borsa-raporlari.pages.dev/en/reports/2026-09-23-derin-analiz", "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Deep Analysis - 2026-09-23", "datePublished": "2026-09-23", "inLanguage": "en", "description": "2026-09-23 date BIST 30 deep analysis report.", "author": {"@type": "Organization", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}, "publisher": {"@type": "Organization", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}, "mainEntityOfPage": "https://borsa-raporlari.pages.dev/en/reports/2026-09-23-derin-analiz.html"}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="../style.css">
@@ -68,7 +68,7 @@
       .catch(function() {
         if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
         var iz2 = document.getElementById('ticker-iz');
-        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Prices could not be loaded temporarily; they will be retried shortly.</span>';
       });
   }
   yukle('/api/fiyatlar?t=' + Date.now());
@@ -108,7 +108,7 @@
       .then(ciz)
       .catch(function() {
         if (adres.indexOf('/api/') !== -1) { yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }
-        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Piyasa verileri geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Market data could not be loaded temporarily; it will be retried shortly.</span>';
       });
   }
   yukle('/api/piyasa?t=' + Date.now());
@@ -209,7 +209,7 @@
       }
       panel.innerHTML = html;
     }).catch(function() {
-      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Search index could not be loaded.</span>';
     });
   };
 

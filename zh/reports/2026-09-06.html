@@ -28,7 +28,7 @@
 <meta name="twitter:description" content="2026-09-06日期的BIST 30日市场报告：管理层摘要、新闻和宏观评估、个股技术分析和模型投资组合建议。">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.devog-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "每日市场报告 - 2026-09-06", "description": "2026-09-06日期的BIST 30日市场报告：管理层摘要、新闻和宏观评估、个股技术分析和模型投资组合建议。", "url": "https://borsa-raporlari.pages.dev/zh/reports/2026-09-06", "inLanguage": "zh", "isPartOf": {"@type": "WebSite", "name": "BIST 30 每日报告", "url": "https://borsa-raporlari.pages.dev/zh/"}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Günlük Piyasa Raporu — 2026-09-06", "datePublished": "2026-09-06", "inLanguage": "zh", "description": "2026-09-06日期的BIST 30日市场报告：管理层摘要、新闻和宏观评估、个股技术分析和模型投资组合建议。", "author": {"@type": "Organization", "name": "BIST 30 每日报告", "url": "https://borsa-raporlari.pages.dev/zh/"}, "publisher": {"@type": "Organization", "name": "BIST 30 每日报告", "url": "https://borsa-raporlari.pages.dev/zh/"}, "mainEntityOfPage": "https://borsa-raporlari.pages.dev/zh/reports/2026-09-06.html"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "每日市场报告 - 2026-09-06", "description": "2026-09-06日期的BIST 30日市场报告：管理层摘要、新闻和宏观评估、个股技术分析和模型投资组合建议。", "url": "https://borsa-raporlari.pages.dev/zh/reports/2026-09-06", "inLanguage": "zh", "isPartOf": {"@type": "WebSite", "name": "BIST 30 每日报告", "url": "https://borsa-raporlari.pages.dev/zh/"}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "每日市场报告 - 2026-09-06", "datePublished": "2026-09-06", "inLanguage": "zh", "description": "2026-09-06日期的BIST 30日市场报告：管理层摘要、新闻和宏观评估、个股技术分析和模型投资组合建议。", "author": {"@type": "Organization", "name": "BIST 30 每日报告", "url": "https://borsa-raporlari.pages.dev/zh/"}, "publisher": {"@type": "Organization", "name": "BIST 30 每日报告", "url": "https://borsa-raporlari.pages.dev/zh/"}, "mainEntityOfPage": "https://borsa-raporlari.pages.dev/zh/reports/2026-09-06.html"}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="../style.css">
@@ -103,7 +103,7 @@
       .then(ciz)
       .catch(function() {
         if (adres.indexOf('/api/') !== -1) { yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }
-        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Piyasa verileri geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">市场数据暂时无法加载，稍后将自动重试。</span>';
       });
   }
   yukle('/api/piyasa?t=' + Date.now());
@@ -208,7 +208,7 @@
       }
       panel.innerHTML = html;
     }).catch(function() {
-      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">无法加载搜索索引。</span>';
     });
   };
 
