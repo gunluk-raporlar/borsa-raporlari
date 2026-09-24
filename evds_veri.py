@@ -14,7 +14,9 @@ eslemeyle kesfedilir ve `data/evds-kodlar.json` dosyasinda sabitlenir;
 sonraki calismalarda dogrudan o kod kullanilir. Kelime eslemesi sonucu
 belirsizse o gosterge ATLANIR (uygun seri uydurulmaz) ve adaylar loglanir.
 
-EVDS REST ornegi: `.../igmevdsms-dis/?series=KOD&startDate=gg-aa-yyyy
+EVDS REST ornegi - parametreler yolun icine yazilir, `?` KULLANILMAZ
+(`?`-li istek 400 "Missing parameters" dondurur; 24-09-2026 canli denetimle
+dogrulandi): `.../igmevdsms-dis/series=KOD&startDate=gg-aa-yyyy
 &endDate=gg-aa-yyyy&type=json&frequency=5&formulas=3` + `key` header.
 Anahtarsiz istek HTTP 401 "Invalid API Key" dondurur (olay kayitlanir).
 """
@@ -109,9 +111,13 @@ def _istek(url, parametreler=None, anahtar_deger=None):
     k = anahtar_deger or anahtar()
     if not k:
         raise EvdsHata("EVDS_API_KEY yok", durum="anahtar")
+    # EVDS3 parametreleri '?' ile degil YOLUN ICINE yazar (24-09-2026 canli
+    # denetim: '?'-li istek 400 "Missing parameters", '?'-siz istek 200).
+    # Ornek: .../datagroups/mode=0&code=&type=json (PyPI 'evds' paketi de
+    # boyle cagirir; sadece 'key' header'i gonderilir).
     sorgu = urllib.parse.urlencode(parametreler or {})
-    tam = url + ("&" if "?" in url else "?") + sorgu if sorgu else url
-    req = urllib.request.Request(tam, headers={"key": k, "User-Agent": "Mozilla/5.0"})
+    tam = (url + sorgu) if sorgu else url
+    req = urllib.request.Request(tam, headers={"key": k})
     try:
         with urllib.request.urlopen(req, timeout=30) as yanit:
             ham = yanit.read()
@@ -119,7 +125,14 @@ def _istek(url, parametreler=None, anahtar_deger=None):
         if exc.code in (401, 403):
             raise EvdsHata(f"EVDS anahtari gecersiz (HTTP {exc.code})",
                            durum="anahtar") from exc
-        raise EvdsHata(f"EVDS HTTP {exc.code}", durum="veri") from exc
+        # Govde + istek URL'si (anahtar URL'de degil, header'dadir) loglansin:
+        # CI'da 400'un sebebi sonraki calismada gorunur olsun.
+        try:
+            govde = exc.read()[:200].decode("utf-8", "replace").replace("\n", " ")
+        except Exception:
+            govde = ""
+        raise EvdsHata(f"EVDS HTTP {exc.code}: {govde} | istek: {tam}",
+                       durum="veri") from exc
     except (urllib.error.URLError, TimeoutError, OSError) as exc:
         raise EvdsHata(f"EVDS baglanti hatasi: {exc}", durum="veri") from exc
     try:
@@ -212,7 +225,7 @@ def _kodu_bul(hedef, gruplar):
 
 
 def _tarih_yaz(deger):
-    """EVDS DATE alanini 'YYYY-MM-DD'ye cevirir; okunamazsa None."""
+    """EVDS tarih alanini ('Tarih'/'DATE') 'YYYY-MM-DD'ye cevirir; okunamazsa None."""
     yazi = str(deger or "").strip()
     for bicim, duz in ((r"^\d{2}-\d{2}-\d{4}", "%d-%m-%Y"),
                        (r"^\d{4}-\d{2}-\d{2}", "%Y-%m-%d")):
@@ -265,11 +278,12 @@ def _veri_cek(hedef, kod, bitis_tarih):
     """Serinin son iki gozlemini (deger, onceki, donem) dondurur."""
     bitis = datetime.strptime(str(bitis_tarih)[:10], "%Y-%m-%d")
     bas = (bitis - timedelta(days=int(hedef["gun"]))).strftime("%d-%m-%Y")
+    # Bos 'formulas'/'aggregationTypes' de gonderilir (paketle ayni bicim).
     parametreler = {"series": kod, "startDate": bas,
                     "endDate": bitis.strftime("%d-%m-%Y"), "type": "json",
-                    "frequency": str(hedef["frekans"])}
-    if hedef.get("formul"):
-        parametreler["formulas"] = str(hedef["formul"])
+                    "frequency": str(hedef["frekans"]),
+                    "formulas": str(hedef.get("formul") or ""),
+                    "aggregationTypes": ""}
     veri = _istek(KOK, parametreler)
     items = veri.get("items") if isinstance(veri, dict) else None
     if not isinstance(items, list) or not items:
@@ -284,7 +298,8 @@ def _veri_cek(hedef, kod, bitis_tarih):
                       if str(k).replace(".", "_") in beklenen), None)
         if kolon is None:
             continue
-        tarih = _tarih_yaz(it.get("DATE"))
+        # EVDS3 yanitinda tarih anahtari 'Tarih' (bazen 'DATE').
+        tarih = _tarih_yaz(it.get("Tarih") or it.get("DATE"))
         deger = _sayi(it.get(kolon))
         if tarih and deger is not None:
             gozlemler.append((tarih, deger))

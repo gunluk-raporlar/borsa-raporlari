@@ -1933,7 +1933,7 @@ def _fred_son_tahvil_getirileri(snapshot_date):
     import pandas as pd
     url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS2,DGS10"
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=30) as yanit:
+    with urllib.request.urlopen(req, timeout=60) as yanit:
         tablo = csv.DictReader(io.StringIO(yanit.read().decode("utf-8")))
         satirlar = []
         for row in tablo:
@@ -1957,7 +1957,7 @@ def _fred_son_kapanislar(seri_ids, snapshot_date):
     import pandas as pd
     url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=" + ",".join(seri_ids)
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=30) as yanit:
+    with urllib.request.urlopen(req, timeout=60) as yanit:
         tablo = csv.DictReader(io.StringIO(yanit.read().decode("utf-8")))
         satirlar = []
         for row in tablo:

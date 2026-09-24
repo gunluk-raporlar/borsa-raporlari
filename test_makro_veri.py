@@ -438,6 +438,43 @@ class EvdsTest(unittest.TestCase):
             self.assertEqual(liste, [])
             self.assertEqual(self.evds.piyasa_kayitlari("2026-09-24"), [])
 
+    def test_evds_url_yol_icinde_anhtar_headerda(self):
+        # EVDS3 '?'-li URL'ye 400 "Missing parameters" dondurur; parametreler
+        # yolun icine, anahtar yalnizca header'a yazilir (24-09-2026 canli
+        # denetim kosusuyla dogrulandi - regresyon kilidi).
+        yakalanan = {}
+
+        class SahteYanit:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+            def read(self):
+                return b"[]"
+
+        def sahte_urlopen(istek, timeout=None):
+            yakalanan["url"] = istek.full_url
+            yakalanan["header"] = dict(istek.header_items())
+            return SahteYanit()
+
+        with mock.patch.object(self.evds.urllib.request, "urlopen",
+                               sahte_urlopen):
+            sonuc = self.evds._istek(
+                self.evds.KOK + "datagroups/",
+                {"mode": 0, "code": "", "type": "json"},
+                anahtar_deger="TEST123")
+        self.assertEqual(sonuc, [])
+        self.assertTrue(
+            yakalanan["url"].endswith("/datagroups/mode=0&code=&type=json"),
+            yakalanan["url"])
+        self.assertNotIn("?", yakalanan["url"])
+        self.assertNotIn("TEST123", yakalanan["url"])
+        anhtarli = [v for k, v in yakalanan["header"].items()
+                    if k.lower() == "key"]
+        self.assertEqual(anhtarli, ["TEST123"])
+
     def test_anahtar_gecersizse_kesif_dahil_atlanir(self):
         def hatali(url, parametreler=None, anahtar_deger=None):
             raise self.evds.EvdsHata("EVDS anahtari gecersiz (HTTP 401)",
