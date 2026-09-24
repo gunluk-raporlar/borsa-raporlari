@@ -1,0 +1,28 @@
+{
+ "tarih": "2026-09-24",
+ "etiket": "bot",
+ "cagrilar": [
+  {
+   "islev": "zai_call",
+   "model": "glm",
+   "sure_sn": 133.517,
+   "ok": true,
+   "saat": "2026-09-24T08:17:57+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 4.041,
+   "ok": true,
+   "saat": "2026-09-24T08:18:01+03:00"
+  }
+ ],
+ "ozet": {
+  "adet": 2,
+  "ortalama_sn": 68.779,
+  "p95_sn": 4.041,
+  "maks_sn": 133.517,
+  "basari_orani": 1.0,
+  "son_guncelleme": "2026-09-24T08:20:51+03:00"
+ }
+}
