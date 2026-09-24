@@ -1084,32 +1084,40 @@ TUIK_DATAFLOW = {
 TUIK_SERIE_TANIMLARI = {
     "inflation_yoy": {
         "dataflow": "DF_TUFE_SDMX_TT03", "select": ("total", "annual rate of change"),
+        "match": ("total", "annual", "change"),
     },
     "inflation_mom": {
         "dataflow": "DF_TUFE_SDMX_TT03", "select": ("total", "monthly rate of change"),
+        "match": ("total", "month", "change"),
     },
     "core_inflation_yoy": {
         "dataflow": "DF_TUFE_SDMX_TT03",
         "select": ("excluding food and energy", "gıda ve enerji dışı"),
+        "match_any": ("excluding food and energy", "gıda ve enerji dışı"),
     },
     "producer_prices_yoy": {
         "dataflow": "DF_UFE_SANAYI_V2", "select": ("total", "annual rate of change"),
+        "match": ("total", "annual", "change"),
     },
     "unemployment_rate": {
         "dataflow": "DF_ISGUCU_AYLIK_TAMAMLAYICI_GOSTERGE_C",
         "select": ("total", "unemployment rate"),
+        "match": ("unemployment", "rate"),
     },
     "participation_rate": {
         "dataflow": "DF_ISGUCU_AYLIK_TEMEL_ISGUCU_C",
         "select": ("total", "labour force participation rate"),
+        "match": ("participation", "rate"),
     },
     "industrial_production_yoy": {
         "dataflow": "DF_SANAYI_URETIM_ENDEKS_ANA_C",
         "select": ("total", "annual rate of change"),
+        "match": ("total", "annual", "change"),
     },
     "industrial_production_mom": {
         "dataflow": "DF_SANAYI_URETIM_ENDEKS_ANA_C",
         "select": ("total", "monthly rate of change"),
+        "match": ("total", "month", "change"),
     },
 }
 _TUIK_YAPI_ONBELLEK = {}
@@ -1354,6 +1362,15 @@ def _tuik_seride_guncel(gosterge, as_of=None):
         return None
     aday = []
     for row in satirlar:
+        row_text = _tuik_duz(" ".join(str(v) for k, v in row.items()
+                                    if k != "value"))
+        match = tanim.get("match")
+        match_any = tanim.get("match_any")
+        if match and not all(_tuik_duz(token) in row_text for token in match):
+            continue
+        if match_any and not any(_tuik_duz(token) in row_text
+                                 for token in match_any):
+            continue
         donem = _tuik_donem(row.get("TIME_PERIOD"))
         try:
             datetime.strptime(donem, "%Y-%m-%d")
