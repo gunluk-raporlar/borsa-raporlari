@@ -14,10 +14,10 @@
  "enflasyon_yonu": "seri yeni (kayit birikiyor)",
  "etiket": "yüksek enflasyon + sıkı para politikası (5.49 puan reel faiz) · ılımlı iç talep",
  "global_risk": {
-  "brent": 107.32,
-  "dxy": 101.267998,
+  "brent": 107.629997,
+  "dxy": 101.278999,
   "ust10y": null,
-  "vix": 15.48
+  "vix": 15.64
  },
  "globall": {
   "ABD": {
@@ -31,7 +31,7 @@
  },
  "ic_talep": "ılımlı",
  "issizlik": 8.3,
- "olusturma": "2026-09-24T23:07:00+03:00",
+ "olusturma": "2026-09-24T23:29:23+03:00",
  "para_durusu": "sıkı",
  "piyasa_sinyalleri": {
   "emtia": 1,

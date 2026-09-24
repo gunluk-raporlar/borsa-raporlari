@@ -1,0 +1,17 @@
+{
+ "consumer_loan_rate": {
+  "kod": "TP.FKF.TRY.15",
+  "ad": "Consumer Loans (TRY) (Personal+Vehicle+Housing) (Stock, %)",
+  "grup": "Financing Companies Interest  Rates on Loans (Stock Data)"
+ },
+ "credit_growth_yoy": {
+  "kod": "TP.KM.B23",
+  "ad": "4.1.2. Domestic Interbank Loans",
+  "grup": "Loans - Deposit Money Banks"
+ },
+ "m3_yoy": {
+  "kod": "TP.HPBITABLO1.18",
+  "ad": "3.M3",
+  "grup": "Monetary Aggregates"
+ }
+}
