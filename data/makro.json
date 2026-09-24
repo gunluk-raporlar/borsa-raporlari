@@ -1,34 +1,30 @@
 {
- "guncelleme": "2026-09-24 18:13",
+ "guncelleme": "2026-09-24 18:19",
  "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli",
  "gostergeler": [
   {
    "ulke": "Türkiye",
    "ad": "Enflasyon (yıllık)",
-   "deger": 33.79,
+   "deger": 31.51,
    "birim": "%",
-   "donem": "2026-08-01",
-   "tahmin": null,
-   "onceki": null,
-   "kaynak_baslik": "DF_TUFE_SDMX_TT03",
-   "kaynak_periyot": "2026-08",
-   "frekans": "TÜİK",
-   "teyit": "TÜİK",
-   "kaynak_durumu": "TÜİK resmi verisi"
+   "donem": "2026-09-03",
+   "tahmin": 31.62,
+   "onceki": 31.75,
+   "kaynak_baslik": "Inflation Rate YoY",
+   "kaynak_periyot": "Aug",
+   "frekans": "aylık"
   },
   {
    "ulke": "Türkiye",
    "ad": "Enflasyon (aylık)",
-   "deger": 0.22,
+   "deger": 1.84,
    "birim": "%",
-   "donem": "2026-08-01",
-   "tahmin": null,
-   "onceki": null,
-   "kaynak_baslik": "DF_TUFE_SDMX_TT03",
-   "kaynak_periyot": "2026-08",
-   "frekans": "TÜİK",
-   "teyit": "TÜİK",
-   "kaynak_durumu": "TÜİK resmi verisi"
+   "donem": "2026-09-03",
+   "tahmin": 1.93,
+   "onceki": 1.78,
+   "kaynak_baslik": "Inflation Rate MoM",
+   "kaynak_periyot": "Aug",
+   "frekans": "aylık"
   },
   {
    "ulke": "Türkiye",
@@ -85,7 +81,7 @@
   {
    "ulke": "Türkiye",
    "ad": "Sanayi Üretimi (aylık)",
-   "deger": 113.8051,
+   "deger": -0.3234,
    "birim": "%",
    "donem": "2026-07-01",
    "tahmin": null,

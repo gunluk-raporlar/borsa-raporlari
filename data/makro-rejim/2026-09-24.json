@@ -13,10 +13,10 @@
   "global risk (VIX/DXY/UST10Y/Brent)",
   "yabancı takas oranı / forward P/E"
  ],
- "enflasyon": 0.22,
+ "enflasyon": 1.84,
  "enflasyon_seviyesi": "düşük",
  "enflasyon_yonu": "seri yeni (kayit birikiyor)",
- "etiket": "düşük enflasyon + sıkı para politikası (36.78 puan reel faiz) · zayıf iç talep",
+ "etiket": "düşük enflasyon + sıkı para politikası (35.16 puan reel faiz) · zayıf iç talep",
  "globall": {
   "ABD": {
    "enflasyon": 2.4,
@@ -29,10 +29,10 @@
  },
  "ic_talep": "zayıf",
  "issizlik": 8.3,
- "olusturma": "2026-09-24T18:14:29+03:00",
+ "olusturma": "2026-09-24T18:20:10+03:00",
  "para_durusu": "sıkı",
  "politika_faizi": 37.0,
- "reel_faiz": 36.78,
+ "reel_faiz": 35.16,
  "rezerv": 68.444,
  "tarih": "2026-09-24"
 }
