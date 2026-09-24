@@ -1,0 +1,74 @@
+name: EVDS Ucu Denetimi 4
+# Gecici: 4 grubun TAM seri listesi (mevduat faizi, reer x2, kredi) +
+# tahvil/getiri gruplarinin capsiz taramasi.
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: EVDS 4. denetim
+        env:
+          EVDS_API_KEY: ${{ secrets.EVDS_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import json, os, re, urllib.request, urllib.error
+          from datetime import date, datetime
+
+          K = os.environ.get("EVDS_API_KEY", "")
+          KOK = "https://evds3.tcmb.gov.tr/igmevdsms-dis/"
+
+          def istek(yol):
+              req = urllib.request.Request(KOK + yol, headers={"key": K})
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as r:
+                      return r.status, r.read()
+              except urllib.error.HTTPError as e:
+                  return e.code, e.read()
+              except Exception as e:
+                  return None, str(e).encode()
+
+          def duz(t):
+              s = str(t or "").casefold()
+              for a, b in (("ı","i"),("i̇","i"),("ş","s"),("ğ","g"),("ü","u"),
+                           ("ö","o"),("ç","c"),("â","a"),("î","i"),("û","u")):
+                  s = s.replace(a, b)
+              return s
+
+          def son_tarih(k):
+              try:
+                  return datetime.strptime(str(k)[:10], "%d-%m-%Y").date()
+              except ValueError:
+                  return date.min
+
+          for kod in ("bie_mt100h", "bie_rktufey", "bie_rkufey", "bie_kmmbkre"):
+              s, g = istek(f"serieList/type=json&code={kod}")
+              if s != 200:
+                  print(f"TAM | {kod} | HATA {s}")
+                  continue
+              seriler = json.loads(g)
+              seriler = [se for se in seriler if isinstance(se, dict)]
+              seriler.sort(key=lambda se: son_tarih(se.get("END_DATE")), reverse=True)
+              print(f"TAM | {kod} | {len(seriler)} seri")
+              for se in seriler:
+                  print("SERI4 |", kod, "|", se.get("SERIE_CODE"), "|",
+                        str(se.get("SERIE_NAME") or se.get("SERIE_NAME_ENG"))[:72],
+                        "|", se.get("END_DATE"), "|", se.get("FREQUENCY_STR"))
+
+          s, g = istek("datagroups/mode=0&code=&type=json")
+          gruplar = [gr for gr in json.loads(g) if isinstance(gr, dict) and gr.get("DATAGROUP_CODE")]
+          desen = r"tahvil|bond|yield|getiri|borclanma|securities|oecd|iki yil|2 yil"
+          esik = date(2025, 6, 1)
+          bul = [gr for gr in gruplar if re.search(
+              desen, duz(gr.get("DATAGROUP_NAME")) + " " + duz(gr.get("DATAGROUP_NAME_ENG")))]
+          bul = [gr for gr in bul if son_tarih(gr.get("END_DATE")) >= esik]
+          bul.sort(key=lambda gr: son_tarih(gr.get("END_DATE")), reverse=True)
+          print("TAHVIL-GRUP |", len(bul))
+          for gr in bul:
+              print("GRUP4 |", gr["DATAGROUP_CODE"], "|",
+                    str(gr.get("DATAGROUP_NAME") or "")[:66], "|",
+                    gr.get("END_DATE"), "| FREQ", gr.get("FREQUENCY"))
+          PY
