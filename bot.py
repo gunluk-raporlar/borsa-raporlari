@@ -1848,6 +1848,9 @@ def piyasa_verisi():
     try:
         import yfinance as yf
         df_kur = yf.download("USDTRY=X", period="5d", progress=False)["Close"].ffill().dropna()
+        if hasattr(df_kur, "columns"):
+            # yfinance >= 0.2 MultiIndex kolon dondurur; tek seride indir.
+            df_kur = df_kur.iloc[:, 0]
         if len(df_kur) >= 2:
             onceki, son = float(df_kur.iloc[-2]), float(df_kur.iloc[-1])
             if onceki > 0:
