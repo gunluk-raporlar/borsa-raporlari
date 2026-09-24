@@ -1,0 +1,106 @@
+name: EVDS Ucu Denetimi 3
+# Gecici: taze (END_DATE dd-mm-yyyy siralamasi) grup adaylari + secilecek
+# serilerin listeleri (mevduat faizi, reer, tahvil getirisi, toplam kredi).
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: EVDS 3. denetim
+        env:
+          EVDS_API_KEY: ${{ secrets.EVDS_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import json, os, re, urllib.request, urllib.error
+          from datetime import date, datetime
+
+          K = os.environ.get("EVDS_API_KEY", "")
+          KOK = "https://evds3.tcmb.gov.tr/igmevdsms-dis/"
+
+          def istek(yol):
+              req = urllib.request.Request(KOK + yol, headers={"key": K})
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as r:
+                      return r.status, r.read()
+              except urllib.error.HTTPError as e:
+                  return e.code, e.read()
+              except Exception as e:
+                  return None, str(e).encode()
+
+          def duz(t):
+              s = str(t or "").casefold()
+              for a, b in (("ı","i"),("i̇","i"),("ş","s"),("ğ","g"),("ü","u"),
+                           ("ö","o"),("ç","c"),("â","a"),("î","i"),("û","u")):
+                  s = s.replace(a, b)
+              return s
+
+          def son_tarih(k):
+              try:
+                  return datetime.strptime(str(k)[:10], "%d-%m-%Y").date()
+              except ValueError:
+                  return date.min
+
+          s, g = istek("datagroups/mode=0&code=&type=json")
+          gruplar = [gr for gr in json.loads(g) if isinstance(gr, dict) and gr.get("DATAGROUP_CODE")]
+          print("GRUP-SAYISI:", len(gruplar))
+          esik = date(2025, 6, 1)  # bayat/arshiv gruplar elenir
+
+          def adaylar(desen):
+              bul = [gr for gr in gruplar
+                     if re.search(desen, duz(gr.get("DATAGROUP_NAME")) + " "
+                                  + duz(gr.get("DATAGROUP_NAME_ENG")))]
+              bul = [gr for gr in bul if son_tarih(gr.get("END_DATE")) >= esik]
+              bul.sort(key=lambda gr: son_tarih(gr.get("END_DATE")), reverse=True)
+              return bul
+
+          kategoriler = {
+              "mevduat-faizi": r"mevduat|deposit|faiz|interest",
+              "reer":          r"reel|efektif|effective|reer",
+              "tahvil-getiri": r"tahvil|bond|yield|getiri|borclanma|securities",
+              "kredi":         r"kredi|credit|loan",
+          }
+          secilecek_gruplar = []
+          for etiket, desen in kategoriler.items():
+              bul = adaylar(desen)
+              print(f"== {etiket}: {len(bul)} grup")
+              for gr in bul[:20]:
+                  print("   ", gr["DATAGROUP_CODE"], "|",
+                        str(gr.get("DATAGROUP_NAME") or "")[:62], "|",
+                        gr.get("END_DATE"), "| FREQ", gr.get("FREQUENCY"))
+              if etiket in ("mevduat-faizi", "reer", "tahvil-getiri"):
+                  secilecek_gruplar += [(etiket, gr["DATAGROUP_CODE"]) for gr in bul[:4]]
+              if etiket == "kredi":
+                  secilecek_gruplar.append((etiket, "bie_kmmbkre"))
+
+          seri_desen = {
+              "mevduat-faizi": r"mevduat.*faiz|faiz.*mevduat|deposit.*rate|rate.*deposit|deposit.*interest|interest.*deposit|interest rate",
+              "reer":          r"reel efektif|real effective|reer|efektif",
+              "tahvil-getiri": r"yil|year|vade|maturity|getiri|yield",
+              "kredi":         r".",
+          }
+          gorulen = set()
+          for etiket, kod in secilecek_gruplar:
+              if kod in gorulen:
+                  continue
+              gorulen.add(kod)
+              s2, g2 = istek(f"serieList/type=json&code={kod}")
+              if s2 != 200:
+                  print(f"   SERI-LIST HATA {kod}: {s2}")
+                  continue
+              seriler = json.loads(g2)
+              uygun = [se for se in seriler if isinstance(se, dict) and re.search(
+                  seri_desen[etiket],
+                  duz(se.get("SERIE_NAME")) + " " + duz(se.get("SERIE_NAME_ENG")))]
+              uygun = [se for se in uygun
+                       if son_tarih(se.get("END_DATE")) >= esik]
+              uygun.sort(key=lambda se: son_tarih(se.get("END_DATE")), reverse=True)
+              print(f"   -- {kod}: {len(seriler)} seriden {len(uygun)} uygun")
+              for se in uygun[:10]:
+                  print("      ", se.get("SERIE_CODE"), "|",
+                        str(se.get("SERIE_NAME") or se.get("SERIE_NAME_ENG"))[:70],
+                        "|", se.get("END_DATE"), "|", se.get("FREQUENCY_STR"))
+          PY
