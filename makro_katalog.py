@@ -151,8 +151,6 @@ PIYASA_KOD = {item[1] for item in PIYASA_SERILERI} | {
     "gold_try", "ust2y", "ust10y", "bist30", "bist100",
     # FRED kredi marjlari (BAMLC0A0CM / BAMLH0A0HYM2)
     "corp_oas", "hy_oas",
-    # TCMB EVDS tahvil getirileri (2 yil / 10 yil)
-    "tr2y", "tr10y",
 }
 
 REQUIRED = {

@@ -2060,14 +2060,6 @@ def piyasa_serileri_ce(snapshot_date):
         _logging.getLogger("makro-snapshot").warning(
             "FRED kredi marjlari alinamadi: %s", exc)
 
-    # EVDS TR tahvil getirileri (opsiyonel; anahtar/kesif yoksa bos doner).
-    try:
-        import evds_veri
-        kayitlar.extend(evds_veri.piyasa_kayitlari(snapshot_date))
-    except Exception as exc:
-        _logging.getLogger("makro-snapshot").warning(
-            "EVDS piyasa serileri atlandi: %s", exc)
-
     for symbol, kod, ad, birim in (
         ("XU030", "bist30", "BIST 30", "puan"),
         ("XU100", "bist100", "BIST 100", "puan"),

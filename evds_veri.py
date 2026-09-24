@@ -7,12 +7,23 @@ Anahtar oldugunda iki blogu doldurur:
 
 - Makro (TR): mevduat faizi, tuketici kredisi faizi, kredi buyumesi,
   M3 para yillik buyumesi, reel efektif doviz kuru.
-- Piyasa (TR): 2 ve 10 yillik tahvil getirileri.
 
-Seri kodlari ilk calismada `datagroups` + `serieList` uzerinden kelime
-eslemeyle kesfedilir ve `data/evds-kodlar.json` dosyasinda sabitlenir;
-sonraki calismalarda dogrudan o kod kullanilir. Kelime eslemesi sonucu
-belirsizse o gosterge ATLANIR (uygun seri uydurulmaz) ve adaylar loglanir.
+Dogrulanmis seri kodlari `ELLE_KODLAR` haritasinda elle sabitlidir (24-25
+ Eylul 2026 canli denetimle veri + ad birebir kontrol edildi); bu gostergeler
+kesif yapmadan dogrudan o kodla cagirilir, boylece arsiv/bayat gruplarin
+kalabaliginda yanlis seri secilmez. Haritadaki bir seri EVDS'den kaldirilirsa
+veri cekme hatasi loglanir ve o gosterge yalnizca o gun atlanir.
+
+Haritada olmayan hedefler icin seri kodlari `datagroups` + `serieList`
+uzerinden kelime eslemesiyle kesfedilir (taze gruplar once taranir; arsiv ve
+550 gunden eski grup/seriler ele gelir) ve `data/evds-kodlar.json` dosyasinda
+sabitlenir. Kelime eslemesi sonucu belirsizse o gosterge ATLANIR (uygun seri
+uydurulmaz) ve adaylar loglanir.
+
+NOT: EVDS'de sabit vadeli (2/10 yillik) TR tahvil getirisi serisi YOKTUR
+(25-09-2026 bes uclu denetimle dogrulandi: 4208 pydibs serisi tamami tek tek
+ISIN; 14 taze "faiz" grubunda toplu getiri serisi yok) - o yuzden hedeflistede
+degildir.
 
 EVDS REST ornegi - parametreler yolun icine yazilir, `?` KULLANILMAZ
 (`?`-li istek 400 "Missing parameters" dondurur; 24-09-2026 canli denetimle
@@ -29,7 +40,7 @@ import re
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 logger = logging.getLogger("evds")
@@ -54,9 +65,9 @@ MACRO_HEDEFLERI = (
     {"id": "credit_growth_yoy", "ad": "Kredi Büyümesi (yıllık)", "birim": "%",
      "siklik": "aylık", "frekans": 5, "formul": 3,
      "min": -100.0, "max": 500.0, "gun": 400,
-     "grup": r"kredi|credit|loan", "seri": r"verilen krediler|bank credit|"
-                                            r"total credit|krediler",
-     "tercih": r"bankalara|bankalari|bank", "disi": r"kart|card|mevduat"},
+     "grup": r"kredi|credit|loan", "seri": r"6\.\s*toplam|toplam krediler|"
+                                           r"total loans|total credit",
+     "tercih": None, "disi": r"kart|card|mevduat|deposit"},
     {"id": "m3_yoy", "ad": "M3 Para Arzı (yıllık)", "birim": "%",
      "siklik": "aylık", "frekans": 5, "formul": 3,
      "min": -100.0, "max": 500.0, "gun": 400,
@@ -65,23 +76,34 @@ MACRO_HEDEFLERI = (
     {"id": "reer", "ad": "Reel Efektif Döviz Kuru", "birim": "endeks",
      "siklik": "aylık", "frekans": 5, "formul": 0,
      "min": 40.0, "max": 250.0, "gun": 400,
-     "grup": r"endeks|doviz|kurlar|index|exchange",
-     "seri": r"reel efektif|real effective|reer", "tercih": None,
-     "disi": r"nominal|nominal"},
+     "grup": r"reel efektif|real effective|reer",
+     "seri": r"reel efektif|real effective|reer",
+     "tercih": r"^t[u]fe bazl", "disi": r"^yi[- ]?ufe|nominal"},
 )
 
-PIYASA_HEDEFLERI = (
-    {"id": "tr2y", "label": "TR 2 Yıllık Tahvil", "birim": "%",
-     "kategori": "faiz", "frekans": 1, "formul": 0,
-     "min": 0.0, "max": 150.0, "gun": 40,
-     "grup": r"tahvil|getiri|borclanma|bond|yield",
-     "seri": r"(?<!\d)2\s*yil|(?<!\d)2\s*year", "tercih": None, "disi": r"enflasyon"},
-    {"id": "tr10y", "label": "TR 10 Yıllık Tahvil", "birim": "%",
-     "kategori": "faiz", "frekans": 1, "formul": 0,
-     "min": 0.0, "max": 150.0, "gun": 40,
-     "grup": r"tahvil|getiri|borclanma|bond|yield",
-     "seri": r"(?<!\d)10\s*yil|(?<!\d)10\s*year", "tercih": None, "disi": r"enflasyon"},
-)
+# 24-25.09.2026 canli denetimle (evds-probe2/4) verisi + adi birebir
+# dogrulanmis seri kodlari. Kesif bu gostergeler icin ATLANIR: eskiden arsiv
+# gruplar (END 2002/2013) ya da yanlis anlamli seri secilebiliyordu.
+# 'ad'/'grup' yalnizca log/kaynak basligi icindir; EVDS seriyi kaldirirsa
+# _veri_cek hatasi goreli loglanir ve o gosterge yalnizca o gun atlanir.
+ELLE_KODLAR = {
+    "deposit_rate": {"kod": "TP.TRY.MT06",
+                     "ad": "Toplam (TL Mevduat, Akım, %)",
+                     "grup": "Mevduat Faiz Oranları (Akım)"},
+    "consumer_loan_rate": {"kod": "TP.FKF.TRY.15",
+                           "ad": "Tüketici Kredisi (TL, Stok, %)",
+                           "grup": "Finansman Şirketleri Kredi Faiz Oranları "
+                                   "(Stok)"},
+    "credit_growth_yoy": {"kod": "TP.KM.B33",
+                          "ad": "6.TOPLAM",
+                          "grup": "Krediler - Mevduat Bankaları"},
+    "m3_yoy": {"kod": "TP.HPBITABLO1.18",
+               "ad": "3.M3",
+               "grup": "Para Arzı (haftalık)"},
+    "reer": {"kod": "TP.RK.T1.Y",
+             "ad": "TÜFE Bazlı Reel Efektif Döviz Kuru (2025=100)",
+             "grup": "Reel Efektif Döviz Kuru - TÜFE Bazlı"},
+}
 
 
 class EvdsHata(Exception):
@@ -187,18 +209,57 @@ def _seri_listesi(grup_kodu):
     return [s for s in veri if isinstance(s, dict) and s.get("SERIE_CODE")]
 
 
-def _kodu_bul(hedef, gruplar):
+def _son_tarih(deger):
+    """'dd-mm-yyyy' tarihini date'e cevirir; okunamazsa None."""
+    try:
+        return datetime.strptime(str(deger or "")[:10], "%d-%m-%Y").date()
+    except ValueError:
+        return None
+
+
+def _canli_mi(kayit, azami_gun=550):
+    """Arsiv/bayat grup-seri adayini ele; tarihi olmayan kayitlar birakilir.
+
+    EVDS 'datagroups' listesinde arsiv gruplar (END 2002/2013) ve seride
+    bitmis seriler ('(Arsiv)', END 2024) taze adaylari kalabaliklastiriyordu
+    (25-09-2026 denetim: reer/mevduat kesifi arsiv gruplarda takiliyordu).
+    """
+    if not isinstance(kayit, dict):
+        return False
+    metin = _duz(" ".join(_kayit_adlari(kayit, "DATAGROUP_NAME")
+                          + _kayit_adlari(kayit, "SERIE_NAME")))
+    if "arsiv" in metin or "archive" in metin:
+        return False
+    son = _son_tarih(kayit.get("END_DATE"))
+    if son is None:
+        return True
+    return (date.today() - son).days <= azami_gun
+
+
+def _kodu_bul(hedef, gruplar, seri_onbellek=None):
     """Kelime eslemesiyle tek seri kodu kesfeder; belirsizse None."""
-    aday_gruplar = [g for g in gruplar if _esi(_kayit_adlari(g, "DATAGROUP_NAME"),
-                                               hedef["grup"])]
+    aday_gruplar = [g for g in gruplar
+                    if _esi(_kayit_adlari(g, "DATAGROUP_NAME"), hedef["grup"])
+                    and _canli_mi(g)]
+    # Taze grup once: END_DATE 'dd-mm-yyyy' oldugundan dogru tarihle siralanir
+    # (ham/alfabetik sirada 2013'te biten arsiv grubu 2026'dan once geliyordu).
+    aday_gruplar.sort(key=lambda g: _son_tarih(g.get("END_DATE")) or date.min,
+                      reverse=True)
     belirsiz = []
-    for grup in aday_gruplar[:8]:
-        try:
-            seriler = _seri_listesi(str(grup["DATAGROUP_CODE"]))
-        except EvdsHata:
-            raise
+    for grup in aday_gruplar[:25]:
+        grup_kodu = str(grup["DATAGROUP_CODE"])
+        if seri_onbellek is not None and grup_kodu in seri_onbellek:
+            seriler = seri_onbellek[grup_kodu]
+        else:
+            try:
+                seriler = _seri_listesi(grup_kodu)
+            except EvdsHata:
+                raise
+            if seri_onbellek is not None:
+                seri_onbellek[grup_kodu] = seriler
         eslesen = [s for s in seriler
-                   if _esi(_kayit_adlari(s, "SERIE_NAME"), hedef["seri"])
+                   if _canli_mi(s)
+                   and _esi(_kayit_adlari(s, "SERIE_NAME"), hedef["seri"])
                    and not (hedef.get("disi")
                             and _esi(_kayit_adlari(s, "SERIE_NAME"), hedef["disi"]))]
         if hedef.get("tercih") and len(eslesen) > 1:
@@ -225,7 +286,13 @@ def _kodu_bul(hedef, gruplar):
 
 
 def _tarih_yaz(deger):
-    """EVDS tarih alanini ('Tarih'/'DATE') 'YYYY-MM-DD'ye cevirir; okunamazsa None."""
+    """EVDS tarih alanini ('Tarih'/'DATE') 'YYYY-MM-DD'ye cevirir; okunamazsa None.
+
+    Biçimler: gunluk 'gg-aa-yyyy' / 'yyyy-aa-gg', aylik seri 'yyyy-aa'
+    (25-09-2026 denetim: frequency=5 yaniti 'Tarih':'2025-8' doner - bu bicim
+    islenmezse TUM satirlar duser ve 'gecerli gozlem yok' hatasi uretilir),
+    yillik seri 'yyyy'.
+    """
     yazi = str(deger or "").strip()
     for bicim, duz in ((r"^\d{2}-\d{2}-\d{4}", "%d-%m-%Y"),
                        (r"^\d{4}-\d{2}-\d{2}", "%Y-%m-%d")):
@@ -234,6 +301,14 @@ def _tarih_yaz(deger):
                 return datetime.strptime(yazi[:10], duz).date().isoformat()
             except ValueError:
                 return None
+    ay = re.match(r"^(\d{4})-(\d{1,2})$", yazi)
+    if ay:
+        try:
+            return date(int(ay.group(1)), int(ay.group(2)), 1).isoformat()
+        except ValueError:
+            return None
+    if re.match(r"^\d{4}$", yazi):
+        return f"{yazi}-01-01"
     return None
 
 
@@ -255,6 +330,7 @@ class _Kesif:
     def __init__(self):
         self.onbellek = _kod_onbellegi()
         self._gruplar = None
+        self._seri_onbellek = {}
 
     def gruplar(self):
         if self._gruplar is None:
@@ -262,10 +338,13 @@ class _Kesif:
         return self._gruplar
 
     def kod(self, hedef):
+        elle = ELLE_KODLAR.get(hedef["id"])
+        if elle:
+            return str(elle["kod"]), str(elle.get("ad") or "")
         kayit = self.onbellek.get(hedef["id"])
         if isinstance(kayit, dict) and str(kayit.get("kod", "")).strip():
             return str(kayit["kod"]), str(kayit.get("ad") or "")
-        bulunan = _kodu_bul(hedef, self.gruplar())
+        bulunan = _kodu_bul(hedef, self.gruplar(), self._seri_onbellek)
         if not bulunan:
             raise EvdsHata(f"{hedef['id']}: seri kodu kesfedilemedi",
                            durum="kesif")
@@ -274,12 +353,31 @@ class _Kesif:
         return bulunan["kod"], bulunan["ad"]
 
 
+def _kolon_eslesir(k, beklenen):
+    """'TP_KM_B33' ve formul son ekli 'TP_KM_B33-3' kolonlarini kabul eder.
+
+    EVDS, formulas=3 isteginde kolon adina '-3' ekler; e kabul edilmezse
+    dogrulama hep basarisiz olurdu (25-09-2026 denetimde goruldu).
+    """
+    temiz = str(k).replace(".", "_")
+    return temiz in beklenen or temiz.split("-")[0] in beklenen
+
+
 def _veri_cek(hedef, kod, bitis_tarih):
     """Serinin son iki gozlemini (deger, onceki, donem) dondurur."""
     bitis = datetime.strptime(str(bitis_tarih)[:10], "%Y-%m-%d")
-    bas = (bitis - timedelta(days=int(hedef["gun"]))).strftime("%d-%m-%Y")
+    bas_gun = bitis - timedelta(days=int(hedef["gun"]))
+    # Kullanim kilavuzu: istenen frekansin ilk gunu yazilmali (aylikta ayin
+    # 1'i); hizalamazsan ilk donem eksik gelir.
+    if hedef["frekans"] == 5:
+        bas_gun = bas_gun.replace(day=1)
+    elif hedef["frekans"] == 6:
+        bas_gun = bas_gun.replace(month=((bas_gun.month - 1) // 3) * 3 + 1,
+                                  day=1)
+    elif hedef["frekans"] == 8:
+        bas_gun = bas_gun.replace(month=1, day=1)
     # Bos 'formulas'/'aggregationTypes' de gonderilir (paketle ayni bicim).
-    parametreler = {"series": kod, "startDate": bas,
+    parametreler = {"series": kod, "startDate": bas_gun.strftime("%d-%m-%Y"),
                     "endDate": bitis.strftime("%d-%m-%Y"), "type": "json",
                     "frequency": str(hedef["frekans"]),
                     "formulas": str(hedef.get("formul") or ""),
@@ -294,8 +392,7 @@ def _veri_cek(hedef, kod, bitis_tarih):
     for it in items:
         if not isinstance(it, dict):
             continue
-        kolon = next((k for k in it
-                      if str(k).replace(".", "_") in beklenen), None)
+        kolon = next((k for k in it if _kolon_eslesir(k, beklenen)), None)
         if kolon is None:
             continue
         # EVDS3 yanitinda tarih anahtari 'Tarih' (bazen 'DATE').
@@ -304,8 +401,8 @@ def _veri_cek(hedef, kod, bitis_tarih):
         if tarih and deger is not None:
             gozlemler.append((tarih, deger))
     if not gozlemler:
-        raise EvdsHata(f"{hedef['id']}: {kod} icin sonlu gozlem yok "
-                       "(sutun/kelime dogrulamasi basarisiz")
+        raise EvdsHata(f"{hedef['id']}: {kod} icin gecerli gozlem yok "
+                       "(kolon eslesmedi ya da tum degerler bos)")
     gozlemler.sort()
     donem, deger = gozlemler[-1]
     if not (float(hedef["min"]) <= deger <= float(hedef["max"])):
@@ -348,34 +445,3 @@ def gostergeleri_ekle(gostergeler, tarih):
         })
         eklenen += 1
     return eklenen
-
-
-def piyasa_kayitlari(snapshot_date):
-    """EVDS TR tahvil getirileri; anahtar/kesif yoksa bos liste."""
-    if not anahtar():
-        logger.info("[EVDS] EVDS_API_KEY yok; piyasa EVDS adimlari atlandi.")
-        return []
-    kesif = _Kesif()
-    kayitlar = []
-    for hedef in PIYASA_HEDEFLERI:
-        try:
-            kod, seri_adi = kesif.kod(hedef)
-            deger, onceki, donem = _veri_cek(hedef, kod, snapshot_date)
-        except EvdsHata as exc:
-            logger.warning("[EVDS] %s atlandi: %s", hedef["id"], exc)
-            if exc.durum == "anahtar":
-                break
-            continue
-        except Exception as exc:  # pragma: no cover - guvenlik agi
-            logger.warning("[EVDS] %s beklenmeyen hata: %s", hedef["id"], exc)
-            continue
-        kayitlar.append({
-            "symbol": f"EVDS:{kod}", "indicator": hedef["id"],
-            "label": hedef["label"], "value": round(deger, 4),
-            "previous": round(onceki, 4) if onceki is not None else None,
-            "change": round(deger - onceki, 4) if onceki is not None else None,
-            "unit": hedef["birim"], "period": donem,
-            "category": hedef["kategori"],
-            "source": f"TCMB EVDS ({seri_adi})", "status": "close",
-        })
-    return kayitlar

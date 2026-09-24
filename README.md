@@ -55,11 +55,16 @@ Makro sayıları artık doğrudan canlı kaynaktan rapora karıştırılmaz:
 5. TCMB EVDS opsiyoneldir: `EVDS_API_KEY` GitHub Secret olarak tanımlanır
    (repoya yazılmaz). Anahtar yoksa/401 gelirse hiçbir şey eklenmez, snapshot
    TV/TÜİK verisiyle yazılır. Anahtar varsa TR mevduat faizi, tüketici kredisi
-   faizi, kredi büyümesi, M3 (yıllık), reel efektif kuru ve 2/10 yıllık tahvil
-   getirileri EVDS'ten gelir. Seri kodları ilk anahtarlı koşuda kelime
-   eşlemesiyle `data/evds-kodlar.json` içinde sabitlenir (workflow bu dosyayı
-   commit eder); eşleşme birden çok adaya düşerse o gösterge atlanır ve adaylar
-   loglanır — kaynağı doğrulanamayan sayı rapora girmez.
+   faizi, kredi büyümesi, M3 (yıllık) ve reel efektif kuru EVDS'ten gelir.
+   Doğrulanmış seri kodları `evds_veri.ELLE_KODLAR` haritasında elle sabittir
+   (24-25.09.2026 canlı denetim — arşiv/bayat gruplarda yanlış seri seçimini
+   engeller); haritada olmayan hedefler `datagroups` + `serieList` kelime
+   eşlemesiyle keşfedilir ve `data/evds-kodlar.json` içinde sabitlenir
+   (workflow bu dosyayı commit eder). Eşleşme birden çok adaya düşerse o
+   gösterge atlanır ve adaylar loglanır — kaynağı doğrulanamayan sayı rapora
+   girmez. EVDS'de sabit vadeli 2/10 yıllık TR tahvil getirisi serisi
+   bulunmadığından (09.2026 uç denetim: 4208 pydibs serisi tek tek ISIN)
+   bu hedefler listede yoktur.
 6. Doğrulama; ülke/gösterge eşleşmesine göre enflasyon, politika faizi, ÜFE,
    büyüme, işsizlik, cari denge ve rezerv değerlerini deterministik kontrol eder.
 
@@ -76,8 +81,7 @@ uydurulmaz.
 Aynı snapshot 15 piyasa serisi de taşır: USD/TRY, EUR/TRY, altın, gram altın
 (türetilmiş), WTI, Brent, DXY, VIX, ABD 3/5/30 yıllık tahviller, FRED DGS2/DGS10
 ve Borsapy BIST 30/BIST 100. Opsiyonel olarak FRED kredi marjları (investment
-grade OAS, yüksek getirili OAS) ve EVDS 2/10 yıllık TR tahvil getirileri de
-eklenir. Her kayıt kapanış, önceki değer, değişim, tarih ve kaynağını taşır.
+grade OAS, yüksek getirili OAS) eklenir. Her kayıt kapanış, önceki değer, değişim, tarih ve kaynağını taşır.
 Yayınlanmayan seri snapshot'a girmez.
 
 ```bash

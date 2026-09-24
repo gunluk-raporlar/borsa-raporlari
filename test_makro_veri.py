@@ -422,6 +422,9 @@ class EvdsTest(unittest.TestCase):
         self._yamalar = [
             mock.patch.dict(os.environ, {"EVDS_API_KEY": "test-anahtar"}),
             mock.patch.object(evds_veri, "KOD_DOSYA", kod_yolu),
+            # Kesif testleri elle sabitlenmis kodlarin one cikmasini istemez;
+            # pin davranisi ayri testte (test_ele_kodlar...) ele alinir.
+            mock.patch.object(evds_veri, "ELLE_KODLAR", {}),
         ]
         for y in self._yamalar:
             y.start()
@@ -436,7 +439,6 @@ class EvdsTest(unittest.TestCase):
             liste = []
             self.assertEqual(self.evds.gostergeleri_ekle(liste, "2026-09-24"), 0)
             self.assertEqual(liste, [])
-            self.assertEqual(self.evds.piyasa_kayitlari("2026-09-24"), [])
 
     def test_evds_url_yol_icinde_anhtar_headerda(self):
         # EVDS3 '?'-li URL'ye 400 "Missing parameters" dondurur; parametreler
@@ -483,7 +485,6 @@ class EvdsTest(unittest.TestCase):
             liste = []
             self.assertEqual(self.evds.gostergeleri_ekle(liste, "2026-09-24"), 0)
             self.assertEqual(liste, [])
-            self.assertEqual(self.evds.piyasa_kayitlari("2026-09-24"), [])
 
     def test_kesif_onbellegi_ve_makro_kaydi(self):
         def sahte(url, parametreler=None, anahtar_deger=None):
@@ -537,37 +538,81 @@ class EvdsTest(unittest.TestCase):
             self.assertEqual(self.evds.gostergeleri_ekle(liste, "2026-09-24"), 0)
             self.assertEqual(liste, [])
 
-    def test_piyasa_kayitlari_sekli(self):
+    def test_tarih_yazi_aylik_ve_yillik_bicimleri(self):
+        # Aylik frekansli istek 'Tarih':'2025-8' dondurur; bu bicim
+        # islenmezse TUM satirlar duser ve 'gecerli gozlem yok' uretilirdi
+        # (25-09-2026 canli denetimde goruldu).
+        self.assertEqual(self.evds._tarih_yaz("2025-8"), "2025-08-01")
+        self.assertEqual(self.evds._tarih_yaz("2025-10"), "2025-10-01")
+        self.assertEqual(self.evds._tarih_yaz("2025"), "2025-01-01")
+        self.assertEqual(self.evds._tarih_yaz("01-09-2026"), "2026-09-01")
+        self.assertEqual(self.evds._tarih_yaz("24-09-2026 00:00:00"),
+                         "2026-09-24")
+        self.assertEqual(self.evds._tarih_yaz("2026-09-24"), "2026-09-24")
+        self.assertIsNone(self.evds._tarih_yaz("bozuk"))
+        self.assertIsNone(self.evds._tarih_yaz(None))
+
+    def test_aylik_istek_hizalanir_ve_formul_son_egli_kolon_kabul(self):
+        # Kullanim kilavuzu: frekansin ilk gunu yazilmali (aylikta ayin
+        # 1'i); formulas=3 isteginde EVDS kolon adina '-3' ekler.
+        yakalanan = {}
+
+        def sahte(url, parametreler=None, anahtar_deger=None):
+            yakalanan.update(parametreler or {})
+            return {"items": [
+                {"Tarih": "2025-8", "TP_KM_B33-3": "51.2"},
+                {"Tarih": "2026-9", "TP_KM_B33-3": "61.8"}]}
+
+        hedef = {"id": "credit_growth_yoy", "frekans": 5, "formul": 3,
+                 "gun": 400, "min": -100.0, "max": 500.0}
+        with mock.patch.object(self.evds, "_istek", side_effect=sahte):
+            deger, onceki, donem = self.evds._veri_cek(
+                hedef, "TP.KM.B33", "2026-09-24")
+        self.assertEqual((deger, onceki, donem), (61.8, 51.2, "2026-09-01"))
+        self.assertEqual(yakalanan["startDate"], "01-08-2025")
+        self.assertEqual(yakalanan["formulas"], "3")
+
+    def test_ele_kodlar_kesif_cagrisi_yaptirmaz(self):
+        # Elle sabitlenmis kod icin ne datagroups ne serieList cagrilir.
+        pin = {"reer": {"kod": "TP.RK.T1.Y",
+                        "ad": "TUFE Bazli REER", "grup": "g"}}
+
+        def yasak(url, parametreler=None, anahtar_deger=None):
+            raise AssertionError("kesif ag cagrisi yapmamali")
+
+        with mock.patch.object(self.evds, "ELLE_KODLAR", pin), \
+                mock.patch.object(self.evds, "_istek", side_effect=yasak):
+            kesif = self.evds._Kesif()
+            kod, ad = kesif.kod({"id": "reer", "grup": r"eslesmez",
+                                 "seri": r"eslesmez"})
+        self.assertEqual(kod, "TP.RK.T1.Y")
+        self.assertEqual(ad, "TUFE Bazli REER")
+
+    def test_kesif_arsiv_grubu_ele_taze_grubu_sec(self):
+        # Eskiden '(Arsiv)' adli, eski bitisli gruplar kesifte one
+        # cikiyordu; artik arsiv adli ve bayat END_DATE'li gruplar ele gelir.
         def sahte(url, parametreler=None, anahtar_deger=None):
             if url.endswith("datagroups/"):
-                return [{"DATAGROUP_CODE": "bie_tbtgv",
-                         "DATAGROUP_NAME": "Gösterge Niteliğindeki Tahviller"}]
+                return [
+                    {"DATAGROUP_CODE": "bie_eski",
+                     "DATAGROUP_NAME": "Mevduat Faizleri (Arşiv)",
+                     "END_DATE": "01-07-2026"},
+                    {"DATAGROUP_CODE": "bie_taze",
+                     "DATAGROUP_NAME": "Mevduat Faizleri",
+                     "END_DATE": "18-09-2026"}]
             if url.endswith("serieList/"):
-                return [{"SERIE_CODE": "TP.TB.02",
-                         "SERIE_NAME": "2 Yıllık Tahvil Getirisi"},
-                        {"SERIE_CODE": "TP.TB.10",
-                         "SERIE_NAME": "10 Yıllık Tahvil Getirisi"}]
-            if url == self.evds.KOK:
-                seri = str(parametreler.get("series", ""))
-                deger, onceki = ("34.6", "34.4") if seri == "TP.TB.02" \
-                    else ("36.1", "35.9")
-                kolon = seri.replace(".", "_")
-                return {"items": [
-                    {"DATE": "23-09-2026 00:00:00", kolon: onceki},
-                    {"DATE": "24-09-2026 00:00:00", kolon: deger}]}
+                grup = str((parametreler or {}).get("code", ""))
+                return [{"SERIE_CODE": "TP." + grup.upper() + ".TUM",
+                         "SERIE_NAME": "Tum Mevduat Faizi",
+                         "END_DATE": "18-09-2026"}]
             return None
 
+        hedef = {"id": "deposit_rate", "grup": r"mevduat",
+                 "seri": r"mevduat faizi", "tercih": None, "disi": None}
         with mock.patch.object(self.evds, "_istek", side_effect=sahte):
-            kayitlar = self.evds.piyasa_kayitlari("2026-09-24")
-        self.assertEqual([k["indicator"] for k in kayitlar],
-                         ["tr2y", "tr10y"])
-        ilk = kayitlar[0]
-        self.assertEqual(ilk["label"], "TR 2 Yıllık Tahvil")
-        self.assertEqual(ilk["value"], 34.6)
-        self.assertEqual(ilk["previous"], 34.4)
-        self.assertEqual(ilk["change"], 0.2)
-        self.assertEqual(ilk["unit"], "%")
-        self.assertEqual(ilk["period"], "2026-09-24")
+            bulunan = self.evds._kodu_bul(hedef, self.evds._grup_listesi())
+        self.assertIsNotNone(bulunan)
+        self.assertEqual(bulunan["kod"], "TP.BIE_TAZE.TUM")
 
 
 if __name__ == "__main__":
