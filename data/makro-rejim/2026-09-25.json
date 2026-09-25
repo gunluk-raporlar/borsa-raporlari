@@ -1,0 +1,42 @@
+{
+ "buyume": 2.3,
+ "cari_denge": 0.036,
+ "eksik_kanallar": [
+  "çekirdek enflasyon",
+  "enflasyon beklentisi",
+  "CDS",
+  "yabancı takas oranı / forward P/E"
+ ],
+ "enflasyon": 31.51,
+ "enflasyon_seviyesi": "yüksek",
+ "enflasyon_yonu": "yatay",
+ "etiket": "yüksek enflasyon + sıkı para politikası (5.49 puan reel faiz) · ılımlı iç talep",
+ "global_risk": {
+  "brent": 97.489998,
+  "dxy": 101.071999,
+  "ust10y": null,
+  "vix": 15.0
+ },
+ "globall": {
+  "ABD": {
+   "enflasyon": 3.4,
+   "faiz": 4.0
+  },
+  "Euro Bölgesi": {
+   "enflasyon": 3.2,
+   "faiz": 2.65
+  }
+ },
+ "ic_talep": "ılımlı",
+ "issizlik": 8.3,
+ "olusturma": "2026-09-25T20:49:37+03:00",
+ "para_durusu": "sıkı",
+ "piyasa_sinyalleri": {
+  "emtia": -1,
+  "kur": 1
+ },
+ "politika_faizi": 37.0,
+ "reel_faiz": 5.49,
+ "rezerv": 62.808,
+ "tarih": "2026-09-25"
+}
