@@ -24,6 +24,7 @@ jobs:
           TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
           ZAI_MODELS: "glm-4.5-flash,glm-4.7-flash"
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           AMD_MODEL: "DeepSeek-V4-Flash"
           AMD_FALLBACK_MODELS: "GLM-5.3-Flash,Qwen3.8-Flash-Next"
           ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
