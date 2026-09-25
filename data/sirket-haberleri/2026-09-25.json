@@ -9,14 +9,14 @@
   {
     "kod": "AEFES",
     "baslik": "Thomas Walkup'ın Menajeri: \"Anadolu Efes, Olympiakos ve Panathinaikos 'Kabadayılık' Yapmaya Alışmışlar\"",
-    "kaynak": "Eurohoops",
+    "kaynak": "eurohoops.net",
     "link": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPN000MGxac2hhQ2tZek5Nd09POWFneHZwVVIxaDlQS21JX3BBc2lFSERFU2V2UFFobWI3cHl3NFFrTWFkMng2M0F3c1pydklGZWpmRXBlUkNoTDVxdU1pbVVfVldOdllUSmNSX0MxN0gxZzN6TElOeHZ1b3o2Qzc3QWk0c0VUNHhqRjJtVTlyNmdfUGhxZ25OZ2Vub3dDWTNjREpIOGluMDVUcFlNemRWSHNjZFpBRTVTN1pzdEZPZlB4V1JLNUdfTVhHZ0k0RlJFS0RMRHozazl2eXZSeEVhZ19R?oc=5",
     "ts": 1790179260
   },
   {
     "kod": "AEFES",
     "baslik": "Anadolu Efes, Avrupa Ligi'nde yarın Barcelona'ya konuk olacak",
-    "kaynak": "aa.com.tr",
+    "kaynak": "Anadolu Ajansı",
     "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQUkM1aHI5SWVlVWhmMUltOXpleFpTemZhRWZ0eWRlZF9KenFmQVJvRDRDcEduSzVoNGZ4S0Vqb01xczRob0xzblhrcU4taFZFWWRrU1VWQVFUTjJOQWprdWRiazFIY2YtLUVtSjFrU2FvbWZuaFdDOWRSNVYwY2xWMjFUWC1fcWFfRC1vcTJPUHFLU2VRd24zSmRTa2k?oc=5",
     "ts": 1790147817
   },
@@ -30,7 +30,7 @@
   {
     "kod": "AEFES",
     "baslik": "Anadolu Efes, Avrupa Ligi'nde Barcelona'ya konuk olacak",
-    "kaynak": "aa.com.tr",
+    "kaynak": "Anadolu Ajansı",
     "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5JbEFoeEFxeGJhTnptLUYtQi0zUnNSRjJIWDl0aGtWWmtpQWtXOFRmcmZyY1BZSG1ZOFR3RmxVRXRGZXV2clhQZkNCMmMxdXk4VWFkRGY0b2dNdw?oc=5",
     "ts": 1790191086
   },
@@ -93,7 +93,7 @@
   {
     "kod": "ASELS",
     "baslik": "ASELSAN ile ROKETSAN arasında 1,2 milyar avroluk sözleşme imzalandı",
-    "kaynak": "aa.com.tr",
+    "kaynak": "Anadolu Ajansı",
     "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNRnd5a0RleFZJdXpNQXJ0bndrRGZ0aWFWRXVNMUNwaF9UN2k4bXotdlZtd2tPc0h4TmVhQi1UbUtCZDZvWEpOay1HaEQ0MG9DaWdGS3d1MkdWTHZ1S0ZqbS1aU2VvSDVwTjNiMUNqUElyODh5emczQUpFVFhnTnhwVEowTmMxVkRWTW04YXpveVItZGlhczUwYmN4bmJpbmtmN0g1Q2xlME5LVG9v?oc=5",
     "ts": 1790149543
   },
@@ -107,7 +107,7 @@
   {
     "kod": "ASELS",
     "baslik": "Savunmada dev anlaşma: ASELSAN ve ROKETSAN’dan 1,23 milyar euroluk sözleşme | Türkiye Ekonomisi Haberleri",
-    "kaynak": "gzt.com",
+    "kaynak": "GZT",
     "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQYnZobGpBeklwQ2dackowc09RZ29WYXp0OExWTkpuX0RaQl9hb3htSDlvVkdkWVVfbkI5SEVJQTFBVW1KRVdSOV9xMEY5NmxzQ0d4a3U1Sm56R2ItVHBXaVlPaFpNdVVXUndYQ3l1SEZXcWhGOHRxLXdvQ0hCNDhtTTZjVEdfQlVOZXBCbHY2WmNkMDV3YTFfbXltZ0lJUHhUX1VoRmVfYlhxOVlM?oc=5",
     "ts": 1790146562
   },
@@ -268,7 +268,7 @@
   {
     "kod": "EKGYO",
     "baslik": "Emlak Konut GYO'dan Piyasalara Güven Hamlesi: 1 Milyar TL'lik Dev Geri Alım Programı Başlatıldı",
-    "kaynak": "Para Analiz",
+    "kaynak": "paraanaliz.com",
     "link": "https://news.google.com/rss/articles/CBMitwFBVV95cUxQam80ZU9IUkM3TW9KOVAyOFI1VV9iU2NLU2VLd0tBVGluUGt1VXNVNEluaFlWdFlsYmRiZGdlc2lHNnZUeXJGWUk5TFlEV2VPZVRfcGpZbnNZcmstVzhEV0RrU0l1X1ZQcnkxRVNCdGJEZ0ROeVFQU3hOZmVPaE9sSy1rUGhJWGhpX0FlQUVrN0xoUzZSWGNMWXZ3WWhXbF9rVDBUYzFiV0NtVUJlWVBndmZXdEh6SVU?oc=5",
     "ts": 1790147739
   },
@@ -295,17 +295,17 @@
   },
   {
     "kod": "EREGL",
+    "baslik": "Nevşehirli akademisyen Naki Erdemir siyasete girdi: Hak-Parti resmen kuruldu",
+    "kaynak": "Kapadokya Haber",
+    "link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPQnBfOVE5UDdlYXZsNXpscW91WnhSWHZRbTV6cmJZaGs2ZnNHNHUxU0Q3bUZ4M2V2bEh6dkR0SDVlY2x5Z1dNdU55OW9RQVFpdDhHaTZrSzFQd0paTTJMVDJDcHZhQ2J4QnlLWDBLRXp4UWhRcHlXU0VfQ1ZOcUp2QmxEVEVZeGlENWNkcHpvSFV0ay1oVkxMVjVrRG93U0Q1Z2dVeHd3eTdiSlRMQkZfM0ZCVmpjQXFVRUpVaHlzM3EwZ9IBxwFBVV95cUxNSlduZmNCQ0QwOTJBeEg5dnJvdlhVR195RjFfNFdDOC1CWkc1ZW85b2dodl9TbVhDcUxFd2hBeTJCNjVzUUhtT1RQMEVSWEYtM3J1dXd3THh6R01YVzJsYnBzcnpXN2RFckw3UlVvdkNMMVZTQTNHcGtJSms0WWNzZkpicjNYSlViZzY0ZXNLMENndlZtRGUtZ3dFSUhHWW00VDJTLVY3SnMtSWxWQzYtTlg1SE5OMVQ4eWwxamhkSEx3NkROa1Bn?oc=5",
+    "ts": 1790163300
+  },
+  {
+    "kod": "EREGL",
     "baslik": "Erdemir (EREGL) 2026 2. Çeyrek Bilanço: Beklentilerin Üzerinde Kâr",
     "kaynak": "Finans Hattı",
     "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1MTlRtUGFxRFRuRFV0SjNCMzZWb3hSWHYxdDlYcDFuWWdqNXlncl9ZMm5iZElTMXFsRjl2SnQ0WUF5bVNBdmFtVTN0M3dDREVpRllNSlhDUkVrbU5xWjNwbTZ3NVdYbDR3bVVIT2E4Rm1wNkNPSmlXWkViaThGLXc?oc=5",
     "ts": 1790335809
-  },
-  {
-    "kod": "EREGL",
-    "baslik": "Nevşehirli akademisyen Naki Erdemir siyasete girdi: Hak-Parti resmen kuruldu",
-    "kaynak": "Kapadokya Haber",
-    "link": "https://news.google.com/rss/articles/CBMixwFBVV95cUxNSlduZmNCQ0QwOTJBeEg5dnJvdlhVR195RjFfNFdDOC1CWkc1ZW85b2dodl9TbVhDcUxFd2hBeTJCNjVzUUhtT1RQMEVSWEYtM3J1dXd3THh6R01YVzJsYnBzcnpXN2RFckw3UlVvdkNMMVZTQTNHcGtJSms0WWNzZkpicjNYSlViZzY0ZXNLMENndlZtRGUtZ3dFSUhHWW00VDJTLVY3SnMtSWxWQzYtTlg1SE5OMVQ4eWwxamhkSEx3NkROa1Bn0gHHAUFVX3lxTE1KV25mY0JDRDA5MkF4SDl2cm92WFVHX3lGMV80V0M4LUJaRzVlbzlvZ2h2X1NtWENxTEV3aEF5MkI2NXNRSG1PVFAwRVJYRi0zcnV1d3dMeHpHTVhXMmxicHNyelc3ZEVyTDdSVW92Q0wxVlNBM0dwa0lKazRZY3NmSmJyM1hKVWJnNjRlc0swQ2d2Vm1EZS1nd0VJSEdZbTRUMlMtVjdKcy1JbFZDNi1OWDVITk4xVDh5bDFqaGRITHc2RE5rUGc?oc=5",
-    "ts": 1790163300
   },
   {
     "kod": "EREGL",
@@ -324,7 +324,7 @@
   {
     "kod": "FROTO",
     "baslik": "Ford Otosan ve Vehbi Koç Vakfı katkılarıyla Kocaeli'de ilkokul açıldı",
-    "kaynak": "aa.com.tr",
+    "kaynak": "Anadolu Ajansı",
     "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxQOHpwZDhNcnVkdkdIVjJsMkY4aUx4UzVzNGNYalZTcFRlMm5mZEstaWoyMFF2Q2tuWmFzZnFIZFhLazJWSlR4ZHMxOXBuV1RkSmFPejhiVHRVXzdkSDM5eGNDZE9Jc29PdUNBbkpOT3c5UmREWlJSdHJzU3ppWjVvZDVKZ01KT1BlMjBJVDdsZ1Nzd1c5QnloenB4NnRKVG52RjdpaHVsTEFLaTZxY2VuWnF0V1hlQ0Fw?oc=5",
     "ts": 1790349158
   },
@@ -394,7 +394,7 @@
   {
     "kod": "GARAN",
     "baslik": "Garanti BBVA Partners Tech girişimi Ingosa'ya FutureBright Ventures'tan ikinci yatırım geldi",
-    "kaynak": "aa.com.tr",
+    "kaynak": "Anadolu Ajansı",
     "link": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxPUElYNldoaXpuTWpWdy1FYXdGWUF3SUE1NUNnNUp2VHBGbjAwaVZ4SUdIMW5xdGVCbWNOM2RITlg0cTVBM3B2R2VlRVdqaENsSmh2a1JLNmpWZGJVaThmcHJxNzRsTG1YU01JX3pzbzRJQ00wZGcxYzFvcHNjaE1vdURhc0R1ckRmelQ2OFZyXzVjc2ZrdTAyYWRMNFpTLVZLeGxJSXh2ay14cFpUVlNaTVFoZ3BHcnZaX0xEUG5udjhQal9NM010ZHZNZ1lncm16bWlXMTJ3?oc=5",
     "ts": 1789980747
   },
@@ -436,7 +436,7 @@
   {
     "kod": "GUBRF",
     "baslik": "GÜBRETAŞ, İskenderun Limanı'na 190 milyon dolarlık yatırım gerçekleştirecek",
-    "kaynak": "Para Analiz",
+    "kaynak": "paraanaliz.com",
     "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxNR1VPR3lLMUJnRzFhcVNLNHAxczgzSnBtamhkcC1VRG9ERHpOaGtQTG8tMFFtUlpZQkJ6QjF1WHVfUWVFYVBWRnNRcHgyRFh3RXFUWkhWcUNZVG5PVmdnZWFCai1saW1lTlV2ZENmeHdUX3BkZ2VUOW45d1YtNl8wdWxUbDNaYWpTaVdCaFZIeFp3N3JVYm5qa1k5VGNBR29PWS1qdHZEczNmdnpkd0VJ?oc=5",
     "ts": 1789777632
   },
@@ -513,7 +513,7 @@
   {
     "kod": "KCHOL",
     "baslik": "COP31 İş Forumu'na katılan Ali Koç'tan yenilenebilir enerji vurgusu",
-    "kaynak": "aa.com.tr",
+    "kaynak": "Anadolu Ajansı",
     "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNZDJobU1kXzljYklGODBwc2lKXzcxMjVERWpzSHptdWl3U2hsMk5VVHB5WUxONjgzRVZCTVlKMGo5QkdtcHB0enJOeUNiLUhReURnUjF3aGZfOWRPN2VDZ3Y2ZHF4SzJXU2laaldzc1plMHJETGM5eTRoNjFtTG9Jbmh5cEZpN3lzaHQyTEc2Q1k3d0tGYmxXa09Gd2dJeEFCd00yNzNOeXQxN0NMNEJQUWNqazd5QQ?oc=5",
     "ts": 1790173814
   },
@@ -533,10 +533,10 @@
   },
   {
     "kod": "KRDMD",
-    "baslik": "KAP *** KARDEMİR KARABÜK DEMİR ÇELİK SANAYİ VE TİCARET A.Ş. *** KRDMA,KRDMB,KRDMD *** Payların Geri Alınmasına İlişkin Bildirim",
-    "kaynak": "gzt.com",
-    "link": "https://news.google.com/rss/articles/CBMi8wFBVV95cUxPQnp1YVZUNFFWSEhPQ0VoRENObVZWUTZuOXZYZFEzWG5vWmVrQnFrOFBoTVNqVWVIQmhWVW5oWVJIb2pVXzJXcUZWeVpxWGVpYnc3anJkZG1aYjNzODIxcDRqU2Q2c2pFV0JCRnhZV195M1R5eEljLUdYa3EwNWhoTTV1ajdadkt3UlZ6eDVxeDc2TEt1Qno4NHZ2ajhQN2xtZERjWW9GWmRXeTBISFljVEw2SWxvZE5RT0UzS1hpR3N5eTBYVlFKdU1Sdk40M01zS2xla1hfTHNrNkQ5bFliWFJkX05OTk9OX3AyWFo5VmpBY3c?oc=5",
-    "ts": 1790351907
+    "baslik": "KAP *** KARDEMİR KARABÜK DEMİR ÇELİK SANAYİ VE TİCARET A.Ş. *** KRDMA,KRDMB,KRDMD *** Genel Kurul İşlemlerine İlişkin Bildirim",
+    "kaynak": "Yeni Şafak",
+    "link": "https://news.google.com/rss/articles/CBMi-gFBVV95cUxObEFRVXFSdHZHQkQyZkdXRDU3Y1QtQW56UGhZWWZaNVpibDBVRUZhMUF5MmVHb3ZBRGR6NkZma3VlYU1KSDZGUFQxaFFlQzlyZ0pEX3E3MlkxbDZBZzBpOENvMkxodmFqN3V5TWlOMEdPM2tjN29aSkh0TnlxZTBXZU9UZDZsUHdxOU5DTFg0SzJoVFNkUnVMT3JpU3pwWExJUjgtbXJzVWtFc2JRQjdvbXg2OWhxWGQ0UzR3TXVFTHB0azNyMV81dEhOQVhvcUg5c1k3VWI0R283b1ljSjcwMEhpdmRwaW8yTlV4WXhtS3RQbjZFWUdHbjJB?oc=5",
+    "ts": 1790355339
   },
   {
     "kod": "KRDMD",
@@ -561,17 +561,17 @@
   },
   {
     "kod": "KRDMD",
-    "baslik": "Krdmd borsa hisse analizi Kardemir hisse senedi yorum",
-    "kaynak": "YouTube",
-    "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFB5U29ndHdQTVJGb1RMTkNUd0pKbUZoa2pRbDhGMTZVX0JpYUZWbWpnWnhuNVNGNU40bnZ3R09HOXA0NV9hblJ0eGZTSnoyMWoySklFc2F1SXhrMmEw?oc=5",
-    "ts": 1790337561
+    "baslik": "Kardemir Karabük Demir Çelik Sanayi Ve Ticaret A.S.(IBSE:KRDMB) added to S&P Global BMI Index",
+    "kaynak": "marketscreener.com",
+    "link": "https://news.google.com/rss/articles/CBMi2wFBVV95cUxNVWNacG1sRmVqWUg3bDMxbHJzMktjcTBmNVZITUdSd0JNQnBRWEdLMUtTWmxTdWE4cXd2ZmtkR2JkVFlDQ3NfUGhhQzZETVUzcVRNc0FrNFo5d2NxTW5VTmFNZUhkTGR5aWtsRGFlUXR2M0RjNFF5dnhRTXdka0s4dFdaMUhNVEVCYmRnbFR5bEQ2OS1NbUZIeFFRMHVsMm1KaHY1bTJvdXFlc1h0WGdYZlBPMWRFYnR1cUllel9sanY5NjZTeFhXTVV5QjJYTW5VcWQwLVpxeGFuV2c?oc=5",
+    "ts": 1789941600
   },
   {
     "kod": "KRDMD",
-    "baslik": "Kardemir MetalExpo'da çeliğin dününü ve bugününü sergiledi",
-    "kaynak": "Aksiyon.com.TR",
-    "link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxQQnp4RjNTbjZzdTRRc3dBWjZQa19WQVFJYk1udVZwRmN6dVNycXNDUy1CaGlhZVlnSnVIYTNQVjZncnZpbUxUbFVWLWNsb3oxQUhGRDhaZkowXzFxZDNzRTdmZVJ1bVB4UjZNOTN2eVhRUjFtNEZMVjFWcE93NlljcXcwLUlUQ2RRRER4bEdnZGNSYnhLbkxN0gGcAUFVX3lxTE03YzhIMWRsRnJDMGluTFQ3aTRoZS1RZE1ZMVAwNnpWU0RNd0pwN0FZa2VhdnpNX1VCMzN4VGJpQTF5OHd5VHFaM3M0U2Q2aTYxMmFSR2hBN1U1bmhtM1VsVFBUY083RVlpNXJBTW1nMFZDLUo2UWgtcEo0Q1pTR01UaVRlS1NUWkVFeUUyd0xmZHY2R25HSEtZd19lQw?oc=5",
-    "ts": 1789985745
+    "baslik": "Kardemir Çelik’ten olağanüstü fiyat hareketlerine ilişkin açıklama",
+    "kaynak": "hibya.com",
+    "link": "https://news.google.com/rss/articles/CBMilAFBVV95cUxPRkd3Rk5QdXZJX0lSellZY0Fqb3VzT2FlYTdaTE9CM1ZSSkFQVE1WbmF4ZTN1eG15SmhaTkRvTk0ycHlUcmpPeWJyT0FpTnluVzBpNlNRTUk5N0VJc1VCSmtmQWtpY01JdVFmTHNXVDUyc2ZtTTZ6NFE5R1ZYbUJwSDAtS1BGU2tRT1hoNWR1UWpEOU1N?oc=5",
+    "ts": 1790002627
   },
   {
     "kod": "MGROS",
@@ -625,7 +625,7 @@
   {
     "kod": "PETKM",
     "baslik": "KAP *** BORSA İSTANBUL BISTECH DEVRE KESİCİ UYGULAMASI *** PETKM *** Pay Bazında Devre Kesici Bildirimi",
-    "kaynak": "gzt.com",
+    "kaynak": "GZT",
     "link": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxNZ19UdzQ3bDdLVTAzVUMzQUtRMHozNHc0UFJ6bEFMSndnb05TRWV6RFluWkFoX3JzRVYxcEd1WkVzMV96YXRDVTlSdTMydVFOeWNBMFVSWm56QWxodzNUSGdBUjZTWG9KTmJfQmpqeXNRM1BUX1I1R1VmeHd3MVlCR0taUnZ5WFZOWnZyNVBWUHlaX3VZcjZxMEh0aFA3S1h3MEQ0NlhmYjdaSnJoRmV4TWRsa0x5RDlhZGppc3BKZ2QtcU9rNmxIRlFEbHA1X1plLW4zZVNHTFY?oc=5",
     "ts": 1790330818
   },
@@ -646,7 +646,7 @@
   {
     "kod": "PETKM",
     "baslik": "Azerbaycan devinden 2. Petkim için somut adım: 70 milyon dolar harcayacak",
-    "kaynak": "Tek Referans",
+    "kaynak": "tekreferans.com",
     "link": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQc3VyS2FCX1EwR0wtekk3TjdyZzJ4a0Q3NXhCOFVhdDk3SGZYWlg4dlVYaG9TT2RnY1Q1MDZHdEtwQXJVaWE2cXkzOTZkSUZxbHJrV2NOVHRiNXhuZkJtSVVuZUx5UUU1MVFwdGI2TTg3RmU2Vi10V0c5TUdwUzdmMXFhTEJCdmJUbm1CZUpvbDVYX2NDTWw4enRuSTdqSkIweldN?oc=5",
     "ts": 1790286357
   },
@@ -660,7 +660,7 @@
   {
     "kod": "PGSUS",
     "baslik": "THY, AJet ve Pegasus İran uçuşlarını durdurdu",
-    "kaynak": "Bianet",
+    "kaynak": "bianet.org",
     "link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxOVHliT2RrY2pmSXd0OHk2UVRndDlpNzBvU000aEFJWEFMTUFLblphUFJNcUMzczdxMW00cldleUFtMVhpUXh5WXRXVW9Cc1hvMGFpbFVQemZUODE0dzFUc1RNMU1wS0tFekpoNm9VWmVrd1JLMk15cWZXdUdQZWdkT3l3?oc=5",
     "ts": 1790075340
   },
@@ -673,17 +673,17 @@
   },
   {
     "kod": "PGSUS",
-    "baslik": "Pegasus İzmir'den Helsinki ve Stockholm'a direkt uçuşlara başlayacak",
-    "kaynak": "Turizm Ajansı",
-    "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOUTN2NjBPaXljdl92NnVhbE5nbFI2Nk8tLTVEVURLWWlHMjJ6S2kzZXF2aGNuY0x4LWpGNUI1OTh4T1dxaUFBSjF1c1RSOFhRS1UxRU5yWkdkU1lNazZqeVp2Rmkxa2g4c0ZqT3hGc2JHZTBmVWg5VmFLaXQ4ckUxanNUNzBaSWNSTTF2TDV1Q2lZeVBPd3g4cU5fdXc2a2FhLXlOQjAwZ3BLUkNx0gGsAUFVX3lxTE5RM3Y2ME9peWN2X3Y2dWFsTmdsUjY2Ty0tNURVREtZaUcyMnpLaTNlcXZoY25jTHgtakY1QjU5OHhPV3FpQUFKMXVzVFI4WFFLVTFFTnJaR2RTWU1rNmp5WnZGaTFraDhzRmpPeEZzYkdlMGZVaDlWYUtpdDhyRTFqc1Q3MFpJY1JNMXZMNXVDaVl5UE93eDhxTl91dzZrYWEteU5CMDBncEtSQ3E?oc=5",
-    "ts": 1790166945
-  },
-  {
-    "kod": "PGSUS",
     "baslik": "Pegasus - Kozyatağı noktasından Ünalan, Üsküdar noktasına toplu taşıma ile ulaşım",
     "kaynak": "moovitapp.com",
     "link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxNRFdlLUlJZ2xNTjVCR3ZhR3JjaUpsNTBmdGVLQ09rWUprY0hLdW9iVno2cW1vRDI5TmRHRVRBb1JDQmdkeUVTS1hlVk1fTDMwcFNQYUZha2I0ZVN4ZmozeEZrOUtNSS1sR2xaX0M0V25TRFZ4SzQ5UW93Y2tsYzV2aFhlVG1mSTM4SjBsVmkxcEtOTFVFbmVnZFF3?oc=5",
     "ts": 1789819200
+  },
+  {
+    "kod": "PGSUS",
+    "baslik": "Pegasus İzmir'den Helsinki ve Stockholm'a direkt uçuşlara başlayacak",
+    "kaynak": "Turizm Ajansı",
+    "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxNZW9tdlpialo5Sk5SSXVFVHpfQk9kNUZxejVlbENHRjQxUXozUG5qcEhFSFhCQzBSS0NjUG5Ga1B1OUx6dG9zNUlBUWFqZDBtOHdSNWZ3b1RQRFZQZ0EyYy1BcEwwX0NGdldkNll2TEpwN0JjdERzU2ZvbVpGanduanF4Tk5tb0VVTmZ0UFpPcDNJd0YwN09adXAzMkpQS0tBOV90Tk9uTS1IX1JPc2xr0gGsAUFVX3lxTE5RM3Y2ME9peWN2X3Y2dWFsTmdsUjY2Ty0tNURVREtZaUcyMnpLaTNlcXZoY25jTHgtakY1QjU5OHhPV3FpQUFKMXVzVFI4WFFLVTFFTnJaR2RTWU1rNmp5WnZGaTFraDhzRmpPeEZzYkdlMGZVaDlWYUtpdDhyRTFqc1Q3MFpJY1JNMXZMNXVDaVl5UE93eDhxTl91dzZrYWEteU5CMDBncEtSQ3E?oc=5",
+    "ts": 1790165040
   },
   {
     "kod": "PGSUS",
@@ -695,7 +695,7 @@
   {
     "kod": "SAHOL",
     "baslik": "Sabancı Holding, COP31'in elektrifikasyon partneri oldu",
-    "kaynak": "aa.com.tr",
+    "kaynak": "Anadolu Ajansı",
     "link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxQZEJ4MERXaDNDVm9yWTRnd1BqZGY2Z0UzRXMzUEYtYmdXQnJaRjZDZEN3cDlzNU5BTWdyLWhpdG12SFNuRWd5UzJBUDVtZ08teDJsaEtkREtFd2JnUjBBLWxlV1dyNDNfYVVfNU9wNHNmekY0VFVMVnVvSnNsOVNTQm13d2NLcXZnSDVqM0FvVmRFV0l4LTdrWENn?oc=5",
     "ts": 1789893990
   },
@@ -730,7 +730,7 @@
   {
     "kod": "SAHOL",
     "baslik": "Sabancı Holding COP31'de elektrifikasyonun merkezine yerleşti",
-    "kaynak": "Aksiyon.com.TR",
+    "kaynak": "aksiyon.com.tr",
     "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxPN2NyNU56QjFwcVpyLVhEeGdFdnkta3I3NGdjNy00WFNVN0ZzMGMyaV9jRnRobXRfRWQ0cTdxS3hyYlVVNTdqeTJ0elZSdFBOd2plNzk2eVlHdFRndlp1M2J4UzI0elU2NXQ4U3Z6dUpSQjliQmF6R2otT3k2emFIT3Nfd0tOcURvQ3k2QkhhbXNQaDFMNTRhVnA0QdIBoAFBVV95cUxQQTVWNTQtS1JRU2R6T2xUZDZmam5BNUxEY3Q2RGxuTHlEVWdoLXFBRW1fQ3dXYUNaNjZDcF9sLUdIVEJsV0djZzBLTGl1d1BGTmdzZUpNcVNFdkwwZTdzNkJsTlRFc2djcWNJNVlJei1aMnFRTDFpemItSUYwWEM0MmJVTnVkY3FUSzVsUy1sRE9XazBmamQ3eFFXUEdtQmt6?oc=5",
     "ts": 1789895016
   },
@@ -778,6 +778,13 @@
   },
   {
     "kod": "TCELL",
+    "baslik": "Takasbank duyurdu: TUPRS, TCELL ve AKBNK'da temerrüt satışı... Bugün yapılacak",
+    "kaynak": "CNBC-e",
+    "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOMnFrelRzOE1TeDdRaHFCTG1UcTh5NlJ2bTNMWnhWZ24zNXNITW1fZzQzSVdxM2h4djZMZk9yVmU5RXR2d3BwSGpaZFo4cXNxc1gyM0JzRk5LWENkMW52MjFXbTZZRmdLWkw0MEVCa2lsSDFlNVozekVnZ1BZS283WEtubThJbEJlWWZfWGVZMnYzaXZTZ2dmZ1JZUHBZYWJSNHJYZlkySWNLVkE?oc=5",
+    "ts": 1790345539
+  },
+  {
+    "kod": "TCELL",
     "baslik": "Turkcell, Turktell’in sermayesini 8 milyar TL artırdı",
     "kaynak": "Investing.com Türkiye",
     "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxQMmdNSFRfcFE2VFpXM1VxdjJwRFlWb3dFZUt6Mm9KVkhUSldEalhNQ2VxYXc5V1BFY2N2aW9tdHFVNGhDNW9zWnkzS2FLYTF4U1JsYXdJSXFxSkcyTXU3TUVLRGZpVTJ6S1dFU1o4MGpJWUNkdDYxcjNJVDR4WEVjTDM0TG1OVjFFcUlvSVpmMXF3bzlseDVFUmlCcXRsYlQxMWpMa3JoMDNyNVk?oc=5",
@@ -796,13 +803,6 @@
     "kaynak": "Foreks.com",
     "link": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxNZ3d5WGg1NDNwZDVpUXFya2RYYmJyQXFCd0pqdTNiQnItWThuZkdHV0VRQkx2c19xR1B6OF9NODl3UkZtV01aSzBLcE5lbjhYX3V0Q1YxX1drWVJITVBYd3pjWkVERlB2SFlraWV4MlFjbXZIRElNUFdVekNTSUY3MFVUcDJmVWJ6ajJlRFptTzN1LTZ4WTFVbW5jSjFxQjRPajJoZFdmS3hrZW9SR3V4WlJmN3pxUW9UTWUyNzRqelNpZzRuWGo3Q1FxZTZDb2tESGw0M01McFM1TGho?oc=5",
     "ts": 1790313301
-  },
-  {
-    "kod": "TCELL",
-    "baslik": "Orge Enerji, Turkcell’in veri merkezi projesinde ihaleyi aldı",
-    "kaynak": "Paratic Haber",
-    "link": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOaUk3cGtvb0RYY3J6OTZxRHFXZURyRVA1LXByeU1qNHEyekI3N0o4VTQ5eTh4MUxURlprM3J5QjlEVFlnYjVVVUFEdHFULXhwdXRUcExiWDVVMEk1WFBrczZ5Y0tsVjVwSW83c0hla0pYbnFnc2hWUnRlcFlld3oyYXktMU9Oc1U?oc=5",
-    "ts": 1790185007
   },
   {
     "kod": "THYAO",
@@ -835,7 +835,7 @@
   {
     "kod": "THYAO",
     "baslik": "Boeing ve Türk Hava Yolları, 150 Adede Kadar 737 MAX Siparişini Kesinleştirdi!",
-    "kaynak": "Para Analiz",
+    "kaynak": "paraanaliz.com",
     "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQSU83Mk5kYkpkTVctQUxnQXB4VERkb0pnN0hyOWkwVHJuTVgyc0c0VU1OTncyd1llUVE4dEhIMlFaVS1Ydjloc05qcWt1N0Vxb21teXhkcVY4X1ZKNHVUbHpOZE9TWjY2Sm9sN2J3d2tUOVh0VE5EaUFYNzNPbjk4SWRmYWo3WVl6U2pxeU5BWXZKamNGWDVqbm4yd3ZlSlJrd0ZzRDRxQm9IeGxT?oc=5",
     "ts": 1790199085
   },
@@ -852,6 +852,13 @@
     "kaynak": "Motor1.com Türkiye",
     "link": "https://news.google.com/rss/articles/CBMifEFVX3lxTE5HV205Q1liOVNhaGlxc0o3UTNMX0x5YWdZTE5CcDRHREl2MHhFcldTS0RKbXZSaDc2YTVIZjVEcXR4VldjZTMzQUx3V3I2N25tNHYyaGJ6RGQ5V2lBQ0FzVlBBWGVpbmhnZndCOGZha0RqVWNSZFgxSS1VRE8?oc=5",
     "ts": 1789840800
+  },
+  {
+    "kod": "TOASO",
+    "baslik": "TOFAŞ - Bandırma Bordo BK: 90-89",
+    "kaynak": "DHA | Demirören Haber Ajansı",
+    "link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxORTlqaGZhbWdEZzRaMjJuVkp2aEhCZGVqYnRtcGhYLVF0bmtESkFuS1VKNU1hWDRqTW4xb0FfN0c0MzY3OWNabno0OVZVVmFKR1U0bERLWWNUYnVDNUdsaHNUaFJmbHNEMVFDZUdQV1RFRzRkZThwWHp2c3ljbDdYVkl2MTRkRXVVcGlQNm5XbmpBOTg?oc=5",
+    "ts": 1790366570
   },
   {
     "kod": "TOASO",
@@ -876,17 +883,10 @@
   },
   {
     "kod": "TOASO",
-    "baslik": "Tofaş, Pizzabulls Bordo Bandırma'yı son saniyede devirdi!",
-    "kaynak": "Sabah",
-    "link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQTDBVOXZvWjdUR0pUYldIVjB6NnZFTWRLa3FhdWlKRGlCWVRSREdSRlU1T2dpWnNnY1VSMzl2M2poQ0VaMTVZaTQybEF1VHlDSU1hbDFMNkNxMnlOTHFKM2xyS3VINm9aVlU1WUdsRF9DRjd3Vko0eU45LXgwTk9PZEd2RDdKRXNueERMbTFfSVNCZmhQa213STRtbVFlX0hvcUhpY3VJRVPSAasBQVVfeXFMTW05b2huOUJDV0NFY2pUWDZpVFYxR2o5TFZZVWF6eFBhRFZQaDM5clc2eVNadEtYNFVKUkVYQVVXQlZCS3FVazRsM0VuSFU4Tnpuak5Jd0E2VGNRVHgzN3RJN3QyWlZTT050blBVRXNwLWVzRjNOVFRwRERQckdYRTkydUZKN3lkS0s0eXZrZkZnSEpnbmRMb3pUa0ItX25yUl92VEtESHBoOVFJ?oc=5",
-    "ts": 1790361832
-  },
-  {
-    "kod": "TOASO",
     "baslik": "TOFAŞ'tan nefes kesen galibiyet: Son sözü 1 sayı söyledi",
     "kaynak": "Sporx.com",
-    "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNelVtSHhTUDdocl8wcUFhMzh2NElqMXVBcEhGTDNEdTd1OE8xTUM2bS15YTBPWFpXRUJhalBrQ0FNNVV2dkg4VU1TLVJkUjh4Nmh1c2tESTA3ZGpZWGR4RURrTkxnNzdRaTFmdnFWNnRaTGxrMTF4am1PdVFxS21heDZwd3RjMGNkR2hwSF9mekduYy14WUQ5OdIBmwFBVV95cUxPeE5BQXg3VjBWb2t1X1drM1hPbXdTY3J0MW9zOTZhNVRpX0Jpdkh4WWdIbGliUVhWTGYyb2M5NE1vWE01RU95cTJsTUZnbDBQNUhlalpBOEVGVXZYSF9abTN2bVJzVUVYNWk3N09PUWxHcnU1YXlfcDVrRHJUSUtIaHpGUzhOX1Q0Z2h3eWI5SXFZUVV5Tm9qem55SQ?oc=5",
-    "ts": 1790360520
+    "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxPeE5BQXg3VjBWb2t1X1drM1hPbXdTY3J0MW9zOTZhNVRpX0Jpdkh4WWdIbGliUVhWTGYyb2M5NE1vWE01RU95cTJsTUZnbDBQNUhlalpBOEVGVXZYSF9abTN2bVJzVUVYNWk3N09PUWxHcnU1YXlfcDVrRHJUSUtIaHpGUzhOX1Q0Z2h3eWI5SXFZUVV5Tm9qem55SdIBmwFBVV95cUxPeE5BQXg3VjBWb2t1X1drM1hPbXdTY3J0MW9zOTZhNVRpX0Jpdkh4WWdIbGliUVhWTGYyb2M5NE1vWE01RU95cTJsTUZnbDBQNUhlalpBOEVGVXZYSF9abTN2bVJzVUVYNWk3N09PUWxHcnU1YXlfcDVrRHJUSUtIaHpGUzhOX1Q0Z2h3eWI5SXFZUVV5Tm9qem55SQ?oc=5",
+    "ts": 1790360552
   },
   {
     "kod": "TRALT",
@@ -894,6 +894,13 @@
     "kaynak": "Investing.com Türkiye",
     "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQQ1BjQkNrSHYtVUkxNTY4XzBjemtmOU1McUtnWHVOSHlGbm9qemcxV01JTWdMNDhoN0dkVWVhelVNTjMwWWdPWGlwQmJRbk4wUVpXSkNfdFBCdjJEd0Y1YWZiTHVoWGxvMm9FaTVEZnV5UlRHQ2ZGZ2xVWThIUEhmS09sbTFXLWhyN1JxSkg2TWwzOHdjellSLV90ZDRGbTUxdlZkTWI2ZEpzTmJEb0dsSWJDYnA?oc=5",
     "ts": 1790064860
+  },
+  {
+    "kod": "TRALT",
+    "baslik": "BofA’dan borsada 1,1 milyar TL’lik alım: Türk Altın ilk sırada",
+    "kaynak": "Paratic Haber",
+    "link": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOSEMyNENyOWktRlZzdnAzamdaSE5Odjg0M2d3U3RYaUtMUWVpZGR5ajU1WmNsWVY1bzlGSFVOT0JyUVdPbUNPOFhsZXNlaEpLWWlMeFZOc3pHT0xoSjBEdFlXY1B3YXBmWGprc01Mbm95RWpjZWpmamlUZGVTaGhCTU53QXNmR28?oc=5",
+    "ts": 1790366394
   },
   {
     "kod": "TRALT",
@@ -924,16 +931,9 @@
     "ts": 1790090309
   },
   {
-    "kod": "TRALT",
-    "baslik": "Türk Altın'dan 1,25 milyon TL nominal değerli pay geri alımı",
-    "kaynak": "hibya.com",
-    "link": "https://news.google.com/rss/articles/CBMijAFBVV95cUxOVF9ucTA0eFRJT0hjNHl5VVVaTlBqTE11WmNCOWRWbTdJVlZVUkxfdEoxT2pHVzB4d0U4NUVaaTNJNEtFY05BWTFLQ056Ymx0NGpiQ3ZzbTZIV1g0azhYMjIwVzNJUXA5RVJ6anR1NWFWdThHZ0dwUHBCZnRvZm8zS3p1dFMtQmNzMDJzdg?oc=5",
-    "ts": 1790263606
-  },
-  {
     "kod": "TTKOM",
     "baslik": "Türk Telekom, AR-GE ve İnovasyon Bilim Kurulu ile milli teknoloji üretimine katkı sağlayacak",
-    "kaynak": "aa.com.tr",
+    "kaynak": "Anadolu Ajansı",
     "link": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNbzV3WkZqeU00MjNHbm9aMTZUMFRKVmpqeXFna2U4WmVfYWctSDJUbFZpMUQxbHJ3U2NqS0NJbUdxMHhRZFJHV2pTclV1RWJzS25STkVCc2V4a0ZDYllocldYOG44d0xRMjdrQk9XVjR3YUhOTml4dnY4NHh3ZDRNbXJWdGxFa2NiaVhNX3lFS21mN3loZjZDSVBHbVBBQTZaZHNDbjZyVU9oQVRXQkwxbEpqTGdnRG52LWpXSDNMbVhEMUViNC1WNGU0aVY?oc=5",
     "ts": 1789817538
   },
@@ -981,6 +981,13 @@
   },
   {
     "kod": "TUPRS",
+    "baslik": "Takasbank duyurdu: TUPRS, TCELL ve AKBNK'da temerrüt satışı... Bugün yapılacak",
+    "kaynak": "CNBC-e",
+    "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOMnFrelRzOE1TeDdRaHFCTG1UcTh5NlJ2bTNMWnhWZ24zNXNITW1fZzQzSVdxM2h4djZMZk9yVmU5RXR2d3BwSGpaZFo4cXNxc1gyM0JzRk5LWENkMW52MjFXbTZZRmdLWkw0MEVCa2lsSDFlNVozekVnZ1BZS283WEtubThJbEJlWWZfWGVZMnYzaXZTZ2dmZ1JZUHBZYWJSNHJYZlkySWNLVkE?oc=5",
+    "ts": 1790345539
+  },
+  {
+    "kod": "TUPRS",
     "baslik": "KAP *** TÜPRAŞ-TÜRKİYE PETROL RAFİNERİLERİ A.Ş. *** TUPRS *** İhraç Tavanına İlişkin Bildirim",
     "kaynak": "Yeni Şafak",
     "link": "https://news.google.com/rss/articles/CBMizwFBVV95cUxQdnZPVk9jS3U5VGxlVG1sN2FBY1paV0VVRnZtZzBSeW9jSzFpQmYtdXdyZncycmo0RXBpM1JiVzh2YUxfWVhXcnlXS0V1YWVPNG1LLXczNnNVcXNnZDBKUGJLUVJBYzNjZEVpU0VQcWV2VmlGLU04cTVjVm80SFdHOWFINmFCRXpBZWdhSWlYdDE2M004UDdoZUVyT0pTUFpNWVlkRnNkdFk5MWNZY0NYVmJXMTlfXzhoaWZ4ekJ4VDBsa0VZXzRIYTc3UUNpNzQ?oc=5",
@@ -1006,13 +1013,6 @@
     "kaynak": "Investing.com Türkiye",
     "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQZW5WRWZRc0tva1MyN3hyaHBwRzg3UkFRQ254ZDJYcERZYkVMQ0cyck9meHRqakxlcjUxUV9tUGdCMzd1TXdGNXBNeDZXM1hIM09sSVFaTlNyc2otU0xPWkNybGNZbi1yMngzVTQzcVpZVHNtcEs1XzVjMGh6YVlCRmJ1MFVwTUhrUkhHTDJKWTYxbGdlN3UxbWx0RG1lbmhHS2NHQXRZOUpUYVFZMmxrQXpB?oc=5",
     "ts": 1790237798
-  },
-  {
-    "kod": "TUPRS",
-    "baslik": "Temettü 25’te 9 hisse yüzde 20’yi aştı, Tüpraş’ta getiri yüzde 132 haberi",
-    "kaynak": "Borsanın Gündemi",
-    "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQY2FUbWFNcEdHcXJXS3lUUFFQNTEyR29UamVHMUF4OVZwY0JKdlVES0NBOE1aVnJybFlGeVJNbVVFVHdndGc5VE9IUm5GR3ZlczFrTWs0a2hoTFdVYzRocFZWRGJzMTdvbW4ySkhjQWdGYk5yNExEV01OOXBSQXE4cW45TFBlbEk3dUtrX1dmbmJoQTZWTV9keUVPYzlwcUhIdVhBbC1YSDFPQnJL?oc=5",
-    "ts": 1790252165
   },
   {
     "kod": "VAKBN",
@@ -1073,7 +1073,7 @@
   {
     "kod": "YKBNK",
     "baslik": "Yapı Kredi nakit yönetimi alanında uluslararası ödül kazandı",
-    "kaynak": "aa.com.tr",
+    "kaynak": "Anadolu Ajansı",
     "link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxONXZrWmw4eVdtaWxHSlAtZ0dXRDRCckJrOW5NLW1UbWNXRkpzMlZMbjZTdUt4TFV2U2ZDR0hmY1BpRk1TTE14MUZ3UV9sZVZLb01haElUTENrUHhpU1hjaEd4c3hIUVlsQUMtMTdhbkhYRlVYbHB1aWFmcjNnNTZZTlRuOHFzREpRdHRGbEVxZmpFZjRkcTBzb2lfbFplVjdTbkp1cEptRW9KMDE5YkE?oc=5",
     "ts": 1789806560
   },
