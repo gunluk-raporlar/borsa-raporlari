@@ -96,6 +96,12 @@ OR_MODEL_TERCIH = [
     "nex-n2.5-pro",
 ]  # 2026-09 ucretsiz kadro: yuksek parametreli modeller once
 
+# Z.ai (GLM) model tercih sirasi — bot.py'deki tum Z.ai cagrilari bunu kullanir.
+# 4.7/4.5 ailesi cok hata urettigi icin yalnizca son care olarak tutuldu;
+# 5.3 ailesi once denenir (2026-09 kullanici geri bildirimi).
+# ZAI_MODEL ortam degiskeni tanimliysa her yerde tercih listesinin onune gecer.
+ZAI_MODEL_TERCIH = ["glm-5.3-flash", "glm-5.3", "glm-4.7-flash"]
+
 if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY and not OR_API_KEY and not NVID_API_KEY:
     raise SystemExit("AMD/ALT/CF/OR/NVIDIA API anahtarlarindan en az biri ayarlanmali!")
 
@@ -924,7 +930,8 @@ def _zai_call_ic(prompt):
         return None
     client = OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/paas/v4/",
                     timeout=300.0, max_retries=1)
-    modeller = [(os.environ.get("ZAI_MODEL") or "glm-4.7-flash"), "glm-4.5-flash"]
+    modeller = ([os.environ["ZAI_MODEL"]] if os.environ.get("ZAI_MODEL") else []) + ZAI_MODEL_TERCIH
+    modeller = list(dict.fromkeys(modeller))  # tekrarlari at
     son_hata = None
     for mdl in modeller:
         for deneme in range(2):  # 429/asiri yuk icin ayni modeli bekleyip tekrar dene
@@ -2568,7 +2575,7 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
         logger.warning("[Derin Analiz] ZAI_API_KEY tanimli degil; sayfa uretilmeyecek.")
         return None
 
-    model = os.environ.get("ZAI_MODEL") or "glm-4.7-flash"
+    model = os.environ.get("ZAI_MODEL") or ZAI_MODEL_TERCIH[0]
     client = OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/paas/v4/",
                     timeout=300.0, max_retries=1)
 
@@ -2677,8 +2684,8 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
     except Exception as e:
         son_hata = str(e)[:200]
         logger.warning("[Derin Analiz] AMD basarisiz: %s; Z.ai yedegine geciliyor.", son_hata)
-    # 2) Yedek: Z.ai GLM
-    denenecekler = [model] + (["glm-4.5-flash"] if model != "glm-4.5-flash" else [])
+    # 2) Yedek: Z.ai GLM (5.3 ailesi once; 4.7 son care)
+    denenecekler = [model] + [m for m in ZAI_MODEL_TERCIH if m != model]
     for deneme, mdl in enumerate(denenecekler):
         try:
             logger.info("[Derin Analiz] GLM cagrisi (%s), deneme %d", mdl, deneme + 1)
@@ -2724,7 +2731,7 @@ def makro_analiz_yap(yedek_amd=False, snapshot=None):
     metin uretmezse None.
     """
     anahtar = os.environ.get("ZAI_API_KEY", "")
-    model = os.environ.get("ZAI_MODEL") or "glm-4.7-flash"
+    model = os.environ.get("ZAI_MODEL") or ZAI_MODEL_TERCIH[0]
     glm_istemci = (OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/paas/v4/",
                           timeout=300.0, max_retries=1) if anahtar else None)
     if not anahtar:
@@ -2824,7 +2831,7 @@ Biçim kuralları (zorunlu):
             son_hata = str(e)[:200]
             logger.warning("[Makro Analiz] AMD basarisiz: %s; GLM yedegine geciliyor.", son_hata)
 
-    denenecekler = ([model] + (["glm-4.5-flash"] if model != "glm-4.5-flash" else [])
+    denenecekler = ([model] + [m for m in ZAI_MODEL_TERCIH if m != model]
                     if glm_istemci is not None else [])
     for deneme, mdl in enumerate(denenecekler):
         try:
