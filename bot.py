@@ -2233,8 +2233,8 @@ def master_cio_agent(state: AgentState):
 {piyasa_bolumu}
 Raporu kesinlikle profesyonel bir finansal bülten formatında, her başlığı detaylı ve uzun cümlelerle açıklayarak şu alt başlıklar altında oluştur (her başlık "## " ile başlayan markdown başlığı olarak yazılacak):
 
-## 1. Günün Verileri (özet): YALNIZCA rakamlar. Her satır "veri: değer" biçiminde, tek satır olsun: endeks seviyeleri ve günlük değişimler, USD/TRY, gram altın, yükselen/düşen hisse sayısı, sinyal dağılımı. Bu bölümde YORUM, tahmin veya değerlendirme cümlesi YAZMA; yalnızca verilen bloklardaki kesin rakamları listele.
-## 2. Bunun Anlamı — Aktarım Zinciri: 1. bölümdeki rakamların nedenini ve piyasaya aktarımını kur. Zinciri şu sırayla ve açık bağlaçlarla yaz: veri → neden → mekanizma → sektör etkisi → hisse etkisi → risk. Örnek biçim: "kur artışı → ithal girdi maliyeti → marj baskısı → iç talep hassasiyeti → şirket bazında farklılaşma". Bu bölümde YENİ RAKAM ÜRETME; yalnızca 1. bölümdeki ve verilen bloklardaki rakamlara atıf yap.
+## 1. Günün Verileri (özet): BU BÖLÜMÜ YAZMA — hesaplanan verilerden otomatik tablo olarak sistem tarafından eklenir (uydurma riskine karsi). Raporuna "## 2." basligiyla basla; 1. bölümün metnini yeniden üretme.
+## 2. Bunun Anlamı — Aktarım Zinciri: Veri tablosundaki (1. bölüm) rakamların nedenini ve piyasaya aktarımını kur. Zinciri şu sırayla ve açık bağlaçlarla yaz: veri → neden → mekanizma → sektör etkisi → hisse etkisi → risk. Örnek biçim: "kur artışı → ithal girdi maliyeti → marj baskısı → iç talep hassasiyeti → şirket bazında farklılaşma". Bu bölümde YENİ RAKAM ÜRETME; yalnızca verilen bloklardaki ve veri tablosundaki rakamlara atıf yap.
 ## 3. Haber ve Makroekonomik Değerlendirme: Haber akışının ve makro verilerin BIST 30 şirketlerine yansımaları; enflasyon, kur ve faiz sarmalının yatırımcı psikolojisine etkisi. Her paragrafta önce gözlemi, sonra yorumu yaz.
 ## 4. Teknik Değerlendirme (Hisse Bazlı): En çok ayrışan, hacim kazanan veya direnç/destek noktalarını test eden lider hisselerin teknik anatomisi. Aşağıdaki SİNYAL TABLOSU verilerini kullan.
 ## 5. Şirket ve Finansal Değerlendirme: Temel veriler ışığında şirketlerin karlılık, bilanço yapıları ve rasyo bazlı öne çıkan detayları.
@@ -4124,6 +4124,70 @@ def _yazim_ani_str():
     return f"Yaz\u0131m saati: {an.strftime('%H:%M')} (TS\u0130)"
 
 
+def gunun_verileri_tablosu_html(teknik_satirlar=None):
+    """Raporun '1. Günün Verileri (özet)' bölümünü LLM'e yazdırma yerine
+    hesaplanan veriden tablo olarak üretir.
+
+    Eylül'deki uydurma endeks vakasından sonra en sağlam yol: bu bölümde tek
+    bir LLM token'ı yok — her hücre piyasa_verisi() ve teknik tarama sonucundan
+    deterministik üretilir. Veri yoksa o satır hiç yazılmaz ('veri setinde yer
+    almıyor' gibi dolu satırlar da olmaz).
+    """
+    satirlar = []
+    simdi = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul"))
+    satirlar.append(("Tarih", f"{simdi.day} {_AYLAR[simdi.month - 1]} {simdi.year}, "
+                              f"{_GUN_ADLARI[simdi.weekday()]}, saat {simdi.strftime('%H:%M')}"))
+
+    def _yuzde(deg):
+        if deg is None:
+            return ""
+        sinif = "pos" if deg > 0 else ("neg" if deg < 0 else "")
+        deger = f"{_ty(deg)}%"
+        return f"<span class='{sinif}'>{deger}</span>" if sinif else deger
+
+    pv = piyasa_verisi()
+    if pv:
+        if "XU030" in pv:
+            v = pv["XU030"]
+            satirlar.append(("BIST 30 (XU030) son kapanış", f"<strong>{_ts(v['son'])}</strong>"))
+            satirlar.append(("BIST 30 önceki kapanış", _ts(v["onceki"])))
+            satirlar.append(("BIST 30 günlük değişim", _yuzde(v["deg"])))
+        if "XU100" in pv:
+            v = pv["XU100"]
+            satirlar.append(("BIST 100 (XU100) son kapanış", f"<strong>{_ts(v['son'])}</strong>"))
+            satirlar.append(("BIST 100 önceki kapanış", _ts(v["onceki"])))
+            satirlar.append(("BIST 100 günlük değişim", _yuzde(v["deg"])))
+        if "USDTRY" in pv:
+            v = pv["USDTRY"]
+            satirlar.append(("USD/TRY", f"<strong>{_ts(v['son'])}</strong> "
+                                        f"(önceki {_ts(v['onceki'])}, günlük {_yuzde(v['deg'])})"))
+        if "XU030USD" in pv:
+            satirlar.append(("BIST 30 dolar bazında günlük performans", _yuzde(pv["XU030USD"]["deg"])))
+    if teknik_satirlar:
+        sirali = ["GÜÇLÜ AL", "AL", "NÖTR", "SAT", "GÜÇLÜ SAT"]
+        gruplar = {}
+        for s in teknik_satirlar:
+            gruplar.setdefault(s.get("oneri", "?"), []).append(s.get("hisse", "?"))
+        parcalar = []
+        for ad in sirali:
+            kodlar = gruplar.get(ad)
+            if not kodlar:
+                continue
+            # Kalabalık kovalarda tablo satırı şişmesin diye kod listesi kırpılır.
+            etiket = ", ".join(kodlar) if len(kodlar) <= 5 else ", ".join(kodlar[:5]) + "…"
+            parcalar.append(f"<strong>{ad}: {len(kodlar)}</strong>"
+                            + (f" <small>({etiket})</small>" if etiket else ""))
+        if parcalar:
+            satirlar.append(("Sinyal dağılımı (30 hisse)", " · ".join(parcalar)))
+    if not satirlar:
+        return ""
+    govde = "".join(f"<tr><td>{k}</td><td>{v}</td></tr>" for k, v in satirlar)
+    return ('<h2 class="section-title">1. Günün Verileri (özet)</h2>'
+            '<table class="pano-tablo veri-tablo">'
+            '<thead><tr><th>Gösterge</th><th>Değer</th></tr></thead>'
+            f"<tbody>{govde}</tbody></table>")
+
+
 def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
                   alt_baslik="BIST 30 &bull; Yapay zeka destekli günlük analiz",
                   kok_yol=None, aciklama=None, ses_url=None, teknik_satirlar=None,
@@ -4172,10 +4236,16 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
 
 
 def build_html(report, date_str, teknik_satirlar=None, ajanda=None):
+    # Veri bölümü artık sistem tarafından tablo olarak üretiliyor; LLM eski
+    # alışkanlıkla "## 1. Günün Verileri" yazarsa sessizce atılır (uydurma
+    # rakamın sayfaya girmesinin tek yolu bile kapatılır).
+    report = re.sub(r"^##\s*1\.\s*Gün[üu]n Verileri[^\n]*\n(?:^(?!##).*\n?)*", "",
+                    report, flags=re.M)
     ses_url = None
     if os.path.exists(os.path.join("reports", f"{date_str}.mp3")):
         ses_url = f"../reports/{date_str}.mp3"
-    return rapor_sayfasi(markdown_to_html(report), date_str, ses_url=ses_url,
+    return rapor_sayfasi(gunun_verileri_tablosu_html(teknik_satirlar) + markdown_to_html(report),
+                         date_str, ses_url=ses_url,
                          teknik_satirlar=teknik_satirlar, ajanda=ajanda)
 
 
