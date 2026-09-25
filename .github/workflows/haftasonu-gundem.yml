@@ -22,6 +22,7 @@ jobs:
       - name: Gundemi uret
         env:
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
           CF_API_KEY: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
