@@ -21,6 +21,7 @@ jobs:
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
           # Birincil saglayici AMD DeepSeek-V4-Flash; GLM yedek
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           AMD_MODEL: "DeepSeek-V4-Flash"
           TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
           GOOGLE_SITE_DOGRULAMA: ${{ secrets.GOOGLE_SITE_DOGRULAMA }}
