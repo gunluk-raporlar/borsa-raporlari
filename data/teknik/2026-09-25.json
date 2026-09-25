@@ -375,20 +375,20 @@
   },
   {
     "hisse": "ISCTR",
-    "son": 13.07,
-    "deg60": -11.81,
-    "gunluk": -0.98,
+    "son": 13.2,
+    "deg60": -11.59,
+    "gunluk": -3.23,
     "sektor": "Bankacılık",
     "kisa": "BEKLE",
-    "orta": "SAT",
+    "orta": "BEKLE",
     "uzun": "SAT",
     "wt": "SAT",
-    "wt1": 19.0,
-    "konum": 56.0,
-    "r": -0.12,
+    "wt1": 27.3,
+    "konum": 62.0,
+    "r": -0.19,
     "puan": 0,
     "genel": "GÜÇLÜ SAT",
-    "stale": false
+    "stale": true
   },
   {
     "hisse": "ENKAI",
