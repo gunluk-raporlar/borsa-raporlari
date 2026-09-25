@@ -29,6 +29,6 @@ jobs:
           AMD_FALLBACK_MODELS: "GLM-5.3-Flash,Qwen3.8-Flash-Next"
           ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          OR_MODELS: "z-ai/glm-5.2:free,z-ai/glm-5.3-flash"
+          OR_MODELS: "z-ai/glm-5.2:free"
           DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
         run: python i18n.py --saglayici-test
