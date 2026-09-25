@@ -65,9 +65,20 @@ OR_MODELS = [m.strip() for m in os.environ.get("OR_MODELS", "").split(",") if m.
 
 # Model emekleme durumlarina karsi otomatik secim icin tercih siralari
 # (icerik eslesmesiyle bulunur; saglayici tam adlandirmayi degistirse de calisir).
-GROQ_MODEL_TERCIH = ["gpt-oss-120b", "llama-4-scout", "llama-4-maverick", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
+GROQ_MODEL_TERCIH = ["gpt-oss-120b", "llama-4-maverick", "llama-4-scout", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
 CF_MODEL_TERCIH = ["llama-3.3-70b-instruct-fp8-fast", "llama-4-scout", "llama-3.3-70b-instruct", "llama-3.1-8b-instruct"]
-OR_MODEL_TERCIH = ["nemotron-3-ultra", "nemotron-3.5-lightning", "nemotron-3-super", "gemma-4-31b", "ling-3.0-flash-fin", "inkling"]  # 2026-09 ucretsiz kadro: nemotron3 ailesi + gemma4 + ling-fin
+OR_MODEL_TERCIH = [
+    "nemotron-3-ultra-550b-a55b",   # ~550B MoE (en buyuk ucretsiz)
+    "nemotron-3-super-120b-a12b",   # ~120B MoE
+    "nemotron-3.5-lightning",       # 1M baglam
+    "glm-5.2",                      # Z.ai GLM-5.2 (ucretsiz)
+    "gemma-4-31b",
+    "gemma-4-26b-a4b",
+    "qwen3.8-27b",
+    "inkling",                      # 1M baglam
+    "ling-3.0-flash-fin",
+    "nex-n2.5-pro",
+]  # 2026-09 ucretsiz kadro: yuksek parametreli modeller once
 
 if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY and not OR_API_KEY:
     raise SystemExit("AMD_API_KEY, ALT_API_KEY, CF_API_KEY veya OR_API_KEY'den en az biri ayarlanmali!")
@@ -765,14 +776,12 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
 
     max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "8000"))
 
-    # Deneme sirasi: AMD (ana) -> Cloudflare -> Groq. Raporda Cloudflare Groq'dan
-    # once gelir cunku Groq'un ucretsiz katmanindaki dar dakikalik token siniri
-    # buyuk promptlarda 429 verir; ozette ise Groq oncelidir (kucuk cagri).
-    # sirasi parametresiyle oncelik degistirilebilir.
-    sirasi = sirasi or ("AMD", "CF", "YEDEK", "OR")
+    # Deneme sirasi: AMD (ana) -> OpenRouter (ucretsiz) -> Groq (ucretsiz).
+    # Cloudflare Workers AI metin uretimi kaldirildi (parali/kullanilmiyor);
+    # yalnizca ucretsiz saglayicilar yedek. sirasi ile oncelik degistirilebilir.
+    sirasi = sirasi or ("AMD", "OR", "YEDEK")
     havuzlar = {
         "AMD": (client, AMD_MODEL_LIST or [AMD_MODEL]),
-        "CF": (cf_client, _cf_havuz() if cf_client else CF_MODELS),
         "YEDEK": (alt_client, _havuz_modelleri(alt_client, ALT_MODELS, GROQ_MODEL_TERCIH, "Groq") if alt_client else ALT_MODELS),
         "OR": (or_client, _havuz_modelleri(or_client, OR_MODELS, OR_MODEL_TERCIH, "OpenRouter",
                                            suzgec=lambda m: m.endswith(":free")) if or_client else OR_MODELS),
