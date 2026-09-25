@@ -395,7 +395,7 @@
     "ulke": "US",
     "olay": "Initial Jobless Claims",
     "onem": 0,
-    "tahmin": null,
+    "tahmin": 199,
     "gercek": null,
     "onceki": 197
   },
@@ -585,7 +585,7 @@
     "ulke": "US",
     "olay": "Factory Orders MoM",
     "onem": 0,
-    "tahmin": null,
+    "tahmin": -0.1,
     "gercek": null,
     "onceki": 0.9
   },

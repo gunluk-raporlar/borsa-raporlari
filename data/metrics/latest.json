@@ -5,24 +5,24 @@
   "sure_sn": 3.6,
   "son_guncelleme": "2026-09-25T05:47:10+03:00"
  },
- "guncelleme": "2026-09-25T18:09:54+03:00",
+ "guncelleme": "2026-09-25T19:44:04+03:00",
  "llm": {
   "adet": 3,
-  "ortalama_sn": 964.337,
-  "p95_sn": 1347.051,
-  "maks_sn": 1542.942,
+  "ortalama_sn": 477.957,
+  "p95_sn": 672.116,
+  "maks_sn": 758.388,
   "basari_orani": 1.0,
-  "son_guncelleme": "2026-09-25T18:09:54+03:00"
+  "son_guncelleme": "2026-09-25T19:44:04+03:00"
  },
  "dogrulama": {
-  "isim": 0,
-  "enflasyon": 0,
-  "toplam_metin": 1,
-  "endeks": 0,
+  "isim": 3,
+  "enflasyon": 2,
+  "toplam_metin": 2,
+  "endeks": 3,
   "endeks_uyari": 0,
-  "faiz": 0,
-  "makro": 0,
-  "piyasa": 0,
-  "son_guncelleme": "2026-09-25T18:09:54+03:00"
+  "faiz": 3,
+  "makro": 4,
+  "piyasa": 5,
+  "son_guncelleme": "2026-09-25T19:44:04+03:00"
  }
 }
