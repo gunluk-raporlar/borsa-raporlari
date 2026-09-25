@@ -410,7 +410,7 @@ class Cevirmen:
             ham = os.environ.get("ZAI_MODELS") or os.environ.get("ZAI_MODEL") or "glm-5.3-flash"
             zai_modeller = [m.strip() for m in ham.split(",") if m.strip()] or ["glm-5.3-flash"]
             zai_modeller = list(dict.fromkeys(zai_modeller))   # tekrarlari at
-            uclar.append(("https://api.z.ai/api/paas/v4/chat/completions", zai_anahtar, zai_modeller))
+            uclar.append(("https://api.z.ai/api/coding/paas/v4/chat/completions", zai_anahtar, zai_modeller))
         # 2) AMD Radeon Developer Cloud (bot.py'nin ana saglayicisi)
         amd_anahtar = os.environ.get("AMD_API_KEY")
         if amd_anahtar:

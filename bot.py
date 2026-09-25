@@ -167,7 +167,7 @@ nvid_client = OpenAI(
 
 zai_client = OpenAI(
     api_key=ZAI_API_KEY,
-    base_url="https://api.z.ai/api/paas/v4/",
+    base_url="https://api.z.ai/api/coding/paas/v4/",
     timeout=300.0,
     max_retries=1,
 ) if ZAI_API_KEY else None
@@ -943,7 +943,7 @@ def _zai_call_ic(prompt):
     anahtar = os.environ.get("ZAI_API_KEY", "")
     if not anahtar:
         return None
-    client = OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/paas/v4/",
+    client = OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/coding/paas/v4/",
                     timeout=300.0, max_retries=1)
     modeller = ([os.environ["ZAI_MODEL"]] if os.environ.get("ZAI_MODEL") else []) + ZAI_MODEL_TERCIH
     modeller = list(dict.fromkeys(modeller))  # tekrarlari at
@@ -2591,7 +2591,7 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
         return None
 
     model = os.environ.get("ZAI_MODEL") or ZAI_MODEL_TERCIH[0]
-    client = OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/paas/v4/",
+    client = OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/coding/paas/v4/",
                     timeout=300.0, max_retries=1)
 
     teknik_ozet = "\n".join(
@@ -2747,7 +2747,7 @@ def makro_analiz_yap(yedek_amd=False, snapshot=None):
     """
     anahtar = os.environ.get("ZAI_API_KEY", "")
     model = os.environ.get("ZAI_MODEL") or ZAI_MODEL_TERCIH[0]
-    glm_istemci = (OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/paas/v4/",
+    glm_istemci = (OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/coding/paas/v4/",
                           timeout=300.0, max_retries=1) if anahtar else None)
     if not anahtar:
         logger.warning("[Makro Analiz] ZAI_API_KEY yok; yedek AMD yolu denenecek (yedek_amd=%s).",
