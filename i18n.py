@@ -423,9 +423,8 @@ class Cevirmen:
             nvid_url = os.environ.get("NVID_BASE_URL", "https://integrate.api.nvidia.com/v1").rstrip("/") + "/chat/completions"
             nvid_modeller = [m.strip() for m in os.environ.get(
                 "NVID_MODELS",
-                "deepseek-ai/deepseek-v4.1-flash,nvidia/nemotron-3-ultra-550b-a55b,"
-                "nvidia/nemotron-3-super-120b-a12b,nvidia/llama-3.1-nemotron-70b-instruct,"
-                "z-ai/glm-5.3"
+                "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b,"
+                "z-ai/glm-5.3,nvidia/nemotron-3.5-lightning-30b-a3b"
             ).split(",") if m.strip()]
             uclar.append((nvid_url, nvid_anahtar, nvid_modeller))
         alt_anahtar = os.environ.get("ALT_API_KEY") or os.environ.get("GROQ_API_KEY")
