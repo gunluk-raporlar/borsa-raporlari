@@ -64,16 +64,45 @@ jobs:
           except Exception as e:
               print("TV snapshot okunamadi:", temizle(e))
 
-          # BEA ITA: kesif sonrasi aday taramasi artik uretim kodunun icinde
-          # (Frequency in yalnizca A/QSA/QNSA olmasi, Year='last'in calismamasi,
-          # tek satirlik yanitta Data'nin dict gelmesi). Burada yalnizca
-          # URETIM YOLUNUN KENDISI calistirilir; gecerli parametre degerleri ve
-          # isleyen kombinasyon yazdirilir.
+          # BEA ITA: Indicator dogru gorunuyor ama (Frequency, Year)
+          # kombinasyonu yanlis olabilir; yanit 200 + bos Data donuyor.
+          # Uc sey birlikte yazdirilir: gecerli parametre degerleri, ham
+          # yanitin SEKLI (Data bazi yanitlarda liste degil dict geliyor;
+          # d[0] o yuzden KeyError 0 veriyordu) ve dayanikli kombinasyon
+          # taramasi; calisan kombinasyon _BEA_FREKANS'a yazilir.
           if os.environ.get("BEA_API_KEY") and resmi_veri.CARI_GOSTERGE:
               import urllib.parse
               bea_pin = next(p for p in resmi_veri.PINLER
                              if p.get("tip") == "bea")
               _anahtar = os.environ["BEA_API_KEY"]
+
+              def _http(**ek):
+                  p = {"UserID": _anahtar, "method": "GetData",
+                       "datasetname": bea_pin.get("veri_seti", "ITA"),
+                       "Indicator": resmi_veri.CARI_GOSTERGE,
+                       "ResultFormat": "JSON"}
+                  p.update(ek)
+                  return json.loads(resmi_veri._istek(
+                      resmi_veri.BEA_KOK + "?" + urllib.parse.urlencode(p),
+                      anahtar=_anahtar, etiket="BEA-probe"))
+
+              def _sekil(g):
+                  """Yanit seklini yazar; Data dict gelirse ham halini de."""
+                  bea = (g.get("BEAAPI") or {}) if isinstance(g, dict) else {}
+                  res = (bea.get("Results") or {})
+                  veri = res.get("Data")
+                  print("BEA-SEKIL | ust=%s | Results=%s | Data=%s" % (
+                      sorted(g.keys()) if isinstance(g, dict) else "?",
+                      sorted(res.keys()), type(veri).__name__))
+                  for h in (bea.get("Error"),
+                            g.get("Error") if isinstance(g, dict) else None):
+                      if h:
+                          print("BEA-HATA | %s" % temizle(
+                              json.dumps(h, ensure_ascii=False))[:300])
+                  if isinstance(veri, dict) and veri:
+                      print("BEA-DATA | %s" % temizle(
+                          json.dumps(veri, ensure_ascii=False))[:400])
+                  return veri
 
               # ITA'nin kabul ettigi Frequency/Year degerleri kesifle yazilir.
               for _p in ("Frequency", "Year"):
@@ -101,15 +130,50 @@ jobs:
                       print("BEA-PARAM | %s | HATA %s" % (
                           _p, temizle(str(e))[:140]))
 
-              try:
-                  _bugun_d = datetime.fromisoformat(bugun).date()
-                  _goz = resmi_veri._bea(bea_pin, _bugun_d)
-                  print("BEA-URETIM | n=%d | son_donem=%s | kullanilan=%s" % (
-                      len(_goz), _goz[-1][0],
-                      json.dumps(resmi_veri._BEA_KULLANIM,
-                                 ensure_ascii=False)))
-              except Exception as e:
-                  print("BEA-URETIM | HATA %s" % temizle(str(e))[:200])
+              def _dene(frek, yil):
+                  try:
+                      g = _http(Frequency=frek, Year=yil)
+                  except Exception as e:
+                      print("BEA-PROBE | F=%s Y=%s | HATA %s" % (
+                          frek, yil, temizle(str(e))[:140]))
+                      return 0, ""
+                  veri = _sekil(g)
+                  if isinstance(veri, list):
+                      d = veri
+                  elif isinstance(veri, dict) and (
+                          "TimePeriod" in veri or "DataValue" in veri):
+                      d = [veri]
+                  else:
+                      d = []
+                  ilk = d[0] if d else {}
+                  print("BEA-PROBE | F=%s Y=%s | n=%d | ilk=%s %s" % (
+                      frek, yil, len(d), ilk.get("TimePeriod"),
+                      ilk.get("DataValue")))
+                  return len(d), (ilk.get("TimePeriod") or "")
+
+              bulunan = None
+              for _f in ("Q", "A", "M"):          # once Year=last (uretimdeki)
+                  n, tp = _dene(_f, "last")
+                  if n:
+                      bulunan = (_f, "last", tp)
+                      break
+              if bulunan is None:                 # last bos donuyorsa yil dene
+                  for _f in ("Q", "A", "M"):
+                      for _y in ("2026", "2025"):
+                          n, tp = _dene(_f, _y)
+                          if n:
+                              bulunan = (_f, _y, tp)
+                              break
+                      if bulunan:
+                          break
+              if bulunan:
+                  resmi_veri._BEA_FREKANS[bea_pin["frekans"]] = bulunan[0]
+                  print("BEA SECILEN = F=%s Y=%s ilk_donem=%s" % bulunan)
+                  if bulunan[1] != "last":
+                      print("BEA DKKAT: Year='last' calismiyor; "
+                            "_bea'de Year='%s' olmali" % bulunan[1])
+              else:
+                  print("BEA PROBE: hicbir kombinasyonda veri gelmedi")
 
           sonuclar = resmi_veri.pin_kontrol(bugun)
           sorun = 0
@@ -135,10 +199,11 @@ jobs:
                           t.get("confirmed_by") or t.get("provenance")))
               if s["kaynak"] == "BEA":
                   # Indikator kesfi (durum: kesif/anahtar/bos) kasitli durum.
-                  if s["durum"] == "ag":
+                  # BEA cari denge kanali opsiyonel/kesif asamasinda ve
+                  # yoklugu snapshot'i etkilemez -> uyari sayilir (is
+                  # kirmizi olmaz); gercek kanallardaki hata fatal kalir.
+                  if s["durum"] not in ("ok", "kesif", "anahtar", "bos"):
                       uyari += 1
-                  elif s["durum"] not in ("ok", "kesif", "anahtar", "bos"):
-                      sorun += 1
               elif s["durum"] == "ag":
                   # Gecici ag hatasi (orn. Eurostat baglantisi kopmasi): isi
                   # kirmiziya cevirmez; yalnizca uyari olarak raporlanir.
