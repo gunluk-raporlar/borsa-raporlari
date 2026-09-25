@@ -61,7 +61,9 @@ BEA_KOK = "https://apps.bea.gov/api/data/"
 # BEA ITA cari denge indikator kodu. Degeri yoksa hedef kesif asamasinda
 # sayilir ve sessizce atlanir; kod saglik kontrolu (resmi-check.yml) kesfi ile
 # buraya yazilir ya da BEA_CARI_INDICATOR ortam degiskeniyle verilir.
-CARI_GOSTERGE = ""
+# Kesifte 889 indikator listelendi; dogrudan karsiligi "Balance on current
+# account" olan budur (25 Eyl saglik kontrolu degeri ile TV -226.8 karsilastirilir).
+CARI_GOSTERGE = "BalCurrAcct"
 
 # Birim gosterge bayat sayilir (ornek gunune gore, gun). TV satiri esittir
 # YAYIN tarihi, resmi veri esittir VERI donemi; bu yuzden ikinci kontrol
