@@ -1027,6 +1027,61 @@ class ResmiVeriTest(unittest.TestCase):
         self.assertEqual(y.exception.durum, "veri")
         self.assertIn("Results=Value", str(y.exception))
 
+    def test_bea_tek_satirda_dict_donen_datayi_okur(self):
+        # BEA tek satirlik yanitta `Data`'yi liste degil DICT dondurur
+        # (25 Eyl canli yaniti: Indicator=BalCurrAcct, TimePeriod=2025,
+        # UNIT_MULT=6). List disi reddedilmek gercek degeri "veri yok"
+        # yapiyordu.
+        govde = json.dumps({"BEAAPI": {"Results": {"Data": {
+            "Indicator": "BalCurrAcct", "TimePeriod": "2025",
+            "CL_UNIT": "USD", "UNIT_MULT": "6",
+            "DataValue": "-1177066"}}}})
+        anahtar = "TESTKEY12345678901234567890123456"
+        pin = self._pin(gosterge="current_account", ulke="ABD", tip="bea",
+                        seri=None, kaynak="BEA", veri_seti="ITA",
+                        frekans="üç aylık", birim="milyar $",
+                        olcek="milyar", hesap="son",
+                        min=-3000.0, max=1000.0)
+        with mock.patch.dict(os.environ, {"BEA_API_KEY": anahtar,
+                                          "BEA_CARI_INDICATOR": ""}), \
+                mock.patch.object(self.resmi, "CARI_GOSTERGE",
+                                  "BalCurrAcct"), \
+                mock.patch.object(self.resmi, "_istek",
+                                  return_value=govde):
+            gozlem = self.resmi._bea(pin, date(2026, 9, 25))
+        self.assertEqual(gozlem, [(date(2025, 1, 1), -1177066.0)])
+
+    def test_bea_yil_last_degil_aday_olarak_tarar(self):
+        # ITA `Year` "last" bilmiyor (GetParameterValues 1960..2026) ve
+        # yil verilmeden istek bos donebiliyor; uretim once yilsiz dener,
+        # bos donerse gecerli yillari tarar. Frequency de yalnizca
+        # A/QSA/QNSA gecerli; eski "Q" istegi 200 + bos Data donuyordu.
+        bos = json.dumps({"BEAAPI": {"Results": {"Dimensions": []}}})
+        dolu = json.dumps({"BEAAPI": {"Results": {"Data": [
+            {"TimePeriod": "2026Q2", "DataValue": "-226.8"}]}}})
+        anahtar = "TESTKEY12345678901234567890123456"
+        pin = self._pin(gosterge="current_account", ulke="ABD", tip="bea",
+                        seri=None, kaynak="BEA", veri_seti="ITA",
+                        frekans="üç aylık", birim="milyar $",
+                        olcek="milyar", hesap="son",
+                        min=-3000.0, max=1000.0)
+        with mock.patch.dict(os.environ, {"BEA_API_KEY": anahtar,
+                                          "BEA_CARI_INDICATOR": ""}), \
+                mock.patch.object(self.resmi, "CARI_GOSTERGE",
+                                  "BalCurrAcct"), \
+                mock.patch.object(self.resmi, "_istek",
+                                  side_effect=[bos, bos, dolu]) as istek:
+            gozlem = self.resmi._bea(pin, date(2026, 9, 25))
+        urls = [c[0][0] for c in istek.call_args_list]
+        self.assertIn("Frequency=QSA", urls[0])
+        self.assertNotIn("Year=", urls[0])          # once yilsiz denenir
+        self.assertIn("Year=2026", urls[1])
+        self.assertIn("Year=2025", urls[2])
+        self.assertTrue(all("last" not in u for u in urls))
+        self.assertEqual(gozlem, [(date(2026, 6, 30), -226.8)])
+        self.assertEqual(self.resmi._BEA_KULLANIM,
+                         {"Frequency": "QSA", "Year": "2025"})
+
     def test_resmi_satirlar_snapshot_semasiyla_uyumludur(self):
         veri = copy.deepcopy(CANLI)
         pin = self._pin(ulke="Euro Bölgesi", tip="eurostat", seri=None,
