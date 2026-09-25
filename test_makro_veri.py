@@ -888,6 +888,91 @@ class ResmiVeriTest(unittest.TestCase):
                 with self.assertRaises(self.resmi.ResmiHata):
                     self.resmi.bea_gostergeleri()
 
+    # ----------------------------------------------------- tekrar / saglik
+
+    def test_istek_kullanici_arac_basligi_gonderir(self):
+        # 25 Eyl: Eurostat "Remote end closed connection without response"
+        # ile istegi kapatti; kendini tanimayan varsayilan Python UA'si
+        # bazi AB uclarinda tetikleyici olur.
+        yakalanan = {}
+
+        def sahte_urlopen(istek, timeout=None):
+            yakalanan.clear()
+            yakalanan.update(dict(istek.headers))
+
+            class Y:
+                def __enter__(self):
+                    return self
+
+                def __exit__(self, *a):
+                    return False
+
+                def read(self):
+                    return b'{"ok": true}'
+
+            return Y()
+
+        with mock.patch.object(self.resmi.urllib.request, "urlopen",
+                               sahte_urlopen):
+            self.resmi._istek("https://ornek/veri")
+            alt = {k.lower(): v for k, v in yakalanan.items()}
+            self.assertTrue(alt.get("user-agent"))
+            # Cagiran kendi basligini gecerse onunki kazanir.
+            self.resmi._istek("https://ornek/veri",
+                              basliklar={"User-Agent": "Ozel/2.0"})
+            alt = {k.lower(): v for k, v in yakalanan.items()}
+            self.assertEqual(alt.get("user-agent"), "Ozel/2.0")
+
+    def test_pin_kontrol_tekil_ag_hatasi_bir_kez_daha_denir(self):
+        hedef = self.resmi.PINLER[0]
+        sayac = {"n": 0}
+
+        def yanilayici(pin, tarih):
+            if pin is hedef:
+                sayac["n"] += 1
+                if sayac["n"] == 1:
+                    raise self.resmi.ResmiHata(
+                        "sunucu baglantiyi kapatti", durum="ag")
+            return (3.2, 3.0, "2026-08-01")
+
+        with mock.patch.object(self.resmi, "_pin_coz", side_effect=yanilayici):
+            sonuclar = self.resmi.pin_kontrol("2026-09-25")
+        self.assertEqual(sayac["n"], 2)
+        ilk = sonuclar[0]
+        self.assertEqual(ilk["durum"], "ok")
+        self.assertTrue(ilk.get("tekrar"))
+        self.assertNotIn("hata", ilk)
+        self.assertEqual(ilk["deger"], 3.2)
+        self.assertTrue(all(s["durum"] == "ok" for s in sonuclar))
+
+    def test_pin_kontrol_kalici_ag_hatasi_sonsuz_donguye_dusmez(self):
+        sayac = {"n": 0}
+
+        def hep_kapanir(pin, tarih):
+            sayac["n"] += 1
+            raise self.resmi.ResmiHata("sunucu kapandi", durum="ag")
+
+        with mock.patch.object(self.resmi, "_pin_coz", side_effect=hep_kapanir):
+            sonuclar = self.resmi.pin_kontrol("2026-09-25")
+        # Tam iki deneme: bir normal + bir tekrar. Daha fazla degil.
+        self.assertEqual(sayac["n"], 2 * len(self.resmi.PINLER))
+        self.assertTrue(all(s["durum"] == "ag" for s in sonuclar))
+        self.assertTrue(all(s.get("tekrar") for s in sonuclar))
+
+    def test_pin_kontrol_kalici_anahtar_hatasi_tek_deneme(self):
+        # 401/403 tekrarlarsa BLS kotasi bosuna yanar; tekrarlanmaz.
+        sayac = {"n": 0}
+
+        def anahtarsiz(pin, tarih):
+            sayac["n"] += 1
+            raise self.resmi.ResmiHata("BEA_API_KEY yok", durum="anahtar")
+
+        with mock.patch.object(self.resmi, "_pin_coz", side_effect=anahtarsiz):
+            sonuclar = self.resmi.pin_kontrol("2026-09-25")
+        self.assertEqual(sayac["n"], len(self.resmi.PINLER))
+        self.assertTrue(all(s["durum"] == "anahtar" for s in sonuclar))
+        self.assertTrue(all("tekrar" not in s for s in sonuclar))
+
     def test_resmi_satirlar_snapshot_semasiyla_uyumludur(self):
         veri = copy.deepcopy(CANLI)
         pin = self._pin(ulke="Euro Bölgesi", tip="eurostat", seri=None,
@@ -902,6 +987,50 @@ class ResmiVeriTest(unittest.TestCase):
         snapshot = makro_veri.normalize(
             veri, captured_at="2026-09-23T21:00:00+03:00")
         makro_veri.validate(snapshot, "2026-09-24")
+
+    def test_resmi_deger_dogrulamaya_otomatik_akar(self):
+        # dogrulama.py ayri bir deger listesi almaz; resmi AB/ABD degerleri
+        # rate_maps(snapshot) uzerinden gelir. TV'de 1.5 olan buyume resmi
+        # adimdan sonra 2.1 olmali ve bayat metin duzeltilmeli.
+        veri = copy.deepcopy(CANLI)
+        # TV satirinin VERI donemi resmi donemle ayni ("Q2" = 2026-06-30,
+        # yalnizca yayin tarihi farkli): resmi kanal ustune yazar.
+        # TV source_period gercek bicimi aylik/ayrilik etikettir (Q2, Aug,
+        # Jul, Sep/12, 2025); ISO tarih kullanilmaz.
+        for g in veri["gostergeler"]:
+            if g["ulke"] == "ABD" and g["ad"] == "Büyüme (yıllık)":
+                g["kaynak_periyot"] = "Q2"
+        pin = self._pin(gosterge="growth_yoy", ulke="ABD", tip="fred",
+                        seri="GDPC1", kaynak="FRED",
+                        kaynak_baslik="FRED GSYH (yıllık)", hesap="yillik",
+                        frekans="üç aylık", min=-10.0, max=20.0)
+        with mock.patch.object(self.resmi, "PINLER", [pin]), \
+                mock.patch.object(self.resmi, "_pin_coz",
+                                  return_value=(2.1, 2.7, "2026-06-30")):
+            resmi_veri.gostergeleri_ekle(veri["gostergeler"], "2026-09-23")
+        snapshot = makro_veri.normalize(
+            veri, captured_at="2026-09-23T21:00:00+03:00")
+        _enf, _faiz, gostergeler = makro_veri.rate_maps(snapshot)
+        self.assertEqual(gostergeler["us"]["growth_yoy"], 2.1)
+        metin, duzeltme = dogrulama.makro_gosterge_duzelt(
+            "ABD'de büyüme yıllık %1,5 oldu.", gostergeler)
+        self.assertEqual(duzeltme, [("growth_yoy", "%1,5", "%2,1")])
+        self.assertIn("%2,1", metin)
+
+        # Ters durum: TV'nin VERI donemi ("Jul" = 2026-07-31) resmi donemden
+        # (2026-06-30) yeniyse resmi eski degeri ustune yazmaz; TV satiri
+        # korunur, sayi uydurulmaz.
+        bayat = copy.deepcopy(CANLI)
+        for g in bayat["gostergeler"]:
+            if g["ulke"] == "ABD" and g["ad"] == "Büyüme (yıllık)":
+                g["kaynak_periyot"] = "Jul"
+        with mock.patch.object(self.resmi, "PINLER", [pin]), \
+                mock.patch.object(self.resmi, "_pin_coz",
+                                  return_value=(2.1, 2.7, "2026-06-30")):
+            resmi_veri.gostergeleri_ekle(bayat["gostergeler"], "2026-09-23")
+        self.assertEqual(
+            next(g["deger"] for g in bayat["gostergeler"]
+                 if g["ulke"] == "ABD" and g["ad"] == "Büyüme (yıllık)"), 1.5)
 
     # --------------------------------------------------------- kaynak/gizlilik
 

@@ -81,6 +81,12 @@ MAGAZA_ALANLARI = ("country_code", "country", "indicator", "label", "value",
 TEKRAR_KODLARI = (429, 500, 502, 503, 504)
 TEKRAR_BEKLEME = 3.0  # testler 0'a cekebilir
 
+# Varsayilan istek basligi. Bazi AB uclari (Eurostat) kendini tanimayan
+# Python-urllib UA'siyla gelen istegi govde yazmadan kapatir; o zaman hata
+# "Remote end closed connection without response" olur ve durum="ag".
+# Cagiran kendi basligini gecerirse onunki kazanir.
+VARSAYILAN_BASLIK = {"User-Agent": "borsa-raporlari/1.0 (resmi-veri)"}
+
 _ONBELLEK = {}    # pin anahari -> [(donem, ham deger)]
 _PIN_HATA = {}    # pin anahari -> ResmiHata (ayni calismada tekrar deneme yok)
 
@@ -120,9 +126,10 @@ def _govde_kis(metin, anahtar=None):
 def _istek(url, anahtar=None, veri=None, basliklar=None, etiket="resmi",
            timeout=25, tekrar=1):
     """HTTP istegi; govde metni dondurur. URL ve anahtar hic loglanmaz."""
+    nihai = dict(VARSAYILAN_BASLIK)
+    nihai.update(basliklar or {})
     for deneme in range(tekrar + 1):
-        req = urllib.request.Request(url, data=veri,
-                                     headers=dict(basliklar or {}))
+        req = urllib.request.Request(url, data=veri, headers=nihai)
         try:
             with urllib.request.urlopen(req, timeout=timeout) as yanit:
                 ham = yanit.read()
@@ -922,7 +929,14 @@ def _pin_coz(pin, tarih):
 
 
 def pin_kontrol(tarih=None):
-    """Her pinin canli sonucunu dondurur (saglik kontrolu / yerel denetim)."""
+    """Her pinin canli sonucunu dondurur (saglik kontrolu / yerel denetim).
+
+    Sunucunun istegi aniden kapattigi **tekil** bir ag hatasi (``durum="ag"``)
+    icin pin bir kez daha denenir: gece kozesinde tek bir paket kaybi saglik
+    kontrolunu kirmiziya cevirmesin. Kalici kesinti yine ``ag`` olarak doner
+    (ikiden fazla deneme YOK), 401/403 gibi kalici hatalar da tekrarlanmaz
+    (BLS kotasi bosuna yanmasin).
+    """
     tarih = tarih or date.today().isoformat()
     sonuclar = []
     for pin in PINLER:
@@ -930,13 +944,24 @@ def pin_kontrol(tarih=None):
                  "kaynak": pin["kaynak"], "seri": pin.get("seri")
                  or pin.get("veri_kumesi") or pin.get("veri_seti", ""),
                  "durum": "ok", "birim": _birim(pin)}
-        try:
-            deger, onceki, donem = _pin_coz(pin, tarih)
-            kayit.update({"deger": deger, "onceki": onceki, "donem": donem})
-        except ResmiHata as exc:
-            kayit.update({"durum": exc.durum, "hata": str(exc)})
-        except Exception as exc:  # pragma: no cover - guvenlik agi
-            kayit.update({"durum": "hata", "hata": str(exc)})
+        for deneme in range(2):
+            try:
+                deger, onceki, donem = _pin_coz(pin, tarih)
+                kayit.update({"durum": "ok", "deger": deger,
+                              "onceki": onceki, "donem": donem})
+                kayit.pop("hata", None)   # onceden yazilmis hata metni kalmasin
+                break
+            except ResmiHata as exc:
+                kayit.update({"durum": exc.durum, "hata": str(exc)})
+                if deneme or exc.durum != "ag":
+                    break
+                # Tekil ag patlamasi: defteri bosalt ve bir kez daha dene.
+                _PIN_HATA.pop(_pin_anahari(pin, tarih), None)
+                kayit["tekrar"] = True
+                time.sleep(TEKRAR_BEKLEME)
+            except Exception as exc:  # pragma: no cover - guvenlik agi
+                kayit.update({"durum": "hata", "hata": str(exc)})
+                break
         sonuclar.append(kayit)
     return sonuclar
 
