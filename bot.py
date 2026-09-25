@@ -811,6 +811,7 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
                                            suzgec=lambda m: m.endswith(":free")) if or_client else OR_MODELS),
     }
     istekler = []
+    kuyruklar = []
     for etiket in sirasi:
         if etiket not in havuzlar:
             # Kalinti/eski etiket (orn. havuzdan cikarilmis saglayici) tum
@@ -818,9 +819,22 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
             logger.warning("Bilinmeyen LLM saglayici etiketi atlandi: %s", etiket)
             continue
         saglayici, modeller = havuzlar[etiket]
-        if saglayici is not None:
-            for m in modeller:
-                istekler.append((saglayici, m, etiket))
+        if saglayici is not None and modeller:
+            kuyruklar.append([saglayici, list(modeller), etiket])
+
+    # Saglayicilar araya serpistirilir (round-robin): deneme sirasi AMD, NVID,
+    # OR, YEDEK, AMD, NVID, ... seklinde ilerler. Aksi halde ilk saglayicinin
+    # tum modelleri deneme butcesini yiyip Groq/OpenRouter hic denenmeden
+    # max_deneme tukenir (2026-09-25 kosusunda tam olarak bu oldu: 6 denemenin
+    # 6'si da AMD+NVID timeout'una gitti, yanit veren Groq hic denenmedi).
+    while kuyruklar:
+        kalan = []
+        for kuyruk in kuyruklar:
+            saglayici, modeller, etiket = kuyruk
+            istekler.append((saglayici, modeller.pop(0), etiket))
+            if modeller:
+                kalan.append(kuyruk)
+        kuyruklar = kalan
 
     if not istekler:
         logger.error("Kullanilabilir LLM saglayicisi yok (AMD_API_KEY / ALT_API_KEY tanimli degil).")
@@ -2263,7 +2277,10 @@ Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek veril
         response = llm_call(prompt)
     except Exception as e:
         logger.exception("AMD llm_call failed in master_cio_agent: %s", e)
-    if not response:
+    # llm_call denemeler tukendiginde raise yerine fallback metni doner; metin
+    # "truthy" oldugu icin bu kontrolun altindan gecip Z.ai yedegini atlardik.
+    # Fallback metni basarisizlik say, Z.ai'i dene.
+    if not response or (isinstance(response, str) and response.startswith("(LLM hizmetine ulaşılamadı")):
         response = _zai_call(prompt)
     if not response:
         response = "(LLM hizmetine ulaşılamadı — rapor şu an kısmi olarak oluşturuldu veya oluşturulamadı. Daha sonra tekrar deneyin.)"
@@ -2645,7 +2662,9 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
     try:
         logger.info("[Derin Analiz] AMD cagrisi (llm_call)")
         icerik = llm_call(prompt)
-        if icerik and icerik.strip():
+        # llm_call denemeler tukendiginde fallback metni doner; bunu "icerik"
+        # sanip sayfaya yazmamak icin basarisizlik sayip GLM yedegine dus.
+        if icerik and icerik.strip() and not icerik.startswith("(LLM hizmetine ulaşılamadı"):
             if _derin_dongu_var(icerik):
                 son_hata = "tekrar dongusu (AMD)"
                 logger.warning("[Derin Analiz] AMD tekrar dongusune girdi; Z.ai yedegine geciliyor.")
