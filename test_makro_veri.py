@@ -973,6 +973,60 @@ class ResmiVeriTest(unittest.TestCase):
         self.assertTrue(all(s["durum"] == "anahtar" for s in sonuclar))
         self.assertTrue(all("tekrar" not in s for s in sonuclar))
 
+    def test_bea_frequency_parametresi_gonderilir_ve_2026q2_okunur(self):
+        # ITA istek `Frequency` (A/Q/M) ister; verilmezse yanit 200 gelir ama
+        # Results.Data bos kalir. Ayrica TimePeriod "2026Q2" biciminde gelir.
+        govde = json.dumps({"BEAAPI": {"Results": {"Data": [
+            {"TimePeriod": "2026Q2", "DataValue": "-226.8"},
+            {"TimePeriod": "2026Q1", "DataValue": "-304.5"}]}}})
+        anahtar = "TESTKEY12345678901234567890123456"
+        pin = self._pin(gosterge="current_account", ulke="ABD", tip="bea",
+                        seri=None, kaynak="BEA", veri_seti="ITA",
+                        frekans="üç aylık", birim="milyar $",
+                        olcek="milyar", hesap="son",
+                        min=-3000.0, max=1000.0)
+        with mock.patch.dict(os.environ, {"BEA_API_KEY": anahtar,
+                                          "BEA_CARI_INDICATOR": ""}), \
+                mock.patch.object(self.resmi, "CARI_GOSTERGE",
+                                  "BalCurrAcct"), \
+                mock.patch.object(self.resmi, "_istek",
+                                  return_value=govde) as istek:
+            gozlem = self.resmi._bea(pin, date(2026, 9, 25))
+        sorgu = istek.call_args[0][0]
+        self.assertIn("Frequency=Q", sorgu)
+        self.assertIn("Indicator=BalCurrAcct", sorgu)
+        # 2026Q2 eski bicimde taninmiyordu -> ceyrek donemine cevrilmeli.
+        self.assertEqual([d for d, _ in gozlem],
+                         [date(2026, 6, 30), date(2026, 3, 31)])
+
+    def test_donem_cevir_bea_timeperiod_bicimini_kabul_eder(self):
+        # BEA ITA "2026Q2" (Q sonda); eski kod yalnizca "2026-Q2"/"Q2 2026"
+        # biliyordu, dolayisiyla gozlem listesi bos duserdi.
+        self.assertEqual(self.resmi._donem_cevir("2026Q2", "üç aylık"),
+                         date(2026, 6, 30))
+        self.assertEqual(self.resmi._donem_cevir("2025Q4", "üç aylık"),
+                         date(2025, 12, 31))
+
+    def test_bea_data_yokken_sonuclari_anlatir(self):
+        # Yanit 200 + bos Data oldugunda mesaj "BEA veri yok:" ile biter ve
+        # Results anahtarlarini gosterir; yoksa bir sonraki tur de kör kalir.
+        govde = json.dumps({"BEAAPI": {"Results": {"Value": []}}})
+        anahtar = "TESTKEY12345678901234567890123456"
+        pin = self._pin(gosterge="current_account", ulke="ABD", tip="bea",
+                        seri=None, kaynak="BEA", veri_seti="ITA",
+                        frekans="üç aylık", birim="milyar $",
+                        olcek="milyar", hesap="son",
+                        min=-3000.0, max=1000.0)
+        with mock.patch.dict(os.environ, {"BEA_API_KEY": anahtar,
+                                          "BEA_CARI_INDICATOR": ""}), \
+                mock.patch.object(self.resmi, "CARI_GOSTERGE",
+                                  "BalCurrAcct"), \
+                mock.patch.object(self.resmi, "_istek", return_value=govde):
+            with self.assertRaises(self.resmi.ResmiHata) as y:
+                self.resmi._bea(pin, date(2026, 9, 25))
+        self.assertEqual(y.exception.durum, "veri")
+        self.assertIn("Results=Value", str(y.exception))
+
     def test_resmi_satirlar_snapshot_semasiyla_uyumludur(self):
         veri = copy.deepcopy(CANLI)
         pin = self._pin(ulke="Euro Bölgesi", tip="eurostat", seri=None,

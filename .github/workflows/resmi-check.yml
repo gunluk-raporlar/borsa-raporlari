@@ -64,6 +64,63 @@ jobs:
           except Exception as e:
               print("TV snapshot okunamadi:", temizle(e))
 
+          # BEA ITA: Indicator dogru ama (Frequency, Year) kombinasyonu yanlis
+          # olabilir; yanit 200 + bos Data doner. Burada adaylar taranir,
+          # calisan frekans _BEA_FREKANS'a yazilir ki ana dongu da gecsin.
+          if os.environ.get("BEA_API_KEY") and resmi_veri.CARI_GOSTERGE:
+              import urllib.parse
+              bea_pin = next(p for p in resmi_veri.PINLER
+                             if p.get("tip") == "bea")
+              _anahtar = os.environ["BEA_API_KEY"]
+
+              def _dene(frek, yil):
+                  p = {"UserID": _anahtar, "method": "GetData",
+                       "datasetname": bea_pin.get("veri_seti", "ITA"),
+                       "Indicator": resmi_veri.CARI_GOSTERGE,
+                       "Frequency": frek, "Year": yil,
+                       "ResultFormat": "JSON"}
+                  url = resmi_veri.BEA_KOK + "?" + urllib.parse.urlencode(p)
+                  try:
+                      g = json.loads(resmi_veri._istek(
+                          url, anahtar=_anahtar, etiket="BEA-probe"))
+                  except Exception as e:
+                      print("BEA-PROBE | F=%s Y=%s | HATA %s" % (
+                          frek, yil, temizle(str(e))[:140]))
+                      return 0, ""
+                  hata = ((g.get("BEAAPI") or {}).get("Error") or {})
+                  d = ((g.get("BEAAPI") or {}).get("Results") or {}
+                       ).get("Data") or []
+                  ilk = d[0] if d else {}
+                  print("BEA-PROBE | F=%s Y=%s | n=%d | ilk=%s %s %s" % (
+                      frek, yil, len(d), ilk.get("TimePeriod"),
+                      ilk.get("DataValue"),
+                      temizle(hata.get("APIErrorDescription") or "")))
+                  return len(d), ilk.get("TimePeriod") or ""
+
+              bulunan = None
+              for _f in ("Q", "A", "M"):          # once Year=last (uretimdeki)
+                  n, tp = _dene(_f, "last")
+                  if n:
+                      bulunan = (_f, "last", tp)
+                      break
+              if bulunan is None:                 # last bos donuyorsa yil dene
+                  for _f in ("Q", "A", "M"):
+                      for _y in ("2026", "2025"):
+                          n, tp = _dene(_f, _y)
+                          if n:
+                              bulunan = (_f, _y, tp)
+                              break
+                      if bulunan:
+                          break
+              if bulunan:
+                  resmi_veri._BEA_FREKANS[bea_pin["frekans"]] = bulunan[0]
+                  print("BEA SECILEN = F=%s Y=%s ilk_donem=%s" % bulunan)
+                  if bulunan[1] != "last":
+                      print("BEA DKKAT: Year='last' calismiyor; "
+                            "_bea'de Year='%s' olmali" % bulunan[1])
+              else:
+                  print("BEA PROBE: hicbir kombinasyonda veri gelmedi")
+
           sonuclar = resmi_veri.pin_kontrol(bugun)
           sorun = 0
           for s in sonuclar:
