@@ -812,6 +812,11 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
     }
     istekler = []
     for etiket in sirasi:
+        if etiket not in havuzlar:
+            # Kalinti/eski etiket (orn. havuzdan cikarilmis saglayici) tum
+            # gunluk raporu KeyError ile cokermesin; etiket sessizce atlanir.
+            logger.warning("Bilinmeyen LLM saglayici etiketi atlandi: %s", etiket)
+            continue
         saglayici, modeller = havuzlar[etiket]
         if saglayici is not None:
             for m in modeller:
@@ -2300,9 +2305,9 @@ def summary_agent(state: AgentState):
    {rapor[:6000]}
    """
     # Ozet kucuk bir cagri oldugu icin once ucretsiz yedekler (Groq ->
-    # Cloudflare -> OpenRouter) kullanilir; boylece ana rapor icin AMD'nin
+    # NVIDIA -> OpenRouter) kullanilir; boylece ana rapor icin AMD'nin
     # gunluk kotasini tuketmez.
-    ozet = llm_call(prompt, sirasi=("YEDEK", "CF", "OR", "AMD"))
+    ozet = llm_call(prompt, sirasi=("YEDEK", "NVID", "OR", "AMD"))
     save_daily("summaries", bugun, {"ozet": ozet})
     return {}
 
@@ -4741,20 +4746,55 @@ def teknik_tarama_yap():
     # ~15 dk gecikmeli canli fiyat verir; kapali piyasada iki kaynak esittir
     # (o zaman ekleme yapilmaz ve tablo kapanis verisine doner).
     canli = {}
+
+    # Birincil kaynak: TradingView scanner'a TEK istek (30 hisse ~0.3 sn).
+    # Daha once hisse basina birer borsapy fast_info cagrisi yapiliyordu; CI
+    # runner'inda cagri basina ~30 sn yavaslanyip 6-16 dk yeriyordu. Scanner
+    # 'close' alani oturum acikken son islem fiyatini, kapaliyken kapanisi
+    # verir (borsapy/TradingView ayni kaynagi servis eder).
     try:
-        import borsapy as bp
-        for hisse in HISSELER:
-            try:
-                fi = bp.Ticker(hisse).fast_info
-                deger = fi.get("last_price") if hasattr(fi, "get") else getattr(fi, "last_price", None)
-                if deger and float(deger) > 0:
-                    canli[hisse] = float(deger)
-            except Exception:
-                pass
-            time.sleep(0.2)
-        logger.info("[Teknik Tarama] %d hisse icin canli fiyat alindi (TradingView).", len(canli))
-    except ImportError:
-        logger.warning("[Teknik Tarama] borsapy yok; gun ici canli fiyat kullanilamayacak.")
+        import urllib.request
+        tv_govde = {"symbols": {"tickers": ["BIST:" + h for h in HISSELER],
+                                "query": {"types": []}},
+                    "columns": ["name", "close"]}
+        tv_istek = urllib.request.Request(
+            "https://scanner.tradingview.com/turkey/scan",
+            data=json.dumps(tv_govde).encode(),
+            headers={"User-Agent": "Mozilla/5.0",
+                     "Content-Type": "application/json"})
+        with urllib.request.urlopen(tv_istek, timeout=25) as r:
+            tv_ham = json.loads(r.read().decode())
+        for satir in tv_ham.get("data", []):
+            d = satir.get("d") or []
+            if len(d) >= 2 and d[0] and d[1] and float(d[1]) > 0:
+                canli[str(d[0])] = float(d[1])
+    except Exception as e:
+        logger.warning("[Teknik Tarama] TradingView toplu canli fiyat cekilemedi: %s", str(e)[:120])
+
+    # Scanner'dan gelmeyen semboller icin yedek: borsapy canli fiyat, paralel.
+    eksikler = [h for h in HISSELER if h not in canli]
+    if eksikler:
+        try:
+            import borsapy as bp
+            from concurrent.futures import ThreadPoolExecutor
+
+            def _canli_fiyat(hisse):
+                try:
+                    fi = bp.Ticker(hisse).fast_info
+                    deger = fi.get("last_price") if hasattr(fi, "get") else getattr(fi, "last_price", None)
+                    if deger and float(deger) > 0:
+                        return hisse, float(deger)
+                except Exception:
+                    pass
+                return hisse, None
+
+            with ThreadPoolExecutor(max_workers=8) as fiyat_havuzu:
+                for hisse, deger in fiyat_havuzu.map(_canli_fiyat, eksikler):
+                    if deger:
+                        canli[hisse] = deger
+        except ImportError:
+            logger.warning("[Teknik Tarama] borsapy yok; gun ici canli fiyat kullanilamayacak.")
+    logger.info("[Teknik Tarama] %d hisse icin canli fiyat alindi (TradingView).", len(canli))
 
     satirlar = []
     atlanan = []
