@@ -63,6 +63,26 @@ OR_API_KEY = os.environ.get("OR_API_KEY") or os.environ.get("OPENROUTER_API_KEY"
 OR_BASE_URL = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1")
 OR_MODELS = [m.strip() for m in os.environ.get("OR_MODELS", "").split(",") if m.strip()]
 
+# Dorduncu saglayici: NVIDIA NIM (build.nvidia.com) — bircok model ucretsiz
+# kredili; OpenAI uyumlu. Anahtar: https://build.nvidia.com/settings/api-keys
+NVID_API_KEY = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NIM_API_KEY", "")
+NVID_BASE_URL = os.environ.get("NVID_BASE_URL", "https://integrate.api.nvidia.com/v1")
+NVID_MODELS = [m.strip() for m in os.environ.get("NVID_MODELS", "").split(",") if m.strip()]
+NVID_MODEL_TERCIH = [
+    "deepseek-v4.1-flash",            # DeepSeek V4.1 Flash (frontier sinifi)
+    "nemotron-3-ultra-550b-a55b",     # ~550B MoE (en buyuk)
+    "nemotron-4-340b-instruct",       # 340B
+    "llama-3.1-nemotron-ultra-253b",  # 253B
+    "nemotron-3-super-120b-a12b",     # 120B MoE
+    "glm-5.3",
+    "kimi-k3",
+    "kimi-k2.6",
+    "llama-3.1-nemotron-70b",
+    "gemma-4-31b",
+    "nemotron-3.5-lightning-30b-a3b",
+    "gpt-oss-20b",
+]  # NVIDIA NIM katalogu (canli /v1/models ile dogrulandi)
+
 # Model emekleme durumlarina karsi otomatik secim icin tercih siralari
 # (icerik eslesmesiyle bulunur; saglayici tam adlandirmayi degistirse de calisir).
 GROQ_MODEL_TERCIH = ["gpt-oss-120b", "llama-4-maverick", "llama-4-scout", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
@@ -80,8 +100,8 @@ OR_MODEL_TERCIH = [
     "nex-n2.5-pro",
 ]  # 2026-09 ucretsiz kadro: yuksek parametreli modeller once
 
-if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY and not OR_API_KEY:
-    raise SystemExit("AMD_API_KEY, ALT_API_KEY, CF_API_KEY veya OR_API_KEY'den en az biri ayarlanmali!")
+if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY and not OR_API_KEY and not NVID_API_KEY:
+    raise SystemExit("AMD/ALT/CF/OR/NVIDIA API anahtarlarindan en az biri ayarlanmali!")
 
 # Varsayilan model: 1B parametrelik MiniCPM5-1B karmasik Turkce promptlarda Ingilizce
 # ic-konusma uretip talimatlari rapora sicrayabilir ve tekrar dongusune girebilir;
@@ -132,6 +152,13 @@ or_client = OpenAI(
     timeout=240.0,
     max_retries=0,
 ) if OR_API_KEY else None
+
+nvid_client = OpenAI(
+    api_key=NVID_API_KEY,
+    base_url=NVID_BASE_URL,
+    timeout=240.0,
+    max_retries=0,
+) if NVID_API_KEY else None
 
 # Takip edilen BIST30 hisseleri (Guncel liste)
 HISSELER = [
@@ -779,9 +806,10 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
     # Deneme sirasi: AMD (ana) -> OpenRouter (ucretsiz) -> Groq (ucretsiz).
     # Cloudflare Workers AI metin uretimi kaldirildi (parali/kullanilmiyor);
     # yalnizca ucretsiz saglayicilar yedek. sirasi ile oncelik degistirilebilir.
-    sirasi = sirasi or ("AMD", "OR", "YEDEK")
+    sirasi = sirasi or ("AMD", "NVID", "OR", "YEDEK")
     havuzlar = {
         "AMD": (client, AMD_MODEL_LIST or [AMD_MODEL]),
+        "NVID": (nvid_client, _havuz_modelleri(nvid_client, NVID_MODELS, NVID_MODEL_TERCIH, "NVIDIA") if nvid_client else NVID_MODELS),
         "YEDEK": (alt_client, _havuz_modelleri(alt_client, ALT_MODELS, GROQ_MODEL_TERCIH, "Groq") if alt_client else ALT_MODELS),
         "OR": (or_client, _havuz_modelleri(or_client, OR_MODELS, OR_MODEL_TERCIH, "OpenRouter",
                                            suzgec=lambda m: m.endswith(":free")) if or_client else OR_MODELS),
