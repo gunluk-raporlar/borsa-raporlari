@@ -69,19 +69,16 @@ NVID_API_KEY = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NIM_API_K
 NVID_BASE_URL = os.environ.get("NVID_BASE_URL", "https://integrate.api.nvidia.com/v1")
 NVID_MODELS = [m.strip() for m in os.environ.get("NVID_MODELS", "").split(",") if m.strip()]
 NVID_MODEL_TERCIH = [
-    "deepseek-v4.1-flash",            # DeepSeek V4.1 Flash (frontier sinifi)
-    "nemotron-3-ultra-550b-a55b",     # ~550B MoE (en buyuk)
-    "nemotron-4-340b-instruct",       # 340B
-    "llama-3.1-nemotron-ultra-253b",  # 253B
-    "nemotron-3-super-120b-a12b",     # 120B MoE
-    "glm-5.3",
+    # Sira CANLI test ile dogrulandi (2026-09-25): once hizli+calisan modeller.
+    "nemotron-3-ultra-550b-a55b",     # ~550B MoE  (OK, 0.9 sn)
+    "nemotron-3-super-120b-a12b",     # 120B MoE   (OK, 7.5 sn)
+    "glm-5.3",                        # OK, 4.7 sn
     "kimi-k3",
     "kimi-k2.6",
-    "llama-3.1-nemotron-70b",
     "gemma-4-31b",
     "nemotron-3.5-lightning-30b-a3b",
     "gpt-oss-20b",
-]  # NVIDIA NIM katalogu (canli /v1/models ile dogrulandi)
+]  # NOT: "deepseek-v4.1-flash" NIM'de 30 sn timeout veriyor, "llama-3.1-nemotron-70b" 404; cikarildi.
 
 # Model emekleme durumlarina karsi otomatik secim icin tercih siralari
 # (icerik eslesmesiyle bulunur; saglayici tam adlandirmayi degistirse de calisir).
