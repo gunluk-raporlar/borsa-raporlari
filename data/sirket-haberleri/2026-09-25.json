@@ -72,7 +72,7 @@
   {
     "kod": "AKBNK",
     "baslik": "Doğru Varlık Yönetim, Akbank’tan 516 milyon TL’lik TGA portföyü devrini tamamladı",
-    "kaynak": "tr.investing.com",
+    "kaynak": "Investing.com Türkiye",
     "link": "https://news.google.com/rss/articles/CBMizwFBVV95cUxQQklsVzhEOGh3T1RsdEdfUXBZU3d4Rnl5NHY5dnBYUFJ0dzFUX0FfS20welhDNWk5Y25Db2daSklrYmhuUmUwUmFjVXl4YzBSLVV1ei1MdlNXLVFSUlhKV1BmbGlFVlBNZWhMTWhJZE1UVG84WTZiSkNHelhTUURoSWZBMnRtVmdRb0NTTGtRNjRoWTBLVFhPeWZRNVZ2RVV3SnpmcVo2OHFqNEJ3RlN6MEpxQTF0VVpYak1OcERmVGs5ODZtaUh0YWNuc0JjTVU?oc=5",
     "ts": 1790262957
   },
@@ -135,7 +135,7 @@
   {
     "kod": "ASTOR",
     "baslik": "[Son Dakika] Astor Enerji, 33,78 milyon $’lık ABD sözleşmesi imzaladı",
-    "kaynak": "tr.investing.com",
+    "kaynak": "Investing.com Türkiye",
     "link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPdW1wWm9HNWpTNm9jRHJDZUwwd014eU5BYm8tSllQREZzRFdaTVdsYzN2LUJPR05OMDF1eWFlZTBFVUhab1BUNnZGNkU2VkFURVNGeXU3ZGxHVUVWNnkyYU0zMkgzS0VrY3o1VlpXNDlsQ3JXSUJwUm9VeUladGI3Mm44cWZnNlhuMkZCdUo0dkFudHZxX3hMaFBxTGFlSUpCVU5KbC16NTN5UzFsR0dZX1drMzk5bDFxT04w?oc=5",
     "ts": 1790155383
   },
@@ -189,6 +189,13 @@
     "ts": 1790278570
   },
   {
+    "kod": "BIMAS",
+    "baslik": "Borsa İstanbul'da TUPRS ve BIMAS'ta dev özel emir işlemi",
+    "kaynak": "YatırımX",
+    "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxPVU5aUmxBcG1uQ1ZVV3dXRkJBUnd5em1yNEJSc2tJcHBtXzlHNzZzTG90bUFCUkw1UklBV3FJZjdjcmFGSHBIY2loY1NZVWZNQzUyNWlXamxvWmNRRk9xbkpCcVEtQ0RVR2xmNXVTLUdoeXgzWG81Z2hjUlhYN00xUlBhUi1lSGpjZWl2THdLLUdSTXF4d19wNFA2Yw?oc=5",
+    "ts": 1790313751
+  },
+  {
     "kod": "DSTKF",
     "baslik": "Destek Finans ve Katılımevim Ana Pazar’a geçecek",
     "kaynak": "Ekonomim",
@@ -198,7 +205,7 @@
   {
     "kod": "DSTKF",
     "baslik": "DSTKF, PASEU ve KTLEV endekslerden çıkarılıyor: Yatırım fonlarını neler bekliyor?",
-    "kaynak": "Ekonomi Manşet",
+    "kaynak": "ekonomimanset.com",
     "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOOXZiZGljYTVGcDhJMEJqWVYwOGpGQ1Z6aXprV1VGSzBtX0I0d2JlSmF6b3QyTENsZmVQa041OS1NZTZPdThSUEttWHlwM3doR0Q1TkhrUVJ3cGdMZWc3U2dpWDh2dXNKaERad3hEMkczanZxa01RRVZ2d1pfbHlTUXhCTEdGTnRPTnEyaFBLdnZZbUdiT3NZMmxGUXlVNDItTThKTEZ0eXN6RmRt?oc=5",
     "ts": 1790047868
   },
@@ -261,7 +268,7 @@
   {
     "kod": "EKGYO",
     "baslik": "Emlak Konut GYO, bağlı ortaklığının sermayesini 1,65 milyar TL artırdı",
-    "kaynak": "tr.investing.com",
+    "kaynak": "Investing.com Türkiye",
     "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNRG5nQjAyLVdGNFlOaVR0YXlfT05ieXhXZlhqVXZLa1RIY2UxZFNpd0NURHptdE1LVzJFWkJ4QTY1REk0QmVvTEFySTlLUktCMi1YWXZoRVVzWm5NcUdreDhrMlVEWmVFSjBPU3dFdm1xc0lFVlpCTkx6WWZQOXVtRGdZVDhSa1Y1OVRuUWU3TE5PQUQyUUVSOW02NjBSb09jYUpZTTF0YTJLU25oUjRoMjdtZWNpVV9tTVRYWg?oc=5",
     "ts": 1790148276
   },
@@ -317,7 +324,7 @@
   {
     "kod": "EREGL",
     "baslik": "HAK-PARTİ kuruldu: Prof. Dr. Naki Erdemir’den “hakça düzen” mesajı",
-    "kaynak": "guneydoguguncel.com",
+    "kaynak": "Güneydoğu Güncel",
     "link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQT003aWstU1habngyNHZQbDFQa3hWRXdfYnFDZW10UU42THhzME5tSDFPa3UxVXAyNGxSa3JacTJIaFNQNXhad3V3ZmtPVnF0SDJheTZBLWlqVzBtVGhRZWdwSko4aWJKNzFkclJaeFN0aEJ5dk5ZX3EzRGY4elZ6VWhLcFhTYkFmS2xMYnUtcEhleGNkNTlFVlJVUHlsazRwM3c?oc=5",
     "ts": 1790174524
   },
@@ -330,10 +337,10 @@
   },
   {
     "kod": "FROTO",
-    "baslik": "Ford Otosan için 1 Ocak 2027 alarmı elektrikli araçlarda geçici menşe kuralları sona eriyor",
+    "baslik": "AB'nin Made in Europe düzenlemesindeki yeni yaklaşımı, Ford Otosan'ın Kocaeli'de ürettiği Volkswagen Transporter için somut risk oluşturabilir",
     "kaynak": "Patronlar Dünyası",
-    "link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPdzBkRTFNSGVZMHpVVjIxUzItcmMtSUFFMFJRd1BfdjZJYWw1MHNRbTF3Z293ZVFwdmJsV1ZlQ0ViWF80Y1lxUEFNQlFWclNRM05OZHAzTmYzWTk1c2t3QzA4OTh0RkRMWXg2M0hTVklxMkJtZ1dNWUlvYXo5azA0eW5UTUlvY2VZejM0OFp5SGpfYXJUMmJ6SUhreDBpQWp3S0JaRUJXRjdRM2l0aFIyYlNjSkNIdndhYWVMUzd3c2FpZw?oc=5",
-    "ts": 1789711271
+    "link": "https://news.google.com/rss/articles/CBMigAJBVV95cUxNMzczOS1yWXdMS29xUlFKSU5RUi0tODZYeXVkWm5fV0R5bnNhbHFNUmhJVWdJMnBtUVpfQ3VzTUpIc215NHFZblZJSnN5d3JCMnZwOTA0WGtUdWRqTVJJTF9wNWpkaFZXQ2ZvN2VNVHdIalhmWGxOMFdSZHFsaFl2dm04VWczc2VPNWtTRWN5WGNGamdPX2l1Vi14TnlkZjRnR3dmUEh6VkVHQjZfSlZlOWFqXy1KLTNLS0RMbC1nY2gzb0lJLWF0MFhrd29UM1dDNTVpclVQRWE3WDdfS01wTWgxUTd2WlRBV3N3U3pHU3hHSVJiSnZqZXVCWjBXbXFW?oc=5",
+    "ts": 1790227927
   },
   {
     "kod": "FROTO",
@@ -351,17 +358,17 @@
   },
   {
     "kod": "FROTO",
-    "baslik": "AB'nin Made in Europe düzenlemesindeki yeni yaklaşımı, Ford Otosan'ın Kocaeli'de ürettiği Volkswagen Transporter için somut risk oluşturabilir",
-    "kaynak": "Patronlar Dünyası",
-    "link": "https://news.google.com/rss/articles/CBMigAJBVV95cUxNMzczOS1yWXdMS29xUlFKSU5RUi0tODZYeXVkWm5fV0R5bnNhbHFNUmhJVWdJMnBtUVpfQ3VzTUpIc215NHFZblZJSnN5d3JCMnZwOTA0WGtUdWRqTVJJTF9wNWpkaFZXQ2ZvN2VNVHdIalhmWGxOMFdSZHFsaFl2dm04VWczc2VPNWtTRWN5WGNGamdPX2l1Vi14TnlkZjRnR3dmUEh6VkVHQjZfSlZlOWFqXy1KLTNLS0RMbC1nY2gzb0lJLWF0MFhrd29UM1dDNTVpclVQRWE3WDdfS01wTWgxUTd2WlRBV3N3U3pHU3hHSVJiSnZqZXVCWjBXbXFW?oc=5",
-    "ts": 1790227927
-  },
-  {
-    "kod": "FROTO",
     "baslik": "Ford Otomotiv (FROTO) 2027 temettü tahmini",
     "kaynak": "Rota Borsa",
     "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTFA2RGZzanJ1Wk5HUlhVYVhFVEl5dFN1bjlVRTJVdThTODg4cm50QVpZekFLZV96UDI4aFdsZjRqLWtNTDIwMGJ4WS1YTzF0dDNwNjF3bFVkS0trWGNwMWg3UTREMHJxX0lCZVFFWVRpSWc?oc=5",
     "ts": 1789819521
+  },
+  {
+    "kod": "FROTO",
+    "baslik": "Ford Otosan’da çalışıyormuş!",
+    "kaynak": "En Kocaeli",
+    "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9vN3Q2bUJRakZ3amRYZjBWSS16WVZsc0dkcVI4RXlGWG9yaUlaQ0xNeklYODAxSlJYQ18yU0dHWjdyNkJmbzloUDFJeEtXdVlLWktWX3lnZzVEZ2VvVzV6dW1VVm5tbFpQOElCVU50Wm9xeXVBMGfSAXtBVV95cUxPZnFRdEQyNkR4WjF4MDktQUhqSUlTVXltUHdLZ05uLWJkY0puVmprZHpoaC1jUkhyX2c5YVh1el9GZDA3MDF2SDRzdFhRa3FCUjlOaWNaSTBPQkd3VWhQR0pwY09mMEVyd0dWRy0xTEZVcUxpMGI1MFJ0MW8?oc=5",
+    "ts": 1789921260
   },
   {
     "kod": "GARAN",
@@ -401,7 +408,7 @@
   {
     "kod": "GARAN",
     "baslik": "Garanti BBVA, Rekabet Kurulu ile 1,55 milyar TL’ye uzlaştı",
-    "kaynak": "tr.investing.com",
+    "kaynak": "Investing.com Türkiye",
     "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPNDBFamh3d3pwVHRFQ041WV9wUEhtNVJDOHhtUjBlNzBGTkZOS3Z3bmY1R1RCeGIzZVZjUXFDQmlGLU50Nmk1aHZaMlVhT3F3YVNYU0ZZRXZmMGo3VGNxMVY2anZXR01BVThaVXFTM19MVXJ4Zk1saTJtUnhnRVI5WklJaUpPaFYtamRMbnJkM3Y1UHRod0p5cDlmekp0UThvMzlUejJkenZhcWNyZmFTdjRn?oc=5",
     "ts": 1790062818
   },
@@ -418,13 +425,6 @@
     "kaynak": "CNBC-e",
     "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNZUJhbGRuWWljenJvWXhxWFY3S1Z0VC1kS1hCc2t0QWtQY2pPUzVxbjlfZ1U0R2F3V2VHcEo3Y3ZWMkpfYnN6VXlJVW5hMzlJY0VjbDlxTnlxbkozTEVDRHpEVkFONHZlZWtFRm16Zzh0T1I4dGxPLU1hOTJ2VTQzdA?oc=5",
     "ts": 1790245350
-  },
-  {
-    "kod": "GUBRF",
-    "baslik": "Gübretaş limanı Albayrak Grubu'na 35 yıllığına ihalesiz verildi!",
-    "kaynak": "Tarımdan Haber",
-    "link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPOFQzRkJpX2tUXzZMU3FxMjktVEFybnNYQmpTR21MQUJXbjVsTWFlN01DeUJKOXRkd2Q4ZURxeF9uZVZrVVBQVmZ2eVY4WXhJeE1OTTUxNUpnMF80c2dfSlhEbVFfdXRNZmMwOXlMeWFBM0JpLXozaUVYeHQzRTVyWFZXUFBZckdNVlNHc3ZNT3lIa2lTRURN0gGcAUFVX3lxTE90alFnZU10RERNZ1JpVTlyTlZPdEpndHp2TnZLZ21pWndEVUYtNk8xNVI3NnRDQWhCcTloRmRmX3BvVHVLcndBWXgtNnhYT1NUY2RCMGFuTUJtQWVjbVpjSTdyVldVMXVnREJacU5MNms4NlVZVlc3ZjYxLUxMLUpPMUFrdnFfQ3JjQ3JrRnh4VHZDRXhrX21XVG9WMw?oc=5",
-    "ts": 1789710300
   },
   {
     "kod": "GUBRF",
@@ -448,6 +448,13 @@
     "ts": 1789742160
   },
   {
+    "kod": "GUBRF",
+    "baslik": "Gübretaş Maden 1,5 milyar TL kâr dağıtımı yapacak",
+    "kaynak": "Paratic Haber",
+    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1rdnV5RTdqNzBkQkpqbk1SZnJEWml3djJjR2hiNGZUdzZXN052cVRka2YwZEV2cmx0X1g1YWNGNXVIMDhZTU81WFVlYnVDbUZLQ0IyWmVHZzl2U3RnU1M2aUZpMnVRRXFBUDRNRXJLa0tGYUVSMXVVS0NB?oc=5",
+    "ts": 1790248747
+  },
+  {
     "kod": "ISCTR",
     "baslik": "131 fonun tasfiyesini Ziraat ve İş Bankası yürütecek: Yatırımcıyı ne bekliyor?",
     "kaynak": "Euronews.com",
@@ -457,7 +464,7 @@
   {
     "kod": "ISCTR",
     "baslik": "131 fon tasfiye edildi! SPK: Tasfiyeyi Ziraat ve İş Bankası yapacak",
-    "kaynak": "ekonomi.haber7.com",
+    "kaynak": "Haber 7",
     "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxONXJCSWdDOHZoR0V5eno3d001eTRPOHFDT0l1NFU1SEh4b21xdFhCODJ3QTN3aFNmZ2M2WjU1R2Q4cXlpZ0xsVkZPMm12LUlnR0NBMGl6NzJWSTRCUlZLd1lTR04yZl9ONUVvTGpTWHRnV2hQU1VJbGUxdXBYaDE4MmRneUJvdThXdF93MmRXVVAyRENHeThra25UR3RRWFZJS2lWVjZzdVdhZnpTRnMwTE0wWlfSAbcBQVVfeXFMT2Z5MHltLVF2ZG0wWTFIYjk5bnM0eGYxbkhkS0xGV0w0QW9CN0FiaXlUZ3hHaFhvUHRnbzhwMVJ4SFpZYndvY0ZsRUVORVlNTTJuekFvb1U4WDVnaXVqZk9HcEpMYkh5WGRVZTdsT3o4SzhMVS1QcE9idjJTOGZqZmdXa1hwU1pWQjd3d1ItM2xMWHh2cUdVMDZiWk5CbGVwRkFoblF4WmcxZ3kzMFJHLUMzdFZWZ2ZR?oc=5",
     "ts": 1789716720
   },
@@ -478,7 +485,7 @@
   {
     "kod": "ISCTR",
     "baslik": "Tera Portföy’ün tasfiyesi İş Bankası’na emanet",
-    "kaynak": "forbes.com.tr",
+    "kaynak": "Forbes Türkiye",
     "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPOU12bWtwUmVyRmV3aE05OXgtdVJRbWp2SHAtbEJmOURXbXVtWmw4ZHV2UDI0R1RGeFNJeThsYXA4NjVGRFE1Q1djTklkSE8xM0p5ZDJyWmFldzJsaU96SHd5MDd1MkdaTVNITDRoOWlGZDdIZEFETDZqN1JHd29GaTVLRElYM0J2?oc=5",
     "ts": 1789727940
   },
@@ -709,7 +716,7 @@
   {
     "kod": "SAHOL",
     "baslik": "Sabancı Holding, InvestingPro Gerçeğe Uygun Değer sinyalinden sonra %52 getiri sağladı",
-    "kaynak": "tr.investing.com",
+    "kaynak": "Investing.com Türkiye",
     "link": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxNVnZNMERaMEpDQlkxMnJhYm1selBNckdWeS01cWs2YlNUOUFoTGhJZWFBSDhpVW9xRGhkMDNPdm9XMWc1NjRZYjVoZ1lRX1pzRWtpRnNJR0pvLTAtRHpCVUppbjdGYjNvMVBiZm1FbWVuTUFxSW5JLW9mdkRBZnB3d2dOTjROQmI2TVVVWTdMV0F6ZW5CbUZ6RXB5Y3Z3bEtQWVh6QUVJeDh0Sm91d0NTOFRnUnljVHhGSHBrczl1dkJlRXN0TnJKT3dWOUJtbWFkb1BzenpkNzdMdw?oc=5",
     "ts": 1790250790
   },
@@ -729,17 +736,17 @@
   },
   {
     "kod": "SAHOL",
-    "baslik": "Sabancı Üniversitesi, YÖK \"Araştırma Üniversiteleri 2026 Yılı Performans Sıralaması\"nda Türkiye ikinciliğini korudu",
-    "kaynak": "Anadolu Ajansı",
-    "link": "https://news.google.com/rss/articles/CBMi8wFBVV95cUxQcFJqTkx6SWo2Q3FwN2owdUNiNGJmdUxWZXN6QmlkUk9PdU5OSHY3YjBWWTNRNzVwbnFuV3UzNF9NaUk2b3BQMGFmd2Y3a0NaT2hrcjhBV2xIem1BX0tWalJVbExQcTlBTjEzMGU4RGxuNm03Q2RlVlg0dVdmbF8yRUl2MGdfcDRiZ1ZQZjFNb2twRXcyX0ttVXhHZ2tKQmRQS2NHa0dIeFNHb2Nsb0ZhbWlnT3htR2w1ZXdtRllOM3JfZ0lReEl0Q2Z2a2VEN2JSR2ZNdTh6N01VajZjNmZQeTNmZ2xrbHYwY0FSdzF0cTkzNG8?oc=5",
-    "ts": 1789731730
+    "baslik": "Sabancı Holding, COP31'e elektrifikasyon ortağı oldu",
+    "kaynak": "Ege Alternatif",
+    "link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxOLWhsRHBrWDNIVUVvemhWa05vZnF2ODNOa2FwOThVRlctb1JuLVoyTTBIV0M0SXF6R1FZWEJrUlRpeEVJS3VVa21FeUNEQlI3T2llUktCS1k3TlJGeFpBbXBfbDlHWjg5ODluVFdXbjZ3RzkycC1xY1ZncS1VYVdVLVJuSkFsbV82ajJWVnJhZUpuVGFLWjVoaFRn?oc=5",
+    "ts": 1789893960
   },
   {
     "kod": "SAHOL",
-    "baslik": "Sabancı COP31 partneri oldu",
-    "kaynak": "Bigpara",
-    "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQMEtlUUIzdTRoUVVJQ3ZFMWNzTkZiNHNhU0NWRTZSX0VOMHFiZ21qcEs3MmNtTEFicldFVktzNWVqQWlIWEhra3hKM0t4NXNJYmoyUDdTSXU2ektpNXN2ZUV4REtEUWNETlZ0eDdwV1MwMmY2WGFoN3ZQLVBmN3duVUZ2RTRvZVZZT1VaYVc3a29DbjQ2WWJuWFpobDFyT3cx?oc=5",
-    "ts": 1789952400
+    "baslik": "Sabancı Holding COP31'de elektrifikasyonun merkezine yerleşti",
+    "kaynak": "Aksiyon.com.TR",
+    "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxPN2NyNU56QjFwcVpyLVhEeGdFdnkta3I3NGdjNy00WFNVN0ZzMGMyaV9jRnRobXRfRWQ0cTdxS3hyYlVVNTdqeTJ0elZSdFBOd2plNzk2eVlHdFRndlp1M2J4UzI0elU2NXQ4U3Z6dUpSQjliQmF6R2otT3k2emFIT3Nfd0tOcURvQ3k2QkhhbXNQaDFMNTRhVnA0QdIBoAFBVV95cUxQQTVWNTQtS1JRU2R6T2xUZDZmam5BNUxEY3Q2RGxuTHlEVWdoLXFBRW1fQ3dXYUNaNjZDcF9sLUdIVEJsV0djZzBLTGl1d1BGTmdzZUpNcVNFdkwwZTdzNkJsTlRFc2djcWNJNVlJei1aMnFRTDFpemItSUYwWEM0MmJVTnVkY3FUSzVsUy1sRE9XazBmamQ3eFFXUEdtQmt6?oc=5",
+    "ts": 1789895016
   },
   {
     "kod": "SASA",
@@ -821,14 +828,14 @@
   {
     "kod": "TCELL",
     "baslik": "Turkcell, Turktell’in sermayesini 8 milyar TL artırdı",
-    "kaynak": "tr.investing.com",
+    "kaynak": "Investing.com Türkiye",
     "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxQMmdNSFRfcFE2VFpXM1VxdjJwRFlWb3dFZUt6Mm9KVkhUSldEalhNQ2VxYXc5V1BFY2N2aW9tdHFVNGhDNW9zWnkzS2FLYTF4U1JsYXdJSXFxSkcyTXU3TUVLRGZpVTJ6S1dFU1o4MGpJWUNkdDYxcjNJVDR4WEVjTDM0TG1OVjFFcUlvSVpmMXF3bzlseDVFUmlCcXRsYlQxMWpMa3JoMDNyNVk?oc=5",
     "ts": 1790091164
   },
   {
     "kod": "TCELL",
     "baslik": "Turkcell ve Türk Telekom'un küresel yarışı",
-    "kaynak": "haberturk.com",
+    "kaynak": "Habertürk",
     "link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxPeWVlMWpyM3REc0xnNGR1eVZNWkJNQlRqYTNIT0EwMzlMWDNDWFVrUlRDV3Y5Ujg5VXVOOWZMUDNyMVZYUUotMTlSejhCMXJseXRzQ0dBdlFCcG1UVi03elRETXBtVVVEbDhqRGlqcmlYOGlIRVFxVHBIRmhObUVESEFfREVxZkd6d1pqZkVUS3pMZ01FYVBlWUJoa3JYX0RXdmlxWUNkTkxSaTdJZWc?oc=5",
     "ts": 1790079340
   },
@@ -862,13 +869,6 @@
   },
   {
     "kod": "THYAO",
-    "baslik": "Türk Hava Yolları, Avrupa'nın en iyi havayolu şirketi unvanını 11. kez kazandı.",
-    "kaynak": "Vietnam.vn",
-    "link": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOM1VjS1BsQTJPeDVReWVXT1JWazNuZGZ5SXpMZmZhcHJ2TE55VkxZTDhlcUVYODBMcEV0REJhSVVGVm91aXlNczR6SmFmQ0dtMUZXQ0JXWG9PMHpETUMzYXRlSG9nZHVFb3pKTzNFLUNKVTd4QzhXM1dXSFR0a3pxNks5SXJnS3ZZSExOY1MyS3hHUmxyaXdVR24zbVdRSFN3aUFZ?oc=5",
-    "ts": 1790076366
-  },
-  {
-    "kod": "THYAO",
     "baslik": "Boeing ve Türk Hava Yolları, 150 Adede Kadar 737 MAX Siparişini Kesinleştirdi!",
     "kaynak": "Para Analiz",
     "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQSU83Mk5kYkpkTVctQUxnQXB4VERkb0pnN0hyOWkwVHJuTVgyc0c0VU1OTncyd1llUVE4dEhIMlFaVS1Ydjloc05qcWt1N0Vxb21teXhkcVY4X1ZKNHVUbHpOZE9TWjY2Sm9sN2J3d2tUOVh0VE5EaUFYNzNPbjk4SWRmYWo3WVl6U2pxeU5BWXZKamNGWDVqbm4yd3ZlSlJrd0ZzRDRxQm9IeGxT?oc=5",
@@ -876,8 +876,15 @@
   },
   {
     "kod": "THYAO",
+    "baslik": "Türk Hava Yolları, Avrupa'nın en iyi havayolu şirketi unvanını 11. kez kazandı.",
+    "kaynak": "Vietnam.vn",
+    "link": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOM1VjS1BsQTJPeDVReWVXT1JWazNuZGZ5SXpMZmZhcHJ2TE55VkxZTDhlcUVYODBMcEV0REJhSVVGVm91aXlNczR6SmFmQ0dtMUZXQ0JXWG9PMHpETUMzYXRlSG9nZHVFb3pKTzNFLUNKVTd4QzhXM1dXSFR0a3pxNks5SXJnS3ZZSExOY1MyS3hHUmxyaXdVR24zbVdRSFN3aUFZ?oc=5",
+    "ts": 1790076366
+  },
+  {
+    "kod": "THYAO",
     "baslik": "THY düğmeye bastı! Boeing'den 150 uçak alınacak",
-    "kaynak": "A Haber",
+    "kaynak": "ahaber.com.tr",
     "link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQS1YxTGJYa19UaWVTTkRVaGhzR0dwcm9vMUxjemlLWW5JdDJ3Yko1YXIwa2dOd2JXVUhhTWFHYWZFQWxlUEJGSTRzTVJaUzhRTE1xNnNkVW9lRF9DbkViTnYyUFRrUXhxamR2ak03SVo2OEdRdGxlME50UHJfWUFMbkRYaDJGS1VwaGJKaW1mT0hQQQ?oc=5",
     "ts": 1790178219
   },
@@ -926,7 +933,7 @@
   {
     "kod": "TRALT",
     "baslik": "Türk Altın İşletmeleri, 16,8 milyar TL’lik ihale sonuçlandırdı",
-    "kaynak": "tr.investing.com",
+    "kaynak": "Investing.com Türkiye",
     "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQQ1BjQkNrSHYtVUkxNTY4XzBjemtmOU1McUtnWHVOSHlGbm9qemcxV01JTWdMNDhoN0dkVWVhelVNTjMwWWdPWGlwQmJRbk4wUVpXSkNfdFBCdjJEd0Y1YWZiTHVoWGxvMm9FaTVEZnV5UlRHQ2ZGZ2xVWThIUEhmS09sbTFXLWhyN1JxSkg2TWwzOHdjellSLV90ZDRGbTUxdlZkTWI2ZEpzTmJEb0dsSWJDYnA?oc=5",
     "ts": 1790064860
   },
@@ -939,17 +946,17 @@
   },
   {
     "kod": "TRALT",
-    "baslik": "KAP *** TÜRK ALTIN İŞLETMELERİ A.Ş. *** TRALT *** Özel Durum Açıklaması (Genel)",
-    "kaynak": "Yeni Şafak",
-    "link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPaFpMWkNNZ3lHRjdPd24zaUFNdk9JcU5hVEpFU0c5Qy0ySEFSM0dqRlZ2OEZDZUFkRFc5NHdqazNyRW5zM3g5d3RLM2pSeWtmRW0ydXZUNEV0RGpfN0dnU003MVB3OFhVQ291ZDZXM0dnRm1CT2RhLURkSUh6dS1BRjQ4eWRQMUozOEpTMTJWWjctZFAtZDFGZ3lVM1dQRDliSTBRYnRrQjFQZUdWVi1leVVwQlg5TmI1Mlh3?oc=5",
-    "ts": 1790014320
+    "baslik": "Türk Altın İşletmeleri’nden Kayseri ve Çanakkale’deki Altın Projelerine 16,84 Milyar TL’lik İhale",
+    "kaynak": "ekogundem.org",
+    "link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxPRHZNNGp1bzY2akRnY2tSRllmMXVlOXNaRHZ2WFFabjJKUHYzajNRMzExaXJKSkVYYl96eExwTXJ4SU80SkhIRzE3ZDN4aDFTSTJKeGJYcVF5aVdUY3hob2N3czIyd09WR3VnSEp2c1U2SWMwTmZGemxmVlI5WUpNb2NJRGE2a2stMkhTN3oxZkItX3l0Tml1UjMtYnFoTEVDTUV4RkoybG5EWEJ5NGxTam1sMGd5UnlQbkFlcXZkbUJTam95S0E?oc=5",
+    "ts": 1790268097
   },
   {
     "kod": "TRALT",
-    "baslik": "Türk Altın İşletmeleri’nden Kayseri ve Çanakkale’deki Altın Projelerine 16,84 Milyar TL’lik İhale",
-    "kaynak": "Ekogündem Gazetesi",
-    "link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxPRHZNNGp1bzY2akRnY2tSRllmMXVlOXNaRHZ2WFFabjJKUHYzajNRMzExaXJKSkVYYl96eExwTXJ4SU80SkhIRzE3ZDN4aDFTSTJKeGJYcVF5aVdUY3hob2N3czIyd09WR3VnSEp2c1U2SWMwTmZGemxmVlI5WUpNb2NJRGE2a2stMkhTN3oxZkItX3l0Tml1UjMtYnFoTEVDTUV4RkoybG5EWEJ5NGxTam1sMGd5UnlQbkFlcXZkbUJTam95S0E?oc=5",
-    "ts": 1790268097
+    "baslik": "KAP *** TÜRK ALTIN İŞLETMELERİ A.Ş. *** TRALT *** Payların Geri Alınmasına İlişkin Bildirim",
+    "kaynak": "Yeni Şafak",
+    "link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxOcVhTTnFNSU5kNmhaRGRBaWJCcmFPMnpWRDRGWkVldm4tOXBYQy1hWmo0R3RMUHBOeGFWVGo1VmstTXFBZzZrOG9FR05DRG4tbjVMbVNOS1d4c2tPeGJWcXRrUjZTWEJUTExjcUV1LXRGejNzVDd2NXJwalRPUmdPX216dlZsV242dUNCeW9QUll6UzRFYS1tdmZhZW9TQ2lRLUdVSGFtRnE3ZG42ZGxnbnoybnp6eUFZYXpqOGZzdHY1QnoxNlhhRk92RjRfQQ?oc=5",
+    "ts": 1790090309
   },
   {
     "kod": "TRALT",
@@ -960,10 +967,10 @@
   },
   {
     "kod": "TRALT",
-    "baslik": "KAP *** TÜRK ALTIN İŞLETMELERİ A.Ş. *** TRALT *** Payların Geri Alınmasına İlişkin Bildirim",
-    "kaynak": "GZT",
-    "link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxPeUNydFdSYnM4NC0xNGR1a29pdUxfam1ON3VkRGtxeEota1hLZG1tUEJLUEp0akdKeU1OTmlMckQydjlOemkzYnVVWl95WDB2TWVIcGdhdkNrOVg2RWYtYjJINW5iel9hRElvTW40R2s5RzB5eGpUY2FSRXN4aHJRcnJJdjA3SFc2bEVhUlpwdEQwNmk4dXF0UEVGVW5aZGdnYlJBRnZfODdRMzZBblRlZmJnR3lXb1g2eHM4dkRiaVUyNXdsWHc?oc=5",
-    "ts": 1790089816
+    "baslik": "Türk Altın İşletmeleri’nden pay geri alımı",
+    "kaynak": "hibya.com",
+    "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBGcG9FTF9EckpMMWwwNDk1MHJwVTljUFN4cndySnVqOENQVWxLeVlJNGJIWjF0WnBtU0VaLVg0RXJjNWNkclFvZnJtN3BTWjZ6TFRhWF9LLUV5WFFNNkxYZmdqQkJ6LV8yTUZPWkpMc2ZwcTRsa2c?oc=5",
+    "ts": 1790089687
   },
   {
     "kod": "TTKOM",
@@ -981,17 +988,17 @@
   },
   {
     "kod": "TTKOM",
-    "baslik": "Türk Telekom’dan Silikon Vadisi’nde stratejik iş birliği",
-    "kaynak": "Dünya Gazetesi",
-    "link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQUnp1UzNUVUxUY0lGU1B4eWRCRlpfWWs5MFl3cTFhc0gyYlNrZFZTcjBBMGtpZC1TOWRyaWhZVEhzVTUzaE5LcTU0MUpFTms5TXp2VG9NV25OSm5OVjZXVENpdHloTExDWmNZUmVxUTNJYVF2eUQ0cDlJQUUtUGVBSjhGZG9PekJWLUFmcmN1X2loMXBFaDhjaU1jSVVVUzE0Umc?oc=5",
-    "ts": 1790238960
-  },
-  {
-    "kod": "TTKOM",
     "baslik": "Türk Telekom Yetkililerinden Rektörümüze Ziyaret",
     "kaynak": "togü haber",
     "link": "https://news.google.com/rss/articles/CBMiTEFVX3lxTE5iYW1ob3pOeEtqV0ZlSVk5aWItTldlTGZEWThENGlBTVhnNnhqa0xuYmhvOW01RWtqd05sMEx4bnJvZllhY3hYdzcydmg?oc=5",
     "ts": 1789740874
+  },
+  {
+    "kod": "TTKOM",
+    "baslik": "Türk Telekom’dan Silikon Vadisi’nde stratejik iş birliği",
+    "kaynak": "Dünya Gazetesi",
+    "link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQUnp1UzNUVUxUY0lGU1B4eWRCRlpfWWs5MFl3cTFhc0gyYlNrZFZTcjBBMGtpZC1TOWRyaWhZVEhzVTUzaE5LcTU0MUpFTms5TXp2VG9NV25OSm5OVjZXVENpdHloTExDWmNZUmVxUTNJYVF2eUQ0cDlJQUUtUGVBSjhGZG9PekJWLUFmcmN1X2loMXBFaDhjaU1jSVVVUzE0Umc?oc=5",
+    "ts": 1790238960
   },
   {
     "kod": "TTKOM",
@@ -1038,7 +1045,7 @@
   {
     "kod": "TUPRS",
     "baslik": "Tüpraş, 20 milyar TL’ye kadar tahvil ihracına karar verdi",
-    "kaynak": "tr.investing.com",
+    "kaynak": "Investing.com Türkiye",
     "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQZW5WRWZRc0tva1MyN3hyaHBwRzg3UkFRQ254ZDJYcERZYkVMQ0cyck9meHRqakxlcjUxUV9tUGdCMzd1TXdGNXBNeDZXM1hIM09sSVFaTlNyc2otU0xPWkNybGNZbi1yMngzVTQzcVpZVHNtcEs1XzVjMGh6YVlCRmJ1MFVwTUhrUkhHTDJKWTYxbGdlN3UxbWx0RG1lbmhHS2NHQXRZOUpUYVFZMmxrQXpB?oc=5",
     "ts": 1790237798
   },
@@ -1052,7 +1059,7 @@
   {
     "kod": "VAKBN",
     "baslik": "Tukaş, VakıfBank’a 55 milyon Euro tutarında ipotek tesis etti",
-    "kaynak": "tr.investing.com",
+    "kaynak": "Investing.com Türkiye",
     "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOd0FtOVh0ekRaNGxUZUlJdzdZZkV2R3hzOWtsTk9KbEhJZmFESzdRWl8ySFpXeUs0VVRndlFmdklMOGVRMzFGQTdVMXdnaUR6MUsweDFSUko5T1NOaUxQNXoxLUFId0pGdlJCRDdLamJHbUNzNENNMEUtc2I0bGQ5MXpNbXNNbGNWRjdGZmZENUlJNHJLZ2c3Y0hvdjlSYmc5cHJKV3NZSWxlTlhzVmV4LUF4R1BlQQ?oc=5",
     "ts": 1790062817
   },
@@ -1065,10 +1072,10 @@
   },
   {
     "kod": "VAKBN",
-    "baslik": "VakıfBank ve Eczacıbaşı Antalya'da karşılaşacak",
+    "baslik": "VakıfBank ile Eczacıbaşı finali Antalya'da oynanacak",
     "kaynak": "Yeni Alanya",
-    "link": "https://news.google.com/rss/articles/CBMifkFVX3lxTE9QaUxoRlN2WXB3eDlFQ0pwaFhCbi13YmZVa2ZBb0ZvMXgxZFdBLVNfc1BBUTZTWTlzcjdPWGcxc3JFTzd5eEpBQ01WRno2Zk0zYU5fQm1ORnRxanNUUFFkVHpsUXJkUGdkT3RxVmJvMHlhbk5tb3U5WGRJS1hEQQ?oc=5",
-    "ts": 1790273280
+    "link": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNOEI1dzh1cXFkTEJWU3JMcmh6LU9rd3FvS2lXUE5namNqN3FKTld2d1NaVVB1S1pkdk9CZWlsSGN2bEtmb3hZam1nR2xqXzU1VGsyNU9LOFR5OFBDbXpGZFgtRjZFd3NTVFhFaXQwYmt2am0wcU1WcDd5bGtiOXotZ0pRanA?oc=5",
+    "ts": 1790175960
   },
   {
     "kod": "VAKBN",
@@ -1121,16 +1128,16 @@
   },
   {
     "kod": "YKBNK",
-    "baslik": "Emekli maaş promosyon Eylül 2026 | Yapı Kredi, Şekerbank, Akbank, QNB emekli promosyonu ne kadar?",
-    "kaynak": "GZT",
-    "link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxPeG5YSGZpalQ3V1EwWWg4VU9zcTBqdTNuT3Z5VFgzWDN0Z0xRQmo1ZWg0cDJqajVROHQ1M3VLRGNxY3ljX0RHeWt6VWpUVUI3SGhyMjZzS3hTZHlMUUlkcHNqa2RuYUpMeEhRd0RNZUN3OC10aDg2Nzc0dmRpdlR4SVNPZVNYTG5pVFdxM2ljbUVvLXFrbmJvSWxlSkQ4clljMng2ME15eDk1RGZGSGJQOFhONTFVR2V4LTU0dlkyWG8wRG1qenc?oc=5",
-    "ts": 1790253041
-  },
-  {
-    "kod": "YKBNK",
     "baslik": "Yapı Kredi’ye uluslararası ödül",
     "kaynak": "Posta",
     "link": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBwOU5iWThrZnZIWnkzSTJRY3dieWFoUzRwSXptNkRpRUhvMF9mQWtVNC13aEQ4dXc5bkdkSXY2SkFRWXdJVWpuWXpaZkM3c3UxX2dCYk9nOG5kOXNqRmU3LWtQVEJRQnVTRlVzS0I1Q2ZaNDVFMGlTd1Mycw?oc=5",
     "ts": 1789876800
+  },
+  {
+    "kod": "YKBNK",
+    "baslik": "YAPI KREDİ EMEKLİ MAAŞ PROMOSYON TUTARLARI! SSK, Bağ-Kur Yapı Kredi güncel emekli maaş promosyon rakamları! İşte maaş tutarlarına göre ödenecek rakamlar...",
+    "kaynak": "Uzmanpara",
+    "link": "https://news.google.com/rss/articles/CBMihwJBVV95cUxQZlB3dEtJcFdNc0E4ZTZhcmJUMHE4TFNjRlQwLUxDWFZ2Uzl5YVBSbk9DLVRRMWxpS2tSNVpOV1VhT0F6RDRlLS1waXY1MGNSRDBDalRCaG5acVFmVWVOdm9iamRacUlnMjdnc1Y2UW14WnljdDRycGJFNnRDWEtVcnI3NkNNMjNub251MUY1OURNN05rcjJUa0FIbXlUQS1NRkdCNTBPVVpjb190dkZ2VGVkT0hLdnNvWkFrVGg3ZW5pSzVBZ1gyYzNIZ240MjctRHA2NVJlUUdSN01OcVhmcDN1YnI0LUZzTEJleGh0RXMybXpEcUMxbG1Eb2I2a09UUUUyOFB2WQ?oc=5",
+    "ts": 1789749229
   }
 ]
