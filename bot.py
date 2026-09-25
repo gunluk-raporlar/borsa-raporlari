@@ -76,7 +76,6 @@ NVID_MODEL_TERCIH = [
     "kimi-k3",
     "kimi-k2.6",
     "gemma-4-31b",
-    "nemotron-3.5-lightning-30b-a3b",
     "gpt-oss-20b",
 ]  # NOT: "deepseek-v4.1-flash" NIM'de 30 sn timeout veriyor, "llama-3.1-nemotron-70b" 404; cikarildi.
 
