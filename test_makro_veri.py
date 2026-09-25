@@ -858,6 +858,36 @@ class ResmiVeriTest(unittest.TestCase):
                 self.resmi._pin_cek(pin, date(2026, 9, 25))
         self.assertEqual(y.exception.durum, "anahtar")
 
+    def test_bea_kesif_paramvalue_desc_anahtarlarini_okur(self):
+        # Kilavuz (s.11-12): Results.ParamValue[] icinde Key + Desc.
+        govde = json.dumps({"BEAAPI": {
+            "Request": {"RequestParam": []},
+            "Results": {"ParamValue": [
+                {"Key": "BalGds", "Desc": "Balance of goods"},
+                {"Key": "BopGlbl", "Desc": "Balance of payments"}]}}})
+        anahtar = "TESTKEY12345678901234567890123456"
+        with mock.patch.dict(os.environ, {"BEA_API_KEY": anahtar}), \
+                mock.patch.object(self.resmi, "_istek", return_value=govde) as istek:
+            liste = self.resmi.bea_gostergeleri()
+        self.assertEqual([i["kod"] for i in liste], ["BalGds", "BopGlbl"])
+        self.assertEqual(liste[0]["ad"], "Balance of goods")
+        self.assertNotIn(anahtar, json.dumps(liste, ensure_ascii=False))
+        self.assertTrue(istek.called)
+
+    def test_bea_kesif_hatali_veya_bossa_sessizce_bos_donmez(self):
+        # Eski davranis: anahtar/alan adi tutmazsa [] donup kesif kaybolurdu.
+        with mock.patch.dict(os.environ, {"BEA_API_KEY": "TESTKEY123456789"}):
+            hatali = json.dumps({"BEAAPI": {"Error": {
+                "APIErrorDescription": "The key is invalid"}}})
+            with mock.patch.object(self.resmi, "_istek", return_value=hatali):
+                with self.assertRaises(self.resmi.ResmiHata) as y:
+                    self.resmi.bea_gostergeleri()
+            self.assertIn("key is invalid", str(y.exception))
+            bos = json.dumps({"BEAAPI": {"Results": {}}})
+            with mock.patch.object(self.resmi, "_istek", return_value=bos):
+                with self.assertRaises(self.resmi.ResmiHata):
+                    self.resmi.bea_gostergeleri()
+
     def test_resmi_satirlar_snapshot_semasiyla_uyumludur(self):
         veri = copy.deepcopy(CANLI)
         pin = self._pin(ulke="Euro Bölgesi", tip="eurostat", seri=None,

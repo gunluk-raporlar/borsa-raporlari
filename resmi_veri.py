@@ -650,7 +650,13 @@ def _bea(pin, tarih):
 
 
 def bea_gostergeleri():
-    """BEA ITA indikator listesini dondurur (saglik kontrolu kesfi)."""
+    """BEA ITA indikator listesini dondurur (saglik kontrolu kesfi).
+
+    Klasore gore cevap ``BEAAPI.Results.ParamValue[]`` icinde ``Key`` +
+    ``Desc`` tasiyor (Nisan 2026 kilavuzu s.11-12); anahtar/alan adi
+    yanlisysa liste bos doner ve kesif sessizce kaybolur, bu yuzden bos
+    yanit hata olarak yukseltilir.
+    """
     anahtar = os.environ.get("BEA_API_KEY", "").strip()
     if not anahtar:
         raise ResmiHata("BEA_API_KEY yok", durum="anahtar")
@@ -662,10 +668,19 @@ def bea_gostergeleri():
                  etiket="BEA ITA kesfi")
     if not ham.strip():
         raise ResmiHata("BEA kesif yaniti bos", durum="bos")
-    veri = json.loads(ham)
-    degerler = ((veri.get("BEAAPI") or {}).get("Results")
-                or {}).get("ParameterValues") or []
-    return [{"kod": str(d.get("Key") or ""), "ad": str(d.get("Text") or "")}
+    try:
+        veri = json.loads(ham)
+    except ValueError:
+        raise ResmiHata("BEA kesif JSON degil") from None
+    bea = veri.get("BEAAPI") or {}
+    hata = str((bea.get("Error") or {}).get("APIErrorDescription") or "")
+    sonuclar = bea.get("Results") or {}
+    degerler = sonuclar.get("ParamValue") or sonuclar.get("ParameterValues") or []
+    if not degerler:
+        raise ResmiHata(f"BEA kesif bos: {hata or 'ParamValue yok'}",
+                        durum="veri" if hata else "bos")
+    return [{"kod": str(d.get("Key") or ""),
+             "ad": str(d.get("Desc") or d.get("Text") or "")}
             for d in degerler if isinstance(d, dict)]
 
 
