@@ -26,6 +26,9 @@ jobs:
         env:
           TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
           EVDS_API_KEY: ${{ secrets.EVDS_API_KEY }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}
+          BEA_API_KEY: ${{ secrets.BEA_API_KEY }}
         run: python -u makro_snapshot.py
       - name: Snapshot degisikliklerini yayinla
         run: |
@@ -33,6 +36,10 @@ jobs:
           git config user.email "borsa-bot@users.noreply.github.com"
           git add data/makro.json data/makro-snapshot.json data/makro-gecmis data/enflasyon.json data/makro-rejim
           if [ -f data/evds-kodlar.json ]; then git add data/evds-kodlar.json; fi
+          # Resmi veri tabani (EU + ABD + TUİK/EVDS onayli satirlar); ilk kosuda
+          # dosya/dizin henuz olmayabilir, bu yuzden kosullu.
+          if [ -f data/resmi-veri.json ]; then git add data/resmi-veri.json; fi
+          if [ -d data/resmi-gecmis ]; then git add data/resmi-gecmis; fi
           if git diff --cached --quiet; then
             echo "Snapshot degismedi; commit atlandi."
             exit 0

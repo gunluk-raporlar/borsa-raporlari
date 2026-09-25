@@ -4,8 +4,13 @@
 Çalıştırma: python -m unittest -v test_makro_veri.py
 """
 import copy
+import io
+import json
 import os
 import unittest
+import urllib.error
+from datetime import date
+from pathlib import Path
 from unittest import mock
 
 import unittest
@@ -15,6 +20,7 @@ os.environ.setdefault("AMD_API_KEY", "makro-test")
 import bot
 import dogrulama
 import makro_veri
+import resmi_veri
 
 
 CANLI = {
@@ -613,6 +619,423 @@ class EvdsTest(unittest.TestCase):
             bulunan = self.evds._kodu_bul(hedef, self.evds._grup_listesi())
         self.assertIsNotNone(bulunan)
         self.assertEqual(bulunan["kod"], "TP.BIE_TAZE.TUM")
+
+
+class ResmiVeriTest(unittest.TestCase):
+    """resmi_veri: donem cevirimleri, tazelik kapagi, onbellek, anahtar gizliligi.
+
+    Canli pin degerleri `.github/workflows/resmi-check.yml` (dispatch-only)
+    ile dogrulanir; burada yalnizca deterministik mantik kilitlenir.
+    """
+
+    def setUp(self):
+        self.resmi = resmi_veri
+        self.resmi.sifirla()
+        import pathlib
+        import tempfile
+        self._tmp = tempfile.TemporaryDirectory()
+        self._magaza = pathlib.Path(self._tmp.name) / "resmi-veri.json"
+        self._arsiv = pathlib.Path(self._tmp.name) / "resmi-gecmis"
+        self._yamalar = [
+            mock.patch.object(resmi_veri, "MAGAZA_YOL", self._magaza),
+            mock.patch.object(resmi_veri, "ARSIV_DIZIN", self._arsiv),
+            # 503 tekrari testlerde bekleme yapmasin.
+            mock.patch.object(resmi_veri, "TEKRAR_BEKLEME", 0.0),
+        ]
+        for y in self._yamalar:
+            y.start()
+
+    def tearDown(self):
+        for y in reversed(self._yamalar):
+            y.stop()
+        self.resmi.sifirla()
+        self._tmp.cleanup()
+
+    def _pin(self, **ek):
+        taban = {"gosterge": "inflation_yoy", "ulke": "ABD", "kaynak": "BLS",
+                 "tip": "bls", "kaynak_baslik": "BLS CPI-U (yıllık)",
+                 "hesap": "yillik", "frekans": "aylık", "ondalik": 1,
+                 "geriye_gun": 600, "min": -10.0, "max": 100.0}
+        taban.update(ek)
+        return taban
+
+    # ------------------------------------------------------------- cevirimler
+
+    def test_donem_cevirimi_ceyrek_ay_yil_ve_serbest(self):
+        f = self.resmi._donem_cevir
+        self.assertEqual(f("2026-Q2", "üç aylık"), date(2026, 6, 30))
+        self.assertEqual(f("Q1 2026", "üç aylık"), date(2026, 3, 31))
+        self.assertEqual(f("2026-07", "aylık"), date(2026, 7, 1))
+        self.assertEqual(f("2026", "yıllık"), date(2026, 1, 1))
+        self.assertEqual(f("2026-07-15", "aylık"), date(2026, 7, 15))
+        # FRED/BLS ceyrek-basi tarihi veri donemine (ceyrek sonu) cevrilir
+        self.assertEqual(f("2026-04-01", "üç aylık"), date(2026, 6, 30))
+        self.assertIsNone(f("", "aylık"))
+        self.assertIsNone(f("bozuk", "aylık"))
+        self.assertIsNone(f("2026-13-40", "aylık"))
+
+    def test_tv_veri_donemi_yayin_tarihinden_ayristirilir(self):
+        # TV `donem` = yayin/olay tarihi; `kaynak_periyot` = veri donemi.
+        f = self.resmi._tv_veri_donemi
+        self.assertEqual(f("2026-09-17", "Aug"), date(2026, 8, 1))
+        self.assertEqual(f("2026-09-07", "Q2"), date(2026, 6, 30))
+        self.assertEqual(f("2026-09-17", "Sep/12"), date(2026, 9, 12))
+        self.assertEqual(f("2026-04-22", "2025"), date(2025, 1, 1))
+        # Yil sonu yayinlari bir onceki yilin verisini isaret eder
+        self.assertEqual(f("2027-01-15", "Dec"), date(2026, 12, 1))
+        self.assertIsNone(f("2026-09-17", ""))
+        self.assertIsNone(f("2026-09-17", "bozuk"))
+
+    # ---------------------------------------------------------- tazelik kapagi
+
+    def test_tazelik_kapagi_taze_resmi_kabul_bayat_resmi_rededer(self):
+        t = self.resmi._taze_mi
+        self.assertTrue(t("2026-08-01", "2026-09-11", "Aug",
+                          "2026-09-25", "aylık"))
+        self.assertTrue(t("2026-09-19", "2026-09-17", "Sep/12",
+                          "2026-09-25", "haftalık"))
+        # TV daha yeni veri yayinlamis, resmi seri henuz gelmemis -> EZILEMEZ
+        self.assertFalse(t("2026-06-01", "2026-09-11", "Aug",
+                           "2026-09-25", "aylık"))
+        # Bayat kume (yas siniri asildi) taze TV satirini ezemez
+        self.assertFalse(t("2025-08-01", "2026-09-11", "Aug",
+                           "2026-09-25", "aylık"))
+        # Gelecege ait donem guvenilir degil
+        self.assertFalse(t("2026-12-01", None, None, "2026-09-25", "aylık"))
+        # TV veri donemi okunamiyorsa yalnizca yas kontrolu gecer
+        self.assertTrue(t("2026-08-01", "2026-09-11", "",
+                          "2026-09-25", "aylık"))
+
+    # ------------------------------------------------------------------ uretim
+
+    def test_uret_fark_yillik_ve_aylik(self):
+        u = self.resmi._uret
+        istihdam = [(date(2026, 7, 1), 158913.0), (date(2026, 8, 1), 159075.0)]
+        # "fark" (tarim disi istihdam): onceki gozlemle fark (regresyon kilidi:
+        # bu dallanma 'd' degiskenini baglamiyordu ve calisiyordu).
+        self.assertEqual(u(istihdam, "fark"), [(date(2026, 8, 1), 162.0)])
+        yoy = u([(date(2025, 8, 1), 324.0), (date(2026, 8, 1), 334.98)],
+                "yillik")
+        self.assertEqual(len(yoy), 1)
+        self.assertAlmostEqual(yoy[0][1], 3.3889, places=3)
+        aylik = u([(date(2026, 7, 1), 100.0), (date(2026, 8, 1), 100.4)],
+                  "aylik")
+        self.assertAlmostEqual(aylik[0][1], 0.4, places=6)
+        # Bir ay boslukta yillik/aylik fark uydurulmaz
+        self.assertEqual(u([(date(2026, 5, 1), 100.0),
+                            (date(2026, 8, 1), 104.0)], "aylik"), [])
+        self.assertEqual(u(istihdam, "son"), istihdam)
+        with self.assertRaises(self.resmi.ResmiHata):
+            u(istihdam, "yok-boyle")
+
+    def test_onbellek_ayni_veri_kumesi_farkli_parametre_ayri_tutulur(self):
+        # prc_hicp_minr yillik + aylik, namq_10_gdp yillik + ceyreklik olarak
+        # ayni kumeyi cagirir; anahtar parametreleri icermese yanlis seri
+        # donerdi (25-09-2026 canli denetimde goruldu).
+        p_yoy = self._pin(ulke="Euro Bölgesi", tip="eurostat", seri=None,
+                          veri_kumesi="prc_hicp_minr", kaynak="Eurostat",
+                          hesap="son", parametreler={"unit": "RCH_A"})
+        p_mom = self._pin(gosterge="inflation_mom", ulke="Euro Bölgesi",
+                          tip="eurostat", seri=None,
+                          veri_kumesi="prc_hicp_minr", kaynak="Eurostat",
+                          hesap="son", parametreler={"unit": "RCH_M"})
+        cagri = []
+
+        def sahte(veri_kumesi, parametreler, frekans):
+            cagri.append(parametreler["unit"])
+            deger = 3.2 if parametreler["unit"] == "RCH_A" else 0.4
+            return [(date(2026, 8, 1), deger)]
+
+        with mock.patch.object(self.resmi, "_eurostat", side_effect=sahte):
+            ilk = self.resmi._pin_coz(p_yoy, "2026-09-25")
+            ikinci = self.resmi._pin_coz(p_mom, "2026-09-25")
+            tekrar = self.resmi._pin_coz(p_yoy, "2026-09-25")
+        self.assertEqual(ilk[0], 3.2)
+        self.assertEqual(ikinci[0], 0.4)
+        self.assertEqual(tekrar[0], 3.2)
+        # Ucuncu cagri onbellekten geldi (ag istegi tekrarlanmadi)
+        self.assertEqual(cagri, ["RCH_A", "RCH_M"])
+
+    # ------------------------------------------------------- satir guncelleme
+
+    def test_taze_resmi_deger_tv_satirini_ezer(self):
+        pin = self._pin()
+        liste = [
+            {"ulke": "Türkiye", "ad": "Enflasyon (yıllık)", "deger": 31.5,
+             "birim": "%", "donem": "2026-09-03"},
+            {"ulke": "ABD", "ad": "Enflasyon (yıllık)", "deger": 3.4,
+             "birim": "%", "donem": "2026-09-11", "kaynak_periyot": "Aug",
+             "frekans": "aylık", "tahmin": 3.5, "onceki": 3.3},
+            {"ulke": "Euro Bölgesi", "ad": "Enflasyon (yıllık)", "deger": 3.2,
+             "birim": "%", "donem": "2026-09-17"},
+        ]
+        with mock.patch.object(self.resmi, "PINLER", [pin]), \
+                mock.patch.object(self.resmi, "_pin_coz",
+                                  return_value=(3.5, 3.4, "2026-08-01")):
+            sayi = self.resmi.gostergeleri_ekle(liste, "2026-09-25")
+        self.assertEqual(sayi, 1)
+        satir = liste[1]
+        self.assertEqual(satir["deger"], 3.5)
+        self.assertEqual(satir["donem"], "2026-08-01")
+        self.assertEqual(satir["onceki"], 3.4)
+        self.assertEqual(satir["birim"], "%")
+        self.assertEqual(satir["frekans"], "aylık")
+        # TV beklentisi (konsensus) resmi gercek degeriyle birlikte korunur
+        self.assertEqual(satir["tahmin"], 3.5)
+        self.assertEqual(satir["teyit"], "BLS")
+        self.assertEqual(satir["kaynak_baslik"], "BLS CPI-U (yıllık)")
+        self.assertEqual(len(liste), 3)
+
+    def test_bayat_resmi_tv_satirini_ezemez(self):
+        pin = self._pin()
+        liste = [{"ulke": "ABD", "ad": "Enflasyon (yıllık)", "deger": 3.4,
+                  "birim": "%", "donem": "2026-09-11",
+                  "kaynak_periyot": "Aug"}]
+        with mock.patch.object(self.resmi, "PINLER", [pin]), \
+                mock.patch.object(self.resmi, "_pin_coz",
+                                  return_value=(9.9, 9.0, "2025-12-01")):
+            sayi = self.resmi.gostergeleri_ekle(liste, "2026-09-25")
+        self.assertEqual(sayi, 0)
+        self.assertEqual(liste[0]["deger"], 3.4)
+        self.assertEqual(liste[0]["donem"], "2026-09-11")
+
+    def test_tv_satiri_yoksa_resmi_satir_ulke_bloguna_eklenir(self):
+        pin = self._pin(ulke="Euro Bölgesi", tip="eurostat", seri=None,
+                        veri_kumesi="prc_hicp_minr", kaynak="Eurostat",
+                        hesap="son", parametreler={"unit": "RCH_A"})
+        liste = [
+            {"ulke": "Türkiye", "ad": "Enflasyon (yıllık)", "deger": 31.5,
+             "birim": "%", "donem": "2026-09-03"},
+            {"ulke": "ABD", "ad": "Politika faizi", "deger": 4.0,
+             "birim": "%", "donem": "2026-09-16"},
+        ]
+        with mock.patch.object(self.resmi, "PINLER", [pin]), \
+                mock.patch.object(self.resmi, "_pin_coz",
+                                  return_value=(3.2, 3.0, "2026-08-01")):
+            sayi = self.resmi.gostergeleri_ekle(liste, "2026-09-25")
+        self.assertEqual(sayi, 1)
+        self.assertEqual([g["ulke"] for g in liste],
+                         ["Türkiye", "ABD", "Euro Bölgesi"])
+        yeni = liste[-1]
+        self.assertEqual(yeni["ad"], "Enflasyon (yıllık)")
+        self.assertEqual(yeni["deger"], 3.2)
+        self.assertEqual(yeni["kaynak_durumu"], "Eurostat resmi verisi")
+
+    def test_istek_hatasi_tv_satiri_ve_sayi_degismez(self):
+        # "Veri bloğunda olmayan sayıyı yazma": kanal patlarsa TV satiri aynen
+        # kalir, hicbir deger uydurulmaz.
+        p1 = self._pin()
+        p2 = self._pin(gosterge="unemployment_rate", seri="LNS14000000")
+        liste = [
+            {"ulke": "ABD", "ad": "Enflasyon (yıllık)", "deger": 3.4,
+             "birim": "%", "donem": "2026-09-11"},
+            {"ulke": "ABD", "ad": "İşsizlik oranı", "deger": 4.1,
+             "birim": "%", "donem": "2026-09-04"},
+        ]
+
+        def patlak(pin, tarih):
+            raise self.resmi.ResmiHata("ag yok", durum="ag")
+
+        with mock.patch.object(self.resmi, "PINLER", [p1, p2]), \
+                mock.patch.object(self.resmi, "_pin_coz", side_effect=patlak):
+            sayi = self.resmi.gostergeleri_ekle(liste, "2026-09-25")
+        self.assertEqual(sayi, 0)
+        self.assertEqual([g["deger"] for g in liste], [3.4, 4.1])
+
+    def test_bea_anahtar_yoksa_ag_cagrisi_yapilmaz(self):
+        pin = self._pin(tip="bea", gosterge="current_account", seri=None,
+                        ulke="ABD", kaynak="BEA", veri_seti="ITA",
+                        frekans="üç aylık", birim="milyar $",
+                        olcek="milyar", hesap="son", min=-3000.0, max=1000.0)
+
+        def yasak(*a, **k):
+            raise AssertionError("ag cagrisi yapilmamali")
+
+        with mock.patch.dict(os.environ, {"BEA_API_KEY": "",
+                                          "BEA_CARI_INDICATOR": ""}), \
+                mock.patch.object(self.resmi.urllib.request, "urlopen", yasak):
+            with self.assertRaises(self.resmi.ResmiHata) as y:
+                self.resmi._pin_cek(pin, date(2026, 9, 25))
+        self.assertEqual(y.exception.durum, "anahtar")
+
+    def test_resmi_satirlar_snapshot_semasiyla_uyumludur(self):
+        veri = copy.deepcopy(CANLI)
+        pin = self._pin(ulke="Euro Bölgesi", tip="eurostat", seri=None,
+                        veri_kumesi="une_rt_m", kaynak="Eurostat",
+                        kaynak_baslik="Eurostat EA21 işsizlik oranı",
+                        parametreler={"unit": "PC_ACT"}, hesap="son")
+        with mock.patch.object(self.resmi, "PINLER", [pin]), \
+                mock.patch.object(self.resmi, "_pin_coz",
+                                  return_value=(6.4, 6.5, "2026-07-01")):
+            self.resmi.gostergeleri_ekle(veri["gostergeler"], "2026-09-23")
+        # Aksam snapshot'i ertesi gun raporlanir: 23-09 yakalama -> 24-09 raporu
+        snapshot = makro_veri.normalize(
+            veri, captured_at="2026-09-23T21:00:00+03:00")
+        makro_veri.validate(snapshot, "2026-09-24")
+
+    # --------------------------------------------------------- kaynak/gizlilik
+
+    def test_anahtar_hicbir_ciktiya_dusmez(self):
+        anahtar = "FIREDKEY1234567890ABCDEF"
+
+        def hatali(istek, timeout=None):
+            govde = ('{"message":"invalid api_key ' + anahtar + '"}').encode()
+            raise urllib.error.HTTPError(istek.full_url, 400, "Bad Request",
+                                         None, io.BytesIO(govde))
+
+        with mock.patch.object(self.resmi.urllib.request, "urlopen", hatali):
+            with self.assertRaises(self.resmi.ResmiHata) as y:
+                self.resmi._istek("https://ornek/?api_key=" + anahtar,
+                                  anahtar=anahtar, etiket="FRED")
+        metin = str(y.exception)
+        self.assertNotIn(anahtar, metin)
+        self.assertIn("***", metin)
+        self.assertIn("HTTP 400", metin)
+
+    def test_sunucu_mezgul_503_tekrar_eder_ve_html_kisaltilir(self):
+        class Sahte:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+            def read(self):
+                return b"2026-08,3.4"
+
+        def urlopen_basarili(istek, timeout=None):
+            urlopen_basarili.n += 1
+            if urlopen_basarili.n == 1:
+                raise urllib.error.HTTPError(
+                    istek.full_url, 503, "busy", None,
+                    io.BytesIO(b"<html>bos</html>"))
+            return Sahte()
+
+        urlopen_basarili.n = 0
+        with mock.patch.object(self.resmi.urllib.request, "urlopen",
+                               urlopen_basarili):
+            metin = self.resmi._istek("https://ornek/", etiket="BLS")
+        self.assertEqual(metin, "2026-08,3.4")
+        self.assertEqual(urlopen_basarili.n, 2)
+
+        # Tum denemeler bosa cikarsa HTML govde logu kirletmez.
+        def hep_503(istek, timeout=None):
+            raise urllib.error.HTTPError(
+                istek.full_url, 503, "busy", None,
+                io.BytesIO(b"<!DOCTYPE html><div id=BOOMR>mesgul</div>"))
+
+        with mock.patch.object(self.resmi.urllib.request, "urlopen", hep_503):
+            with self.assertRaises(self.resmi.ResmiHata) as y:
+                self.resmi._istek("https://ornek/", etiket="BLS")
+        metin = str(y.exception)
+        self.assertIn("HTTP 503", metin)
+        self.assertIn("HTML yanit", metin)
+        self.assertNotIn("BOOMR", metin)
+
+    def test_bls_kucuk_harf_series_ve_eksi_deger_kabul(self):
+        # v1 yaniti 'series', v2 yaniti 'Series'; '-' deger gozlem degildir.
+        govde = json.dumps({"status": "REQUEST_SUCCEEDED", "Results": {
+            "series": [{"seriesID": "CUUR0000SA0", "data": [
+                {"year": "2026", "period": "M08", "value": "334.980"},
+                {"year": "2026", "period": "M07", "value": "-"},
+                {"year": "2026", "period": "M13", "value": "330.000"}]}]}})
+        harita = self.resmi._bls_ayikla(govde)
+        self.assertEqual(harita["CUUR0000SA0"], [(date(2026, 8, 1), 334.98)])
+
+    def test_bls_kota_hatasinda_seri_seri_denemez(self):
+        # Kota/mesgul gununde her seri icin ayri istek denemek 25'lik gunluk
+        # kotayi gereksiz yere bitirir; tek toplu istekten sonra vazgecilir.
+        cagri = {"n": 0}
+
+        def istek(url, **k):
+            cagri["n"] += 1
+            raise self.resmi.ResmiHata(
+                "BLS yaniti seri icermedi: REQUEST_NOT_PROCESSED ['the daily "
+                "threshold for total number of requests allocated to the user "
+                "has been reached']")
+
+        with mock.patch.dict(os.environ, {"BLS_API_KEY": ""}), \
+                mock.patch.object(self.resmi, "_istek", side_effect=istek):
+            with self.assertRaises(self.resmi.ResmiHata) as y:
+                self.resmi._bls_toplu(["A", "B", "C"], 2025, 2026)
+        self.assertEqual(cagri["n"], 1)
+        self.assertTrue(self.resmi._limit_mi(y.exception))
+
+    def test_jsonstat_filtresiz_seride_yanlis_secim_yapilmaz(self):
+        cevap = {
+            "id": ["unit", "time"], "size": [2, 3],
+            "dimension": {
+                "unit": {"category": {"index": {"RCH_A": 0, "RCH_M": 1}}},
+                "time": {"category": {"index": {"2026-06": 0, "2026-07": 1,
+                                                "2026-08": 2}}},
+            },
+            "value": {"0": 3.0, "1": 3.1, "2": 3.2,
+                      "3": 0.1, "4": 0.2, "5": 0.4},
+        }
+        yoy = self.resmi._jsonstat(cevap, {"unit": "RCH_A"}, "aylık")
+        self.assertEqual(yoy, [(date(2026, 6, 1), 3.0),
+                               (date(2026, 7, 1), 3.1),
+                               (date(2026, 8, 1), 3.2)])
+        mom = self.resmi._jsonstat(cevap, {"unit": "RCH_M"}, "aylık")
+        self.assertEqual(mom[-1], (date(2026, 8, 1), 0.4))
+        # Tam sayi anahtarlari da okunur (bazi ureticiler JSON-object
+        # yerine liste/indis uretir).
+        sayisal = dict(cevap, value={0: 3.0, 1: 3.1, 2: 3.2,
+                                     3: 0.1, 4: 0.2, 5: 0.4})
+        self.assertEqual(self.resmi._jsonstat(sayisal, {"unit": "RCH_A"},
+                                              "aylık")[-1][1], 3.2)
+        # Filtre unutulursa "en dogrusu" secmek yerine sesli hata verilir.
+        with self.assertRaises(self.resmi.ResmiHata):
+            self.resmi._jsonstat(cevap, {}, "aylık")
+
+    # ------------------------------------------------------------------ magaza
+
+    @staticmethod
+    def _kayit(kod, ulke, gosterge, ad, deger, teyit):
+        return {"country_code": kod, "country": ulke, "indicator": gosterge,
+                "label": ad, "value": deger, "unit": "%",
+                "period": "2026-08-01", "frequency": "aylık",
+                "forecast": None, "previous": deger - 0.1,
+                "source_title": "test", "source_period": "2026-08-01",
+                "provenance": (f"{teyit} resmi verisi" if teyit
+                               else "canlı akşam toplaması"),
+                "confirmed_by": teyit}
+
+    def test_magaza_yaz_eu_abd_ve_tuik_onayli_satirlari_kaydeder(self):
+        snapshot = {
+            "snapshot_id": "2026-09-25-1",
+            "snapshot_date": "2026-09-25",
+            "captured_at": "2026-09-25T21:00:00+03:00",
+            "records": [
+                self._kayit("EU", "Euro Bölgesi", "inflation_yoy",
+                            "Enflasyon (yıllık)", 3.2, "Eurostat"),
+                self._kayit("US", "ABD", "inflation_yoy",
+                            "Enflasyon (yıllık)", 3.4, ""),
+                self._kayit("TR", "Türkiye", "inflation_yoy",
+                            "Enflasyon (yıllık)", 31.5, "TÜİK"),
+                self._kayit("TR", "Türkiye", "policy_rate",
+                            "Politika faizi", 37.0, ""),
+            ],
+        }
+        magaza, arsiv = self.resmi.magaza_yaz(snapshot)
+        self.assertTrue(Path(magaza).exists())
+        veri = json.loads(Path(magaza).read_text(encoding="utf-8"))
+        self.assertEqual(veri["schema"], "borsa-raporlari/resmi-veri")
+        self.assertEqual(veri["snapshot_id"], "2026-09-25-1")
+        # EU + ABD tum satirlar, TR'de yalnizca TUİK/EVDS onaylisi
+        self.assertEqual(veri["kayit_sayisi"], 3)
+        tur = {(g["country_code"], g["confirmed_by"]): g["kaynak_turu"]
+               for g in veri["gostergeler"]}
+        self.assertEqual(tur[("EU", "Eurostat")], "resmi kanal")
+        self.assertEqual(tur[("US", "")], "TV ekonomik takvimi")
+        self.assertEqual(tur[("TR", "TÜİK")], "resmi kanal")
+        self.assertNotIn(("TR", ""), tur)
+        self.assertIn("Eurostat", veri["kaynaklar"])
+        # Gunluk arsiv ayni icerigi ayri dosyada tutar
+        self.assertEqual(Path(arsiv).name, "2026-09-25.json")
+        arsiv_veri = json.loads(Path(arsiv).read_text(encoding="utf-8"))
+        self.assertEqual(arsiv_veri["kayit_sayisi"], 3)
+        self.assertTrue(self._arsiv.exists())
 
 
 if __name__ == "__main__":

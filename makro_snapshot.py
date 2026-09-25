@@ -18,6 +18,7 @@ import zoneinfo
 import bot
 import makro_veri
 import makro_rejim
+import resmi_veri
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 logger = logging.getLogger("makro-snapshot")
@@ -44,11 +45,20 @@ def main():
     snapshot = makro_veri.normalize(canli, captured_at=now.isoformat(timespec="seconds"))
     makro_veri.validate(snapshot)
     guncel, arsiv = makro_veri.write(snapshot)
+    # Resmi veri tabanı (EU + ABD tum satirlari, TR'de TUİK/EVDS onaylilari):
+    # snapshot'tan uretilir; yazamazsa aksam snapshot'i etkilenmez.
+    try:
+        resmi_magaza, resmi_arsiv = resmi_veri.magaza_yaz(snapshot)
+        resmi_durum = f"{resmi_magaza} + {resmi_arsiv}"
+    except Exception as e:
+        logger.warning("Resmi veri magazasi yazilamadi: %s", e)
+        resmi_durum = "yazilamadi"
     rejim = makro_rejim.uret(kaydet_mi=True)
     rejim_yolu = ((rejim or {}).get("rejim") or {}).get("kayit_yolu", "yazilamadi")
     print(
         f"MAKRO SNAPSHOT YAZILDI: {snapshot['snapshot_id']} | "
-        f"{len(snapshot['records'])} kayit | {guncel} + {arsiv} | rejim: {rejim_yolu}",
+        f"{len(snapshot['records'])} kayit | {guncel} + {arsiv} | rejim: {rejim_yolu}"
+        f" | resmi: {resmi_durum}",
         flush=True,
     )
     return 0

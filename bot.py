@@ -1695,6 +1695,16 @@ def makro_cek(gun=170, yol="data/makro.json", as_of=None):
                 tuik_ek += f" + EVDS({evds_sayi})"
         except Exception as e:
             logger.warning("[Makro] EVDS atlandi: %s", e)
+        # Resmi AB/ABD kanallari (Eurostat/ECB, BLS/FRED/BEA): taze olduklari
+        # surede TV satirlarinin UZERINE yazar, TV'de olmayan satiri ekler.
+        # Anahtar/istek yoksa ya da resmi veri bayatsa TV satiri aynen kalir.
+        try:
+            import resmi_veri
+            resmi_sayi = resmi_veri.gostergeleri_ekle(gostergeler, bugun)
+            if resmi_sayi:
+                tuik_ek += f" + Resmi AB/ABD({resmi_sayi})"
+        except Exception as e:
+            logger.warning("[Makro] Resmi AB/ABD adimi atlandi: %s", e)
         govde = {"guncelleme": bugun + " " + datetime.now(tz).strftime("%H:%M"),
                  "kaynak": "TradingView ekonomik takvimi" + tuik_ek,
                  "gostergeler": gostergeler}
