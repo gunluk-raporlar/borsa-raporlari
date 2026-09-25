@@ -417,6 +417,17 @@ class Cevirmen:
             modeller = [os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")]
             modeller += [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "Qwen3.8-Flash-Next").split(",") if m.strip()]
             uclar.append(("https://developer.amd.com.cn/radeon/api/v1/chat/completions", amd_anahtar, modeller))
+        # 2b) NVIDIA NIM (build.nvidia.com) - ucretsiz kredili, OpenAI uyumlu
+        nvid_anahtar = os.environ.get("NVIDIA_API_KEY") or os.environ.get("NIM_API_KEY")
+        if nvid_anahtar:
+            nvid_url = os.environ.get("NVID_BASE_URL", "https://integrate.api.nvidia.com/v1").rstrip("/") + "/chat/completions"
+            nvid_modeller = [m.strip() for m in os.environ.get(
+                "NVID_MODELS",
+                "deepseek-ai/deepseek-v4.1-flash,nvidia/nemotron-3-ultra-550b-a55b,"
+                "nvidia/nemotron-3-super-120b-a12b,nvidia/llama-3.1-nemotron-70b-instruct,"
+                "z-ai/glm-5.3"
+            ).split(",") if m.strip()]
+            uclar.append((nvid_url, nvid_anahtar, nvid_modeller))
         alt_anahtar = os.environ.get("ALT_API_KEY") or os.environ.get("GROQ_API_KEY")
         if alt_anahtar:
             alt_url = os.environ.get("ALT_BASE_URL", "https://api.groq.com/openai/v1").rstrip("/") + "/chat/completions"
@@ -1089,6 +1100,8 @@ def saglayici_test() -> int:
             return "Z.AI"
         if "groq" in url:
             return "Groq/ALT"
+        if "nvidia" in url:
+            return "NVIDIA"
         return "OpenRouter"
 
     # 0) Her saglayicinin GERCEK model listesi (destekliyorsa)
