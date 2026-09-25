@@ -64,38 +64,92 @@ jobs:
           except Exception as e:
               print("TV snapshot okunamadi:", temizle(e))
 
-          # BEA ITA: Indicator dogru ama (Frequency, Year) kombinasyonu yanlis
-          # olabilir; yanit 200 + bos Data doner. Burada adaylar taranir,
-          # calisan frekans _BEA_FREKANS'a yazilir ki ana dongu da gecsin.
+          # BEA ITA: Indicator dogru gorunuyor ama (Frequency, Year)
+          # kombinasyonu yanlis olabilir; yanit 200 + bos Data donuyor.
+          # Uc sey birlikte yazdirilir: gecerli parametre degerleri, ham
+          # yanitin SEKLI (Data bazi yanitlarda liste degil dict geliyor;
+          # d[0] o yuzden KeyError 0 veriyordu) ve dayanikli kombinasyon
+          # taramasi; calisan kombinasyon _BEA_FREKANS'a yazilir.
           if os.environ.get("BEA_API_KEY") and resmi_veri.CARI_GOSTERGE:
               import urllib.parse
               bea_pin = next(p for p in resmi_veri.PINLER
                              if p.get("tip") == "bea")
               _anahtar = os.environ["BEA_API_KEY"]
 
-              def _dene(frek, yil):
+              def _http(**ek):
                   p = {"UserID": _anahtar, "method": "GetData",
                        "datasetname": bea_pin.get("veri_seti", "ITA"),
                        "Indicator": resmi_veri.CARI_GOSTERGE,
-                       "Frequency": frek, "Year": yil,
                        "ResultFormat": "JSON"}
-                  url = resmi_veri.BEA_KOK + "?" + urllib.parse.urlencode(p)
+                  p.update(ek)
+                  return json.loads(resmi_veri._istek(
+                      resmi_veri.BEA_KOK + "?" + urllib.parse.urlencode(p),
+                      anahtar=_anahtar, etiket="BEA-probe"))
+
+              def _sekil(g):
+                  """Yanit seklini yazar; Data dict gelirse ham halini de."""
+                  bea = (g.get("BEAAPI") or {}) if isinstance(g, dict) else {}
+                  res = (bea.get("Results") or {})
+                  veri = res.get("Data")
+                  print("BEA-SEKIL | ust=%s | Results=%s | Data=%s" % (
+                      sorted(g.keys()) if isinstance(g, dict) else "?",
+                      sorted(res.keys()), type(veri).__name__))
+                  for h in (bea.get("Error"),
+                            g.get("Error") if isinstance(g, dict) else None):
+                      if h:
+                          print("BEA-HATA | %s" % temizle(
+                              json.dumps(h, ensure_ascii=False))[:300])
+                  if isinstance(veri, dict) and veri:
+                      print("BEA-DATA | %s" % temizle(
+                          json.dumps(veri, ensure_ascii=False))[:400])
+                  return veri
+
+              # ITA'nin kabul ettigi Frequency/Year degerleri kesifle yazilir.
+              for _p in ("Frequency", "Year"):
                   try:
-                      g = json.loads(resmi_veri._istek(
-                          url, anahtar=_anahtar, etiket="BEA-probe"))
+                      sv = json.loads(resmi_veri._istek(
+                          resmi_veri.BEA_KOK + "?" + urllib.parse.urlencode({
+                              "UserID": _anahtar,
+                              "method": "GetParameterValues",
+                              "datasetname": "ITA", "ParameterName": _p,
+                              "ResultFormat": "JSON"}),
+                          anahtar=_anahtar, etiket="BEA-probe"))
+                      pv = ((sv.get("BEAAPI") or {}).get("Results")
+                            or {}).get("ParamValue")
+                      if isinstance(pv, list):
+                          ks = [str(x.get("Key")) for x in pv
+                                if isinstance(x, dict)]
+                          print("BEA-PARAM | %s | n=%d | ilk15=%s" % (
+                              _p, len(ks), ",".join(ks[:15])))
+                      else:
+                          print("BEA-PARAM | %s | tip=%s | ham=%s" % (
+                              _p, type(pv).__name__,
+                              temizle(json.dumps(pv, ensure_ascii=False))
+                              [:300]))
+                  except Exception as e:
+                      print("BEA-PARAM | %s | HATA %s" % (
+                          _p, temizle(str(e))[:140]))
+
+              def _dene(frek, yil):
+                  try:
+                      g = _http(Frequency=frek, Year=yil)
                   except Exception as e:
                       print("BEA-PROBE | F=%s Y=%s | HATA %s" % (
                           frek, yil, temizle(str(e))[:140]))
                       return 0, ""
-                  hata = ((g.get("BEAAPI") or {}).get("Error") or {})
-                  d = ((g.get("BEAAPI") or {}).get("Results") or {}
-                       ).get("Data") or []
+                  veri = _sekil(g)
+                  if isinstance(veri, list):
+                      d = veri
+                  elif isinstance(veri, dict) and (
+                          "TimePeriod" in veri or "DataValue" in veri):
+                      d = [veri]
+                  else:
+                      d = []
                   ilk = d[0] if d else {}
-                  print("BEA-PROBE | F=%s Y=%s | n=%d | ilk=%s %s %s" % (
+                  print("BEA-PROBE | F=%s Y=%s | n=%d | ilk=%s %s" % (
                       frek, yil, len(d), ilk.get("TimePeriod"),
-                      ilk.get("DataValue"),
-                      temizle(hata.get("APIErrorDescription") or "")))
-                  return len(d), ilk.get("TimePeriod") or ""
+                      ilk.get("DataValue")))
+                  return len(d), (ilk.get("TimePeriod") or "")
 
               bulunan = None
               for _f in ("Q", "A", "M"):          # once Year=last (uretimdeki)
