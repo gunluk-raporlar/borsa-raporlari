@@ -36,14 +36,35 @@
    "sure_sn": 524.362,
    "ok": true,
    "saat": "2026-09-25T09:39:20+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 1347.051,
+   "ok": true,
+   "saat": "2026-09-25T17:42:42+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 3.019,
+   "ok": true,
+   "saat": "2026-09-25T17:42:45+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 1542.942,
+   "ok": true,
+   "saat": "2026-09-25T18:09:30+03:00"
   }
  ],
  "ozet": {
   "adet": 3,
-  "ortalama_sn": 372.666,
-  "p95_sn": 524.362,
-  "maks_sn": 591.227,
+  "ortalama_sn": 964.337,
+  "p95_sn": 1347.051,
+  "maks_sn": 1542.942,
   "basari_orani": 1.0,
-  "son_guncelleme": "2026-09-25T09:39:47+03:00"
+  "son_guncelleme": "2026-09-25T18:09:54+03:00"
  }
 }
