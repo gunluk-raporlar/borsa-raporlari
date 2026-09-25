@@ -39,3 +39,19 @@ if __name__ == "__main__":
     dene("C: string low", {"thinking": "low"})
     dene("D: reasoning_effort", {"reasoning_effort": "low"})
     dene("E: obj enabled", {"thinking": {"type": "enabled"}})
+
+    # Coding plan ucu: ZCode'un kullandigi haftalik plan kotasi bu uctan sayilir.
+    url2 = "https://api.z.ai/api/coding/paas/v4/chat/completions"
+
+    def dene2(etiket, ek_alanlar):
+        global url
+        eski = url
+        url = url2
+        try:
+            dene(etiket, ek_alanlar)
+        finally:
+            url = eski
+
+    dene2("F: coding, param yok", {})
+    dene2("G: coding, obj low", {"thinking": {"type": "low"}})
+    dene("H: std, obj LOW", {"thinking": {"type": "LOW"}})
