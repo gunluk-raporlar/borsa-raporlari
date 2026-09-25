@@ -2200,65 +2200,11 @@ def master_cio_agent(state: AgentState):
     piyasa_bolumu = (f"\n[BUGUNUN TARIHI VE PIYASA VERILERI - KESIN RAKAMLAR; "
                      f"tarih, gun adi, seviye ve yuzdeleri YALNIZCA buradan al]:\n"
                      f"{piyasa_blogu}\n") if piyasa_blogu else ""
-    if piyasa_blogu:
-        tarih_kurallari = (
-            '- Rapor doğrudan "## 1." başlığıyla başlayacak; RAPOR ADI, Yayıncı, Konu gibi kimlik satırları EKLEME.\n'
-            "- Metinde köşeli parantezli [...] yer tutucu veya iç not kullanma.\n"
-            '- Kimlik satırı YAZMA: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri geçmeyecek.\n'
-            '- "## 1." başlığından sonraki İLK cümle tarih ve endeks verisiyle açılır: tarih, gün adı, endeks seviyesi ve yüzdeleri YALNIZCA [BUGUNUN TARIHI VE PIYASA VERILERI] bloğundan AYNEN alınır; kendi hafızandan tarih, gün adı veya rakam ÜRETME (tarih-gün eşleştirmesinde sık hata yapıyorsun). Raporun yazıldığı saat de ilk cümlede geçer (bloktaki "saat HH:MM" değerini aynen kullan). Örnek kalıp: "<tarih>, saat <HH:MM> itibarıyla — BIST 30 (XU030) son kapanış <son kapanış>; bir önceki kapanış <önceki kapanış> (günlük %<değişim>); dolar bazında günlük performans %<değişim>."'
-        )
-    else:
-        tarih_kurallari = (
-            '- Rapor doğrudan "## 1." başlığıyla başlayacak; RAPOR ADI, Tarih, Yayıncı, Konu gibi kimlik satırları EKLEME (site şablonu tarihi zaten gösteriyor, yanlış tarihe düşme riski yaratma).\n'
-            "- Metinde köşeli parantezli [...] yer tutucu veya iç not kullanma.\n"
-            '- Kimlik satırı YAZMA: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri ve tarih ya da haftanın gün adı raporda GEÇMEYECEK (tarih-gün eşleştirmesinde sık hata yapıyorsun; şablon zaten tarihi gösteriyor).'
-        )
+    # Tek dev prompt yerine bolum bolum uretim: her bolumun kendi talimati ve
+    # SADECE ilgili veri bloklari vardir (asagida RAPOR_BOLUMLERI + veri_bloklari).
 
 
-    prompt = f"""Sen Türkiye piyasalarında uzmanlaşmış bağımsız bir finansal analist yapay zekâsısın (gerçek bir kişi veya kurum değilsin; kendini öyle tanıtma). Aşağıdaki GERÇEK verileri kullanarak profesyonel okuyucuya hitap eden, derinlemesine ve uzun bir BIST 30 Yatırım ve Strateji Raporu kaleme al.
-Önceki günlere ait analiz özetlerini dikkatle incele; trendin devam edip etmediğini, önceki önerilerin performansını ve piyasa dinamiklerindeki değişimleri eleştirel bir gözle değerlendir.
-
-[GEÇMİŞ GÜNLERİN ANALİZ ÖZETLERİ - HAFIZA]:
-{hafiza_metni}
-
-[GÜNÜN HABERLERİ]:
-{state['news_data']}
-
-[TEKNİK VERİLER VE HİSSE FİYATLARI]:
-{state['tech_data']}
-
-[TEMEL / FİNANSAL VERİLER]:
-{state['fundamental_data']}
-{piyasa_bolumu}
-Raporu kesinlikle profesyonel bir finansal bülten formatında, her başlığı detaylı ve uzun cümlelerle açıklayarak şu alt başlıklar altında oluştur (her başlık "## " ile başlayan markdown başlığı olarak yazılacak):
-
-## 1. Günün Verileri (özet): BU BÖLÜMÜ YAZMA — hesaplanan verilerden otomatik tablo olarak sistem tarafından eklenir (uydurma riskine karsi). Raporuna "## 2." basligiyla basla; 1. bölümün metnini yeniden üretme.
-## 2. Bunun Anlamı — Aktarım Zinciri: Veri tablosundaki (1. bölüm) rakamların nedenini ve piyasaya aktarımını kur. Zinciri şu sırayla ve açık bağlaçlarla yaz: veri → neden → mekanizma → sektör etkisi → hisse etkisi → risk. Örnek biçim: "kur artışı → ithal girdi maliyeti → marj baskısı → iç talep hassasiyeti → şirket bazında farklılaşma". Bu bölümde YENİ RAKAM ÜRETME; yalnızca verilen bloklardaki ve veri tablosundaki rakamlara atıf yap.
-## 3. Haber ve Makroekonomik Değerlendirme: Haber akışının ve makro verilerin BIST 30 şirketlerine yansımaları; enflasyon, kur ve faiz sarmalının yatırımcı psikolojisine etkisi. Her paragrafta önce gözlemi, sonra yorumu yaz.
-## 4. Teknik Değerlendirme (Hisse Bazlı): En çok ayrışan, hacim kazanan veya direnç/destek noktalarını test eden lider hisselerin teknik anatomisi. Aşağıdaki SİNYAL TABLOSU verilerini kullan.
-## 5. Şirket ve Finansal Değerlendirme: Temel veriler ışığında şirketlerin karlılık, bilanço yapıları ve rasyo bazlı öne çıkan detayları.
-## 6. Risk Yönetimi ve Strateji: Kısa vadeli olası aşağı/yukarı yönlü senaryolar ve portföyü koruma kalkanları.
-## 7. Önerilen Model Portföy: Raporun SONUNDA, yukarıdaki sinyal ve analizlere DAYANARAK kendinin kurduğu somut bir model portföyü tablosu oluştur. Tablo şu sütunlarla olmalı:
-
-| Hisse | Sektör | Ağırlık (%) | İşlem | Baz Senaryo | İyimser Senaryo | Geçersizlik Koşulu | Gerekçe |
-|-------|--------|-------------|-------|-------------|-----------------|--------------------|---------|
-
-Tablo kuralları: En fazla 8 hisse pozisyonu + bir "NAKİT" satırı ekle; ağırlıklar %100'ü tamamlamalı (nakit dahil). Sadece AL/GÜÇLÜ AL sinyali veren ve gerekçesi verilerle desteklenen hisseleri seç; ağırlığı sinyal gücü, Pearson (r) ve kanal konumuna göre belirle. "Giriş bölgesi / hedef / stop" gibi emir dili KULLANMA; bunun yerine koşullu senaryo dili kullan: Baz Senaryo = mevcut veri setinin işaret ettiği en olası patika (örn. "kanal orta bandına doğru toparlanma"), İyimser Senaryo = görünümü güçlendiren somut koşul (örn. "kanal üst bandı üzerinde hacimli kapanış"), Geçersizlik Koşulu = senaryoyu çürüten somut gelişme (örn. "kanal alt bandı altında kapanış"). Anılan seviyeleri SADECE sağlanan gerçek fiyatlardan türet (kanal bantları ve son fiyat baz alın); dışarıdan hiçbir veri ekleme. Her satırın gerekçesi teknik + osilatör gerekçelerini birleştirsin.
-
-Biçim kuralları (zorunlu):
-{tarih_kurallari}
-- KATMAN AYRIMI (zorunlu): 1. bölüm yalnız VERİdir (yorum yok); 2. bölüm yalnız YORUMdur ve aktarım zincirini (veri → neden → mekanizma → sektör etkisi → hisse etkisi → risk) eksiksiz kurar. Diğer bölümlerde her paragraf önce gözlemi, sonra yorumu yazar.
-- TÜM metinde doğru Türkçe karakterler kullan (ç, ğ, ı, i, ö, ş, ü); "sinyal" gibi kelimeleri yanlış yazma ("sinyil" DEĞİL).
-- 6. bölümdeki nakit/likidite önerisi ile 7. bölümdeki NAKİT satırının ağırlığı ÇELİŞMEMELİ (örn. "%40 nakit tutun" deyip %0 nakitlik portföy verme).
-- Şirket adlarını YALNIZCA verilerde hisse kodunun yanında verilen resmi adla kullan (örn. YKBNK kodunun adı "Yapı Kredi"dir); hiçbir şirket için kendi hafızandan farklı bir isim, kısaltma ya da benzer bir ad yazma.
-- Enflasyon gibi makro göstergeleri yalnızca [MAKRO GEREKLER] bölümündeki değerlerle an; kendi genel bilginden sayı yazma.
-- Tablo veya portföy bölümlerinden sonra "(Not: ...)" biçiminde dipnot/uyarı cümlesi EKLEME; tekrar eden ya da yarım kalan dipnotları yazma.
-
-{VERI_DAYANAK_ENVANTERI}
-
-{PROFESYONEL_YAZIM_KURALLARI}
-
-Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek verileri ve geçmiş hafızayı baz al. Raporu zengin finansal terimler kullanarak Türkçe kaleme al."""
+    # (Eski 30k-tokenlik tek dev prompt kaldirildi; bolum bolum uretim asagida.)
 
     # Gunun sinyal tablolari (master_cio calismadan once taze taramalar alinir)
     try:
@@ -2281,33 +2227,129 @@ Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek veril
             f"MACD={s['macd']}, StochK={s['stoch']}, CCI20={s['cci']}, ADX={s['adx']}"
             for s in b_satirlar
         )
-    if sinyaller:
-        prompt = prompt.replace("Kurallar: Asla uydurma", sinyaller + "\n\nKurallar: Asla uydurma")
-
     # Makro gercekler onceki aksam snapshot'indan tek cerceve olarak gelir.
     # Snapshot eksik/gecersizse bu fonksiyon bilerek durur; canli fallback yoktur.
     snapshot = makro_snapshot_cek()
-    prompt = prompt.replace(
-        "Kurallar: Asla uydurma",
-        "[MAKRO GEREKLER]\n" + makro_veri.frame_text(snapshot) + "\n\n"
-        + MAKRO_AKTARIM_KILAVUZU + "\n\nKurallar: Asla uydurma")
+    makro_cerceve = ("[MAKRO GEREKLER]\n" + makro_veri.frame_text(snapshot)
+                     + "\n\n" + MAKRO_AKTARIM_KILAVUZU)
 
-    # once AMD ana saglayici (DeepSeek-V4-Flash), olmazsa Z.ai (GLM) yedek
-    response = None
-    try:
-        response = llm_call(prompt)
-    except Exception as e:
-        logger.exception("AMD llm_call failed in master_cio_agent: %s", e)
-    # llm_call denemeler tukendiginde raise yerine fallback metni doner; metin
-    # "truthy" oldugu icin bu kontrolun altindan gecip Z.ai yedegini atlardik.
-    # Fallback metni basarisizlik say, Z.ai'i dene.
-    if not response or (isinstance(response, str) and response.startswith("(LLM hizmetine ulaşılamadı")):
-        response = _zai_call(prompt)
-    if not response:
-        response = "(LLM hizmetine ulaşılamadı — rapor şu an kısmi olarak oluşturuldu veya oluşturulamadı. Daha sonra tekrar deneyin.)"
+    # ---- BOLUM BOLUM URETIM ("bolum yazarlari + bas editor" modeli) ----
+    # Tek modelden tek dev metin (30k input + 10k+ output) hem AMD gateway'ini
+    # zorluyor hem 8k cikti limitinde kesilmeye yol aciyor. Yerine: once kucuk
+    # bir ISKELET cagrisi (gunun plani), sonra her bolum SADECE ilgili veri
+    # bloklariyla ve rotasyonun siradaki saglayicisindan yazilir; cikti bolum
+    # basina ~1-2k token kalir, kesilme sorunu kokten biter.
+    veri_bloklari = {
+        "piyasa": piyasa_bolumu,
+        "hafiza": hafiza_metni,
+        "haber": f"\n[GÜNÜN HABERLERİ]:\n{state['news_data']}\n",
+        "teknik": f"\n[TEKNİK VERİLER VE HİSSE FİYATLARI]:\n{state['tech_data']}\n",
+        "temel": f"\n[TEMEL / FİNANSAL VERİLER]:\n{state['fundamental_data']}\n",
+        "makro": makro_cerceve,
+        "sinyal": sinyaller,
+    }
 
-    # Eger llm_call fallback mesaji donduyse, LLM'e ulasilamadi demektir; makul bir ham-rapor uret
-    if isinstance(response, str) and response.startswith("(LLM hizmetine ulaşılamadı"):
+    ortak_kurallar = (
+        "- Metinde köşeli parantezli [...] yer tutucu veya iç not kullanma.\n"
+        '- Kimlik satırı YAZMA: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", '
+        '"Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri geçmeyecek.\n'
+        "- Tarih, gün adı, endeks seviyeleri ve yüzdeleri YALNIZCA sana verilen "
+        "[BUGUNUN TARIHI VE PIYASA VERILERI] bloğundan AYNEN alınır; kendi hafızandan tarih, "
+        "gün adı veya rakam üretme.\n"
+        "- TÜM metinde doğru Türkçe karakterler kullan (ç, ğ, ı, i, ö, ş, ü).\n"
+        '- Şirket adlarını YALNIZCA verilerde hisse kodunun yanında verilen resmi adla kullan '
+        '(örn. YKBNK kodunun adı "Yapı Kredi"dir).\n'
+        "- Makro göstergeleri yalnızca [MAKRO GEREKLER] bloğu verilmişse oradaki değerlerle an; "
+        "blok yoksa makro sayısı YAZMA.\n"
+        '- Tablodan sonra "(Not: ...)" biçiminde dipnot/uyarı cümlesi EKLEME.\n\n'
+        + VERI_DAYANAK_ENVANTERI + "\n\n" + PROFESYONEL_YAZIM_KURALLARI
+    )
+
+    iskelet_prompt = (
+        "Sen BIST 30 günlük raporu yazan bir baş analistsin. Aşağıdaki piyasa ve sinyal "
+        "verilerine bakarak bugünkü raporun PLANINI çıkar. ÇIKTI madde madde olsun, en fazla "
+        "250 kelime, yorum değil plan:\n"
+        "1) Günün teması (1-2 cümle).\n"
+        "2) Öne çıkacak 4-6 hisse ve nedenleri (kod + 1 cümle).\n"
+        "3) Şu bölümlerin her biri için vurgulanacak 1-2 somut nokta: Piyasa Okuması; Makro "
+        "Görünüm; Teknik Analiz; Temel Analiz; Risk ve Senaryolar; Model Portföy.\n\n"
+        + veri_bloklari.get("piyasa", "") + "\n" + veri_bloklari.get("sinyal", "")
+    )
+    iskelet = llm_call(iskelet_prompt, max_deneme=4)
+    if not iskelet or iskelet.startswith("(LLM hizmetine ulaşılamadı"):
+        iskelet = "(İskelet üretilemedi; bölümü doğrudan veri bloklarından yaz.)"
+    logger.info("[Bas Analist] iskelet alindi (%d karakter).", len(iskelet))
+
+    rapor_bolumleri = [
+        {"no": 2, "baslik": "Piyasa Okuması ve Aktarım Mekanizması",
+         "veri": ("piyasa", "hafiza"),
+         "talimat": (
+             "Bu bölüm günün piyasa verisinin ne anlama geldiğini aktarım zinciriyle kurar: "
+             "veri → neden → mekanizma → sektör etkisi → hisse etkisi → risk. İLK cümle tarih ve "
+             "endeks verisiyle açılır; örnek kalıp: \"<tarih>, saat <HH:MM> itibarıyla — BIST 30 "
+             "(XU030) son kapanış <son kapanış>; bir önceki kapanış <önceki kapanış> (günlük "
+             "%<değişim>); dolar bazında günlük performans %<değişim>.\" Bu bölümde YENİ RAKAM "
+             "ÜRETME; yalnızca verilen bloklardaki rakamlara atıf yap. 2-3 paragraf.")},
+        {"no": 3, "baslik": "Makro Görünüm ve Haber Akışı",
+         "veri": ("haber", "makro"),
+         "talimat": ("Haber akışının ve makro verilerin BIST 30 şirketlerine yansımaları; enflasyon, "
+                     "kur ve faiz sarmalının yatırımcı psikolojisine etkisi. Her paragrafta önce "
+                     "gözlem, sonra yorum. 3-4 paragraf.")},
+        {"no": 4, "baslik": "Teknik Analiz — Öne Çıkan Hisseler",
+         "veri": ("teknik", "sinyal"),
+         "talimat": ("En çok ayrışan, hacim kazanan veya direnç/destek noktalarını test eden lider "
+                     "hisselerin teknik anatomisi; sinyal verilerindeki genel sinyalleri ve osilatör "
+                     "değerlerini kullan. 3-4 paragraf.")},
+        {"no": 5, "baslik": "Temel Analiz — Şirket Değerlendirmesi",
+         "veri": ("temel",),
+         "talimat": ("Temel veriler ışığında şirketlerin karlılık, bilanço yapıları ve rasyo bazlı "
+                     "öne çıkan detayları. 2-4 paragraf.")},
+        {"no": 6, "baslik": "Risk Yönetimi ve Senaryolar",
+         "veri": ("piyasa", "sinyal", "hafiza"),
+         "talimat": ("Kısa vadeli olası aşağı/yukarı yönlü senaryolar ve portföyü koruma kalkanları. "
+                     "Buradaki nakit/likidite önerisi ile 7. bölümdeki NAKİT satırının ağırlığı "
+                     "ÇELİŞMEMELİ. 2-3 paragraf.")},
+        {"no": 7, "baslik": "Önerilen Model Portföy",
+         "veri": ("sinyal", "teknik"),
+         "talimat": (
+             "Sinyal ve analizlere DAYANARAK somut bir model portföyü TABLOSU oluştur. Sütunlar:\n\n"
+             "| Hisse | Sektör | Ağırlık (%) | İşlem | Baz Senaryo | İyimser Senaryo | Geçersizlik Koşulu | Gerekçe |\n"
+             "|-------|--------|-------------|-------|-------------|-----------------|--------------------|---------|\n\n"
+             "Tablo kuralları: En fazla 8 hisse pozisyonu + bir \"NAKİT\" satırı; ağırlıklar %100'ü "
+             "tamamlamalı (nakit dahil). Sadece AL/GÜÇLÜ AL sinyali veren ve gerekçesi verilerle "
+             "desteklenen hisseleri seç; ağırlığı sinyal gücü, Pearson (r) ve kanal konumuna göre "
+             "belirle. \"Giriş bölgesi / hedef / stop\" gibi emir dili KULLANMA; koşullu senaryo dili "
+             "kullan: Baz Senaryo = mevcut verinin işaret ettiği en olası patika, İyimser Senaryo = "
+             "görünümü güçlendiren somut koşul, Geçersizlik Koşulu = senaryoyu çürüten somut gelişme. "
+             "Seviyeleri SADECE sağlanan gerçek fiyatlardan türet; dışarıdan veri ekleme. Tablodan "
+             "önce 1 kısa giriş paragrafı yaz; tablodan sonra dipnot EKLEME.")},
+    ]
+
+    bolum_metinleri = []
+    basarisiz_bolumler = []
+    for bolum in rapor_bolumleri:
+        bloklar = "\n".join(veri_bloklari.get(k, "") for k in bolum["veri"] if veri_bloklari.get(k))
+        bolum_prompt = (
+            "Sen Türkiye piyasalarında uzmanlaşmış bağımsız bir finansal analist yapay zekâsısın "
+            "(gerçek bir kişi veya kurum değilsin). Günlük BIST 30 raporunun TEK BİR bölümünü "
+            "yazacaksın; diğer bölümler başka yazarlarda, raporun genel planı aşağıda.\n\n"
+            f"[RAPORUN PLANI - İSKELET]:\n{iskelet}\n\n"
+            f"{bloklar}\n\n"
+            f"GÖREV: Raporun \"{bolum['no']}. {bolum['baslik']}\" bölümünü yaz.\n"
+            f"{bolum['talimat']}\n\n"
+            "BİÇİM KURALLARI (zorunlu):\n" + ortak_kurallar + "\n\n"
+            "Kurallar: Asla uydurma veri veya rakam ekleme; yalnızca sağlanan gerçek verileri baz al. "
+            "ÇIKTI YALNIZCA bu bölümün gövde metni olsun: bölüm başlığını (## ile) YAZMA — sistem "
+            "ekler; diğer bölümleri yazma; giriş/kapanış paragrafı ekleme."
+        )
+        metin = llm_call(bolum_prompt)
+        if not metin or metin.startswith("(LLM hizmetine ulaşılamadı"):
+            logger.warning("[Bas Analist] %d. bolum uretilemedi; atlandi.", bolum["no"])
+            basarisiz_bolumler.append(bolum["baslik"])
+            continue
+        bolum_metinleri.append(f"## {bolum['no']}. {bolum['baslik']}\n\n{metin.strip()}")
+
+    if not bolum_metinleri:
         logger.warning("LLM'e ulaşılamadi, kısmi ham rapor döndürülüyor.")
         fallback_report = "GUNLUK RAPOR (LLM KULLANILAMADI)\n\n"
         fallback_report += "HABERLER:\n" + state.get('news_data', '') + "\n\n"
@@ -2316,9 +2358,13 @@ Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek veril
         fallback_report += "(LLM'e ulaşılamadığı için rapor otomatik olarak bu ham verilerin birleşimidir.)"
         return {"final_report": fallback_report}
 
+    if basarisiz_bolumler:
+        logger.warning("[Bas Analist] uretilemeyen bolumler: %s", ", ".join(basarisiz_bolumler))
+    rapor = "\n\n".join(bolum_metinleri)
+
     # Yayin onesi otomatik temizlik: uydurulmus tarih/yayinci satirlari,
     # koseli parantezli yer tutucular, eksik h2 yapisi, ASCII Turkce...
-    response = rapor_son_islem(response)
+    response = rapor_son_islem(rapor)
     response = _metin_dogrula_ve_kaydet(
         response, " / gunluk rapor", snapshot=snapshot)
     return {"final_report": response}
