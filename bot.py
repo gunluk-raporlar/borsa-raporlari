@@ -7131,6 +7131,15 @@ if __name__ == "__main__":
         logger.exception("[Derin Analiz] sayfa uretilemedi; diger sayfalar etkilenmez.")
 
     p = load_portfolio()
+    # `raporlar` 7062'de, bugunku rapor(ler) reports/ altina YAZILMADAN once
+    # listelenmisti: hem gunluk rapor (7076) hem derin-analiz arsiv kopyasi
+    # (7127) sonra olusturuluyor. Tazelenmezse bugunun karti ana sayfa
+    # arsivine, sitemap'e, site-arama.json'a ve indexnow ping'ine girmiyordu;
+    # arsiv yalnizca siradaki Teknik Tarama run'una (piyasa saati) kadar
+    # bayat kaliyordu.
+    raporlar = sorted(
+        (fn for fn in os.listdir("reports") if fn.endswith(".html")),
+        reverse=True)
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(build_index_html(p, raporlar, teknik_oneriler))
     if p and p.get("history"):
