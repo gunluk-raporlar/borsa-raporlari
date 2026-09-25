@@ -177,6 +177,7 @@ jobs:
 
           sonuclar = resmi_veri.pin_kontrol(bugun)
           sorun = 0
+          uyari = 0
           for s in sonuclar:
               satir = {k: v for k, v in s.items() if k != "hata"}
               print("PIN |", json.dumps(satir, ensure_ascii=False))
@@ -198,8 +199,14 @@ jobs:
                           t.get("confirmed_by") or t.get("provenance")))
               if s["kaynak"] == "BEA":
                   # Indikator kesfi (durum: kesif/anahtar/bos) kasitli durum.
-                  if s["durum"] not in ("ok", "kesif", "anahtar", "bos"):
+                  if s["durum"] == "ag":
+                      uyari += 1
+                  elif s["durum"] not in ("ok", "kesif", "anahtar", "bos"):
                       sorun += 1
+              elif s["durum"] == "ag":
+                  # Gecici ag hatasi (orn. Eurostat baglantisi kopmasi): isi
+                  # kirmiziya cevirmez; yalnizca uyari olarak raporlanir.
+                  uyari += 1
               elif s["durum"] != "ok":
                   sorun += 1
 
@@ -214,6 +221,6 @@ jobs:
           else:
               print("BEA_API_KEY yok; cari denge kesfi atlandi.")
 
-          print("SONUC=%d SORUN=%d" % (len(sonuclar), sorun))
+          print("SONUC=%d SORUN=%d UYARI=%d" % (len(sonuclar), sorun, uyari))
           sys.exit(1 if sorun else 0)
           PY
