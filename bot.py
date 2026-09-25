@@ -99,9 +99,10 @@ OR_MODEL_TERCIH = [
 ]  # 2026-09: gemma-4-31b/26b, qwen3.8-27b, ling-3.0-flash-fin, inkling-small cikarildi (uydurma).
 
 # Z.ai (GLM) model tercih sirasi — bot.py'deki tum Z.ai cagrilari bunu kullanir.
-# 4.7/4.5 ailesi cok hata/uydurma yaptigi icin tamamen cikarildi (2026-09);
-# ZAI_MODEL ortam degiskeni tanimliysa her yerde tercih listesinin onune gecer.
-ZAI_MODEL_TERCIH = ["glm-5.3-flash", "glm-5.3"]
+# YALNIZCA glm-5.3-flash: kullanici karari (2026-09) — buyuk glm-5.3, ZCode'la
+# paylasilan haftalik kotayi hizla tukettigi icin kullanilmaz; 4.5/4.7 de
+# uydurma yaptigi icin cikarildi. ZAI_MODEL env ile override hala mumkun.
+ZAI_MODEL_TERCIH = ["glm-5.3-flash"]
 
 if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY and not OR_API_KEY and not NVID_API_KEY:
     raise SystemExit("AMD/ALT/CF/OR/NVIDIA API anahtarlarindan en az biri ayarlanmali!")
