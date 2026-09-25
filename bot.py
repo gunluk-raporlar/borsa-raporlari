@@ -1034,6 +1034,17 @@ def rapor_son_islem(metin: str) -> str:
                 satirlar[j] = ""
             temiz.append(None)
             continue
+        # Modelin tablo/portfoy altina ekledigi "(Not: ...)" dipnotlari
+        # (yarim veya tekrarli sablon cumleleri): bilgi tasimadigi icin dusur.
+        _nk = re.sub(r"^[\s*\-#>]+", "", s)
+        if _nk.startswith("(Not:") and (
+            "en güvenli liman" in _nk
+            or "satırı bulunmaktadır" in _nk
+            or "sinyali veren his" in _nk
+            or not _nk.endswith(")")
+        ):
+            temiz.append(None)
+            continue
         temiz.append(satir)
     metin = "\n".join(t for t in temiz if t is not None)
     # Ardik bos satirlari tek bos satira indir
@@ -2168,6 +2179,7 @@ Biçim kuralları (zorunlu):
 - 6. bölümdeki nakit/likidite önerisi ile 7. bölümdeki NAKİT satırının ağırlığı ÇELİŞMEMELİ (örn. "%40 nakit tutun" deyip %0 nakitlik portföy verme).
 - Şirket adlarını YALNIZCA verilerde hisse kodunun yanında verilen resmi adla kullan (örn. YKBNK kodunun adı "Yapı Kredi"dir); hiçbir şirket için kendi hafızandan farklı bir isim, kısaltma ya da benzer bir ad yazma.
 - Enflasyon gibi makro göstergeleri yalnızca [MAKRO GEREKLER] bölümündeki değerlerle an; kendi genel bilginden sayı yazma.
+- Tablo veya portföy bölümlerinden sonra "(Not: ...)" biçiminde dipnot/uyarı cümlesi EKLEME; tekrar eden ya da yarım kalan dipnotları yazma.
 
 {VERI_DAYANAK_ENVANTERI}
 
@@ -2207,14 +2219,16 @@ Kurallar: Asla uydurma veri veya rakam ekleme, yalnızca sağlanan gerçek veril
         "[MAKRO GEREKLER]\n" + makro_veri.frame_text(snapshot) + "\n\n"
         + MAKRO_AKTARIM_KILAVUZU + "\n\nKurallar: Asla uydurma")
 
-    # once kullanici Z.ai anahtari (buyuk GLM modeli), olmazsa yedek zincir
-    response = _zai_call(prompt)
+    # once AMD ana saglayici (DeepSeek-V4-Flash), olmazsa Z.ai (GLM) yedek
+    response = None
+    try:
+        response = llm_call(prompt)
+    except Exception as e:
+        logger.exception("AMD llm_call failed in master_cio_agent: %s", e)
     if not response:
-        try:
-            response = llm_call(prompt)
-        except Exception as e:
-            logger.exception("LLM call failed in master_cio_agent: %s", e)
-            response = "(LLM hizmetine ulaşılamadı — rapor şu an kısmi olarak oluşturuldu veya oluşturulamadı. Daha sonra tekrar deneyin.)"
+        response = _zai_call(prompt)
+    if not response:
+        response = "(LLM hizmetine ulaşılamadı — rapor şu an kısmi olarak oluşturuldu veya oluşturulamadı. Daha sonra tekrar deneyin.)"
 
     # Eger llm_call fallback mesaji donduyse, LLM'e ulasilamadi demektir; makul bir ham-rapor uret
     if isinstance(response, str) and response.startswith("(LLM hizmetine ulaşılamadı"):
@@ -2588,6 +2602,25 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
 {rapor_state.get('final_report', '')[:6000]}"""
 
     son_hata = None
+    # 1) AMD ana saglayici (DeepSeek-V4-Flash) + havuz fallback'leri; rate-limit
+    #    durumunda llm_call icindeki saglayici/model rotasyonu + Z.ai yedegi devrede.
+    try:
+        logger.info("[Derin Analiz] AMD cagrisi (llm_call)")
+        icerik = llm_call(prompt)
+        if icerik and icerik.strip():
+            if _derin_dongu_var(icerik):
+                son_hata = "tekrar dongusu (AMD)"
+                logger.warning("[Derin Analiz] AMD tekrar dongusune girdi; Z.ai yedegine geciliyor.")
+            else:
+                icerik = rapor_son_islem(icerik)
+                return _metin_dogrula_ve_kaydet(
+                    icerik, " / derin analiz", snapshot=snapshot)
+        else:
+            son_hata = "bos yanit (AMD)"
+    except Exception as e:
+        son_hata = str(e)[:200]
+        logger.warning("[Derin Analiz] AMD basarisiz: %s; Z.ai yedegine geciliyor.", son_hata)
+    # 2) Yedek: Z.ai GLM
     denenecekler = [model] + (["glm-4.5-flash"] if model != "glm-4.5-flash" else [])
     for deneme, mdl in enumerate(denenecekler):
         try:
