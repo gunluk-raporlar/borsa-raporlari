@@ -26,6 +26,7 @@ jobs:
           ZAI_MODEL: ${{ vars.ZAI_MODEL }}
           # Yedek: GLM alinamazsa AMD DeepSeek-V4-Flash ile uretilir
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           AMD_MODEL: "DeepSeek-V4-Flash"
           GOOGLE_SITE_DOGRULAMA: ${{ secrets.GOOGLE_SITE_DOGRULAMA }}
           BING_SITE_DOGRULAMA: ${{ secrets.BING_SITE_DOGRULAMA }}
