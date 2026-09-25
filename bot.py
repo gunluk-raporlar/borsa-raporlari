@@ -2745,6 +2745,28 @@ Biçim kuralları (zorunlu):
 """
 
     son_hata = "ZAI anahtari yok" if glm_istemci is None else None
+
+    # 1) AMD ana saglayici (DeepSeek-V4-Flash); Z.ai GLM yedek
+    if client is not None:
+        try:
+            amd_model = AMD_MODEL_LIST[0] if AMD_MODEL_LIST else AMD_MODEL
+            logger.info("[Makro Analiz] AMD cagrisi (%s)", amd_model)
+            icerik = _llm_call_ic(prompt, max_deneme=4, fallback_on_fail=False,
+                                  sirasi=("AMD",))
+            if icerik and icerik.strip():
+                if _derin_dongu_var(icerik):
+                    son_hata = "tekrar dongusu (AMD)"
+                    logger.warning("[Makro Analiz] AMD tekrar dongusune girdi; GLM yedegine geciliyor.")
+                else:
+                    icerik = rapor_son_islem(icerik)
+                    return _metin_dogrula_ve_kaydet(
+                        icerik, " / makro analiz", snapshot=snapshot)
+            else:
+                son_hata = "bos yanit (AMD)"
+        except Exception as e:
+            son_hata = str(e)[:200]
+            logger.warning("[Makro Analiz] AMD basarisiz: %s; GLM yedegine geciliyor.", son_hata)
+
     denenecekler = ([model] + (["glm-4.5-flash"] if model != "glm-4.5-flash" else [])
                     if glm_istemci is not None else [])
     for deneme, mdl in enumerate(denenecekler):
