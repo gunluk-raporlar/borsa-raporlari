@@ -65,6 +65,11 @@ BEA_KOK = "https://apps.bea.gov/api/data/"
 # account" olan budur (25 Eyl saglik kontrolu degeri ile TV -226.8 karsilastirilir).
 CARI_GOSTERGE = "BalCurrAcct"
 
+# BEA ITA `Frequency` degerleri (A/Q/M). ITA istek bunu ister; verilmezse
+# yanit 200 gelir ama `Results.Data` bos olur.
+_BEA_FREKANS = {"aylık": "M", "üç aylık": "Q", "yıllık": "A",
+                "günlük": "A", "haftalık": "A"}
+
 # Birim gosterge bayat sayilir (ornek gunune gore, gun). TV satiri esittir
 # YAYIN tarihi, resmi veri esittir VERI donemi; bu yuzden ikinci kontrol
 # (_taze_mi icinde) TV'nin kaynak_periyot'uyla yapilir.
@@ -191,6 +196,10 @@ def _donem_cevir(kod, frekans):
     if not metin:
         return None
     m = re.fullmatch(r"(\d{4})-Q([1-4])", metin, re.IGNORECASE)
+    if m:
+        return _ay_sonu(int(m.group(1)), int(m.group(2)) * 3)
+    # BEA ITA "TimePeriod" bicimi: 2026Q2 (Q once degil sonda).
+    m = re.fullmatch(r"(\d{4})[Qq]([1-4])", metin)
     if m:
         return _ay_sonu(int(m.group(1)), int(m.group(2)) * 3)
     m = re.fullmatch(r"[Qq]([1-4])\s+(\d{4})", metin)
@@ -627,10 +636,16 @@ def _bea(pin, tarih):
     if not kod:
         raise ResmiHata("BEA cari denge indikator kodu kesif bekliyor",
                         durum="kesif")
-    sorgu = urllib.parse.urlencode({
+    parametreler = {
         "UserID": anahtar, "method": "GetData",
         "datasetname": pin.get("veri_seti", "ITA"), "Indicator": kod,
-        "Year": "last", "ResultFormat": "JSON"})
+        "Year": "last", "ResultFormat": "JSON"}
+    # ITA istek `Frequency` ister (A/Q/M); verilmezse yanit bos doner ve
+    # `BEA veri yok:` bos aciklamali hatayla kalir.
+    frek = _BEA_FREKANS.get(str(pin.get("frekans") or ""))
+    if frek:
+        parametreler["Frequency"] = frek
+    sorgu = urllib.parse.urlencode(parametreler)
     ham = _istek(f"{BEA_KOK}?{sorgu}", anahtar=anahtar,
                  etiket="BEA " + pin.get("veri_seti", "ITA"))
     if not ham.strip():
@@ -640,9 +655,17 @@ def _bea(pin, tarih):
         veri = json.loads(ham)
     except ValueError:
         raise ResmiHata("BEA JSON degil") from None
-    ham_veri = ((veri.get("BEAAPI") or {}).get("Results") or {}).get("Data")
+    bea = veri.get("BEAAPI") or {}
+    ham_veri = (bea.get("Results") or {}).get("Data")
     if not isinstance(ham_veri, list) or not ham_veri:
-        hata = ((veri.get("BEAAPI") or {}).get("Error") or {}).get("APIErrorDescription") or ""
+        hata = str((bea.get("Error") or {}).get("APIErrorDescription") or "")
+        if not hata:
+            hata = str((bea.get("Error") or {}).get("APIErrorCode") or "")
+        if not hata:
+            # Yanit 200 ama `Data` yok: hangi anahtarlara bakilmali gorunsun.
+            anahtarlar = sorted((bea.get("Results") or {}).keys())
+            hata = ("Data yok; Results=" + ",".join(anahtarlar)
+                    if anahtarlar else "Results yok")
         raise ResmiHata(f"BEA veri yok: {hata}", durum="veri")
     gozlemler = []
     for it in ham_veri:
