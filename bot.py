@@ -864,9 +864,9 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
         try:
             logger.info("LLM cagrisi: %s model=%s deneme=%d/%d", etiket, model, deneme, max_deneme)
 
-            # Z.ai GLM'de dusunme (thinking) modu kapatilmazsa token akip
-            # gecikme/kotu cikti riski artiyor; kalan saglayicilara gonderilmez.
-            ek = {"extra_body": {"thinking": {"type": "disabled"}}} if etiket == "ZAI" else {}
+            # Z.ai glm-5.3-flash daima dusunur; API "disabled" kabul etmiyor
+            # (400/1210: use low, high, or max). Kota icin en ucuzu "low".
+            ek = {"extra_body": {"thinking": {"type": "low"}}} if etiket == "ZAI" else {}
             resp = saglayici.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
@@ -957,7 +957,7 @@ def _zai_call_ic(prompt):
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.4,
                     max_tokens=8000,
-                    extra_body={"thinking": {"type": "disabled"}},
+                    extra_body={"thinking": {"type": "low"}},
                 )
                 icerik = resp.choices[0].message.content or ""
                 if not icerik.strip():
@@ -2711,7 +2711,7 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
                 max_tokens=8000,
                 # GLM'in dusunme modunu kapatmak icin ozel parametre SDK'ya
                 # extra_body ile gonderilir; dogrudan kwarg hata verir.
-                extra_body={"thinking": {"type": "disabled"}},
+                extra_body={"thinking": {"type": "low"}},
             )
             icerik = resp.choices[0].message.content or ""
             if icerik.strip():
@@ -2856,7 +2856,7 @@ Biçim kuralları (zorunlu):
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.4,
                 max_tokens=8000,
-                extra_body={"thinking": {"type": "disabled"}},
+                extra_body={"thinking": {"type": "low"}},
             )
             icerik = resp.choices[0].message.content or ""
             if icerik.strip():

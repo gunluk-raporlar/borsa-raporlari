@@ -566,9 +566,10 @@ class Cevirmen:
             "temperature": 0.2,
         }
         # Z.AI: glm-5.3 ailesi dusunmeyi kapatmiyor (kod 1210) -> alani hic gondermeyelim.
-        # Digerlerinde ceviri icin dusunme kapali (hiz + token tasarrufu).
-        if "z.ai" in url and not model.startswith("glm-5.3"):
-            istek_govdesi["thinking"] = {"type": "disabled"}
+        # glm-5.3 ailesi daima dusunur; "disabled" 400/1210 verir -> dusuk
+        # dusunme (kota icin en ucuzu). Diger modellerde dusunme kapali.
+        if "z.ai" in url:
+            istek_govdesi["thinking"] = {"type": "low" if model.startswith("glm-5.3") else "disabled"}
         govde = json.dumps(istek_govdesi).encode("utf-8")
         istek = urllib.request.Request(url, data=govde, headers={
             "Content-Type": "application/json",
