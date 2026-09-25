@@ -404,12 +404,11 @@ class Cevirmen:
         # 1) Z.AI (GLM) — kullanicinin kayitli anahtari; bot.py ile ayni uc ve modeller
         zai_anahtar = os.environ.get("ZAI_API_KEY")
         if zai_anahtar:
-            # Not: 4.5/4.7 ailesi cok hata urettigi icin 5.3 ailesi once denenir
-            # (bot.py'deki ZAI_MODEL_TERCIH ile ayni siralar). ZAI_MODELS
-            # (virgullu) ile birden fazla model denenebilir; test modu bunlari sirayla olcer.
+            # Not: 4.5/4.7 ailesi cok hata/uydurma yaptigi icin tamamen cikarildi;
+            # yalnizca 5.3 ailesi denenir (bot.py'deki ZAI_MODEL_TERCIH ile ayni).
+            # ZAI_MODELS (virgullu) ile birden fazla model denenebilir; test modu bunlari sirayla olcer.
             ham = os.environ.get("ZAI_MODELS") or os.environ.get("ZAI_MODEL") or "glm-5.3-flash,glm-5.3"
             zai_modeller = [m.strip() for m in ham.split(",") if m.strip()] or ["glm-5.3-flash"]
-            zai_modeller.append("glm-4.7-flash")
             zai_modeller = list(dict.fromkeys(zai_modeller))   # tekrarlari at
             uclar.append(("https://api.z.ai/api/paas/v4/chat/completions", zai_anahtar, zai_modeller))
         # 2) AMD Radeon Developer Cloud (bot.py'nin ana saglayicisi)

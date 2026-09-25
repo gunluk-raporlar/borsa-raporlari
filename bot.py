@@ -68,39 +68,40 @@ OR_MODELS = [m.strip() for m in os.environ.get("OR_MODELS", "").split(",") if m.
 NVID_API_KEY = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NIM_API_KEY", "")
 NVID_BASE_URL = os.environ.get("NVID_BASE_URL", "https://integrate.api.nvidia.com/v1")
 NVID_MODELS = [m.strip() for m in os.environ.get("NVID_MODELS", "").split(",") if m.strip()]
+
+# Besinci saglayici: Z.ai (GLM) — kullanicinin ucretli anahtari; ucretsiz
+# saglayicilarin ortak sunuculari sikistiginda kaliteli ve stabil alternativa.
+ZAI_API_KEY = os.environ.get("ZAI_API_KEY", "")
 NVID_MODEL_TERCIH = [
     # Sira CANLI test ile dogrulandi (2026-09-25): once hizli+calisan modeller.
+    # Kalite politikasi (2026-09): dusuk parametreli modeller (gemma-4-31b,
+    # gpt-oss-20b) uydurma yaptigi icin cikarildi; yalnizca buyuk modeller.
     "nemotron-3-ultra-550b-a55b",     # ~550B MoE  (OK, 0.9 sn)
     "nemotron-3-super-120b-a12b",     # 120B MoE   (OK, 7.5 sn)
-    "glm-5.3",                        # OK, 4.7 sn
+    "glm-5.3",                        # OK, 4.7 sn (alt dize eslesmesi glm-5.3-flash'i da yakalar — istenen)
     "kimi-k3",
     "kimi-k2.6",
-    "gemma-4-31b",
-    "gpt-oss-20b",
 ]  # NOT: "deepseek-v4.1-flash" NIM'de 30 sn timeout veriyor, "llama-3.1-nemotron-70b" 404; cikarildi.
 
 # Model emekleme durumlarina karsi otomatik secim icin tercih siralari
 # (icerik eslesmesiyle bulunur; saglayici tam adlandirmayi degistirse de calisir).
-GROQ_MODEL_TERCIH = ["gpt-oss-120b", "llama-4-maverick", "llama-4-scout", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
+# Kalite politikasi (2026-09 kullanici karari): dusuk parametreli modeller
+# uydurma yaptigi icin TUM havuzlarda cikarildi; yalnizca buyuk modeller.
+GROQ_MODEL_TERCIH = ["gpt-oss-120b", "llama-4-maverick", "llama-3.3-70b-versatile"]
 CF_MODEL_TERCIH = ["llama-3.3-70b-instruct-fp8-fast", "llama-4-scout", "llama-3.3-70b-instruct", "llama-3.1-8b-instruct"]
 OR_MODEL_TERCIH = [
     "nemotron-3-ultra-550b-a55b",   # ~550B MoE (en buyuk ucretsiz)
     "nemotron-3-super-120b-a12b",   # ~120B MoE
     "nemotron-3.5-lightning",       # 1M baglam
     "glm-5.2",                      # Z.ai GLM-5.2 (ucretsiz)
-    "gemma-4-31b",
-    "gemma-4-26b-a4b",
-    "qwen3.8-27b",
-    "inkling",                      # 1M baglam
-    "ling-3.0-flash-fin",
     "nex-n2.5-pro",
-]  # 2026-09 ucretsiz kadro: yuksek parametreli modeller once
+    "inkling",                      # 1M baglam ("inkling-small" suzgecle elenir)
+]  # 2026-09: gemma-4-31b/26b, qwen3.8-27b, ling-3.0-flash-fin, inkling-small cikarildi (uydurma).
 
 # Z.ai (GLM) model tercih sirasi — bot.py'deki tum Z.ai cagrilari bunu kullanir.
-# 4.7/4.5 ailesi cok hata urettigi icin yalnizca son care olarak tutuldu;
-# 5.3 ailesi once denenir (2026-09 kullanici geri bildirimi).
+# 4.7/4.5 ailesi cok hata/uydurma yaptigi icin tamamen cikarildi (2026-09);
 # ZAI_MODEL ortam degiskeni tanimliysa her yerde tercih listesinin onune gecer.
-ZAI_MODEL_TERCIH = ["glm-5.3-flash", "glm-5.3", "glm-4.7-flash"]
+ZAI_MODEL_TERCIH = ["glm-5.3-flash", "glm-5.3"]
 
 if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY and not OR_API_KEY and not NVID_API_KEY:
     raise SystemExit("AMD/ALT/CF/OR/NVIDIA API anahtarlarindan en az biri ayarlanmali!")
@@ -111,7 +112,8 @@ if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY and not OR_API_KEY and
 AMD_MODEL = os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")
 
 # Opsiyonel: virgulle ayrilmis fallback modeller (environment ile kontrol edilebilir)
-AMD_FALLBACK_MODELS = [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "Qwen3.8-Flash-Next").split(",") if m.strip()]  # MiniCPM5-1B cikarildi: Turkce raporu tasiyamiyor, talimat eko + Ingilizce karistirma yapiyor
+# GLM-5.3-Flash AMD galerisinde mevcut ve canli testte sorunsuz (2026-09 panel kaydi).
+AMD_FALLBACK_MODELS = [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "Qwen3.8-Flash-Next,GLM-5.3-Flash").split(",") if m.strip()]  # MiniCPM5-1B cikarildi: Turkce raporu tasiyamiyor, talimat eko + Ingilizce karistirma yapiyor
 
 # Eger VLM (vision-language) modellerini explicit olarak kullanmak isterseniz bu environment'i 1 yapin
 AMD_INCLUDE_VLM = os.environ.get("AMD_INCLUDE_VLM", "0") == "1"
@@ -161,6 +163,13 @@ nvid_client = OpenAI(
     timeout=240.0,
     max_retries=0,
 ) if NVID_API_KEY else None
+
+zai_client = OpenAI(
+    api_key=ZAI_API_KEY,
+    base_url="https://api.z.ai/api/paas/v4/",
+    timeout=300.0,
+    max_retries=1,
+) if ZAI_API_KEY else None
 
 # Takip edilen BIST30 hisseleri (Guncel liste)
 HISSELER = [
@@ -805,16 +814,17 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
 
     max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "8000"))
 
-    # Deneme sirasi: AMD (ana) -> OpenRouter (ucretsiz) -> Groq (ucretsiz).
-    # Cloudflare Workers AI metin uretimi kaldirildi (parali/kullanilmiyor);
-    # yalnizca ucretsiz saglayicilar yedek. sirasi ile oncelik degistirilebilir.
-    sirasi = sirasi or ("AMD", "NVID", "OR", "YEDEK")
+    # Deneme sirasi: AMD (ucretsiz ana) -> ZAI (kullanicinin GLM anahtari;
+    # ucretsiz ortak sunucular sikistiginda kaliteli/stabil ikinci sans) ->
+    # NVIDIA -> OpenRouter -> Groq. sirasi ile oncelik degistirilebilir.
+    sirasi = sirasi or ("AMD", "ZAI", "NVID", "OR", "YEDEK")
     havuzlar = {
         "AMD": (client, AMD_MODEL_LIST or [AMD_MODEL]),
+        "ZAI": (zai_client, ZAI_MODEL_TERCIH),
         "NVID": (nvid_client, _havuz_modelleri(nvid_client, NVID_MODELS, NVID_MODEL_TERCIH, "NVIDIA") if nvid_client else NVID_MODELS),
         "YEDEK": (alt_client, _havuz_modelleri(alt_client, ALT_MODELS, GROQ_MODEL_TERCIH, "Groq") if alt_client else ALT_MODELS),
         "OR": (or_client, _havuz_modelleri(or_client, OR_MODELS, OR_MODEL_TERCIH, "OpenRouter",
-                                           suzgec=lambda m: m.endswith(":free")) if or_client else OR_MODELS),
+                                           suzgec=lambda m: m.endswith(":free") and "small" not in m) if or_client else OR_MODELS),
     }
     istekler = []
     kuyruklar = []
@@ -853,11 +863,15 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
         try:
             logger.info("LLM cagrisi: %s model=%s deneme=%d/%d", etiket, model, deneme, max_deneme)
 
+            # Z.ai GLM'de dusunme (thinking) modu kapatilmazsa token akip
+            # gecikme/kotu cikti riski artiyor; kalan saglayicilara gonderilmez.
+            ek = {"extra_body": {"thinking": {"type": "disabled"}}} if etiket == "ZAI" else {}
             resp = saglayici.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.3,
                 max_tokens=max_tokens,
+                **ek,
             )
             secim = resp.choices[0]
             icerik = secim.message.content or ""
