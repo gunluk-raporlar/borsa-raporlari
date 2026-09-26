@@ -1,0 +1,36 @@
+# Borsa Raporları
+
+> Yapay zeka destekli günlük BIST 30 analiz platformu: teknik tarama ve osilatör sinyalleri, model portföy, makroekonomik değerlendirme, günlük piyasa raporları ve sesli bülten. Raporlar her iş günü 08:00 TR saatinde güncellenir.
+
+İçerik Türkçedir; İngilizce, Almanca, Rusça ve Çince sürümleri de aynı yapıda sunulur. Tüm içerik bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.
+
+## Günlük içerik
+
+- [BIST 30 Günlük Raporlar](https://borsa-raporlari.pages.dev/): günün özeti, endeks durumu ve rapor arşivi
+- [Günlük Raporlar](https://borsa-raporlari.pages.dev/reports/): tarih bazlı günlük piyasa raporları
+- [Derin Analiz](https://borsa-raporlari.pages.dev/derin-analiz): günlük derin piyasa analizi
+- [Makroekonomik Değerlendirme](https://borsa-raporlari.pages.dev/makro-analiz): makro göstergeler ve yorum
+- [Teknik Tarama](https://borsa-raporlari.pages.dev/teknik-analiz): BIST 30 teknik tarama sonuçları
+- [Borsapy Sinyalleri](https://borsa-raporlari.pages.dev/borsapy-analiz): hisse bazlı sinyal tablosu
+- [Sinyal Karnesi](https://borsa-raporlari.pages.dev/sinyal-karnesi): AL sinyallerinin backtest performansı
+- [Deneme Portföyü](https://borsa-raporlari.pages.dev/portfolio): 100.000 TL sanal model portföy
+- [Hafta Sonu Gündemi](https://borsa-raporlari.pages.dev/haftasonu): hafta içi gelişmelerin değerlendirmesi
+
+## Hisse ve veri
+
+- [Hisse Sayfaları](https://borsa-raporlari.pages.dev/hisse/): BIST 30 hisselerinin her biri için teknik görünüm
+- [Ekonomik Takvim](https://borsa-raporlari.pages.dev/takvim): yaklaşan ekonomik veriler ve etkinlikler
+- [Haber Arşivi](https://borsa-raporlari.pages.dev/haberler): piyasa haberleri
+- [Şirket Haberleri](https://borsa-raporlari.pages.dev/sirket-haberleri): şirket bazlı haberler
+
+## Kaynaklar
+
+- [Borsa Sözlüğü](https://borsa-raporlari.pages.dev/sozluk): borsa terimleri sözlüğü
+- [Terimler ve Tanımlar](https://borsa-raporlari.pages.dev/terimler): teknik ve piyasa terimleri
+- [Muhasebe Terimleri](https://borsa-raporlari.pages.dev/muhasebe-terimleri): finansal tablo terimleri
+- [Radyo / Podcast](https://borsa-raporlari.pages.dev/radyo/): günlük piyasa bülteninin sesli sürümü
+
+## Diğer diller
+
+- [English](https://borsa-raporlari.pages.dev/en/) · [Deutsch](https://borsa-raporlari.pages.dev/de/) · [Русский](https://borsa-raporlari.pages.dev/ru/) · [中文](https://borsa-raporlari.pages.dev/zh/)
+- [Site Haritası](https://borsa-raporlari.pages.dev/sitemap.xml): tüm sayfaların listesi

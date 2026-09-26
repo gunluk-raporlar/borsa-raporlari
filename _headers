@@ -7,6 +7,7 @@
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Link: <https://borsa-raporlari.pages.dev/llms.txt>; rel="describedby", <https://borsa-raporlari.pages.dev/sitemap.xml>; rel="sitemap"
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   Content-Security-Policy: default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; img-src 'self' https: data: blob:; connect-src 'self' https: wss:; font-src 'self' https: data:; frame-src 'self' https:; object-src 'none'; base-uri 'self'
 
@@ -25,4 +26,6 @@
 /favicon.svg
   Cache-Control: public, max-age=86400
 /favicon-120.png
+  Cache-Control: public, max-age=86400
+/llms.txt
   Cache-Control: public, max-age=86400
