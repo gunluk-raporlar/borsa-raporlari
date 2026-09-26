@@ -3867,9 +3867,6 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     if not aciklama:
         aciklama = "Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi."
     ld_ek_html = f'<script type="application/ld+json">{ld_ek}</script>' if ld_ek else ""
-    favicon = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E"
-               "%3Crect width='100' height='100' rx='18' fill='%230f172a'/%3E"
-               "%3Ctext y='.9em' x='12' font-size='72'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E")
     ld_json = json.dumps({
         "@context": "https://schema.org", "@type": "WebPage", "name": title,
         "description": aciklama, "url": tam_url, "inLanguage": "tr",
@@ -3883,7 +3880,8 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <title>{title}</title>
 <meta name="description" content="{aciklama}">
 <link rel="canonical" href="{tam_url}">
-<link rel="icon" href="{favicon}">
+<link rel="icon" href="/favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{SITE_ADI}">
 <meta property="og:title" content="{title}">

@@ -14,7 +14,7 @@ for d in hisse reports radyo haftasonu haftasonu-egitimi en de ru zh; do
 done
 
 # Kok dizindeki site dosyalari
-cp *.html *.css *.json *.png *.svg *.xml *.txt _headers dist/ 2>/dev/null || true
+cp *.html *.css *.json *.png *.svg *.xml *.txt _headers _redirects dist/ 2>/dev/null || true
 
 # Site disi metin dosyalari
 rm -f dist/joblog.txt dist/requirements.txt

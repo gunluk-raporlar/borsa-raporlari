@@ -1,0 +1,6 @@
+# Yandex botlarinin yanlis birlestirdigi cift-URL yollarini dogru sayfaya yonlendir.
+# Ornek hatali taranan yol: /https://borsa-raporlari.pages.dev/hisse/GUBRF
+# Botlar // 'yi bazen / 'ye indirger; iki bicim de kapsanir.
+/https://borsa-raporlari.pages.dev/*  /:splat  301
+/https:/borsa-raporlari.pages.dev/*   /:splat  301
+/http://borsa-raporlari.pages.dev/*   /:splat  301

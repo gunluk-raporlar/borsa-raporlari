@@ -1,0 +1,39 @@
+name: IndexNow Bildirimi
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: true
+
+jobs:
+  bildir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # IndexNow anahtar dosyasini dogrulamak icin siteye gidecek;
+      # Cloudflare Pages deploy'u bitsin diye bekliyoruz.
+      - name: Cloudflare Pages deploy'unu bekle
+        run: sleep 180
+
+      - name: Degisen sayfalari IndexNow'a bildir
+        env:
+          ONCEKI_SHA: ${{ github.event.before }}
+          YENI_SHA: ${{ github.sha }}
+        run: python indexnow_ping.py --before "$ONCEKI_SHA" --after "$YENI_SHA"
