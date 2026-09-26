@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      tum_sayfalar:
+        description: "Diff yerine sitemap'teki tum URL'leri gonder"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -15,7 +20,7 @@ concurrency:
 jobs:
   bildir:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Depoyu indir
         uses: actions/checkout@v4
@@ -36,4 +41,8 @@ jobs:
         env:
           ONCEKI_SHA: ${{ github.event.before }}
           YENI_SHA: ${{ github.sha }}
-        run: python indexnow_ping.py --before "$ONCEKI_SHA" --after "$YENI_SHA"
+          TUM_SAYFALAR: ${{ inputs.tum_sayfalar }}
+        run: |
+          EK=""
+          [ "$TUM_SAYFALAR" = "true" ] && EK="--all"
+          python indexnow_ping.py --before "$ONCEKI_SHA" --after "$YENI_SHA" $EK

@@ -14,6 +14,7 @@ import json
 import re
 import subprocess
 import sys
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -73,20 +74,31 @@ def gonder(url_listesi, dry_run: bool) -> int:
         ENDPOINT, data=veri, method="POST",
         headers={"Content-Type": "application/json; charset=utf-8"},
     )
-    try:
-        with urllib.request.urlopen(istek, timeout=30) as cevap:
-            print("IndexNow yaniti:", cevap.status, cevap.read(200).decode(errors="replace"))
-    except urllib.error.HTTPError as h:
-        print(f"IndexNow hatasi: {h.code}", h.read(200).decode(errors="replace"))
-        if h.code == 403:
-            print("403: anahtar dosyasi sitede bulunamadi — deploy'un bittiginden emin olun.")
-        elif h.code == 429:
-            print("429: istek limiti asildi; bir sonraki kosuda denenecek.")
-        return 1
-    except urllib.error.URLError as u:
-        print("IndexNow'a ulasilamadi:", u.reason)
-        return 1
-    return 0
+    # 403: yeni anahtarin dogrulamasi henuz tamamlanmamis olabilir (gecici);
+    # 429 ve 5xx de gecici kabul edilir. 60 sn, 120 sn bekleyip yeniden dene.
+    for deneme in range(1, 4):
+        try:
+            with urllib.request.urlopen(istek, timeout=30) as cevap:
+                print("IndexNow yaniti:", cevap.status, cevap.read(200).decode(errors="replace"))
+                return 0
+        except urllib.error.HTTPError as h:
+            govde = h.read(200).decode(errors="replace")
+            print(f"IndexNow hatasi (deneme {deneme}/3): {h.code}", govde)
+            if h.code == 403:
+                print("403: anahtar dogrulamasi tamamlanmadi — SiteVerificationNotCompleted.")
+            elif h.code == 429:
+                print("429: istek limiti asildi.")
+            gecici = h.code == 403 or h.code == 429 or h.code >= 500
+        except urllib.error.URLError as u:
+            print(f"IndexNow'a ulasilamadi (deneme {deneme}/3):", u.reason)
+            gecici = True
+        if not gecici:
+            return 1
+        if deneme < 3:
+            bekleme = 60 * deneme
+            print(f"{bekleme} sn bekleyip tekrar denenecek...")
+            time.sleep(bekleme)
+    return 1
 
 
 def main():
