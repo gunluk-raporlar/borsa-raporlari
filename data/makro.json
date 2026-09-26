@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-09-25 20:47",
+ "guncelleme": "2026-09-26 20:45",
  "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + EVDS(5) + Resmi AB/ABD(25)",
  "gostergeler": [
   {
@@ -285,13 +285,13 @@
   {
    "ulke": "Türkiye",
    "ad": "Turist Sayısı (yıllık)",
-   "deger": -0.3,
+   "deger": -0.03,
    "birim": "%",
-   "donem": "2026-08-21",
+   "donem": "2026-09-25",
    "tahmin": null,
-   "onceki": -4.02,
+   "onceki": -0.3,
    "kaynak_baslik": "Tourist Arrivals YoY",
-   "kaynak_periyot": "Jul",
+   "kaynak_periyot": "Aug",
    "frekans": "aylık"
   },
   {
@@ -407,25 +407,25 @@
   {
    "ulke": "ABD",
    "ad": "Enflasyon Beklentisi (1 yıl)",
-   "deger": 3.6,
+   "deger": 4.6,
    "birim": "%",
-   "donem": "2026-09-08",
-   "tahmin": null,
-   "onceki": 3.6,
-   "kaynak_baslik": "Consumer Inflation Expectations",
-   "kaynak_periyot": "Aug",
+   "donem": "2026-09-25",
+   "tahmin": 4.6,
+   "onceki": 4.0,
+   "kaynak_baslik": "Michigan Inflation Expectations Final",
+   "kaynak_periyot": "Sep",
    "frekans": "aylık"
   },
   {
    "ulke": "ABD",
    "ad": "Enflasyon Beklentisi (5 yıl)",
-   "deger": 3.3,
+   "deger": 3.4,
    "birim": "%",
-   "donem": "2026-08-28",
-   "tahmin": 3.3,
+   "donem": "2026-09-25",
+   "tahmin": 3.4,
    "onceki": 3.3,
    "kaynak_baslik": "Michigan 5 Year Inflation Expectations Final",
-   "kaynak_periyot": "Aug",
+   "kaynak_periyot": "Sep",
    "frekans": "aylık"
   },
   {
@@ -451,20 +451,6 @@
    "kaynak_baslik": "PPI MoM",
    "kaynak_periyot": "Aug",
    "frekans": "aylık"
-  },
-  {
-   "ulke": "ABD",
-   "ad": "Politika faizi",
-   "deger": 4.0,
-   "birim": "%",
-   "donem": "2026-09-25",
-   "tahmin": 4.0,
-   "onceki": 4.0,
-   "kaynak_baslik": "FRED Fed fon ust siniri",
-   "kaynak_periyot": "2026-09-25",
-   "frekans": "olay",
-   "teyit": "FRED",
-   "kaynak_durumu": "FRED resmi verisi"
   },
   {
    "ulke": "ABD",
@@ -898,20 +884,6 @@
   },
   {
    "ulke": "Euro Bölgesi",
-   "ad": "Politika faizi",
-   "deger": 2.65,
-   "birim": "%",
-   "donem": "2026-09-25",
-   "tahmin": 2.65,
-   "onceki": 2.65,
-   "kaynak_baslik": "ECB MRO ana refinansman faizi",
-   "kaynak_periyot": "2026-09-25",
-   "frekans": "olay",
-   "teyit": "ECB",
-   "kaynak_durumu": "ECB resmi verisi"
-  },
-  {
-   "ulke": "Euro Bölgesi",
    "ad": "İşsizlik oranı",
    "deger": 6.4,
    "birim": "%",
@@ -1077,13 +1049,13 @@
   {
    "ulke": "Euro Bölgesi",
    "ad": "M3 Para Arzı (yıllık)",
-   "deger": 3.4,
+   "deger": 3.5,
    "birim": "%",
-   "donem": "2026-08-27",
-   "tahmin": 3.4,
-   "onceki": 3.3,
+   "donem": "2026-09-25",
+   "tahmin": 3.5,
+   "onceki": 3.4,
    "kaynak_baslik": "M3 Money Supply YoY",
-   "kaynak_periyot": "Jul",
+   "kaynak_periyot": "Aug",
    "frekans": "aylık"
   },
   {
@@ -1101,13 +1073,13 @@
   {
    "ulke": "Euro Bölgesi",
    "ad": "Şirketlere Krediler (yıllık)",
-   "deger": 4.4,
+   "deger": 4.2,
    "birim": "%",
-   "donem": "2026-08-27",
+   "donem": "2026-09-25",
    "tahmin": null,
-   "onceki": 4.0,
+   "onceki": 4.4,
    "kaynak_baslik": "Loans to Companies YoY",
-   "kaynak_periyot": "Jul",
+   "kaynak_periyot": "Aug",
    "frekans": "aylık"
   },
   {
@@ -1115,12 +1087,26 @@
    "ad": "Hanehalkına Krediler (yıllık)",
    "deger": 3.1,
    "birim": "%",
-   "donem": "2026-08-27",
-   "tahmin": 2.9,
-   "onceki": 3.0,
+   "donem": "2026-09-25",
+   "tahmin": 3.2,
+   "onceki": 3.1,
    "kaynak_baslik": "Loans to Households YoY",
-   "kaynak_periyot": "Jul",
+   "kaynak_periyot": "Aug",
    "frekans": "aylık"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "Politika faizi",
+   "deger": 4.0,
+   "birim": "%",
+   "donem": "2026-09-26",
+   "tahmin": 4.0,
+   "onceki": 4.0,
+   "kaynak_baslik": "FRED Fed fon ust siniri",
+   "kaynak_periyot": "2026-09-26",
+   "frekans": "olay",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
   },
   {
    "ulke": "ABD",
@@ -1135,6 +1121,20 @@
    "kaynak_periyot": "2026-06-30",
    "frekans": "üç aylık",
    "teyit": "FRED"
+  },
+  {
+   "ulke": "Euro Bölgesi",
+   "ad": "Politika faizi",
+   "deger": 2.65,
+   "birim": "%",
+   "donem": "2026-09-26",
+   "tahmin": 2.65,
+   "onceki": 2.65,
+   "kaynak_baslik": "ECB MRO ana refinansman faizi",
+   "kaynak_periyot": "2026-09-26",
+   "frekans": "olay",
+   "teyit": "ECB",
+   "kaynak_durumu": "ECB resmi verisi"
   },
   {
    "ulke": "Türkiye",
