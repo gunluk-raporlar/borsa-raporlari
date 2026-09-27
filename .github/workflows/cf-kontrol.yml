@@ -1,7 +1,7 @@
 name: CF Ayar Kontrol (tek seferlik)
 # Pages projesinin build ayarlarini okur — sirgala degil, workflow_dispatch ile
-# elle calistirilir. Sadece GUVENLI OLMAYAN ozellik bayraklarini yazdirir;
-# token ve tam proje JSON'i loglara asla yazilmaz (repo public).
+# elle calistirilir. Sadece guvenli olmayan yapisal bayraklar yazdirilir;
+# token ve deployment_configs (env degerleri) loglara asla yazilmaz (repo public).
 on:
   workflow_dispatch:
 permissions: {}
@@ -18,9 +18,5 @@ jobs:
           curl -s -H "Authorization: Bearer $CF_TOKEN" \
             "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT/pages/projects/gunluk-raporlar" \
             | jq '{basari: .success,
-                   hata: (.errors // [] | map(.message)),
-                   preview_deployments: (.result.build_config.preview_deployments_enabled // "bilinmiyor"),
-                   kaynak_bagli: (.result.source.type // "yok"),
-                   otomatik_deploy: (.result.source.config.deployments_enabled // "bilinmiyor"),
-                   production_deploy: (.result.source.config.production_deployments_enabled // "bilinmiyor"),
-                   production_branch: (.result.source.config.production_branch // "bilinmiyor")}'
+                   build_config: (.result.build_config // {}),
+                   source_config: (.result.source.config // {})}'
