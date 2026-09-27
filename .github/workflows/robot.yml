@@ -1,16 +1,21 @@
 name: Islem Robotu (Paper Trading)
 on:
   schedule:
-    # Hafta ici 16:15 UTC = 19:15 Turkiye saati: borsa kapandiktan (~18:10) sonra,
-    # gunun kapanis bariyle birlikte. Ayni bar tekrar islennmez (idempotent).
+    # Piyasa saatleri: hafta ici 07:00-15:30 UTC = 10:00-18:30 TR, her 30 dakikada
+    # canli fiyat kontrolu (stop/hedef gun icinde tetiklenebilir).
+    - cron: '*/30 7-15 * * 1-5'
+    # Kapanis kosusu: 16:15 UTC = 19:15 TR — gunun son ozkaynak noktasi/ozeti.
     - cron: '15 16 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write
+concurrency:
+  group: robot
+  cancel-in-progress: false
 jobs:
   robot:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 20
     steps:
       - name: Depoyu indir
         uses: actions/checkout@v4
@@ -31,6 +36,16 @@ jobs:
             echo "Degisiklik yok; commit atlanır."
             exit 0
           fi
-          git commit -m "Islem robotu guncellemesi (paper trading)"
+          # Gun ici kosulari [CI Skip] ile commit'lenir: durum gite yazilir ama
+          # Cloudflare Pages build TETIKLEMEZ (aylik 500 build kotasi korunur).
+          # Yalnizca kapanis kosusu (16:15 UTC = 19:15 TR, +kron gecikme payi)
+          # sayfayi gunun tam haliyle yeniden publish eder.
+          SAAT=$(date -u +%H%M)
+          if [ "$SAAT" -ge 1610 ] && [ "$SAAT" -lt 1700 ]; then
+            MSJ="Islem robotu kapanis guncellemesi"
+          else
+            MSJ="Islem robotu ara guncellemesi [CI Skip]"
+          fi
+          git commit -m "$MSJ"
           git pull --rebase -X theirs origin main
           git push origin main

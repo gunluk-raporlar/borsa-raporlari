@@ -2,24 +2,27 @@
 
 Gerçek para kullanmaz; sinyalleri simüle emirlerle işler, sonucu robot.html'de yayınlar.
 Kaldırmak için: robot.py, robot.html, data/robot/, .github/workflows/robot.yml silinir.
-Başka hiçbir dosyaya bağımlılığı yoktur (ortak CSS/linkler haricinde bot.py'den
-hiçbir fonksiyon çağrılmaz).
+Başka hiçbir dosyaya bağımlılığı yoktur.
 
-Katmanlar (her biri ayrı fonksiyon grubu):
-  1. VERI     : isyatirimhisse 300 günlük EOD kapanış; yfinance yedek kaynak
-  2. STRATEJI : SMA10/SMA30 kesişimi + RSI14 filtresi + SMA100 trend filtresi
-  3. RISK     : pozisyon boyutu, maks. pozisyon, stop-loss/hedef, günlük zarar limiti
-  4. OMS      : simüle fill (slippage + komisyon), gün bazlı idempotency
-  5. MUHASEBE : data/robot/durum.json (durum) + data/robot/islemler.jsonl (append-only)
-  6. DASHBOARD: robot.html (site stilini style.css'ten alır, kendi iskeletini basar)
+Calisma duzeni:
+  - Piyasa saatlerinde (h.i. 10:00-18:30 TR) her 30 dakikada bir kron kosar.
+  - Gostergeler gunun ILK kosusunda cekilen gunluk kapanis serisinden (yerel onbellek)
+    hesaplanir; piyasa acikken bugunun barı CANLI fiyattan (TradingView, ~15 dk
+    gecikmeli) gecici olarak eklenir ve sinyaller oyle degerlendirilir.
+  - Stop-loss / hedef gun icinde canlı fiyattan tetiklenir; AL/GUC'LU AL sinyali de
+    gun icinde kesisme olusursa ayni anda isleme donusebilir.
+  - Ozkaynak egrisi her kontrolda bir nokta kazanir (gun icinde hareket eder).
+  - Ayni fiyatlar tekrar gelirse (kapanis sonrasi tekrarlar, tatil gunleri) islem
+    ve nokta eklenmez; ayni hisse ayni gun satusa geri alinmaz.
 
-GitHub Actions kronu hafta içi 19:15 (TR) civarı, kapanış barı oluşmuşken çalışır.
+Katmanlar: VERI -> STRATEJI -> RISK -> OMS -> MUHASEBE -> DASHBOARD (asagida ayri).
 """
 import json
 import logging
 import math
 import os
 import time
+import urllib.request
 from datetime import datetime, timedelta, timezone as dt_timezone
 
 try:
@@ -43,6 +46,7 @@ HISSELER = [
 ]
 DURUM_YOL = "data/robot/durum.json"
 ISLEM_YOL = "data/robot/islemler.jsonl"
+GECMIS_DIR = "data/robot/gecmis"
 SAYFA_YOL = "robot.html"
 
 KAPITAL0 = 100_000.0        # sanal başlangıç sermayesi (TL)
@@ -50,18 +54,32 @@ POZISYON_ORAN = 0.12        # özkaynağın en fazla %12'si tek hisseye
 MAKS_POZISYON = 8           # aynı anda en fazla 8 farklı hisse
 STOP_ORAN = -0.07           # maliyetin %7 altında stop-loss
 HEDEF_ORAN = 0.15           # maliyetin %15 üstünde kâr alma
-GUNLUK_ZARAR_LIMITI = 0.03  # özkaynak bir günde %3 düşerse yeni alım durur
+GUNLUK_ZARAR_LIMITI = 0.03  # özkaynak dünkü kapanışa göre %3 düşerse yeni alım durur
 KOMISYON = 0.0006           # işlem başına %0,06 (BSMV dahil varsayım)
-KAYMA = 0.0005              # %0,05 slippage varsayımı (kapanıştan işlem)
+KAYMA = 0.0005              # %0,05 slippage varsayımı
 MIN_ISLEM_TL = 2_000.0      # bundan küçük işlem açılmaz
 VERI_GUN = 300              # SMA100 + tampon için ~200 işlem günü
+OZKAYIT_GUN = 14            # eğride son 14 gün saklanır (ilk nokta hep kalır)
 
 SITE_URL = "https://borsa-raporlari.pages.dev/"
 
 
+def _simdi():
+    return datetime.now(TZ)
+
+
+def piyasa_acik_mi(simdi=None):
+    """BIST sürekli işlem oturumu kabaca 10:00-18:00 TR; tampon için 09:45-18:35."""
+    s = simdi or _simdi()
+    if s.weekday() >= 5:
+        return False
+    dk = s.hour * 60 + s.minute
+    return 9 * 60 + 45 <= dk <= 18 * 60 + 35
+
+
 # ---------- 1. VERI KATMANI ----------
 def _serileri_duzelt(ham):
-    """{hisse: Series(tarih->kapanis)} sozlugunu {hisse: (tarihler, fiyatlar)} bicimine getirir."""
+    """{hisse: Series} -> {hisse: (tarihler, fiyatlar)}"""
     out = {}
     for h, s in ham.items():
         if s is None or len(s) == 0:
@@ -70,14 +88,13 @@ def _serileri_duzelt(ham):
         s = s[s > 0]
         if s.empty:
             continue
-        tarihler = [str(t)[:10] for t in s.index]
-        out[h] = (tarihler, [float(v) for v in s.values])
+        out[h] = ([str(t)[:10] for t in s.index], [float(v) for v in s.values])
     return out
 
 
 def veri_cek():
-    """BIST 30 icin gunluk kapanis serilerini doner: {hisse: (tarihler, fiyatlar)}."""
-    bugun = datetime.now(TZ)
+    """Gunluk kapanis serilerini kaynaktan ceker: {hisse: (tarihler, fiyatlar)}."""
+    bugun = _simdi()
     bas = (bugun - timedelta(days=VERI_GUN)).strftime("%d-%m-%Y")
     bit = bugun.strftime("%d-%m-%Y")
     ham = {}
@@ -99,7 +116,6 @@ def veri_cek():
                         seri = seri[seri > 0]
                         if not seri.empty:
                             ham[h] = seri
-        # kutuphanenin zaman asimina takilan semboller icin tek tek ek deneme
         eksikler = [h for h in HISSELER if h not in ham]
         for i, h in enumerate(eksikler):
             try:
@@ -142,6 +158,78 @@ def veri_cek():
     return seriler
 
 
+def gecmis_oku_ya_da_cek():
+    """Gunluk kapanis serilerini GUNLUK yerel onbellekten okur; yoksa ceker ve kaydeder.
+
+    Boylece 30 dakikalik kron kosulari kaynagi her seferinde yormaz; gun icindeki
+    kosular onbellek + canli fiyatla calisir. Onbellekler son 3 gun tutulur."""
+    bugun = _simdi().strftime("%Y-%m-%d")
+    os.makedirs(GECMIS_DIR, exist_ok=True)
+    yol = os.path.join(GECMIS_DIR, bugun + ".json")
+    if os.path.exists(yol):
+        try:
+            with open(yol, encoding="utf-8") as f:
+                ham = json.load(f)
+            log.info("[VERI] Gecmis onbellekten yuklendi (%d hisse, %s).", len(ham), bugun)
+            return {h: (v[0], v[1]) for h, v in ham.items()}
+        except Exception:
+            pass
+    seriler = veri_cek()
+    if len(seriler) >= 5:
+        try:
+            with open(yol, "w", encoding="utf-8") as f:
+                json.dump({h: [v[0], v[1]] for h, v in seriler.items()}, f, ensure_ascii=False)
+        except OSError:
+            log.warning("[VERI] Gecmis onbellek yazilamadi: %s", yol)
+    # eski onbellekleri temizle (son 3 gun kalsin)
+    eski_sinir = (_simdi() - timedelta(days=3)).strftime("%Y-%m-%d")
+    for fn in os.listdir(GECMIS_DIR):
+        if fn.endswith(".json") and fn[:-5] < eski_sinir:
+            try:
+                os.remove(os.path.join(GECMIS_DIR, fn))
+            except OSError:
+                pass
+    return seriler
+
+
+def canli_fiyatlar():
+    """TradingView scanner ile 30 hissenin son islem fiyatini TEK istekte alir.
+
+    Oturum acikken son islem fiyati (~15 dk gecikmeli), kapaliyken kapanisi verir.
+    Basarisizsa bos sozluk doner; robot o zaman son kapanis verisiyle calisir."""
+    try:
+        govde = {"symbols": {"tickers": ["BIST:" + h for h in HISSELER], "query": {"types": []}},
+                 "columns": ["name", "close"]}
+        istek = urllib.request.Request(
+            "https://scanner.tradingview.com/turkey/scan",
+            data=json.dumps(govde).encode(),
+            headers={"User-Agent": "Mozilla/5.0", "Content-Type": "application/json"})
+        with urllib.request.urlopen(istek, timeout=25) as r:
+            ham = json.loads(r.read().decode())
+        out = {}
+        for satir in ham.get("data", []):
+            d = satir.get("d") or []
+            if len(d) >= 2 and d[0] and d[1] and float(d[1]) > 0:
+                out[str(d[0])] = float(d[1])
+        return out
+    except Exception as e:
+        log.warning("[VERI] TradingView canli fiyat alinamadi: %s", str(e)[:120])
+        return {}
+
+
+def seri_hazirla(seriler, canli, bugun, ekle):
+    """Piyasa acikken bugunun barini CANLI fiyattan gecici olarak serilere ekler."""
+    if not (ekle and canli):
+        return seriler
+    out = {}
+    for h, (t, f) in seriler.items():
+        if h in canli and (not t or t[-1] < bugun):
+            out[h] = (t + [bugun], f + [float(canli[h])])
+        else:
+            out[h] = (t, f)
+    return out
+
+
 # ---------- 2. STRATEJI MOTORU ----------
 def _sma(degerler, n):
     if len(degerler) < n:
@@ -150,7 +238,7 @@ def _sma(degerler, n):
 
 
 def _rsi(degerler, n=14):
-    """Wilder duzlestirmeli RSI; hesaplanamıyorsa None."""
+    """Wilder duzlestirmeli RSI; hesaplanamiyorsa None."""
     if len(degerler) < n + 1:
         return None
     kazanc, kayip = [], []
@@ -176,7 +264,7 @@ def strateji_sinyalleri(seriler):
     AL  : son barda SMA10, SMA30'u yukari kesti  VE RSI14 45-75 arasinda
           VE fiyat SMA100'un uzerinde (trend filtresi).
     SAT : son barda SMA10, SMA30'u asagi kesti (stop/hedef OMS katmaninda da tetiklenir).
-    """
+    Piyasa acikken son bar CANLI fiyattan gecici bardir (gun ici kesisim yakalanir)."""
     sinyaller = {}
     for h, (tarihler, fiyatlar) in seriler.items():
         if len(fiyatlar) < 110:
@@ -187,10 +275,6 @@ def strateji_sinyalleri(seriler):
         sma100 = _sma(f, 100)
         rsi = _rsi(f)
         # Kesisim OLAYI (durum degil): onceki bardaki iliski degisir.
-        # Golden cross : onceki bar s10<=s30 iken son bar s10>s30
-        # Death  cross : onceki bar s10>=s30 iken son bar s10<s30
-        # (Onceki bar kosulu olmadan 'SMA10 zaten asagida' durumu her gun
-        # SAT uretir ve sinyal gunlugu gurultuye bogulur.)
         onceki_ok = s10[0] is not None and s30[0] is not None and s10[1] is not None and s30[1] is not None
         alt_kesti = onceki_ok and s10[0] <= s30[0]
         usti_cikti = onceki_ok and s10[1] > s30[1]
@@ -258,31 +342,44 @@ def ozkaynak(durum, fiyatlar):
     return toplam
 
 
+def ozkayit_guncelle(durum, sinyaller):
+    """Bu kontrolun ozkaynak degerini egrisine zaman damgali ekler (ayni dakikada uzerine yazar)."""
+    fiyatlar = {h: s["son_fiyat"] for h, s in sinyaller.items()}
+    deger = round(ozkaynak(durum, fiyatlar), 2)
+    simdi = _simdi().strftime("%Y-%m-%dT%H:%M")
+    k = durum["ozkayit"]
+    if k and k[-1][0] == simdi:
+        k[-1][1] = deger
+    elif k and k[-1][0] > simdi:
+        return
+    else:
+        k.append([simdi, deger])
+    sinir = (_simdi() - timedelta(days=OZKAYIT_GUN)).strftime("%Y-%m-%d")
+    durum["ozkayit"] = [k[0]] + [p for p in k[1:] if p[0][:10] >= sinir]
+
+
 # ---------- 3. RISK + 4. OMS ----------
 def risk_ve_oms(durum, sinyaller):
-    """Yeni barda sinyalleri risk kurallarindan gecirip simule emirlere cevirir.
+    """Bu kontrolda sinyalleri risk kurallarindan gecirip simule emirlere cevirir.
 
-    Donus: (yeni_islem_sayisi, notlar) — notlar dashboard'da sinyal panosunu besler.
-    """
+    - Stop-loss / hedef / kesisim-asagisi cikislari CANLI fiyattan tetiklenir.
+    - AL sinyali gun icinde de isleme donusebilir (gecici bar ile).
+    - Ayni hisse ayni gun satusa tekrar alinmaz (bugun_satilan listesi).
+    - Dunku kapanisa gore gunluk %3 zarar varsa yeni alimlar durur.
+    Donus: (emir_sayisi, notlar)."""
     fiyatlar = {h: s["son_fiyat"] for h, s in sinyaller.items()}
-    tarih = max(s["tarih"] for s in sinyaller.values())
-
-    # Idempotency: ayni bar bir kez islenir (tekrar calistirmalar yeni emir uretmez)
-    if durum.get("son_bar_tarihi") == tarih:
-        return 0, ["Bu bar onceki kosuda islendi; yeni emir acilmadi."]
-
-    onceki_ozkaynak = durum["ozkayit"][-1][1] if durum["ozkayit"] else KAPITAL0
     oz = ozkaynak(durum, fiyatlar)
+    saat = _simdi().strftime("%H:%M")
     notlar = []
     islem_sayisi = 0
 
-    # --- RISK: gunluk zarar limiti — yeni alimlar duraklatilir (satislar her zaman serbest)
-    duraklatildi = oz < onceki_ozkaynak * (1.0 - GUNLUK_ZARAR_LIMITI)
-    if duraklatildi:
-        dusus = (1.0 - oz / onceki_ozkaynak) * 100.0
-        notlar.append(f"Günlük zarar limiti: özkaynak {dusus:.1f}% düştü — bugün yeni ALIM yapılmadı.")
+    onceki = float(durum.get("onceki_kapanis_ozkaynak", KAPITAL0))
+    duraklatildi = oz < onceki * (1.0 - GUNLUK_ZARAR_LIMITI)
+    if duraklatildi and onceki > 0:
+        dusus = (1.0 - oz / onceki) * 100.0
+        notlar.append(f"Günlük zarar freni: özkaynak dünkü kapanışa göre %{dusus:.1f} düştü — yeni ALIM yapılmıyor.")
 
-    # --- SATISLAR (once satar, nakit acilir): kesisim asagisi / stop / hedef
+    # --- SATISLAR (once satar, nakit acilir): canli fiyatta stop / hedef / kesisim
     for h, p in list(durum["pozisyonlar"].items()):
         s = sinyaller.get(h)
         if s is None:
@@ -292,9 +389,9 @@ def risk_ve_oms(durum, sinyaller):
         hedef_tetik = fiyat >= p["hedef"]
         if s["sinyal"] == "SAT" or stop_tetik or hedef_tetik:
             if stop_tetik and s["sinyal"] != "SAT":
-                gerekce = f"stop-loss: {p['stop']:.2f} seviyesine dokundu (%{STOP_ORAN * 100:.0f} kural)"
+                gerekce = f"stop-loss: {p['stop']:.2f} seviyesi canlı fiyatta delindi (%{STOP_ORAN * 100:.0f} kural)"
             elif hedef_tetik and s["sinyal"] != "SAT":
-                gerekce = f"hedef fiyat: {p['hedef']:.2f} seviyesine ulasti (+%{HEDEF_ORAN * 100:.0f} kural)"
+                gerekce = f"hedef fiyat: {p['hedef']:.2f} seviyesi canlı fiyatta ulaşıldı (+%{HEDEF_ORAN * 100:.0f} kural)"
             else:
                 gerekce = s["gerekce"]
             net = fiyat * (1.0 - KAYMA) * (1.0 - KOMISYON)
@@ -302,21 +399,23 @@ def risk_ve_oms(durum, sinyaller):
             kz = (net - p["maliyet"]) * p["lot"]
             durum["nakit"] += tutar
             del durum["pozisyonlar"][h]
+            durum.setdefault("bugun_satilan", []).append(h)
             islem_sayisi += 1
             durum["gerceklesen_kz"] = durum.get("gerceklesen_kz", 0.0) + kz
             islem_logla({
-                "tarih": tarih, "hisse": h, "yon": "SAT", "lot": p["lot"],
-                "fiyat": round(fiyat, 2), "tutar": round(tutar, 2),
-                "kz": round(kz, 2), "gerekce": gerekce,
+                "tarih": _simdi().strftime("%Y-%m-%d"), "saat": saat, "hisse": h,
+                "yon": "SAT", "lot": p["lot"], "fiyat": round(fiyat, 2),
+                "tutar": round(tutar, 2), "kz": round(kz, 2), "gerekce": gerekce,
                 "giris_tarihi": p["giris"], "nakit_sonra": round(durum["nakit"], 2),
             })
             log.info("[SAT] %s lot=%d fiyat=%.2f K/Z=%+.2f (%s)", h, p["lot"], fiyat, kz, gerekce)
 
-    # --- ALIMLAR: slot + nakit + boyut kurallari; adaylar en dusuk RSI'dan (asiri isinmamis) siralanir
+    # --- ALIMLAR: slot + nakit + boyut + gun ici koruma kurallari
     if not duraklatildi:
         adaylar = sorted(
             [(h, s) for h, s in sinyaller.items()
-             if s["sinyal"] == "AL" and h not in durum["pozisyonlar"]],
+             if s["sinyal"] == "AL" and h not in durum["pozisyonlar"]
+             and h not in durum.get("bugun_alinan", []) and h not in durum.get("bugun_satilan", [])],
             key=lambda x: x[1]["rsi"] if x[1]["rsi"] is not None else 100.0,
         )
         for h, s in adaylar:
@@ -329,7 +428,6 @@ def risk_ve_oms(durum, sinyaller):
             if lot < 1 or lot * fiyat < MIN_ISLEM_TL:
                 notlar.append(f"{h}: AL sinyali vardı ama nakit/boyut kuralı işlem açmaya yetmedi.")
                 continue
-            brut = lot * fiyat
             maliyet = fiyat * (1.0 + KAYMA) * (1.0 + KOMISYON)
             toplam = maliyet * lot
             if toplam > durum["nakit"]:
@@ -337,41 +435,25 @@ def risk_ve_oms(durum, sinyaller):
                 if lot < 1:
                     notlar.append(f"{h}: AL sinyali vardı ama komisyon sonrası nakit yetmedi.")
                     continue
-                maliyet = fiyat * (1.0 + KAYMA) * (1.0 + KOMISYON)
                 toplam = maliyet * lot
-                brut = lot * fiyat
             durum["nakit"] -= toplam
             durum["pozisyonlar"][h] = {
-                "lot": lot, "maliyet": round(maliyet, 4), "giris": tarih,
+                "lot": lot, "maliyet": round(maliyet, 4), "giris": _simdi().strftime("%Y-%m-%d"),
                 "stop": round(maliyet * (1.0 + STOP_ORAN), 2),
                 "hedef": round(maliyet * (1.0 + HEDEF_ORAN), 2),
             }
+            durum.setdefault("bugun_alinan", []).append(h)
             islem_sayisi += 1
             islem_logla({
-                "tarih": tarih, "hisse": h, "yon": "AL", "lot": lot,
-                "fiyat": round(fiyat, 2), "tutar": round(toplam, 2),
-                "kz": None, "gerekce": s["gerekce"],
-                "giris_tarihi": tarih, "nakit_sonra": round(durum["nakit"], 2),
+                "tarih": _simdi().strftime("%Y-%m-%d"), "saat": saat, "hisse": h,
+                "yon": "AL", "lot": lot, "fiyat": round(fiyat, 2),
+                "tutar": round(toplam, 2), "kz": None, "gerekce": s["gerekce"],
+                "giris_tarihi": _simdi().strftime("%Y-%m-%d"),
+                "nakit_sonra": round(durum["nakit"], 2),
             })
             log.info("[AL] %s lot=%d fiyat=%.2f (~%.0f TL) — %s", h, lot, fiyat, toplam, s["gerekce"])
 
-    durum["son_bar_tarihi"] = tarih
     return islem_sayisi, notlar
-
-
-def ozkayit_guncelle(durum, sinyaller):
-    """Bugunun (son barin) ozkaynak degerini egrisine yazar; ayni tarihte uzerine yazar."""
-    fiyatlar = {h: s["son_fiyat"] for h, s in sinyaller.items()}
-    if not sinyaller:
-        return
-    tarih = max(s["tarih"] for s in sinyaller.values())
-    deger = round(ozkaynak(durum, fiyatlar), 2)
-    if durum["ozkayit"] and durum["ozkayit"][-1][0] == tarih:
-        durum["ozkayit"][-1][1] = deger
-    elif durum["ozkayit"] and durum["ozkayit"][-1][0] > tarih:
-        return  # eski tarihli veri; egriyi geriye sarma
-    else:
-        durum["ozkayit"].append([tarih, deger])
 
 
 # ---------- 6. DASHBOARD (robot.html) ----------
@@ -380,11 +462,20 @@ def _tr(x, hane=2):
     return f"{x:,.{hane}f}".replace(",", "\u00A0").replace(".", ",").replace("\u00A0", ".")
 
 
+def _kisa_zaman(z):
+    """'2026-09-28T14:30' -> '28.09 14:30' ; saf tarih ise '28.09.2026'."""
+    if len(z) > 10:
+        y, a, g = z[:10].split("-")
+        return f"{g}.{a} {z[11:16]}"
+    y, a, g = z[:10].split("-")
+    return f"{g}.{a}.{y}"
+
+
 def _egri_svg(ozkayit):
     if len(ozkayit) < 2:
         return ("<svg viewBox='0 0 720 160' style='width:100%;height:auto' role='img'>"
                 "<text x='360' y='85' text-anchor='middle' fill='#64748b' font-size='13'>"
-                "Eğri için ikinci işlem günü bekleniyor…</text></svg>")
+                "Eğri için ikinci fiyat kontrolü bekleniyor…</text></svg>")
     degerler = [v for _, v in ozkayit]
     mn, mx = min(degerler), max(degerler)
     if mx - mn < 1e-9:
@@ -395,21 +486,40 @@ def _egri_svg(ozkayit):
         y = H - P - (v - mn) * (H - 2 * P) / (mx - mn)
         return f"{x:.1f},{y:.1f}"
     noktalar = " ".join(xy(i, v) for i, v in enumerate(degerler))
-    son = degerler[-1]
-    ilk = degerler[0]
+    son, ilk = degerler[-1], degerler[0]
     renk = "#047857" if son >= ilk else "#b91c1c"
     return f"""<svg viewBox="0 0 {W} {H}" style="width:100%;height:auto" role="img" aria-label="Özkaynak eğrisi">
 <polyline points="{xy(0, ilk)},{xy(len(degerler) - 1, son)}" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
 <polyline points="{noktalar}" fill="none" stroke="{renk}" stroke-width="2.5" stroke-linejoin="round"/>
-<text x="{P}" y="{H - 2}" font-size="10" fill="#64748b">{ozkayit[0][0]}</text>
-<text x="{W - P}" y="{H - 2}" font-size="10" fill="#64748b" text-anchor="end">{ozkayit[-1][0]}</text>
+<text x="{P}" y="{H - 2}" font-size="10" fill="#64748b">{_kisa_zaman(ozkayit[0][0])}</text>
+<text x="{W - P}" y="{H - 2}" font-size="10" fill="#64748b" text-anchor="end">{_kisa_zaman(ozkayit[-1][0])}</text>
 <text x="{W - P}" y="{P + 2}" font-size="11" fill="{renk}" text-anchor="end">{_tr(son)} TL</text>
 <text x="{P}" y="{P + 2}" font-size="11" fill="#64748b">{_tr(ilk)} TL (başlangıç)</text>
 </svg>"""
 
 
+def _bugun_bolumu(durum):
+    """Gunun ozeti: kac kontrol yapildi, bugunku islemler (saat ve gerekcesiyle)."""
+    bugun = durum.get("bugun_tarih", _simdi().strftime("%Y-%m-%d"))
+    islemler = [i for i in islemleri_oku() if i.get("tarih") == bugun]
+    kontrol = durum.get("kontrol_sayisi", 0)
+    hucreler = "".join(
+        f"<div class='pano-hucre'><div class='pano-etiket'>"
+        f"<span class='{'pos' if i['yon'] == 'AL' else 'neg'}'>{i['yon']}</span> · {i['hisse']} · "
+        f"{i['lot']} lot · {_tr(i['fiyat'])} ₺ · {i.get('saat', '')}</div>{i['gerekce']}</div>"
+        for i in islemler)
+    if not hucreler:
+        hucreler = "<div class='pano-hucre'>Bugün henüz işlem yok — sinyal bekleniyor.</div>"
+    acik_etiket = "🟢 piyasa açık — canlı takip" if piyasa_acik_mi() else "🔴 piyasa kapalı — son kapanış verisi"
+    return (f"<h2 class='section-title'>Bugün ({_kisa_zaman(bugun)})</h2>"
+            f"<div class='grid' style='gap:10px'>"
+            f"<div class='pano-hucre'><div class='pano-etiket'>Fiyat kontrolü</div>"
+            f"{kontrol} kez · piyasa saatlerinde 30 dakikada bir · {acik_etiket}</div>"
+            f"{hucreler}</div>")
+
+
 def dashboard_yaz(durum, sinyaller, notlar):
-    now = datetime.now(TZ).strftime("%d.%m.%Y %H:%M")
+    now = _simdi().strftime("%d.%m.%Y %H:%M")
     islemler = islemleri_oku()
     fiyatlar = {h: s["son_fiyat"] for h, s in sinyaller.items()}
     oz = ozkaynak(durum, fiyatlar)
@@ -421,14 +531,14 @@ def dashboard_yaz(durum, sinyaller, notlar):
     kazananlar = [i for i in satislar if i.get("kz", 0) > 0]
     kazanma_orani = (len(kazananlar) / len(satislar) * 100.0) if satislar else 0.0
 
-    # KPI kartlari
-    def stat(etiket, deger, cls=""):
-        return (f"<div class='stat' style='background:var(--card);border:1px solid var(--line);"
+    def stat(etiket, deger, cls="", kimlik=""):
+        id_html = f" id='{kimlik}'" if kimlik else ""
+        return (f"<div class='stat'{id_html} style='background:var(--card);border:1px solid var(--line);"
                 f"border-radius:10px;padding:12px 14px'><div class='label'>{etiket}</div>"
                 f"<div style='font-size:21px;font-weight:700' class='{cls}'>{deger}</div></div>")
 
     kpi = "<div class='grid' style='grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0'>" + "".join([
-        stat("Toplam Değer", _tr(oz) + " ₺"),
+        stat("Toplam Değer", _tr(oz) + " ₺", "", "kpi-toplam"),
         stat("Toplam Getiri", f"{_tr(getiri)}%", "pos" if toplam_kz >= 0 else "neg"),
         stat("Nakit", _tr(durum["nakit"]) + " ₺"),
         stat("Açık Pozisyon", str(len(durum["pozisyonlar"])) + f" / {MAKS_POZISYON}"),
@@ -436,7 +546,6 @@ def dashboard_yaz(durum, sinyaller, notlar):
         stat("Kazanma Oranı", f"{_tr(kazanma_orani, 0)}%"),
     ]) + "</div>"
 
-    # Pozisyon tablosu
     poz_satirlar = ""
     for h, p in sorted(durum["pozisyonlar"].items()):
         fiyat = fiyatlar.get(h, p["maliyet"])
@@ -453,27 +562,25 @@ def dashboard_yaz(durum, sinyaller, notlar):
     pozisyon_bolumu = ("""<h2 class="section-title">Açık Pozisyonlar</h2><div class="card" style="padding:8px 24px 16px">
 <div style="overflow-x:auto"><table><tr><th>Hisse</th><th>Lot</th><th>Maliyet</th><th>Son</th><th>Değer ₺</th>
 <th>K/Z ₺</th><th>K/Z %</th><th>Stop</th><th>Hedef</th><th>Giriş</th></tr>""" + poz_satirlar +
-                       ("""</table></div>""" if poz_satirlar else "</table></div><p style='color:var(--muted)'>Henüz açık pozisyon yok — robot AL sinyali bekliyor.</p>") + "</div>")
+                       "</table></div>" + ("" if poz_satirlar else "<p style='color:var(--muted)'>Henüz açık pozisyon yok — robot AL sinyali bekliyor.</p>") + "</div>")
 
-    # Son islemler
     islem_satirlar = ""
     for i in islemler[-25:][::-1]:
-        if i["yon"] == "SAT":
-            kz = i.get("kz")
-            kz_hucre = (f"<td class='{'pos' if kz >= 0 else 'neg'}'>{_tr(kz)}</td>" if kz is not None else "<td>—</td>")
-        else:
-            kz_hucre = "<td>—</td>"
-        islem_satirlar += (f"<tr><td>{i['tarih']}</td>"
+        kz_hucre = "<td>—</td>"
+        if i["yon"] == "SAT" and i.get("kz") is not None:
+            kz = i["kz"]
+            kz_hucre = f"<td class='{'pos' if kz >= 0 else 'neg'}'>{_tr(kz)}</td>"
+        islem_satirlar += (f"<tr><td>{i['tarih']} {i.get('saat', '')}</td>"
                            f"<td><b>{i['hisse']}</b></td>"
                            f"<td class='{'pos' if i['yon'] == 'AL' else 'neg'}'>{i['yon']}</td>"
                            f"<td>{i['lot']}</td><td>{_tr(i['fiyat'])}</td><td>{_tr(i['tutar'])}</td>"
                            f"{kz_hucre}<td style='max-width:340px'>{i['gerekce']}</td></tr>")
     islem_bolumu = ("""<h2 class="section-title">Son İşlemler</h2><div class="card" style="padding:8px 24px 16px">
-<div style="overflow-x:auto"><table><tr><th>Tarih</th><th>Hisse</th><th>Yön</th><th>Lot</th><th>Fiyat</th>
+<div style="overflow-x:auto"><table><tr><th>Zaman</th><th>Hisse</th><th>Yön</th><th>Lot</th><th>Fiyat</th>
 <th>Tutar ₺</th><th>K/Z ₺</th><th>Gerekçe</th></tr>""" + islem_satirlar +
                     ("</table></div>" if islem_satirlar else "</table></div><p style='color:var(--muted)'>Henüz işlem yok.</p>") + "</div>")
 
-    # Sinyal panosu: bugun ne oldu, ne bekliyor
+    # Sinyal panosu: son kontroldaki AL/SAT olaylari
     pano = ""
     for h, s in sorted(sinyaller.items()):
         if s["sinyal"] == "BEKLE" or h in durum["pozisyonlar"] and s["sinyal"] != "SAT":
@@ -485,22 +592,20 @@ def dashboard_yaz(durum, sinyaller, notlar):
         pano += (f"<div class='pano-hucre'><div class='pano-etiket'>"
                  f"<span class='{'pos' if s['sinyal'] in ('AL',) else 'neg'}'>{s['sinyal']}</span> · {h} · {_tr(s['son_fiyat'])} ₺ · {durum_notu}</div>"
                  f"{s['gerekce']}</div>")
-    if notlar:
-        for n in notlar:
-            pano += f"<div class='pano-hucre'>ℹ️ {n}</div>"
+    for n in notlar:
+        pano += f"<div class='pano-hucre'>ℹ️ {n}</div>"
     if not pano:
-        pano = "<div class='pano-hucre'>Bugün yeni AL/SAT sinyali üretmedi — robot bekliyor.</div>"
-    pano_bolumu = ("<h2 class='section-title'>Sinyal Panosu (son bar: "
+        pano = "<div class='pano-hucre'>Son kontrolde yeni AL/SAT sinyali üretmedi — robot bekliyor.</div>"
+    pano_bolumu = ("<h2 class='section-title'>Sinyal Panosu (son kontrol: "
                    + (durum.get("son_bar_tarihi") or "—") + ")</h2><div class='grid' style='gap:10px'>" + pano + "</div>")
 
-    # Strateji kurallari + istatistik
     istatistik = (f"<div class='grid-iki'><div class='card'><div class='pano-baslik'>Strateji Kuralları</div>"
                   f"<ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'>"
                   f"<li><b>AL:</b> SMA10, SMA30'u yukarı keser + RSI14 45–75 bandında + fiyat SMA100 üzerinde.</li>"
                   f"<li><b>SAT:</b> SMA10, SMA30'u aşağı keser, ya da maliyetin <b>%{abs(int(STOP_ORAN * 100))}</b> altına düşer (stop), "
                   f"ya da <b>%{int(HEDEF_ORAN * 100)}</b> yukarısına çıkar (hedef).</li>"
                   f"<li><b>Boyut:</b> özkaynağın en fazla %{int(POZISYON_ORAN * 100)}'i tek hisseye, en fazla {MAKS_POZISYON} pozisyon.</li>"
-                  f"<li><b>Günlük fren:</b> özkaynak bir günde %{int(GUNLUK_ZARAR_LIMITI * 100)} düşerse yeni alım o gün durdurulur.</li>"
+                  f"<li><b>Günlük fren:</b> özkaynak dünkü kapanışa göre %{int(GUNLUK_ZARAR_LIMITI * 100)} düşerse yeni alım o gün durdurulur.</li>"
                   f"<li><b>Sürtünme:</b> işlem başına %{_tr(KOMISYON * 100, 2)} komisyon + %{_tr(KAYMA * 100, 2)} kayma varsayılır.</li></ul></div>"
                   f"<div class='card'><div class='pano-baslik'>Performans Özeti</div>"
                   f"<ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'>"
@@ -512,30 +617,30 @@ def dashboard_yaz(durum, sinyaller, notlar):
 
     icerik = f"""<div class="hero">
 <h1>İşlem Robotu <span class="badge">simülasyon</span></h1>
-<p>BIST 30 hisseleri üzerinde <b>kağıt-üstünde işlem</b> (paper trading) yapan otomatik robotun canlı defteri:
-stratejisi kendi ürettiği AL/SAT sinyallerini <u>gerçek para kullanmadan</u>, kapanış fiyatlarından
-komisyon ve kayma payıyla simüle eder; tüm emirler, pozisyonlar ve özkaynak eğrisi burada şeffaf biçimde yayımlanır.
+<p>BIST 30 hisseleri üzerinde <b>kağıt-üstünde işlem</b> yapan otomatik robotun canlı defteri.
+Robot <b>piyasa saatlerinde 30 dakikada bir</b> canlı fiyattan (TradingView, ~15 dk gecikmeli) kontrol edilir:
+stop-loss ve hedef gün içinde tetiklenebilir, kesişim sinyalleri gün içi fiyattan değerlendirilir ve
+özkaynak eğrisi her kontrolde bir nokta kazanır. <u>Gerçek para kullanılmaz</u>; tüm emirler gerekçesiyle burada yayımlanır.
 <strong>Yatırım tavsiyesi değildir.</strong> Son güncelleme: {now} (İstanbul).</p>
 </div>
 {kpi}
-<h2 class="section-title">Özkaynak Eğrisi</h2>
+{_bugun_bolumu(durum)}
+<h2 class="section-title">Özkaynak Eğrisi <span style="font-size:13px;color:var(--muted);font-weight:400">— her fiyat kontrolünde bir nokta</span></h2>
 <div class="card">{_egri_svg(durum["ozkayit"])}</div>
 {pozisyon_bolumu}
 {islem_bolumu}
 {pano_bolumu}
 {istatistik}"""
 
-    # Basit rol: aktif menü vurgusu sabit 'robot'
     html = _iskelet("İşlem Robotu (Simülasyon)", icerik, now)
     with open(SAYFA_YOL, "w", encoding="utf-8") as f:
         f.write(html)
-    log.info("[DASHBOARD] robot.html yazildi (ozkaynak=%s TL, pozisyon=%d)", _tr(oz), len(durum["pozisyonlar"]))
+    log.info("[DASHBOARD] robot.html yazildi (ozkaynak=%s TL, pozisyon=%d, nokta=%d)",
+             _tr(oz), len(durum["pozisyonlar"]), len(durum["ozkayit"]))
 
 
 def _iskelet(title, icerik, guncelleme):
-    """Sayfa iskeleti — sitenin style.css'ini kullanan BAGIMSIZ kopya (bot.py'ye dokunmaz).
-
-    KALDIRMA NOTU: bu fonksiyon tek basina robot.html'i uretir; baska sayfayi etkilemez."""
+    """Sayfa iskeleti — sitenin style.css'ini kullanan BAGIMSIZ kopya (bot.py'ye dokunmaz)."""
     nav = """<nav><a href="index.html">Raporlar</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="sinyal-karnesi.html">Sinyal Karnesi</a><a href="portfolio.html">Deneme Portföyü</a><a href="robot.html" class="active">İşlem Robotu</a></nav>"""
     return f"""<!DOCTYPE html>
 <html lang="tr">
@@ -543,9 +648,9 @@ def _iskelet(title, icerik, guncelleme):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
-<meta name="description" content="BIST 30 kağıt-üstünde işlem robotunun canlı defteri: simüle AL/SAT emirleri, açık pozisyonlar, özkaynak eğrisi ve strateji kuralları. Gerçek para kullanılmaz; yatırım tavsiyesi değildir.">
+<meta name="description" content="BIST 30 kağıt-üstünde işlem robotunun canlı defteri: piyasa saatlerinde 30 dakikada bir güncellenen simüle AL/SAT emirleri, açık pozisyonlar, gün içi özkaynak eğrisi ve strateji kuralları. Gerçek para kullanılmaz; yatırım tavsiyesi değildir.">
 <meta property="og:title" content="{title}">
-<meta property="og:description" content="BIST 30 simülasyon işlem robotunun şeffaf defteri: pozisyonlar, işlemler, özkaynak eğrisi. Yatırım tavsiyesi değildir.">
+<meta property="og:description" content="BIST 30 simülasyon işlem robotunun şeffaf defteri: pozisyonlar, işlemler, gün içi özkaynak eğrisi. Yatırım tavsiyesi değildir.">
 <meta property="og:type" content="website">
 <script>(function(){{try{{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){{document.documentElement.classList.add('dark');}}}}catch(e){{}}}})();</script>
 <link rel="stylesheet" href="style.css">
@@ -557,9 +662,10 @@ def _iskelet(title, icerik, guncelleme):
 {nav}
 </div></header>
 <main class="wrap">
+<div id="robot-canli" class="card" style="padding:12px 18px;margin:0 0 18px;font-size:14px"><span style="color:var(--muted)">🟡 Canlı özete bağlanıyor…</span></div>
 {icerik}
 <p style="color:var(--muted);font-size:12px;margin:26px 0 4px">Bu sayfa bağımsız bir simülasyondur: hiçbir gerçek emir gönderilmez, hiçbir gerçek para risk edilmez.
-Veri: İş Yatırım (EOD) / Yahoo Finance yedek · Komisyon ve kayma payı varsayımsaldır.
+Veri: İş Yatırım (EOD) + TradingView (gün içi, ~15 dk gecikmeli) · Komisyon ve kayma payı varsayımsaldır.
 Son güncelleme: {guncelleme} (İstanbul) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir.</p>
 </main>
 <footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir.
@@ -578,45 +684,113 @@ function temaDegistir() {{
   if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
 }})();
 </script>
+<script>
+/* Canlı özet katmanı: /api/robot (son commit'lenen durum + canlı fiyat) */
+(function() {{
+  var kutu = document.getElementById('robot-canli');
+  if (!kutu) return;
+  function tr(x, h) {{
+    return (x === null || x === undefined) ? '—'
+      : Number(x).toLocaleString('tr-TR', {{minimumFractionDigits: h || 2, maximumFractionDigits: h || 2}});
+  }}
+  function ciz(d) {{
+    if (!d || d.hata) {{
+      kutu.innerHTML = "<span style='color:var(--muted)'>🟠 Canlı özet şu an erişilemiyor — aşağıdaki tablolar son güncellemeye aittir.</span>";
+      return;
+    }}
+    var cips = (d.pozisyonlar || []).map(function(p) {{
+      return "<span class='pano-hucre' style='display:inline-block;padding:4px 10px;margin:2px'><b>" + p.hisse + "</b> "
+        + tr(p.son) + " ₺ <span class='" + (p.kzy >= 0 ? 'pos' : 'neg') + "'>"
+        + (p.kzy >= 0 ? '+' : '') + tr(p.kzy) + "%</span></span>";
+    }}).join('');
+    if (!cips) cips = "<span style='color:var(--muted)'>açık pozisyon yok — nakit bekleniyor</span>";
+    var gun = (d.gunluk_yuzde === null || d.gunluk_yuzde === undefined) ? '' :
+      " <span class='" + (d.gunluk_yuzde >= 0 ? 'pos' : 'neg') + "'>(" + (d.gunluk_yuzde >= 0 ? '+' : '') + tr(d.gunluk_yuzde) + "% dünkü kapanışa göre)</span>";
+    kutu.innerHTML = "🟢 <b>CANLI</b> · son fiyat " + (d.fiyat_saati || '—') +
+      " · Toplam <b style='font-size:17px'>" + tr(d.toplam) + " ₺</b>" + gun + " · " + cips +
+      "<div style='color:var(--muted);font-size:11.5px;margin-top:6px'>Fiyatlar ~15 dk gecikmelidir; bu şerit 1 dakikada bir tazelenir. " +
+      "Özkaynak eğrisi ve tablolar kapanış koşusuyla (19:15) günün tam haliyle yayımlanır.</div>";
+    var k = document.getElementById('kpi-toplam');
+    if (k) k.innerHTML = tr(d.toplam) + " ₺";
+  }}
+  function yenile() {{
+    fetch('/api/robot').then(function(r) {{ return r.json(); }}).then(ciz)
+      .catch(function() {{ kutu.innerHTML = "<span style='color:var(--muted)'>🟠 Canlı özet şu an erişilemiyor.</span>"; }});
+  }}
+  yenile();
+  setInterval(yenile, 60000);
+}})();
+</script>
 </body></html>"""
 
 
 # ---------- ANA AKIS ----------
 def main():
-    simdi = datetime.now(TZ)
-    log.info("[ROBOT] Basliyor (%s) — paper trading, hicbir gercek emir gonderilmez.", simdi.strftime("%Y-%m-%d %H:%M"))
+    simdi = _simdi()
+    acik = piyasa_acik_mi(simdi)
+    bugun = simdi.strftime("%Y-%m-%d")
+    log.info("[ROBOT] Basliyor %s — piyasa %s.", simdi.strftime("%d.%m %H:%M"), "ACIK (canli kontrol)" if acik else "KAPALI")
 
-    seriler = veri_cek()
+    seriler = gecmis_oku_ya_da_cek()
     if len(seriler) < 5:
         log.error("[ROBOT] Yeterli veri gelmedi (%d hisse); bu tur islem yapilmadi.", len(seriler))
         return
 
-    sinyaller = strateji_sinyalleri(seriler)
-    if not sinyaller:
-        log.error("[ROBOT] Hicbir hisse icin gosterge hesaplanamadi; cikiliyor.")
-        return
-
     durum = durum_oku()
     if durum is None:
-        tarih = max(s["tarih"] for s in sinyaller.values())
+        tarih = max((t[-1] for (t, _) in seriler.values() if t), default=bugun)
         durum = {
-            "versiyon": 1, "baslangic": tarih, "kapital0": KAPITAL0,
-            "nakit": KAPITAL0, "pozisyonlar": {},
-            "gerceklesen_kz": 0.0, "son_bar_tarihi": None,
-            "ozkayit": [[tarih, KAPITAL0]],
+            "versiyon": 2, "baslangic": tarih, "kapital0": KAPITAL0,
+            "nakit": KAPITAL0, "pozisyonlar": {}, "gerceklesen_kz": 0.0,
+            "son_bar_tarihi": None, "ozkayit": [[tarih, KAPITAL0]],
         }
-        log.info("[ROBOT] Ilk calistirma: durum baslatildi (baslangic bari %s).", tarih)
+        log.info("[ROBOT] Ilk calistirma: durum baslatildi (son bar %s).", tarih)
 
-    # Bir onceki barin ozkaynagiyla kiyaslama yapabilmek icin: risk katmani
-    # gunluk zarar limitini ozkayit'taki son degere gore denetler.
-    islem_sayisi, notlar = risk_ve_oms(durum, sinyaller)
-    ozkayit_guncelle(durum, sinyaller)
+    # Gunluk sifirlama: yeni gun -> bugun listeleri sifirlanir, dunku kapanisi referans olur
+    if durum.get("bugun_tarih") != bugun:
+        onceki = None
+        for p in durum["ozkayit"]:
+            if p[0][:10] < bugun:
+                onceki = p
+        durum["bugun_tarih"] = bugun
+        durum["bugun_alinan"] = []
+        durum["bugun_satilan"] = []
+        durum["kontrol_sayisi"] = 0
+        durum["onceki_kapanis_ozkaynak"] = onceki[1] if onceki else durum.get("kapital0", KAPITAL0)
+    durum["kontrol_sayisi"] = durum.get("kontrol_sayisi", 0) + 1
+
+    canli = canli_fiyatlar()
+    if canli:
+        log.info("[VERI] %d/%d hisse icin canli fiyat alindi.", len(canli), len(HISSELER))
+
+    # Piyasa acikken bugunun barini canli fiyattan ekle (gun ici kesisim/stop yakalansin)
+    kullan = seri_hazirla(seriler, canli, bugun, ekle=acik)
+    sinyaller = strateji_sinyalleri(kullan)
+    if not sinyaller:
+        log.error("[ROBOT] Gosterge hesaplanamadi; cikiliyor.")
+        return
+    for h, s in sinyaller.items():
+        if h in canli:
+            s["son_fiyat"] = float(canli[h])
+    durum["son_bar_tarihi"] = max(s["tarih"] for s in sinyaller.values())
+
+    # Ayni fiyatlar tekrar geldiyse (kapanis sonrasi kosular, tatil) islem/nokta ekleme
+    degisim_yok = bool(canli) and canli == durum.get("son_fiyatlar")
+    notlar = []
+    if degisim_yok:
+        log.info("[ROBOT] Fiyatlar onceki kosuyla ayni; emir ve egri noktasi atlandi.")
+    else:
+        islem_sayisi, notlar = risk_ve_oms(durum, sinyaller)
+        if acik or islem_sayisi:
+            ozkayit_guncelle(durum, sinyaller)
+        if canli:
+            durum["son_fiyatlar"] = canli
+
     durum_yaz(durum)
     dashboard_yaz(durum, sinyaller, notlar)
-
-    log.info("[ROBOT] Bitti: %d emir islendi, ozkaynak=%s TL, pozisyon=%d.",
-             islem_sayisi, _tr(ozkaynak(durum, {h: s["son_fiyat"] for h, s in sinyaller.items()})),
-             len(durum["pozisyonlar"]))
+    log.info("[ROBOT] Bitti: kontrol #%d, pozisyon=%d, ozkaynak=%s TL.",
+             durum["kontrol_sayisi"], len(durum["pozisyonlar"]),
+             _tr(ozkaynak(durum, {h: s["son_fiyat"] for h, s in sinyaller.items()})))
 
 
 if __name__ == "__main__":
