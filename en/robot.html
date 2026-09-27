@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>"İşlem Robotu (Simülasyon)"</title>
+<meta name="description" content="&quot;BIST 30 kağıt-üstünde işlem robotunun canlı defteri: piyasa saatlerinde 30 dakikada bir güncellenen simüle AL/SAT emirleri, açık pozisyonlar, gün içi özkaynak eğrisi ve strateji kuralları. Gerçek para kullanılmaz; yatırım tavsiyesi değildir.&quot;">
+<meta property="og:title" content="&quot;İşlem Robotu (Simülasyon)&quot;">
+<meta property="og:description" content="&quot;BIST 30 simülasyon işlem robotunun şeffaf defteri: pozisyonlar, işlemler, gün içi özkaynak eğrisi. Yatırım tavsiyesi değildir.&quot;">
+<meta property="og:type" content="website">
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="index.html">BIST 30 Daily Reports</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Light/dark theme" aria-label="Change theme">🌙</button></div>
+<nav><a href="index.html">Reports</a><a href="teknik-analiz.html">Technical Scan</a><a href="sinyal-karnesi.html">Signal Scorecard</a><a href="portfolio.html">Demo Portfolio</a><a href="robot.html" class="active">"İşlem Robotu"</a></nav>
+</div></header>
+<main class="wrap">
+<div id="robot-canli" class="card" style="padding:12px 18px;margin:0 0 18px;font-size:14px"><span style="color:var(--muted)">🟡 "Canlı özete bağlanıyor…"</span></div>
+<div class="hero">
+<h1>"İşlem Robotu "<span class="badge">"simülasyon"</span></h1>
+<p>"BIST 30 hisseleri üzerinde "<b>"kağıt-üstünde işlem"</b> "yapan otomatik robotun canlı defteri.\nRobot "<b>"piyasa saatlerinde 30 dakikada bir"</b> "canlı fiyattan (TradingView, ~15 dk gecikmeli) kontrol edilir:\nstop-loss ve hedef gün içinde tetiklenebilir, kesişim sinyalleri gün içi fiyattan değerlendirilir ve\nözkaynak eğrisi her kontrolde bir nokta kazanır. "<u>"Gerçek para kullanılmaz"</u>; "tüm emirler gerekçesiyle burada yayımlanır.\n"<strong>"Yatırım tavsiyesi değildir."</strong> "Son güncelleme: 27.09,2026 16:48 (İstanbul)."</p>
+</div>
+<div class='grid' style='grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0'><div class='stat' id='kpi-toplam' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Total Value</div><div style='font-size:21px;font-weight:700' class=''>100,000.00 ₺</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Total return</div><div style='font-size:21px;font-weight:700' class='pos'>0.00%</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Cash</div><div style='font-size:21px;font-weight:700' class=''>100,000.00 ₺</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Open Position</div><div style='font-size:21px;font-weight:700' class=''>0 / 8</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>"Gerçekleşen K/Z"</div><div style='font-size:21px;font-weight:700' class='pos'>0.00 ₺</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>"Kazanma Oranı"</div><div style='font-size:21px;font-weight:700' class=''>0%</div></div></div>
+<h2 class='section-title'>"Bugün (27.09,2026)"</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'>Price check</div>3 times · every 30 minutes during market hours · 🔴 market closed — last closing data</div><div class='pano-hucre'>No trades yet today — signal awaited.</div></div>
+<h2 class="section-title">Equity Curve<span style="font-size:13px;color:var(--muted);font-weight:400">— one point with each price check</span></h2>
+<div class="card"><svg viewBox='0 0 720 160' style='width:100%;height:auto' role='img'><text x='360' y='85' text-anchor='middle' fill='#64748b' font-size='13'>Second price check for the curve awaited…</text></svg></div>
+<h2 class="section-title">Open Positions</h2><div class="card" style="padding:8px 24px 16px">
+<div style="overflow-x:auto"><table><tr><th>Stock</th><th>Lot</th><th>Cost</th><th>Last</th><th>Value ₺</th>
+<th>P/L ₺</th><th>P/L %</th><th>Stop</th><th>Target</th><th>Entry</th></tr></table></div><p style='color:var(--muted)'>No open positions yet — robot BUY signal awaited.</p></div>
+<h2 class="section-title">Recent Trades</h2><div class="card" style="padding:8px 24px 16px">
+<div style="overflow-x:auto"><table><tr><th>Time</th><th>Stock</th><th>Direction</th><th>Lot</th><th>Fiyat</th>
+<th>Amount ₺</th><th>P/L ₺</th><th>Reason</th></tr></table></div><p style='color:var(--muted)'>No trades yet.</p></div>
+<h2 class='section-title'>Signal Board (last check: 2026-09-25)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>SELL</span> · ENKAI · 86.45 ₺ · no position to sell</div>SMA10 crossed SMA30 downward</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>SELL</span> · SASA · 2.08 ₺ · no position to sell</div>SMA10 crossed SMA30 downward</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>SELL</span> · SISE · 39.24 ₺ · no position to sell</div>SMA10 crossed SMA30 downward</div></div>
+<div class='grid-iki'><div class='card'><div class='pano-baslik'>Strategy Rules</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li><b>BUY:</b> SMA10 crosses SMA30 upward + RSI14 is in 45-75 range + price is above SMA100.</li><li><b>SAT:</b> SMA10 crosses below SMA30, or the cost of <b>7%</b> drops to (stop), or <b>15%</b> rises to (target).</li><li><b>Size:</b> at most 12% of capital in a single stock, max 8 positions.</li><li><b>Daily brake:</b> if equity drops by 3% from yesterday's close, buying stops for the day.</li><li><b>Friction:</b> 0.06% commission per trade + 0.05% slippage is assumed.</li></ul></div><div class='card'><div class='pano-baslik'>Performance Summary</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li>Start: 2026-09-25 · 100.000.00 ₺</li><li>Total trades: 0 (0 SELL / 0 BUY)</li><li>Winning SELL ratio: 0%</li><li>Realized P/L: 0.00 ₺</li><li>Open position P/L (unrealized): 0.00 ₺</li></ul></div></div>
+<p style="color:var(--muted);font-size:12px;margin:26px 0 4px">This page is an independent simulation: no real orders are sent, no real money is risked.
+Data: İş Yatırım (EOD) + TradingView (intraday, ~15 min delayed) · Commission and slippage are assumed.
+Last update: 27.09,2026 16:48 (Istanbul) · No content herein constitutes investment advice.</p>
+</main>
+<footer class="footer">The information, comments and recommendations herein are for informational purposes only; do not constitute investment advisory or investment advice.
+Simulation results are not indicative of future returns past performance.<a href="gizlilik.html" style="color:inherit">Privacy &amp; Data Protection</a></footer>
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+<script>
+/* Canlı özet katmanı: /api/robot (son commit'lenen durum + canlı fiyat) */
+(function() {
+  var kutu = document.getElementById('robot-canli');
+  if (!kutu) return;
+  function tr(x, h) {
+    return (x === null || x === undefined) ? '—'
+      : Number(x).toLocaleString('tr-TR', {minimumFractionDigits: h || 2, maximumFractionDigits: h || 2});
+  }
+  function ciz(d) {
+    if (!d || d.hata) {
+      kutu.innerHTML = "<span style='color:var(--muted)'>🟠 Canlı özet şu an erişilemiyor — aşağıdaki tablolar son güncellemeye aittir.</span>";
+      return;
+    }
+    var cips = (d.pozisyonlar || []).map(function(p) {
+      return "<span class='pano-hucre' style='display:inline-block;padding:4px 10px;margin:2px'><b>" + p.hisse + "</b> "
+        + tr(p.son) + " ₺ <span class='" + (p.kzy >= 0 ? 'pos' : 'neg') + "'>"
+        + (p.kzy >= 0 ? '+' : '') + tr(p.kzy) + "%</span></span>";
+    }).join('');
+    if (!cips) cips = "<span style='color:var(--muted)'>açık pozisyon yok — nakit bekleniyor</span>";
+    var gun = (d.gunluk_yuzde === null || d.gunluk_yuzde === undefined) ? '' :
+      " <span class='" + (d.gunluk_yuzde >= 0 ? 'pos' : 'neg') + "'>(" + (d.gunluk_yuzde >= 0 ? '+' : '') + tr(d.gunluk_yuzde) + "% dünkü kapanışa göre)</span>";
+    kutu.innerHTML = "🟢 <b>CANLI</b> · son fiyat " + (d.fiyat_saati || '—') +
+      " · Toplam <b style='font-size:17px'>" + tr(d.toplam) + " ₺</b>" + gun + " · " + cips +
+      "<div style='color:var(--muted);font-size:11.5px;margin-top:6px'>Fiyatlar ~15 dk gecikmelidir; bu şerit 1 dakikada bir tazelenir. " +
+      "Özkaynak eğrisi ve tablolar kapanış koşusuyla (19:15) günün tam haliyle yayımlanır.</div>";
+    var k = document.getElementById('kpi-toplam');
+    if (k) k.innerHTML = tr(d.toplam) + " ₺";
+  }
+  function yenile() {
+    fetch('/api/robot').then(function(r) { return r.json(); }).then(ciz)
+      .catch(function() { kutu.innerHTML = "<span style='color:var(--muted)'>🟠 Canlı özet şu an erişilemiyor.</span>"; });
+  }
+  yenile();
+  setInterval(yenile, 60000);
+})();
+</script>
+</body></html>

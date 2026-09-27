@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Торговый робот (симуляция)</title>
+<meta name="description" content="Электронная торговая книга BIST 30 в纸上 симуляции: симулированные заявки на покупку/продажу, открытые позиции, кривая собственного капитала в течение дня и правила стратегии, обновляемые каждые 30 минут в рыночное время. Не используются реальные деньги; не является инвестиционным советом.">
+<meta property="og:title" content="Торговый робот (симуляция)">
+<meta property="og:description" content="Прозрачная торговая книга симуляции торгового робота BIST 30: позиции, сделки, кривая собственного капитала в течение дня. Не является инвестиционным советом.">
+<meta property="og:type" content="website">
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="index.html">Ежедневные отчёты BIST 30</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Светлая/тёмная тема" aria-label="Сменить тему">🌙</button></div>
+<nav><a href="index.html">Отчёты</a><a href="teknik-analiz.html">Технический анализ</a><a href="sinyal-karnesi.html">Сводка сигналов</a><a href="portfolio.html">Демо-портфель</a><a href="robot.html" class="active">Торговый робот</a></nav>
+</div></header>
+<main class="wrap">
+<div id="robot-canli" class="card" style="padding:12px 18px;margin:0 0 18px;font-size:14px"><span style="color:var(--muted)">🟡 Подключение к живому резюме…</span></div>
+<div class="hero">
+<h1>Торговый робот<span class="badge">симуляция</span></h1>
+<p>на акциях BIST 30<b>бумажная торговля</b> "yapan otomatik robotun canlı defteri.\nRobot "<b>piyasa saatlerinde 30 dakikada bir</b> canlı fiyattan (TradingView, ~15 dk gecikmeli) kontrol edilir:\nstop-loss ve hedef gün içinde tetiklenebilir, kesişim sinyalleri gün içi fiyattan değerlendirilir ve\nözkaynak eğrisi her kontrolde bir nokta kazanır. <u>Gerçek para kullanılmaz</u>; tüm emirler gerekçesiyle burada yayımlanır.\n<strong>Yatırım tavsiyesi değildir.</strong> Son güncelleme: 27.09,2026 16:48 (İstanbul).</p>
+</div>
+<div class='grid' style='grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0'><div class='stat' id='kpi-toplam' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Общая стоимость</div><div style='font-size:21px;font-weight:700' class=''>100,000.00 ₺</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Общая доходность</div><div style='font-size:21px;font-weight:700' class='pos'>0.00%</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Наличные</div><div style='font-size:21px;font-weight:700' class=''>100,000.00 ₺</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Открытая позиция</div><div style='font-size:21px;font-weight:700' class=''>0 / 8</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Gerçekleşen K/Z</div><div style='font-size:21px;font-weight:700' class='pos'>0.00 ₺</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Kazanma Oranı</div><div style='font-size:21px;font-weight:700' class=''>0%</div></div></div>
+<h2 class='section-title'>Bugün (27.09,2026)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'>Проверка цены</div>3 раза · каждые 30 минут в торговое время · 🔴 рынок закрыт — последние данные закрытия</div><div class='pano-hucre'>Сегодня сделок еще нет — ожидается сигнал.</div></div>
+<h2 class="section-title">Кривая капитала<span style="font-size:13px;color:var(--muted);font-weight:400">— одна точка при каждой проверке цены</span></h2>
+<div class="card"><svg viewBox='0 0 720 160' style='width:100%;height:auto' role='img'><text x='360' y='85' text-anchor='middle' fill='#64748b' font-size='13'>Ожидается вторая проверка цены для кривой…</text></svg></div>
+<h2 class="section-title">Открытые позиции</h2><div class="card" style="padding:8px 24px 16px">
+<div style="overflow-x:auto"><table><tr><th>Акция</th><th>Лот</th><th>Стоимость</th><th>Последние</th><th>Значение ₺</th>
+<th>П/З ₺</th><th>П/З %</th><th>Стоп-лосс</th><th>Цель</th><th>Вход</th></tr></table></div><p style='color:var(--muted)'>Открытых позиций нет — ожидается сигнал на ПОКУПКУ от робота.</p></div>
+<h2 class="section-title">Последние сделки</h2><div class="card" style="padding:8px 24px 16px">
+<div style="overflow-x:auto"><table><tr><th>Время</th><th>Акция</th><th>Направление</th><th>Лот</th><th>"Цена"</th>
+<th>Сумма ₺</th><th>П/З ₺</th><th>Обоснование</th></tr></table></div><p style='color:var(--muted)'>Сделок еще нет.</p></div>
+<h2 class='section-title'>Панель сигналов (последняя проверка: 2026-09-25)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>ПРОДАЖА</span> · ENKAI · 86.45 ₺ · нет позиции для продажи</div>SMA10 пересекла SMA30 вниз</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>ПРОДАЖА</span> · SASA · 2.08 ₺ · нет позиции для продажи</div>SMA10 пересекла SMA30 вниз</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>ПРОДАЖА</span> · SISE · 39.24 ₺ · нет позиции для продажи</div>SMA10 пересекла SMA30 вниз</div></div>
+<div class='grid-iki'><div class='card'><div class='pano-baslik'>Правила стратегии</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li><b>ПОКУПАТЬ:</b> SMA10 пересекает SMA30 вверх + RSI14 в диапазоне 45–75 + цена выше SMA100.</li><li><b>SAT:</b> SMA10, SMA30'u aşağı keser, ya da maliyetin <b>7%</b> altına düşer (stop), ya da <b>15%</b> yukarısına çıkar (hedef).</li><li><b>Boyut:</b> "özkaynağın en fazla 12%'i tek hisseye, en fazla 8 pozisyon."</li><li><b>"Günlük fren:"</b> "özkaynak dünkü kapanışa göre 3% düşerse yeni alım o gün durdurulur."</li><li><b>"Sürtünme:"</b> "işlem başına 0.06% komisyon + 0.05% kayma varsayılır."</li></ul></div><div class='card'><div class='pano-baslik'>"Performans Özeti"</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li>"Başlangıç: 2026-09-25 · 100,000.00 ₺"</li><li>"Toplam işlem: 0 (0 SAT / 0 AL)"</li><li>"Kazanan SAT oranı: 0%"</li><li>"Gerçekleşen K/Z: 0.00 ₺"</li><li>"Açık pozisyon K/Z (gerçekleşmemiş): 0.00 ₺"</li></ul></div></div>
+<p style="color:var(--muted);font-size:12px;margin:26px 0 4px">"Bu sayfa bağımsız bir simülasyondur: hiçbir gerçek emir gönderilmez, hiçbir gerçek para risk edilmez.\nVeri: İş Yatırım (EOD) + TradingView (gün içi, ~15 dk gecikmeli) · Komisyon ve kayma payı varsayımsaldır.\nSon güncelleme: 27.09,2026 16:48 (İstanbul) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir."</p>
+</main>
+<footer class="footer">"Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir.\nSimülasyon sonuçları geçmiş performansın gelecek getiri göstergesi değildir."]<a href="gizlilik.html" style="color:inherit">Конфиденциальность</a></footer>
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+<script>
+/* Canlı özet katmanı: /api/robot (son commit'lenen durum + canlı fiyat) */
+(function() {
+  var kutu = document.getElementById('robot-canli');
+  if (!kutu) return;
+  function tr(x, h) {
+    return (x === null || x === undefined) ? '—'
+      : Number(x).toLocaleString('tr-TR', {minimumFractionDigits: h || 2, maximumFractionDigits: h || 2});
+  }
+  function ciz(d) {
+    if (!d || d.hata) {
+      kutu.innerHTML = "<span style='color:var(--muted)'>🟠 Canlı özet şu an erişilemiyor — aşağıdaki tablolar son güncellemeye aittir.</span>";
+      return;
+    }
+    var cips = (d.pozisyonlar || []).map(function(p) {
+      return "<span class='pano-hucre' style='display:inline-block;padding:4px 10px;margin:2px'><b>" + p.hisse + "</b> "
+        + tr(p.son) + " ₺ <span class='" + (p.kzy >= 0 ? 'pos' : 'neg') + "'>"
+        + (p.kzy >= 0 ? '+' : '') + tr(p.kzy) + "%</span></span>";
+    }).join('');
+    if (!cips) cips = "<span style='color:var(--muted)'>açık pozisyon yok — nakit bekleniyor</span>";
+    var gun = (d.gunluk_yuzde === null || d.gunluk_yuzde === undefined) ? '' :
+      " <span class='" + (d.gunluk_yuzde >= 0 ? 'pos' : 'neg') + "'>(" + (d.gunluk_yuzde >= 0 ? '+' : '') + tr(d.gunluk_yuzde) + "% dünkü kapanışa göre)</span>";
+    kutu.innerHTML = "🟢 <b>CANLI</b> · son fiyat " + (d.fiyat_saati || '—') +
+      " · Toplam <b style='font-size:17px'>" + tr(d.toplam) + " ₺</b>" + gun + " · " + cips +
+      "<div style='color:var(--muted);font-size:11.5px;margin-top:6px'>Fiyatlar ~15 dk gecikmelidir; bu şerit 1 dakikada bir tazelenir. " +
+      "Özkaynak eğrisi ve tablolar kapanış koşusuyla (19:15) günün tam haliyle yayımlanır.</div>";
+    var k = document.getElementById('kpi-toplam');
+    if (k) k.innerHTML = tr(d.toplam) + " ₺";
+  }
+  function yenile() {
+    fetch('/api/robot').then(function(r) { return r.json(); }).then(ciz)
+      .catch(function() { kutu.innerHTML = "<span style='color:var(--muted)'>🟠 Canlı özet şu an erişilemiyor.</span>"; });
+  }
+  yenile();
+  setInterval(yenile, 60000);
+})();
+</script>
+</body></html>
