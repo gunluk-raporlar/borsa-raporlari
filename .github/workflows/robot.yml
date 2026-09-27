@@ -1,0 +1,36 @@
+name: Islem Robotu (Paper Trading)
+on:
+  schedule:
+    # Hafta ici 16:15 UTC = 19:15 Turkiye saati: borsa kapandiktan (~18:10) sonra,
+    # gunun kapanis bariyle birlikte. Ayni bar tekrar islennmez (idempotent).
+    - cron: '15 16 * * 1-5'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  robot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Kutuphaneleri kur (yalnizca robotun kendi bagimliliklari)
+        run: pip install pandas isyatirimhisse yfinance
+      - name: Robotu calistir (paper trading)
+        run: python -u robot.py
+      - name: Degisiklikleri yayinla
+        run: |
+          git config user.name "borsa-bot"
+          git config user.email "borsa-bot@users.noreply.github.com"
+          git add robot.html data/robot/
+          if git diff --cached --quiet; then
+            echo "Degisiklik yok; commit atlanır."
+            exit 0
+          fi
+          git commit -m "Islem robotu guncellemesi (paper trading)"
+          git pull --rebase -X theirs origin main
+          git push origin main

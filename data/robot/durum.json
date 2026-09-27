@@ -1,0 +1,15 @@
+{
+  "baslangic": "2026-09-25",
+  "gerceklesen_kz": 0.0,
+  "kapital0": 100000.0,
+  "nakit": 100000.0,
+  "ozkayit": [
+    [
+      "2026-09-25",
+      100000.0
+    ]
+  ],
+  "pozisyonlar": {},
+  "son_bar_tarihi": "2026-09-25",
+  "versiyon": 1
+}
