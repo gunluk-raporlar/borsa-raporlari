@@ -15,20 +15,197 @@
 <header class="topbar"><div class="inner">
 <div class="brand-row"><a class="brand" href="index.html">BIST 30 Günlük Raporlar</a>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
-<nav><a href="index.html">Raporlar</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="sinyal-karnesi.html">Sinyal Karnesi</a><a href="portfolio.html">Deneme Portföyü</a><a href="robot.html" class="active">İşlem Robotu</a></nav>
+<nav><a href="index.html">Raporlar</a><a href="hisse/index.html">Hisseler</a><a href="derin-analiz.html">Derin Analiz</a><a href="makro-analiz.html">Makro Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="sinyal-karnesi.html">Sinyal Karnesi</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="haberler.html">Haberler</a><a href="sirket-haberleri.html">Şirket Haberleri</a><a href="portfolio.html">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu</a><a href="haftasonu-egitimi.html">Borsa Okulu</a><a href="takvim.html">📅 Takvim</a><a href="sozluk.html">Sözlük</a><a href="terimler.html">Terimler</a><a href="muhasebe-terimleri.html">Muhasebe Terimleri</a><a href="robot.html" class="active">İşlem Robotu</a></nav>
 </div></header>
+
+<div class="ticker-bant" id="ticker-bant" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Fiyatlar yükleniyor...</span></div>
+</div>
+<script>
+(function() {
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle('ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>
+
+<div class="ticker-bant" id="ticker-bant2" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Piyasa verileri yükleniyor...</span></div>
+</div>
+<script>
+(function() {
+  var iz = document.getElementById('ticker-iz2');
+
+  function bicim(g) {
+    var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
+    var rozet = (typeof g.d === 'number')
+      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+        Number(g.d).toFixed(2) + '%</span>'
+      : '';
+    var birim = g.b || g.birim || '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (birim ? ' ' + birim : '') + rozet + '</span>';
+  }
+  function ciz(veri) {
+    var ogeler = (veri.gostergeler || []).map(bicim).join('');
+    if (!ogeler) throw new Error('bos');
+    var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
+               (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle('piyasa-serit.json?t=' + Date.now()); return; }
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Piyasa verileri geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+      });
+  }
+  yukle('/api/piyasa?t=' + Date.now());
+  setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>
 <main class="wrap">
 <div id="robot-canli" class="card" style="padding:12px 18px;margin:0 0 18px;font-size:14px"><span style="color:var(--muted)">🟡 Canlı özete bağlanıyor…</span></div>
+    <!-- Üst Widget Alanı (Canlı Saat ve İstanbul Hava Durumu) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
+        </div>
+    </div>
+<script>
+    function updateClock() {{
+        const now = new Date();
+        const options = {{ timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' }};
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }}
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {{
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: ' + temp + '°C, ' + desc;
+        }})
+        .catch(err => {{
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        }});
+</script>
+<div class="interactive-box">
+
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Hisse, konu veya tarih ara…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Ara</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch('site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0;
+    var h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';
+    });
+  };
+})();
+</script>
+
+</div>
 <div class="hero">
 <h1>İşlem Robotu <span class="badge">simülasyon</span></h1>
 <p>BIST 30 hisseleri üzerinde <b>kağıt-üstünde işlem</b> yapan otomatik robotun canlı defteri.
 Robot <b>piyasa saatlerinde 30 dakikada bir</b> canlı fiyattan (TradingView, ~15 dk gecikmeli) kontrol edilir:
 stop-loss ve hedef gün içinde tetiklenebilir, kesişim sinyalleri gün içi fiyattan değerlendirilir ve
 özkaynak eğrisi her kontrolde bir nokta kazanır. <u>Gerçek para kullanılmaz</u>; tüm emirler gerekçesiyle burada yayımlanır.
-<strong>Yatırım tavsiyesi değildir.</strong> Son güncelleme: 27.09.2026 16:48 (İstanbul).</p>
+<strong>Yatırım tavsiyesi değildir.</strong> Son güncelleme: 27.09.2026 19:15 (İstanbul).</p>
 </div>
 <div class='grid' style='grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0'><div class='stat' id='kpi-toplam' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Toplam Değer</div><div style='font-size:21px;font-weight:700' class=''>100.000,00 ₺</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Toplam Getiri</div><div style='font-size:21px;font-weight:700' class='pos'>0,00%</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Nakit</div><div style='font-size:21px;font-weight:700' class=''>100.000,00 ₺</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Açık Pozisyon</div><div style='font-size:21px;font-weight:700' class=''>0 / 8</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Gerçekleşen K/Z</div><div style='font-size:21px;font-weight:700' class='pos'>0,00 ₺</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Kazanma Oranı</div><div style='font-size:21px;font-weight:700' class=''>0%</div></div></div>
-<h2 class='section-title'>Bugün (27.09.2026)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'>Fiyat kontrolü</div>3 kez · piyasa saatlerinde 30 dakikada bir · 🔴 piyasa kapalı — son kapanış verisi</div><div class='pano-hucre'>Bugün henüz işlem yok — sinyal bekleniyor.</div></div>
+<h2 class='section-title'>Bugün (27.09.2026)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'>Fiyat kontrolü</div>4 kez · piyasa saatlerinde 30 dakikada bir · 🔴 piyasa kapalı — son kapanış verisi</div><div class='pano-hucre'>Bugün henüz işlem yok — sinyal bekleniyor.</div></div>
 <h2 class="section-title">Özkaynak Eğrisi <span style="font-size:13px;color:var(--muted);font-weight:400">— her fiyat kontrolünde bir nokta</span></h2>
 <div class="card"><svg viewBox='0 0 720 160' style='width:100%;height:auto' role='img'><text x='360' y='85' text-anchor='middle' fill='#64748b' font-size='13'>Eğri için ikinci fiyat kontrolü bekleniyor…</text></svg></div>
 <h2 class="section-title">Açık Pozisyonlar</h2><div class="card" style="padding:8px 24px 16px">
@@ -41,10 +218,19 @@ stop-loss ve hedef gün içinde tetiklenebilir, kesişim sinyalleri gün içi fi
 <div class='grid-iki'><div class='card'><div class='pano-baslik'>Strateji Kuralları</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li><b>AL:</b> SMA10, SMA30'u yukarı keser + RSI14 45–75 bandında + fiyat SMA100 üzerinde.</li><li><b>SAT:</b> SMA10, SMA30'u aşağı keser, ya da maliyetin <b>%7</b> altına düşer (stop), ya da <b>%15</b> yukarısına çıkar (hedef).</li><li><b>Boyut:</b> özkaynağın en fazla %12'i tek hisseye, en fazla 8 pozisyon.</li><li><b>Günlük fren:</b> özkaynak dünkü kapanışa göre %3 düşerse yeni alım o gün durdurulur.</li><li><b>Sürtünme:</b> işlem başına %0,06 komisyon + %0,05 kayma varsayılır.</li></ul></div><div class='card'><div class='pano-baslik'>Performans Özeti</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li>Başlangıç: 2026-09-25 · 100.000,00 ₺</li><li>Toplam işlem: 0 (0 SAT / 0 AL)</li><li>Kazanan SAT oranı: 0%</li><li>Gerçekleşen K/Z: 0,00 ₺</li><li>Açık pozisyon K/Z (gerçekleşmemiş): 0,00 ₺</li></ul></div></div>
 <p style="color:var(--muted);font-size:12px;margin:26px 0 4px">Bu sayfa bağımsız bir simülasyondur: hiçbir gerçek emir gönderilmez, hiçbir gerçek para risk edilmez.
 Veri: İş Yatırım (EOD) + TradingView (gün içi, ~15 dk gecikmeli) · Komisyon ve kayma payı varsayımsaldır.
-Son güncelleme: 27.09.2026 16:48 (İstanbul) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir.</p>
+Son güncelleme: 27.09.2026 19:15 (İstanbul) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir.</p>
 </main>
+<nav class="altbar" aria-label="Hızlı menü">
+<a href="index.html"><span class="i" aria-hidden="true">📊</span>Raporlar</a>
+<a href="teknik-analiz.html"><span class="i" aria-hidden="true">📈</span>Teknik</a>
+<a href="hisse/index.html"><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
+<a href="portfolio.html"><span class="i" aria-hidden="true">💼</span>Portföy</a>
+<a href="robot.html" class="active"><span class="i" aria-hidden="true">🤖</span>Robot</a>
+<a href="haberler.html"><span class="i" aria-hidden="true">📰</span>Haberler</a>
+<a href="takvim.html"><span class="i" aria-hidden="true">📅</span>Takvim</a>
+</nav>
 <footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir.
-Simülasyon sonuçları geçmiş performansın gelecek getiri göstergesi değildir. <a href="gizlilik.html" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
+Simülasyon sonuçları geçmiş performansın gelecek getiri göstergesi değildir. Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)<br><a href="gizlilik.html" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
 <script>
 function temaDegistir() {
   var kok = document.documentElement;
@@ -84,7 +270,7 @@ function temaDegistir() {
     kutu.innerHTML = "🟢 <b>CANLI</b> · son fiyat " + (d.fiyat_saati || '—') +
       " · Toplam <b style='font-size:17px'>" + tr(d.toplam) + " ₺</b>" + gun + " · " + cips +
       "<div style='color:var(--muted);font-size:11.5px;margin-top:6px'>Fiyatlar ~15 dk gecikmelidir; bu şerit 1 dakikada bir tazelenir. " +
-      "Özkaynak eğrisi ve tablolar kapanış koşusuyla (19:15) günün tam haliyle yayımlanır.</div>";
+      "Özkaynak eğrisi ve tablolar günde 2 kez (10:30 / 19:30) yayımlanan tam sürümle güncellenir.</div>";
     var k = document.getElementById('kpi-toplam');
     if (k) k.innerHTML = tr(d.toplam) + " ₺";
   }

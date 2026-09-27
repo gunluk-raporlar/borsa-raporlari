@@ -639,9 +639,207 @@ stop-loss ve hedef gün içinde tetiklenebilir, kesişim sinyalleri gün içi fi
              _tr(oz), len(durum["pozisyonlar"]), len(durum["ozkayit"]))
 
 
+# ---------- SITENIN UST GORUNUMU (bot.py _sayfa ciktisinin bagimsiz KOPYASI) ----------
+# UYARI: Bilincli tercih — robot bot.py'yi import etmez; site capasi burada
+# statik kopya olarak tutulur. bot.py'deki ust menu/seritler degisirse bu
+# kopyalar da guncellenmelidir. Kaldirma: bu sablonlar yalnizca robot.html'i
+# etkiler, baska hicbir sayfaya dokunmaz.
+
+_SITE_NAV = """<nav><a href="index.html">Raporlar</a><a href="hisse/index.html">Hisseler</a><a href="derin-analiz.html">Derin Analiz</a><a href="makro-analiz.html">Makro Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="sinyal-karnesi.html">Sinyal Karnesi</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="haberler.html">Haberler</a><a href="sirket-haberleri.html">Şirket Haberleri</a><a href="portfolio.html">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu</a><a href="haftasonu-egitimi.html">Borsa Okulu</a><a href="takvim.html">📅 Takvim</a><a href="sozluk.html">Sözlük</a><a href="terimler.html">Terimler</a><a href="muhasebe-terimleri.html">Muhasebe Terimleri</a><a href="robot.html" class="active">İşlem Robotu</a></nav>"""
+
+_SITE_ALTBAR = """<nav class="altbar" aria-label="Hızlı menü">
+<a href="index.html"><span class="i" aria-hidden="true">📊</span>Raporlar</a>
+<a href="teknik-analiz.html"><span class="i" aria-hidden="true">📈</span>Teknik</a>
+<a href="hisse/index.html"><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
+<a href="portfolio.html"><span class="i" aria-hidden="true">💼</span>Portföy</a>
+<a href="robot.html" class="active"><span class="i" aria-hidden="true">🤖</span>Robot</a>
+<a href="haberler.html"><span class="i" aria-hidden="true">📰</span>Haberler</a>
+<a href="takvim.html"><span class="i" aria-hidden="true">📅</span>Takvim</a>
+</nav>"""
+
+_SITE_SAAT = """    <!-- Üst Widget Alanı (Canlı Saat ve İstanbul Hava Durumu) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
+        </div>
+    </div>
+<script>
+    function updateClock() {{
+        const now = new Date();
+        const options = {{ timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' }};
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }}
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {{
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: ' + temp + '°C, ' + desc;
+        }})
+        .catch(err => {{
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        }});
+</script>"""
+
+_SITE_TICKER1 = """
+<div class="ticker-bant" id="ticker-bant" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Fiyatlar yükleniyor...</span></div>
+</div>
+<script>
+(function() {
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle('ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>"""
+
+_SITE_TICKER2 = """
+<div class="ticker-bant" id="ticker-bant2" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Piyasa verileri yükleniyor...</span></div>
+</div>
+<script>
+(function() {
+  var iz = document.getElementById('ticker-iz2');
+
+  function bicim(g) {
+    var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
+    var rozet = (typeof g.d === 'number')
+      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+        Number(g.d).toFixed(2) + '%</span>'
+      : '';
+    var birim = g.b || g.birim || '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (birim ? ' ' + birim : '') + rozet + '</span>';
+  }
+  function ciz(veri) {
+    var ogeler = (veri.gostergeler || []).map(bicim).join('');
+    if (!ogeler) throw new Error('bos');
+    var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
+               (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle('piyasa-serit.json?t=' + Date.now()); return; }
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Piyasa verileri geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+      });
+  }
+  yukle('/api/piyasa?t=' + Date.now());
+  setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>"""
+
+_SITE_ARAMA = """
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Hisse, konu veya tarih ara…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Ara</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch('site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0;
+    var h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';
+    });
+  };
+})();
+</script>
+"""
+
+
 def _iskelet(title, icerik, guncelleme):
-    """Sayfa iskeleti — sitenin style.css'ini kullanan BAGIMSIZ kopya (bot.py'ye dokunmaz)."""
-    nav = """<nav><a href="index.html">Raporlar</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="sinyal-karnesi.html">Sinyal Karnesi</a><a href="portfolio.html">Deneme Portföyü</a><a href="robot.html" class="active">İşlem Robotu</a></nav>"""
+    """Sayfa iskeleti — sitenin style.css'ini ve tam capasini kullanan bagimsiz
+    KOPYA (bot.py'ye dokunmaz; ust menu, seritler, saat/hava, arama dahil)."""
     return f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -659,17 +857,24 @@ def _iskelet(title, icerik, guncelleme):
 <header class="topbar"><div class="inner">
 <div class="brand-row"><a class="brand" href="index.html">BIST 30 Günlük Raporlar</a>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
-{nav}
+{_SITE_NAV}
 </div></header>
+{_SITE_TICKER1}
+{_SITE_TICKER2}
 <main class="wrap">
 <div id="robot-canli" class="card" style="padding:12px 18px;margin:0 0 18px;font-size:14px"><span style="color:var(--muted)">🟡 Canlı özete bağlanıyor…</span></div>
+{_SITE_SAAT}
+<div class="interactive-box">
+{_SITE_ARAMA}
+</div>
 {icerik}
 <p style="color:var(--muted);font-size:12px;margin:26px 0 4px">Bu sayfa bağımsız bir simülasyondur: hiçbir gerçek emir gönderilmez, hiçbir gerçek para risk edilmez.
 Veri: İş Yatırım (EOD) + TradingView (gün içi, ~15 dk gecikmeli) · Komisyon ve kayma payı varsayımsaldır.
 Son güncelleme: {guncelleme} (İstanbul) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir.</p>
 </main>
+{_SITE_ALTBAR}
 <footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir.
-Simülasyon sonuçları geçmiş performansın gelecek getiri göstergesi değildir. <a href="gizlilik.html" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
+Simülasyon sonuçları geçmiş performansın gelecek getiri göstergesi değildir. Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)<br><a href="gizlilik.html" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
 <script>
 function temaDegistir() {{
   var kok = document.documentElement;
@@ -709,7 +914,7 @@ function temaDegistir() {{
     kutu.innerHTML = "🟢 <b>CANLI</b> · son fiyat " + (d.fiyat_saati || '—') +
       " · Toplam <b style='font-size:17px'>" + tr(d.toplam) + " ₺</b>" + gun + " · " + cips +
       "<div style='color:var(--muted);font-size:11.5px;margin-top:6px'>Fiyatlar ~15 dk gecikmelidir; bu şerit 1 dakikada bir tazelenir. " +
-      "Özkaynak eğrisi ve tablolar kapanış koşusuyla (19:15) günün tam haliyle yayımlanır.</div>";
+      "Özkaynak eğrisi ve tablolar günde 2 kez (10:30 / 19:30) yayımlanan tam sürümle güncellenir.</div>";
     var k = document.getElementById('kpi-toplam');
     if (k) k.innerHTML = tr(d.toplam) + " ₺";
   }}
