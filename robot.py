@@ -501,7 +501,7 @@ def dashboard_yaz(durum, sinyaller, notlar):
                   f"ya da <b>%{int(HEDEF_ORAN * 100)}</b> yukarısına çıkar (hedef).</li>"
                   f"<li><b>Boyut:</b> özkaynağın en fazla %{int(POZISYON_ORAN * 100)}'i tek hisseye, en fazla {MAKS_POZISYON} pozisyon.</li>"
                   f"<li><b>Günlük fren:</b> özkaynak bir günde %{int(GUNLUK_ZARAR_LIMITI * 100)} düşerse yeni alım o gün durdurulur.</li>"
-                  f"<li><b>Sürtünme:</b> işlem başına %{KOMISYON * 100:.2f} komisyon + %{KAYMA * 100:.2f} kayma varsayılır.</li></ul></div>"
+                  f"<li><b>Sürtünme:</b> işlem başına %{_tr(KOMISYON * 100, 2)} komisyon + %{_tr(KAYMA * 100, 2)} kayma varsayılır.</li></ul></div>"
                   f"<div class='card'><div class='pano-baslik'>Performans Özeti</div>"
                   f"<ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'>"
                   f"<li>Başlangıç: {durum['ozkayit'][0][0] if durum['ozkayit'] else '—'} · {_tr(KAPITAL0)} ₺</li>"
