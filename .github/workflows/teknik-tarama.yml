@@ -35,6 +35,6 @@ jobs:
             echo "Degisiklik yok; commit atlanır."
             exit 0
           fi
-          git commit -m "Teknik tarama guncellemesi"
+          git commit -m "Teknik tarama guncellemesi [CI Skip]"
           git pull --rebase -X theirs origin main
           git push origin main

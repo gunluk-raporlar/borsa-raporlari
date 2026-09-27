@@ -54,7 +54,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "Yeni metrik yok, commit atlanıyor."
           else
-            git commit -m "metrics: embedding calismasi $(date -u +%F-%H:%M UTC)"
+            git commit -m "metrics: embedding calismasi $(date -u +%F-%H:%M UTC) [CI Skip]"
             git pull --rebase -X theirs origin main || true
             git push origin main || echo "[uyari] push başarısız — metrikler sonraki çalışmada işlenir"
           fi

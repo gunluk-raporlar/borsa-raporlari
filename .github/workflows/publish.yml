@@ -1,0 +1,29 @@
+name: Site Yayini (gunluk publish)
+# Tum icerik botlari commit'lerini [CI Skip] ile atar (build tetiklemez).
+# Bu workflow gunde 2 kez bos bir commit atarak Cloudflare Pages build'ini
+# tetikler: o ana kadar biriken tum guncellemeler siteye yayinlanir.
+# Aylik tuketim ~60 build (500 limitinin ~%12'si).
+on:
+  schedule:
+    - cron: '30 7 * * *'   # 10:30 Turkiye saati — oglen yayini
+    - cron: '30 16 * * *'  # 19:30 Turkiye saati — aksam yayini (robot kapanis kosusundan sonra)
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: site-yayini
+  cancel-in-progress: false
+jobs:
+  yayinla:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+      - name: Yayin commit'i (Cloudflare Pages build'ini tetikler)
+        run: |
+          git config user.name "borsa-bot"
+          git config user.email "borsa-bot@users.noreply.github.com"
+          git pull --rebase -X theirs origin main
+          git commit --allow-empty -m "Site yayini"
+          git push origin main

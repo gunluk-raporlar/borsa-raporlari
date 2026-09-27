@@ -36,16 +36,9 @@ jobs:
             echo "Degisiklik yok; commit atlanır."
             exit 0
           fi
-          # Gun ici kosulari [CI Skip] ile commit'lenir: durum gite yazilir ama
-          # Cloudflare Pages build TETIKLEMEZ (aylik 500 build kotasi korunur).
-          # Yalnizca kapanis kosusu (16:15 UTC = 19:15 TR, +kron gecikme payi)
-          # sayfayi gunun tam haliyle yeniden publish eder.
-          SAAT=$(date -u +%H%M)
-          if [ "$SAAT" -ge 1610 ] && [ "$SAAT" -lt 1700 ]; then
-            MSJ="Islem robotu kapanis guncellemesi"
-          else
-            MSJ="Islem robotu ara guncellemesi [CI Skip]"
-          fi
-          git commit -m "$MSJ"
+          # Tum robot kosulari [CI Skip]: durum gite yazilir ama Cloudflare
+          # Pages build tetiklenmez (aylik kota korunur). Siteyi publish.yml
+          # gunde 2 kez (10:30 / 19:30 TR) yayinlar.
+          git commit -m "Islem robotu guncellemesi [CI Skip]"
           git pull --rebase -X theirs origin main
           git push origin main

@@ -39,6 +39,6 @@ jobs:
             echo "Degisiklik yok; commit atlanır."
             exit 0
           fi
-          git commit -m "Hafta sonu gundemi guncellemesi"
+          git commit -m "Hafta sonu gundemi guncellemesi [CI Skip]"
           git pull --rebase -X theirs origin main
           git push origin main

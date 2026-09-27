@@ -44,6 +44,6 @@ jobs:
             echo "Snapshot degismedi; commit atlandi."
             exit 0
           fi
-          git commit -m "Aksam makro snapshot guncellemesi"
+          git commit -m "Aksam makro snapshot guncellemesi [CI Skip]"
           git pull --rebase -X theirs origin main
           git push origin main
