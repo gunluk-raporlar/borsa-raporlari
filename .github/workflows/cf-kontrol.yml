@@ -1,7 +1,6 @@
 name: CF Ayar Kontrol (tek seferlik)
-# Pages preview deploy durumu OKUMA — ham deger yazdirir (jq '//' tuzagina
-# dusmeden: false ile null ayristirilir). Token ve deployment_configs (env
-# degerleri) loglara asla yazilmaz (repo public).
+# Pages proje semasini okur — SADECE anahtar adlari (degerler degil);
+# token ve env degerleri loglara asla yazilmaz (repo public).
 on:
   workflow_dispatch:
 permissions: {}
@@ -10,15 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Preview deploy durumunu oku (ham deger)
+      - name: Proje anahtarlari
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           curl -s -H "Authorization: Bearer $CF_TOKEN" \
             "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT/pages/projects/gunluk-raporlar" \
-            | jq '{basari: .success,
-                   preview_ham: .result.build_config.preview_deployments_enabled,
-                   preview_turu: (.result.build_config.preview_deployments_enabled | type),
-                   otomatik_deploy: .result.source.config.deployments_enabled,
-                   production_branch: .result.source.config.production_branch}'
+            | jq '{proje_anahtarlari: (.result | keys),
+                   build_config_anahtarlari: (.result.build_config | keys),
+                   deployment_config_anahtarlari: (.result.deployment_configs // {} | keys),
+                   deployment_preview_anahtarlari: (.result.deployment_configs.preview // {} | keys),
+                   deployment_production_anahtarlari: (.result.deployment_configs.production // {} | keys)}'
