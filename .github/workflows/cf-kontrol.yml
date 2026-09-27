@@ -1,5 +1,5 @@
 name: CF Ayar Kontrol (tek seferlik)
-# robot sayfasinin /robot vs /robot.html HTTP davranisini kontrol eder.
+# robot sayfasinin canli capasini dogrular: tam menu + seritler + arama var mi?
 on:
   workflow_dispatch:
 permissions: {}
@@ -8,13 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: URL davranislari
+      - name: Canli sayfa capasi
         run: |
-          for u in "https://borsa-raporlari.pages.dev/robot" "https://borsa-raporlari.pages.dev/robot/" "https://borsa-raporlari.pages.dev/robot.html"; do
-            echo "== $u =="
-            curl -s -o /dev/null -w "durum: %{http_code} | yonlendirme: %{redirect_url}\n" "$u"
+          HTML=$(curl -sL "https://borsa-raporlari.pages.dev/robot")
+          echo "menu ogesi sayisi: $(echo "$HTML" | grep -oE '<nav><a href="[^"]*"' | wc -l)"
+          for ip in "Muhasebe Terimleri" "ticker-bant2" "live-clock-weather" "site-arama-giris" "robot-canli" "Bugün"; do
+            say=$(echo "$HTML" | grep -cF "$ip" || true)
+            echo "$ip: $say"
           done
-          echo "== /robot icindekiden ornek =="
-          curl -sL "https://borsa-raporlari.pages.dev/robot" | grep -oE '<link rel="stylesheet"[^>]*>|<nav>' | head -3
-          echo "== /style.css durumu =="
-          curl -s -o /dev/null -w "durum: %{http_code}\n" "https://borsa-raporlari.pages.dev/style.css"
+          echo "style.css linki: $(echo "$HTML" | grep -c 'href="style.css"')"
+          echo "== /api/fiyatlar durumu =="
+          curl -s -o /dev/null -w "%{http_code}\n" "https://borsa-raporlari.pages.dev/api/fiyatlar"
+          echo "== /api/robot durumu =="
+          curl -s -o /dev/null -w "%{http_code}\n" "https://borsa-raporlari.pages.dev/api/robot"
