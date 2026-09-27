@@ -1,6 +1,5 @@
 name: CF Ayar Kontrol (tek seferlik)
-# Pages proje semasini okur — SADECE anahtar adlari (degerler degil);
-# token ve env degerleri loglara asla yazilmaz (repo public).
+# robot sayfasinin /robot vs /robot.html HTTP davranisini kontrol eder.
 on:
   workflow_dispatch:
 permissions: {}
@@ -9,15 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Proje anahtarlari
-        env:
-          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: URL davranislari
         run: |
-          curl -s -H "Authorization: Bearer $CF_TOKEN" \
-            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT/pages/projects/gunluk-raporlar" \
-            | jq '{proje_anahtarlari: (.result | keys),
-                   build_config_anahtarlari: (.result.build_config | keys),
-                   deployment_config_anahtarlari: (.result.deployment_configs // {} | keys),
-                   deployment_preview_anahtarlari: (.result.deployment_configs.preview // {} | keys),
-                   deployment_production_anahtarlari: (.result.deployment_configs.production // {} | keys)}'
+          for u in "https://borsa-raporlari.pages.dev/robot" "https://borsa-raporlari.pages.dev/robot/" "https://borsa-raporlari.pages.dev/robot.html"; do
+            echo "== $u =="
+            curl -s -o /dev/null -w "durum: %{http_code} | yonlendirme: %{redirect_url}\n" "$u"
+          done
+          echo "== /robot icindekiden ornek =="
+          curl -sL "https://borsa-raporlari.pages.dev/robot" | grep -oE '<link rel="stylesheet"[^>]*>|<nav>' | head -3
+          echo "== /style.css durumu =="
+          curl -s -o /dev/null -w "durum: %{http_code}\n" "https://borsa-raporlari.pages.dev/style.css"
