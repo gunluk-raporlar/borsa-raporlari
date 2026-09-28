@@ -1,12 +1,16 @@
 {
   "baslangic": "2026-09-25",
-  "bugun_alinan": [],
+  "bugun_alinan": [
+    "VAKBN",
+    "TUPRS",
+    "BIMAS"
+  ],
   "bugun_satilan": [],
   "bugun_tarih": "2026-09-28",
   "gerceklesen_kz": 0.0,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 10,
-  "nakit": 100000.0,
+  "kontrol_sayisi": 11,
+  "nakit": 64272.03172339001,
   "onceki_kapanis_ozkaynak": 100000.0,
   "ozkayit": [
     [
@@ -52,40 +56,66 @@
     [
       "2026-09-28T14:44",
       100000.0
+    ],
+    [
+      "2026-09-28T15:04",
+      99960.73
     ]
   ],
-  "pozisyonlar": {},
+  "pozisyonlar": {
+    "BIMAS": {
+      "giris": "2026-09-28",
+      "hedef": 484.11,
+      "lot": 28,
+      "maliyet": 420.9627,
+      "stop": 391.5
+    },
+    "TUPRS": {
+      "giris": "2026-09-28",
+      "hedef": 457.92,
+      "lot": 30,
+      "maliyet": 398.1876,
+      "stop": 370.31
+    },
+    "VAKBN": {
+      "giris": "2026-09-28",
+      "hedef": 38.11,
+      "lot": 362,
+      "maliyet": 33.1364,
+      "stop": 30.82
+    }
+  },
   "son_bar_tarihi": "2026-09-28",
   "son_fiyatlar": {
     "AEFES": 18.12,
-    "AKBNK": 69.55,
-    "ASELS": 357.75,
+    "AKBNK": 69.4,
+    "ASELS": 358.0,
     "ASTOR": 235.2,
     "BIMAS": 420.5,
     "DSTKF": 1057.0,
-    "EKGYO": 18.8,
-    "ENKAI": 85.4,
-    "EREGL": 36.72,
-    "FROTO": 74.65,
-    "GARAN": 127.6,
+    "EKGYO": 18.79,
+    "ENKAI": 85.5,
+    "EREGL": 36.8,
+    "FROTO": 74.35,
+    "GARAN": 127.4,
     "GUBRF": 434.75,
-    "ISCTR": 12.8,
+    "ISCTR": 12.78,
     "KCHOL": 211.4,
-    "KRDMD": 46.22,
+    "KRDMD": 46.3,
     "MGROS": 525.5,
-    "PETKM": 20.34,
-    "PGSUS": 142.2,
-    "SAHOL": 86.1,
+    "PETKM": 20.24,
+    "PGSUS": 142.0,
+    "SAHOL": 85.9,
     "SASA": 1.9,
-    "SISE": 38.1,
-    "TAVHL": 266.25,
-    "TCELL": 97.9,
+    "SISE": 38.06,
+    "TAVHL": 266.5,
+    "TCELL": 98.35,
     "THYAO": 286.5,
-    "TOASO": 279.5,
-    "TRALT": 46.38,
-    "TTKOM": 53.25,
-    "TUPRS": 397.0,
-    "VAKBN": 33.06,
+    "TOASO": 279.0,
+    "TRALT": 46.18,
+    "TTKOM": 53.4,
+    "TUPRS": 397.75,
+    "VAKBN": 33.1,
     "YKBNK": 35.1
   },
   "versiyon": 1
