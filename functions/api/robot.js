@@ -104,29 +104,39 @@ export async function onRequestGet(context) {
             hisse: h, lot: p.lot, maliyet: p.maliyet, son,
             kz: Math.round(kz * 100) / 100,
             kzy: taban ? Math.round((kz / taban) * 10000) / 100 : 0,
-            stop: p.stop, hedef: p.hedef,
+            stop: p.stop, hedef: p.hedef, giris: p.giris || "",
           };
         })
         .sort((a, b) => a.hisse.localeCompare(b.hisse));
 
       const toplam = (durum.nakit || 0) + pozisyonlar.reduce((s, p) => s + p.son * p.lot, 0);
+      const kapital0 = typeof durum.kapital0 === "number" ? durum.kapital0 : 100000;
       const onceki = typeof durum.onceki_kapanis_ozkaynak === "number" ? durum.onceki_kapanis_ozkaynak : null;
 
       let sonIslemler = [];
       if (islemlerMetin) {
-        sonIslemler = islemlerMetin.trim().split("\n").slice(-8).reverse()
+        sonIslemler = islemlerMetin.trim().split("\n").slice(-25).reverse()
           .map((s) => { try { return JSON.parse(s); } catch { return null; } })
           .filter(Boolean);
       }
+      const satislar = sonIslemler.filter((i) => i.yon === "SAT");
+      const kazananlar = satislar.filter((i) => i.kz > 0);
 
       yanit = jsonYanit({
         zaman: new Date().toISOString(),
         fiyat_saati: new Date().toLocaleTimeString("tr-TR", { timeZone: "Europe/Istanbul", hour: "2-digit", minute: "2-digit" }),
         toplam: Math.round(toplam * 100) / 100,
+        toplam_getiri_yuzde: Math.round((toplam / kapital0 - 1) * 10000) / 100,
         gunluk_yuzde: onceki ? Math.round((toplam / onceki - 1) * 10000) / 100 : null,
         nakit: durum.nakit || 0,
+        gerceklesen_kz: durum.gerceklesen_kz || 0,
+        pozisyon_sayisi: pozisyonlar.length,
+        kontrol_sayisi: durum.kontrol_sayisi || 0,
+        bugun_tarih: durum.bugun_tarih || "",
+        kazanma_orani: satislar.length ? Math.round(kazananlar.length / satislar.length * 1000) / 10 : 0,
         pozisyonlar,
         son_islemler: sonIslemler,
+        ozkayit: durum.ozkayit || [],
       });
     }
   } catch (e) {

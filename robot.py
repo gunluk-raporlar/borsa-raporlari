@@ -515,7 +515,7 @@ def _bugun_bolumu(durum):
     return (f"<h2 class='section-title'>Bugün ({_kisa_zaman(bugun)})</h2>"
             f"<div class='grid' style='gap:10px'>"
             f"<div class='pano-hucre'><div class='pano-etiket'>Fiyat kontrolü</div>"
-            f"{kontrol} kez · piyasa saatlerinde 30 dakikada bir · {acik_etiket}</div>"
+            f"<span id='bugun-kontrol'>{kontrol}</span> kez · piyasa saatlerinde 30 dakikada bir · {acik_etiket}</div>"
             f"{hucreler}</div>")
 
 
@@ -540,11 +540,11 @@ def dashboard_yaz(durum, sinyaller, notlar):
 
     kpi = "<div class='grid' style='grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0'>" + "".join([
         stat("Toplam Değer", _tr(oz) + " ₺", "", "kpi-toplam"),
-        stat("Toplam Getiri", f"{_tr(getiri)}%", "pos" if toplam_kz >= 0 else "neg"),
-        stat("Nakit", _tr(durum["nakit"]) + " ₺"),
-        stat("Açık Pozisyon", str(len(durum["pozisyonlar"])) + f" / {MAKS_POZISYON}"),
-        stat("Gerçekleşen K/Z", _tr(ger_kz) + " ₺", "pos" if ger_kz >= 0 else "neg"),
-        stat("Kazanma Oranı", f"{_tr(kazanma_orani, 0)}%"),
+        stat("Toplam Getiri", f"{_tr(getiri)}%", "pos" if toplam_kz >= 0 else "neg", "kpi-getiri"),
+        stat("Nakit", _tr(durum["nakit"]) + " ₺", "", "kpi-nakit"),
+        stat("Açık Pozisyon", str(len(durum["pozisyonlar"])) + f" / {MAKS_POZISYON}", "", "kpi-poz"),
+        stat("Gerçekleşen K/Z", _tr(ger_kz) + " ₺", "pos" if ger_kz >= 0 else "neg", "kpi-kz"),
+        stat("Kazanma Oranı", f"{_tr(kazanma_orani, 0)}%", "", "kpi-oran"),
     ]) + "</div>"
 
     poz_satirlar = ""
@@ -560,10 +560,11 @@ def dashboard_yaz(durum, sinyaller, notlar):
                          f"<td class='{sinif}'>{_tr(kzy)}%</td>"
                          f"<td>{_tr(p['stop'])}</td><td>{_tr(p['hedef'])}</td>"
                          f"<td>{p['giris']}</td></tr>")
-    pozisyon_bolumu = ("""<h2 class="section-title">Açık Pozisyonlar</h2><div class="card" style="padding:8px 24px 16px">
-<div style="overflow-x:auto"><table><tr><th>Hisse</th><th>Lot</th><th>Maliyet</th><th>Son</th><th>Değer ₺</th>
-<th>K/Z ₺</th><th>K/Z %</th><th>Stop</th><th>Hedef</th><th>Giriş</th></tr>""" + poz_satirlar +
-                       "</table></div>" + ("" if poz_satirlar else "<p style='color:var(--muted)'>Henüz açık pozisyon yok — robot AL sinyali bekliyor.</p>") + "</div>")
+    pozisyon_bolumu = ("<h2 class='section-title'>Açık Pozisyonlar</h2><div class='card' style='padding:8px 24px 16px' id='sec-poz'>"
+                       + ("<div style='overflow-x:auto'><table><tr><th>Hisse</th><th>Lot</th><th>Maliyet</th><th>Son</th><th>Değer ₺</th>"
+                          f"<th>K/Z ₺</th><th>K/Z %</th><th>Stop</th><th>Hedef</th><th>Giriş</th></tr>{poz_satirlar}</table></div>"
+                          if poz_satirlar else "<p style='color:var(--muted)'>Henüz açık pozisyon yok — robot AL sinyali bekliyor.</p>")
+                       + "</div>")
 
     islem_satirlar = ""
     for i in islemler[-25:][::-1]:
@@ -576,10 +577,11 @@ def dashboard_yaz(durum, sinyaller, notlar):
                            f"<td class='{'pos' if i['yon'] == 'AL' else 'neg'}'>{i['yon']}</td>"
                            f"<td>{i['lot']}</td><td>{_tr(i['fiyat'])}</td><td>{_tr(i['tutar'])}</td>"
                            f"{kz_hucre}<td style='max-width:340px'>{i['gerekce']}</td></tr>")
-    islem_bolumu = ("""<h2 class="section-title">Son İşlemler</h2><div class="card" style="padding:8px 24px 16px">
-<div style="overflow-x:auto"><table><tr><th>Zaman</th><th>Hisse</th><th>Yön</th><th>Lot</th><th>Fiyat</th>
-<th>Tutar ₺</th><th>K/Z ₺</th><th>Gerekçe</th></tr>""" + islem_satirlar +
-                    ("</table></div>" if islem_satirlar else "</table></div><p style='color:var(--muted)'>Henüz işlem yok.</p>") + "</div>")
+    islem_bolumu = ("<h2 class='section-title'>Son İşlemler</h2><div class='card' style='padding:8px 24px 16px' id='sec-islem'>"
+                    + ("<div style='overflow-x:auto'><table><tr><th>Zaman</th><th>Hisse</th><th>Yön</th><th>Lot</th><th>Fiyat</th>"
+                       f"<th>Tutar ₺</th><th>K/Z ₺</th><th>Gerekçe</th></tr>{islem_satirlar}</table></div>"
+                       if islem_satirlar else "<p style='color:var(--muted)'>Henüz işlem yok.</p>")
+                    + "</div>")
 
     # Sinyal panosu: son kontroldaki AL/SAT olaylari
     pano = ""
@@ -627,7 +629,7 @@ stop-loss ve hedef gün içinde tetiklenebilir, kesişim sinyalleri gün içi fi
 {kpi}
 {_bugun_bolumu(durum)}
 <h2 class="section-title">Özkaynak Eğrisi <span style="font-size:13px;color:var(--muted);font-weight:400">— her fiyat kontrolünde bir nokta</span></h2>
-<div class="card">{_egri_svg(durum["ozkayit"])}</div>
+<div class="card" id='sec-egri'>{_egri_svg(durum["ozkayit"])}</div>
 {pozisyon_bolumu}
 {islem_bolumu}
 {pano_bolumu}
@@ -838,6 +840,121 @@ _SITE_ARAMA = """
 """
 
 
+_ROBOT_CANLI_JS = """<script>
+/* Canlı katman: /api/robot (son commit'lenen durum + canlı fiyat) — üst şerit,
+   KPI kartları, pozisyonlar, işlem defteri ve özkaynak eğrisi tarayıcıda
+   yeniden render edilir; 19:30/10:30 statik yayını beklemeden güncel kalır. */
+(function() {
+  var kutu = document.getElementById('robot-canli');
+  function tr(x, h) {
+    return (x === null || x === undefined) ? '—'
+      : Number(x).toLocaleString('tr-TR', {minimumFractionDigits: h || 2, maximumFractionDigits: h || 2});
+  }
+  function isaret(v) { return v >= 0 ? '+' : ''; }
+  function kisaZaman(z) {
+    if (!z) return '—';
+    if (z.length > 10) return z.slice(8, 10) + '.' + z.slice(5, 7) + ' ' + z.slice(11, 16);
+    return z.slice(8, 10) + '.' + z.slice(5, 7) + '.' + z.slice(0, 4);
+  }
+  function kpiYaz(id, deger, sinif) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = deger;
+    if (sinif !== undefined) el.className = sinif;
+  }
+  function cizBar(d) {
+    if (!kutu) return;
+    var cips = (d.pozisyonlar || []).map(function(p) {
+      return "<span class='pano-hucre' style='display:inline-block;padding:4px 10px;margin:2px'><b>" + p.hisse + "</b> "
+        + tr(p.son) + " ₺ <span class='" + (p.kzy >= 0 ? 'pos' : 'neg') + "'>"
+        + (p.kzy >= 0 ? '+' : '') + tr(p.kzy) + "%</span></span>";
+    }).join('');
+    if (!cips) cips = "<span style='color:var(--muted)'>açık pozisyon yok — nakit bekleniyor</span>";
+    var gun = (d.gunluk_yuzde === null || d.gunluk_yuzde === undefined) ? '' :
+      " <span class='" + (d.gunluk_yuzde >= 0 ? 'pos' : 'neg') + "'>(" + (d.gunluk_yuzde >= 0 ? '+' : '') + tr(d.gunluk_yuzde) + "% dünkü kapanışa göre)</span>";
+    kutu.innerHTML = "🟢 <b>CANLI</b> · son fiyat " + (d.fiyat_saati || '—') +
+      " · Toplam <b style='font-size:17px'>" + tr(d.toplam) + " ₺</b>" + gun + " · " + cips +
+      "<div style='color:var(--muted);font-size:11.5px;margin-top:6px'>Fiyatlar ~15 dk gecikmelidir; tüm bölüm 1 dakikada bir tazelenir.</div>";
+    kutu.dataset.yuklendi = '1';
+  }
+  function cizKpi(d) {
+    kpiYaz('kpi-toplam', tr(d.toplam) + ' ₺');
+    var g = d.toplam_getiri_yuzde || 0;
+    kpiYaz('kpi-getiri', isaret(g) + tr(g) + '%', g >= 0 ? 'pos' : 'neg');
+    kpiYaz('kpi-nakit', tr(d.nakit) + ' ₺');
+    kpiYaz('kpi-poz', (d.pozisyon_sayisi || 0) + ' / 8');
+    var kz = d.gerceklesen_kz || 0;
+    kpiYaz('kpi-kz', tr(kz) + ' ₺', kz >= 0 ? 'pos' : 'neg');
+    kpiYaz('kpi-oran', tr(d.kazanma_orani || 0, 0) + '%');
+    var bk = document.getElementById('bugun-kontrol');
+    if (bk) bk.innerHTML = d.kontrol_sayisi || 0;
+  }
+  function cizPoz(d) {
+    var hedef = document.getElementById('sec-poz');
+    if (!hedef) return;
+    var p = d.pozisyonlar || [];
+    if (!p.length) { hedef.innerHTML = "<p style='color:var(--muted)'>Henüz açık pozisyon yok — robot AL sinyali bekliyor.</p>"; return; }
+    var satir = p.map(function(x) {
+      var s = x.kz >= 0 ? 'pos' : 'neg';
+      return '<tr><td><b>' + x.hisse + '</b></td><td>' + x.lot + '</td><td>' + tr(x.maliyet) + '</td><td>' + tr(x.son) +
+        '</td><td>' + tr(x.son * x.lot) + '</td><td class="' + s + '">' + tr(x.kz) + '</td><td class="' + s + '">' + tr(x.kzy) + '%</td>' +
+        '<td>' + tr(x.stop) + '</td><td>' + tr(x.hedef) + '</td><td>' + (x.giris || '—') + '</td></tr>';
+    }).join('');
+    hedef.innerHTML = "<div style='overflow-x:auto'><table><tr><th>Hisse</th><th>Lot</th><th>Maliyet</th><th>Son</th><th>Değer ₺</th><th>K/Z ₺</th><th>K/Z %</th><th>Stop</th><th>Hedef</th><th>Giriş</th></tr>" + satir + "</table></div>";
+  }
+  function cizIslem(d) {
+    var hedef = document.getElementById('sec-islem');
+    if (!hedef) return;
+    var l = d.son_islemler || [];
+    if (!l.length) { hedef.innerHTML = "<p style='color:var(--muted)'>Henüz işlem yok.</p>"; return; }
+    var satir = l.map(function(i) {
+      var kzH = '<td>—</td>';
+      if (i.yon === 'SAT' && i.kz !== null && i.kz !== undefined) kzH = '<td class="' + (i.kz >= 0 ? 'pos' : 'neg') + '">' + tr(i.kz) + '</td>';
+      return '<tr><td>' + (i.tarih || '') + ' ' + (i.saat || '') + '</td><td><b>' + i.hisse + '</b></td>' +
+        '<td class="' + (i.yon === 'AL' ? 'pos' : 'neg') + '">' + i.yon + '</td><td>' + i.lot + '</td><td>' + tr(i.fiyat) +
+        '</td><td>' + tr(i.tutar) + '</td>' + kzH + '<td style="max-width:340px">' + (i.gerekce || '') + '</td></tr>';
+    }).join('');
+    hedef.innerHTML = "<div style='overflow-x:auto'><table><tr><th>Zaman</th><th>Hisse</th><th>Yön</th><th>Lot</th><th>Fiyat</th><th>Tutar ₺</th><th>K/Z ₺</th><th>Gerekçe</th></tr>" + satir + "</table></div>";
+  }
+  function cizEgri(d) {
+    var hedef = document.getElementById('sec-egri');
+    if (!hedef) return;
+    var k = d.ozkayit || [];
+    if (k.length < 2) return;
+    var vals = k.map(function(p) { return p[1]; });
+    var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
+    if (mx - mn < 1e-9) mx = mn + 1;
+    var W = 720, H = 160, P = 14;
+    function xy(i, v) {
+      return (P + i * (W - 2 * P) / (vals.length - 1)).toFixed(1) + ',' + (H - P - (v - mn) * (H - 2 * P) / (mx - mn)).toFixed(1);
+    }
+    var pts = vals.map(function(v, i) { return xy(i, v); }).join(' ');
+    var renk = vals[vals.length - 1] >= vals[0] ? '#047857' : '#b91c1c';
+    hedef.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto" role="img" aria-label="Özkaynak eğrisi">' +
+      '<polyline points="' + xy(0, vals[0]) + ',' + xy(vals.length - 1, vals[vals.length - 1]) + '" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>' +
+      '<polyline points="' + pts + '" fill="none" stroke="' + renk + '" stroke-width="2.5" stroke-linejoin="round"/>' +
+      '<text x="' + P + '" y="' + (H - 2) + '" font-size="10" fill="#64748b">' + kisaZaman(k[0][0]) + '</text>' +
+      '<text x="' + (W - P) + '" y="' + (H - 2) + '" font-size="10" fill="#64748b" text-anchor="end">' + kisaZaman(k[k.length - 1][0]) + '</text>' +
+      '<text x="' + (W - P) + '" y="' + (P + 2) + '" font-size="11" fill="' + renk + '" text-anchor="end">' + tr(vals[vals.length - 1]) + ' TL</text>' +
+      '<text x="' + P + '" y="' + (P + 2) + '" font-size="11" fill="#64748b">' + tr(vals[0]) + ' TL (başlangıç)</text></svg>';
+  }
+  function cizHepsi(d) {
+    if (!d || d.hata) {
+      if (kutu && !kutu.dataset.yuklendi) kutu.innerHTML = "<span style='color:var(--muted)'>🟠 Canlı özet şu an erişilemiyor — aşağıdaki tablolar son güncellemeye aittir.</span>";
+      return;
+    }
+    cizBar(d); cizKpi(d); cizPoz(d); cizIslem(d); cizEgri(d);
+  }
+  function yenile() {
+    fetch('/api/robot').then(function(r) { return r.json(); }).then(cizHepsi)
+      .catch(function() { if (kutu && !kutu.dataset.yuklendi) kutu.innerHTML = "<span style='color:var(--muted)'>🟠 Canlı özet şu an erişilemiyor.</span>"; });
+  }
+  yenile();
+  setInterval(yenile, 60000);
+})();
+</script>"""
+
+
 def _iskelet(title, icerik, guncelleme):
     """Sayfa iskeleti — sitenin style.css'ini ve tam capasini kullanan bagimsiz
     KOPYA (bot.py'ye dokunmaz; ust menu, seritler, saat/hava, arama dahil)."""
@@ -891,41 +1008,7 @@ function temaDegistir() {{
 }})();
 </script>
 <script>
-/* Canlı özet katmanı: /api/robot (son commit'lenen durum + canlı fiyat) */
-(function() {{
-  var kutu = document.getElementById('robot-canli');
-  if (!kutu) return;
-  function tr(x, h) {{
-    return (x === null || x === undefined) ? '—'
-      : Number(x).toLocaleString('tr-TR', {{minimumFractionDigits: h || 2, maximumFractionDigits: h || 2}});
-  }}
-  function ciz(d) {{
-    if (!d || d.hata) {{
-      kutu.innerHTML = "<span style='color:var(--muted)'>🟠 Canlı özet şu an erişilemiyor — aşağıdaki tablolar son güncellemeye aittir.</span>";
-      return;
-    }}
-    var cips = (d.pozisyonlar || []).map(function(p) {{
-      return "<span class='pano-hucre' style='display:inline-block;padding:4px 10px;margin:2px'><b>" + p.hisse + "</b> "
-        + tr(p.son) + " ₺ <span class='" + (p.kzy >= 0 ? 'pos' : 'neg') + "'>"
-        + (p.kzy >= 0 ? '+' : '') + tr(p.kzy) + "%</span></span>";
-    }}).join('');
-    if (!cips) cips = "<span style='color:var(--muted)'>açık pozisyon yok — nakit bekleniyor</span>";
-    var gun = (d.gunluk_yuzde === null || d.gunluk_yuzde === undefined) ? '' :
-      " <span class='" + (d.gunluk_yuzde >= 0 ? 'pos' : 'neg') + "'>(" + (d.gunluk_yuzde >= 0 ? '+' : '') + tr(d.gunluk_yuzde) + "% dünkü kapanışa göre)</span>";
-    kutu.innerHTML = "🟢 <b>CANLI</b> · son fiyat " + (d.fiyat_saati || '—') +
-      " · Toplam <b style='font-size:17px'>" + tr(d.toplam) + " ₺</b>" + gun + " · " + cips +
-      "<div style='color:var(--muted);font-size:11.5px;margin-top:6px'>Fiyatlar ~15 dk gecikmelidir; bu şerit 1 dakikada bir tazelenir. " +
-      "Özkaynak eğrisi ve tablolar günde 2 kez (10:30 / 19:30) yayımlanan tam sürümle güncellenir.</div>";
-    var k = document.getElementById('kpi-toplam');
-    if (k) k.innerHTML = tr(d.toplam) + " ₺";
-  }}
-  function yenile() {{
-    fetch('/api/robot').then(function(r) {{ return r.json(); }}).then(ciz)
-      .catch(function() {{ kutu.innerHTML = "<span style='color:var(--muted)'>🟠 Canlı özet şu an erişilemiyor.</span>"; }});
-  }}
-  yenile();
-  setInterval(yenile, 60000);
-}})();
+{_ROBOT_CANLI_JS}
 </script>
 </body></html>"""
 
