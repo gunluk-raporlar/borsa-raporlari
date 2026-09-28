@@ -261,10 +261,12 @@ def _rsi(degerler, n=14):
 def strateji_sinyalleri(seriler):
     """Her hisse icin AL/SAT/BEKLE sinyali uretir: {hisse: {...}}.
 
-    AL  : son barda SMA10, SMA30'u yukari kesti  VE RSI14 45-75 arasinda
-          VE fiyat SMA100'un uzerinde (trend filtresi).
-    SAT : son barda SMA10, SMA30'u asagi kesti (stop/hedef OMS katmaninda da tetiklenir).
-    Piyasa acikken son bar CANLI fiyattan gecici bardir (gun ici kesisim yakalanir)."""
+    AL  : SMA10, SMA30'un UZERINDE (dizilim durumu — taze kesisim sart degil,
+          boylece robot duzeltme donemlerinde de pozisyon acar) VE RSI14 45-75
+          bandinda VE fiyat SMA100'un uzerinde (trend filtresi).
+    SAT : SMA10, SMA30'un altina indi (kesisim olayi) — stop/hedef OMS'te de
+          tetiklenir. Piyasa acikken son bar CANLI fiyattan gecici bardir
+          (gun ici sinyaller yakalanir)."""
     sinyaller = {}
     for h, (tarihler, fiyatlar) in seriler.items():
         if len(fiyatlar) < 110:
@@ -276,11 +278,10 @@ def strateji_sinyalleri(seriler):
         rsi = _rsi(f)
         # Kesisim OLAYI (durum degil): onceki bardaki iliski degisir.
         onceki_ok = s10[0] is not None and s30[0] is not None and s10[1] is not None and s30[1] is not None
-        alt_kesti = onceki_ok and s10[0] <= s30[0]
         usti_cikti = onceki_ok and s10[1] > s30[1]
         asagi_kesti = onceki_ok and s10[0] >= s30[0] and s10[1] < s30[1]
         sinyal, gerekce = "BEKLE", ""
-        if alt_kesti and usti_cikti:
+        if usti_cikti:
             if rsi is None or not (45.0 <= rsi <= 75.0) or f[-1] <= sma100:
                 neden = []
                 if rsi is not None and rsi > 75:
@@ -289,13 +290,13 @@ def strateji_sinyalleri(seriler):
                     neden.append(f"RSI {rsi:.0f} zayif")
                 if f[-1] <= sma100:
                     neden.append("fiyat SMA100 altinda")
-                sinyal, gerekce = "BEKLE", "kesisim var ama: " + ", ".join(neden)
+                sinyal, gerekce = "BEKLE", "dizilim AL yonunde ama: " + ", ".join(neden)
             else:
                 sinyal = "AL"
-                gerekce = f"SMA10, SMA30'u yukari kesti · RSI {rsi:.0f} · fiyat SMA100 uzerinde"
+                gerekce = f"SMA10 > SMA30 dizilimi · RSI {rsi:.0f} · fiyat SMA100 uzerinde"
         elif asagi_kesti:
             sinyal = "SAT"
-            gerekce = "SMA10, SMA30'u asagi kesti"
+            gerekce = "SMA10, SMA30'un asagi kesti"
         sinyaller[h] = {
             "sinyal": sinyal, "gerekce": gerekce,
             "son_fiyat": f[-1], "tarih": tarihler[-1],
@@ -601,7 +602,7 @@ def dashboard_yaz(durum, sinyaller, notlar):
 
     istatistik = (f"<div class='grid-iki'><div class='card'><div class='pano-baslik'>Strateji Kuralları</div>"
                   f"<ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'>"
-                  f"<li><b>AL:</b> SMA10, SMA30'u yukarı keser + RSI14 45–75 bandında + fiyat SMA100 üzerinde.</li>"
+                  f"<li><b>AL:</b> SMA10, SMA30'un üzerinde dizilim + RSI14 45–75 bandında + fiyat SMA100 üzerinde (taze kesişim beklenmez; dizilim varsa girilir).</li>"
                   f"<li><b>SAT:</b> SMA10, SMA30'u aşağı keser, ya da maliyetin <b>%{abs(int(STOP_ORAN * 100))}</b> altına düşer (stop), "
                   f"ya da <b>%{int(HEDEF_ORAN * 100)}</b> yukarısına çıkar (hedef).</li>"
                   f"<li><b>Boyut:</b> özkaynağın en fazla %{int(POZISYON_ORAN * 100)}'i tek hisseye, en fazla {MAKS_POZISYON} pozisyon.</li>"
