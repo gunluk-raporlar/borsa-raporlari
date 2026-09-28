@@ -1,9 +1,9 @@
 name: Islem Robotu (Paper Trading)
 on:
   schedule:
-    # Piyasa saatleri: hafta ici 07:00-15:30 UTC = 10:00-18:30 TR, her 30 dakikada
+    # Piyasa saatleri: hafta ici 07:00-15:30 UTC = 10:00-18:30 TR, her 15 dakikada
     # canli fiyat kontrolu (stop/hedef gun icinde tetiklenebilir).
-    - cron: '*/30 7-15 * * 1-5'
+    - cron: '*/15 7-15 * * 1-5'
     # Kapanis kosusu: 16:15 UTC = 19:15 TR — gunun son ozkaynak noktasi/ozeti.
     - cron: '15 16 * * 1-5'
   workflow_dispatch:

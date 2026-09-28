@@ -52,16 +52,26 @@ SAYFA_YOL = "robot.html"
 KAPITAL0 = 100_000.0        # sanal başlangıç sermayesi (TL)
 POZISYON_ORAN = 0.12        # özkaynağın en fazla %12'si tek hisseye
 MAKS_POZISYON = 8           # aynı anda en fazla 8 farklı hisse
-STOP_ORAN = -0.07           # maliyetin %7 altında stop-loss
-HEDEF_ORAN = 0.15           # maliyetin %15 üstünde kâr alma
+STOP_ORAN = -0.03           # maliyetin %3 altında stop-loss (scalp braketi)
+HEDEF_ORAN = 0.03           # maliyetin %3 üstünde kâr alma (scalp braketi)
 GUNLUK_ZARAR_LIMITI = 0.03  # özkaynak dünkü kapanışa göre %3 düşerse yeni alım durur
-KOMISYON = 0.0006           # işlem başına %0,06 (BSMV dahil varsayım)
+KOMISYON_ORAN = 0.0004      # aracı kurum komisyonu: %0,04
+KOMISYON_MIN = 10.0         # işlem başına en düşük komisyon (TL)
+BSMV_ORAN = 0.15            # komisyon üzerinden BSMV: %15
+YASAL_UCRET = 0.0002        # BIST+SPK+MKK işlem ücretleri (yaklaşık %0,02)
 KAYMA = 0.0005              # %0,05 slippage varsayımı
 MIN_ISLEM_TL = 2_000.0      # bundan küçük işlem açılmaz
 VERI_GUN = 300              # SMA100 + tampon için ~200 işlem günü
 OZKAYIT_GUN = 14            # eğride son 14 gün saklanır (ilk nokta hep kalır)
 
 SITE_URL = "https://borsa-raporlari.pages.dev/"
+
+
+def islem_kesintisi(brut_tutar):
+    """Bir islemin araci kurumu + devlet kesintisi (TL): komisyon (%0,04,
+    en az 10 TL) + komisyon uzeri BSMV %15 + BIST/SPK/MKK ucretleri."""
+    komisyon = max(brut_tutar * KOMISYON_ORAN, KOMISYON_MIN)
+    return round(komisyon * (1.0 + BSMV_ORAN) + brut_tutar * YASAL_UCRET, 2)
 
 
 def _simdi():
@@ -395,10 +405,12 @@ def risk_ve_oms(durum, sinyaller):
                 gerekce = f"hedef fiyat: {p['hedef']:.2f} seviyesi canlı fiyatta ulaşıldı (+%{HEDEF_ORAN * 100:.0f} kural)"
             else:
                 gerekce = s["gerekce"]
-            net = fiyat * (1.0 - KAYMA) * (1.0 - KOMISYON)
-            tutar = net * p["lot"]
-            kz = (net - p["maliyet"]) * p["lot"]
+            brut = fiyat * p["lot"]
+            kesinti = islem_kesintisi(brut)
+            tutar = brut * (1.0 - KAYMA) - kesinti
+            kz = tutar - p["maliyet"] * p["lot"]
             durum["nakit"] += tutar
+            durum["toplam_kesinti"] = round(durum.get("toplam_kesinti", 0.0) + kesinti, 2)
             del durum["pozisyonlar"][h]
             durum.setdefault("bugun_satilan", []).append(h)
             islem_sayisi += 1
@@ -406,7 +418,8 @@ def risk_ve_oms(durum, sinyaller):
             islem_logla({
                 "tarih": _simdi().strftime("%Y-%m-%d"), "saat": saat, "hisse": h,
                 "yon": "SAT", "lot": p["lot"], "fiyat": round(fiyat, 2),
-                "tutar": round(tutar, 2), "kz": round(kz, 2), "gerekce": gerekce,
+                "tutar": round(tutar, 2), "kesinti": round(kesinti, 2),
+                "kz": round(kz, 2), "gerekce": gerekce,
                 "giris_tarihi": p["giris"], "nakit_sonra": round(durum["nakit"], 2),
             })
             log.info("[SAT] %s lot=%d fiyat=%.2f K/Z=%+.2f (%s)", h, p["lot"], fiyat, kz, gerekce)
@@ -429,15 +442,21 @@ def risk_ve_oms(durum, sinyaller):
             if lot < 1 or lot * fiyat < MIN_ISLEM_TL:
                 notlar.append(f"{h}: AL sinyali vardı ama nakit/boyut kuralı işlem açmaya yetmedi.")
                 continue
-            maliyet = fiyat * (1.0 + KAYMA) * (1.0 + KOMISYON)
-            toplam = maliyet * lot
-            if toplam > durum["nakit"]:
+            etkin = fiyat * (1.0 + KAYMA)
+            brut = etkin * lot
+            kesinti = islem_kesintisi(brut)
+            toplam = brut + kesinti
+            while toplam > durum["nakit"] and lot > 1:
                 lot -= 1
-                if lot < 1:
-                    notlar.append(f"{h}: AL sinyali vardı ama komisyon sonrası nakit yetmedi.")
-                    continue
-                toplam = maliyet * lot
+                brut = etkin * lot
+                kesinti = islem_kesintisi(brut)
+                toplam = brut + kesinti
+            if lot < 1:
+                notlar.append(f"{h}: AL sinyali vardı ama komisyon sonrası nakit yetmedi.")
+                continue
+            maliyet = toplam / lot
             durum["nakit"] -= toplam
+            durum["toplam_kesinti"] = round(durum.get("toplam_kesinti", 0.0) + kesinti, 2)
             durum["pozisyonlar"][h] = {
                 "lot": lot, "maliyet": round(maliyet, 4), "giris": _simdi().strftime("%Y-%m-%d"),
                 "stop": round(maliyet * (1.0 + STOP_ORAN), 2),
@@ -448,7 +467,8 @@ def risk_ve_oms(durum, sinyaller):
             islem_logla({
                 "tarih": _simdi().strftime("%Y-%m-%d"), "saat": saat, "hisse": h,
                 "yon": "AL", "lot": lot, "fiyat": round(fiyat, 2),
-                "tutar": round(toplam, 2), "kz": None, "gerekce": s["gerekce"],
+                "tutar": round(toplam, 2), "kesinti": round(kesinti, 2),
+                "kz": None, "gerekce": s["gerekce"],
                 "giris_tarihi": _simdi().strftime("%Y-%m-%d"),
                 "nakit_sonra": round(durum["nakit"], 2),
             })
@@ -545,6 +565,7 @@ def dashboard_yaz(durum, sinyaller, notlar):
         stat("Açık Pozisyon", str(len(durum["pozisyonlar"])) + f" / {MAKS_POZISYON}", "", "kpi-poz"),
         stat("Gerçekleşen K/Z", _tr(ger_kz) + " ₺", "pos" if ger_kz >= 0 else "neg", "kpi-kz"),
         stat("Kazanma Oranı", f"{_tr(kazanma_orani, 0)}%", "", "kpi-oran"),
+        stat("Ödenen Kesinti", _tr(durum.get("toplam_kesinti", 0.0)) + " ₺", "neg", "kpi-kesinti"),
     ]) + "</div>"
 
     poz_satirlar = ""
@@ -576,10 +597,11 @@ def dashboard_yaz(durum, sinyaller, notlar):
                            f"<td><b>{i['hisse']}</b></td>"
                            f"<td class='{'pos' if i['yon'] == 'AL' else 'neg'}'>{i['yon']}</td>"
                            f"<td>{i['lot']}</td><td>{_tr(i['fiyat'])}</td><td>{_tr(i['tutar'])}</td>"
+                           f"<td>{_tr(i.get('kesinti', 0))}</td>"
                            f"{kz_hucre}<td style='max-width:340px'>{i['gerekce']}</td></tr>")
     islem_bolumu = ("<h2 class='section-title'>Son İşlemler</h2><div class='card' style='padding:8px 24px 16px' id='sec-islem'>"
                     + ("<div style='overflow-x:auto'><table><tr><th>Zaman</th><th>Hisse</th><th>Yön</th><th>Lot</th><th>Fiyat</th>"
-                       f"<th>Tutar ₺</th><th>K/Z ₺</th><th>Gerekçe</th></tr>{islem_satirlar}</table></div>"
+                       f"<th>Tutar ₺</th><th>Kesinti</th><th>K/Z ₺</th><th>Gerekçe</th></tr>{islem_satirlar}</table></div>"
                        if islem_satirlar else "<p style='color:var(--muted)'>Henüz işlem yok.</p>")
                     + "</div>")
 
@@ -609,13 +631,14 @@ def dashboard_yaz(durum, sinyaller, notlar):
                   f"ya da <b>%{int(HEDEF_ORAN * 100)}</b> yukarısına çıkar (hedef).</li>"
                   f"<li><b>Boyut:</b> özkaynağın en fazla %{int(POZISYON_ORAN * 100)}'i tek hisseye, en fazla {MAKS_POZISYON} pozisyon.</li>"
                   f"<li><b>Günlük fren:</b> özkaynak dünkü kapanışa göre %{int(GUNLUK_ZARAR_LIMITI * 100)} düşerse yeni alım o gün durdurulur.</li>"
-                  f"<li><b>Sürtünme:</b> işlem başına %{_tr(KOMISYON * 100, 2)} komisyon + %{_tr(KAYMA * 100, 2)} kayma varsayılır.</li></ul></div>"
+                  f"<li><b>Maliyetler:</b> komisyon %{KOMISYON_ORAN * 100:.2f} (en az {KOMISYON_MIN:.0f} ₺) + BSMV %15 + yasal ücret ~%{YASAL_UCRET * 100:.3f} + kayma %{KAYMA * 100:.2f}. 12.000 ₺'lik işlemin tur maliyeti ~35–40 ₺ (~%0,3) — scalping'in gerçek bedeli.</li>"
+                  f"<li><b>Vergi:</b> BIST hisse satış kazancında stopaj %0; yıllık beyan sınırını aşan kazanç beyan edilir.</li></ul></div>"
                   f"<div class='card'><div class='pano-baslik'>Performans Özeti</div>"
                   f"<ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'>"
                   f"<li>Başlangıç: {durum['ozkayit'][0][0] if durum['ozkayit'] else '—'} · {_tr(KAPITAL0)} ₺</li>"
                   f"<li>Toplam işlem: {len(islemler)} ({len(satislar)} SAT / {len(islemler) - len(satislar)} AL)</li>"
                   f"<li>Kazanan SAT oranı: {_tr(kazanma_orani, 0)}%</li>"
-                  f"<li>Gerçekleşen K/Z: {_tr(ger_kz)} ₺</li>"
+                  f"<li>Gerçekleşen K/Z: {_tr(ger_kz)} ₺ · Ödenen kesinti: {_tr(durum.get('toplam_kesinti', 0.0))} ₺</li>"
                   f"<li>Açık pozisyon K/Z (gerçekleşmemiş): {_tr(toplam_kz - ger_kz)} ₺</li></ul></div></div>")
 
     icerik = f"""<div class="hero">
@@ -886,6 +909,7 @@ _ROBOT_CANLI_JS = """<script>
     var kz = d.gerceklesen_kz || 0;
     kpiYaz('kpi-kz', tr(kz) + ' ₺', kz >= 0 ? 'pos' : 'neg');
     kpiYaz('kpi-oran', tr(d.kazanma_orani || 0, 0) + '%');
+    kpiYaz('kpi-kesinti', tr(d.toplam_kesinti || 0) + ' ₺', 'neg');
     var bk = document.getElementById('bugun-kontrol');
     if (bk) bk.innerHTML = d.kontrol_sayisi || 0;
   }
@@ -912,9 +936,9 @@ _ROBOT_CANLI_JS = """<script>
       if (i.yon === 'SAT' && i.kz !== null && i.kz !== undefined) kzH = '<td class="' + (i.kz >= 0 ? 'pos' : 'neg') + '">' + tr(i.kz) + '</td>';
       return '<tr><td>' + (i.tarih || '') + ' ' + (i.saat || '') + '</td><td><b>' + i.hisse + '</b></td>' +
         '<td class="' + (i.yon === 'AL' ? 'pos' : 'neg') + '">' + i.yon + '</td><td>' + i.lot + '</td><td>' + tr(i.fiyat) +
-        '</td><td>' + tr(i.tutar) + '</td>' + kzH + '<td style="max-width:340px">' + (i.gerekce || '') + '</td></tr>';
+        '</td><td>' + tr(i.tutar) + '</td><td>' + tr(i.kesinti || 0) + '</td>' + kzH + '<td style="max-width:340px">' + (i.gerekce || '') + '</td></tr>';
     }).join('');
-    hedef.innerHTML = "<div style='overflow-x:auto'><table><tr><th>Zaman</th><th>Hisse</th><th>Yön</th><th>Lot</th><th>Fiyat</th><th>Tutar ₺</th><th>K/Z ₺</th><th>Gerekçe</th></tr>" + satir + "</table></div>";
+    hedef.innerHTML = "<div style='overflow-x:auto'><table><tr><th>Zaman</th><th>Hisse</th><th>Yön</th><th>Lot</th><th>Fiyat</th><th>Tutar ₺</th><th>Kesinti</th><th>K/Z ₺</th><th>Gerekçe</th></tr>" + satir + "</table></div>";
   }
   function cizEgri(d) {
     var hedef = document.getElementById('sec-egri');
@@ -1031,6 +1055,7 @@ def main():
         durum = {
             "versiyon": 2, "baslangic": tarih, "kapital0": KAPITAL0,
             "nakit": KAPITAL0, "pozisyonlar": {}, "gerceklesen_kz": 0.0,
+            "toplam_kesinti": 0.0,
             "son_bar_tarihi": None, "ozkayit": [[tarih, KAPITAL0]],
         }
         log.info("[ROBOT] Ilk calistirma: durum baslatildi (son bar %s).", tarih)
@@ -1047,6 +1072,17 @@ def main():
         durum["kontrol_sayisi"] = 0
         durum["onceki_kapanis_ozkaynak"] = onceki[1] if onceki else durum.get("kapital0", KAPITAL0)
     durum["kontrol_sayisi"] = durum.get("kontrol_sayisi", 0) + 1
+
+    # Braket v2: scalp moduna geciste acik pozisyonlarin stop/hedefleri de
+    # yeni kurallara tasinir (eski -%7/+%15 braketi yerine -%3/+%3).
+    if durum.get("braket_versiyonu") != 2:
+        for h, p in durum["pozisyonlar"].items():
+            p["stop"] = round(p["maliyet"] * (1.0 + STOP_ORAN), 2)
+            p["hedef"] = round(p["maliyet"] * (1.0 + HEDEF_ORAN), 2)
+        durum["braket_versiyonu"] = 2
+        if durum["pozisyonlar"]:
+            log.info("[RISK] %d pozisyon scalp braketlerine tasindi (stop -%d / hedef +%d).",
+                     len(durum["pozisyonlar"]), abs(int(STOP_ORAN * 100)), int(HEDEF_ORAN * 100))
 
     canli = canli_fiyatlar()
     if canli:

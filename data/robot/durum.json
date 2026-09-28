@@ -1,5 +1,6 @@
 {
   "baslangic": "2026-09-25",
+  "braket_versiyonu": 2,
   "bugun_alinan": [
     "VAKBN",
     "TUPRS",
@@ -9,7 +10,7 @@
   "bugun_tarih": "2026-09-28",
   "gerceklesen_kz": 0.0,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 13,
+  "kontrol_sayisi": 14,
   "nakit": 64272.77253761201,
   "onceki_kapanis_ozkaynak": 100000.0,
   "ozkayit": [
@@ -68,63 +69,67 @@
     [
       "2026-09-28T15:48",
       99939.97
+    ],
+    [
+      "2026-09-28T16:03",
+      100091.87
     ]
   ],
   "pozisyonlar": {
     "BIMAS": {
       "giris": "2026-09-28",
-      "hedef": 484.68,
+      "hedef": 434.11,
       "lot": 28,
       "maliyet": 421.4632,
-      "stop": 391.96
+      "stop": 408.82
     },
     "TUPRS": {
       "giris": "2026-09-28",
-      "hedef": 457.63,
+      "hedef": 409.88,
       "lot": 30,
       "maliyet": 397.9374,
-      "stop": 370.08
+      "stop": 386.0
     },
     "VAKBN": {
       "giris": "2026-09-28",
-      "hedef": 38.08,
+      "hedef": 34.11,
       "lot": 362,
       "maliyet": 33.1164,
-      "stop": 30.8
+      "stop": 32.12
     }
   },
   "son_bar_tarihi": "2026-09-28",
   "son_fiyatlar": {
-    "AEFES": 18.05,
-    "AKBNK": 69.4,
-    "ASELS": 358.25,
+    "AEFES": 18.11,
+    "AKBNK": 69.7,
+    "ASELS": 360.5,
     "ASTOR": 235.2,
-    "BIMAS": 420.0,
+    "BIMAS": 421.5,
     "DSTKF": 1057.0,
-    "EKGYO": 18.73,
-    "ENKAI": 85.5,
-    "EREGL": 36.84,
-    "FROTO": 74.3,
-    "GARAN": 127.8,
-    "GUBRF": 435.0,
-    "ISCTR": 12.77,
-    "KCHOL": 211.3,
-    "KRDMD": 46.6,
-    "MGROS": 526.5,
-    "PETKM": 20.12,
-    "PGSUS": 142.3,
-    "SAHOL": 86.0,
+    "EKGYO": 18.81,
+    "ENKAI": 85.7,
+    "EREGL": 36.92,
+    "FROTO": 74.75,
+    "GARAN": 128.2,
+    "GUBRF": 435.75,
+    "ISCTR": 12.83,
+    "KCHOL": 212.4,
+    "KRDMD": 46.72,
+    "MGROS": 528.5,
+    "PETKM": 20.18,
+    "PGSUS": 143.1,
+    "SAHOL": 86.5,
     "SASA": 1.9,
-    "SISE": 38.12,
-    "TAVHL": 266.75,
-    "TCELL": 97.75,
-    "THYAO": 286.25,
-    "TOASO": 278.25,
-    "TRALT": 46.44,
-    "TTKOM": 53.2,
-    "TUPRS": 397.5,
-    "VAKBN": 33.1,
-    "YKBNK": 35.04
+    "SISE": 38.26,
+    "TAVHL": 268.0,
+    "TCELL": 98.0,
+    "THYAO": 287.75,
+    "TOASO": 279.75,
+    "TRALT": 46.64,
+    "TTKOM": 53.3,
+    "TUPRS": 398.75,
+    "VAKBN": 33.3,
+    "YKBNK": 35.14
   },
   "versiyon": 1
 }

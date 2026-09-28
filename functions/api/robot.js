@@ -130,6 +130,7 @@ export async function onRequestGet(context) {
         gunluk_yuzde: onceki ? Math.round((toplam / onceki - 1) * 10000) / 100 : null,
         nakit: durum.nakit || 0,
         gerceklesen_kz: durum.gerceklesen_kz || 0,
+        toplam_kesinti: durum.toplam_kesinti || 0,
         pozisyon_sayisi: pozisyonlar.length,
         kontrol_sayisi: durum.kontrol_sayisi || 0,
         bugun_tarih: durum.bugun_tarih || "",
