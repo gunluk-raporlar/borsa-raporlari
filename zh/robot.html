@@ -97,25 +97,25 @@
         </div>
     </div>
 <script>
-    function updateClock() {{
+    function updateClock() {
         const now = new Date();
-        const options = {{ timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' }};
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
         document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
-    }}
+    }
     setInterval(updateClock, 1000);
     updateClock();
 
     fetch('https://wttr.in/Istanbul?format=j1')
         .then(response => response.json())
-        .then(data => {{
+        .then(data => {
             const current = data.current_condition[0];
             const temp = current.temp_C;
             const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: ' + temp + '°C, ' + desc;
-        }})
-        .catch(err => {{
+        })
+        .catch(err => {
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
-        }});
+        });
 </script>
 <div class="interactive-box">
 
@@ -202,30 +202,24 @@
 机器人<b>市场时段每30分钟</b> 从实时价格 (TradingView, ~15分钟延迟) 检查：
 止损和目标可能在日内触发，交叉信号从日内价格评估，
 净资产曲线每次检查都会获得一个点。<u>不使用真实资金</u>; 所有订单均在此发布其理由。
-<strong>不是投资建议。</strong> Son güncelleme: 28.09,2026 15:04 (İstanbul).</p>
+<strong>不是投资建议。</strong> Son güncelleme: 28.09,2026 17:10 (İstanbul).</p>
 </div>
-<div class='grid' style='grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0'><div class='stat' id='kpi-toplam' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>总价值</div><div style='font-size:21px;font-weight:700' class=''>99,960.73 ₺</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>总收益率</div><div style='font-size:21px;font-weight:700' class='neg'>-0.04%</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>现金</div><div style='font-size:21px;font-weight:700' class=''>64,272.03 ₺</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>未平仓头寸</div><div style='font-size:21px;font-weight:700' class=''>3 / 8</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>已实现的 Z/S</div><div style='font-size:21px;font-weight:700' class='pos'>0.00 ₺</div></div><div class='stat' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>胜率</div><div style='font-size:21px;font-weight:700' class=''>0%</div></div></div>
-<h2 class='section-title'>Bugün (28.09,2026)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'>价格控制</div>11 kez · piyasa saatlerinde 30 dakikada bir · 🟢 piyasa açık — canlı takip</div><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>买入</span> · VAKBN · 362 lot · 33.10 ₺ · 15:04</div>SMA10 &gt; SMA30 dizilimi · RSI 49 · fiyat SMA100 uzerinde</div><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>买入</span> · TUPRS · 30 lot · 397.75 ₺ · 15:04</div>SMA10 &gt; SMA30 dizilimi · RSI 52 · fiyat SMA100 uzerinde</div><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>买入</span> · BIMAS · 28 lot · 420.50 ₺ · 15:04</div>SMA10 &gt; SMA30 dizilimi · RSI 53 · fiyat SMA100 uzerinde</div></div>
+<div class='grid' style='grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0'><div class='stat' id='kpi-toplam' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>总价值</div><div style='font-size:21px;font-weight:700' class=''>100,434.29 ₺</div></div><div class='stat' id='kpi-getiri' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>总收益率</div><div style='font-size:21px;font-weight:700' class='pos'>0.43%</div></div><div class='stat' id='kpi-nakit' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>现金</div><div style='font-size:21px;font-weight:700' class=''>64,272.77 ₺</div></div><div class='stat' id='kpi-poz' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>未平仓头寸</div><div style='font-size:21px;font-weight:700' class=''>3 / 8</div></div><div class='stat' id='kpi-kz' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>已实现的 Z/S</div><div style='font-size:21px;font-weight:700' class='pos'>0.00 ₺</div></div><div class='stat' id='kpi-oran' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>胜率</div><div style='font-size:21px;font-weight:700' class=''>0%</div></div><div class='stat' id='kpi-kesinti' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Ödenen Kesinti</div><div style='font-size:21px;font-weight:700' class='neg'>0.00 ₺</div></div></div>
+<h2 class='section-title'>Bugün (28.09,2026)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'>价格控制</div><span id='bugun-kontrol'>19</span> kez · piyasa saatlerinde 30 dakikada bir · 🟢 piyasa açık — canlı takip</div><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>买入</span> · VAKBN · 362 lot · 33.08 ₺ · 15:17</div>SMA10 &gt; SMA30 dizilimi · RSI 49 · fiyat SMA100 uzerinde</div><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>买入</span> · TUPRS · 30 lot · 397.50 ₺ · 15:17</div>SMA10 &gt; SMA30 dizilimi · RSI 52 · fiyat SMA100 uzerinde</div><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>买入</span> · BIMAS · 28 lot · 421.00 ₺ · 15:17</div>SMA10 &gt; SMA30 dizilimi · RSI 53 · fiyat SMA100 uzerinde</div></div>
 <h2 class="section-title">权益曲线<span style="font-size:13px;color:var(--muted);font-weight:400">— 每次价格控制时一个点</span></h2>
-<div class="card"><svg viewBox="0 0 720 160" style="width:100%;height:auto" role="img" aria-label="Özkaynak eğrisi">
-<polyline points="14.0,14.0,706.0,146.0" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
-<polyline points="14.0,14.0 76.9,14.0 139.8,14.0 202.7,14.0 265.6,14.0 328.5,14.0 391.5,14.0 454.4,14.0 517.3,14.0 580.2,14.0 643.1,14.0 706.0,146.0" fill="none" stroke="#b91c1c" stroke-width="2.5" stroke-linejoin="round"/>
+<div class="card" id='sec-egri'><svg viewBox="0 0 720 160" style="width:100%;height:auto" role="img" aria-label="Özkaynak eğrisi">
+<polyline points="14.0,130.0,706.0,14.0" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+<polyline points="14.0,130.0 50.4,130.0 86.8,130.0 123.3,130.0 159.7,130.0 196.1,130.0 232.5,130.0 268.9,130.0 305.4,130.0 341.8,130.0 378.2,130.0 414.6,140.5 451.1,134.5 487.5,146.0 523.9,105.4 560.3,97.7 596.7,99.6 633.2,78.8 669.6,63.2 706.0,14.0" fill="none" stroke="#047857" stroke-width="2.5" stroke-linejoin="round"/>
 <text x="14" y="158" font-size="10" fill="#64748b">25.09,2026</text>
-<text x="706" y="158" font-size="10" fill="#64748b" text-anchor="end">28.09 15:04</text>
-<text x="706" y="16" font-size="11" fill="#b91c1c" text-anchor="end">99,960.73 TL</text>
+<text x="706" y="158" font-size="10" fill="#64748b" text-anchor="end">28.09 17:10</text>
+<text x="706" y="16" font-size="11" fill="#047857" text-anchor="end">100,434.29 TL</text>
 <text x="14" y="16" font-size="11" fill="#64748b">100,000.00 TL (başlangıç)</text>
 </svg></div>
-<h2 class="section-title">持仓</h2><div class="card" style="padding:8px 24px 16px">
-<div style="overflow-x:auto"><table><tr><th>股票</th><th>手数</th><th>成本</th><th>最新</th><th>价值 ₺</th>
-<th>盈亏 ₺</th><th>盈亏 %</th><th>止损</th><th>目标</th><th>入场</th></tr><tr><td><b>BIMAS</b></td><td>28</td><td>420.96</td><td>420.50</td><td>11,774.00</td><td class='neg'>-12.96</td><td class='neg'>-0.11%</td><td>391.50</td><td>484.11</td><td>2026-09-28</td></tr><tr><td><b>TUPRS</b></td><td>30</td><td>398.19</td><td>397.75</td><td>11,932.50</td><td class='neg'>-13.13</td><td class='neg'>-0.11%</td><td>370.31</td><td>457.92</td><td>2026-09-28</td></tr><tr><td><b>VAKBN</b></td><td>362</td><td>33.14</td><td>33.10</td><td>11,982.20</td><td class='neg'>-13.18</td><td class='neg'>-0.11%</td><td>30.82</td><td>38.11</td><td>2026-09-28</td></tr></table></div></div>
-<h2 class="section-title">最近交易</h2><div class="card" style="padding:8px 24px 16px">
-<div style="overflow-x:auto"><table><tr><th>时间</th><th>股票</th><th>方向</th><th>手数</th><th>价格</th>
-<th>金额 ₺</th><th>盈亏 ₺</th><th>理由</th></tr><tr><td>2026-09-28 15:04</td><td><b>BIMAS</b></td><td class='pos'>买入</td><td>28</td><td>420.50</td><td>11,786.95</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 dizilimi · RSI 53 · fiyat SMA100 uzerinde</td></tr><tr><td>2026-09-28 15:04</td><td><b>TUPRS</b></td><td class='pos'>买入</td><td>30</td><td>397.75</td><td>11,945.63</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 dizilimi · RSI 52 · fiyat SMA100 uzerinde</td></tr><tr><td>2026-09-28 15:04</td><td><b>VAKBN</b></td><td class='pos'>买入</td><td>362</td><td>33.10</td><td>11,995.38</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 dizilimi · RSI 49 · fiyat SMA100 uzerinde</td></tr></table></div></div>
-<h2 class='section-title'>Sinyal Panosu (son kontrol: 2026-09-28)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>卖出</span> · AEFES · 18.12 ₺ · satılacak pozisyon yok</div>SMA10, SMA30'un asagi kesti</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>卖出</span> · KCHOL · 211.40 ₺ · satılacak pozisyon yok</div>SMA10, SMA30'un asagi kesti</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>卖出</span> · TTKOM · 53.40 ₺ · satılacak pozisyon yok</div>SMA10, SMA30'un asagi kesti</div></div>
-<div class='grid-iki'><div class='card'><div class='pano-baslik'>策略规则</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li><b>买入：</b> SMA10, SMA30'un üzerinde dizilim + RSI14 45–75 bandında + fiyat SMA100 üzerinde (taze kesişim beklenmez; dizilim varsa girilir).</li><li><b>SAT:</b> SMA10, SMA30'u aşağı keser, ya da maliyetin <b>7%</b> altına düşer (stop), ya da <b>15%</b> yukarısına çıkar (hedef).</li><li><b>Boyut:</b> "özkaynağın en fazla 12%'i tek hisseye, en fazla 8 pozisyon."</li><li><b>"Günlük fren:"</b> "özkaynak dünkü kapanışa göre 3% düşerse yeni alım o gün durdurulur."</li><li><b>"Sürtünme:"</b> "işlem başına 0.06% komisyon + 0.05% kayma varsayılır."</li></ul></div><div class='card'><div class='pano-baslik'>表现摘要</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li>开始: 2026-09-25 · 100.000.00 ₺</li><li>Toplam işlem: 3 (0 SAT / 3 AL)</li><li>胜率: 0%</li><li>已实现盈亏: 0.00 ₺</li><li>Açık pozisyon K/Z (gerçekleşmemiş): -39.27 ₺</li></ul></div></div>
-<p style="color:var(--muted);font-size:12px;margin:26px 0 4px">Bu sayfa bağımsız bir simülasyondur: hiçbir gerçek emir gönderilmez, hiçbir gerçek para risk edilmez.
-Veri: İş Yatırım (EOD) + TradingView (gün içi, ~15 dk gecikmeli) · Komisyon ve kayma payı varsayımsaldır.
-Son güncelleme: 28.09,2026 15:04 (İstanbul) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir.</p>
+<h2 class='section-title'>持仓</h2><div class='card' style='padding:8px 24px 16px' id='sec-poz'><div style='overflow-x:auto'><table><tr><th>股票</th><th>手数</th><th>成本</th><th>最新</th><th>价值 ₺</th><th>盈亏 ₺</th><th>盈亏 %</th><th>止损</th><th>目标</th><th>入场</th></tr><tr><td><b>BIMAS</b></td><td>28</td><td>421.46</td><td>426.00</td><td>11,928.00</td><td class='pos'>127.03</td><td class='pos'>1.08%</td><td>408.82</td><td>434.11</td><td>2026-09-28</td></tr><tr><td><b>TUPRS</b></td><td>30</td><td>397.94</td><td>398.00</td><td>11,940.00</td><td class='pos'>1.88</td><td class='pos'>0.02%</td><td>386.00</td><td>409.88</td><td>2026-09-28</td></tr><tr><td><b>VAKBN</b></td><td>362</td><td>33.12</td><td>33.96</td><td>12,293.52</td><td class='pos'>305.38</td><td class='pos'>2.55%</td><td>32.12</td><td>34.11</td><td>2026-09-28</td></tr></table></div></div>
+<h2 class='section-title'>最近交易</h2><div class='card' style='padding:8px 24px 16px' id='sec-islem'><div style='overflow-x:auto'><table><tr><th>时间</th><th>股票</th><th>方向</th><th>手数</th><th>价格</th><th>金额 ₺</th><th>Kesinti</th><th>盈亏 ₺</th><th>理由</th></tr><tr><td>2026-09-28 15:17</td><td><b>BIMAS</b></td><td class='pos'>买入</td><td>28</td><td>421.00</td><td>11,800.97</td><td>0.00</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 dizilimi · RSI 53 · fiyat SMA100 uzerinde</td></tr><tr><td>2026-09-28 15:17</td><td><b>TUPRS</b></td><td class='pos'>买入</td><td>30</td><td>397.50</td><td>11,938.12</td><td>0.00</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 dizilimi · RSI 52 · fiyat SMA100 uzerinde</td></tr><tr><td>2026-09-28 15:17</td><td><b>VAKBN</b></td><td class='pos'>买入</td><td>362</td><td>33.08</td><td>11,988.14</td><td>0.00</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 dizilimi · RSI 49 · fiyat SMA100 uzerinde</td></tr></table></div></div>
+<h2 class='section-title'>Sinyal Panosu (son kontrol: 2026-09-28)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>卖出</span> · AEFES · 18.21 ₺ · satılacak pozisyon yok</div>SMA10, SMA30'un asagi kesti</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>卖出</span> · KCHOL · 214.30 ₺ · satılacak pozisyon yok</div>SMA10, SMA30'un asagi kesti</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>卖出</span> · TTKOM · 53.65 ₺ · satılacak pozisyon yok</div>SMA10, SMA30'un asagi kesti</div></div>
+<div class='grid-iki'><div class='card'><div class='pano-baslik'>策略规则</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li><b>买入：</b> SMA10, SMA30'un üzerinde dizilim + RSI14 45–75 bandında + fiyat SMA100 üzerinde (taze kesişim beklenmez; dizilim varsa girilir).</li><li><b>SAT:</b> SMA10, SMA30'u aşağı keser, ya da maliyetin <b>3%</b> altına düşer (stop), ya da <b>3%</b> yukarısına çıkar (hedef).</li><li><b>Boyut:</b> "özkaynağın en fazla 12%'i tek hisseye, en fazla 8 pozisyon."</li><li><b>"Günlük fren:"</b> "özkaynak dünkü kapanışa göre 3% düşerse yeni alım o gün durdurulur."</li><li><b>Maliyetler:</b> komisyon 0.04% (en az 10 ₺) + BSMV 15% + yasal ücret ~0,020% + kayma 0.05%. 12,000 ₺'lik işlemin tur maliyeti ~35–40 ₺ (~0.3%) — scalping'in gerçek bedeli.</li><li><b>Vergi:</b> BIST hisse satış kazancında stopaj 0%; yıllık beyan sınırını aşan kazanç beyan edilir.</li></ul></div><div class='card'><div class='pano-baslik'>表现摘要</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li>开始: 2026-09-25 · 100.000.00 ₺</li><li>Toplam işlem: 3 (0 SAT / 3 AL)</li><li>胜率: 0%</li><li>Gerçekleşen K/Z: 0.00 ₺ · Ödenen kesinti: 0.00 ₺</li><li>Açık pozisyon K/Z (gerçekleşmemiş): 434.29 ₺</li></ul></div></div>
+<p style="color:var(--muted);font-size:12px;margin:26px 0 4px">Bu sayfa bağımsız bir simülasyondur: hiçbir gerçek emir gönderilmez, hiçbir gerçek para risk edilmez.\nVeri: İş Yatırım (EOD) + TradingView (gün içi, ~15 dk gecikmeli) · Komisyon ve kayma payı varsayımsaldır.\nSon güncelleme: 28.09,2026 17:10 (İstanbul) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir.</p>
 </main>
 <nav class="altbar" aria-label="快捷菜单">
 <a href="index.html"><span class="i" aria-hidden="true">📊</span>报告</a>
@@ -253,19 +247,30 @@ function temaDegistir() {
 })();
 </script>
 <script>
-/* Canlı özet katmanı: /api/robot (son commit'lenen durum + canlı fiyat) */
+<script>
+/* Canlı katman: /api/robot (son commit'lenen durum + canlı fiyat) — üst şerit,
+   KPI kartları, pozisyonlar, işlem defteri ve özkaynak eğrisi tarayıcıda
+   yeniden render edilir; 19:30/10:30 statik yayını beklemeden güncel kalır. */
 (function() {
   var kutu = document.getElementById('robot-canli');
-  if (!kutu) return;
   function tr(x, h) {
     return (x === null || x === undefined) ? '—'
       : Number(x).toLocaleString('tr-TR', {minimumFractionDigits: h || 2, maximumFractionDigits: h || 2});
   }
-  function ciz(d) {
-    if (!d || d.hata) {
-      kutu.innerHTML = "<span style='color:var(--muted)'>🟠 Canlı özet şu an erişilemiyor — aşağıdaki tablolar son güncellemeye aittir.</span>";
-      return;
-    }
+  function isaret(v) { return v >= 0 ? '+' : ''; }
+  function kisaZaman(z) {
+    if (!z) return '—';
+    if (z.length > 10) return z.slice(8, 10) + '.' + z.slice(5, 7) + ' ' + z.slice(11, 16);
+    return z.slice(8, 10) + '.' + z.slice(5, 7) + '.' + z.slice(0, 4);
+  }
+  function kpiYaz(id, deger, sinif) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = deger;
+    if (sinif !== undefined) el.className = sinif;
+  }
+  function cizBar(d) {
+    if (!kutu) return;
     var cips = (d.pozisyonlar || []).map(function(p) {
       return "<span class='pano-hucre' style='display:inline-block;padding:4px 10px;margin:2px'><b>" + p.hisse + "</b> "
         + tr(p.son) + " ₺ <span class='" + (p.kzy >= 0 ? 'pos' : 'neg') + "'>"
@@ -276,17 +281,85 @@ function temaDegistir() {
       " <span class='" + (d.gunluk_yuzde >= 0 ? 'pos' : 'neg') + "'>(" + (d.gunluk_yuzde >= 0 ? '+' : '') + tr(d.gunluk_yuzde) + "% dünkü kapanışa göre)</span>";
     kutu.innerHTML = "🟢 <b>CANLI</b> · son fiyat " + (d.fiyat_saati || '—') +
       " · Toplam <b style='font-size:17px'>" + tr(d.toplam) + " ₺</b>" + gun + " · " + cips +
-      "<div style='color:var(--muted);font-size:11.5px;margin-top:6px'>Fiyatlar ~15 dk gecikmelidir; bu şerit 1 dakikada bir tazelenir. " +
-      "Özkaynak eğrisi ve tablolar günde 2 kez (10:30 / 19:30) yayımlanan tam sürümle güncellenir.</div>";
-    var k = document.getElementById('kpi-toplam');
-    if (k) k.innerHTML = tr(d.toplam) + " ₺";
+      "<div style='color:var(--muted);font-size:11.5px;margin-top:6px'>Fiyatlar ~15 dk gecikmelidir; tüm bölüm 1 dakikada bir tazelenir.</div>";
+    kutu.dataset.yuklendi = '1';
+  }
+  function cizKpi(d) {
+    kpiYaz('kpi-toplam', tr(d.toplam) + ' ₺');
+    var g = d.toplam_getiri_yuzde || 0;
+    kpiYaz('kpi-getiri', isaret(g) + tr(g) + '%', g >= 0 ? 'pos' : 'neg');
+    kpiYaz('kpi-nakit', tr(d.nakit) + ' ₺');
+    kpiYaz('kpi-poz', (d.pozisyon_sayisi || 0) + ' / 8');
+    var kz = d.gerceklesen_kz || 0;
+    kpiYaz('kpi-kz', tr(kz) + ' ₺', kz >= 0 ? 'pos' : 'neg');
+    kpiYaz('kpi-oran', tr(d.kazanma_orani || 0, 0) + '%');
+    kpiYaz('kpi-kesinti', tr(d.toplam_kesinti || 0) + ' ₺', 'neg');
+    var bk = document.getElementById('bugun-kontrol');
+    if (bk) bk.innerHTML = d.kontrol_sayisi || 0;
+  }
+  function cizPoz(d) {
+    var hedef = document.getElementById('sec-poz');
+    if (!hedef) return;
+    var p = d.pozisyonlar || [];
+    if (!p.length) { hedef.innerHTML = "<p style='color:var(--muted)'>Henüz açık pozisyon yok — robot AL sinyali bekliyor.</p>"; return; }
+    var satir = p.map(function(x) {
+      var s = x.kz >= 0 ? 'pos' : 'neg';
+      return '<tr><td><b>' + x.hisse + '</b></td><td>' + x.lot + '</td><td>' + tr(x.maliyet) + '</td><td>' + tr(x.son) +
+        '</td><td>' + tr(x.son * x.lot) + '</td><td class="' + s + '">' + tr(x.kz) + '</td><td class="' + s + '">' + tr(x.kzy) + '%</td>' +
+        '<td>' + tr(x.stop) + '</td><td>' + tr(x.hedef) + '</td><td>' + (x.giris || '—') + '</td></tr>';
+    }).join('');
+    hedef.innerHTML = "<div style='overflow-x:auto'><table><tr><th>Hisse</th><th>Lot</th><th>Maliyet</th><th>Son</th><th>Değer ₺</th><th>K/Z ₺</th><th>K/Z %</th><th>Stop</th><th>Hedef</th><th>Giriş</th></tr>" + satir + "</table></div>";
+  }
+  function cizIslem(d) {
+    var hedef = document.getElementById('sec-islem');
+    if (!hedef) return;
+    var l = d.son_islemler || [];
+    if (!l.length) { hedef.innerHTML = "<p style='color:var(--muted)'>Henüz işlem yok.</p>"; return; }
+    var satir = l.map(function(i) {
+      var kzH = '<td>—</td>';
+      if (i.yon === 'SAT' && i.kz !== null && i.kz !== undefined) kzH = '<td class="' + (i.kz >= 0 ? 'pos' : 'neg') + '">' + tr(i.kz) + '</td>';
+      return '<tr><td>' + (i.tarih || '') + ' ' + (i.saat || '') + '</td><td><b>' + i.hisse + '</b></td>' +
+        '<td class="' + (i.yon === 'AL' ? 'pos' : 'neg') + '">' + i.yon + '</td><td>' + i.lot + '</td><td>' + tr(i.fiyat) +
+        '</td><td>' + tr(i.tutar) + '</td><td>' + tr(i.kesinti || 0) + '</td>' + kzH + '<td style="max-width:340px">' + (i.gerekce || '') + '</td></tr>';
+    }).join('');
+    hedef.innerHTML = "<div style='overflow-x:auto'><table><tr><th>Zaman</th><th>Hisse</th><th>Yön</th><th>Lot</th><th>Fiyat</th><th>Tutar ₺</th><th>Kesinti</th><th>K/Z ₺</th><th>Gerekçe</th></tr>" + satir + "</table></div>";
+  }
+  function cizEgri(d) {
+    var hedef = document.getElementById('sec-egri');
+    if (!hedef) return;
+    var k = d.ozkayit || [];
+    if (k.length < 2) return;
+    var vals = k.map(function(p) { return p[1]; });
+    var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
+    if (mx - mn < 1e-9) mx = mn + 1;
+    var W = 720, H = 160, P = 14;
+    function xy(i, v) {
+      return (P + i * (W - 2 * P) / (vals.length - 1)).toFixed(1) + ',' + (H - P - (v - mn) * (H - 2 * P) / (mx - mn)).toFixed(1);
+    }
+    var pts = vals.map(function(v, i) { return xy(i, v); }).join(' ');
+    var renk = vals[vals.length - 1] >= vals[0] ? '#047857' : '#b91c1c';
+    hedef.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto" role="img" aria-label="Özkaynak eğrisi">' +
+      '<polyline points="' + xy(0, vals[0]) + ',' + xy(vals.length - 1, vals[vals.length - 1]) + '" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>' +
+      '<polyline points="' + pts + '" fill="none" stroke="' + renk + '" stroke-width="2.5" stroke-linejoin="round"/>' +
+      '<text x="' + P + '" y="' + (H - 2) + '" font-size="10" fill="#64748b">' + kisaZaman(k[0][0]) + '</text>' +
+      '<text x="' + (W - P) + '" y="' + (H - 2) + '" font-size="10" fill="#64748b" text-anchor="end">' + kisaZaman(k[k.length - 1][0]) + '</text>' +
+      '<text x="' + (W - P) + '" y="' + (P + 2) + '" font-size="11" fill="' + renk + '" text-anchor="end">' + tr(vals[vals.length - 1]) + ' TL</text>' +
+      '<text x="' + P + '" y="' + (P + 2) + '" font-size="11" fill="#64748b">' + tr(vals[0]) + ' TL (başlangıç)</text></svg>';
+  }
+  function cizHepsi(d) {
+    if (!d || d.hata) {
+      if (kutu && !kutu.dataset.yuklendi) kutu.innerHTML = "<span style='color:var(--muted)'>🟠 Canlı özet şu an erişilemiyor — aşağıdaki tablolar son güncellemeye aittir.</span>";
+      return;
+    }
+    cizBar(d); cizKpi(d); cizPoz(d); cizIslem(d); cizEgri(d);
   }
   function yenile() {
-    fetch('/api/robot').then(function(r) { return r.json(); }).then(ciz)
-      .catch(function() { kutu.innerHTML = "<span style='color:var(--muted)'>🟠 Canlı özet şu an erişilemiyor.</span>"; });
+    fetch('/api/robot').then(function(r) { return r.json(); }).then(cizHepsi)
+      .catch(function() { if (kutu && !kutu.dataset.yuklendi) kutu.innerHTML = "<span style='color:var(--muted)'>🟠 Canlı özet şu an erişilemiyor.</span>"; });
   }
   yenile();
   setInterval(yenile, 60000);
 })();
+</script>
 </script>
 </body></html>
