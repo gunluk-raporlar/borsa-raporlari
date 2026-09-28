@@ -668,25 +668,25 @@ _SITE_SAAT = """    <!-- Üst Widget Alanı (Canlı Saat ve İstanbul Hava Durum
         </div>
     </div>
 <script>
-    function updateClock() {{
+    function updateClock() {
         const now = new Date();
-        const options = {{ timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' }};
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
         document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
-    }}
+    }
     setInterval(updateClock, 1000);
     updateClock();
 
     fetch('https://wttr.in/Istanbul?format=j1')
         .then(response => response.json())
-        .then(data => {{
+        .then(data => {
             const current = data.current_condition[0];
             const temp = current.temp_C;
             const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: ' + temp + '°C, ' + desc;
-        }})
-        .catch(err => {{
+        })
+        .catch(err => {
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
-        }});
+        });
 </script>"""
 
 _SITE_TICKER1 = """
