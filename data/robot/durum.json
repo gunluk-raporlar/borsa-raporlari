@@ -9,7 +9,7 @@
   "bugun_tarih": "2026-09-28",
   "gerceklesen_kz": 0.0,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 11,
+  "kontrol_sayisi": 12,
   "nakit": 64272.03172339001,
   "onceki_kapanis_ozkaynak": 100000.0,
   "ozkayit": [
@@ -60,6 +60,10 @@
     [
       "2026-09-28T15:04",
       99960.73
+    ],
+    [
+      "2026-09-28T15:16",
+      100010.21
     ]
   ],
   "pozisyonlar": {
@@ -88,35 +92,35 @@
   "son_bar_tarihi": "2026-09-28",
   "son_fiyatlar": {
     "AEFES": 18.12,
-    "AKBNK": 69.4,
-    "ASELS": 358.0,
+    "AKBNK": 69.35,
+    "ASELS": 358.5,
     "ASTOR": 235.2,
-    "BIMAS": 420.5,
+    "BIMAS": 421.75,
     "DSTKF": 1057.0,
-    "EKGYO": 18.79,
+    "EKGYO": 18.85,
     "ENKAI": 85.5,
-    "EREGL": 36.8,
-    "FROTO": 74.35,
-    "GARAN": 127.4,
-    "GUBRF": 434.75,
+    "EREGL": 36.88,
+    "FROTO": 74.6,
+    "GARAN": 127.6,
+    "GUBRF": 437.25,
     "ISCTR": 12.78,
-    "KCHOL": 211.4,
-    "KRDMD": 46.3,
-    "MGROS": 525.5,
-    "PETKM": 20.24,
-    "PGSUS": 142.0,
-    "SAHOL": 85.9,
-    "SASA": 1.9,
-    "SISE": 38.06,
-    "TAVHL": 266.5,
-    "TCELL": 98.35,
-    "THYAO": 286.5,
-    "TOASO": 279.0,
-    "TRALT": 46.18,
+    "KCHOL": 211.8,
+    "KRDMD": 46.54,
+    "MGROS": 527.5,
+    "PETKM": 20.28,
+    "PGSUS": 142.2,
+    "SAHOL": 86.05,
+    "SASA": 1.91,
+    "SISE": 38.14,
+    "TAVHL": 267.25,
+    "TCELL": 98.3,
+    "THYAO": 286.75,
+    "TOASO": 278.5,
+    "TRALT": 46.46,
     "TTKOM": 53.4,
     "TUPRS": 397.75,
-    "VAKBN": 33.1,
-    "YKBNK": 35.1
+    "VAKBN": 33.14,
+    "YKBNK": 35.06
   },
   "versiyon": 1
 }
