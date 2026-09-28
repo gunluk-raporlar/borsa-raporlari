@@ -4,14 +4,15 @@
   "bugun_alinan": [
     "VAKBN",
     "TUPRS",
-    "BIMAS"
+    "BIMAS",
+    "KCHOL"
   ],
   "bugun_satilan": [],
   "bugun_tarih": "2026-09-28",
   "gerceklesen_kz": 0.0,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 23,
-  "nakit": 64272.77253761201,
+  "kontrol_sayisi": 24,
+  "nakit": 52268.88053761201,
   "onceki_kapanis_ozkaynak": 100000.0,
   "ozkayit": [
     [
@@ -109,6 +110,10 @@
     [
       "2026-09-28T18:17",
       100346.37
+    ],
+    [
+      "2026-09-28T18:39",
+      100385.22
     ]
   ],
   "pozisyonlar": {
@@ -118,6 +123,13 @@
       "lot": 28,
       "maliyet": 421.4632,
       "stop": 408.82
+    },
+    "KCHOL": {
+      "giris": "2026-09-28",
+      "hedef": 220.79,
+      "lot": 56,
+      "maliyet": 214.3552,
+      "stop": 207.92
     },
     "TUPRS": {
       "giris": "2026-09-28",
@@ -136,36 +148,37 @@
   },
   "son_bar_tarihi": "2026-09-28",
   "son_fiyatlar": {
-    "AEFES": 18.08,
-    "AKBNK": 70.05,
-    "ASELS": 365.5,
+    "AEFES": 18.06,
+    "AKBNK": 70.1,
+    "ASELS": 367.25,
     "ASTOR": 235.2,
-    "BIMAS": 426.0,
+    "BIMAS": 426.5,
     "DSTKF": 1057.0,
-    "EKGYO": 18.9,
-    "ENKAI": 85.7,
-    "EREGL": 37.36,
-    "FROTO": 74.8,
-    "GARAN": 129.0,
-    "GUBRF": 442.0,
-    "ISCTR": 12.93,
-    "KCHOL": 213.5,
-    "KRDMD": 47.14,
-    "MGROS": 530.5,
-    "PETKM": 20.14,
-    "PGSUS": 143.1,
-    "SAHOL": 86.8,
+    "EKGYO": 18.92,
+    "ENKAI": 85.4,
+    "EREGL": 37.48,
+    "FROTO": 74.95,
+    "GARAN": 129.4,
+    "GUBRF": 442.25,
+    "ISCTR": 12.96,
+    "KCHOL": 214.0,
+    "KRDMD": 47.16,
+    "MGROS": 532.0,
+    "PETKM": 20.2,
+    "PGSUS": 143.7,
+    "SAHOL": 86.9,
     "SASA": 1.88,
-    "SISE": 38.3,
+    "SISE": 38.38,
     "TAVHL": 267.75,
     "TCELL": 98.35,
-    "THYAO": 287.25,
-    "TOASO": 278.25,
-    "TRALT": 46.5,
-    "TTKOM": 53.5,
-    "TUPRS": 397.0,
-    "VAKBN": 33.8,
-    "YKBNK": 35.5
+    "THYAO": 287.0,
+    "TOASO": 278.75,
+    "TRALT": 46.66,
+    "TTKOM": 53.55,
+    "TUPRS": 398.25,
+    "VAKBN": 33.82,
+    "YKBNK": 35.52
   },
+  "toplam_kesinti": 13.9,
   "versiyon": 1
 }
