@@ -1,5 +1,5 @@
 name: CF Ayar Kontrol (tek seferlik)
-# Ana sayfa + ornek sayfalarda robot menu linkini ve robot.html'i dogrular.
+# Canli robot sayfasinda JS bozukluguna yol acan cift-suslu parantez kaldi mi?
 on:
   workflow_dispatch:
 permissions: {}
@@ -8,13 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Menu linki ve sayfa durumu
+      - name: Canli sayfa {{ kontrolu ve islem kaydi
         run: |
-          echo "== ana sayfada robot linki =="
-          curl -sL "https://borsa-raporlari.pages.dev/" | grep -oE 'href="robot.html"[^>]*>[^<]*' | head -2
-          echo "== teknik-analiz sayfasinda =="
-          curl -sL "https://borsa-raporlari.pages.dev/teknik-analiz.html" | grep -oE 'href="robot.html"' | head -1
-          echo "== hisse sayfasinda (goreli yol) =="
-          curl -sL "https://borsa-raporlari.pages.dev/hisse/ASELS.html" | grep -oE 'href="\.\./robot\.html"' | head -1
-          echo "== robot.html durumu =="
-          curl -s -o /dev/null -w "%{http_code}\n" -L "https://borsa-raporlari.pages.dev/robot.html"
+          HTML=$(curl -sL "https://borsa-raporlari.pages.dev/robot")
+          echo "cift-suslu sayisi: $(echo "$HTML" | grep -c '{{' || true)"
+          echo "updateClock temiz mi: $(echo "$HTML" | grep -c 'function updateClock() {' || true)"
+          echo "islem kaydi (VAKBN AL): $(echo "$HTML" | grep -cF 'VAKBN' || true)"
+          echo "pozisyon tablosu (BIMAS): $(echo "$HTML" | grep -cF 'BIMAS' || true)"
