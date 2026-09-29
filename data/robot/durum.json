@@ -2,18 +2,17 @@
   "baslangic": "2026-09-25",
   "braket_versiyonu": 2,
   "bugun_alinan": [
-    "VAKBN",
-    "TUPRS",
-    "BIMAS",
+    "KRDMD"
+  ],
+  "bugun_satilan": [
     "KCHOL"
   ],
-  "bugun_satilan": [],
-  "bugun_tarih": "2026-09-28",
-  "gerceklesen_kz": 0.0,
+  "bugun_tarih": "2026-09-29",
+  "gerceklesen_kz": -0.6028000000005704,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 26,
-  "nakit": 52268.88053761201,
-  "onceki_kapanis_ozkaynak": 100000.0,
+  "kontrol_sayisi": 1,
+  "nakit": 52222.80421761201,
+  "onceki_kapanis_ozkaynak": 100385.22,
   "ozkayit": [
     [
       "2026-09-25",
@@ -114,6 +113,10 @@
     [
       "2026-09-28T18:39",
       100385.22
+    ],
+    [
+      "2026-09-29T10:14",
+      100485.94
     ]
   ],
   "pozisyonlar": {
@@ -124,12 +127,12 @@
       "maliyet": 421.4632,
       "stop": 408.82
     },
-    "KCHOL": {
-      "giris": "2026-09-28",
-      "hedef": 220.79,
-      "lot": 56,
-      "maliyet": 214.3552,
-      "stop": 207.92
+    "KRDMD": {
+      "giris": "2026-09-29",
+      "hedef": 48.86,
+      "lot": 254,
+      "maliyet": 47.4384,
+      "stop": 46.02
     },
     "TUPRS": {
       "giris": "2026-09-28",
@@ -146,39 +149,39 @@
       "stop": 32.12
     }
   },
-  "son_bar_tarihi": "2026-09-28",
+  "son_bar_tarihi": "2026-09-29",
   "son_fiyatlar": {
     "AEFES": 18.06,
-    "AKBNK": 70.1,
+    "AKBNK": 70.15,
     "ASELS": 367.25,
-    "ASTOR": 235.2,
+    "ASTOR": 211.7,
     "BIMAS": 426.5,
-    "DSTKF": 1057.0,
-    "EKGYO": 18.92,
+    "DSTKF": 951.5,
+    "EKGYO": 18.93,
     "ENKAI": 85.4,
-    "EREGL": 37.48,
+    "EREGL": 37.54,
     "FROTO": 74.95,
-    "GARAN": 129.4,
-    "GUBRF": 442.25,
-    "ISCTR": 12.96,
-    "KCHOL": 214.0,
-    "KRDMD": 47.16,
+    "GARAN": 129.2,
+    "GUBRF": 441.0,
+    "ISCTR": 12.94,
+    "KCHOL": 214.7,
+    "KRDMD": 47.36,
     "MGROS": 532.0,
-    "PETKM": 20.2,
+    "PETKM": 20.34,
     "PGSUS": 143.7,
-    "SAHOL": 86.9,
+    "SAHOL": 87.0,
     "SASA": 1.88,
-    "SISE": 38.38,
-    "TAVHL": 267.75,
-    "TCELL": 98.35,
-    "THYAO": 287.0,
-    "TOASO": 278.75,
-    "TRALT": 46.66,
-    "TTKOM": 53.55,
+    "SISE": 38.42,
+    "TAVHL": 267.5,
+    "TCELL": 98.3,
+    "THYAO": 288.0,
+    "TOASO": 279.25,
+    "TRALT": 47.0,
+    "TTKOM": 53.6,
     "TUPRS": 398.25,
-    "VAKBN": 33.82,
-    "YKBNK": 35.52
+    "VAKBN": 34.1,
+    "YKBNK": 35.56
   },
-  "toplam_kesinti": 13.9,
+  "toplam_kesinti": 41.71,
   "versiyon": 1
 }
