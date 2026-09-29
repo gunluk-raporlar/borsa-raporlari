@@ -76,9 +76,13 @@ NVID_MODEL_TERCIH = [
     # Sira CANLI test ile dogrulandi (2026-09-25): once hizli+calisan modeller.
     # Kalite politikasi (2026-09): dusuk parametreli modeller (gemma-4-31b,
     # gpt-oss-20b) uydurma yaptigi icin cikarildi; yalnizca buyuk modeller.
+    # 2026-09-29 kullanici karari: glm-5.3 ailesi EN ONE — diger modeller
+    # makro/derin raporlarda asiri sayi uyduruyor (34 duzeltme). NVIDIA
+    # uzerindeki z-ai/glm-5.3(+flash) NIM kredisiyle ucretsiz; ZAI haftalik
+    # kota paylasimi harcanmaz.
+    "glm-5.3",                        # OK, 4.7 sn (alt dize eslesmesi glm-5.3-flash'i da yakalar — istenen)
     "nemotron-3-ultra-550b-a55b",     # ~550B MoE  (OK, 0.9 sn)
     "nemotron-3-super-120b-a12b",     # 120B MoE   (OK, 7.5 sn)
-    "glm-5.3",                        # OK, 4.7 sn (alt dize eslesmesi glm-5.3-flash'i da yakalar — istenen)
     "kimi-k3",
     "kimi-k2.6",
 ]  # NOT: "deepseek-v4.1-flash" NIM'de 30 sn timeout veriyor, "llama-3.1-nemotron-70b" 404; cikarildi.
@@ -90,10 +94,10 @@ NVID_MODEL_TERCIH = [
 GROQ_MODEL_TERCIH = ["gpt-oss-120b", "llama-4-maverick", "llama-3.3-70b-versatile"]
 CF_MODEL_TERCIH = ["llama-3.3-70b-instruct-fp8-fast", "llama-4-scout", "llama-3.3-70b-instruct", "llama-3.1-8b-instruct"]
 OR_MODEL_TERCIH = [
+    "glm-5.2",                      # Z.ai GLM-5.2 (ucretsiz) — 2026-09-29: glm ailesi once
     "nemotron-3-ultra-550b-a55b",   # ~550B MoE (en buyuk ucretsiz)
     "nemotron-3-super-120b-a12b",   # ~120B MoE
     "nemotron-3.5-lightning",       # 1M baglam
-    "glm-5.2",                      # Z.ai GLM-5.2 (ucretsiz)
     "nex-n2.5-pro",
     "inkling",                      # 1M baglam ("inkling-small" suzgecle elenir)
 ]  # 2026-09: gemma-4-31b/26b, qwen3.8-27b, ling-3.0-flash-fin, inkling-small cikarildi (uydurma).
@@ -103,6 +107,12 @@ OR_MODEL_TERCIH = [
 # paylasilan haftalik kotayi hizla tukettigi icin kullanilmaz; 4.5/4.7 de
 # uydurma yaptigi icin cikarildi. ZAI_MODEL env ile override hala mumkun.
 ZAI_MODEL_TERCIH = ["glm-5.3-flash"]
+
+# Uydurma esigi (2026-09-29 kullanici karari): glm-5.3 ailesi disi modeller
+# raporlarda asiri sayi uyduruyor (29.09 makro: 34 duzeltme). Derin/makro
+# analiz yollarinda dogrulama bu kadar duzeltme yapmak zorunda kalirsa yanit
+# reddedilip siradaki (GLM-oncelikli) model denenir.
+UYDURMA_ESIGI = int(os.environ.get("UYDURMA_ESIGI", "10"))
 
 if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY and not OR_API_KEY and not NVID_API_KEY:
     raise SystemExit("AMD/ALT/CF/OR/NVIDIA API anahtarlarindan en az biri ayarlanmali!")
@@ -129,6 +139,10 @@ def _is_vlm_model(name: str) -> bool:
 AMD_MODEL_LIST = [AMD_MODEL] + [m for m in AMD_FALLBACK_MODELS if m != AMD_MODEL]
 if not AMD_INCLUDE_VLM:
     AMD_MODEL_LIST = [m for m in AMD_MODEL_LIST if not _is_vlm_model(m)]
+# 2026-09-29 kullanici karari: glm-5.3 disi modeller asiri sayi uyduruyor;
+# AMD galerisindeki GLM-5.3-Flash ucretsiz — listede varsa one gecilir
+# (yoksa sira hic degismez, env override davranisi korunur).
+AMD_MODEL_LIST.sort(key=lambda m: "GLM-5.3" not in m.upper())
 
 client = OpenAI(
     api_key=AMD_API_KEY,
@@ -2793,8 +2807,14 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
                     logger.warning("[Derin Analiz] AMD yaniti yarim (%s); Z.ai yedegine geciliyor.", eksik)
                 else:
                     icerik = rapor_son_islem(icerik)
-                    return _metin_dogrula_ve_kaydet(
-                        icerik, " / derin analiz", snapshot=snapshot)
+                    dogrulanmis = _metin_dogrula_ve_kaydet(
+                        icerik, " / derin analiz", snapshot=snapshot,
+                        uydurma_esigi=UYDURMA_ESIGI)
+                    if dogrulanmis is None:
+                        son_hata = "uydurma yogun yanit (AMD)"
+                        logger.warning("[Derin Analiz] AMD yaniti cok sayida hatali sayi iceriyordu; reddedilip Z.ai yedegine geciliyor.")
+                    else:
+                        return dogrulanmis
         else:
             son_hata = "bos yanit (AMD)"
     except Exception as e:
@@ -2831,8 +2851,15 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
                     time.sleep(3)
                     continue
                 icerik = rapor_son_islem(icerik)
-                return _metin_dogrula_ve_kaydet(
-                    icerik, " / derin analiz", snapshot=snapshot)
+                dogrulanmis = _metin_dogrula_ve_kaydet(
+                    icerik, " / derin analiz", snapshot=snapshot,
+                    uydurma_esigi=UYDURMA_ESIGI)
+                if dogrulanmis is None:
+                    son_hata = f"uydurma yogun yanit ({mdl})"
+                    logger.warning("[Derin Analiz] %s yaniti cok sayida hatali sayi iceriyordu; reddedilip siradaki model deneniyor.", mdl)
+                    time.sleep(3)
+                    continue
+                return dogrulanmis
             son_hata = "bos yanit"
         except Exception as e:
             son_hata = str(e)[:200]
@@ -2957,8 +2984,14 @@ Biçim kuralları (zorunlu):
                         logger.warning("[Makro Analiz] AMD yaniti yarim (%s); GLM yedegine geciliyor.", eksik)
                     else:
                         icerik = rapor_son_islem(icerik)
-                        return _metin_dogrula_ve_kaydet(
-                            icerik, " / makro analiz", snapshot=snapshot)
+                        dogrulanmis = _metin_dogrula_ve_kaydet(
+                            icerik, " / makro analiz", snapshot=snapshot,
+                            uydurma_esigi=UYDURMA_ESIGI)
+                        if dogrulanmis is None:
+                            son_hata = "uydurma yogun yanit (AMD)"
+                            logger.warning("[Makro Analiz] AMD yaniti cok sayida hatali sayi iceriyordu; reddedilip GLM yedegine geciliyor.")
+                        else:
+                            return dogrulanmis
             else:
                 son_hata = "bos yanit (AMD)"
         except Exception as e:
@@ -2995,8 +3028,15 @@ Biçim kuralları (zorunlu):
                     time.sleep(3)
                     continue
                 icerik = rapor_son_islem(icerik)
-                return _metin_dogrula_ve_kaydet(
-                    icerik, " / makro analiz", snapshot=snapshot)
+                dogrulanmis = _metin_dogrula_ve_kaydet(
+                    icerik, " / makro analiz", snapshot=snapshot,
+                    uydurma_esigi=UYDURMA_ESIGI)
+                if dogrulanmis is None:
+                    son_hata = f"uydurma yogun yanit ({mdl})"
+                    logger.warning("[Makro Analiz] %s yaniti cok sayida hatali sayi iceriyordu; reddedilip siradaki model deneniyor.", mdl)
+                    time.sleep(3)
+                    continue
+                return dogrulanmis
             son_hata = "bos yanit"
         except Exception as e:
             son_hata = str(e)[:200]
@@ -3030,8 +3070,14 @@ Biçim kuralları (zorunlu):
                         logger.warning("[Makro Analiz] AMD yedek yaniti yarim (%s).", eksik)
                     else:
                         icerik = rapor_son_islem(icerik)
-                        return _metin_dogrula_ve_kaydet(
-                            icerik, " / makro analiz", snapshot=snapshot)
+                        dogrulanmis = _metin_dogrula_ve_kaydet(
+                            icerik, " / makro analiz", snapshot=snapshot,
+                            uydurma_esigi=UYDURMA_ESIGI)
+                        if dogrulanmis is None:
+                            son_hata = f"{son_hata} / uydurma yogun yanit (yedek)"
+                            logger.warning("[Makro Analiz] Yedek yanit da cok sayida hatali sayi iceriyordu; reddedildi.")
+                        else:
+                            return dogrulanmis
                 son_hata = f"{son_hata} / amd bos yanit"
             except Exception as e:
                 son_hata = str(e)[:200]
@@ -3228,8 +3274,16 @@ def _enflasyon_oranlari(snapshot=None):
     return enflasyon or None
 
 
-def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None):
-    """Yayin oncesi deterministik dogrulama; ayni snapshot promptla paylasilir."""
+def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None):
+    """Yayin oncesi deterministik dogrulama; ayni snapshot promptla paylasilir.
+
+    uydurma_esigi verilirse (derin/makro analiz): dogrulamanin duzeltmek
+    zorunda kaldigi sayi/isim sayisi esigi asarsa yanit REDDEDILIR (None
+    doner) ve cagiran taraf siradaki modele gecer. Cerceve disindaki
+    rakamlarin da uydurulmus olacagi varsayimiyla hareket edilir
+    (2026-09-29 kullanici karari: glm-5.3 disi modeller asiri uyduruyor;
+    ayni gunun makro analizinde 34 duzeltme yapilmak zorunda kalindi).
+    """
     snapshot = snapshot or makro_snapshot_cek()
     enflasyon_oranlari, faiz_oranlari, gostergeler = makro_veri.rate_maps(snapshot)
     piyasa_serileri = makro_veri.piyasa_map(snapshot)
@@ -3283,6 +3337,16 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None):
         for uyari in sonuc.get("endeks_uyari", []):
             DOGRULAMA_IST["endeks_uyari"] += 1
             logger.warning("[Dogrulama%s] seviye mantigi: %s", etiket, uyari)
+        duzeltme_sayisi = (len(sonuc["isim_duzeltme"]) + len(sonuc["enflasyon_duzeltme"])
+                           + len(sonuc["endeks_duzeltme"]) + len(sonuc["faiz_duzeltme"])
+                           + len(sonuc["makro_duzeltme"]) + len(sonuc["piyasa_duzeltme"]))
+        if uydurma_esigi is not None and duzeltme_sayisi > uydurma_esigi:
+            logger.warning("[Dogrulama%s] %d sayi/isim duzeltildi (esik %d): "
+                           "uydurma yogun yanit REDDEDILDI; siradaki model denenmeli.",
+                           etiket, duzeltme_sayisi, uydurma_esigi)
+            print(f"[Uyari] {duzeltme_sayisi} sayi/isim duzeltildi (esik {uydurma_esigi}): "
+                  "uydurma yogun yanit reddedildi, siradaki model deneniyor...", flush=True)
+            return None
         DOGRULAMA_IST["toplam_metin"] += 1
         return sonuc["metin"]
     except Exception as exc:
