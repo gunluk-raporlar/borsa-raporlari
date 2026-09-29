@@ -774,10 +774,10 @@ def metrik_dosyasi_yaz(etiket="bot"):
         logger.exception("[Metrik] LLM metrik dosyalari yazilamadi; uretim etkilenmez.")
 
 
-def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
+def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogrulama=None):
     """_llm_call_ic icin gecikme olcumlu ince sarmalayici (imza ayni kalir)."""
     t0 = time.time()
-    sonuc = _llm_call_ic(prompt, max_deneme=max_deneme, fallback_on_fail=fallback_on_fail, sirasi=sirasi)
+    sonuc = _llm_call_ic(prompt, max_deneme=max_deneme, fallback_on_fail=fallback_on_fail, sirasi=sirasi, dogrulama=dogrulama)
     _metrik_kaydet("llm_call", time.time() - t0, bool(sonuc))
     return sonuc
 
@@ -790,7 +790,7 @@ def _zai_call(prompt):
     return sonuc
 
 
-def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
+def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogrulama=None):
     """Daha saglam LLM cagrisi:
     - cok saglayicili: AMD modelleri + (tanimliysa) yedek saglayici modelleri
       sirayla denenir; bir saglayici tukendiginde digerine otomatik gecilir
@@ -798,6 +798,9 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
     - concurrency/rate-limit durumunda siradaki modele gecis
     - uretilen yanit tekrar dongusu ve prompt sizmasi acisindan dogrulanir; bozuksa
       diger modele gecilir
+    - dogrulama callable'i verildiyse yanit yapisal olarak tam olmali ya da
+      finish_reason 'length' olmamali; degilse siradaki modele gecilir
+      (2026-09-28: token limitinde kesik yarim derin analiz yayinlandi)
     - tum denemeler basarisizsa opsiyonel kismi fallback string doner (raise yerine)
 
     APIConnectionError (GitHub Actions runner'i ile Cin'de barindirilan .com.cn
@@ -884,7 +887,15 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None):
                 time.sleep(2)
                 continue
 
-            if getattr(secim, "finish_reason", None) == "length":
+            if dogrulama is not None:
+                kesildi = getattr(secim, "finish_reason", None) == "length"
+                if kesildi or not dogrulama(icerik):
+                    sebep = "token limitinde kesildi" if kesildi else "tamamlik denetimini gecemedi"
+                    logger.warning("%s/%s yaniti %s; siradaki model denenecek.", etiket, model, sebep)
+                    print(f"[Uyari] {etiket}/{model} yaniti {sebep}, siradaki model deneniyor ({deneme}/{max_deneme})...", flush=True)
+                    time.sleep(2)
+                    continue
+            elif getattr(secim, "finish_reason", None) == "length":
                 logger.warning("Yanit token limitine takilip erken kesilmis olabilir.")
                 print("[Uyari] Yanit token limitine takilip erken kesilmis olabilir.", flush=True)
             return icerik
@@ -2625,6 +2636,32 @@ def _derin_dongu_var(metin: str) -> bool:
     return False
 
 
+def _derin_eksik_mi(metin: str):
+    """Derin analiz yanitinin promptta istenen yapisal bilesenleri eksikse
+    eksiklik nedenini dondurur; yanit tamamsa None.
+
+    2026-09-28'de ucretsiz saglayicinin yaniti token limitinde kelime
+    ortasinda kesilmisti ("...tum osilatorler 'sagl|"); yarim rapor dogrulama
+    katmanindan gecip sayfaya yazildi. Kelime sayisi guvenilir sinyal degil
+    (uzun yazan model yine de erken biter), bu yuzden kontrol yapisal:
+    6 bolum basligi + kapanis tablosu + son satir butunlugu.
+    """
+    if not metin or not metin.strip():
+        return "bos yanit"
+    for no in range(1, 7):
+        if not re.search(rf"^##\s*{no}\.", metin, re.M):
+            return f"## {no}. bolum basligi yok"
+    if not re.search(r"^\|\s*Hisse\s*\|", metin, re.M):
+        return "kapanis tablosu basligi yok"
+    son_satir = [s for s in metin.strip().splitlines() if s.strip()][-1].strip()
+    if son_satir.startswith("|"):
+        if not son_satir.endswith("|"):
+            return "son tablo satiri yarim"
+    elif son_satir[-1:].isalnum() or son_satir[-1:] == ",":
+        return "son satir cumle ortasinda kesik"
+    return None
+
+
 def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
     """Kullanicinin Z.ai anahtariyla (ZAI_API_KEY secret) sayfada yayinlanan
     uzun ve derinlemesine gunluk analizi uretir; sonunda onerilen hisseler
@@ -2728,7 +2765,7 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
     #    durumunda llm_call icindeki saglayici/model rotasyonu + Z.ai yedegi devrede.
     try:
         logger.info("[Derin Analiz] AMD cagrisi (llm_call)")
-        icerik = llm_call(prompt)
+        icerik = llm_call(prompt, dogrulama=lambda m: _derin_eksik_mi(m) is None)
         # llm_call denemeler tukendiginde fallback metni doner; bunu "icerik"
         # sanip sayfaya yazmamak icin basarisizlik sayip GLM yedegine dus.
         if icerik and icerik.strip() and not icerik.startswith("(LLM hizmetine ulaşılamadı"):
@@ -2736,9 +2773,14 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
                 son_hata = "tekrar dongusu (AMD)"
                 logger.warning("[Derin Analiz] AMD tekrar dongusune girdi; Z.ai yedegine geciliyor.")
             else:
-                icerik = rapor_son_islem(icerik)
-                return _metin_dogrula_ve_kaydet(
-                    icerik, " / derin analiz", snapshot=snapshot)
+                eksik = _derin_eksik_mi(icerik)
+                if eksik:
+                    son_hata = f"eksik yanit (AMD): {eksik}"
+                    logger.warning("[Derin Analiz] AMD yaniti yarim (%s); Z.ai yedegine geciliyor.", eksik)
+                else:
+                    icerik = rapor_son_islem(icerik)
+                    return _metin_dogrula_ve_kaydet(
+                        icerik, " / derin analiz", snapshot=snapshot)
         else:
             son_hata = "bos yanit (AMD)"
     except Exception as e:
@@ -2753,15 +2795,25 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
                 model=mdl,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.4,
-                max_tokens=8000,
+                # Dusunme tokenlari da ayni butceden harcanir; 8000'de uzun
+                # rapor + dusunme tukendiginde yanit kelime ortasinda kesiliyor.
+                max_tokens=12000,
                 # GLM'in dusunme modunu kapatmak icin ozel parametre SDK'ya
                 # extra_body ile gonderilir; dogrudan kwarg hata verir.
             )
-            icerik = resp.choices[0].message.content or ""
+            secim = resp.choices[0]
+            icerik = secim.message.content or ""
             if icerik.strip():
                 if _derin_dongu_var(icerik):
                     son_hata = "tekrar dongusu"
                     logger.warning("[Derin Analiz] %s tekrar dongusune girdi; rapor yayinlanmayip siradaki model deneniyor.", mdl)
+                    time.sleep(3)
+                    continue
+                kesildi = getattr(secim, "finish_reason", None) == "length"
+                eksik = "token limitinde kesildi" if kesildi else _derin_eksik_mi(icerik)
+                if eksik:
+                    son_hata = f"eksik yanit ({mdl}): {eksik}"
+                    logger.warning("[Derin Analiz] %s yaniti yarim (%s); rapor yayinlanmayip siradaki model deneniyor.", mdl, eksik)
                     time.sleep(3)
                     continue
                 icerik = rapor_son_islem(icerik)

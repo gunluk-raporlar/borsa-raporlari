@@ -8,6 +8,14 @@ on:
     - cron: '30 7 * * *'   # 10:30 Turkiye saati — oglen yayini
     - cron: '30 16 * * *'  # 19:30 Turkiye saati — aksam yayini (robot kapanis kosusundan sonra)
   workflow_dispatch:
+  # Sabah gunluk raporu bittigi an siteye gitsin; 10:30'u beklemesin
+  # (2026-09-29: rapor 08:52'de repodaydi, site 10:30'a kadar eski kaldi).
+  # Basarisiz kosular yayini tetiklemez (job kosulunda suzulur).
+  # Aylik tuketim ~60 -> ~83 build (500 limitinin ~%17'si).
+  workflow_run:
+    workflows: ["Gunluk BIST 30 Raporu"]
+    types: [completed]
+    branches: [main]
 permissions:
   contents: write
 concurrency:
@@ -15,6 +23,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   yayinla:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
