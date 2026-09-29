@@ -2636,22 +2636,25 @@ def _derin_dongu_var(metin: str) -> bool:
     return False
 
 
-def _derin_eksik_mi(metin: str):
-    """Derin analiz yanitinin promptta istenen yapisal bilesenleri eksikse
-    eksiklik nedenini dondurur; yanit tamamsa None.
+def _yapisal_eksik_mi(metin: str, bolum_sayisi: int, tablo_gerekli: bool):
+    """Numarali "## N." bolumlerden olusan uzun raporlarin yapisal
+    tamlik denetimi: bolum basliklari, (isteniyorsa) kapanis tablosu ve
+    son satir butunlugu. Eksiklik varsa nedenini, yanit tamamsa None
+    dondurur.
 
-    2026-09-28'de ucretsiz saglayicinin yaniti token limitinde kelime
-    ortasinda kesilmisti ("...tum osilatorler 'sagl|"); yarim rapor dogrulama
-    katmanindan gecip sayfaya yazildi. Kelime sayisi guvenilir sinyal degil
-    (uzun yazan model yine de erken biter), bu yuzden kontrol yapisal:
-    6 bolum basligi + kapanis tablosu + son satir butunlugu.
+    2026-09-28'de iki kez yarin rapor yayinlandi: derin analizde ucretsiz
+    saglayicinin yaniti token limitinde kelime ortasinda kesildi ("...tum
+    osilatorler 'sagl|"), makro analizde glm-5.3-flash dusunme tokenlari
+    butceyi tuketip bos icerik dondurdu. Kelime sayisi guvenilir sinyal
+    degil (uzun yazan model yine de erken biter), bu yuzden kontrol
+    yapisal.
     """
     if not metin or not metin.strip():
         return "bos yanit"
-    for no in range(1, 7):
+    for no in range(1, bolum_sayisi + 1):
         if not re.search(rf"^##\s*{no}\.", metin, re.M):
             return f"## {no}. bolum basligi yok"
-    if not re.search(r"^\|\s*Hisse\s*\|", metin, re.M):
+    if tablo_gerekli and not re.search(r"^\|\s*Hisse\s*\|", metin, re.M):
         return "kapanis tablosu basligi yok"
     son_satir = [s for s in metin.strip().splitlines() if s.strip()][-1].strip()
     if son_satir.startswith("|"):
@@ -2660,6 +2663,17 @@ def _derin_eksik_mi(metin: str):
     elif son_satir[-1:].isalnum() or son_satir[-1:] == ",":
         return "son satir cumle ortasinda kesik"
     return None
+
+
+def _derin_eksik_mi(metin: str):
+    """Derin analiz promptu: 6 bolum + sonunda onerilen hisseler tablosu."""
+    return _yapisal_eksik_mi(metin, 6, True)
+
+
+def _makro_eksik_mi(metin: str):
+    """Makro analiz promptu: 10 bolum, kapanis tablosu yok
+    (son bolum "## 10. Sonuc ve Degerlendirme")."""
+    return _yapisal_eksik_mi(metin, 10, False)
 
 
 def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
@@ -2927,15 +2941,21 @@ Biçim kuralları (zorunlu):
             amd_model = AMD_MODEL_LIST[0] if AMD_MODEL_LIST else AMD_MODEL
             logger.info("[Makro Analiz] AMD cagrisi (%s)", amd_model)
             icerik = _llm_call_ic(prompt, max_deneme=4, fallback_on_fail=False,
-                                  sirasi=("AMD",))
+                                  sirasi=("AMD",),
+                                  dogrulama=lambda m: _makro_eksik_mi(m) is None)
             if icerik and icerik.strip():
                 if _derin_dongu_var(icerik):
                     son_hata = "tekrar dongusu (AMD)"
                     logger.warning("[Makro Analiz] AMD tekrar dongusune girdi; GLM yedegine geciliyor.")
                 else:
-                    icerik = rapor_son_islem(icerik)
-                    return _metin_dogrula_ve_kaydet(
-                        icerik, " / makro analiz", snapshot=snapshot)
+                    eksik = _makro_eksik_mi(icerik)
+                    if eksik:
+                        son_hata = f"eksik yanit (AMD): {eksik}"
+                        logger.warning("[Makro Analiz] AMD yaniti yarim (%s); GLM yedegine geciliyor.", eksik)
+                    else:
+                        icerik = rapor_son_islem(icerik)
+                        return _metin_dogrula_ve_kaydet(
+                            icerik, " / makro analiz", snapshot=snapshot)
             else:
                 son_hata = "bos yanit (AMD)"
         except Exception as e:
@@ -2951,13 +2971,24 @@ Biçim kuralları (zorunlu):
                 model=mdl,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.4,
-                max_tokens=8000,
+                # Dusunme tokenlari da ayni butceden harcanir; 8000'de 10
+                # bolumluk rapor + dusunme tukendiginde icerik bos donebiliyor
+                # (2026-09-28: "GLM metin uretmedi (bos yanit)").
+                max_tokens=12000,
             )
-            icerik = resp.choices[0].message.content or ""
+            secim = resp.choices[0]
+            icerik = secim.message.content or ""
             if icerik.strip():
                 if _derin_dongu_var(icerik):
                     son_hata = "tekrar dongusu"
                     logger.warning("[Makro Analiz] %s tekrar dongusune girdi; siradaki model deneniyor.", mdl)
+                    time.sleep(3)
+                    continue
+                kesildi = getattr(secim, "finish_reason", None) == "length"
+                eksik = "token limitinde kesildi" if kesildi else _makro_eksik_mi(icerik)
+                if eksik:
+                    son_hata = f"eksik yanit ({mdl}): {eksik}"
+                    logger.warning("[Makro Analiz] %s yaniti yarim (%s); siradaki model deneniyor.", mdl, eksik)
                     time.sleep(3)
                     continue
                 icerik = rapor_son_islem(icerik)
@@ -2982,11 +3013,17 @@ Biçim kuralları (zorunlu):
                 amd_model = AMD_MODEL_LIST[0] if AMD_MODEL_LIST else AMD_MODEL
                 logger.info("[Makro Analiz] AMD yedek cagrisi (%s)", amd_model)
                 icerik = _llm_call_ic(prompt, max_deneme=4, fallback_on_fail=False,
-                                      sirasi=("AMD",))
+                                      sirasi=("AMD",),
+                                      dogrulama=lambda m: _makro_eksik_mi(m) is None)
                 if icerik and icerik.strip():
-                    icerik = rapor_son_islem(icerik)
-                    return _metin_dogrula_ve_kaydet(
-                        icerik, " / makro analiz", snapshot=snapshot)
+                    eksik = _makro_eksik_mi(icerik)
+                    if eksik:
+                        son_hata = f"{son_hata} / amd yarim yanit: {eksik}"
+                        logger.warning("[Makro Analiz] AMD yedek yaniti yarim (%s).", eksik)
+                    else:
+                        icerik = rapor_son_islem(icerik)
+                        return _metin_dogrula_ve_kaydet(
+                            icerik, " / makro analiz", snapshot=snapshot)
                 son_hata = f"{son_hata} / amd bos yanit"
             except Exception as e:
                 son_hata = str(e)[:200]
