@@ -49,6 +49,11 @@ jobs:
           # Yedek: GLM alinamazsa AMD DeepSeek-V4-Flash ile uretilir
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          # Son-care rotasyonunun OpenRouter/Groq havuzlari da gercekten
+          # calisabilmesi icin bu iki anahtar da verilmeli (2026-09-29:
+          # NVIDIA havuzu 6 denemeyi de yiyip OR/Groq'a sira gelmedi).
+          OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
           AMD_MODEL: "DeepSeek-V4-Flash"
           GOOGLE_SITE_DOGRULAMA: ${{ secrets.GOOGLE_SITE_DOGRULAMA }}
           BING_SITE_DOGRULAMA: ${{ secrets.BING_SITE_DOGRULAMA }}
