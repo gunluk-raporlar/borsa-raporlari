@@ -2701,8 +2701,11 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
         return None
 
     model = os.environ.get("ZAI_MODEL") or ZAI_MODEL_TERCIH[0]
+    # glm-5.3-flash HER ZAMAN dusunur (probe 2026-09-29: "1+1"ye bile 60
+    # reasoning token). 10 bolumuk analizde dusunme + icerik 5 dk'yi asiyor
+    # ve "Request timed out" ile yutuluyordu; tek deneme 10 dk butce.
     client = OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/coding/paas/v4/",
-                    timeout=300.0, max_retries=1)
+                    timeout=600.0, max_retries=0)
 
     teknik_ozet = "\n".join(
         f"{s['hisse']} ({HISSE_ADLARI.get(s['hisse'], s['hisse'])}): son {s['son']} TL, gunluk {s['gunluk']:+.2f}%, 60g {s['deg60']:+.1f}%, "
@@ -2885,7 +2888,9 @@ def makro_analiz_yap(yedek_amd=False, snapshot=None):
     anahtar = os.environ.get("ZAI_API_KEY", "")
     model = os.environ.get("ZAI_MODEL") or ZAI_MODEL_TERCIH[0]
     glm_istemci = (OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/coding/paas/v4/",
-                          timeout=300.0, max_retries=1) if anahtar else None)
+                          # Derin analizle ayni gerekce: dusunen model 5 dk'yi
+                          # asiyor; tek deneme 10 dk butce (rotasyon devrede).
+                          timeout=600.0, max_retries=0) if anahtar else None)
     if not anahtar:
         logger.warning("[Makro Analiz] ZAI_API_KEY yok; yedek AMD yolu denenecek (yedek_amd=%s).",
                        yedek_amd)
