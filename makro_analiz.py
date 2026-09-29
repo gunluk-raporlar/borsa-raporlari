@@ -18,6 +18,7 @@ _GERCEK_AMD = bool(os.environ.get("AMD_API_KEY", "").strip())
 os.environ.setdefault("AMD_API_KEY", "makro-analiz")
 
 import logging
+import sys
 from datetime import datetime
 import zoneinfo
 
@@ -119,14 +120,16 @@ def main():
     if not zai and not _GERCEK_AMD:
         logger.warning("ZAI_API_KEY/AMD_API_KEY yok; tam analiz uretilemeyecek.")
         _placeholder_yaz(makro, eksik_anahtar=True)
-        return
+        return 1
 
     logger.info("Makroekonomik degerlendirme uretiliyor (GLM ana, DeepSeek yedek)...")
     analiz = bot.makro_analiz_yap(yedek_amd=_GERCEK_AMD, snapshot=snapshot)
     if not analiz:
         logger.warning("Makro analiz uretilemedi; mevcut sayfa korunuyor/placeholder.")
         _placeholder_yaz(makro, eksik_anahtar=False)
-        return
+        # Yayindaki sayfa korunur ama is KIRMIZI olsun: sessiz basari
+        # 2026-09-29'da uretim olmadigini Actions uzerinden gormeyi engelledi.
+        return 1
 
     # Veri tablosu bolumu: metnin altina her zaman guncel gosterge tablosu
     veri_bolumu = _veri_tablosu(makro)
@@ -151,4 +154,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

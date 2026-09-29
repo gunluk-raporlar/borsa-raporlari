@@ -2940,7 +2940,10 @@ Biçim kuralları (zorunlu):
         try:
             amd_model = AMD_MODEL_LIST[0] if AMD_MODEL_LIST else AMD_MODEL
             logger.info("[Makro Analiz] AMD cagrisi (%s)", amd_model)
-            icerik = _llm_call_ic(prompt, max_deneme=4, fallback_on_fail=False,
+            # Ana yol maliyet tercihiyle yine AMD-oncelikli; deneme sayisi 3'e
+            # cekildi ki AMD tamamen cokerken tum zaman butcesini yemesin
+            # (4 deneme x 4 dk timeout + beklemeler ~20 dk suruyordu).
+            icerik = _llm_call_ic(prompt, max_deneme=3, fallback_on_fail=False,
                                   sirasi=("AMD",),
                                   dogrulama=lambda m: _makro_eksik_mi(m) is None)
             if icerik and icerik.strip():
@@ -3011,9 +3014,11 @@ Biçim kuralları (zorunlu):
         else:
             try:
                 amd_model = AMD_MODEL_LIST[0] if AMD_MODEL_LIST else AMD_MODEL
-                logger.info("[Makro Analiz] AMD yedek cagrisi (%s)", amd_model)
-                icerik = _llm_call_ic(prompt, max_deneme=4, fallback_on_fail=False,
-                                      sirasi=("AMD",),
+                logger.info("[Makro Analiz] AMD yedek cagrisi (%s; tam rotasyon)", amd_model)
+                # 2026-09-29: AMD havuzu sabah boyu timeout'ta, GLM de "Connection
+                # error" verince makro uretilemedi. Son care artik sadece AMD degil
+                # tam saglayici rotasyonu (ZAI/NVIDIA/OpenRouter/Groq) dener.
+                icerik = _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=False,
                                       dogrulama=lambda m: _makro_eksik_mi(m) is None)
                 if icerik and icerik.strip():
                     eksik = _makro_eksik_mi(icerik)
