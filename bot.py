@@ -3014,11 +3014,14 @@ Biçim kuralları (zorunlu):
         else:
             try:
                 amd_model = AMD_MODEL_LIST[0] if AMD_MODEL_LIST else AMD_MODEL
-                logger.info("[Makro Analiz] AMD yedek cagrisi (%s; tam rotasyon)", amd_model)
+                logger.info("[Makro Analiz] AMD yedek cagrisi (%s; NVID/OR/Groq rotasyonu)", amd_model)
                 # 2026-09-29: AMD havuzu sabah boyu timeout'ta, GLM de "Connection
-                # error" verince makro uretilemedi. Son care artik sadece AMD degil
-                # tam saglayici rotasyonu (ZAI/NVIDIA/OpenRouter/Groq) dener.
+                # error" verince makro uretilemedi. Son care AMD/ZAI'yi (ustte iki
+                # asamada zaten tukendiler) tekrar denemek yerine hic denenmemis
+                # NVIDIA/OpenRouter/Groq havuzlarina gider; her ReadTimeout ~4 dk
+                # oldugundan ayni havuzlari tekrar denemek butceyi bosuna yakar.
                 icerik = _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=False,
+                                      sirasi=("NVID", "OR", "YEDEK"),
                                       dogrulama=lambda m: _makro_eksik_mi(m) is None)
                 if icerik and icerik.strip():
                     eksik = _makro_eksik_mi(icerik)
