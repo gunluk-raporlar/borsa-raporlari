@@ -6,7 +6,7 @@ permissions:
 jobs:
   analiz:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 55
     steps:
       - name: Depoyu indir
         uses: actions/checkout@v4
