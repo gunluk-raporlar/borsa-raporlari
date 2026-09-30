@@ -22,6 +22,10 @@ jobs:
           # Birincil saglayici AMD DeepSeek-V4-Flash; GLM yedek
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          # Son-care rotasyonu icin (2026-09-30: NVID havuzu bos taikarken
+          # OR/Groq'a gecilemiyordu)
+          OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
           AMD_MODEL: "DeepSeek-V4-Flash"
           TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
           GOOGLE_SITE_DOGRULAMA: ${{ secrets.GOOGLE_SITE_DOGRULAMA }}
@@ -40,5 +44,9 @@ jobs:
             exit 0
           fi
           git commit -m "Derin analiz guncellemesi [CI Skip]"
+          git pull --rebase -X theirs origin main
+          git push origin main
+          # [CI Skip] build tetiklemedigi icin aninda yayin commit'i:
+          git commit --allow-empty -m "Site yayini (derin analiz)"
           git pull --rebase -X theirs origin main
           git push origin main
