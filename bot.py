@@ -804,6 +804,28 @@ def _zai_call(prompt):
     return sonuc
 
 
+# ---------- Saglayici devre kesici (2026-09-30) ----------
+# Gunun birinde bir saglayici toplu olarak cokerse (orn. AMD endpoint'i
+# 2026-09-29/30'da gun boyu timeout'ta kaldı), her llm_call yeniden onunla
+# baslayip deneme basina ~4 dk yakmak yerine: art arda esik kadar hata alan
+# saglayici BU SUREC icinde rotasyonlardan atlanir. Saglayici bazlidir;
+# model bazli degil (bir saglayicinin tum modelleri ayni altyapiyi paylasir).
+_SAGLAYICI_ARIZA = {}
+_SAGLAYICI_ARIZA_ESIGI = 3
+
+
+def _saglayici_hata(etiket):
+    _SAGLAYICI_ARIZA[etiket] = _SAGLAYICI_ARIZA.get(etiket, 0) + 1
+
+
+def _saglayici_temizle(etiket):
+    _SAGLAYICI_ARIZA.pop(etiket, None)
+
+
+def _saglayici_atlanmali(etiket):
+    return _SAGLAYICI_ARIZA.get(etiket, 0) >= _SAGLAYICI_ARIZA_ESIGI
+
+
 def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogrulama=None):
     """Daha saglam LLM cagrisi:
     - cok saglayicili: AMD modelleri + (tanimliysa) yedek saglayici modelleri
@@ -877,7 +899,10 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
         raise RuntimeError("Kullanilabilir LLM saglayicisi yok.")
 
     for deneme in range(1, max_deneme + 1):
-        saglayici, model, etiket = istekler[(deneme - 1) % len(istekler)]
+        # Devre kesici: bu surecte arizali isaretlenen saglayicilari atla;
+        # hepsi arizaliysa (olasilik disi) tam liste kullanilir.
+        adaylar = [i for i in istekler if not _saglayici_atlanmali(i[2])] or istekler
+        saglayici, model, etiket = adaylar[(deneme - 1) % len(adaylar)]
         try:
             logger.info("LLM cagrisi: %s model=%s deneme=%d/%d", etiket, model, deneme, max_deneme)
 
@@ -891,6 +916,14 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
                 temperature=0.3,
                 max_tokens=max_tokens,
             )
+            # OpenRouter aralikla 200 + bos choices dondurebiliyor (2026-09-30:
+            # 3 dk bekleyip TypeError ile yanitin cöpe gitmesine yol acmisti).
+            if not getattr(resp, "choices", None):
+                logger.warning("%s/%s 200 dondu ama choices bos; siradaki model denenecek.", etiket, model)
+                print(f"[Uyari] {etiket}/{model} 200 dondu ama choices bos; siradaki model deneniyor ({deneme}/{max_deneme})...", flush=True)
+                _saglayici_hata(etiket)
+                time.sleep(2)
+                continue
             secim = resp.choices[0]
             icerik = secim.message.content or ""
 
@@ -898,6 +931,7 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
                 sebep = "tekrar dongusu" if _looks_degenerate(icerik) else ("prompt sizmasi" if _contains_prompt_leak(prompt, icerik) else "Ingilizce karisma")
                 logger.warning("%s/%s bozuk yanit uretti (%s); siradaki model denenecek.", etiket, model, sebep)
                 print(f"[Uyari] {etiket}/{model} bozuk yanit uretti ({sebep}), siradaki model deneniyor ({deneme}/{max_deneme})...", flush=True)
+                _saglayici_hata(etiket)
                 time.sleep(2)
                 continue
 
@@ -907,24 +941,29 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
                     sebep = "token limitinde kesildi" if kesildi else "tamamlik denetimini gecemedi"
                     logger.warning("%s/%s yaniti %s; siradaki model denenecek.", etiket, model, sebep)
                     print(f"[Uyari] {etiket}/{model} yaniti {sebep}, siradaki model deneniyor ({deneme}/{max_deneme})...", flush=True)
+                    _saglayici_hata(etiket)
                     time.sleep(2)
                     continue
             elif getattr(secim, "finish_reason", None) == "length":
                 logger.warning("Yanit token limitine takilip erken kesilmis olabilir.")
                 print("[Uyari] Yanit token limitine takilip erken kesilmis olabilir.", flush=True)
+            _saglayici_temizle(etiket)
             return icerik
 
         except openai.RateLimitError as e:
             bekle = min(10 * deneme, 30)  # 10sn, 20sn, 30sn
             print(f"[Uyari] API hiz siniri ({etiket}/{model}, {type(e).__name__}: {e}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme}/{max_deneme})...", flush=True)
+            _saglayici_hata(etiket)
             time.sleep(bekle)
         except (openai.APIConnectionError, openai.APITimeoutError) as e:
             bekle = min(20 * deneme, 90)  # 20, 40, 60, 80, 90, 90 sn
             sebep = getattr(e, "__cause__", None) or e
             print(f"[Uyari] Baglanti/zaman asimi sorunu ({etiket}/{model}, {type(e).__name__}: {sebep!r}). {bekle} sn bekleniyor, tekrar deneniyor ({deneme}/{max_deneme})...", flush=True)
+            _saglayici_hata(etiket)
             time.sleep(bekle)
         except Exception as e:
             emsg = str(e).lower()
+            _saglayici_hata(etiket)
 
             # Concurrency/model-busy tespiti -> yedek saglayici/modellere hizli gec
             if "concurrency" in emsg or "concurrent" in emsg:
