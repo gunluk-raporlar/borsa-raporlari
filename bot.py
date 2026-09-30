@@ -2873,7 +2873,7 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
                 temperature=0.4,
                 # Dusunme tokenlari da ayni butceden harcanir; 8000'de uzun
                 # rapor + dusunme tukendiginde yanit kelime ortasinda kesiliyor.
-                max_tokens=12000,
+                max_tokens=32768,
                 # GLM'in dusunme modunu kapatmak icin ozel parametre SDK'ya
                 # extra_body ile gonderilir; dogrudan kwarg hata verir.
             )
@@ -3054,7 +3054,7 @@ Biçim kuralları (zorunlu):
                 # Dusunme tokenlari da ayni butceden harcanir; 8000'de 10
                 # bolumluk rapor + dusunme tukendiginde icerik bos donebiliyor
                 # (2026-09-28: "GLM metin uretmedi (bos yanit)").
-                max_tokens=12000,
+                max_tokens=32768,
             )
             secim = resp.choices[0]
             icerik = secim.message.content or ""
