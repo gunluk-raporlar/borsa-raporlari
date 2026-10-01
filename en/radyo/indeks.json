@@ -1,6 +1,14 @@
 {
- "guncelleme": "30.09 18:18",
+ "guncelleme": "01.10 10:30",
  "bolumler": [
+  {
+   "id": "2026-10-01-acilis",
+   "tarih": "2026-10-01",
+   "bolum": "acilis",
+   "baslik": "2026-10-01 — Açılış Yayını",
+   "dosya": "radyo/2026-10-01-acilis.mp3",
+   "sure_sn": 396
+  },
   {
    "id": "2026-09-30-acilis",
    "tarih": "2026-09-30",
@@ -152,14 +160,6 @@
    "baslik": "2026-09-22 — Açılış Yayını",
    "dosya": "radyo/2026-09-22-acilis.mp3",
    "sure_sn": 493
-  },
-  {
-   "id": "2026-09-22-ogle",
-   "tarih": "2026-09-22",
-   "bolum": "ogle",
-   "baslik": "2026-09-22 — Öğle Yayını",
-   "dosya": "radyo/2026-09-22-ogle.mp3",
-   "sure_sn": 696
   }
  ]
 }
