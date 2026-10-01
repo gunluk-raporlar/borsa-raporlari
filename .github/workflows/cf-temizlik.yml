@@ -51,9 +51,7 @@ jobs:
           SAYI=$(echo "$ZONES" | jq '.result | length')
           echo "Zone sayisi: $SAYI"
           if [ "$SAYI" = "0" ]; then
-            echo "Hesapta zone yok: WAF rate limit ve Bot Fight Mode pages.dev"
-            "adresine uygulanamaz (bu ayarlar zone bazlidir). pages.dev'de"
-            "koruma Cloudflare'in kendisine aittir; ozel domain baglanirsa acilir."
+            echo "Hesapta zone yok: WAF rate limit ve Bot Fight Mode pages.dev adresine uygulanamaz (bu ayarlar zone bazlidir). pages.dev'de koruma Cloudflare'in kendisine aittir; ozel domain baglanirsa acilir."
             exit 0
           fi
           echo "$ZONES" | jq -c '.result[]? | {id, name}' | while read -r z; do
