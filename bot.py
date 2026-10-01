@@ -3232,14 +3232,44 @@ INDEXNOW_ANA_SAYFALAR = [
 
 
 def indexnow_ping(url_yollari):
-    """Degisen URL'leri IndexNow'ya bildirir (hata raporu uretimini bozmaz)."""
+    """Degisen URL'leri IndexNow'ya bildirir (hata raporu uretimini bozmaz).
+
+    Girdi esnek: goreli yol ("derin-analiz.html"), kok yolu ("/index.html")
+    veya tam URL kabul eder. 2026-10-02: gunluk bot sitemap'ten okudugu TAM
+    URL'leri gonderiyordu; asagida SITE_URL tekrar eklenince "site/https://
+    site/..." cift on ekiyle 475 adres bosuna gidiyordu. Ayrica .html son
+    eki kaldirilarak canonical (uzantisiz) adres gonderilir; site zaten
+    308 ile uzantisiz adrese yonlendirir.
+    """
+    kok = SITE_URL.rstrip("/")
+    temiz = []
+    for u in url_yollari:
+        u = (u or "").strip()
+        if not u:
+            continue
+        if u.startswith("http://") or u.startswith("https://"):
+            tam = u
+        else:
+            tam = kok + ("/" + u.lstrip("/"))
+        # Sadece kendi alan adimizdaki adresleri canonical'a cevir
+        if tam == kok or tam.startswith(kok + "/"):
+            yol = tam[len(kok):]
+            if yol.endswith("/index.html"):
+                yol = yol[: -len("index.html")]
+            elif yol.endswith(".html"):
+                yol = yol[: -len(".html")]
+            tam = kok + (yol or "/")
+        temiz.append(tam)
+    url_yollari = temiz
+    if not url_yollari:
+        return
     try:
         import urllib.request
         veri = json.dumps({
             "host": SITE_URL.split("//", 1)[1].rstrip("/"),
             "key": INDEXNOW_KEY,
             "keyLocation": SITE_URL + INDEXNOW_KEY + ".txt",
-            "urlList": [SITE_URL + u for u in url_yollari],
+            "urlList": url_yollari,
         }).encode("utf-8")
         req = urllib.request.Request(
             "https://api.indexnow.org/indexnow", data=veri,
