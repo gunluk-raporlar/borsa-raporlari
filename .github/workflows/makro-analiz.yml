@@ -1,50 +1,30 @@
 name: Makro Analiz (GLM + DeepSeek yedek)
 on:
-  # 20:30 TSİ akşam snapshot'ı; Pazartesi 07:00 TSİ makro analizi bu kaydı okur.
+  # Haftada bir, yalnizca Pazartesi TSİ 07:00'de taze makro analizi uretir
+  # (kullanici karari, 2026-10-01: arada guvenlik kosusu istenmiyor).
+  # Onceki aksam (Pazar 20:30) snapshot'i uzerine uretilir; Cumartesi/Pazar
+  # piyasa kapali oldugundan haftalik yayin icin yeterlidir.
   schedule:
     - cron: '0 4 * * 1'
-    # Pazartesi koşusu başarısızsa sayfa bir hafta bayat kalıyordu
-    # (2026-09-28: 35 dk timeout ile iptal oldu, sayfa 25'inde kaldı).
-    # Salı-Cuma güvenlik tekrarı: sayfa tazeyse (dün veya bugün üretilmişse)
-    # aşağıdaki koruma adımı üretimi atlar, maliyet oluşmaz.
-    - cron: '30 4 * * 2-5'
   workflow_dispatch:
 permissions:
   contents: write
 jobs:
   analiz:
     runs-on: ubuntu-latest
-    # Sağlayıcılar yavaşsa AMD rotasyonu + GLM + AMD yedeği toplam ~50 dk
+    # Sağlayıcılar yavaşsa AMD rotasyonu + GLM + yedek rotasyon toplam ~50 dk
     # sürebiliyor; 35 dk koşuyu çağrı ortasında iptal ettiriyordu.
     timeout-minutes: 55
     steps:
       - name: Depoyu indir
         uses: actions/checkout@v4
-      - name: Sayfa bu haftanin mi? (Pazartesi uretildiyse tekrarlama)
-        # Yalnizca Salı-Cuma güvenlik cron'larında çalışır; manuel ve
-        # Pazartesi koşuları her zaman üretir.
-        # Kapı haftanin Pazartesi'sine baglidir; "dun"e degil (2026-10-01:
-        # Salideki atlama sonrasi sayfa Pazartesi tarihli kalinca Carsamba
-        # "dunden eski" sayip 42 dk'lik gereksiz uretim baslatti).
-        if: github.event_name == 'schedule' && github.event.schedule == '30 4 * * 2-5'
-        run: |
-          SON=$(grep -oE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' makro-analiz.html 2>/dev/null | head -1 || true)
-          PZRT=$(TZ=Europe/Istanbul date -d 'last monday' +%F)
-          echo "Sayfadaki son tarih: ${SON:-yok} • bu haftanin Pazartesi'si: $PZRT"
-          if [ -n "$SON" ] && { [ "$SON" \> "$PZRT" ] || [ "$SON" = "$PZRT" ]; }; then
-            echo "Makro analiz bu haftanin sürümü; yeniden üretilmiyor."
-            echo "taze=true" >> "$GITHUB_ENV"
-          fi
       - name: Python kur
-        if: env.taze != 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - name: Kutuphaneleri kur
-        if: env.taze != 'true'
         run: pip install -r requirements.txt
       - name: Makro analizi uret
-        if: env.taze != 'true'
         env:
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
           TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
