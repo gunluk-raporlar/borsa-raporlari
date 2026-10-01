@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Derin Analiz - 2026-10-01</title>
+<meta name="description" content="2026-10-01 tarihli BIST 30 derin analiz raporu.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/en/reports/2026-10-01-derin-analiz">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/reports/2026-10-01-derin-analiz">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/reports/2026-10-01-derin-analiz">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/reports/2026-10-01-derin-analiz">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/reports/2026-10-01-derin-analiz">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/reports/2026-10-01-derin-analiz">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/reports/2026-10-01-derin-analiz">
+<link rel="icon" href="..//favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="..//favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Daily Reports">
+<meta property="og:title" content="Derin Analiz - 2026-10-01">
+<meta property="og:description" content="2026-10-01 tarihli BIST 30 derin analiz raporu.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/en/reports/2026-10-01-derin-analiz">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Daily Reports cover image">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Derin Analiz - 2026-10-01">
+<meta name="twitter:description" content="2026-10-01 tarihli BIST 30 derin analiz raporu.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<meta name="yandex-verification" content="2c8df12d0b97a734">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Derin Analiz - 2026-10-01", "description": "2026-10-01 tarihli BIST 30 derin analiz raporu.", "url": "https://borsa-raporlari.pages.dev/en/reports/2026-10-01-derin-analiz", "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Derin Analiz - 2026-10-01", "datePublished": "2026-10-01", "dateModified": "2026-10-01T09:12:21+03:00", "inLanguage": "en", "description": "2026-10-01 tarihli BIST 30 derin analiz raporu.", "author": {"@type": "Organization", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}, "publisher": {"@type": "Organization", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}, "mainEntityOfPage": "https://borsa-raporlari.pages.dev/en/reports/2026-10-01-derin-analiz.html"}</script>
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="../style.css">
+
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="../index.html">BIST 30 Daily Reports</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Light/dark theme" aria-label="Change theme">🌙</button></div>
+<nav><a href="../index.html" class="active">Reports</a><a href="../hisse/index.html">Stocks</a><a href="../derin-analiz.html">Deep Analysis</a><a href="../makro-analiz.html">Macro Analysis</a><a href="../teknik-analiz.html">Technical Scan</a><a href="../sinyal-karnesi.html">Signal Scorecard</a><a href="../borsapy-analiz.html">Borsapy Signals</a><a href="../haberler.html">News</a><a href="../sirket-haberleri.html">Company News</a><a href="../portfolio.html">Demo Portfolio</a><a href="../haftasonu.html">Weekend</a><a href="../haftasonu-egitimi.html">Market School</a><a href="../takvim.html">📅 Calendar</a><a href="../sozluk.html">Glossary</a><a href="../terimler.html">Terms</a><a href="../muhasebe-terimleri.html">Accounting Terms</a><a href="../robot.html">"İşlem Robotu"</a></nav>
+</div></header>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Loading prices…</span></div>
+</div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Prices could not be loaded temporarily; they will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
+
+<div class="ticker-bant" id="ticker-bant2" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Loading market data...</span></div>
+</div>
+<script>
+(function() {
+  var kutu = document.getElementById('ticker-bant2');
+  if (!kutu) return;
+  var kok = kutu.dataset.kok || '';
+  var iz = document.getElementById('ticker-iz2');
+
+  function bicim(g) {
+    var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
+    var rozet = (typeof g.d === 'number')
+      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+        Number(g.d).toFixed(2) + '%</span>'
+      : '';
+    var birim = g.b || g.birim || '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (birim ? ' ' + birim : '') + rozet + '</span>';
+  }
+  function ciz(veri) {
+    var ogeler = (veri.gostergeler || []).map(bicim).join('');
+    if (!ogeler) throw new Error('bos');
+    var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
+               (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Market data could not be loaded temporarily; it will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/piyasa?t=' + Date.now());
+  setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Loading...</span>
+            <span id="istanbul-weather">🌤️ Istanbul Weather...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Select page language">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/reports/2026-10-01-derin-analiz" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/reports/2026-10-01-derin-analiz" hreflang="en" lang="en" data-dil="en" class="aktif" aria-current="true">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/reports/2026-10-01-derin-analiz" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/reports/2026-10-01-derin-analiz" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/reports/2026-10-01-derin-analiz" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+</nav>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
+
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Search stock, topic or date..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '../';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\?\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\.|mi|mı|icin)\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Search index could not be loaded.</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+
+
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Play / Pause">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Volume level" title="Sound">
+  <span class="radyo-linkler"><a href="../radyo/index.html">📻 All broadcasts &amp; Podcast page</a> <span class="ayrac">•</span> <a href="../radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">For listening purposes only • Fictional AI servers • For informational purposes, not investment advice.</span>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='../';
+  if(!btn||!ses) return;
+  if(ayar){ ses.volume=(parseInt(ayar.value,10)||80)/100; }
+  var hazir=false;
+  function hazirla(geri){
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){return r.json();}).then(function(d){
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){ ses.src=kok+l[0].dosya; }
+      hazir=true; geri();
+    }).catch(function(){ hazir=true; geri(); });
+  }
+  btn.addEventListener('click',function(){
+    if(ses.paused){ hazirla(function(){ var p=ses.play(); if(p&&p.catch){p.catch(function(){});} }); }
+    else { ses.pause(); }
+  });
+  ses.addEventListener('play',function(){ btn.textContent='❚❚'; btn.setAttribute('aria-label','Duraklat'); });
+  ses.addEventListener('pause',function(){ btn.textContent='▶'; btn.setAttribute('aria-label','Oynat'); });
+  if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
+})();
+</script>
+
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>Deep Analysis</h1>
+<div class="meta"><span class="badge">2026-10-01</span><span class="badge">Yazım saati: 09:12 (TSİ)</span><span>BIST 30 • AI-powered in-depth analysis</span>
+<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Read report aloud">🔊 Read Aloud</button>
+<span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px"><a class="paylas" href="https://twitter.com/intent/tweet?text=Derin+Analiz+2026-10-01&url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-10-01-derin-analiz.html" target="_blank" rel="noopener" title="Share on X">𝕏</a><a class="paylas" href="https://t.me/share/url?url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-10-01-derin-analiz.html&text=Derin+Analiz+2026-10-01" target="_blank" rel="noopener" title="Share on Telegram">✈</a><a class="paylas" href="https://wa.me/?text=Derin+Analiz+2026-10-01%20https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-10-01-derin-analiz.html" target="_blank" rel="noopener" title="Share on WhatsApp">💬</a><a class="paylas" href="javascript:void(0)" title="Copy link" onclick="if(navigator.clipboard){navigator.clipboard.writeText('https://borsa-raporlari.pages.dev/en/reports/2026-10-01-derin-analiz.html');this.textContent='✓';}">🔗</a></span></div>
+</div>
+
+
+
+
+<article class="report" id="rapor-govde"><h2>1. Market Summary and Overview</h2>
+<p>1 Ekim 2026, Perşembe, saat 09:08, BIST 30 (XU030) son kapanışı 14,842.04, önceki kapanış 15,264.10, günlük -2.77%. </p>
+<p>Gün içinde endeks düşüşü, TL bazında -2.77% ve dolar bazında -2.79% olarak neredeyse eşleşti; bu durum USD/TRY’nin 49.02 seviyesinde sadece +0.03% değişim göstermesiyle kur etkisinin sınırlı olduğunu gösterir. Dolayısıyla satış baskısı principalement yerel risk iştahındaki zayıflama ve kısa vadeli pozisyon kapatma eğiliminden kaynaklanıyor. </p>
+<p>BIST 100 (XU100) aynı oturumu 11,947.18 ile kapattı; önceki kapanış 12,290.58, günlük -2.79%. İki endeks arasındaki yakınlık, satışın geniş tabanlı olduğunu ve sektörel farklılıkların hareketi sınırladığını işaret ediyor. </p>
+<p>Teknik taramada 30 hissenin tamamı negatif yön gösterirken, 26’sı GÜÇLÜ SAT sinyali veriyor; tek NÖTR konumda kalan BIMAS (RSI 50.31) dışındaki tüm hisseler WT (WaveTrend) göstergesiyle SAT yönünde uyumlu. Bu genelleşmiş satış ortamında, endeksin 15,000 psikolojik destek seviyesinin altında kalması (14,842.04) düşüşünMomentumunu güçlendiriyor. </p>
+<p>Dolar bazlı performans (-2.79%) TL bazlıyla neredeyse aynı; bu da kur şoku yerine yerel likidite çekimi ve risk dışı varlıkların satışının baskın olduğunu destekliyor. </p>
+<p>Özetle, günün ana teması: kur sabitken, yerel risk aversiyonu ve teknik satış sinyalleri birleşerek endeksi alt yönlü bir koridorda tutuyor; kısa vadeli bir tepki rallisi olasılığı sadece aşırı satım bölgelerinde (RSI 35 altı) sınırlı kalıyor. </p>
+<h2>2. Sector-Based Evaluation</h2>
+<p>Isı haritası oluştururken teknik taramadaki “genel” sütunu ve osilatör oneri sütunu baz alındığında, sektörlerin göreli gücü aşağıdaki şekilde değerlendirilebilir:  </p>
+<ul>
+<li>
+<p><strong>Banking</strong>: VAKBN, AKBNK, YKBNK, GARAN, ISCTR – hepsi GÜÇLÜ SAT; osilatörde RSI 38‑45 arası, MACD negatif, ADX 15‑22 arasında. Sektörde 5 hisse aynı yönde hareket ediyor; bu yoğunluk, bankacılığın endeks içindeki ağırlığını düşündüğünde satışın mekanik etkisini artırıyor. </p>
+</li>
+<li>
+<p><strong>Energy &amp; Petrochemicals</strong>: TUPRS (SAT, RSI 42.09, ADX 28.07), PETKM (GÜÇLÜ SAT, RSI 38.8, ADX 17.42), ENKAI (GÜÇLÜ SAT, RSI 39.38, ADX 25.22), ASTOR (GÜÇLÜ SAT, RSI 23.12, ADX 38.39), AEFES (GÜÇLÜ SAT, RSI 36.39, ADX 26.9), SISE (GÜÇLÜ SAT, RSI 35.44, ADX 21.45). Toplam 6 hisse; 5’si GÜÇLÜ SAT, 1’si SAT. Sektör içinde ASTOR gibi aşırı satım (RSI 23) ve güçlü trend (ADX &gt;38) gösteren bir outlier var; geri kalanlar orta‑zayıf momentoda. </p>
+</li>
+<li>
+<p><strong>Holding</strong>: KCHOL (SAT, RSI 42.28, ADX 25.38), SAHOL (GÜÇLÜ SAT, RSI 36.94, ADX 31.53). İki hisse farklı sinyal veriyor; holding sektörü içinde yön belirsizliği var. </p>
+</li>
+<li>
+<p><strong>Retail</strong>: BIMAS (NÖTR, RSI 50.31, ADX 17.53), MGROS (GÜÇLÜ SAT, RSI 36.83, ADX 32.22). İki hisse arasında net ayrışma; BIMAS relativa dayanıklılık gösterirken MGROS güçlü satım sinyali veriyor. </p>
+</li>
+<li>
+<p><strong>Metal &amp; Mining</strong>: KRDMD (SAT, RSI 46.4, ADX 15.58), EREGL (GÜÇLÜ SAT, RSI 39.92, ADX 14.31). İki hisse farklı osilatör okumalarıyla zayıf‑orta momentoda. </p>
+</li>
+<li>
+<p><strong>Chemicals &amp; Fertilizers</strong>: GUBRF (GÜÇLÜ SAT, RSI 38.71, ADX 29.65), SASA (GÜÇLÜ SAT, RSI 26.06, ADX 24.8). Her ikisi de GÜÇLÜ SAT; SASA’nın RSI 26 aşırı satım sınırına yakın. </p>
+</li>
+<li>
+<p><strong>Defense</strong>: ASELS (GÜÇLÜ SAT, RSI 33.92, ADX 28.08). Tek hisse, orta‑zayıf momentoda. </p>
+</li>
+<li>
+<p><strong>Real Estate</strong>: EKGYO (GÜÇLÜ SAT, RSI 41.52, ADX 19.33). Tek hisse, nötr‑zayıf momentoda. </p>
+</li>
+<li>
+<p><strong>Ulaşım &amp; Havacılık</strong>: TAVHL (GÜÇLÜ SAT, RSI 41.48, ADX 14.53), THYAO (GÜÇLÜ SAT, RSI 41.52, ADX 27.3), PGSUS (GÜÇLÜ SAT, RSI 31.5, ADX 18.29). Üç hisse hepsi GÜÇLÜ SAT; THYAO’nun ADX 27.3 orta‑güçlü trend gösteriyor. </p>
+</li>
+<li>
+<p><strong>Telecom</strong>: TTKOM (GÜÇLÜ SAT, RSI 42.94, ADX 13.24), TCELL (GÜÇLÜ SAT, RSI 40.1, ADX 26.83). İki hisse benzer osilatör profiliyle nötr‑zayıf momentoda. </p>
+</li>
+<li>
+<p><strong>Automotive</strong>: TOASO (GÜÇLÜ SAT, RSI 39.64, ADX 15.74), FROTO (GÜÇLÜ SAT, RSI 37.73, ADX 25.72). İki hisse orta‑zayıf momentoda. </p>
+</li>
+<li>
+<p><strong>Finance (Other)</strong>: DSTKF (GÜÇLÜ SAT, RSI 20.3, ADX 33.5). Tek hisse, aşırı satım ve güçlü trend (ADX &gt;33) kombinasyonu. </p>
+</li>
+</ul>
+<p>Sektör bazlı sinyal yoğunluğuna bakıldığında en çok GÜÇLÜ SAT sinyali veren grup <strong>Banking</strong> (5 hisse) ve <strong>Energy &amp; Petrochemicals</strong> (5 hisse) olur. Bu iki sektörün endeks içindeki toplam ağırlığı yüksek olduğu için genel düşüşün motoru olarak görülebilir. Göreli dayanıklılık gösterenler ise <strong>BIMAS</strong> (Perakende) ve <strong>TUPRS</strong> (Enerji) gibi tek tek hisseler; sektör içinde ayrışma söz konusu. </p>
+<h2>3. Technical Visual Analysis</h2>
+<p>EMA dizilimleri, Wave Trend (WT) ve regresyon kanalı konumları ile Pearson korelasyon (r) değerleri birlikte değerlendirildiğinde aşağıdaki çıklar elde edilebilir:  </p>
+<ul>
+<li>
+<p><strong>EMA yapısı</strong>: Teknik taramada “kisa”, “orta”, “uzun” sütunları kısa, orta ve uzun vadeli EMA eğilimini gösterir. Çoğu hisse için “kisa=SAT”, “orta=SAT” veya “BEKLE”, “uzun=AL” ya da “BEKLE” şeklinde bir görüntü oluşuyor. Bu, kısa ve orta vadeli trendlerin aşağı yönlüyken uzun vadeli bazda bazı hisselerde (BIMAS, TUPRS, KCHOL, KRDMD) alım eğilimi devam ettiğini suggerer; ancak bu uzun vadeli sinyalin gücü “genel” sütununda NÖTR veya SAT olarak sınırlı kalıyor. </p>
+</li>
+<li>
+<p><strong>Wave Trend (WT)</strong>: Tüm hisselerde WT=SAT, sadece BIMAS dışında. Bu, kısa vadeli momentumun genel olarak negatif baskıyla çalıştığını ve alım sinyallerinin çok sınırlı olduğunu gösterir. </p>
+</li>
+<li>
+<p><strong>Regresyon kanalı ve % kanal değeri</strong>: “kanal %” sütunu fiyatın regresyon kanalının üst veya alt sınırına ne kadar yakın olduğunu gösterir. Pozitif değerler kanal üstü, negatif değerler kanal altındaki konumu ifade eder. Örneğin TUPRS kanal %-14 (altta), BIMAS kanal 22% (üstte), MGROS kanal 50% (çok üstte). Bu durum, BIMAS ve MGROS gibi bazı hisselerin kanalın üst bandında toparlanmaya çalıştığını, ancak WT ve osilatörlerin SAT yönünde olduğu için bu yükselişin geçici bir tepki olasılığı yüksek olduğunu意味します。  </p>
+</li>
+<li>
+<p><strong>Pearson korelasyon (r)</strong>: “r” değeri fiyatın kanal ile ilişkisinin gücünü gösterir; 1’e yakın değerler güçlü yönlü ilişkiyi, 0’a yakın değerler zayıf ilişkiyi ifade eder. BIMAS r=0.86 ve TUPRS r=0.92 gibi yüksek değerler, bu hisselerin kanal içinde oldukça tutarlı bir trend izlediğini gösterir; ancak yön (SAT) negatif olduğu için bu tutarlılık düşüşün devam edeceğine işaret eder. Düşük r değerleri (EKGYO r=0.05, TRALT r=0.02) ise bu hisselerin kanal ile ilişkisinin zayıf olduğunu ve hareketlerin daha rasgele olduğunu gösterir; bu da bu grup içinde kısa vadeli tek yönlü hareketlerin sınırlı olabileceğini ima eder. </p>
+</li>
+</ul>
+<p>Ayrışan hisseler açısından, <strong>BIMAS</strong> (kanal 22%, r=0.86, genel=NÖTR) ve <strong>TUPRS</strong> (kanal %-14, r=0.92, genel=SAT) en belirgin ayrışmayı gösterir; biri kanal üstünde nötr, diğeri kanal altında satım sinyali veriyor. Bu durum, sektör içindeki göreli güç farklılığını yansıtıyor ve kısa vadeli bir rotasyon olasılığını artırabilir. </p>
+<h2>4. Oscillator and Momentum Readings</h2>
+<p>Osilatör verileri (RSI, MACD, StochK, CCI20, ADX) aşağıdaki gibi yorumlanabilir:  </p>
+<ul>
+<li>
+<p><strong>RSI</strong>: 35’in altında olan hisseler aşırı satım bölgesinde sayılır. Bu grup: DSTKF (20.3), ASTOR (23.1), SASA (26.1). Bu üç hisse kısa vadeli bir teknik tepki (short covering) olasılığı taşıyor; ancak ADX değerleri yüksek (DSTKF 33.5, ASTOR 38.4, SASA 24.8) olduğu için trendin gücü bu tepkileri sınırlayabilir. </p>
+</li>
+<li>
+<p><strong>RSI 35‑50 arası</strong>: Çoğu hisse bu aralıkta (örnek: VAKBN 45.54, AKBNK 39.8, YKBNK 41.83, GARAN 38.14, ISCTR 38.63). Bu bölge nötr‑zayıf momentomu gösterir; yön değişimi için güçlü bir katalizator gerekir. </p>
+</li>
+<li>
+<p><strong>RSI 50 üzeri</strong>: Tek BIMAS (50.31) bu bölgede; bu da onun göreli güçlü momentomu işaret eder, ancak genel sinyal NÖTR olduğu için bu gücün yön değiştirmesi için ek bir destek gerekir. </p>
+</li>
+<li>
+<p><strong>MACD</strong>: Negatif değerler düşük momentomu, pozitif değerler yukarı momentomu gösterir. Çoğu hisse MACD negatif (AKBNK -0.30, YKBNK -0.10, GARAN -0.89, ISCTR -0.04). BIMAS MACD 4.6 pozitif outliers; bu da kısa vadeli alım impulsu olabileceğini gösterir, ancak osilatör oneri NÖTR olduğu için bu impulsu güvenirli değil. </p>
+</li>
+<li>
+<p><strong>StochK</strong>: 20’nin altında olanlar aşırı satım, 80’nin üzeri olanlar aşırı alım gösterir. DSTKF StochK 0.0 (asagı ekstrem), ASTOR 12.19, SASA 3.39 gibi düşük değerler bu hisselerin stochastik aşırı satım bölgesinde olduğunu confirma eder. </p>
+</li>
+<li>
+<p><strong>CCI20</strong>: -100’un altında değerler düşük trend gücünü, +100’un üstü değerler güçlü trendü gösterir. Çoğu hisse -100’un altında (TUPRS -184.16, GUBRF -106.94, ASELS -221.52). Bu da düşüş trendinin geniş tabanlı olduğunu destekler. </p>
+</li>
+<li>
+<p><strong>ADX</strong>: 20 üzeri değerler trendin varlığını, 25 üzeri değerler güçlü trendü gösterir. Güçlü trend gösterenler: ASTOR (38.4), MGROS (32.2), DSTKF (33.5), GUBRF (29.65), ASELS (28.08), TUPRS (28.07), THYAO (27.3), TCELL (26.83), AEFES (26.9), SISE (21.45), GARAN (20.93), YKBNK (19.4), AKBNK (19.87), ISCTR (21.65). Bu yüksek ADX değerleri, düşüşün sadece rastgele değil, yönlü ve güçlü bir trend olduğunu gösterir; bu da kısa vadeli alım sinyallerinin güvenilir olma olasılığını düşürür. </p>
+</li>
+</ul>
+<p>Genel olarak osilatörler, <strong>DSTKF, ASTOR ve SASA</strong> gibi aşırı satım bölgelerinde kısa vadeli teknik tepki olasılığını gösterirken, yüksek ADX değerleri bu tepkilerin sınırlı kalacağını ve ana trendin aşağı yönlü devam etme olasılığını yüksek kılar. </p>
+<h2>5. Risk Map and Scenarios</h2>
+<h3>Yukarı Yönlü Senaryo</h3>
+<ul>
+<li>
+<p><strong>Koşul</strong>: BIMAS ve TUPRS gibi göreli güçli hisselerde RSI 50 üzerine çıkıp, MACD pozitif hale gelmesi ve StochK 50 üzeri yükselmesi; birlikte bu hisselerde kanal % değeri pozitif kalıp, r değeri 0.80 üzerinde kalması. </p>
+</li>
+<li>
+<p><strong>Result</strong>: Bu durum, kısa vadeli bir alım impulsu oluşturabilir ve perakende ve enerji sektörlerinde göreli güç artışı sağlayabilir; endeks 15,000‑15,200 aralığında bir denge denemesi yapabilir. </p>
+</li>
+<li>
+<p><strong>Invalidation Condition</strong>: Yukarıdaki osilatör amélii gerçekleşmez ve/veya BIMAS/TUPRS’nin RSI 45’in altına düşmesi, MACD’nin tekrar negatif olması veya kanal % değeri negatif bölgeye dönmesi (BIMAS kanal 0%’un altına, TUPRS kanal %-20’nin altına düşmesi). </p>
+</li>
+</ul>
+<h3>Aşağı Yönlü Senaryo</h3>
+<ul>
+<li>
+<p><strong>Koşul</strong>: Bankacılık hisselerinde (ISCTR, YKBNK, AKBNK, GARAN, VAKBN) RSI 30’un altına inmesi, MACD’nin daha da negatifleşmesi ve ADX’nin 30 üzerinde kalması; birlikte bu hisselerde kanal % değeri daha da negatif (örnek: ISCTR kanal 17%’den 30%’a çıkması) ve r değeri 0.60’nin altına düşmesi. </p>
+</li>
+<li>
+<p><strong>Result</strong>: Bu durum, bankacılık sektöründeki satış basıncını artırır ve endeksi 14,500‑14,700 aralığında daha da aşağı çeker; perakende ve enerji gibi göreli güçli hisselerde de satış etkisi yayılır. </p>
+</li>
+<li>
+<p><strong>Invalidation Condition</strong>: Yukarıda tanımlanan osilatör gelişmeleri (RSI 30’un üzerine çıkma, MACD’nın pozitif hale gelmesi) gerçekleşirse bu senaryo geçersiz olur. </p>
+</li>
+</ul>
+<h3>Bölünme Stratejisi</h3>
+<ul>
+<li>
+<p><strong>Core Pozisyon</strong>: BIMAS ve TUPRS gibi göreli güçli hisselerde, RSI 45‑55 arasında ve MACD’nın hafif pozitif olduğu günlerde küçük bir alım pozisyonu tutulabilir; bu pozisyonun geçersizliği için RSI 40’un altına düşmesi veya MACD’nın tekrar negatif olması koşulu uygulanır. </p>
+</li>
+<li>
+<p><strong>Tetikleyici Satış</strong>: Bankacılık hisselerinde RSI 30’un altına inmesi ve ADX’nin 30 üzerinde kalması durumunda pozisyonların azaltılması veya tamamen kapatılması düşünülebilir; bu koşulun geçersizliği için RSI 35’in üzerine çıkması ve MACD’nın pozitif hale gelmesi gerekir. </p>
+</li>
+</ul>
+<h2>6. Recommended Stocks for the Day</h2>
+<p>Teknik taramada ve osilatörde <strong>BUY</strong> veya <strong>STRONG BUY</strong> sinyali veren hisse bulunmamaktadır. Dolayısıyla tablo boş bırakılmıştır. </p>
+<table>
+<thead>
+<tr>
+<th>Stock</th>
+<th>Signal</th>
+<th>Base Scenario</th>
+<th>Optimistic Scenario</th>
+<th>Invalidation Condition</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><em>Not: Gün içinde teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren hisse tespit edilememiştir; bu yüzden önerilen hisse listesi boş bırakılmıştır.</em></p></article>
+<p style="margin-top:18px"><a href="../index.html">← Back to all reports</a></p>
+<script>
+(function() {
+  if (!('speechSynthesis' in window)) { return; }
+  // Chrome bazi sesleri gec yukler; sayfa acilir acilmaz ses listesini isit.
+  var sesleriIsit = function() { try { window.speechSynthesis.getVoices(); } catch (e) {} };
+  sesleriIsit();
+  if (window.speechSynthesis.onvoiceschanged === null) {
+    window.speechSynthesis.onvoiceschanged = sesleriIsit;
+  }
+  window.sesliOkuToggle = function(btn, kaynakId) {
+    var S = window.speechSynthesis;
+    var durum = btn.getAttribute('data-durum') || 'durdu';
+    if (durum === 'okunuyor') { S.pause(); btn.textContent = '\u25b6 Devam'; btn.setAttribute('data-durum', 'bekliyor'); return; }
+    if (durum === 'bekliyor') { S.resume(); btn.textContent = '\u23f8 Duraklat'; btn.setAttribute('data-durum', 'okunuyor'); return; }
+    S.cancel();
+    var kaynak = document.getElementById(kaynakId);
+    var metin = kaynak ? (kaynak.textContent || '') : '';
+    metin = metin.replace(/\s+/g, ' ').trim();
+    if (!metin) { return; }
+    var u = new SpeechSynthesisUtterance(metin);
+    u.lang = 'tr-TR';
+    var sesListe = S.getVoices() || [];
+    var trSes = sesListe.filter(function(v) { return v.lang && v.lang.toLowerCase().indexOf('tr') === 0; })[0] || null;
+    if (trSes) { u.voice = trSes; }
+    u.rate = 1.0;
+    u.onend = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    u.onerror = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    btn.textContent = '\u23f8 Duraklat';
+    btn.setAttribute('data-durum', 'okunuyor');
+    S.speak(u);
+  };
+})();
+</script>
+</main>
+
+<nav class="altbar" aria-label="Quick menu">
+<a href="../index.html" class="active"><span class="i" aria-hidden="true">📊</span>Reports</a>
+<a href="../teknik-analiz.html"><span class="i" aria-hidden="true">📈</span>Technical</a>
+<a href="../hisse/index.html"><span class="i" aria-hidden="true">🏦</span>Stocks</a>
+<a href="../portfolio.html"><span class="i" aria-hidden="true">💼</span>Portfolio</a>
+<a href="../haberler.html"><span class="i" aria-hidden="true">📰</span>News</a>
+<a href="../takvim.html"><span class="i" aria-hidden="true">📅</span>Calendar</a>
+</nav>
+
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+
+<footer class="footer">The information, comments and recommendations contained herein are for informational purposes only; they do not constitute investment advisory or investment advice. The accuracy of the data cannot be guaranteed and the user is responsible for any decisions that may arise from the content.<br>Data sources: İş Yatırım, RSS news feeds • Analysis: artificial intelligence (multi-agent system)<br><a href="../gizlilik.html" style="color:inherit">Privacy &amp; Data Protection</a></footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+</body></html>
