@@ -20,16 +20,19 @@ jobs:
     steps:
       - name: Depoyu indir
         uses: actions/checkout@v4
-      - name: Sayfa taze mi? (Pazartesi üretildiyse tekrarlama)
-        # Yalnızca Salı-Cuma güvenlik cron'larında çalışır; manuel ve
+      - name: Sayfa bu haftanin mi? (Pazartesi uretildiyse tekrarlama)
+        # Yalnizca Salı-Cuma güvenlik cron'larında çalışır; manuel ve
         # Pazartesi koşuları her zaman üretir.
+        # Kapı haftanin Pazartesi'sine baglidir; "dun"e degil (2026-10-01:
+        # Salideki atlama sonrasi sayfa Pazartesi tarihli kalinca Carsamba
+        # "dunden eski" sayip 42 dk'lik gereksiz uretim baslatti).
         if: github.event_name == 'schedule' && github.event.schedule == '30 4 * * 2-5'
         run: |
           SON=$(grep -oE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' makro-analiz.html 2>/dev/null | head -1 || true)
-          DUN=$(TZ=Europe/Istanbul date -d 'yesterday' +%F)
-          echo "Sayfadaki son tarih: ${SON:-yok} • dün: $DUN"
-          if [ -n "$SON" ] && { [ "$SON" \> "$DUN" ] || [ "$SON" = "$DUN" ]; }; then
-            echo "Makro analiz zaten taze; yeniden üretilmiyor."
+          PZRT=$(TZ=Europe/Istanbul date -d 'last monday' +%F)
+          echo "Sayfadaki son tarih: ${SON:-yok} • bu haftanin Pazartesi'si: $PZRT"
+          if [ -n "$SON" ] && { [ "$SON" \> "$PZRT" ] || [ "$SON" = "$PZRT" ]; }; then
+            echo "Makro analiz bu haftanin sürümü; yeniden üretilmiyor."
             echo "taze=true" >> "$GITHUB_ENV"
           fi
       - name: Python kur
