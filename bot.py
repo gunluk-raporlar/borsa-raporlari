@@ -633,15 +633,26 @@ def _contains_prompt_leak(prompt: str, yanit: str) -> bool:
 
 
 def _dil_karismis(metin: str) -> bool:
-    """Turkce beklenen yanitta Ingilizce ic-konusma baskin mi diye bakar.
+    """Turkce beklenen yanitta Ingilizce ic-konusma veya CJK (Cince/Japonca)
+    karismis mi diye bakar.
 
     Kucuk modeller bazen Turkce talimata ragmen Ingilizce dusunup Ingilizce
     yazar. Ingilizce fonksiyon kelimeleri baskin ve Turkce kelimeler cok azsa
     yanit bozuk sayilir (Ingilizce finans terimleri gecen normal Turkce raporlar
     esikyi gecmez).
+
+    CJK denetimi (2026-10-01): ucretsiz saglayici Turkce paragrafin sonuna
+    "...oldugunu意味します" gibi bir Japonca kuyruk ekleyip yayina girdi —
+    Turkiye borsa raporunda CJK karakterin meşru yeri yoktur; 2 ve uzeri CJK
+    karakter (ideograf + kana) yaniti bozuk sayar. Dil sayfalarindaki etiketler
+    (orn. "简体中文") bu denetleyiciye girmez; yalnizca LLM yanit icerigi
+    denetlenir.
     """
     if not metin:
         return False
+    cjk = len(re.findall(r"[\u3400-\u4dbf\u4e00-\u9fff\u3040-\u30ff\uf900-\ufaff]", metin))
+    if cjk >= 2:
+        return True
     ing = len(re.findall(r"\b(the|and|of|to|has|have|with|for|from|this|that|is|are)\b", metin, re.IGNORECASE))
     turkce = len(re.findall(r"\b(ve|ile|olarak|için|göre|daha|çok|ancak|piyasa|rapor|hisse)\b", metin, re.IGNORECASE))
     return ing >= 8 and ing > turkce * 2
@@ -2885,6 +2896,11 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
                     logger.warning("[Derin Analiz] %s tekrar dongusune girdi; rapor yayinlanmayip siradaki model deneniyor.", mdl)
                     time.sleep(3)
                     continue
+                if _dil_karismis(icerik):
+                    son_hata = "dil karismasi (CJK/Ingilizce)"
+                    logger.warning("[Derin Analiz] %s yanitina CJK/Ingilizce karisti; rapor yayinlanmayip siradaki model deneniyor.", mdl)
+                    time.sleep(3)
+                    continue
                 kesildi = getattr(secim, "finish_reason", None) == "length"
                 eksik = "token limitinde kesildi" if kesildi else _derin_eksik_mi(icerik)
                 if eksik:
@@ -3021,6 +3037,9 @@ Biçim kuralları (zorunlu):
                 if _derin_dongu_var(icerik):
                     son_hata = "tekrar dongusu (AMD)"
                     logger.warning("[Makro Analiz] AMD tekrar dongusune girdi; GLM yedegine geciliyor.")
+                elif _dil_karismis(icerik):
+                    son_hata = "dil karismasi (AMD)"
+                    logger.warning("[Makro Analiz] AMD yanitina CJK/Ingilizce karisti; GLM yedegine geciliyor.")
                 else:
                     eksik = _makro_eksik_mi(icerik)
                     if eksik:
@@ -3062,6 +3081,11 @@ Biçim kuralları (zorunlu):
                 if _derin_dongu_var(icerik):
                     son_hata = "tekrar dongusu"
                     logger.warning("[Makro Analiz] %s tekrar dongusune girdi; siradaki model deneniyor.", mdl)
+                    time.sleep(3)
+                    continue
+                if _dil_karismis(icerik):
+                    son_hata = "dil karismasi (CJK/Ingilizce)"
+                    logger.warning("[Makro Analiz] %s yanitina CJK/Ingilizce karisti; siradaki model deneniyor.", mdl)
                     time.sleep(3)
                     continue
                 kesildi = getattr(secim, "finish_reason", None) == "length"
