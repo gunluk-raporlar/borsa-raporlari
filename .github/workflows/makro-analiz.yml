@@ -12,9 +12,11 @@ permissions:
 jobs:
   analiz:
     runs-on: ubuntu-latest
-    # Sağlayıcılar yavaşsa AMD rotasyonu + GLM + yedek rotasyon toplam ~50 dk
-    # sürebiliyor; 35 dk koşuyu çağrı ortasında iptal ettiriyordu.
-    timeout-minutes: 55
+    # "Uretene kadar denesin" (kullanici karari, 2026-10-01): 3 deneme x
+    # ~50 dk + aralarda 2x10 dk bekleme ~170 dk edebilir; 180 dk sinir.
+    # Denemeler arasindaki beklemeler gecici saglayici kesintilerinin
+    # (orn. AMD gunluk timeout'lari) selfServle duzelmesine izin verir.
+    timeout-minutes: 180
     steps:
       - name: Depoyu indir
         uses: actions/checkout@v4
@@ -42,7 +44,21 @@ jobs:
           BING_SITE_DOGRULAMA: ${{ secrets.BING_SITE_DOGRULAMA }}
           BAIDU_SITE_DOGRULAMA: ${{ secrets.BAIDU_SITE_DOGRULAMA }}
           YANDEX_SITE_DOGRULAMA: ${{ secrets.YANDEX_SITE_DOGRULAMA }}
-        run: python -u makro_analiz.py
+        run: |
+          for deneme in 1 2 3; do
+            echo "=== Makro analiz denemesi: $deneme/3 ==="
+            if python -u makro_analiz.py; then
+              echo "Basarili (deneme $deneme)."
+              exit 0
+            fi
+            echo "Deneme $deneme basarisiz."
+            if [ "$deneme" -lt 3 ]; then
+              echo "10 dakika beklenip tekrar denenecek..."
+              sleep 600
+            fi
+          done
+          echo "3 denemenin hepsi basarisiz."
+          exit 1
       - name: Degisiklikleri yayinla
         run: |
           git config user.name "borsa-bot"
