@@ -1,0 +1,66 @@
+name: CF Temizlik (cf-diag-temp + bot korumasi)
+# Cloudflare AI incelemesinin bulgulari uzerine tek seferlik islem:
+# 1) cf-diag-temp worker'i (saatte ~60 kez, %100 hata) kaynak dovuyor —
+#    adi ve rapor "gecici tani" oldugunu gostermiyor; kaynak once
+#    arsivlenir, silinir; silme basarisizsa izin eksigi raporlanir.
+# 2) Zone listesi: borsa-raporlari.pages.dev bir zone degil; WAF rate
+#    limit / Bot Fight Mode yalnizca hesapta tanimli ozel domain zone'u
+#    varsa uygulanabilir. Zone varsa Bot Fight Mode acilir.
+on:
+  workflow_dispatch:
+permissions: {}
+concurrency:
+  group: cf-temizlik
+  cancel-in-progress: false
+jobs:
+  temizle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Hesaptaki worker'lari listele
+        run: |
+          RESP=$(curl -s -H "Authorization: Bearer $CF_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT/workers/scripts")
+          echo "$RESP" | jq '{success, hata: .errors, workerlar: [.result[]? | {id, created_on, modified_on}]}'
+
+      - name: cf-diag-temp kaynagini arsivle (log'a yazilir)
+        run: |
+          KAYNAK=$(curl -s -H "Authorization: Bearer $CF_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT/workers/scripts/cf-diag-temp")
+          echo "----- cf-diag-temp kaynagi (ilk 3000 karakter) -----"
+          echo "$KAYNAK" | head -c 3000
+          echo ""
+          echo "----- arsiv sonu -----"
+
+      - name: cf-diag-temp'i sil
+        run: |
+          CODE=$(curl -s -o /tmp/del.json -w "%{http_code}" -X DELETE \
+            -H "Authorization: Bearer $CF_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT/workers/scripts/cf-diag-temp")
+          echo "Silme HTTP kodu: $CODE"
+          jq '{success, hata: .errors}' /tmp/del.json || cat /tmp/del.json
+
+      - name: Zone listesi + Bot Fight Mode
+        run: |
+          ZONES=$(curl -s -H "Authorization: Bearer $CF_TOKEN" \
+            "https://api.cloudflare.com/client/v4/zones?per_page=50")
+          echo "$ZONES" | jq '[.result[]? | {id, name, status}]'
+          SAYI=$(echo "$ZONES" | jq '.result | length')
+          echo "Zone sayisi: $SAYI"
+          if [ "$SAYI" = "0" ]; then
+            echo "Hesapta zone yok: WAF rate limit ve Bot Fight Mode pages.dev"
+            "adresine uygulanamaz (bu ayarlar zone bazlidir). pages.dev'de"
+            "koruma Cloudflare'in kendisine aittir; ozel domain baglanirsa acilir."
+            exit 0
+          fi
+          echo "$ZONES" | jq -c '.result[]? | {id, name}' | while read -r z; do
+            ZID=$(echo "$z" | jq -r .id); ZNAME=$(echo "$z" | jq -r .name)
+            BOT=$(curl -s -X PUT -H "Authorization: Bearer $CF_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d '{"fight_mode": true}' \
+              "https://api.cloudflare.com/client/v4/zones/$ZID/bots/v2")
+            echo "$ZNAME: $(echo "$BOT" | jq -c '{success, fight_mode: .result.fight_mode, hata: .errors}')"
+          done
