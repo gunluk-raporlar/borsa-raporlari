@@ -1,0 +1,77 @@
+{
+ "tarih": "2026-10-01",
+ "etiket": "bot",
+ "cagrilar": [
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 357.211,
+   "ok": true,
+   "saat": "2026-10-01T08:25:57+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 392.479,
+   "ok": true,
+   "saat": "2026-10-01T08:32:29+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 647.068,
+   "ok": true,
+   "saat": "2026-10-01T08:43:16+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 447.176,
+   "ok": true,
+   "saat": "2026-10-01T08:50:43+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 450.227,
+   "ok": true,
+   "saat": "2026-10-01T08:58:14+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 136.255,
+   "ok": true,
+   "saat": "2026-10-01T09:00:30+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 395.61,
+   "ok": true,
+   "saat": "2026-10-01T09:07:05+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 3.158,
+   "ok": true,
+   "saat": "2026-10-01T09:07:09+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 232.547,
+   "ok": true,
+   "saat": "2026-10-01T09:12:21+03:00"
+  }
+ ],
+ "ozet": {
+  "adet": 9,
+  "ortalama_sn": 340.192,
+  "p95_sn": 450.227,
+  "maks_sn": 647.068,
+  "basari_orani": 1.0,
+  "son_guncelleme": "2026-10-01T09:12:46+03:00"
+ }
+}
