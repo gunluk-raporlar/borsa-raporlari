@@ -911,6 +911,28 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
                 kalan.append(kuyruk)
         kuyruklar = kalan
 
+    # Groq ucretsiz katmani istek basina TPM 8000 kisti; rapor promptlari
+    # 13-18 bin token oldugundan 413 aliniyor ve bekleme-tekralari butce
+    # yakiyordu (2026-10-02 logu: 18457 token -> 3x30-60 sn bekleme). Buyuk
+    # promptlarda Groq en bastan cikarilir; tek saglayici kaldiysa kalir.
+    tahmin_token = len(prompt) // 3  # TR/EN karisik metin icin kaba tahmin
+    if tahmin_token > 7000 and len(kuyruklar) > 1:
+        kalanlar = [k for k in kuyruklar if k[2] != "YEDEK"]
+        if kalanlar:
+            logger.info("Prompt ~%d token (Groq ucretsiz TPM 8000 sinirini asar); "
+                        "YEDEK/Groq bu cagrida atlandi.", tahmin_token)
+            kuyruklar = kalanlar
+            istekler = []
+            kuyruklar2 = list(kuyruklar)
+            while kuyruklar2:
+                kalan2 = []
+                for kuyruk in kuyruklar2:
+                    saglayici, modeller, etiket = kuyruk
+                    istekler.append((saglayici, modeller.pop(0), etiket))
+                    if modeller:
+                        kalan2.append(kuyruk)
+                kuyruklar2 = kalan2
+
     if not istekler:
         logger.error("Kullanilabilir LLM saglayicisi yok (AMD_API_KEY / ALT_API_KEY tanimli degil).")
         if fallback_on_fail:
@@ -983,6 +1005,15 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
         except Exception as e:
             emsg = str(e).lower()
             _saglayici_hata(etiket)
+
+            # Istek boyutu model/plan limitini asti (413): bekleyerek
+            # duzelmeyecegi icin hemen siradaki modele gec. Not: Groq 413'u
+            # "rate_limit_exceeded" adiyla dondurdugunden rate dalindan ONCE
+            # yakalanmali (2026-10-02: 18457 tokenlik prompt 3x bekleme yaptirdi).
+            if "413" in emsg or "payload too large" in emsg:
+                print(f"[Uyari] {etiket}/{model} istek boyutu plan limitini asti (413), siradaki model deneniyor ({deneme}/{max_deneme})...", flush=True)
+                time.sleep(2)
+                continue
 
             # Concurrency/model-busy tespiti -> yedek saglayici/modellere hizli gec
             if "concurrency" in emsg or "concurrent" in emsg:
