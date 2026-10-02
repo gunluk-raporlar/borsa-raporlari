@@ -1,0 +1,17 @@
+name: AMD Model Yoklamasi (gecici)
+# Kullanici onerisi 3 yeni AMD modelini (DeepSeek-V4.1-Flash,
+# DeepSeek-V4-Flash-Vision-Exp, MiMo-V2.6-Flash) canli test eder;
+# mevcut havuzdaki 2 model referans olarak basilir. Anahtar yazdirilmaz.
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Model yoklamasi
+        env:
+          AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+        run: python -u amd_probe.py
