@@ -124,7 +124,10 @@ AMD_MODEL = os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")
 
 # Opsiyonel: virgulle ayrilmis fallback modeller (environment ile kontrol edilebilir)
 # GLM-5.3-Flash AMD galerisinde mevcut ve canli testte sorunsuz (2026-09 panel kaydi).
-AMD_FALLBACK_MODELS = [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "Qwen3.8-Flash-Next,GLM-5.3-Flash").split(",") if m.strip()]  # MiniCPM5-1B cikarildi: Turkce raporu tasiyamiyor, talimat eko + Ingilizce karistirma yapiyor
+# 2026-10-02 canli yoklama: MiMo-V2.6-Flash (1.5 sn) ve DeepSeek-V4.1-Flash
+# (117 sn — yavas, son care) eklendi. DeepSeek-V4-Flash-Vision-Exp hizliydi
+# ama VLM/deneysel oldugundan varsayilan filtrede kalmaya devam eder.
+AMD_FALLBACK_MODELS = [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "Qwen3.8-Flash-Next,GLM-5.3-Flash,MiMo-V2.6-Flash,DeepSeek-V4.1-Flash").split(",") if m.strip()]  # MiniCPM5-1B cikarildi: Turkce raporu tasiyamiyor, talimat eko + Ingilizce karistirma yapiyor
 
 # Eger VLM (vision-language) modellerini explicit olarak kullanmak isterseniz bu environment'i 1 yapin
 AMD_INCLUDE_VLM = os.environ.get("AMD_INCLUDE_VLM", "0") == "1"
