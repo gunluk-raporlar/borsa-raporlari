@@ -13,4 +13,5 @@ jobs:
       - name: Model yoklamasi
         env:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
         run: python -u opencode_probe.py
