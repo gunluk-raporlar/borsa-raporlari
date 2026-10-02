@@ -99,8 +99,10 @@ OR_MODEL_TERCIH = [
     "nemotron-3-super-120b-a12b",   # ~120B MoE
     "nemotron-3.5-lightning",       # 1M baglam
     "nex-n2.5-pro",
-    "inkling",                      # 1M baglam ("inkling-small" suzgecle elenir)
 ]  # 2026-09: gemma-4-31b/26b, qwen3.8-27b, ling-3.0-flash-fin, inkling-small cikarildi (uydurma).
+   # 2026-10-02: "inkling" cikarildi — OpenRouter modeli "agentic harness" kisitina
+   # aldi; ham API cagrisina 403 donuyor ("only available on agentic harnesses"),
+   # her rotasyon sonunda son deneme hakki bosa gidiyordu.
 
 # Z.ai (GLM) model tercih sirasi — bot.py'deki tum Z.ai cagrilari bunu kullanir.
 # YALNIZCA glm-5.3-flash: kullanici karari (2026-09) — buyuk glm-5.3, ZCode'la
@@ -1001,6 +1003,16 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
                 wait = min(10 * deneme, 60)
                 logger.warning("Rate limit veya 429 alindi: %s. %s sn bekleniyor, deneme %d/%d", e, wait, deneme, max_deneme)
                 time.sleep(wait + random.uniform(0, 3))
+                continue
+
+            # Kalici model/erisim reddi (403/404): bu model saglayicida bizim
+            # icin kapali (orn. 2026-10-02: OR "inkling:free" yalnizca agentic
+            # harness'lara acildi). Bekleyerek duzelmeyecegi icin kisa bekleyip
+            # siradaki modele gec; deneme butcesini yakmasin.
+            if "403" in emsg or "404" in emsg or "not found" in emsg or "only available" in emsg:
+                logger.warning("%s/%s kalici red (403/404); kisa bekleyip siradaki modele geciliyor: %.120s",
+                               etiket, model, str(e).replace("\n", " "))
+                time.sleep(2)
                 continue
 
             # Bilinmeyen hata, kaydet ve kisa bekle
