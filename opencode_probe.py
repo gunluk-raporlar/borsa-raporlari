@@ -13,10 +13,10 @@ BASE = "https://opencode.ai/zen/v1"
 # Ucretsiz katman (docs 2026-10-02); jev-1.13-free ozel /systemone ucugu
 # kullandigi icin listede yok.
 MODELLER = [
+    "ling-3.1-flash",
+    "ling-3.1-flash-free",
+    "ling-3.0-flash-fin-free",
     "space-bunny-free",
-    "longcat-2.5-preview-free",
-    "longcat-2.5-preview",
-    "muse-spark-1.2-contributor-free",
 ]
 
 
@@ -38,8 +38,8 @@ def katalog():
 
 def dene(model):
     govde = {"model": model,
-             "messages": [{"role": "user", "content": "1+1 kac? sadece sayiyi yaz"}],
-             "max_tokens": 64}
+             "messages": [{"role": "user", "content": "Turkiye enflasyonu duserken faiz sabit kalirsa banka hisseleri genelde nasil etkilenir? Iki cumleyle, Turkce yaz."}],
+             "max_tokens": 400}
     req = urllib.request.Request(
         BASE + "/chat/completions", data=json.dumps(govde).encode(), method="POST",
         headers={"Authorization": f"Bearer {os.environ['OPENCODE_API_KEY']}",
