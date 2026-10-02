@@ -68,7 +68,7 @@ if __name__ == "__main__":
     for i, soru in enumerate(SORULAR, 1):
         print(f"--- SORU {i}: {soru[:60]}")
         SORU = soru
-        for m in [m for m in MODELLER if m in ("space-bunny-free", "fledge-alpha-free")]:
+        for m in MODELLER:
             dene(m)
     # Parmak izi kiyasi: gercek GLM ayni sorulari
     if os.environ.get("ZAI_API_KEY"):
