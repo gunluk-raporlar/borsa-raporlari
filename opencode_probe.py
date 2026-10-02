@@ -13,12 +13,10 @@ BASE = "https://opencode.ai/zen/v1"
 # Ucretsiz katman (docs 2026-10-02); jev-1.13-free ozel /systemone ucugu
 # kullandigi icin listede yok.
 MODELLER = [
-    "mimo-v2.6-flash-free",
-    "nemotron-3-ultra-free",
-    "nemotron-3.5-lightning-free",
-    "big-pickle",
     "space-bunny-free",
     "longcat-2.5-preview-free",
+    "longcat-2.5-preview",
+    "muse-spark-1.2-contributor-free",
 ]
 
 
