@@ -59,18 +59,30 @@ def dene(model):
         print(f"[{model}] HATA {type(e).__name__}: {str(e)[:100]} ({time.time()-t0:.0f}s)")
 
 
+SORULAR = [
+    "Who are you? Which exact model and version are you, and who trained you? One line, no role-play.",
+    "你是什么模型？由哪家公司训练？一行回答。",
+    "What is your knowledge cutoff date? Answer with the month and year only.",
+]
+
 if __name__ == "__main__":
     if not os.environ.get("OLLAMA_API_KEY"):
         raise SystemExit("OLLAMA_API_KEY yok")
-    adaylar = katalog()
-    if not adaylar:
-        # Katalog basarisizsa bilinen bulut modelleriyle denemeye calis
-        adaylar = ["gpt-oss:120b", "glm:latest", "deepseek-v3.1:671b"]
-    # Ucretsiz dahil olabilecek kucuk modelleri de test et (buyukler 402
-    # dondu: 2026-10-02 "not included in your free usage").
-    for m in ("gpt-oss:20b", "nemotron-3-super", "nemotron-3-nano:30b",
-              "gemma4:31b", "gpt-oss:120b", "kimi-k3", "glm-5.3-flash"):
-        if m not in adaylar:
-            adaylar.append(m)
-    for m in adaylar:
-        dene(m)
+    for i, soru in enumerate(SORULAR, 1):
+        print(f"--- SORU {i}: {soru[:60]}")
+        govde = {"model": "gpt-oss:120b",
+                 "messages": [{"role": "user", "content": soru}],
+                 "max_tokens": 300}
+        req = urllib.request.Request(
+            BASE + "/chat/completions", data=json.dumps(govde).encode(), method="POST",
+            headers=basliklar())
+        t0 = time.time()
+        try:
+            with urllib.request.urlopen(req, timeout=180) as r:
+                d = json.loads(r.read().decode())
+            secim = (d.get("choices") or [{}])[0]
+            icerik = ((secim.get("message") or {}).get("content") or "")[:400]
+            print(f"[gpt-oss:120b] S{i} OK {time.time()-t0:.1f}s")
+            print(f"[gpt-oss:120b] CEVAP: {icerik!r}")
+        except Exception as e:
+            print(f"[gpt-oss:120b] S{i} HATA: {type(e).__name__} {str(e)[:100]}")
