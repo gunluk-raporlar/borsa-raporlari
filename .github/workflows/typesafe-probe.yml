@@ -1,0 +1,16 @@
+name: Typesafe Jev Yoklamasi (gecici)
+# TYPESAFE_API_KEY ile gercel haber basliklarinda Jev noul/choice kapisi
+# olculur: haber eleme kullanimina hazirlik. Anahtar yazdirilmaz.
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Jev haber kapisi testi
+        env:
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+        run: python -u typesafe_probe.py
