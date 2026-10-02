@@ -866,7 +866,10 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
     import openai
     import random
 
-    max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "8000"))
+    # 16000: havuzdaki dusunen modeller (GLM/MiMo ailesi) reasoning tokenlarini
+    # da ayni butceden harcamakta; 8000'de uzun rapor + dusunme kesilebiliyor
+    # (ust sinir — gercek maliyet uretilen token kadardir, ek bedeli yok).
+    max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "16000"))
 
     # Deneme sirasi: AMD (ucretsiz ana) -> ZAI (kullanicinin GLM anahtari;
     # ucretsiz ortak sunucular sikistiginda kaliteli/stabil ikinci sans) ->
