@@ -11,6 +11,7 @@ os.environ.setdefault("AMD_API_KEY", "derin-analiz")
 
 import json
 import logging
+import sys
 from datetime import datetime
 import zoneinfo
 
@@ -53,7 +54,9 @@ def main():
     analiz = bot.derin_analiz_yap(durum, teknik, borsapy)
     if not analiz:
         logger.error("Derin analiz uretilemedi (model hatasi veya bos yanit).")
-        return
+        # Yayindaki sayfa korunur ama is KIRMIZI olsun; sessiz yesil kosu
+        # uretim olmadigini gizliyor (makro_analiz.py ile ayni duzeltme).
+        return 1
 
     sarmal = dict(
         baslik="Derin Analiz",
@@ -86,4 +89,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
