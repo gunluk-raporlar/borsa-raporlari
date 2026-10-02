@@ -11,7 +11,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 100
+    timeout-minutes: 180
     steps:
       - name: Depoyu indir
         uses: actions/checkout@v4
