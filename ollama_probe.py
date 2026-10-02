@@ -66,5 +66,11 @@ if __name__ == "__main__":
     if not adaylar:
         # Katalog basarisizsa bilinen bulut modelleriyle denemeye calis
         adaylar = ["gpt-oss:120b", "glm:latest", "deepseek-v3.1:671b"]
+    # Ucretsiz dahil olabilecek kucuk modelleri de test et (buyukler 402
+    # dondu: 2026-10-02 "not included in your free usage").
+    for m in ("gpt-oss:20b", "nemotron-3-super", "nemotron-3-nano:30b",
+              "gemma4:31b", "gpt-oss:120b", "kimi-k3", "glm-5.3-flash"):
+        if m not in adaylar:
+            adaylar.append(m)
     for m in adaylar:
         dene(m)
