@@ -5086,7 +5086,7 @@ function arsivAc(btn) {{
     icerik = f"""
 <div class="hero">
 <h1>BIST 30 Günlük Piyasa Raporları</h1>
-<p>Hafta içi her sabah 08:00'de otomatik üretilen, yapay zeka destekli BIST 30 analizleri ve sanal portföy takibi. (Hafta sonu yayın yok — piyasa kapalı.)</p>
+<p>Hafta içi her sabah 07:00'de üretilmeye başlayan, ~08:00'de siteye düşen yapay zeka destekli BIST 30 analizleri ve sanal portföy takibi. (Hafta sonu yayın yok — piyasa kapalı.)</p>
 </div>
 {arsiv_bolumu}
 {derin_bolumu}

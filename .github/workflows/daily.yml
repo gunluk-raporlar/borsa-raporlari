@@ -1,9 +1,12 @@
 name: Gunluk BIST 30 Raporu
 on:
   schedule:
-    # Hafta ici 08:00 Turkiye saati (UTC+3) = 05:00 UTC — hafta sonu piyasa kapali,
-    # gunluk rapor/portfoy/MP3 uretilmez (hafta sonu 'rezil' gorunum istemiyoruz)
-    - cron: '0 5 * * 1-5'
+    # Hafta ici 07:05 TSi (04:05 UTC) — kosu ~50 dk surup ~08:00'te biter;
+    # workflow_run yayiniyla site ~08:05'te guncellenir (sitedeki '08:00'e kadar'
+    # ibaresiyle uyumlu). 10:00 borsa acilisindan 2+ saat once, hata durumunda
+    # da retry alani genis. 04:05 secildi ki cift saatlerde kosan i18n ile
+    # ayni anda baslamasin. Hafta sonu piyasa kapali — uretim yok.
+    - cron: '5 4 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write
