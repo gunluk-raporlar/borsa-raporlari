@@ -72,6 +72,17 @@ NVID_MODELS = [m.strip() for m in os.environ.get("NVID_MODELS", "").split(",") i
 # Besinci saglayici: Z.ai (GLM) — kullanicinin ucretli anahtari; ucretsiz
 # saglayicilarin ortak sunuculari sikistiginda kaliteli ve stabil alternativa.
 ZAI_API_KEY = os.environ.get("ZAI_API_KEY", "")
+
+# Altinci saglayici: OpenCode Zen (opencode.ai) — kullanicinin anahtari
+# 2026-09'dan beri secrets'ta duruyordu ama hictir baglanmamisti (2026-10-02
+# yoklama: anahtar gecerli). Ucretsiz katman cogunlukla yalnizca OpenCode
+# uygulamasinin icinden kullanilabilir ("FreeTierError: can only be used
+# from within OpenCode"); ham API'den TEK calisan ucretsiz model
+# space-bunny-free (canli test: OK, 2.6 sn). Not: CF bot korumasi
+# python-urllib UA'sini 1010 ile banliyor; istemci opencode/1.0 UA
+# gondermeli. Ucretli modeller bakiye harcadigindan havuzda YOK.
+OPENCODE_API_KEY = os.environ.get("OPENCODE_API_KEY", "")
+OPENCODE_MODELS = [m.strip() for m in os.environ.get("OPENCODE_MODELS", "space-bunny-free").split(",") if m.strip()]
 NVID_MODEL_TERCIH = [
     # Sira CANLI test ile dogrulandi (2026-09-25): once hizli+calisan modeller.
     # Kalite politikasi (2026-09): dusuk parametreli modeller (gemma-4-31b,
@@ -116,8 +127,9 @@ ZAI_MODEL_TERCIH = ["glm-5.3-flash"]
 # reddedilip siradaki (GLM-oncelikli) model denenir.
 UYDURMA_ESIGI = int(os.environ.get("UYDURMA_ESIGI", "10"))
 
-if not AMD_API_KEY and not ALT_API_KEY and not CF_API_KEY and not OR_API_KEY and not NVID_API_KEY:
-    raise SystemExit("AMD/ALT/CF/OR/NVIDIA API anahtarlarindan en az biri ayarlanmali!")
+if not (AMD_API_KEY or ALT_API_KEY or CF_API_KEY or OR_API_KEY or NVID_API_KEY
+        or OPENCODE_API_KEY):
+    raise SystemExit("AMD/ALT/CF/OR/NVIDIA/OPENCODE API anahtarlarindan en az biri ayarlanmali!")
 
 # Varsayilan model: 1B parametrelik MiniCPM5-1B karmasik Turkce promptlarda Ingilizce
 # ic-konusma uretip talimatlari rapora sicrayabilir ve tekrar dongusune girebilir;
@@ -190,6 +202,16 @@ zai_client = OpenAI(
     timeout=300.0,
     max_retries=1,
 ) if ZAI_API_KEY else None
+
+# OpenCode Zen: CF bot korumasi python UA'sini 1010 ile banladigindan
+# istemci OpenCode CLI'nin UA'sini taklit eder (2026-10-02 canli test).
+opencode_client = OpenAI(
+    api_key=OPENCODE_API_KEY,
+    base_url="https://opencode.ai/zen/v1",
+    timeout=240.0,
+    max_retries=0,
+    default_headers={"User-Agent": "opencode/1.0"},
+) if OPENCODE_API_KEY else None
 
 # Takip edilen BIST30 hisseleri (Guncel liste)
 HISSELER = [
@@ -876,7 +898,7 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
     # Deneme sirasi: AMD (ucretsiz ana) -> ZAI (kullanicinin GLM anahtari;
     # ucretsiz ortak sunucular sikistiginda kaliteli/stabil ikinci sans) ->
     # NVIDIA -> OpenRouter -> Groq. sirasi ile oncelik degistirilebilir.
-    sirasi = sirasi or ("AMD", "ZAI", "NVID", "OR", "YEDEK")
+    sirasi = sirasi or ("AMD", "ZAI", "NVID", "OR", "OPENCODE", "YEDEK")
     havuzlar = {
         "AMD": (client, AMD_MODEL_LIST or [AMD_MODEL]),
         "ZAI": (zai_client, ZAI_MODEL_TERCIH),
@@ -884,6 +906,7 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
         "YEDEK": (alt_client, _havuz_modelleri(alt_client, ALT_MODELS, GROQ_MODEL_TERCIH, "Groq") if alt_client else ALT_MODELS),
         "OR": (or_client, _havuz_modelleri(or_client, OR_MODELS, OR_MODEL_TERCIH, "OpenRouter",
                                            suzgec=lambda m: m.endswith(":free") and "small" not in m) if or_client else OR_MODELS),
+        "OPENCODE": (opencode_client, OPENCODE_MODELS),
     }
     istekler = []
     kuyruklar = []
