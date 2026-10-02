@@ -1,0 +1,16 @@
+name: OpenCode Zen Yoklamasi (gecici)
+# Kullanicinin OPENCODE_API_KEY secret'i repo'da duruyor ama hictir
+# baglanmamisti. Ucretsiz modelleri + anahtar gecerliligini test eder.
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Model yoklamasi
+        env:
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+        run: python -u opencode_probe.py
