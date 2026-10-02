@@ -24,7 +24,7 @@ MODELLER = [
 
 def katalog():
     req = urllib.request.Request(BASE + "/models",
-                                 headers={"Authorization": f"Bearer {os.environ['OPENCODE_API_KEY']}"})
+                                 headers={"Authorization": f"Bearer {os.environ['OPENCODE_API_KEY']}", "User-Agent": "opencode/1.0"})
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
             d = json.loads(r.read().decode())
@@ -45,7 +45,7 @@ def dene(model):
     req = urllib.request.Request(
         BASE + "/chat/completions", data=json.dumps(govde).encode(), method="POST",
         headers={"Authorization": f"Bearer {os.environ['OPENCODE_API_KEY']}",
-                 "Content-Type": "application/json"})
+                 "Content-Type": "application/json", "User-Agent": "opencode/1.0"})
     t0 = time.time()
     try:
         with urllib.request.urlopen(req, timeout=150) as r:
