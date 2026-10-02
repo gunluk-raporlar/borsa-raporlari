@@ -1,0 +1,17 @@
+name: Ollama Cloud Yoklamasi (gecici)
+# OLLAMA_API_KEY secret'i 2026-09'dan beri duruyor ama hictir baglanmadi.
+# Ollama Cloud (ollama.com/v1, OpenAI-uyumlu) anahtar gecerliligini ve
+# buyuk modelleri canli test eder. Anahtar yazdirilmaz.
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Model yoklamasi
+        env:
+          OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+        run: python -u ollama_probe.py
