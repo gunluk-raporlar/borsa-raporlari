@@ -341,6 +341,77 @@ FINANS_ANAHTARLARI = [
     "temettü", "halka arz", "reel getiri", "portföy", "swap", "rezerv", "maliyet",
 ]
 
+def jev_haber_ele(basliklar):
+    """Typesafe Jev (System One) ile haber basliklarini ilgiliyige gore eler.
+
+    Her baslik icin "BIST 30 / makro etkiler mi?" noul kapisi sorulur;
+    esik altindakiler dusurulur. Anahtar tanimli degilse, API hatasinda
+    veya butun basliklar elenirse None doner — cagiran taraf mevcut
+    listeyi aynen kullanir (keyword filtresi tek basina kalir).
+    Jev yalnizca yapilandirilmis karar uretir (metin yok, uydurma yok);
+    2026-10-02 probe: 114-190 ms/gh, guven 0.96-1.0, ~480 token/cagri.
+    """
+    anahtar = os.environ.get("TYPESAFE_API_KEY", "")
+    if not anahtar or not basliklar:
+        return None
+    esik = float(os.environ.get("JEV_HABER_ESIK", "0.45"))
+    import urllib.request
+    import urllib.error
+    skorlu = []
+    for baslik in basliklar[:40]:
+        govde = {
+            "state": baslik,
+            "model": "jev-latest",
+            "questions": {
+                "etkiler": {
+                    "type": "noul",
+                    "instructions": ("Bu haber BIST 30 borsasindaki bir sirketi "
+                                     "veya Turkiye makro ekonomik gorunumunu "
+                                     "(faiz, enflasyon, kur, buyume, enerji) "
+                                     "dogrudan etkileyebilir nitelikte"),
+                },
+            },
+        }
+        sonuc = None
+        # 429/529 icin docs onerisi: ustel geri cekilme; 2 tekrar yeter
+        for deneme in range(3):
+            req = urllib.request.Request(
+                "https://api.typesafe.ai/v1/systemone",
+                data=json.dumps(govde).encode(), method="POST",
+                headers={"Authorization": f"Bearer {anahtar}",
+                         "Content-Type": "application/json"})
+            try:
+                with urllib.request.urlopen(req, timeout=45) as r:
+                    sonuc = json.loads(r.read().decode())
+                break
+            except urllib.error.HTTPError as h:
+                if h.code in (429, 529) and deneme < 2:
+                    time.sleep(2 * (deneme + 1))
+                    continue
+                logger.warning("[Haber Ajani] Jev HTTP %s; kapisi atlanıyor.", h.code)
+                return None
+            except Exception as e:
+                logger.warning("[Haber Ajani] Jev erisilemedi (%s); kapisi atlanıyor.",
+                               type(e).__name__)
+                return None
+        if not sonuc:
+            return None
+        noul = (sonuc.get("answers", {}).get("etkiler", {}) or {}).get("noul")
+        if noul is None:
+            logger.warning("[Haber Ajani] Jev yanitinda noul yok; kapisi atlanıyor.")
+            return None
+        skorlu.append((float(noul), baslik))
+    if not skorlu:
+        return None
+    skorlu.sort(key=lambda c: c[0], reverse=True)
+    tutulan = [b for n, b in skorlu if n >= esik]
+    if len(tutulan) < 10:  # asiri eleme korumasi: en iyi 10 mutlaka kalir
+        tutulan = [b for _, b in skorlu[:10]]
+    # Kaynak sirasini koru (liste zaten kaynak sirasinda)
+    tutulan_kume = set(tutulan)
+    return [b for b in basliklar if b in tutulan_kume]
+
+
 def news_agent(state: AgentState):
     logger.info("[Haber Ajani] Finans haberleri toplaniyor...")
     print("[Haber Ajani] Finans haberleri toplaniyor...", flush=True)
@@ -384,6 +455,13 @@ def news_agent(state: AgentState):
         except Exception:
             continue
         time.sleep(1)
+    # Jev (System One) ilgililik kapisi: anahtar varsa basliklari makro/
+    # BIST 30 etkisine gore ele; her hatada orijinal liste korunur.
+    jev_sonuc = jev_haber_ele(toplanan)
+    if jev_sonuc is not None:
+        logger.info("[Haber Ajani] Jev kapisi: %d -> %d baslik (%d ilgisiz elendi)",
+                    len(toplanan), len(jev_sonuc), len(toplanan) - len(jev_sonuc))
+        toplanan = jev_sonuc
     if toplanan:
         save_daily("news", bugun, toplanan[:28])
 
