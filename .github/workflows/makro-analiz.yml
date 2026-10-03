@@ -31,6 +31,7 @@ jobs:
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
           ZAI_MODEL: ${{ vars.ZAI_MODEL }}
           # Yedek: GLM alinamazsa AMD DeepSeek-V4-Flash ile uretilir

@@ -91,6 +91,15 @@ OPENCODE_MODELS = [m.strip() for m in os.environ.get("OPENCODE_MODELS", "space-b
 # gemma4:31b calisiyor ama uydurma gecmisiyle havuz politikasina aykiri.
 OLLAMA_API_KEY = os.environ.get("OLLAMA_API_KEY", "")
 OLLAMA_MODELS = [m.strip() for m in os.environ.get("OLLAMA_MODELS", "gpt-oss:120b,nemotron-3-super").split(",") if m.strip()]
+
+# Sekizinci saglayici: Google Gemini (AI Studio ucretsiz anahtari).
+# 2026-10-03 kalite probe'u: sayi-sadakati 5/5 birebir, 6/6 bolum yapisal
+# TAM, akici Turkce — uydurma yok. Ama ucretsiz katman ~20 istek/gun ve
+# 503 "high demand" firtinalari sik: son-care konumunda, gunde 0-2 cagri.
+# Dusunme tokenlari cikis butcesini yediginden rapor cagrilari 16k butce
+# ile calisir (llm_call zaten 16000).
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+GEMINI_MODELS = [m.strip() for m in os.environ.get("GEMINI_MODELS", "gemini-3.8-flash").split(",") if m.strip()]
 NVID_MODEL_TERCIH = [
     # Sira CANLI test ile dogrulandi (2026-09-25): once hizli+calisan modeller.
     # Kalite politikasi (2026-09): dusuk parametreli modeller (gemma-4-31b,
@@ -136,8 +145,8 @@ ZAI_MODEL_TERCIH = ["glm-5.3-flash"]
 UYDURMA_ESIGI = int(os.environ.get("UYDURMA_ESIGI", "10"))
 
 if not (AMD_API_KEY or ALT_API_KEY or CF_API_KEY or OR_API_KEY or NVID_API_KEY
-        or OPENCODE_API_KEY or OLLAMA_API_KEY):
-    raise SystemExit("AMD/ALT/CF/OR/NVIDIA/OPENCODE/OLLAMA anahtarlarindan en az biri ayarlanmali!")
+        or OPENCODE_API_KEY or OLLAMA_API_KEY or GEMINI_API_KEY):
+    raise SystemExit("AMD/ALT/CF/OR/NVIDIA/OPENCODE/OLLAMA/GEMINI anahtarlarindan en az biri ayarlanmali!")
 
 # Varsayilan model: 1B parametrelik MiniCPM5-1B karmasik Turkce promptlarda Ingilizce
 # ic-konusma uretip talimatlari rapora sicrayabilir ve tekrar dongusune girebilir;
@@ -227,6 +236,13 @@ ollama_client = OpenAI(
     timeout=240.0,
     max_retries=0,
 ) if OLLAMA_API_KEY else None
+
+gemini_client = OpenAI(
+    api_key=GEMINI_API_KEY,
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai",
+    timeout=240.0,
+    max_retries=0,
+) if GEMINI_API_KEY else None
 
 # Takip edilen BIST30 hisseleri (Guncel liste)
 HISSELER = [
@@ -998,7 +1014,7 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
     # Deneme sirasi: AMD (ucretsiz ana) -> ZAI (kullanicinin GLM anahtari;
     # ucretsiz ortak sunucular sikistiginda kaliteli/stabil ikinci sans) ->
     # NVIDIA -> OpenRouter -> Groq. sirasi ile oncelik degistirilebilir.
-    sirasi = sirasi or ("AMD", "ZAI", "NVID", "OR", "OPENCODE", "OLLAMA", "YEDEK")
+    sirasi = sirasi or ("AMD", "ZAI", "NVID", "OR", "OPENCODE", "OLLAMA", "GEMINI", "YEDEK")
     havuzlar = {
         "AMD": (client, AMD_MODEL_LIST or [AMD_MODEL]),
         "ZAI": (zai_client, ZAI_MODEL_TERCIH),
@@ -1008,6 +1024,7 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
                                            suzgec=lambda m: m.endswith(":free") and "small" not in m) if or_client else OR_MODELS),
         "OPENCODE": (opencode_client, OPENCODE_MODELS),
         "OLLAMA": (ollama_client, OLLAMA_MODELS),
+        "GEMINI": (gemini_client, GEMINI_MODELS),
     }
     istekler = []
     kuyruklar = []

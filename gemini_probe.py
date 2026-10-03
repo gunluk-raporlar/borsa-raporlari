@@ -107,7 +107,7 @@ def sayi_denetle(metin):
     for deger in VERILER.values():
         for m in re.finditer(r"\d{1,3}(?:[.,]\d{3})*(?:[.,]\d+)?", deger):
             izinli.add(m.group(0))
-    izinli |= {"2026"}
+    izinli |= {"2026", "30"}  # BIST 30 endeks adi
     for m in re.finditer(r"\d{1,3}(?:[.,]\d{3})*(?:[.,]\d+)?", metin):
         parca = m.group(0)
         if parca not in izinli:
