@@ -1,0 +1,17 @@
+name: Z.ai Vision Yoklamasi (gecici)
+# Arayuzde "glm-5.3-flash vision" yazmasi uzerine: model gercekten goruntu
+# kabul ediyor mu? Bakir sacli pasaport gonderilir; sac rengini bilebiliyorsa
+# vision AKTIF. Coding ve standart uclar ayri ayri test edilir.
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Vision yoklamasi
+        env:
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+        run: python -u zai_vision_probe.py
