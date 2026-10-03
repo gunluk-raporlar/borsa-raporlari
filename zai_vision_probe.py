@@ -11,9 +11,9 @@ import time
 import urllib.error
 import urllib.request
 
-SORU = ("Bu goruntude ne goruyorsun? Kisinin sac rengini ve turunu tek "
-        "cumlede acikla; goruntu goremiyorsan bunu acikca soyle.")
-IMG = r"C:/Users/pc/dizi-stil/kimlikler/ates_kadin.jpg"
+SORU = ("Bu goruntude hangi sekilleri ve renkleri goruyorsun? Ayrica okunabilir "
+        "bir yazi varsa ne yaziyor? Kisa ve net cevap ver.")
+IMG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vision_test.jpg")
 
 UCULAR = [
     ("coding", "https://api.z.ai/api/coding/paas/v4/chat/completions"),
@@ -43,8 +43,13 @@ def dene(etiket, url):
         secim = (d.get("choices") or [{}])[0]
         icerik = ((secim.get("message") or {}).get("content") or "")[:400]
         print(f"[{etiket}] OK {time.time()-t0:.1f}s CEVAP: {icerik!r}")
-        kirmizi = any(k in icerik.lower() for k in ("kırmızı", "kizil", "red", "bakır", "copper"))
-        print(f"[{etiket}] SAÇ RENGİ GÖRDÜ MÜ: {'EVET' if kirmizi else 'HAYIR'}")
+        metin = icerik.lower()
+        bulundu = {"kirmizi daire": any(k in metin for k in ("kırmızı", "red", "kırmızı")),
+                   "mavi kare": any(k in metin for k in ("mavi", "blue")),
+                   "yesil ucgen": any(k in metin for k in ("yeşil", "üçgen", "green", "triangle")),
+                   "yazi JEV": "jev" in metin}
+        print(f"[{etiket}] GORUNTU OKUMA: {bulundu} "
+              f"({sum(bulundu.values())}/4)")
     except urllib.error.HTTPError as e:
         print(f"[{etiket}] HTTP {e.code} ({time.time()-t0:.1f}s) {e.read().decode()[:200]!r}")
     except Exception as e:
