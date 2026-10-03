@@ -5,7 +5,9 @@ metindeki sayilar verilenlerle kiyaslanir, disari sayi uydurursa yakalanir.
 Test 2 (yapisal): 6 bolumluk mini analiz; bot.py'deki _derin_eksik_mi
 mantigiyla ayni bolum-baslik denetimi.
 Test 3 (maliyet/limit): usage + finish_reason + gecikme basilir.
-Ucretsiz katman ~20 istek/gun (gemini-3.8-flash) — probe 2-4 cagri yeter.
+Ucretsiz katman ~20 istek/gun; probe 2-4 cagri yeter. Yeni modellerde
+503/429 "high demand" sik goruldugunden modeller sirayla denenir, hatali
+denemeler geri cekilmeli tekrarlanir.
 """
 import json
 import os
@@ -15,7 +17,9 @@ import urllib.error
 import urllib.request
 
 BASE = "https://generativelanguage.googleapis.com/v1beta/openai"
-MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
+MODELLER = [m.strip() for m in os.environ.get(
+    "GEMINI_MODEL",
+    "gemini-3.8-flash,gemini-3.8-flash-lite,gemini-flash-latest").split(",") if m.strip()]
 
 VERILER = {
     "endeks": "15.218,47", "endeks_degisim": "%2,54",
@@ -40,8 +44,8 @@ YAPISAL_PROMPT = (
 )
 
 
-def sor(soru, max_tokens=700):
-    govde = {"model": MODEL,
+def _tek_dene(model, soru, max_tokens):
+    govde = {"model": model,
              "messages": [{"role": "user", "content": soru}],
              "max_tokens": max_tokens, "temperature": 0.3}
     req = urllib.request.Request(
@@ -56,15 +60,32 @@ def sor(soru, max_tokens=700):
         secim = (d.get("choices") or [{}])[0]
         icerik = (secim.get("message") or {}).get("content") or ""
         u = d.get("usage", {})
-        print(f"  OK {dt:.1f}s finish={secim.get('finish_reason')} "
+        print(f"  [{model}] OK {dt:.1f}s finish={secim.get('finish_reason')} "
               f"token: giris={u.get('prompt_tokens')} cikis={u.get('completion_tokens')}")
-        return icerik
+        return (model, icerik)
     except urllib.error.HTTPError as e:
-        print(f"  HTTP {e.code} ({time.time()-t0:.1f}s) {e.read().decode()[:200]!r}")
-        return None
+        govde_txt = e.read().decode()[:120]
+        kod = e.code
+        print(f"  [{model}] HTTP {kod} ({time.time()-t0:.1f}s) {govde_txt!r}")
+        if kod in (429, 503):
+            return None  # gecici; geri cekilme sarmalayiciya ait
+        raise SystemExit(f"gemini kalici hata: {kod}")
     except Exception as e:
         print(f"  HATA {type(e).__name__}: {str(e)[:120]}")
         return None
+
+
+def sor(soru, max_tokens=700):
+    """Modelleri sirayla dener; 503/429'da geri cekilerek 3 kez tekrarlar."""
+    for model in MODELLER:
+        for deneme in range(3):
+            r = _tek_dene(model, soru, max_tokens)
+            if r is not None:
+                return r
+            bekle = 10 * (deneme + 1)
+            print(f"  ({model} deneme {deneme + 1}/3 basarisiz; {bekle} sn bekleniyor)")
+            time.sleep(bekle)
+    return None
 
 
 def sayi_denetle(metin):
@@ -99,20 +120,24 @@ if __name__ == "__main__":
     if not os.environ.get("GEMINI_API_KEY"):
         raise SystemExit("GEMINI_API_KEY yok")
 
-    print(f"--- TEST 1: sayi-sadakati ({MODEL})")
-    c1 = sor(SAYI_SADAKATI_PROMPT, max_tokens=400)
-    if c1:
+    print("--- TEST 1: sayi-sadakati")
+    r1 = sor(SAYI_SADAKATI_PROMPT, max_tokens=400)
+    if r1:
+        model, c1 = r1
+        print(f"  MODEL: {model}")
         print("  CEVAP:", c1[:350].replace("\n", " "))
         s = sayi_denetle(c1)
         print("  SAYI DENETIMI:", "TEMIZ" if not s else f"HATA -> {s}")
 
-    print(f"--- TEST 2: yapisal tamlik (6 bolum)")
-    c2 = sor(YAPISAL_PROMPT, max_tokens=900)
-    if c2:
+    print("--- TEST 2: yapisal tamlik (6 bolum)")
+    r2 = sor(YAPISAL_PROMPT, max_tokens=900)
+    if r2:
+        model, c2 = r2
+        print(f"  MODEL: {model}")
         print("  CEVAP:", c2[:350].replace("\n", " "))
         s = yapisal_denetle(c2)
         print("  YAPI DENETIMI:", "TAM" if not s else f"EKSIK -> {s}")
 
     print("--- UYGULAMA NOTU: gpt-oss/GLM kiyasi icin ayni denetimler")
     print("    bot.py'deki uydurma esigi (10+ duzeltme=ret) ve CJK denetimi")
-    print("    ile ayni hatta calisir; 20 istek/gun ucretsiz katman sinirli.")
+    print("    ile ayni hatta calisir; ucretsiz katman istek/gun sinirli.")
