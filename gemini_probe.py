@@ -23,15 +23,16 @@ MODELLER = [m.strip() for m in os.environ.get(
 
 VERILER = {
     "endeks": "15.218,47", "endeks_degisim": "%2,54",
-    "usdtry": "34,20", "altin_usd": "2.450",
+    "usdtry": "48,98", "gram_altin_tl": "6.554,78",
     "hacim": "68,4 milyar TL",
 }
 
 SAYI_SADAKATI_PROMPT = (
     "Su verileri kullanarak tek paragraflik Turkce BIST 30 piyasa ozeti yaz:\n"
-    "Endeks 15.218,47 (gunluk %2,54 artis), USD/TRY 34,20, gram altin karsiligi "
-    "2.450 USD seviyesinde, islem hacmi 68,4 milyar TL.\n"
-    "Verilen sayilardan baskasini KULLANMA; tam sayilar virgullu Turkce bicimde kalsin."
+    "Endeks 15.218,47 (gunluk %2,54 artis), USD/TRY 48,98, gram altin "
+    "6.554,78 TL seviyesinde, islem hacmi 68,4 milyar TL.\n"
+    "Verilen sayilardan baskasini KULLANMA; kendi bilginden kur/fiyat DUZELTME; "
+    "tam sayilar virgullu Turkce bicimde kalsin."
 )
 
 YAPISAL_PROMPT = (
