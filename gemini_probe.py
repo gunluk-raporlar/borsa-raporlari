@@ -68,16 +68,24 @@ def sor(soru, max_tokens=700):
 
 
 def sayi_denetle(metin):
-    """Verilen sayilarin metinde korundugunu, uydurma benzer rakam kalmadigini bakar."""
+    """Verilen sayilarin metinde korundugunu, uydurma rakam kalmadigini bakar.
+
+    Izinli parca kumesi = verilen degerlerin icindeki tum sayi parcalari
+    (orn. "%2,54" -> "2,54"), boylece modelin ayni sayiyi farkli sonek
+    ile yazmasi yanilmiyor.
+    """
     sorunlar = []
     for ad, deger in VERILER.items():
         if deger not in metin:
             sorunlar.append(f"{ad}={deger} metinde YOK/bicim bozulmus")
-    # Veri setinde olmayan yuzde/rakam desenlerini bul (kaba av)
-    verilen = set(VERILER.values())
-    for m in re.finditer(r"\d{1,3}(?:[.,]\d{1,3})+|\d+[.,]\d+\s*%", metin):
+    izinli = set()
+    for deger in VERILER.values():
+        for m in re.finditer(r"\d{1,3}(?:[.,]\d{3})*(?:[.,]\d+)?", deger):
+            izinli.add(m.group(0))
+    izinli |= {"2026"}
+    for m in re.finditer(r"\d{1,3}(?:[.,]\d{3})*(?:[.,]\d+)?", metin):
         parca = m.group(0)
-        if parca not in verilen and parca not in ("2026", "15.218"):
+        if parca not in izinli:
             sorunlar.append(f"uydurma olasilikli sayi: {parca!r}")
     return sorunlar
 
