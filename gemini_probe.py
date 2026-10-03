@@ -5,7 +5,7 @@ metindeki sayilar verilenlerle kiyaslanir, disari sayi uydurursa yakalanir.
 Test 2 (yapisal): 6 bolumluk mini analiz; bot.py'deki _derin_eksik_mi
 mantigiyla ayni bolum-baslik denetimi.
 Test 3 (maliyet/limit): usage + finish_reason + gecikme basilir.
-Ucretsiz katman ~20 istek/gun (gemini-2.5-flash) — probe 2-4 cagri yeter.
+Ucretsiz katman ~20 istek/gun (gemini-3.8-flash) — probe 2-4 cagri yeter.
 """
 import json
 import os
@@ -15,7 +15,7 @@ import urllib.error
 import urllib.request
 
 BASE = "https://generativelanguage.googleapis.com/v1beta/openai"
-MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
 
 VERILER = {
     "endeks": "15.218,47", "endeks_degisim": "%2,54",
