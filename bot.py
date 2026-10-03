@@ -856,13 +856,15 @@ def _havuz_modelleri(saglayici, env_listesi, tercih, etiket, suzgec=None):
 METRIK_KAYIT = []
 
 
-def _metrik_kaydet(islev, sure, ok, model="-"):
+def _metrik_kaydet(islev, sure, ok, model="-", token_in=0, token_out=0):
     try:
         METRIK_KAYIT.append({
             "islev": islev,
             "model": model,
             "sure_sn": round(float(sure), 3),
             "ok": bool(ok),
+            "token_giris": int(token_in or 0),
+            "token_cikis": int(token_out or 0),
             "saat": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).isoformat(timespec="seconds"),
         })
     except Exception:
@@ -920,11 +922,16 @@ def metrik_dosyasi_yaz(etiket="bot"):
 
 
 def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogrulama=None):
-    """_llm_call_ic icin gecikme olcumlu ince sarmalayici (imza ayni kalir)."""
+    """_llm_call_ic icin gecikme+token olcumlu ince sarmalayici."""
     t0 = time.time()
+    _LLM_TOKEN_SAYAC["in"] = _LLM_TOKEN_SAYAC["out"] = 0
     sonuc = _llm_call_ic(prompt, max_deneme=max_deneme, fallback_on_fail=fallback_on_fail, sirasi=sirasi, dogrulama=dogrulama)
-    _metrik_kaydet("llm_call", time.time() - t0, bool(sonuc))
+    _metrik_kaydet("llm_call", time.time() - t0, bool(sonuc),
+                   token_in=_LLM_TOKEN_SAYAC["in"], token_out=_LLM_TOKEN_SAYAC["out"])
     return sonuc
+
+
+_LLM_TOKEN_SAYAC = {"in": 0, "out": 0}
 
 
 def _zai_call(prompt):
@@ -1076,6 +1083,10 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
             )
             # OpenRouter aralikla 200 + bos choices dondurebiliyor (2026-09-30:
             # 3 dk bekleyip TypeError ile yanitin cöpe gitmesine yol acmisti).
+            _kullanim = getattr(resp, "usage", None)
+            if _kullanim:
+                _LLM_TOKEN_SAYAC["in"] += getattr(_kullanim, "prompt_tokens", 0) or 0
+                _LLM_TOKEN_SAYAC["out"] += getattr(_kullanim, "completion_tokens", 0) or 0
             if not getattr(resp, "choices", None):
                 logger.warning("%s/%s 200 dondu ama choices bos; siradaki model denenecek.", etiket, model)
                 print(f"[Uyari] {etiket}/{model} 200 dondu ama choices bos; siradaki model deneniyor ({deneme}/{max_deneme})...", flush=True)
