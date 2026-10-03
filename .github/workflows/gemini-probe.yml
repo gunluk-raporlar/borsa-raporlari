@@ -1,0 +1,17 @@
+name: Gemini Yoklamasi (gecici)
+# GEMINI_API_KEY ile bizim kalite caplariyla (sayi-sadakati + 6 bolum
+# yapisal tamlik) Gemini 2.5 Flash testi. Ucretsiz katman ~20 istek/gun;
+# probe 2-4 cagri yeter. Anahtar yazdirilmaz.
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gemini kalite testi
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python -u gemini_probe.py
