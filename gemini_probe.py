@@ -47,7 +47,11 @@ YAPISAL_PROMPT = (
 def _tek_dene(model, soru, max_tokens):
     govde = {"model": model,
              "messages": [{"role": "user", "content": soru}],
-             "max_tokens": max_tokens, "temperature": 0.3}
+             # Gemini dusunme tokenlarini da ayni butceden harciyor: kucuk
+             # max_tokens'ta gorunur metin 14 token'da kesildi. Dusunmeyi
+             # kapatip butceyi metne birakiyoruz.
+             "max_tokens": max(max_tokens, 2000), "temperature": 0.3,
+             "reasoning_effort": "none"}
     req = urllib.request.Request(
         BASE + "/chat/completions", data=json.dumps(govde).encode(), method="POST",
         headers={"Authorization": f"Bearer {os.environ['GEMINI_API_KEY']}",
