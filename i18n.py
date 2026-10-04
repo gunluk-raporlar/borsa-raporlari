@@ -111,6 +111,19 @@ SOZLUK = {
     "Muhasebe": {"en": "Accounting", "de": "Rechnungswesen", "ru": "Бухучёт", "zh": "会计"},
     "Muhasebe Terimleri": {"en": "Accounting Terms", "de": "Rechnungslegungsbegriffe",
                            "ru": "Бухгалтерские термины", "zh": "会计术语"},
+    "İşlem Robotu": {"en": "Trading Robot", "de": "Handelsroboter", "ru": "Торговый робот", "zh": "交易机器人"},
+    "İşlem Robotu (Simülasyon)": {"en": "Trading Robot (Simulation)", "de": "Handelsroboter (Simulation)",
+                                  "ru": "Торговый робот (симуляция)", "zh": "交易机器人（模拟）"},
+    "simülasyon": {"en": "simulation", "de": "Simulation", "ru": "симуляция", "zh": "模拟"},
+    # --- ana sayfa kartlari ---
+    # Anahtar dugum metninin TAMAMI olmalidir; kartta ok ayni dugumde durur,
+    # bu yuzden ok-ekli anahtar kullanilir ("Yapay zeka... dersi" olurse hic eslesmez).
+    "Yapay zeka eğitmenden günün dersi →": {
+        "en": "Lesson of the day from the AI trainer →",
+        "de": "Lektion des Tages vom KI-Trainer →",
+        "ru": "Урок дня от ИИ-тренера →",
+        "zh": "来自AI讲师的今日课程 →",
+    },
     "Terim ara: amortisman, şerefiye, goodwill...": {
         "en": "Search a term: depreciation, goodwill, deferred tax...",
         "de": "Begriff suchen: Abschreibung, Firmenwert, latente Steuern...",
@@ -300,6 +313,8 @@ class Cevirmen:
         self.onbellekten = 0
         self.elle_adedi = 0
         self.sozlukten = 0
+        self.kirilli_elle = 0
+        self.reddedilen_ceviri = 0
 
     # -- onbellek --------------------------------------------------------
     @staticmethod
@@ -329,20 +344,16 @@ class Cevirmen:
                 self.sozlukten += 1
                 continue
             k = self._anahtar(dil, saf)
-            if k in self.elle and self.elle[k]:
+            if k in self.elle and self.elle[k] and ceviri_gecerli_mi(saf, self.elle[k]):
                 # Elle yazilmis ceviri (asistan) en yuksek oncelik: insan denetiminden gecti.
                 _saf, onek = metni_ayikla(m)
                 sonuc[i] = (onek + self.elle[k]) if onek else self.elle[k]
                 self.elle_adedi += 1
                 continue
-            # onbellekteki deger kaynakla AYNI ise gecersiz say (zehirli kayitlari etkisiz kilar)
-            if k in self.onbellek and self.onbellek[k] and self.onbellek[k].strip() != saf.strip():
-                _saf, onek = metni_ayikla(m)
-                sonuc[i] = (onek + self.onbellek[k]) if onek else self.onbellek[k]
-                self.onbellekten += 1
-                continue
-            if k in self.onbellek and self.onbellek[k] and len(saf) <= 60:
-                # kisa dizelerde (sayi/ticker/kod/tablo satiri) birebir ayni ceviri gecerlidir
+            if k in self.elle:
+                self.kirilli_elle += 1
+            # onbellekteki deger kaynakla AYNI veya sahte ise gecersiz say
+            if k in self.onbellek and self.onbellek[k] and ceviri_gecerli_mi(saf, self.onbellek[k]):
                 _saf, onek = metni_ayikla(m)
                 sonuc[i] = (onek + self.onbellek[k]) if onek else self.onbellek[k]
                 self.onbellekten += 1
@@ -357,12 +368,11 @@ class Cevirmen:
                 # Ama ceviri kaynakla birebir ayni olabilir: sayilar, ticker'lar, kodlar
                 # ("BIST 30", "414,75 TL", "RSI"), tablo satirlari. Bunlar GECERLI ceviridir;
                 # onbellege yazilmazsa her kosuda bosuna yeniden denenir.
-                if not cev or not isinstance(cev, str):
-                    self.atlanan_parca += 1
-                    continue
-                if cev.strip() == saf.strip() and len(saf) > 60:
-                    # Uzun metinde birebir ayni cikti suphelidir (model kopyalamis olabilir):
-                    # onbellege yazma, sonraki kosuda yeniden dene.
+                # --- zehir guardi: kimlik/tirnakli-Turkce/Turkce-harf iceren cikti
+                # onbellege YAZILMAZ ve ciktiya konmaz (kaynak metin kalir).
+                if not cev or not isinstance(cev, str) or not ceviri_gecerli_mi(saf, cev):
+                    if cev:
+                        self.reddedilen_ceviri += 1
                     self.atlanan_parca += 1
                     continue
                 self.onbellek[self._anahtar(dil, saf)] = cev
@@ -677,6 +687,31 @@ def metni_boslukla(onek: str) -> str:
 # Ticker / kur / gosterge gibi sayisal metinler ceviriye GONDERILMEZ.
 # (Sayi bicimi ayrica sayilari_cevir ile duzeltilir; fiyatin LLM'e gitmesi risklidir.)
 BIRIMLER = ("TL", "TRY", "USD", "EUR", "RSI", "MACD", "EMA", "SMA", "ADX", "CCI", "WT")
+
+# --- zehir guardi (2026-10-05): onbellek/elle girdilerinin icine sizan sahte
+# ceviriler (kaynagin birebir kendisi, tirnak icine alinmis Turkce, bozuk kod)
+# tarih boyunca sayfalarda yasamisti. Okuma ve yazma yollarinda tek fonksiyon
+# ile engellenir; kimlik ceviri "reddi" ciktiyi degistirmez, yalnizca yeniden
+# deneme maliyeti getirir (cevrilebilir dizeler icin dogru davranis).
+TURKCE_OZEL_RE = re.compile(r"[çğışİÇĞİŞ]")   # u/ö bilinçli hariç: Almanca ile paylasilir
+ALINTI_KARAKTERLERI = "\"'«»“”‘’"
+# Turkce harf iceren ama gecerli olan degerler (kurum/urun adlari)
+OZEL_ADLAR = ("İş Yatırım", "Yeni Şafak", "Tüpraş", "Doğuş Otomotiv", "Sasa Şeker",
+              "Şimşek", "Türkiye Varlık Fonu")
+
+
+def ceviri_gecerli_mi(saf: str, cev: str) -> bool:
+    """Onbellek/elle/saglayici ciktisinin sahte-ceviri olup olmadigini ayirt eder.
+    Kimlik ceviri (kaynakla birebir ayni) HER uzunlukta gecersizdir: ciktiyi
+    degistirmez, yalnizca saglayicida yeniden denenmesi gerekir."""
+    if not isinstance(cev, str):
+        return False
+    v = cev.strip().strip(ALINTI_KARAKTERLERI).strip()
+    if not v or v == saf.strip():
+        return False
+    if TURKCE_OZEL_RE.search(v) and not any(ad in v for ad in OZEL_ADLAR):
+        return False
+    return True
 
 
 def sayisal_mi(metin: str) -> bool:
@@ -1743,6 +1778,8 @@ def main() -> int:
         "sozlukten": cevirmen.sozlukten,
         "onbellekten": cevirmen.onbellekten,
         "yeni_ceviri": cevirmen.yeni,
+        "kirilli_elle": cevirmen.kirilli_elle,
+        "reddedilen_ceviri": cevirmen.reddedilen_ceviri,
         "turkce_degisen": degisen,
         "turkce_yeni_dosya": yeni_tr,
     }, ensure_ascii=False, indent=2))

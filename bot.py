@@ -4995,6 +4995,33 @@ def _tr_tarih(iso_tarih):
         return iso_tarih
 
 
+def _tr_tarih_sade(iso_tarih):
+    """'2026-09-08' -> '8 Eylül 2026' (gun adi olmadan; bozuk formatta None doner)."""
+    try:
+        d = datetime.strptime(iso_tarih, "%Y-%m-%d")
+        return f"{d.day} {_AYLAR[d.month - 1]} {d.year}"
+    except (ValueError, TypeError):
+        return None
+
+
+_DERS_KONU_RE = re.compile(r"Bugünün Dersi:\s*(.+?)</h2>", re.S)
+
+
+def _ders_konusu(dosya_adi):
+    """haftasonu-egitimi/<tarih>.html dosyasindaki ders konusunu dondurur; yoksa None."""
+    try:
+        with open(os.path.join("haftasonu-egitimi", dosya_adi), encoding="utf-8") as fh:
+            icerik = fh.read()
+    except OSError:
+        return None
+    m = _DERS_KONU_RE.search(icerik)
+    if not m:
+        return None
+    konu = re.sub(r"<[^>]+>", " ", m.group(1))
+    konu = re.sub(r"\s+", " ", html.unescape(konu)).strip()
+    return konu or None
+
+
 def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     # Derin analiz arsiv dosyalari rapor arsivine degil, kendi bolumune gider
     gundem_dosyalari = [fn for fn in (rapor_dosyalari or []) if "-derin-analiz" not in fn]
@@ -5058,7 +5085,7 @@ function arsivAc(btn) {{
     if eg_dosyalar:
         eg_kartlar = "".join(
             f'<a class="rcard" href="haftasonu-egitimi/{fn}"><span class="date">{_tr_tarih(fn[:-5])}</span>'
-            f'<span class="sub">Yapay zeka eğitmenden günün dersi &rarr;</span></a>'
+            f'<span class="sub">{_ders_konusu(fn) or "Yapay zeka eğitmenden günün dersi"} &rarr;</span></a>'
             for fn in reversed(eg_dosyalar[-4:])
         )
         egitim_bolumu = f"""
@@ -5067,11 +5094,12 @@ function arsivAc(btn) {{
 <p style="margin:10px 0 0"><a href="haftasonu-egitimi.html">Borsa Okulu sayfası &rarr;</a></p>"""
 
     # Derin analiz bolumu: guncel sayfa + arsivdeki son 3 analiz
+    # (Aciklama tarihe referanslidir: "2 Ekim 2026 gununun derin analizi".)
     derin_bolumu = ""
     if derin_dosyalari:
         derin_kartlar = "".join(
             f'<a class="rcard" href="reports/{fn}"><span class="date">{_tr_tarih(fn[:-5].replace("-derin-analiz", ""))}</span>'
-            f'<span class="sub">O günün derin analizi &rarr;</span></a>'
+            f'<span class="sub">{_tr_tarih_sade(fn[:-5].replace("-derin-analiz", "")) or fn[:-5].replace("-derin-analiz", "")} gününün derin analizi &rarr;</span></a>'
             for fn in derin_dosyalari[:3]
         )
         derin_bolumu = f"""

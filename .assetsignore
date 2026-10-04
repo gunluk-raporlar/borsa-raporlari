@@ -14,3 +14,7 @@ web/
 functions/
 
 # IndexNow dogrulama dosyasi (ba8235...txt) ve arama motoru dogrulama dosyalari KORUNUR.
+
+# Ceviri makineleri ic verileridir; herkese acik siteye ait degil (2026-10-05).
+i18n-cache.json
+i18n-elle.json
