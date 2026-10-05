@@ -16,6 +16,7 @@ from datetime import datetime, time, timedelta
 from pathlib import Path
 
 from makro_katalog import GOSTERGE_KOD, KOD_GOSTERGE, PIYASA_KOD, REQUIRED
+import resmi_tatil
 
 logger = logging.getLogger("makro-veri")
 
@@ -276,16 +277,20 @@ def load_for_report(report_date, max_geri=10):
         raise SnapshotError(f"gecersiz rapor tarihi: {report_date!r}") from exc
     for geri in range(1, max_geri + 1):
         aksam = rapor_tarihi - timedelta(days=geri)
-        if aksam.weekday() >= 5:
-            continue  # hafta sonu akşam snapshoti yazilmaz; is gunune in
         yol = HISTORY_DIR / f"{aksam}.json"
-        if not yol.exists():
-            continue
-        if geri > 1:
-            logger.warning(
-                "[Makro] beklenen aksam snapshoti yok (%s); bayat kabul: %s kullanilacak "
-                "(son yazilan %d gun once)", rapor_tarihi - timedelta(days=1), yol, geri)
-        return load(yol)
+        if yol.exists():
+            if geri > 1:
+                beklenen = rapor_tarihi - timedelta(days=1)
+                if resmi_tatil.tatil_mi(beklenen):
+                    sebep = "resmi tatil gunu (snapshot yazilmaz)"
+                elif beklenen.weekday() >= 5:
+                    sebep = "hafta sonu (snapshot yazilmaz)"
+                else:
+                    sebep = "snapshot yazilamadi"
+                logger.warning(
+                    "[Makro] beklenen aksam snapshoti yok (%s); %s — bayat kabul: %s "
+                    "kullanilacak (son yazilan %d gun once)", beklenen, sebep, yol, geri)
+            return load(yol)
     raise SnapshotError(
         f"{rapor_tarihi} icin hicbir aksam snapshoti bulunamadi "
         f"(son {max_geri} gun tarandi)")
