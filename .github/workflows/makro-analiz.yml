@@ -33,6 +33,8 @@ jobs:
           OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
+          # Uzun analitik yanitlar 240 sn istek zaman asimina takilmasin
+          LLM_TIMEOUT: "420"
           ZAI_MODEL: ${{ vars.ZAI_MODEL }}
           # Yedek: GLM alinamazsa AMD DeepSeek-V4-Flash ile uretilir
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}

@@ -177,47 +177,49 @@ if not AMD_INCLUDE_VLM:
 # 2026-09-29 kullanici karari: glm-5.3 disi modeller asiri sayi uyduruyor;
 # AMD galerisindeki GLM-5.3-Flash ucretsiz — listede varsa one gecilir
 # (yoksa sira hic degismez, env override davranisi korunur).
+_LLM_TIMEOUT = float(os.environ.get("LLM_TIMEOUT", "240"))  # saniye; uzun analitik yanitlarda env ile artirilir
+
 AMD_MODEL_LIST.sort(key=lambda m: "GLM-5.3" not in m.upper())
 
 client = OpenAI(
     api_key=AMD_API_KEY,
     base_url="https://developer.amd.com.cn/radeon/api/v1",
-    timeout=240.0,
+    timeout=_LLM_TIMEOUT,
     max_retries=0,
 ) if AMD_API_KEY else None
 
 alt_client = OpenAI(
     api_key=ALT_API_KEY,
     base_url=ALT_BASE_URL,
-    timeout=240.0,
+    timeout=_LLM_TIMEOUT,
     max_retries=0,
 ) if ALT_API_KEY else None
 
 cf_client = OpenAI(
     api_key=CF_API_KEY,
     base_url=f"https://api.cloudflare.com/client/v4/accounts/{CF_ACCOUNT_ID}/ai/v1",
-    timeout=240.0,
+    timeout=_LLM_TIMEOUT,
     max_retries=0,
 ) if CF_API_KEY and CF_ACCOUNT_ID else None
 
 or_client = OpenAI(
     api_key=OR_API_KEY,
     base_url=OR_BASE_URL,
-    timeout=240.0,
+    timeout=_LLM_TIMEOUT,
     max_retries=0,
 ) if OR_API_KEY else None
 
 nvid_client = OpenAI(
     api_key=NVID_API_KEY,
     base_url=NVID_BASE_URL,
-    timeout=240.0,
+    timeout=_LLM_TIMEOUT,
     max_retries=0,
 ) if NVID_API_KEY else None
 
 zai_client = OpenAI(
     api_key=ZAI_API_KEY,
     base_url="https://api.z.ai/api/coding/paas/v4/",
-    timeout=300.0,
+    timeout=max(300.0, _LLM_TIMEOUT),
     max_retries=1,
 ) if ZAI_API_KEY else None
 
@@ -226,7 +228,7 @@ zai_client = OpenAI(
 opencode_client = OpenAI(
     api_key=OPENCODE_API_KEY,
     base_url="https://opencode.ai/zen/v1",
-    timeout=240.0,
+    timeout=_LLM_TIMEOUT,
     max_retries=0,
     default_headers={"User-Agent": "opencode/1.0"},
 ) if OPENCODE_API_KEY else None
@@ -234,14 +236,14 @@ opencode_client = OpenAI(
 ollama_client = OpenAI(
     api_key=OLLAMA_API_KEY,
     base_url="https://ollama.com/v1",
-    timeout=240.0,
+    timeout=_LLM_TIMEOUT,
     max_retries=0,
 ) if OLLAMA_API_KEY else None
 
 gemini_client = OpenAI(
     api_key=GEMINI_API_KEY,
     base_url="https://generativelanguage.googleapis.com/v1beta/openai",
-    timeout=240.0,
+    timeout=_LLM_TIMEOUT,
     max_retries=0,
 ) if GEMINI_API_KEY else None
 
@@ -1223,7 +1225,7 @@ def _zai_call_ic(prompt):
     if not anahtar:
         return None
     client = OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/coding/paas/v4/",
-                    timeout=300.0, max_retries=1)
+                    timeout=max(300.0, _LLM_TIMEOUT), max_retries=1)
     modeller = ([os.environ["ZAI_MODEL"]] if os.environ.get("ZAI_MODEL") else []) + ZAI_MODEL_TERCIH
     modeller = list(dict.fromkeys(modeller))  # tekrarlari at
     son_hata = None
