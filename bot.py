@@ -18,6 +18,7 @@ import logging
 
 # Yayin oncesi sirket adi / makro sayi denetimi (bkz. dogrulama.py)
 import dogrulama
+import editor
 import makro_veri
 import makro_katalog
 
@@ -1258,19 +1259,8 @@ def _zai_call_ic(prompt):
 #      (gunluk rapor sayfalarinda h2 yapisi boyle olusur).
 #   4. ASCII'ye dusmus Turkce kelimeler (Ozeti -> Ozeti degil, Özeti) ve
 #      sik yazim hatalari (sinyiller -> sinyaller).
-_TR_DUZELTME = {
-    # bolum basligi kelimeleri (ASCII -> dogru Turkce)
-    "Ozeti": "Özeti", "Bakis": "Bakış", "Sektor": "Sektör", "Bazli": "Bazlı",
-    "Degerlendirme": "Değerlendirme", "Gorsel": "Görsel", "Osilator": "Osilatör",
-    "Okumalari": "Okumaları", "Haritasi": "Haritası", "Gunun": "Günün",
-    "Onerilen": "Önerilen", "Giris": "Giriş", "Bolgesi": "Bölgesi",
-    "Gerekce": "Gerekçe", "Asiri": "Aşırı", "Alim": "Alım", "Satim": "Satım",
-    "Yatirim": "Yatırım", "Portfoy": "Portföy", "Portfoyu": "Portföyü",
-    # sik tekrarlayan yazim hatalari (LLM cikisi)
-    "sinyiller": "sinyaller", "Sinyiller": "Sinyaller", "sinyil": "sinyal",
-    "Ayrisan": "Ayrışan", "ayrisan": "ayrışan", "Nötür": "Nötr",
-    "GÜCLÜ": "GÜÇLÜ", "güclü": "güçlü",
-}
+# Sozlugu editor.py tasiyor (tek kaynak); burada alias kalir.
+_TR_DUZELTME = editor.YAZIM
 
 
 def _turkce_karakter_duzelt(metin: str) -> str:
@@ -1332,6 +1322,15 @@ def rapor_son_islem(metin: str) -> str:
     """Yayina girmeden once LLM raporunu temizler (bkz. yukaridaki liste)."""
     if not metin:
         return metin
+    # (0) Editor katmani — zincirin BASI: imla + muğlaklik duzeltmesi burada
+    # yapilir; boylece asagidaki yapisal temizlik ve sayi/isim dogrulama
+    # zinciri daha steril metne calisir (editor sayilara dokunmaz).
+    try:
+        metin, _editor_ozet = editor.uygula(metin)
+        if any(_editor_ozet.values()):
+            logger.warning("[Editor] imla=%(imla)d yumusatma=%(yumusatma)d uyari=%(uyari)d", _editor_ozet)
+    except Exception:
+        logger.exception("[Editor] editor katmani hata verdi; metin dokunulmadan geciyor.")
     satirlar = metin.split("\n")
     temiz = []
     for i, satir in enumerate(satirlar):
@@ -3685,6 +3684,12 @@ def _ses_metni_hazirla(html):
     metin = metin.replace("\n\n", ". ")
     metin = re.sub(r"\s+", " ", metin).strip()
     metin = _konusma_metni_normalize(metin)
+    # Telaffuz katmani: XU030/TL/%/binlik sayilarin dogal okunusu (yalnizca
+    # ses metni; yayin HTML'i etkilenmez). Kirpmadan ONCE uygulanir.
+    try:
+        metin = editor.tts_telaffuz(metin)
+    except Exception:
+        logger.exception("[TTS] telaffuz katmani hata verdi; ham metin okunacak.")
     return metin.strip(" .,;:")[:12000]
 
 
