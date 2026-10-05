@@ -2677,7 +2677,9 @@ PORTFOY_NOTU = ("Portföy hafta içi her sabah otomatik olarak, bir önceki işl
                 "üstteki fiyat şeridine bakınız. Getiri, başlangıçta eşit dağıtılan 100.000 TL'nin güncel "
                 "değerine göre hesaplanır; tablodaki tekil hisse yüzdelerinin basit ortalaması değildir. "
                 "Karşılaştırma çizgileri (altın/dolar/mevduat/endeks/enflasyon) da aynı 100.000 TL "
-                "tabanına normalize edilmiştir.")
+                "tabanına normalize edilmiştir. Getiri dönemi portföyün başlangıç tarihidir (yıl başı değildir); "
+                "ilk gün de aynı kapanış fiyatlarıyla değerlendiği için ilk kayıt 100.000,00 TL'den birkaç lira "
+                "sapabilir (örn. 100.013 TL).")
 
 
 def load_portfolio():
@@ -2966,8 +2968,12 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
     p = load_portfolio()
     if p and p.get("history"):
         son = p["history"][-1]
+        baslangic = (p.get("start_date") or p.get("baslangic") or "")
         portfoy = (f"Deneme portfoyu: toplam {son['total']} TL (%{son['pct']:+.2f}), "
-                   f"gunluk %{son['daily_pct']:+.2f}, kiyaslamalar: {son.get('benchmarks')}")
+                   f"gunluk %{son['daily_pct']:+.2f}, kiyaslamalar: {son.get('benchmarks')}"
+                   + (f". Portfoy BASLANGICI {baslangic}: yuzde getiri PORTFOY BASLANGICINDAN "
+                      f"bu yana olandır; 'yil basindan bu yana' DEME, cunku portfoy yil basinda "
+                      f"baslamadi." if baslangic else ""))
 
     # Prompt ve dogrulama ayni onceki aksam snapshot'ini paylasir.
     snapshot = makro_snapshot_cek()
@@ -2979,7 +2985,7 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
                      f"tarih, gun adi, seviye ve yuzdeleri YALNIZCA buradan al]:\n"
                      f"{piyasa_blogu}\n") if piyasa_blogu else ""
     if piyasa_blogu:
-        tarih_kurali = ('Metinde köşeli parantezli [...] yer tutucu kullanma; rapor doğrudan "## 1." başlığıyla başlasın. Kimlik satırı EKLEME: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri geçmeyecek. "## 1." başlığından sonraki İLK cümle tarih ve endeks verisiyle açılır: tarih, gün adı, seviye ve yüzdeleri YALNIZCA [BUGUNUN TARIHI VE PIYASA VERILERI] bloğundan AYNEN alınır; raporun yazıldığı saat de aynı ilk cümlede geçer (bloktaki "saat HH:MM" değerini aynen kullan); kendi hafızandan tarih, gün adı, saat veya rakam ÜRETME (tarih-gün eşleştirmesinde sık hata yapıyorsun).')
+        tarih_kurali = ('Metinde köşeli parantezli [...] yer tutucu kullanma; rapor doğrudan "## 1." başlığıyla başlasın. Kimlik satırı EKLEME: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri geçmeyecek. "## 1." başlığından sonraki İLK cümle tarih ve endeks verisiyle açılır: tarih, gün adı, seviye ve yüzdeleri YALNIZCA [BUGUNUN TARIHI VE PIYASA VERILERI] bloğundan AYNEN alınır; raporun yazıldığı saat de aynı ilk cümlede geçer (bloktaki "saat HH:MM" değerini aynen kullan); kendi hafızandan tarih, gün adı, saat veya rakam ÜRETME (tarih-gün eşleştirmesinde sık hata yapıyorsun). Rapor gün içinde yazıldığı için veriler GÜN İÇİ ANLIK VERİDİR: "günlük kapanış verilerine göre", "endeksler kapanmış" gibi KAPANIŞ dili kullanma — piyasa açıksa "işlem görmekte/seyrederken" gibi gün içi dil kullan. [MAKRO GEREKLER] bloğundaki TR yıllık enflasyon SON AÇIKLANMIŞ AY verisidir (blokta ayı yazar); bir sonraki ayın verisi henüz açıklanmadıysa onu gerçekleşmiş gibi YAZMA ve yanlış ay etiketleme (örn. Ağustos verisi açıkken "Eylül verisi" DEME). BIST 30 (XU030) ve BIST 100 (XU100) FARKLI endekslerdir ve farklı seviyeleri vardır; birinin değerini diğerine YAZMA.')
     else:
         tarih_kurali = ('Metinde köşeli parantezli [...] yer tutucu kullanma; rapor doğrudan "## 1." başlığıyla başlasın. Kimlik satırı EKLEME: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri ve tarih ya da haftanın gün adı raporda GEÇMEYECEK (tarih-gün eşleştirmesinde sık hata yapıyorsun).')
 
@@ -3566,6 +3572,24 @@ def _enflasyon_oranlari(snapshot=None):
     return enflasyon or None
 
 
+def _endeks_seviyeleri():
+    """Dogrulama icin XU030/XU100 gercek seviyelerini dondurur (alinamazsa eksik kalir)."""
+    seviyeler = {}
+    try:
+        pv = piyasa_verisi() or {}
+        if pv.get("XU030", {}).get("son"):
+            seviyeler["30"] = float(pv["XU030"]["son"])
+    except Exception:
+        pass
+    try:
+        pv = pv or (piyasa_verisi() or {})
+        if pv.get("XU100", {}).get("son"):
+            seviyeler["100"] = float(pv["XU100"]["son"])
+    except Exception:
+        pass
+    return seviyeler
+
+
 def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None):
     """Yayin oncesi deterministik dogrulama; ayni snapshot promptla paylasilir.
 
@@ -3598,7 +3622,8 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
             enflasyon_oranlari=enflasyon_oranlari,
             enflasyon_aylik_oranlari=makro_veri.inflation_mom_map(snapshot),
             makro_gostergeleri=gostergeler,
-            piyasa_serileri=piyasa_serileri)
+            piyasa_serileri=piyasa_serileri,
+            endeks_seviyeleri=_endeks_seviyeleri())
         if (sonuc["isim_duzeltme"] or sonuc["enflasyon_duzeltme"]
                 or sonuc["endeks_duzeltme"] or sonuc["faiz_duzeltme"]
                 or sonuc["makro_duzeltme"] or sonuc["piyasa_duzeltme"]):

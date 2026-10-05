@@ -102,9 +102,15 @@ _ULKE_FED = re.compile(
     r"\b(?:ABD|Amerika(?:n)?|US|U\.S\.)\b", re.IGNORECASE
 )
 _ULKE_EU = re.compile(
-    r"\b(?:Euro(?: Bölgesi)?|Avrupa|ECB|Eurozone|Euro area|Bölgede)\b",
+    r"\b(?:Euro(?:\s?Bölgesi)?|Avrupa|ECB|Eurozone|Euro area)\b",
     re.IGNORECASE,
 )
+# NOT: Bu desene "Bölgede" gibi tek-kelime alternatifleri KONULMAZ; eski
+# surumdeki "|Bölgede" alternatifi "reel faizlerin pozitif bölgede olması"
+# gibi turkiye cumlelerini Euro baglamina sokup TR enflasyon/faizini EU
+# degeriyle denetleyerek hatali raporun (2 Ekim 2026: "%3,2 enflasyon,
+# %2,65 politika faizi") yayinlanmasina yol acmisti. "Euro Bölgesi" zaten
+# yukaridaki "Euro(?: Bölgesi)?" alternatifiyle kapsaniyor.
 # Merkez bankasi adlari, karsilastirma yapan cumlede de sahibi gosterir.
 _MERKEZ_FED = re.compile(r"\b(?:Federal Reserve|Fed)\b", re.IGNORECASE)
 _MERKEZ_EU = re.compile(
@@ -710,16 +716,33 @@ def _seviye_etiketi(cumle):
     return d, r
 
 
-def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15):
+def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15,
+                         endeks_seviyeleri=None):
     """Endeks cumlelerindeki seviyeleri gercek degerle karsilastirir.
 
     Donus: (yeni_metin, duzeltmeler, uyarilar); duzeltme = (eski, yeni),
     uyari = metin. Yalnizca hem endeks hem seviye baglami gecen CUMLELERDEKI
     sayilar ele alinir; tolerans disindaki sayilar dogru seviyeyle degistirilir.
+
+    `endeks_seviyeleri` = {"30": 15327.05, "100": 16450.2} verilirse cumlede
+    hangi endeks etiketi (BIST 30/XU030 vs BIST 100/XU100) geciyorsa o
+    endeksin gercek seviyesiyle denetlenir. Tek endeksle karsilastirma yapan
+    surum, modelin "BIST 100 = XU030 degeri" kopyalamasini goremezdi
+    (2 Ekim 2026 raporundaki canli hata): iki endeks ayni sayiyi yazdiginda
+    hatali deger dogru saniliyordu. Cumlede iki endeks birden geciyorsa
+    (karsilastirma cumlesi) o sayi atlanir; etiket yoksa XU030 varsayilir.
     """
-    if not metin or not endeks_seviyesi:
+    if not metin:
         return metin, [], []
-    dogru = _binlik(endeks_seviyesi)
+    haritalar = {}
+    if endeks_seviyesi:
+        haritalar["30"] = endeks_seviyesi
+    for k, v in (endeks_seviyeleri or {}).items():
+        if v:
+            haritalar[k] = v
+    if not haritalar:
+        return metin, [], []
+    varsayilan = haritalar.get("30")
     duzeltmeler, uyarilar = [], []
     cikti = []
     for satir in metin.split("\n"):
@@ -727,16 +750,42 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15):
         yeni_parcalar = []
         for cumle in parcalar:
             if _ENDEKS_BAGLAM.search(cumle) and _SEVIYE_BAGLAM.search(cumle):
-                def _bak(m):
-                    try:
-                        deger = _sayiya(m.group(1))
-                    except ValueError:
-                        return m.group(0)
-                    if deger <= 0 or abs(deger / endeks_seviyesi - 1) <= tolerans:
-                        return m.group(0)
-                    duzeltmeler.append((m.group(1), dogru))
-                    return dogru
-                cumle = _SEVIYE_YAZI.sub(_bak, cumle)
+                etiket100 = re.search(r"(BIST\s*100|XU0?100)", cumle, re.I)
+                etiket30 = re.search(r"(BIST\s*30|XU0?30)", cumle, re.I)
+                if etiket100 and etiket30:
+                    hedef_seviye = None      # karsilastirma cumlesi: belirsiz
+                elif etiket100:
+                    hedef_seviye = haritalar.get("100", varsayilan)
+                elif etiket30:
+                    hedef_seviye = haritalar.get("30", varsayilan)
+                else:
+                    hedef_seviye = varsayilan
+                if hedef_seviye:
+                    dogru = _binlik(hedef_seviye)
+
+                    def _bak(m):
+                        try:
+                            deger = _sayiya(m.group(1))
+                        except ValueError:
+                            return m.group(0)
+                        if deger <= 0:
+                            return m.group(0)
+                        # Kopya saptamasi (tolerans denetiminden ONCE): sayi
+                        # haritadaki BASKA bir endeksin gercek degerine yakinsa
+                        # ve hedef endeksten acik sekilde sapiyorsa model o
+                        # endeksten kopyalamistir ("BIST 100 = BIST 30
+                        # seviyesi", 2026-10-02 canli hata; %15 tolerans
+                        # icinde kaldigi icin baska turlu gorunmez).
+                        for diger_k, diger_v in haritalar.items():
+                            if (diger_v and abs(deger / diger_v - 1) <= 0.005
+                                    and abs(deger / hedef_seviye - 1) > 0.01):
+                                duzeltmeler.append((m.group(1), dogru))
+                                return dogru
+                        if abs(deger / hedef_seviye - 1) <= tolerans:
+                            return m.group(0)
+                        duzeltmeler.append((m.group(1), dogru))
+                        return dogru
+                    cumle = _SEVIYE_YAZI.sub(_bak, cumle)
                 # "16.372-16.372" gibi tekrarlari tek sayiya indir
                 cumle = re.sub(r"(\d{1,3}(?:\.\d{3})+)\s*[-–]\s*\1", r"\1", cumle)
                 d, r = _seviye_etiketi(cumle)
@@ -750,12 +799,14 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15):
 def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
                    faiz_oranlari=None, enflasyon_oranlari=None,
                    makro_gostergeleri=None, piyasa_serileri=None,
-                   enflasyon_aylik_oranlari=None):
+                   enflasyon_aylik_oranlari=None, endeks_seviyeleri=None):
     """Tum dogrulama zinciri. Donus sozlugu:
     {"metin": ..., "isim_duzeltme": [...], "enflasyon_duzeltme": [...],
      "endeks_duzeltme": [...], "endeks_uyari": [...], "faiz_duzeltme": [...],
      "makro_duzeltme": [...], "piyasa_duzeltme": [...]}.
     `makro_gostergeleri`: makro snapshot'inin ulke/indikator deger sozlugu.
+    `endeks_seviyeleri`: {"30": XU030 seviyesi, "100": XU100 seviyesi} —
+    BIST 100 cumleleri gercek XU100 seviyesiyle denetlenir.
     Hicbir durumda istisna yukseltmez; cagiran taraf zaten sarmaladi.
     """
     metin, isim = isim_duzelt(metin, adlar)
@@ -764,7 +815,8 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
     metin, faiz = faiz_duzelt(metin, faiz_oranlari)
     metin, makro = makro_gosterge_duzelt(metin, makro_gostergeleri)
     metin, piyasa = piyasa_serileri_duzelt(metin, piyasa_serileri)
-    metin, endeks, uyari = endeks_seviye_duzelt(metin, endeks_seviyesi)
+    metin, endeks, uyari = endeks_seviye_duzelt(metin, endeks_seviyesi,
+                                                endeks_seviyeleri=endeks_seviyeleri)
     return {"metin": metin, "isim_duzeltme": isim, "enflasyon_duzeltme": enf,
             "endeks_duzeltme": endeks, "endeks_uyari": uyari,
             "faiz_duzeltme": faiz, "makro_duzeltme": makro,
@@ -942,5 +994,34 @@ if __name__ == "__main__":
     e3, e3d = enflasyon_duzelt("Yıllık enflasyon %28,4 seviyesinde.",
                                31.51, oranlar=YILLIK, oranlar_aylik=AYLIK)
     assert "%31,51" in e3 and len(e3d) == 1, f"yillik enflasyon kirilimi: {e3}"
+
+    # --- 2026-10-02 canli hata regresyonlari (2 Ekim raporu yayindi) ---
+    # 1) "pozitif bolgede" kelimesi cumleyi Euro baglamina sokuyordu; TR
+    #    enflasyonu %3,2 olarak ve TR faizi %2,65 (EU degeri) olarak kaldi.
+    CANLI = {"tr": 31.51, "us": 3.4, "eu": 3.8}
+    CANLI_FAIZ = {"tr": 37.0, "us": 4.0, "eu": 2.65}
+    canli = ("Türkiye'de yıllık enflasyon %3,2 seviyesinde (Eylül verisi) seyrederken "
+             "politika faizi %2,65'da sabit tutulmakta, reel faizlerin hâlâ pozitif "
+             "bölgede olmasına rağmen kredi büyümesi yıllık %1,2 seviyelerinde...")
+    sc = metin_dogrula(canli, {}, 31.51, faiz_oranlari=CANLI_FAIZ,
+                       enflasyon_oranlari=CANLI)
+    assert "%31,51" in sc["metin"], f"canli enflasyon duzelmedi: {sc['metin'][:120]}"
+    assert "%37" in sc["metin"], f"canli politika faizi duzelmedi: {sc['metin'][:160]}"
+    assert "Euro Bölgesi" not in sc["metin"] or "%2,65" in sc["metin"], "EU orani bozuldu"
+    # 2) BIST 100 = BIST 30 kopyasi: %15 tolerans icinde kalsa da yakalanmali.
+    se = endeks_seviye_duzelt(
+        "BIST 100 endeksi 15.327 seviyesinde, kazançla işlem görmekteyken.",
+        15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
+    assert se[1] and "16.450" in se[0], f"BIST100 kopyasi yakalanmadi: {se[0]}"
+    # dogru XU100 degerine dokunulmaz
+    sd = endeks_seviye_duzelt(
+        "BIST 100 endeksi 16.480 seviyesinde seyrediyor.",
+        15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
+    assert sd[1] == [], "dogru XU100 degeri bozuldu"
+    # karsilastirma cumlesinde iki endeks degerine dokunulmaz
+    sk = endeks_seviye_duzelt(
+        "BIST 100 (16.450) ile BIST 30 (15.327) birlikte yukseldi.",
+        15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
+    assert sk[1] == [], "karsilastirma cumlesi bozuldu"
 
     print("dogrulama.py: tum kendini testler gecti.")
