@@ -1,5 +1,8 @@
 # Borsa Raporları — Platform
 
+**Canlı site: <https://borsa-raporlari.pages.dev/>** — BIST 30 günlük piyasa raporları,
+derin analiz, haftalık makro değerlendirme, teknik tarama, sanal portföy ve podcast.
+
 BIST 30 günlük piyasa raporlarını üreten otomasyonun iki katmanı:
 
 1. **Üretim (mevcut, değişmedi):** Python scriptleri GitHub Actions cron ile çalışır,
