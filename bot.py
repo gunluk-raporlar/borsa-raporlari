@@ -1010,7 +1010,7 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
     # 16000: havuzdaki dusunen modeller (GLM/MiMo ailesi) reasoning tokenlarini
     # da ayni butceden harcamakta; 8000'de uzun rapor + dusunme kesilebiliyor
     # (ust sinir — gercek maliyet uretilen token kadardir, ek bedeli yok).
-    max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "16000"))
+    max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "24000"))
 
     # Deneme sirasi: AMD (ucretsiz ana) -> ZAI (kullanicinin GLM anahtari;
     # ucretsiz ortak sunucular sikistiginda kaliteli/stabil ikinci sans) ->
@@ -1132,8 +1132,17 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
                     time.sleep(2)
                     continue
             elif getattr(secim, "finish_reason", None) == "length":
-                logger.warning("Yanit token limitine takilip erken kesilmis olabilir.")
-                print("[Uyari] Yanit token limitine takilip erken kesilmis olabilir.", flush=True)
+                # Kesik yanit KABUL EDILMEZ: 5 Ekim 2026'da gunluk raporun
+                # 7. bolumu (Model Portfoyu) token limitine takilip tablo
+                # ortasinda kesildi ve yarim haliyle yayina gitti. Son
+                # denemeyse kesik yanit tek secenek oldugu icin kabul edilir.
+                if deneme < max_deneme:
+                    logger.warning("%s/%s yaniti token limitinde kesildi; siradaki model denenecek.", etiket, model)
+                    print(f"[Uyari] {etiket}/{model} yaniti token limitinde kesildi, siradaki model deneniyor ({deneme}/{max_deneme})...", flush=True)
+                    _saglayici_hata(etiket)
+                    time.sleep(2)
+                    continue
+                logger.warning("Son denemede de yanit token limitinde kesildi; kesik yanit kabul ediliyor.")
             _saglayici_temizle(etiket)
             return icerik
 
@@ -2615,6 +2624,20 @@ def master_cio_agent(state: AgentState):
             logger.warning("[Bas Analist] %d. bolum uretilemedi; atlandi.", bolum["no"])
             basarisiz_bolumler.append(bolum["baslik"])
             continue
+        # Tamamlık denetimi: cok kisa govde veya yarım tablo — 5 Ekim 2026'da
+        # 7. bolum token limitine takilip tablo ortasinda kesilmisti.
+        if len(metin.strip()) < 200:
+            logger.warning("[Bas Analist] %d. bolum cok kisa geldi (%d karakter); atlandi.",
+                           bolum["no"], len(metin.strip()))
+            basarisiz_bolumler.append(bolum["baslik"] + " (cok kisa)")
+            continue
+        if "| Hisse |" in bolum.get("talimat", ""):
+            tablo_satirlari = [s for s in metin.splitlines() if s.strip().startswith("|")]
+            if len(tablo_satirlari) < 4:  # baslik + ayraç + en az 2 pozisyon
+                logger.warning("[Bas Analist] %d. bolum tablosu yarim (%d satir); atlandi.",
+                               bolum["no"], len(tablo_satirlari))
+                basarisiz_bolumler.append(bolum["baslik"] + " (tablo yarim)")
+                continue
         bolum_metinleri.append(f"## {bolum['no']}. {bolum['baslik']}\n\n{metin.strip()}")
 
     if not bolum_metinleri:
