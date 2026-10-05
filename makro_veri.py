@@ -8,6 +8,7 @@ ile burada tanimlanan semaya normalize edilir. Ertesi sabah rapor/analiz,
 from __future__ import annotations
 
 import json
+import logging
 import math
 import os
 from copy import deepcopy
@@ -15,6 +16,8 @@ from datetime import datetime, time, timedelta
 from pathlib import Path
 
 from makro_katalog import GOSTERGE_KOD, KOD_GOSTERGE, PIYASA_KOD, REQUIRED
+
+logger = logging.getLogger("makro-veri")
 
 try:
     from zoneinfo import ZoneInfo
@@ -255,19 +258,37 @@ def load(path=SNAPSHOT_PATH, expected_report_date=None):
     return validate(snapshot, expected_report_date=expected_report_date)
 
 
-def load_for_report(report_date):
+def load_for_report(report_date, max_geri=10):
     """Rapor tarihine ait onceki aksam arsiv kaydini açar.
 
     `data/makro-snapshot.json` en son akşamı tutar. Aynı gün 20:30'dan
     sonra elle calisan bir rapor, yeni snapshot'a kaymasin diye daima
     `data/makro-gecmis/<report_date-1>.json` okunur.
+
+    Beklenen günün kaydı yoksa (örn. hafta sonu akşam snapshot koşusu
+    başarısız olduysa — 3-4 Ekim 2026 vakası) önceki İŞ GÜNÜ(ler)ine geriye
+    doğru taranır ve bulunan en yeni snapshot açılır; böylece bir snapshot
+    kaçsa bile günlük rapor üretimi çökmez (bayat veri uyarı ile kabul edilir).
     """
     try:
         rapor_tarihi = datetime.strptime(str(report_date), "%Y-%m-%d").date()
     except ValueError as exc:
         raise SnapshotError(f"gecersiz rapor tarihi: {report_date!r}") from exc
-    aksam = (rapor_tarihi - timedelta(days=1)).isoformat()
-    return load(HISTORY_DIR / f"{aksam}.json", expected_report_date=report_date)
+    for geri in range(1, max_geri + 1):
+        aksam = rapor_tarihi - timedelta(days=geri)
+        if aksam.weekday() >= 5:
+            continue  # hafta sonu akşam snapshoti yazilmaz; is gunune in
+        yol = HISTORY_DIR / f"{aksam}.json"
+        if not yol.exists():
+            continue
+        if geri > 1:
+            logger.warning(
+                "[Makro] beklenen aksam snapshoti yok (%s); bayat kabul: %s kullanilacak "
+                "(son yazilan %d gun once)", rapor_tarihi - timedelta(days=1), yol, geri)
+        return load(yol)
+    raise SnapshotError(
+        f"{rapor_tarihi} icin hicbir aksam snapshoti bulunamadi "
+        f"(son {max_geri} gun tarandi)")
 
 
 def legacy_data(snapshot):
