@@ -74,6 +74,18 @@ _CUMLE_BASI = re.compile(r"(^|[.!?]\s+|\n)([a-zçğıöşü])")
 # Markdown yapisal satirlari: baslik, liste, tablo, numarali madde, ayraç
 _MD_SATIR = re.compile(r"^\s*(?:#|\||[-*+]\s|\d+[.)]\s|>|---|\*\*)")
 
+# --- Word tarzi yapisal denetimler (deterministik, dusuk yanlis-pozitif) ---
+# Yinelenen kelime: "ve ve", "ise ise" — Word'un klasik "double word" kurali.
+_YINELENI_KELIME = re.compile(r"\b(\w+)(\s+\1)+\b", re.IGNORECASE)
+# Bitisik para birimi: "15TL" -> "15 TL" (USDTRY tek token; desen sayi+bitisik
+# kisaltma aradigindan birlesik kodlara dokunulmaz).
+_BITISIK_BIRIM = re.compile(r"(\d)(TL|USD|EUR|GBP|TRY)\b")
+# "15 %" -> "%15": yalnizca yuzde sonrasi bosluk/noktalama/cumle sonu geldiginde;
+# "5 %3" gibi iki ayri sayi yan yanaysa dokunulmaz (veri bozmasini onler).
+_TERS_YUZDE = re.compile(r"(\d)\s+%(?=\s|[.,;:!?)]|$)")
+# Kisa yazim: "vb" -> "vb."
+_VB_KISA = re.compile(r"\bvb(?=[\s.,;:!?)]|$)")
+
 
 def _buyuk(harf: str) -> str:
     """Turkce dogru buyuk harf: i->I degil İ, ı->I."""
@@ -96,7 +108,7 @@ def imla(metin: str) -> tuple:
             duzeltmeler.append((yanlis, dogru, n))
             metin = yeni
 
-    # 2) noktalama temizligi
+    # 2) noktalama + Word tarzi yapisal duzeltmeler
     temiz = metin
     temiz = _NOKTALAMA_ONCESI.sub(r"\1", temiz)        # "kelime ," -> "kelime,"
     temiz = _NOKTALAMA_SONRASI.sub(r"\1 ", temiz)      # "kelime,kelime" -> ", "
@@ -105,6 +117,24 @@ def imla(metin: str) -> tuple:
     temiz = re.sub(r",{2,}", ",", temiz)               # ",," -> ","
     temiz = re.sub(r"\s+([)\]])", r"\1", temiz)        # "( metin )" -> "(metin)"
     temiz = re.sub(r"([([]) ", r"\1", temiz)
+
+    # Word tarzi: yinelenen kelime ("ve ve" -> "ve"; ilk form korunur)
+    temiz, n = _YINELENI_KELIME.subn(r"\1", temiz)
+    if n:
+        duzeltmeler.append(("yinelenen-kelime", "tekilleştirildi", n))
+    # Word tarzi: bitisik para birimi ("15TL" -> "15 TL")
+    temiz, n = _BITISIK_BIRIM.subn(r"\1 \2", temiz)
+    if n:
+        duzeltmeler.append(("bitişik-birim", "15TL -> 15 TL", n))
+    # Word tarzi: ters yüzde ("15 %" -> "%15"; sinirli kosul, "5 %3" korunur)
+    temiz, n = _TERS_YUZDE.subn(r"%\1", temiz)
+    if n:
+        duzeltmeler.append(("ters-yüzde", "15 % -> %15", n))
+    # kisa yazim: "vb" -> "vb."
+    temiz, n = _VB_KISA.subn("vb.", temiz)
+    if n:
+        duzeltmeler.append(("vb", "vb.", n))
+
     if temiz != metin:
         duzeltmeler.append(("noktalama", "temizlik", 1))
         metin = temiz
@@ -179,6 +209,12 @@ def muglak(metin: str) -> tuple:
     for cumle in cumleler:
         if not cumle.strip():
             continue
+        # Word tarzi: eslesmeyen parantez (acma/kapama sayisi farkli)
+        if cumle.count("(") != cumle.count(")"):
+            uyarilar.append(("parantez dengesi", "açma/kapama sayısı eşit değil", cumle.strip()[:160]))
+        # Word tarzi: cok uzun cumle (okunabilirlik) — 40+ kelime
+        if len(cumle.split()) >= 40:
+            uyarilar.append(("uzun cümle", f"{len(cumle.split())} kelime — bölmeyi düşünün", cumle.strip()[:160]))
         deontik = bool(_DEONTIK.search(cumle))
         for eski, yeni in YUMUSAT:
             if eski not in cumle:
@@ -408,5 +444,31 @@ if __name__ == "__main__":
     y4, ozet = uygula(m4, "test")
     assert ozet["imla"] >= 1 and ozet["yumusatma"] >= 1, ozet
     assert "Borsa İstanbul" in y4 and "büyük olasılıkla" in y4, y4
+
+    # --- Word tarzi yapisal denetimler ---
+    # yinelenen kelime
+    y, _ = imla("Piyasa ve ve teknik görünüm olumlu; ise ise sinyal net.")
+    assert "ve teknik" in y and "ise sinyal" in y, y
+    # bitisik birim
+    y, _ = imla("Hisse 15TL seviyesinde; kur 5USD bazında; portföy 2.3EUR karışık.")
+    assert "15 TL" in y and "5 USD" in y and "2.3 EUR" in y, y
+    # USDTRY birlesik koduna dokunulmaz
+    y, _ = imla("USDTRY kuru 49,14 seviyesinde.")
+    assert "USDTRY" in y, y
+    # ters yüzde: cumle sonu/bosluk -> duzelt; iki ayri sayi -> dokunma
+    y, _ = imla("Getiri 5 % oldu.")
+    assert "%5" in y, y
+    y, _ = imla("5 %3 oranları karşılaştırıldı.")
+    assert "5 %3" in y, f"iki ayri sayi bozuldu: {y}"
+    # vb kisa yazim
+    y, _ = imla("Altın, döviz vb varlıklar izlenir.")
+    assert "vb." in y, y
+    # parantez dengesi uyarisi
+    _, _, u = muglak("Endeks (destek seviyesinde kaldı. Yeni veri geldi.")
+    assert any(k[0] == "parantez dengesi" for k in u), u
+    # uzun cumle uyarisi (40+ kelime)
+    uzun = " ".join(["kelime"] * 45) + "."
+    _, _, u2 = muglak(uzun)
+    assert any(k[0] == "uzun cümle" for k in u2), "uzun cumle uyarisi uretilmedi"
 
     print("editor.py: tum kendini testler gecti.")
