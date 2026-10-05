@@ -102,15 +102,17 @@ _ULKE_FED = re.compile(
     r"\b(?:ABD|Amerika(?:n)?|US|U\.S\.)\b", re.IGNORECASE
 )
 _ULKE_EU = re.compile(
-    r"\b(?:Euro(?:\s?Bölgesi)?|Avrupa|ECB|Eurozone|Euro area)\b",
+    r"\b(?:Euro(?:\s?Bölgesi)|Avrupa|ECB|Eurozone|Euro area)\b",
     re.IGNORECASE,
 )
-# NOT: Bu desene "Bölgede" gibi tek-kelime alternatifleri KONULMAZ; eski
+# NOT 1: Bu desene "Bölgede" gibi tek-kelime alternatifleri KONULMAZ; eski
 # surumdeki "|Bölgede" alternatifi "reel faizlerin pozitif bölgede olması"
 # gibi turkiye cumlelerini Euro baglamina sokup TR enflasyon/faizini EU
 # degeriyle denetleyerek hatali raporun (2 Ekim 2026: "%3,2 enflasyon,
-# %2,65 politika faizi") yayinlanmasina yol acmisti. "Euro Bölgesi" zaten
-# yukaridaki "Euro(?: Bölgesi)?" alternatifiyle kapsaniyor.
+# %2,65 politika faizi") yayinlanmasina yol acmisti.
+# NOT 2: "Euro" TEK BASINA da baglam sayilmaz: "euro bazinda/cinsinden getiri"
+# ifadeleri yaygindir ve TR cumlelerini EU degeriyle denetletip dogru TR
+# degerini EU oraniyla degistirtiyor (dogrulanmis saldiri vektoru, 2026-10-05).
 # Merkez bankasi adlari, karsilastirma yapan cumlede de sahibi gosterir.
 _MERKEZ_FED = re.compile(r"\b(?:Federal Reserve|Fed)\b", re.IGNORECASE)
 _MERKEZ_EU = re.compile(
@@ -279,6 +281,10 @@ _FAIZ_KELIME = re.compile(
 _FAIZ_SAHIP_KELIME = re.compile(
     r"\b(politika faiz[a-zçğıöşü]*|faiz[a-zçğıöşü]*|TCMB|Fed)\b",
     re.IGNORECASE)
+# Politika faizi OLMAYAN faiz turleri: bu adlar yakin oldukca o yuzde
+# politika faiziyle kiyaslanmaz (mevduat faizinin gercek degerini bozmamak icin).
+_FAIZ_TURU = re.compile(
+    r"\b(mevduat|kredi|reel|takas|tabela|gecelik|repo|ihraç)\s+(?:faiz|oran)", re.I)
 # Genel Avrupa ipucu, "Avrupa faizi" gibi yalnizca bolgesel ifadeler icin.
 _ULKE_BAGLAM = re.compile(r"\b(avrupa|euro bölgesi|ECB)\b", re.IGNORECASE)
 
@@ -334,6 +340,14 @@ def faiz_duzelt(metin, oranlar, tolerans=0.005):
                         continue  # faiz kelimesiyle arada iliski yok
                     if fb is not None and fb <= ff:
                         continue  # bu yuzde faiz beklentisi/hedefi
+                    # Bileşik faiz türü (mevduat/kredi/reel faizi...) politika
+                    # faizi değildir: sayının solundaki yakın bölümde tür adı
+                    # varsa bu yüzde politika faiziyle denetlenmez — aksi halde
+                    # DOĞRU mevduat faizi (%43,8) politika faiziyle (%37)
+                    # değiştiriliyordu (dogrulanmis saldiri vektoru, 2026-10-05).
+                    sol = cumle[max(0, m.start() - 30):m.start()]
+                    if _FAIZ_TURU.search(sol):
+                        continue
                     aday = m
                     break
                 if aday is not None:
@@ -675,6 +689,14 @@ _SEVIYE_SAG = re.compile(
 )
 
 
+# Yabanci endeks adi gecen cumleler BIST seviyesiyle denetlenmez; aksi halde
+# "DXY endeksi 102.500 seviyesine cikti" ifadesindeki 102.500, XU030 degeriyle
+# (15.327) degistiriliyordu (dogrulanmis saldiri vektoru, 2026-10-05).
+_YABANCI_ENDEKS = re.compile(
+    r"\b(DXY|S\s*&\s*P|SP\s*500|Nasdaq|Dow(?:\s+Jones)?|DAX|FTSE|Nikkei|"
+    r"Euro Stoxx|CAC\s*40|MSCI|Brent|Gold|Gold Spot|XAU|Alt[ıi]n)", re.I)
+
+
 def _sayiya(yazi):
     """'16.372,83' -> 16372.83 ; '4.200' -> 4200.0"""
     return float(yazi.replace(".", "").replace(",", "."))
@@ -750,6 +772,9 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15,
         yeni_parcalar = []
         for cumle in parcalar:
             if _ENDEKS_BAGLAM.search(cumle) and _SEVIYE_BAGLAM.search(cumle):
+                if _YABANCI_ENDEKS.search(cumle):
+                    yeni_parcalar.append(cumle)
+                    continue
                 etiket100 = re.search(r"(BIST\s*100|XU0?100)", cumle, re.I)
                 etiket30 = re.search(r"(BIST\s*30|XU0?30)", cumle, re.I)
                 if etiket100 and etiket30:
@@ -1023,5 +1048,25 @@ if __name__ == "__main__":
         "BIST 100 (16.450) ile BIST 30 (15.327) birlikte yukseldi.",
         15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
     assert sk[1] == [], "karsilastirma cumlesi bozuldu"
+
+    # --- Kelime-oyunu saldiri vektorleri (2026-10-05, dogrulanmis) ---
+    # 1) "euro bazindaki" cumleyi Euro baglamina sokup TR enflasyonunu EU
+    #    degeriyle degistirtiyordu.
+    s1 = metin_dogrula(
+        "Endeksin euro bazındaki performansı %0,48 oldu; yıllık enflasyon %28,4 seviyesinde.",
+        {}, 31.51, enflasyon_oranlari=CANLI)
+    assert "%31,51" in s1["metin"] and "%3,8" not in s1["metin"], \
+        f"euro-bazindaki saldirisi acik: {s1['metin']}"
+    # 2) Gercek mevduat faizi politika faiziyle degistiriliyordu.
+    sf, sdf = faiz_duzelt(
+        "Mevduat faizi %43,8 seviyesindeyken politika faizi sabit kaldi.", CANLI_FAIZ)
+    assert "%43,8" in sf and sdf == [], f"mevduat faizi bozuldu: {sf}"
+    sp, spd = faiz_duzelt("TCMB politika faizi %2,65'da sabit tutulmakta.", CANLI_FAIZ)
+    assert "%37" in sp and spd, "gercek politika faizi hatasi gorunmez oldu!"
+    # 3) Yabanci endeks seviyesi BIST degeriyle degistiriliyordu.
+    sy = endeks_seviye_duzelt(
+        "DXY endeksi 102.500 seviyesine cikti; BIST uygulamasi izlendi.",
+        15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
+    assert sy[1] == [] and "102.500" in sy[0], f"DXY bozuldu: {sy[0]}"
 
     print("dogrulama.py: tum kendini testler gecti.")
