@@ -7915,35 +7915,11 @@ if __name__ == "__main__":
     except Exception:
         logger.exception("[Borsapy] sayfa uretilemedi; diger sayfalar etkilenmez.")
 
-    # Derin analiz: kullanicinin Z.ai anahtariyla uzun gunluk rapor;
-    # anahtar yoksa atlanir, diger uretimleri etkilemez.
-    try:
-        derin = derin_analiz_yap(result, teknik_satirlar, borsapy_satirlar)
-        if derin:
-            # Guncel sayfa (kokte) + tarihsiz ARŞİV kopyası (reports/ altında;
-            # sitemap'e girer ve ana sayfa arşivinde listelenir).
-            sayfa = rapor_sayfasi(
-                markdown_to_html(derin), date_str,
-                baslik="Derin Analiz",
-                alt_baslik="BIST 30 &bull; Yapay zeka destekli derinlemesine analiz",
-                kok_yol="derin-analiz.html",
-                aciklama="BIST 30'un günlük derinlemesine analizi: sektör değerlendirmesi, EMA ve Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları.",
-            )
-            arsiv_yolu = f"reports/{date_str}-derin-analiz.html"
-            arsiv_sayfasi = rapor_sayfasi(
-                markdown_to_html(derin), date_str,
-                baslik="Derin Analiz",
-                alt_baslik="BIST 30 &bull; Yapay zeka destekli derinlemesine analiz",
-                kok_yol=arsiv_yolu,
-                aciklama=f"{date_str} tarihli BIST 30 derin analiz raporu.",
-            )
-            with open("derin-analiz.html", "w", encoding="utf-8") as f:
-                f.write(sayfa)
-            with open(arsiv_yolu, "w", encoding="utf-8") as f:
-                f.write(arsiv_sayfasi)
-            print(f"[Derin Analiz] sayfa uretildi (+ arsiv: {arsiv_yolu}).", flush=True)
-    except Exception:
-        logger.exception("[Derin Analiz] sayfa uretilemedi; diger sayfalar etkilenmez.")
+    # Derin analiz BURADA uretilmiyor: ayri workflow'ta (derin-analiz.yml,
+    # oglen 12:00 TSI) derin_analiz.py ile uretiliyor — gunluk botun 1,5
+    # saatlik LLM bekleme butcesini derin analiz buyutuyordu (5 Ekim 2026
+    # karari). Borsapy sinyalleri asagida borsapy-analiz.html icin toplanmaya
+    # devam eder.
 
     p = load_portfolio()
     # `raporlar` 7062'de, bugunku rapor(ler) reports/ altina YAZILMADAN once

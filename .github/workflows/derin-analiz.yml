@@ -1,6 +1,11 @@
 name: Derin Analiz (Z.ai GLM)
 on:
+  schedule:
+    - cron: '0 9 * * *'   # 12:00 Turkiye saati — oglen derin analizi (piyasa acik; gun ici veriyle yazar)
   workflow_dispatch:
+concurrency:
+  group: derin-analiz
+  cancel-in-progress: false
 permissions:
   contents: write
 jobs:
