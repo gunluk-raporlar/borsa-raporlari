@@ -86,6 +86,23 @@ _TERS_YUZDE = re.compile(r"(\d)\s+%(?=\s|[.,;:!?)]|$)")
 # Kisa yazim: "vb" -> "vb."
 _VB_KISA = re.compile(r"\bvb(?=[\s.,;:!?)]|$)")
 
+# --- Kodlama/karakter sagligi (Gemini incelemesi sonrasi ekleme) ---
+# Bozuk kodlama kalintilari (mojibake): "güìlendiği", "\fcsteyse" gibi —
+# i18n-cache temizliginde gercek vakalar gorduk. Otomatik duzeltme yerine
+# UYARI uretilir (hangi harfin oldugu bagimli); literal escape kalintilari
+# ise guvenle silinir.
+_MOJIBAKE_RE = re.compile(
+    r"ì|\\fc|\\u00[0-9a-f]{2}|\\x[0-9a-f]{2}"
+    r"|[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", re.I)
+# Görünmez karakterler: zero-width, soft hyphen, BOM — sessizce silinir;
+# NBSP normal bosluk yapilir (gorunmez fark, metni kirletmesin).
+_GORUNMEZ_RE = re.compile(r"[\u200b\u200c\u200d\u2060\ufeff\u00ad]")
+_NBSP_RE = re.compile(r"\u00a0")
+# Tırnak standardizasyonu: curly cift/tek tirnaklar duz forma iner. Türkçe
+# ek apostrofu (Türkiye'de) duz ' oldugundan bu donusum guvenlidir.
+_TIRNAK_CIFT = re.compile(r"[\u201c\u201d\u201e\u201f]")
+_TIRNAK_TEK = re.compile(r"[\u2018\u2019\u201a\u201b]")
+
 
 def _buyuk(harf: str) -> str:
     """Turkce dogru buyuk harf: i->I degil İ, ı->I."""
@@ -134,6 +151,18 @@ def imla(metin: str) -> tuple:
     temiz, n = _VB_KISA.subn("vb.", temiz)
     if n:
         duzeltmeler.append(("vb", "vb.", n))
+
+    # kodlama sagligi: gorunmez karakterler silinir, NBSP normal bosluk olur,
+    # curly tirnaklar duzlesir (gorunum degismeden metin standartlasir)
+    temiz = _GORUNMEZ_RE.sub("", temiz)
+    temiz = _NBSP_RE.sub(" ", temiz)
+    temiz = _TIRNAK_CIFT.sub('"', temiz)
+    temiz = _TIRNAK_TEK.sub("'", temiz)
+
+    # mojibake (bozuk kodlama) kalintisi: otomatik harita riskli, UYARI uretilir
+    # ("güìlendiği", "\fcsteyse" gibi gercek vakalar i18n cache'inde goruldu)
+    for m in _MOJIBAKE_RE.finditer(temiz):
+        duzeltmeler.append(("mojibake", f"bozuk karakter: {m.group(0)!r}", 1))
 
     if temiz != metin:
         duzeltmeler.append(("noktalama", "temizlik", 1))
@@ -470,5 +499,19 @@ if __name__ == "__main__":
     uzun = " ".join(["kelime"] * 45) + "."
     _, _, u2 = muglak(uzun)
     assert any(k[0] == "uzun cümle" for k in u2), "uzun cumle uyarisi uretilmedi"
+
+    # --- kodlama sagligi (mojibake / gorunmez / tirnak) ---
+    # NBSP normallesir, zero-width silinir
+    y, _ = imla("Endeks\u00a015.327\u200b seviyesinde.")
+    assert "\u00a0" not in y and "\u200b" not in y and "15.327" in y, repr(y)
+    # curly tirnaklar duzlesir; Turkce apostrof bozulmaz
+    y, _ = imla("\u201cGüçlü sinyal\u201d dedi; Türkiye\u2019de işlem gördü.")
+    assert '"Güçlü sinyal"' in y and "Türkiye'de" in y, repr(y)
+    # mojibake kalintisi uyarı uretir (otomatik harita yok)
+    y, dz = imla("Yükselen ADX trendin güìlendiğini gösterir.")
+    assert any(k[0] == "mojibake" for k in dz), dz
+    # literal escape kalintisi da yakalanir
+    y, dz = imla("ADX yön söylemez. +DI üstteyse alıcı baskısı hakimdir \\fc")
+    assert any(k[0] == "mojibake" for k in dz), dz
 
     print("editor.py: tum kendini testler gecti.")
