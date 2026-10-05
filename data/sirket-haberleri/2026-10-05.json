@@ -8,6 +8,13 @@
   },
   {
     "kod": "AEFES",
+    "baslik": "Anadolu Efes, Bandırma deplasmanında hata yapmadı!",
+    "kaynak": "Cumhuriyet",
+    "link": "https://news.google.com/rss/articles/CBMilgFBVV95cUxQMjlpaHpvZnEzSnh1YWRFcXg4UTVva1c4b1F5TDAyRWlNTndoTUFPd0dndVNPVmlPMU5sT21YVjNpVlQxRW82TklGUkpkZ1NIaXVEQk5oNUZOQTdDZXdYQl9sdVFYYkF0TVFnZm1IZWwtZ2lZQXU4RzhjbndKS09WNlpVNmZKcU82MlMtcmZFeVp4cWp0YUE?oc=5",
+    "ts": 1791136800
+  },
+  {
+    "kod": "AEFES",
     "baslik": "Kızılyıldız–Anadolu Efes: 77-72 | Mike James sakatlandı",
     "kaynak": "A Haber",
     "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxOMUhSVnVwUmZNUjNFUG1MUTlYVmwtT2puYmd1YnRDSDhJdG93MDk0UUZhazFNOEQxdWRyT3lPMHpPZEsyR0FTZ2ZZd3IzOFZQS1pZdjVGVDVZNmpZZlZCOU9SNTltUDNWOFhJMFZRak9mWU5DcVBrZF9wNWc4a0pYT0wwZ19PdVNQWmlCSERscFgtNUFiS1pNZF9WVWdYcFd4OHZkdDNiZVp4dmVmUW5xbg?oc=5",
@@ -19,13 +26,6 @@
     "kaynak": "Eurohoops",
     "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOenVEQkVTZXZWVGlxM2VGeHNFV2FxNEpmbFNnVlhqRUwyaWcyclY5RmQ2ZnNFdU1BT1ZLRDk3bEN1TXB2dGJVV1gtS2gyaVgzV2ZBSDlGRnU3dWlTeEdUcXBtTXlSbWJ5dkUzVlZVa3h1RF9WaC03bUlXcU5HM0hmaGhhYnRHNTVmZjNBSVVNRVNrVThNeWgzU3p1UWFlM3FJQUdIMTdqdw?oc=5",
     "ts": 1791015300
-  },
-  {
-    "kod": "AEFES",
-    "baslik": "Anadolu Efes, Bandırma deplasmanında hata yapmadı!",
-    "kaynak": "Cumhuriyet",
-    "link": "https://news.google.com/rss/articles/CBMilgFBVV95cUxQMjlpaHpvZnEzSnh1YWRFcXg4UTVva1c4b1F5TDAyRWlNTndoTUFPd0dndVNPVmlPMU5sT21YVjNpVlQxRW82TklGUkpkZ1NIaXVEQk5oNUZOQTdDZXdYQl9sdVFYYkF0TVFnZm1IZWwtZ2lZQXU4RzhjbndKS09WNlpVNmZKcU82MlMtcmZFeVp4cWp0YUE?oc=5",
-    "ts": 1791136800
   },
   {
     "kod": "AEFES",
@@ -64,15 +64,8 @@
   },
   {
     "kod": "AKBNK",
-    "baslik": "Caz Denilince Akla Gelenler: Akbank Caz Festivali 2026",
-    "kaynak": "Oggusto",
-    "link": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBmMnp3b19Id1ZRNGxzNUJQdmdQa3o1MXJnMnZpZ09oV05paXhyYXdPdDN2NmtGMkRyVG50UXhudTZDQUU5eVhiblFmak91VGJDZUs2WUdXMTk3Ty1XQ3hQWnk3NnhtMjZjME5HMTQ0enV6MjQ?oc=5",
-    "ts": 1790585146
-  },
-  {
-    "kod": "AKBNK",
     "baslik": "Akbank için hedef fiyat açıklandı: 90 TL’yi aşabilir",
-    "kaynak": "Paratic Haber",
+    "kaynak": "paratic.com",
     "link": "https://news.google.com/rss/articles/CBMie0FVX3lxTE10UGZ0S3E2VjBpNlpmMjJIa1J0eGJLLUdCV3FnOHNqV3o0SnhNdUZiS2ZaeU90UjIycTVmblB3MGthNlVfcGNkS1c5cFBReUpwaEFEU0hqT092THVEay1rZ1BvX2I0dlVDQlNQUHE2YXpHWHZDRDlqdF95SQ?oc=5",
     "ts": 1790793315
   },
@@ -84,11 +77,11 @@
     "ts": 1790609196
   },
   {
-    "kod": "ASELS",
-    "baslik": "Aselsan'dan yeni iş sözleşmesi",
-    "kaynak": "Bloomberght",
-    "link": "https://news.google.com/rss/articles/CBMidEFVX3lxTFBlZmdZSGtmRWtnNmxxTGhIbGN0ZzRXUGhONERZQV90N3JiNUNmQ05sbE56Sk14TWZ6MG1sQVBLYTJYckpBeXZJN2M0LXhFV2NFMF9MZXh2OHR5MW1rMzZndmk5UnVtMWpJazZqb0Rmd2JrN0Mz?oc=5",
-    "ts": 1790837146
+    "kod": "AKBNK",
+    "baslik": "KAP *** AKBANK T.A.Ş. *** AKBNK *** Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
+    "kaynak": "GZT",
+    "link": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxQUWFicC1VbzA4V043U2tFWDkwUDQ5bnU5aTE3aWxZUlM1bjlRdGhaNWlma3ZUUkR3R0FnR2VlVGhET2dMd2JrV0xNNzlITGpuT2txZlZHVzRza1UtTTNzb1RVdUFVd05yaUtsMjhXMFUtOGlxa2xFYU9DZGFfbUZWQ0QzTEF3cEpXTUEtakF4TFgzY09IV1J6STBDd0RtWVM2XzlsX1Z1ZVZLR3BoVXpQWEFoQnpHSE5sbjUwQ3pIbHoxa2lYTTg2V2V2WXFkYnY3aldKNHpldjRaYjhzNV9n?oc=5",
+    "ts": 1790957880
   },
   {
     "kod": "ASELS",
@@ -120,6 +113,13 @@
   },
   {
     "kod": "ASELS",
+    "baslik": "Aselsan 2,46 milyar euroluk sözleşme imzaladı",
+    "kaynak": "Bloomberght",
+    "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQR1g1cDRfcF9jVHY4dUpYWks5QWhKbERrR1lBcGxwUERHSE5OeEtGMnU5THhiZXhjZUNfWllJWVZnSkhLVzZhV0ozT25yYlRxRldPNmc4U0xKWEhlNTBBalIyYmlXTmVVeTdwSXRiNURtTzNrRF8xSmhPd0ZveFhBMFQ5XzhVRDNJ?oc=5",
+    "ts": 1791181810
+  },
+  {
+    "kod": "ASELS",
     "baslik": "Yeni Yerli ve Milli Akıllı Telefon Geliyor: Aselsan ve Türk Telekom Üretecek!",
     "kaynak": "Webtekno",
     "link": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNY1Y5ckM2dlBreUNOaEdMWHFGOEJHTEVkMjJjbE5WblBWbUpGc1k2TVpNZXJub0lGRUpHcEEtSXVKY0s1eUM1Vk5JNE9aU0luNHdCZ3RuVXNlcWZzUkdYX1lBSFVoR29JMDRCR1ZjSHFlUXdoenVJSTUwNE1FUVB4SnJjSmJQams?oc=5",
@@ -142,7 +142,7 @@
   {
     "kod": "ASTOR",
     "baslik": "Astor Enerji açıkladı: Şirketin tasfiye edilen 3 fonda bulunan yatırımı belli oldu",
-    "kaynak": "cnbce.com",
+    "kaynak": "CNBC-e",
     "link": "https://news.google.com/rss/articles/CBMitwFBVV95cUxOVFlBSXA5VE5HWHRzdmRNY0kxYXF1TW9FTGRqc3h0blZLbHh0dW5wbXdMNEEyeTJub1RyNVBoVHdhU21lZUpPZ3RSZkNnNVVXWlVoVVg5WmNpd2E2WG5kOGQ3OGt5RkJHLTlkaEFKM0t2d3pQOTNKRTZKZ3N6RGhCdXBZUmUtbXh3bmhHWHFwbEw2b0tJUnNadkRjSmtuQjVsNDVxdDZXUzJveXFrM01Ud1FoMElpUms?oc=5",
     "ts": 1790598420
   },
@@ -205,7 +205,7 @@
   {
     "kod": "DSTKF",
     "baslik": "Destek Finans Faktoring’in AA- kredi notu askıya alındı",
-    "kaynak": "Paratic Haber",
+    "kaynak": "paratic.com",
     "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE5VYmp1NlhPY0g2RzJPMUMwVHFxOUNjdFpoeUl5S09aQkZ0cmRmV2RlVmluSVVjU2hHRUx0a01sTDdZVkJqaFFfeGpfVTY1M2wzY0pQS0FZRG9vRE9Ob2ZDaUdFcVFwUE1lQ0U1RzU4dW8ycjhFTlEzZDdCRzhtRWc?oc=5",
     "ts": 1790674373
   },
@@ -233,7 +233,7 @@
   {
     "kod": "EKGYO",
     "baslik": "Emlak Konut’tan 6,76 milyar TL’lik taşınmaz alımı",
-    "kaynak": "Paratic Haber",
+    "kaynak": "paratic.com",
     "link": "https://news.google.com/rss/articles/CBMid0FVX3lxTE9vVnF2MlhfRVZMUDQ0eWRBc2s3cjRuWm13UkJ2Znd6MFlPUWRYMXdJQnRDLThZUmZ1b1V1bGlNMkRNY0U3VnJSNGswLUlBMnhFdDJGaFdtVFBOQ2Y5QV9BRmNCc3F3U0R4Y2k1M0FzLVh0QVVHQ2M0?oc=5",
     "ts": 1791020540
   },
@@ -268,7 +268,7 @@
   {
     "kod": "EREGL",
     "baslik": "Erdemir TEKNOFEST Güneydoğu'da malzemenin üretim yolculuğunu tanıttı",
-    "kaynak": "Aksiyon.com.TR",
+    "kaynak": "aksiyon.com.tr",
     "link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxNYWxaMHNMNDV6cHJPbGZhdTl3NTZXNko5bmxUMk1Za3gwMFpHc2dsVGltY2JVcTB0Z2tCd0ozS3czZ25EWHh2RExWMjZDX2ZWdEpTNEdjdFdIQmtDamtfRnVDMlU5dmJPVzRzR2dGWmRWWkN2cTJwWVdOeThyUE1MbmJtQllJb2JiX2E4bWlfN1VfSGRaMWpsQVRvcllSMVVaMEo0T9IBqgFBVV95cUxOV05IZWc5dTdNdS1hMlNjRUJObW84Wm13SDI0LThzRnlManY1bGEyTVZIcFRlaDJ2cTFzbGpzdHBTWkxDT21uSmdJN2tqdHY2NFVJWXB2aDNqZTdKVnJxdEJUMW5DTUYyR2NPU3VlRGlWZ1lzbmsxQ05HVEJ6WmI1OHhjOGp5a3dRb2IxRlhQbHZEY0pTM3otM0lWMUZwbTBfNTVPY3ZrSWF0QQ?oc=5",
     "ts": 1791147116
   },
@@ -282,7 +282,7 @@
   {
     "kod": "EREGL",
     "baslik": "erdemir, ileri malzemeler yarışmasıyla genç araştırmacıları üretime taşıyor",
-    "kaynak": "Aksiyon.com.TR",
+    "kaynak": "aksiyon.com.tr",
     "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPNEpZT2RWcDlwLUlpRDh5dDFVbE9CUjNRTDB4RmNuUzJoakgxN1JGVlBaczBnVkl0cEhwYXBuc1Uxb1RVQnBZT1dXOVZmMVEtM2dPcWZFZ09DZHoxSlo3dmJXYmhtYlZrUnNZNkt0d1VUSkZGQ1Bmck1oeXRneUZTSDFUNGx2VWN3eWd4cHVZMjMxaGxicHFENkl0UWhEbUl6c2x6bm9qWloxQmk50gGyAUFVX3lxTFBtUElGWTNSUkFyMHUyTmQzWVZ1TFNlZW5oemgwVTgyNU1nVVdIaEpiYUloMXpEbmRFSmFwZmNQRHE0UERZdk9rOTdYQThSeEQ0QWYtZ0RNTGlMamNIS1NJLWU4X0VfTUlpQ0JjTUpuY0ZLTEtZYWxJVXowZFp1VTJMNk9tckU5VDZNQVJ1aUhjWWFrekQxcTVLUDdUOGQ1Q01nZGFfbjhvVTQ0aHhyTEhjVFE?oc=5",
     "ts": 1790845849
   },
@@ -310,7 +310,7 @@
   {
     "kod": "FROTO",
     "baslik": "DOAS için tavsiye yükseldi, FROTO ve TOASO’da görünüm korundu",
-    "kaynak": "Paratic Haber",
+    "kaynak": "paratic.com",
     "link": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNLTBLalRlWFlXM2FTbGtMRmdfemJnZE5aT2l1WklaYzZXeUhYaVlhYjZfakYxSXdwd3pVREwzTUEyN2hONEJTYnNJRUd5TEh6V1dkZTV3VlRXX2g5WE5hbHBMTlFWc0pKSDBsWlNRQkJpbWVIeXI5Rlp6b1JiTkpuX1hNTkliLWM?oc=5",
     "ts": 1790840965
   },
@@ -330,24 +330,17 @@
   },
   {
     "kod": "FROTO",
-    "baslik": "İki araç arasında sıkıştı: Ford Otosan’da korkutan iş kazası!",
-    "kaynak": "Ses Kocaeli Gazetesi",
-    "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOM1VCb3czcXBmZWhZQkNISERSYlYtS21jU1JLb0NLMXlLYld4eTQ2WTdmeENQVjRHdWdKR0dMNS1DRGM2SGRxTFBRcWtQNlk4X19QMW9IY3RLemZON3lWT29wbXRtTFJUazI0MDlQYVNNY2hCb05WWGgyclNMdjJrX01PWlVQczB1WTdMcHdGSlFYOWlRRVp0OUZiVzR2X2kwZkFIeEdHMNIBpwFBVV95cUxOM1VCb3czcXBmZWhZQkNISERSYlYtS21jU1JLb0NLMXlLYld4eTQ2WTdmeENQVjRHdWdKR0dMNS1DRGM2SGRxTFBRcWtQNlk4X19QMW9IY3RLemZON3lWT29wbXRtTFJUazI0MDlQYVNNY2hCb05WWGgyclNMdjJrX01PWlVQczB1WTdMcHdGSlFYOWlRRVp0OUZiVzR2X2kwZkFIeEdHMA?oc=5",
-    "ts": 1790944020
+    "baslik": "Ford Otosan’da korkutan iş kazası!",
+    "kaynak": "Söz Sakarya",
+    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9ZRnItMlpXR1dxQnNBTVJDZktHcXhxUjZveHVLeTBtUW1nSU1UeXVvUW4zbnFZWDVhTmItUm81UjRjMU95blFoR19IVnJEVlhyYlJ4elJ5NUtTcFZtNjZoREdxbndqOTZxMk9RbEhzSTB1QkFtQV9OZUVn0gF_QVVfeXFMT0VmeU5wRzNfVWNNalpvRU0wVDZVQmJ6UXA3XzlSZldoRVIxUmUwUGVrb2RQbl9yUGdrSEZuaXoyX2s1Y3ROUTFxcjBPdjNOdkRiNnlrN3A3S3lsT0ZRcnN0V1hUY2xKWFFjcFJCeUZPbVJ4X0RyMEJQenpiRlRRVQ?oc=5",
+    "ts": 1791007140
   },
   {
     "kod": "GARAN",
-    "baslik": "Garanti BBVA Leasing yeni kaynak sağladı",
+    "baslik": "Garanti BBVA 125 milyon dolarlık yeşil finansman sağladı",
     "kaynak": "Yeşil Ekonomi",
-    "link": "https://news.google.com/rss/articles/CBMidEFVX3lxTE4xMlRhM1FubE1rRWhtbnMzcERqZGowR19RMDF3STQ5N044RjZsNUNsSkdSbGVGM1pxMjRSRnM5cEVlZ01LblphbE5DYUQ1NmxZZTRCV0xIUjV4NDFtck4tWmhjN3FnWXI3RVpzYUdieE1CQmNw?oc=5",
-    "ts": 1790846031
-  },
-  {
-    "kod": "GARAN",
-    "baslik": "Garanti BBVA’dan 125 milyon dolarlık tahvil ihracı",
-    "kaynak": "Bloomberght",
-    "link": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQYWUzNHNONG5OcEUxb2p2OExyRWV6alBIUm0tS2ZFV0JwcXp0LWVab1dabFBHeWp2Y3E3aFFHWnFJc294M29FNmUtOHBaRHV1RDQzR2RfbFo2MlpKckk2SWYyTXpqbGRsaWJzZkpCYUJjUHNCQnJlTm9wdGNnZ2JaRnhlVy03Vk9GMWdQS0FWQ1NiWnN2Zzh1Y0c5U3J6cjVBNS1j?oc=5",
-    "ts": 1790585884
+    "link": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQQktqak9oOXdYYjlUQzFyRXk3dmJqTkFVcmN6TEpJV3VVOXRTMTAzZjhtWWhQWDY4RkNqem9XYXEtMzF2by13cklQSlFNZEJQQzVlSTZoNkdnQVQtMUJBZkhEUHdKNnQxX2pndTBuSEdmSXc5SDNEMUM5OGUzaTNhbzFHVzljOGlfbXc?oc=5",
+    "ts": 1790688256
   },
   {
     "kod": "GARAN",
@@ -378,9 +371,16 @@
     "ts": 1790694269
   },
   {
+    "kod": "GARAN",
+    "baslik": "Garanti BBVA, 125 milyon dolarlık sürdürülebilir sermaye benzeri tahvil ihracını tamamladı",
+    "kaynak": "Para Analiz",
+    "link": "https://news.google.com/rss/articles/CBMitwFBVV95cUxOcGNiNnZ2NC01blQyVHJkZldJcGIxeWlrQWhhSnV6VjRDLXRyRnRmckpoNGFGMTdUS2lNTWFkRTM5aEYtYlB0SXNzSnZhTVliTHJ0eHpPQ2ZyQ0s5ZHEzSVBsMlZ3cFdQbEtMNUFGaC10Q3Frd296RmVTUDROZ3ZlOHpBUmRjTFhQeVFYdDliTWE0WmtuNHZhbjVsZHliaDYtOV8xVG1VZGFFd25ibDNTMU96S080cGs?oc=5",
+    "ts": 1790628627
+  },
+  {
     "kod": "GUBRF",
     "baslik": "Gübretaş Maden’in kâr dağıtım tarihi belli oldu",
-    "kaynak": "Paratic Haber",
+    "kaynak": "paratic.com",
     "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9sSFZ4ZTFRcHYtMTNhVGZFbVN5RW1QUHNJb3Jpb20zSXE3MThDNl9QRlVoWmhid05rYllpMElJcXFZWlJ2Y2gzUU8yaUp1QVYzWGtxMUR2S09zNGZjajZYWVExa25DWEFCWm95WjMyOVBxMThucUE?oc=5",
     "ts": 1790695766
   },
@@ -414,17 +414,10 @@
   },
   {
     "kod": "GUBRF",
-    "baslik": "KAP *** BORSA İSTANBUL BISTECH DEVRE KESİCİ UYGULAMASI *** GUBRF *** Pay Bazında Devre Kesici Bildirimi",
-    "kaynak": "GZT",
-    "link": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxQM0ZOZlNFdVR0dDJ1ZjJuLVBvMVVEMmJ1MVRobTllVnZDR0Q3WmhpSTVpdkYyRkVUY3hBTnVmd0hNMXQwWGpqbjc1VHI3NE5tTzkzOWtFODhOb3pHNWViSnExTWs5T0psNEFieWNaSXZJTFJ1MVdDQWdPQ09zRHBmMkJVRmRSM290UWtfUkRYeC02d0x5a3V1TTc2eFdYSkdndVdDTGdaaVlqZFBHa3RxTmNxdTM0amRvRHFrckVnYnVRMHNFeXNYbVNMRGFoYVZMRUI1bi1VMkc?oc=5",
-    "ts": 1790691337
-  },
-  {
-    "kod": "ISCTR",
-    "baslik": "Bireysel Emeklilik Hesabı Açtıran SGK emeklilerine MaxiPuan fırsatı!",
-    "kaynak": "İş Bankası",
-    "link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQTEJyakNIdmRBT2h6V0pRX3g4OGRVcVhkZnhuMzRZQTdsN3J5QTQ4OHhmbUNRYl94Y0RhUGlaSGd4MGI2bTBGNHBHRTlSRThsUV8waVo3cGw0ZGhvbDhnXzM1SnZ5WFc2bENtVngxTjFaSmt0U3EtXzJQZ3MxWG5oOTB3dU5xOGM1OVk2OXRZVzhOYUdUSGJKa1BNVWswSnUwZmlacmRPN00?oc=5",
-    "ts": 1790770256
+    "baslik": "GÜBRETAŞ olağanüstü genel kurulu, yoğun yatırımcı katılımıyla tamamlandı",
+    "kaynak": "Para Analiz",
+    "link": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPeFplN3dRb2tocXJUQTVVemxxWkdDWk5ZbmFrMTJ2ZjdkT1k1RzJWYkphSlYyM29Cczlaa19taUFRX0hRZ1Y4OE5pYldOUG9vTjlXN2Utd2JodTIyU3hDZHpaczY0elA0bkZzNW5xZ2w4RmhHeFBKZU5wTFh0bFY0TVVMUXdQd1piMThWZjhIUzk5di1BbjhfX2s5THZZdDNZekZQMk1B?oc=5",
+    "ts": 1790751600
   },
   {
     "kod": "ISCTR",
@@ -432,13 +425,6 @@
     "kaynak": "Uzmanpara",
     "link": "https://news.google.com/rss/articles/CBMiigJBVV95cUxQeDVtcmdwS3RlX1Y0V0tReDZzR01LM2sxcnItVlBnZk1JTVVncmhRU2dCYWQxa0xxWkUxb1B0NGlWSnVBZHVUYms4dkNIcmllUzVUV1d3TDlWVDdEczhQNzR1LTRlOFNIMWNvUXZhWWtteHdqMmR1cXQyOGJQNWdVSHBONUEyTXhWVG5reF94b0hVM2N5dUZsMUtKU213SGkzcWRsRW91ZTRsZnFkNTBNMjRVak5UeW1UV0pqMFkzOWRDY09MLWVMRnhlM0ZXVEpQVEFpVmNNaTdIWFpqWmVnYVlVUTVWZnlLMGZrNHBKM0R5RDloV3g4Qnc1a0YxemNZY0h5TlFnX3M2UQ?oc=5",
     "ts": 1790828223
-  },
-  {
-    "kod": "ISCTR",
-    "baslik": "İŞ BANKASI EMEKLİ PROMOSYONU EKİM 2026: 25 bin TL’ye varan promosyon! İş Bankası ne kadar veriyor?",
-    "kaynak": "Gazete Vatan",
-    "link": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxPTVhBZjFsVWc4MjVQM01PVkVIQ3hOekJMaUlaTmUxUWZHdUgxeFN0LXE1M09xZHo0QXBpMVNTaGx1RkxDSHk1TDlzZjljSGJDUHJZUGdlZlB1YWI3N2RNMG1VUVhtSWtFQ1JsQUFaWmlGdHBnWWFKVVIwaHBqQmpKMS1NbVJHTDB4aVhMWlZuZjFqLXZmUjdkaEJ1RWhURkVlM1E2MEJBcEt4QkJIRmlqR2hXaVItcXpIWmVsX19tQ2g4cE9TcGRDQmhnUlItWXRPdnhv?oc=5",
-    "ts": 1790844120
   },
   {
     "kod": "ISCTR",
@@ -456,10 +442,24 @@
   },
   {
     "kod": "ISCTR",
+    "baslik": "İŞ BANKASI EMEKLİ PROMOSYONU EKİM 2026: 25 bin TL’ye varan promosyon! İş Bankası ne kadar veriyor?",
+    "kaynak": "Gazete Vatan",
+    "link": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxPTVhBZjFsVWc4MjVQM01PVkVIQ3hOekJMaUlaTmUxUWZHdUgxeFN0LXE1M09xZHo0QXBpMVNTaGx1RkxDSHk1TDlzZjljSGJDUHJZUGdlZlB1YWI3N2RNMG1VUVhtSWtFQ1JsQUFaWmlGdHBnWWFKVVIwaHBqQmpKMS1NbVJHTDB4aVhMWlZuZjFqLXZmUjdkaEJ1RWhURkVlM1E2MEJBcEt4QkJIRmlqR2hXaVItcXpIWmVsX19tQ2g4cE9TcGRDQmhnUlItWXRPdnhv?oc=5",
+    "ts": 1790844120
+  },
+  {
+    "kod": "ISCTR",
     "baslik": "İş Bankası Emekli Promosyonu 2026: Maaşa Göre Ne Kadar Ödeniyor, Başvuru Nasıl Yapılır?",
     "kaynak": "TeknoTalk",
     "link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPeTJfR1UzTTZ2MGNWaFFhQ21NdkY5T1ZJQmJXdG1LVEpkdXY2dzdHeHhLQ1NySEIzb25hX21meUFjQTlwX3l4dkVJZVhTTW9yTEhjUnNKM0dMQjVJV0xyN0NPSHVOMTZZN0ZPaXhQRUQ0bVIxblBsQng3TDBVbmFWNDlnWXlyMmJyY0FvQUZDZnRfbTBUaVpQZzNDXzIyNEw5QmxMVG9uUTQzRDc3N0tBdkdid1NpMThHWmc?oc=5",
     "ts": 1790787623
+  },
+  {
+    "kod": "ISCTR",
+    "baslik": "İş Bankası emekli promosyonu ne kadar? Akbank emekli promosyonu kaç TL? Emekli promosyon 2026 en yüksek hangi banka veriyor?",
+    "kaynak": "GZT",
+    "link": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxNTl9vVjBmbVlQRWpHMm1lSUY5QjJNZDVXOVVheW9DeEoweUZua3djaU1hSUJmblhEU2JxVWQzaUdEd0Vya2JaRkxSa1FFdnNnWVp5emFhMnExSVM1WXEwR25nWEpsb09UQlFkMHIyS2dsYUNBM19nZE9tbTI4dEVPMnl3MUFxWnR3TzZJNG1zNG1WZ0tRa0JnbXQ1blFlRkNMU2tSbktjSzY0djZLRFZyT2lwLWxSbm9hVlFidnBOcld2a3VIODVITjFVQ1k0RkRNTW5RZDRxRjBLWXZ1VWg2WVVSdU9hZDBobkYxVnNB0gH4AUFVX3lxTE9maDBpRzdLVXdKTTlHOHhBVkxXT21WOEdCa1RkQlZEbGxYclUyckJhUVBFXzlPeFhkc29VYkZ2SHFsWHM0RDR4SnFZVG9UQXJ2aWJnV3oxM00yanpZYzdUSzNZNThVbmxZNG15dEk0cjNXU2d2X3pMUTExQ3dOa0ZKai1sdEdOYTB3OFo1d2FzR29kQmNVMWpVcm5IZXMtcWJleER4V2NCaUc1dnQteGE2clJnXzhGaDRzc3pPY29sZ0xCdmZsemZYNEFYZW5MX3dDMXJHWDRVc2k2MHpudUFSOXJ0Y1FibHpHZWYteVRjdlVKZ0Uyc1Vi?oc=5",
+    "ts": 1790752863
   },
   {
     "kod": "KCHOL",
@@ -478,7 +478,7 @@
   {
     "kod": "KCHOL",
     "baslik": "Koç Holding'den \"Made in Europe\" uyarısı: Türkiye işin dışında kalabilir",
-    "kaynak": "cnbce.com",
+    "kaynak": "CNBC-e",
     "link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxONEp5WmtDc2MtNVJaQ29pcXcwczRPOVdOdTFBOTFqYjVIRHZVNW8zWWFfTTg5WHFDZE5yMkVhSm5IYUx5ZVJpLXQ2bjdCX1BBTEt0WTJlUlV0V2I2cFRSemZRaW5Mb3JaVjFoMzNGbXF1UFJ3Yl96VkhGdkhSbnFNNUdmVXNzV1puYUxCWnhiQ1VIQ0dGMGtVcWNjVXR5Q0NRdnE5VFVNdS1CQQ?oc=5",
     "ts": 1790601826
   },
@@ -520,7 +520,7 @@
   {
     "kod": "KRDMD",
     "baslik": "Kardemir ve bağlı ortaklıklarından dev GES projesi",
-    "kaynak": "Paratic Haber",
+    "kaynak": "paratic.com",
     "link": "https://news.google.com/rss/articles/CBMie0FVX3lxTE10NGpKNnltS3MwNFNQR0k1YmthaGwtMG5QR21GUVFMcmpJOGdpVVZKdlZsbkxCWmV6N2pOa0s3YUxrdkhvbHdxcVJuZTZzVTNIWTFCTVpvTnVTS0pOVzlFejk2a3Z3b29vWnhoXzZvUGxIMmplQlhaLWlIcw?oc=5",
     "ts": 1790848368
   },
@@ -541,14 +541,14 @@
   {
     "kod": "KRDMD",
     "baslik": "Kardemir’in Van ve Muş’taki GES yatırımlarına Çin’den 18,3 milyon dolarlık kredi",
-    "kaynak": "Ekonomi Gazetesi",
+    "kaynak": "ekonomigazetesi.com",
     "link": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxNMFktbG5WRDk3OUhxYzNxSDl2Q3FtZW1uN1RWZ0k3ZGdhM1o0SFc2eWZsYW56Sks2aTVTcG54ajhVM25BZXpHb1F2aTl5RUxrWjNzamc2b1kyei12R3M2cmNCS21rXzNoNTlZV19OY1FudnRsdjdyMDVGNDlBQkFJaDFaai1HMmloMFdiMWx4VkxOVVplNlU2SVdJZVVTUlhyV0RwdFczbGRwTmh4ZlhtcjZVYkFvSFl6NzZQQmlhbjI5Z2hYM3FNY2Fac1lURkdOV1JB?oc=5",
     "ts": 1790881413
   },
   {
     "kod": "MGROS",
     "baslik": "BofA, Migros’ta 487,6 bin adet net pay sattı",
-    "kaynak": "Paratic Haber",
+    "kaynak": "paratic.com",
     "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5GbUZwdzJuLU9CRlZfRW9PaGZnWkYwdVRiVGoyejBHa0huWE1qdmZuTnQxWVp6ZGNCNnljNXBrc1dsbDZOVDZlSmJFNVRsNm81MjlyR3M1a0JGVWk4cXRNaWYxZ1V3REhYX29zeHdNcFM?oc=5",
     "ts": 1790774518
   },
@@ -610,13 +610,6 @@
   },
   {
     "kod": "PETKM",
-    "baslik": "Tüpraş, Petkim ve Opet gibi devlere çalışan Türk şirketi iflas etti",
-    "kaynak": "Sözcü",
-    "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPcEpHV05VbU1QUkRmT2xVZmFyWUd6aWZkMkU1TGd1V3JSWFdoeXRhRl9PUjBZbk4tekZhR21RMW01dmdFUWNKbThkQk1maHFNeUxCbXlSVHd6dWZwX1ZFU3RUcVo5TXAzUThCUzByTkc2bkM0ZFpra01VMmZVYk0wZmxvMUJ2czlIbkFkUGZyMHhZcG5iSldocl91cTBfTkEx?oc=5",
-    "ts": 1791095580
-  },
-  {
-    "kod": "PETKM",
     "baslik": "Kanan Mirzayev: Bu aşamada atılan adımlar, Petkim’in geleceğine katkı sağlayacak",
     "kaynak": "Habertürk",
     "link": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE5EQXZYU1FKcm1BbnNxbngtM3hoVGJ2bXBMMHhPejM1LWxEMFQ4QkxhTEVMWHJXTDJNR0tpbld1MTc3bDRFTTBhOUplbmNNT0puNnNvWlJpY2Y?oc=5",
@@ -628,6 +621,13 @@
     "kaynak": "Posta",
     "link": "https://news.google.com/rss/articles/CBMigwFBVV95cUxOVnJwRjFZSUhhY01sZm02SlBTdmtpaXVoU24tQlItOVNRYnVObmFCd0Y4UGItVzNGTnJEV2psUGp4RWZTQnkyMlBZSEdSM1g3M2h2eXV5dHpkbGVBbDV5blk2ekJsMW1vTDdYQThPdGpuMEJwdF9Bc2xicHNPeEtSZGowUQ?oc=5",
     "ts": 1790654400
+  },
+  {
+    "kod": "PETKM",
+    "baslik": "Petkim fabrika kapasite artışı için mühendislik çalışmalarına başladı",
+    "kaynak": "saraymedya.com",
+    "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxPU0NGZVlsUG1DZ3JmSXRodE9WcEowd0Q4OWxNU1lsbE1wV2s3MkVhZXNJWWZSQmFpZW1kelZ3a3lCWEZWbjBoVWRBV29JZFNkcTVBME5EUl95OFYwOFdObUdZQ3kxbjJsQ3lTdEpIOWVScHl0aHBPcFQzN1BCMm5Ec2xtNkFWSmNidWQxa1BVSml6Zlc0dVZQeDFKeHJhemFqZUtLTXVIYVZKdnlrWUJz?oc=5",
+    "ts": 1790595300
   },
   {
     "kod": "PGSUS",
@@ -702,7 +702,7 @@
   {
     "kod": "SAHOL",
     "baslik": "Sabancı Holding 'Dünyanın En İyi İşverenleri' listesinde 23. sırada",
-    "kaynak": "Ekonomi Gazetesi",
+    "kaynak": "ekonomigazetesi.com",
     "link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQSy1OYXRoVUVOZ1UxZm5yZU8zZ1k2azFJY1N5M0NYaUphMU81S0IzNHQ2LW1vTHJDTmFGaFhpb1UzRzlGLWlHQ21MZ0ZwUHBsRVR6U1RkakpJTzVKYm1jU1I2ekNDYkhIS0U3MWFZOXlhUU9VZ1c1U2NKQnV4WEdJc0Q4WFI1a2hoSmRRMFZFZTlYdlhIQmRBc0djcXJwcklUZkU1alYyQ3pTU0N1cDlhUnJ0a0h2dW5lWDQw?oc=5",
     "ts": 1790769268
   },
@@ -723,7 +723,7 @@
   {
     "kod": "SASA",
     "baslik": "Sasa Polyester’den güçlü satış performansı: Yüzde 45 arttı",
-    "kaynak": "Paratic Haber",
+    "kaynak": "paratic.com",
     "link": "https://news.google.com/rss/articles/CBMigwFBVV95cUxQUlZpenN1ZnUwS1RVdmFmTGhmNUw3cVlQanpqdUd5eUV4TGpBaDh3dXdsdmx0UHI2ZGJ3alJrdld6ZmVHekpmS2NHeUFiZ3NzMHVVWEhTZnVoa1pGVmNXRHV5MFU3MFV0UWUxZWRjeWx3RlVfS1FBcFpUdGdhLUY0S3V2OA?oc=5",
     "ts": 1790870098
   },
@@ -744,7 +744,7 @@
   {
     "kod": "SASA",
     "baslik": "Fonlarda 455 bin yatırımcı gündemde, SASA’da sayı 704 bini aşıyor",
-    "kaynak": "paramedya.com",
+    "kaynak": "ParaMedya",
     "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQOGFCVnhPQkljbF95QlJET3h1a21QZkFSTFoxdS16NEdEUGpwZzhoOFRoT2REaE9JN01mRF8tZ0NkekdFV3VpWWktRjVxT09tcVZWT0NPcjNZeGNObjZkMG1LVjE2bnplRFFPcGl0ZWpJeUhiR3QwYkVzeGR2THBMRDQtblpEemI1M05temFMd2RIZmVaNWZZTksxS3FzbEZWSEFwSFpTd9IBrAFBVV95cUxPMHJ2X2hjb2ZySWQ4eEQ1SUpaNTlPdUFwNGhxaTR3YWxEeVhKNVVkTEppb1dJUTZmWEUyVWYyUmVtOGF4dmtGTkx2MEtyMEdrTXFVTExQM2l0UUd5TW1WMG1pTnI5LXhfQlZXTG1mSktmQmxzQzJFR3RqVXdiQWt0b2tQdmQ3a2VMUlJLUkxfbGVzbjR6cXh6LWxlUFpwYmF6N0VESDhLZ1Y0MU5X?oc=5",
     "ts": 1790851595
   },
@@ -761,13 +761,6 @@
     "kaynak": "İnşaat Dünyası",
     "link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPZF93VktFQ3I4TkQyaWNmSWQ0SWUxclhTbVNQMGFWc2h2Z2lybFA0bk9CT254d1F0TXRYbHU0Slc0czRJMktxTVd5cWJkVkFucjZncEF6aEp4bHNSRnMyZktoY1RMZUZJXy1BSV9rb0F4MTlWQUl0NlVMVjRsRGV4UXUxSFNHRVhvMVRGVUhSckwzRGdjMkFV?oc=5",
     "ts": 1790670687
-  },
-  {
-    "kod": "SISE",
-    "baslik": "Şişecam, GlassBuild America Fuarı’nda ABD Pazarına Yönelik Cam Çözümlerini Sergiledi",
-    "kaynak": "Turkchem.net",
-    "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQUmNRRllENGxXTEFqX2E4YzlITl9uNDlGYU4wZmstTHFIbHNWczRvajc4TzhZeTZ6WmpjV0pZRHFiaGJzb0U5SVQzdUxPWU16WDlqUS1SMm9HcTFhcGpKb0xFOTlaT3h2NGE0T2NGV0dpdW1abWtxSWEtckxOZURMUzBFOHdodE1iVDhYNXpXYlZ3UHlrZllFcFFjTnl0elhXSzMxd0RSLW1qZXFpbmMwdHpkX0Nfdw?oc=5",
-    "ts": 1790666492
   },
   {
     "kod": "SISE",
@@ -798,6 +791,13 @@
     "ts": 1790782721
   },
   {
+    "kod": "SISE",
+    "baslik": "Şişecam, Wine Vision by Open Balkan Fuarı’nda Yenilikçi Cam Ambalaj Çözümlerini Sergileyecek",
+    "kaynak": "Fuar Dergisi",
+    "link": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxOSWF5SnVONDVYZXRwbkxJOW44WllXY0ZuZmY5VDdzMWoyMzh6a0M2SUZqZk0yQ2JOVGJPTzZmZlNWRU0zdWMwN0U1bjlOZmp1VWM5TGx0aDV5elJGeU11bXZtZU5zMnZuR0xCWXJuODJtbTJMOWlrTmkxTmczTUJPMVZOTVAxcTNWUW1qX2plams0aXdFd2ZOdjAzdUZFVHVhMEQyU1dwZFlZaG80Tld2UUpIQkQ2NC1LMDhINEVZa2hTLVU?oc=5",
+    "ts": 1790948940
+  },
+  {
     "kod": "TAVHL",
     "baslik": "TAV Havalimanları 3. çeyrek bilanço tarihini duyurdu",
     "kaynak": "Foreks.com",
@@ -824,6 +824,13 @@
     "kaynak": "Yeni Şafak",
     "link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPcllFUmN5TDgzOUNLMnRNbC1lRXpNbmZrQk4zVDFFZjFtYWl3WWtuNTFwWXVWbndVaGZETlBYLW02Umc4RXQzbm5ocHdYYnJEVFQ1T21lUU84emliUG1jbVNZVWNyczl5enYtYUh4d2FFbkVRWlNPaDRKcFI1WlF3eW5XUE9OdmlGdk1tQnRzWTdISDBNVEZMcFkyTzM0Q2RLaXNWck9Xc1JYZHN1Qm9Ib1IwUklfNG50bUd3?oc=5",
     "ts": 1790610660
+  },
+  {
+    "kod": "TAVHL",
+    "baslik": "TAV Havalimanları’ndan Melis Tunaveli, CHRO Summit Türkiye’de konuştu",
+    "kaynak": "Gökyüzü Haberci",
+    "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxOZVRBV1BYM0MyWkZ3LU83c1JmQVJpQXJqT21HRG5jYmN6VjRvY0hQUGNDcHFTU1kwOXZNR3VYb0VhRTRjWUdOLXV4X200SXdTeGd3dnMtbkthMDd3cDk3enphbV9QT1k5bDB5MF82b3VOSDRFRkRrdXIyUzd0U1JVYndrbkRHdFQ2aU5rQkNiSldQTHhWZFFTSm5VUHdhZDQ?oc=5",
+    "ts": 1790688274
   },
   {
     "kod": "TAVHL",
@@ -932,13 +939,6 @@
   },
   {
     "kod": "TOASO",
-    "baslik": "TOFAŞ CEO'su Cengiz Eroldu, Opel'in ana üssünü ziyaret etti",
-    "kaynak": "Motor1.com Türkiye",
-    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE5fZnJ3a0dsSlBxTWMyN2xzSXVlUXdYUzA1dVljZExWMlpWM2g0QzQwM085UHpNdkZ2TzV4MnplazdKQ3ZJOGNRNWRCeXRBLWRfRThFQjFLS0trMWl3dWdyM2VPSW9wTGRqMkU2WW5UTWRidl9aLUpMeG53?oc=5",
-    "ts": 1790589600
-  },
-  {
-    "kod": "TOASO",
     "baslik": "TOFAŞ, Avrupa'yı galibiyetle açtı!",
     "kaynak": "Bursada Bugün",
     "link": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOYnM5UDA1eUcxMnVVQzFtamFoX0lkZ2dLTGZLUXQ3NjRKanNzVlhtd1JfTkROSzhyYXBpVjlpaDFWSWFFT1lhNUNSTHN5M1BkZXBicVZPN2pPUEFQWk92OUJ5YXY5UXBLMHh6X294NmJYSzF6amVvZFU4a3NRcDJteVkyRDN3b2fSAYoBQVVfeXFMUEdPZlVaV3ZRdHQ4VmRuR3R4ZFJZT1ZtRnFNZU13cXFqUUpzZUY0Y1NoTVZJbUFmcEl2QUdLUTV3ZjlhSHpNYWZ1OEgtVmhtNlJyXzNHN1NHV3UxWkNyWmpieWp0MWcxdlIydzV1NWloTjNsM3RFOWNuTmMyWjZaZlhLeXdPX2lua0RR?oc=5",
@@ -947,16 +947,23 @@
   {
     "kod": "TOASO",
     "baslik": "Citroën CEO’su Xavier Chardon, Tofaş Bursa Fabrikası’nı ziyaret etti",
-    "kaynak": "Ekonomi Gazetesi",
+    "kaynak": "ekonomigazetesi.com",
     "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxNakUtbTBWdG5LRmg5cHdQWDJqVkplamR6MEZYSVhnWGxpai10ZnNIMkVvNVZBeE5pdzZCUm0tSl94UkdQdjZzZHNXRUFRdThYU0g4QVRQZmZEWlBRdjVQZENDa0hMRzVoVFZXaVBwdldWVDU0MUN5YmZhY0MyMUhjeTJBVkpLMks2WU5yMzhDeVBBOWV2RFNHaHQxTFhfdUpXdHFQMnJEdnVQQUJRQWVMMEpR?oc=5",
     "ts": 1790609360
   },
   {
     "kod": "TOASO",
-    "baslik": "TOFAŞ Avrupa Kupası’na galibiyetle başladı: Niners Chemnitz’i 82-69 mağlup etti",
-    "kaynak": "Haberton",
-    "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQNTI2TWhjclpmbGliRnFRdXhGc3VUOWJsa3Z2elVlNmNOU1Z6WEIyVU5ncTVySWZESWhpUmh0MGFsM3ZkQ0tYVkU4ZUlRYzFwUktKQkkxSnM5bEszTlJFb1Z0SVF0WjhobzFOcjdzMXNmYzVnX1RHaU1nM2poRjRuYzVnNXJnQWdnUU9ZWENzM0RON2xjdWZwYl95QnMtRkk?oc=5",
-    "ts": 1790757674
+    "baslik": "DOAS için tavsiye yükseldi, FROTO ve TOASO’da görünüm korundu",
+    "kaynak": "paratic.com",
+    "link": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNLTBLalRlWFlXM2FTbGtMRmdfemJnZE5aT2l1WklaYzZXeUhYaVlhYjZfakYxSXdwd3pVREwzTUEyN2hONEJTYnNJRUd5TEh6V1dkZTV3VlRXX2g5WE5hbHBMTlFWc0pKSDBsWlNRQkJpbWVIeXI5Rlp6b1JiTkpuX1hNTkliLWM?oc=5",
+    "ts": 1790840965
+  },
+  {
+    "kod": "TOASO",
+    "baslik": "TOFAŞ Avrupa’ya galibiyetle başladı!",
+    "kaynak": "A Gazete",
+    "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1oZTFZcjBGck9KOVctN0FGNUs1OUpsd3JmTkdnQ3B6T05ydFZyVlFyY1VySHhnVlU1RndDUGw5NTIwSWo5NkJiQng1Wmd0OFkwTGVGX2tfRGFTRWJnTlhQUjVuTVFMWWF6T3I4bG03TERsSlF1aEhEdGw4N19RcGc?oc=5",
+    "ts": 1790752684
   },
   {
     "kod": "TRALT",
@@ -1079,10 +1086,10 @@
   },
   {
     "kod": "TUPRS",
-    "baslik": "Tüpraş, Petkim ve Opet gibi devlere çalışan Türk şirketi iflas etti",
-    "kaynak": "Sözcü",
-    "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPcEpHV05VbU1QUkRmT2xVZmFyWUd6aWZkMkU1TGd1V3JSWFdoeXRhRl9PUjBZbk4tekZhR21RMW01dmdFUWNKbThkQk1maHFNeUxCbXlSVHd6dWZwX1ZFU3RUcVo5TXAzUThCUzByTkc2bkM0ZFpra01VMmZVYk0wZmxvMUJ2czlIbkFkUGZyMHhZcG5iSldocl91cTBfTkEx?oc=5",
-    "ts": 1791095580
+    "baslik": "Tüpraş’ta ürün marjları belli oldu: Hedef fiyat 481 TL",
+    "kaynak": "paratic.com",
+    "link": "https://news.google.com/rss/articles/CBMifkFVX3lxTE5lbHFWR180b2Y1WnpvZHIwcEtzRHU1N0t0OUZTYk9URjY2MnNDQkdsblBHTlZyM1hiNXdDRXpBemdVc0R3Z1AzZ19wLVRCc0xQa0YwTkttcF9CME1fNnN1T0p1UkJoTl81dFJsZHFGWm4zVWhHTnFaNmdFT1ZuUQ?oc=5",
+    "ts": 1790851534
   },
   {
     "kod": "VAKBN",
@@ -1114,17 +1121,17 @@
   },
   {
     "kod": "VAKBN",
-    "baslik": "KAP *** TÜRKİYE VAKIFLAR BANKASI T.A.O. *** TVB,VAKBN *** Şirket Genel Bilgi Formu",
-    "kaynak": "Yeni Şafak",
-    "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPcEpSaklsQk1DRThvWkhsTU90VGhBOWNkSFVvMkxNU2lSRzhqbXZTLXE4MTFJUVhKbFM3RmhIWWJRWUxPcTd2QTVNSHAxRTZNcHFIMDNWbnVCenZrMUZGd3VDSjBHdHV6SW5nZTMtR2ZCWHktTzdIQTU1ZVVjTEhGQlVWM18zdHJ2WU5WYWVtSzJKNlpYeUptWWJIOWRxODNKdmVoSmdrREhWMkZKMVNVb0VzMkdDeUVjcE9DX3FTTQ?oc=5",
-    "ts": 1790769858
-  },
-  {
-    "kod": "VAKBN",
     "baslik": "VakıfBank 2026-2027 sezonluk bilet satışı başladı! VakıfBank kombine fiyatı ne kadar, nasıl alınır?",
     "kaynak": "Akdenizmanset",
     "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOVll3R25tY3lONHNTM2ZNbFE0M09aZlRLYlFpVlYxNnN3NXRqMmhNN2RGVWRLWnFpWE1VWEprMDRCbkVxZkZLVlBOQkdNNWNMUlBmajBBUUJHTkYwS2FGc3lLX21PNTIxajZHYTByOER2MjIySWtubGVJQko4QkRqVGMzNzA5dmNvMEFValE0WEprcExmSHZacGFQMzgydy01ZHVYandWV19VZDM4aGVyeFZFVHdPcWQzQ3JFODFtZ3B6NkVTR1NJUg?oc=5",
     "ts": 1790682120
+  },
+  {
+    "kod": "VAKBN",
+    "baslik": "Vodafone Sultanlar Ligi 1. Hafta mücadelesinde kazanan Vakıfbank!",
+    "kaynak": "Fotomaç",
+    "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxPVEZoNFUtSWRmRWdxZDVDdUE5UnRyNmgwUFhVYnhzVUJneWh1NEZYNktnZ2JRdEJNZHA1dTAtcDJuVm83aF9BYlZ6WDFXNUU1LWFEZjYxX2NwNFNIVm9FckpSMzVpN3E5aGRMVGVyakxERTFpcVFYMW9GNG1EYV90dnhGeG5SVEcwRjJQQUtodGZpOVJYbUd1dG03b2U5Z2xXTDZJQ3NxNzZGYzZPX2dZ?oc=5",
+    "ts": 1791034723
   },
   {
     "kod": "YKBNK",

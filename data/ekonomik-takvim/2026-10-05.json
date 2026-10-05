@@ -35,7 +35,7 @@
     "ulke": "US",
     "olay": "ISM Services PMI",
     "onem": 1,
-    "tahmin": 55.7,
+    "tahmin": 55,
     "gercek": null,
     "onceki": 55.4
   },
@@ -45,7 +45,7 @@
     "ulke": "EU",
     "olay": "Retail Sales MoM",
     "onem": 0,
-    "tahmin": 0.4,
+    "tahmin": 0.2,
     "gercek": null,
     "onceki": -0.6
   },
@@ -85,7 +85,7 @@
     "ulke": "US",
     "olay": "Balance of Trade",
     "onem": 0,
-    "tahmin": -89.8,
+    "tahmin": -102,
     "gercek": null,
     "onceki": -88.6
   },
@@ -185,7 +185,7 @@
     "ulke": "US",
     "olay": "Initial Jobless Claims",
     "onem": 0,
-    "tahmin": 195,
+    "tahmin": 200,
     "gercek": null,
     "onceki": 197
   },

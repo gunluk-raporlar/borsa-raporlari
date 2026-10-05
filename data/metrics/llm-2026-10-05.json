@@ -82,14 +82,95 @@
    "token_giris": 18083,
    "token_cikis": 5510,
    "saat": "2026-10-05T11:21:18+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 305.899,
+   "ok": true,
+   "token_giris": 4476,
+   "token_cikis": 2238,
+   "saat": "2026-10-05T11:54:21+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 539.844,
+   "ok": true,
+   "token_giris": 16063,
+   "token_cikis": 15280,
+   "saat": "2026-10-05T12:03:20+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 500.497,
+   "ok": true,
+   "token_giris": 13205,
+   "token_cikis": 7529,
+   "saat": "2026-10-05T12:11:41+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 261.681,
+   "ok": true,
+   "token_giris": 7781,
+   "token_cikis": 14744,
+   "saat": "2026-10-05T12:16:03+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 139.856,
+   "ok": true,
+   "token_giris": 2559,
+   "token_cikis": 7154,
+   "saat": "2026-10-05T12:18:23+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 164.723,
+   "ok": true,
+   "token_giris": 20046,
+   "token_cikis": 9568,
+   "saat": "2026-10-05T12:21:07+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 1207.976,
+   "ok": true,
+   "token_giris": 7736,
+   "token_cikis": 2472,
+   "saat": "2026-10-05T12:41:15+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 3.881,
+   "ok": true,
+   "token_giris": 2072,
+   "token_cikis": 1256,
+   "saat": "2026-10-05T12:41:19+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 1182.139,
+   "ok": true,
+   "token_giris": 18247,
+   "token_cikis": 8486,
+   "saat": "2026-10-05T13:02:03+03:00"
   }
  ],
  "ozet": {
   "adet": 9,
-  "ortalama_sn": 393.817,
-  "p95_sn": 560.827,
-  "maks_sn": 1198.642,
+  "ortalama_sn": 478.5,
+  "p95_sn": 1182.139,
+  "maks_sn": 1207.976,
   "basari_orani": 1.0,
-  "son_guncelleme": "2026-10-05T11:21:41+03:00"
+  "son_guncelleme": "2026-10-05T13:02:28+03:00"
  }
 }
