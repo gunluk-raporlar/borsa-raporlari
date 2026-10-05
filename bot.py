@@ -5078,9 +5078,12 @@ def _ders_konusu(dosya_adi):
 
 
 def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
-    # Derin analiz arsiv dosyalari rapor arsivine degil, kendi bolumune gider
-    gundem_dosyalari = [fn for fn in (rapor_dosyalari or []) if "-derin-analiz" not in fn]
+    # Derin analiz ve makro analiz arsiv dosyalari rapor arsivine degil,
+    # kendi bolumlerine gider
+    gundem_dosyalari = [fn for fn in (rapor_dosyalari or [])
+                        if "-derin-analiz" not in fn and "-makro-analiz" not in fn]
     derin_dosyalari = [fn for fn in (rapor_dosyalari or []) if "-derin-analiz" in fn]
+    makro_dosyalari = [fn for fn in (rapor_dosyalari or []) if "-makro-analiz" in fn]
 
     arsiv_bolumu = ""
     if gundem_dosyalari:
@@ -5162,6 +5165,20 @@ function arsivAc(btn) {{
 <div class="grid"><a class="rcard" href="derin-analiz.html"><span class="date">Güncel Derin Analiz</span>
 <span class="sub">Piyasanın detaylı değerlendirmesi &rarr;</span></a>{derin_kartlar}</div>"""
 
+    # Makro analiz bolumu: haftalik makro analizi — guncel sayfa + son 3 arsiv
+    # (Aciklama tarihe referanslidir: "2 Ekim 2026 makro analizi".)
+    # Guncel kart HER ZAMAN gorunur (makro-analiz.html kok sayfasi hep mevcut);
+    # arsiv kartlari reports/ altindaki tarihli kopyalar geldikce eklenir.
+    makro_kartlar = "".join(
+        f'<a class="rcard" href="reports/{fn}"><span class="date">{_tr_tarih(fn[:-5].replace("-makro-analiz", ""))}</span>'
+        f'<span class="sub">{_tr_tarih_sade(fn[:-5].replace("-makro-analiz", "")) or fn[:-5].replace("-makro-analiz", "")} makro analizi &rarr;</span></a>'
+        for fn in makro_dosyalari[:3]
+    )
+    makro_bolumu = f"""
+<h2 class="section-title">Makro Analiz</h2>
+<div class="grid"><a class="rcard" href="makro-analiz.html"><span class="date">Güncel Makro Analiz</span>
+<span class="sub">Haftalık makro göstergelerin derinlemesine değerlendirmesi &rarr;</span></a>{makro_kartlar}</div>"""
+
     teknik_bolumu = ""
     if teknik_oneriler:
         kart = "".join(
@@ -5201,6 +5218,7 @@ function arsivAc(btn) {{
 </div>
 {arsiv_bolumu}
 {derin_bolumu}
+{makro_bolumu}
 {haftasonu_bolumu}
 {egitim_bolumu}
 {teknik_bolumu}

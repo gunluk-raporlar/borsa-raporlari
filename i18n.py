@@ -159,6 +159,13 @@ SOZLUK = {
     },
     "Rapor Arşivi": {"en": "Report Archive", "de": "Berichtsarchiv", "ru": "Архив отчётов", "zh": "报告存档"},
     "Güncel Derin Analiz": {"en": "Latest Deep Analysis", "de": "Aktuelle Tiefenanalyse", "ru": "Актуальный глубокий анализ", "zh": "最新深度分析"},
+    "Güncel Makro Analiz": {"en": "Latest Macro Analysis", "de": "Aktuelle Makroanalyse", "ru": "Актуальный макроанализ", "zh": "最新宏观分析"},
+    "Haftalık makro göstergelerin derinlemesine değerlendirmesi": {
+        "en": "In-depth weekly assessment of macro indicators",
+        "de": "Tiefgehende Wochenbewertung der Makroindikatoren",
+        "ru": "Углублённая недельная оценка макропоказателей",
+        "zh": "宏观指标的每周深度评估",
+    },
     "Hafta Sonu Gündemi": {"en": "Weekend Agenda", "de": "Wochenendagenda", "ru": "Повестка выходных", "zh": "周末议程"},
     "Hafta Sonu Borsa Okulu": {"en": "Weekend Market School", "de": "Wochenend-Börsenschule", "ru": "Школа рынка выходного дня", "zh": "周末股市学堂"},
     "Teknik Taramada Öne Çıkanlar": {"en": "Technical Scan Highlights", "de": "Highlights des technischen Scans", "ru": "Лидеры технического анализа", "zh": "技术扫描亮点"},

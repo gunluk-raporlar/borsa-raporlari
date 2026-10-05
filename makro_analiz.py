@@ -146,8 +146,21 @@ def main():
         bot.markdown_to_html(analiz) + veri_bolumu, date_str, **sarmal)
     with open("makro-analiz.html", "w", encoding="utf-8") as f:
         f.write(html)
+    # Tarihli arsiv kopyasi: haftalik makro analiz gecmisi korunur ve ana
+    # sayfanin "Makro Analiz" bolumunde kart olarak listelenir (derin analiz
+    # modeli ile ayni yapi).
+    arsiv_yolu = f"reports/{date_str}-makro-analiz.html"
+    arsiv_sayfa = bot.rapor_sayfasi(
+        bot.markdown_to_html(analiz) + veri_bolumu, date_str,
+        baslik=sarmal["baslik"],
+        alt_baslik=sarmal["alt_baslik"],
+        kok_yol=arsiv_yolu,
+        aciklama=f"{date_str} tarihli haftalik makro analiz raporu.",
+    )
+    with open(arsiv_yolu, "w", encoding="utf-8") as f:
+        f.write(arsiv_sayfa)
     try:
-        bot.indexnow_ping(["makro-analiz.html", "index.html"])
+        bot.indexnow_ping(["makro-analiz.html", arsiv_yolu, "index.html"])
     except Exception:
         logger.exception("IndexNow ping atlandi (sorun degil).")
     print(f"MAKRO ANALIZ SAYFA URETILDI: {date_str} | {len(analiz)} karakter", flush=True)
