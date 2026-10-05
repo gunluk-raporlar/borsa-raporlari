@@ -1,0 +1,522 @@
+[
+  {
+    "tarih": "2026-10-05",
+    "saat": "07:00",
+    "ulke": "TR",
+    "olay": "Inflation Rate YoY",
+    "onem": 0,
+    "tahmin": 30.3,
+    "gercek": 29.73,
+    "onceki": 31.51
+  },
+  {
+    "tarih": "2026-10-05",
+    "saat": "07:00",
+    "ulke": "TR",
+    "olay": "Inflation Rate MoM",
+    "onem": 0,
+    "tahmin": 2.3,
+    "gercek": 1.84,
+    "onceki": 1.84
+  },
+  {
+    "tarih": "2026-10-05",
+    "saat": "08:00",
+    "ulke": "TR",
+    "olay": "Balance of Trade Prel",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": -5.23,
+    "onceki": -5.24
+  },
+  {
+    "tarih": "2026-10-05",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "ISM Services PMI",
+    "onem": 1,
+    "tahmin": 55.7,
+    "gercek": null,
+    "onceki": 55.4
+  },
+  {
+    "tarih": "2026-10-06",
+    "saat": "09:00",
+    "ulke": "EU",
+    "olay": "Retail Sales MoM",
+    "onem": 0,
+    "tahmin": 0.4,
+    "gercek": null,
+    "onceki": -0.6
+  },
+  {
+    "tarih": "2026-10-06",
+    "saat": "12:15",
+    "ulke": "US",
+    "olay": "ADP Employment Change Weekly",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 20
+  },
+  {
+    "tarih": "2026-10-06",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Imports",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 399.3
+  },
+  {
+    "tarih": "2026-10-06",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Exports",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 310.7
+  },
+  {
+    "tarih": "2026-10-06",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Balance of Trade",
+    "onem": 0,
+    "tahmin": -89.8,
+    "gercek": null,
+    "onceki": -88.6
+  },
+  {
+    "tarih": "2026-10-06",
+    "saat": "13:05",
+    "ulke": "US",
+    "olay": "Fed Williams Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-06",
+    "saat": "14:45",
+    "ulke": "US",
+    "olay": "Fed Bowman Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-06",
+    "saat": "20:30",
+    "ulke": "US",
+    "olay": "API Crude Oil Stock Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 1.019
+  },
+  {
+    "tarih": "2026-10-06",
+    "saat": "23:00",
+    "ulke": "US",
+    "olay": "Fed Logan Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-07",
+    "saat": "11:00",
+    "ulke": "US",
+    "olay": "MBA 30-Year Mortgage Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 7.3
+  },
+  {
+    "tarih": "2026-10-07",
+    "saat": "14:30",
+    "ulke": "US",
+    "olay": "EIA Crude Oil Stocks Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.922
+  },
+  {
+    "tarih": "2026-10-07",
+    "saat": "14:30",
+    "ulke": "US",
+    "olay": "EIA Gasoline Stocks Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -1.684
+  },
+  {
+    "tarih": "2026-10-07",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "FOMC Minutes",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-08",
+    "saat": "11:30",
+    "ulke": "EU",
+    "olay": "ECB Monetary Policy Meeting Accounts",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-08",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Initial Jobless Claims",
+    "onem": 0,
+    "tahmin": 195,
+    "gercek": null,
+    "onceki": 197
+  },
+  {
+    "tarih": "2026-10-08",
+    "saat": "17:40",
+    "ulke": "US",
+    "olay": "Fed Musalem Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-09",
+    "saat": "07:00",
+    "ulke": "TR",
+    "olay": "Industrial Production YoY",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -0.3
+  },
+  {
+    "tarih": "2026-10-09",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "Michigan Consumer Sentiment Prel",
+    "onem": 1,
+    "tahmin": 48.1,
+    "gercek": null,
+    "onceki": 48.1
+  },
+  {
+    "tarih": "2026-10-09",
+    "saat": "20:00",
+    "ulke": "US",
+    "olay": "Fed Collins Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-12",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "Monthly Budget Statement",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-13",
+    "saat": "12:15",
+    "ulke": "US",
+    "olay": "ADP Employment Change Weekly",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-13",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "Existing Home Sales",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 3.98
+  },
+  {
+    "tarih": "2026-10-13",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "Existing Home Sales MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -2
+  },
+  {
+    "tarih": "2026-10-14",
+    "saat": "11:00",
+    "ulke": "US",
+    "olay": "MBA 30-Year Mortgage Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-14",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "CPI",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 334.98
+  },
+  {
+    "tarih": "2026-10-14",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Inflation Rate MoM",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.4
+  },
+  {
+    "tarih": "2026-10-14",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Core Inflation Rate YoY",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 2.4
+  },
+  {
+    "tarih": "2026-10-14",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Inflation Rate YoY",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 3.4
+  },
+  {
+    "tarih": "2026-10-14",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Core Inflation Rate MoM",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.3
+  },
+  {
+    "tarih": "2026-10-14",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "CPI s.a",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 334.131
+  },
+  {
+    "tarih": "2026-10-14",
+    "saat": "20:30",
+    "ulke": "US",
+    "olay": "API Crude Oil Stock Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-15",
+    "saat": "09:00",
+    "ulke": "EU",
+    "olay": "Industrial Production MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -0.1
+  },
+  {
+    "tarih": "2026-10-15",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "NY Empire State Manufacturing Index",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 7.6
+  },
+  {
+    "tarih": "2026-10-15",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Initial Jobless Claims",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-15",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Retail Sales Control Group MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 1.4
+  },
+  {
+    "tarih": "2026-10-15",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Philadelphia Fed Manufacturing Index",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 37.8
+  },
+  {
+    "tarih": "2026-10-15",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Core PPI MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.2
+  },
+  {
+    "tarih": "2026-10-15",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "PPI MoM",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.4
+  },
+  {
+    "tarih": "2026-10-15",
+    "saat": "13:30",
+    "ulke": "US",
+    "olay": "Retail Sales MoM",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 1.2
+  },
+  {
+    "tarih": "2026-10-15",
+    "saat": "13:30",
+    "ulke": "US",
+    "olay": "Retail Sales Ex Autos MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 1.4
+  },
+  {
+    "tarih": "2026-10-15",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "Business Inventories MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.8
+  },
+  {
+    "tarih": "2026-10-15",
+    "saat": "16:00",
+    "ulke": "US",
+    "olay": "EIA Crude Oil Stocks Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-15",
+    "saat": "16:00",
+    "ulke": "US",
+    "olay": "EIA Gasoline Stocks Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-16",
+    "saat": "09:00",
+    "ulke": "EU",
+    "olay": "Balance of Trade",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 14.2
+  },
+  {
+    "tarih": "2026-10-16",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Export Prices MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.6
+  },
+  {
+    "tarih": "2026-10-16",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Import Prices MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.7
+  },
+  {
+    "tarih": "2026-10-16",
+    "saat": "13:15",
+    "ulke": "US",
+    "olay": "Industrial Production MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0
+  },
+  {
+    "tarih": "2026-10-16",
+    "saat": "20:00",
+    "ulke": "US",
+    "olay": "Net Long-term TIC Flows",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -27.9
+  }
+]
