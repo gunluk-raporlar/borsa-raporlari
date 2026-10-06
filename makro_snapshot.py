@@ -28,12 +28,13 @@ def main():
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     now = datetime.now(tz)
     # GitHub cron hafta sonunda koşuyu saatlerce geciktirebiliyor (3-4 Ekim
-    # 2026: 20:30 yerine 00:04 TSİ). Gece koşuları bir önceki akşamın
+    # 2026: aksam slotu yerine 00:04 TSİ). Gece koşuları bir önceki akşamın
     # GECİKMİŞ koşusu sayılır: snapshot tarihi önceki güne alınır ve
-    # captured_at 20:30'a normalize edilir; yoksa 18:00 kapisi ve tarih
-    # kontrolleri snapshoti reddediyor, ertesi sabah raporu cokuyordu.
+    # captured_at o gunun nominal slotuna (18:05 TSİ, 2026-10-06 kullanici
+    # karari) normalize edilir; yoksa 18:00 kapisi ve tarih kontrolleri
+    # snapshoti reddediyor, ertesi sabah raporu cokuyordu.
     if now.hour < 6:
-        now = (now - timedelta(days=1)).replace(hour=20, minute=30,
+        now = (now - timedelta(days=1)).replace(hour=18, minute=5,
                                                 second=0, microsecond=0)
         logger.warning("Gece yarisi koşusu algılandı; snapshot önceki akşam "
                        "(%s) olarak yazılacak.", now.isoformat(timespec="seconds"))
