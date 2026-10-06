@@ -6575,6 +6575,92 @@ def _makro_duyarlilik_karti(kod):
             '<p style="margin:8px 0 0;color:var(--muted);font-size:12px">Sektör duyarlılık matrisi x '
             'güncel makro rejim; detay <a href="../makro-analiz.html">Makroekonomik Değerlendirme</a>.</p></div>')
 
+def _temel_analiz_oto(kod):
+    """Tum hisseler icin kural-tabanli 'Temel Analiz Ozeti' maddeileri uretir.
+
+    Kaynaklar: Is Yatirim mali tablolari (TTM) + TradingView temel verisi —
+    her yorum sabit bir esik kuralindan gelir (LLM yok, uydurma yok). Veri
+    eksikse ilgili madde yazilmaz.
+    """
+    v = _degerleme_verisi(kod, None) or {}
+    tv = (temel_veri().get("hisseler") or {}).get(kod) or {}
+    duz = lambda x, h=2: ("%.*f" % (h, x)).replace(".", ",") if x is not None else None
+    mil = lambda x: (f"{x/1e9:.2f}".replace(".", ",") + " milyar TL") if abs(x) >= 1e9 else \
+                    (f"{x/1e6:.0f}".replace(".", ",") + " milyon TL")
+    madde = []
+
+    if v.get("fk") is not None:
+        fk = v["fk"]
+        yorum = ("düşük çarpan — değerleme sikişık" if fk < 10 else
+                 "makul çarpan bölgesi" if fk < 25 else
+                 "yüksek çarpan — fiyat büyüme beklentisi içeriyor")
+        madde.append(f"F/K (TTM) {duz(fk)} — {yorum}.")
+    elif v.get("ttm_kar") is not None:
+        madde.append("F/K hesaplanamıyor: son 12 ay net kâr pozitif değil.")
+    if v.get("pddd"):
+        p = v["pddd"]
+        yorum = ("piyasa değeri öz kaynak değerinin ALTINDA" if p < 1 else
+                 "öz kaynağa makul prim" if p < 3 else "öz kaynağa yüksek prim ödeniyor")
+        madde.append(f"PD/DD {duz(p)} — {yorum}.")
+    if v.get("roe") is not None:
+        r = v["roe"]
+        yorum = ("yüksek özkaynak kârlılığı" if r > 20 else "sağlam özkaynak kârlılığı" if r >= 10
+                 else "zayıf özkaynak kârlılığı" if r > 0 else "özkaynak kârlılığı negatif (zarar)")
+        madde.append(f"ROE %{duz(r, 1)} — {yorum}.")
+
+    gelir = tv.get("total_revenue_ttm")
+    if gelir:
+        ebitda = tv.get("ebitda_ttm")
+        if ebitda is not None:
+            m = ebitda / gelir * 100
+            yorum = ("yüksek FAVÖK marjı" if m > 30 else "sağlam FAVÖK marjı" if m >= 15 else "düşük FAVÖK marjı")
+            madde.append(f"Hasılat (TTM) {mil(gelir)}, FAVÖK {mil(ebitda)} — FAVÖK marjı %{duz(m, 1)} ({yorum}).")
+        nk = tv.get("net_income_ttm")
+        if nk is not None:
+            m = nk / gelir * 100
+            yorum = ("yüksek net kâr marjı" if m > 20 else "normal net kâr marjı" if m >= 5
+                     else "ince net kâr marjı" if m > 0 else "net zarar yazıyor")
+            madde.append(f"Net kâr marjı %{duz(m, 1)} ({yorum}).")
+
+    ev_e = tv.get("enterprise_value_ebitda_ttm")
+    if ev_e:
+        yorum = ("düşük EV/FAVÖK — ucuz bölge" if ev_e < 6 else
+                 "makul EV/FAVÖK" if ev_e < 12 else "EV/FAVÖK yüksek — prim fiyatlanıyor")
+        madde.append(f"EV/FAVÖK {duz(ev_e, 1)} — {yorum}.")
+
+    borc = tv.get("total_debt_fq")
+    nakit = tv.get("cash_n_equivalents_fq")
+    if borc is not None and nakit is not None:
+        net = borc - nakit
+        if net <= 0:
+            madde.append(f"Net finansal borç YOK — nakit, brüt borçtan {mil(-net)} fazla.")
+        else:
+            mc = (net / (tv.get("market_cap_basic") or 0) * 100)
+            ek = f" (piyasa değerinin %{duz(mc, 0)})" if mc else ""
+            madde.append(f"Net finansal borç {mil(net)}{ek}.")
+    cari = tv.get("current_ratio_fq")
+    if cari:
+        yorum = ("güçlü likidite" if cari > 2 else "dengeli likidite" if cari >= 1
+                 else "kısa vadeli yükümlülük baskısı altında")
+        madde.append(f"Cari oran {duz(cari)} — {yorum}.")
+    tem = tv.get("dividends_yield")
+    if tem and tem > 0:
+        madde.append(f"Temettü verimi %{duz(tem, 1)}.")
+    return madde
+
+
+def _temel_analiz_oto_html(kod):
+    madde = _temel_analiz_oto(kod)
+    if not madde:
+        return ""
+    ogeler = "".join(f"<li style='margin:5px 0'>{html.escape(m)}</li>" for m in madde)
+    return (f"""<div class="card" style="margin:0 0 18px">
+<h3 style="margin:0 0 8px">🔎 Temel Analiz Özeti <span style="font-weight:400;color:var(--muted);font-size:12.5px">&middot; otomatik</span></h3>
+<ul style="margin:0; padding-left:18px; font-size:13.5px">{ogeler}</ul>
+<p style="margin:8px 0 0; color:var(--muted); font-size:11.5px">Kural tabanlı özet: İş Yatırım mali tabloları (TTM) ve TradingView temel verisinden sabit eşiklerle üretilir; LLM yok, uydurma riski yok. Yatırım tavsiyesi değildir.</p>
+</div>""")
+
+
 def build_hisse_html(kod, satir, tarihler, veriler, haberler, sirket_haberleri=None):
     seri = [(t, v.get(kod)) for t, v in zip(tarihler, veriler) if v.get(kod)]
     grafik = (_mini_sparkline([f for _, f in seri], etiket=f"{kod} fiyat grafiği (son {len(seri)} gün)")
@@ -6634,6 +6720,7 @@ def build_hisse_html(kod, satir, tarihler, veriler, haberler, sirket_haberleri=N
 {grafik_karti}
 {_sirket_profili_html(kod)}
 {hisse_analiz.bilanco_tablosu_html(kod)}
+{_temel_analiz_oto_html(kod)}
 <div class="grid-iki">
 {_degerleme_karti(kod, satir, seri)}
 {_makro_duyarlilik_karti(kod)}
