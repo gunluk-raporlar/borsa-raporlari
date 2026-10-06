@@ -4,7 +4,7 @@
 // Kenar önbelleği 9 dk: aynı bölgedeki ziyaretçiler tek üst akış isteğini
 // paylaşır; sayfaların 10 dk'lık yenilemeleri hâlâ taze veri bulur.
 
-const BIST30 = ["AEFES", "AKBNK", "ASELS", "ASTOR", "BIMAS", "DSTKF", "EKGYO",
+const BIST30 = ["AEFES", "AKBNK", "ASELS", "ASTOR", "BIMAS", "TRMET", "EKGYO",
   "ENKAI", "EREGL", "FROTO", "GARAN", "GUBRF", "ISCTR", "KCHOL", "KRDMD",
   "MGROS", "PETKM", "PGSUS", "SAHOL", "SASA", "SISE", "TAVHL", "TCELL",
   "THYAO", "TOASO", "TRALT", "TTKOM", "TUPRS", "VAKBN", "YKBNK"];

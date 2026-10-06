@@ -11,7 +11,7 @@ const RAW = "https://raw.githubusercontent.com/gunluk-raporlar/borsa-raporlari/m
 const CACHE_KEY = "https://borsa-raporlari.pages.dev/__ic-robot";
 const CACHE_TTL = 45; // saniye
 
-const BIST30 = ["AEFES", "AKBNK", "ASELS", "ASTOR", "BIMAS", "DSTKF", "EKGYO",
+const BIST30 = ["AEFES", "AKBNK", "ASELS", "ASTOR", "BIMAS", "TRMET", "EKGYO",
   "ENKAI", "EREGL", "FROTO", "GARAN", "GUBRF", "ISCTR", "KCHOL", "KRDMD",
   "MGROS", "PETKM", "PGSUS", "SAHOL", "SASA", "SISE", "TAVHL", "TCELL",
   "THYAO", "TOASO", "TRALT", "TTKOM", "TUPRS", "VAKBN", "YKBNK"];
