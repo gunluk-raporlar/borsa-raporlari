@@ -1,12 +1,14 @@
 name: Makro Snapshot Nöbetçisi
 on:
   schedule:
-    # 06:00 Türkiye saati (03:00 UTC): 18:05 akşam koşusunu GitHub hiç
+    # 05:00 Türkiye saati (02:00 UTC): 18:05 akşam koşusunu GitHub hiç
     # ateşlemediyse dünün snapshot'i eksik kalır. Nöbetçi eksikse snapshot'i
-    # tetikler; yakalama koşusu BIST açılışından (10:00 TSİ) önce koştuğu
-    # için makro_snapshot.py önceki günün akşamına normalize eder — veri
-    # günü karışması olmaz. 07:05'teki günlük rapordan ~1 saat önce biter.
-    - cron: '0 3 * * *'
+    # tetikler; yakalama koşusu ~05:02'de başlayıp normalizasyon penceresine
+    # (00:00-05:59) takılmadan önceki günün akşamına yazılır — veri günü
+    # karışması olmaz. ~05:10'da biter; 07:05'teki günlük rapordan ~2 saat
+    # önce taze arşiv hazır olur. 06:00'tan sonra tetiklemek YANLIŞ olurdu:
+    # pencere kapanır ve kapı koşuyu reddederdi.
+    - cron: '0 2 * * *'
   workflow_dispatch:
 permissions:
   actions: write
