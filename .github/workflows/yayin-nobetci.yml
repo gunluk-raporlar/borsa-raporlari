@@ -31,6 +31,12 @@ jobs:
           TODAY=$(TZ=Europe/Istanbul date +%F)
           GUN=$(TZ=Europe/Istanbul date +%u)   # 1=Pazartesi ... 7=Pazar
           HEDEF="${{ inputs.kontrol }}"
+          if [ -z "$HEDEF" ] && { [ "$GUN" = "6" ] || [ "$GUN" = "7" ]; }; then
+            # Hafta sonu uretim yok (daily.yml 1-5 cronlu); kontrol ve tetikleme
+            # atlanir. Elle tetiklemede bu kural uygulanmaz.
+            HEDEF="YOK"
+            echo "Hafta sonu — uretim/kontrol yok."
+          fi
           if [ -z "$HEDEF" ]; then
             SAAT=$(TZ=Europe/Istanbul date +%H)
             if [ "$SAAT" = "08" ]; then
@@ -57,13 +63,15 @@ jobs:
             esac
             KOD=""
             for deneme in 1 2 3; do
-              KOD=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 \
+              # -L: site reports/...html adreslerini 308 ile yonlendiriyor
+              # (guzel URL); takip edilmezse yayinda olsa bile 308 doner.
+              KOD=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 30 \
                     "https://borsa-raporlari.pages.dev/${DOSYA}?nobetci=${TODAY}-${deneme}")
               echo "Deneme $deneme: ${DOSYA} -> HTTP ${KOD}"
-              [ "$KOD" = "200" ] && break
+              case "$KOD" in 2*) KOD=2xx; break ;; esac
               [ "$deneme" -lt 3 ] && sleep 45
             done
-            if [ "$KOD" != "200" ]; then
+            if [ "$KOD" != "2xx" ]; then
               echo "EKSIK: ${DOSYA} (HTTP ${KOD:-yok})"
               EKSIK="$EKSIK $HEDEF"
             fi
@@ -91,6 +99,6 @@ jobs:
               echo "$WF zaten suruyor ($SURAN kosu) — tekrar tetiklenmedi."
               continue
             fi
-            gh workflow run "$WF" --ref main
+            gh workflow run "$WF" --repo "$GITHUB_REPOSITORY" --ref main
             echo "$WF tetiklendi ($HEDEF yayini canli sitede yoktu)."
           done
