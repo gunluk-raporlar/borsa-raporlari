@@ -62,6 +62,31 @@ if __name__ == "__main__":
     dene2("G: coding, obj low", {"thinking": {"type": "low"}})
     dene("H: std, obj LOW", {"thinking": {"type": "LOW"}})
 
+    # Belgeler (docs.z.ai/devpack/quick-start): Coding Plan ucaklari —
+    #   https://api.z.ai/api/coding/paas/v4 -> OpenAI Chat Completions (bot bunu kullanir)
+    #   https://api.z.ai/api/v1             -> OpenAI RESPONSES protokolu (farkli istek sekli)
+    #   https://api.z.ai/api/anthropic      -> Anthropic protokolu
+    # I varyanti, kullanici anahtariyla api/v1 ucunu (Responses sekli) dogrular:
+    # adres yanlis degil, protokol farkli — ikisi de ayni abonelikten sayilir.
+    print("--- I: api/v1 (Responses protokolu) ---")
+    try:
+        govde = {"model": "glm-5.3-flash",
+                 "input": [{"role": "user", "content": "1+1 kac? sadece sayiyi yaz"}]}
+        req = urllib.request.Request("https://api.z.ai/api/v1/responses",
+                                     data=json.dumps(govde).encode(), method="POST",
+                                     headers={"Authorization": f"Bearer {os.environ['ZAI_API_KEY']}",
+                                              "Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=90) as r:
+            d = json.loads(r.read().decode())
+        print("[I: api/v1 responses] OK | ilk 240 karakter:", json.dumps(d)[:240])
+        SONUCLAR.append(("I: api/v1", True, "OK"))
+    except urllib.error.HTTPError as e:
+        print(f"[I: api/v1 responses] HTTP {e.code} | {e.read().decode()[:180]}")
+        SONUCLAR.append(("I: api/v1", False, e.code))
+    except Exception as e:
+        print(f"[I: api/v1 responses] HATA: {type(e).__name__}: {str(e)[:120]}")
+        SONUCLAR.append(("I: api/v1", False, type(e).__name__))
+
     # Net hüküm: bot (bot.py) yalnızca CODING ucunu kullanır; standart ucun
     # 429 bakiye hatası botu etkilemez (2026-10-06 karışıklık sonrası eklendi).
     coding_sonuc = [(ok, code) for e, ok, code in SONUCLAR if e.startswith(("F:", "G:"))]
