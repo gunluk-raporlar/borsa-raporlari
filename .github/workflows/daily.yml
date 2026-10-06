@@ -11,6 +11,12 @@ on:
 permissions:
   contents: write
   issues: write
+concurrency:
+  # Zamanlanmis kosu ile yayin-nobetci/manual dispatch cakismasin: ikinci
+  # kosu sırada bekler (uretim uzun surdugunden kesmek yerine kuyruklamak
+  # guvenli).
+  group: gunluk-rapor
+  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest

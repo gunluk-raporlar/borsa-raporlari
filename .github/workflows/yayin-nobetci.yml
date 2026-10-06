@@ -1,0 +1,96 @@
+name: Yayın Nöbetçisi (site kontrolü)
+on:
+  schedule:
+    # 11:00 TSİ — günün günlük raporu (reports/<tarih>.html) canlı sitede mi?
+    # (normalde ~08:10'da yayında olur; 3 saatlik gecikme payı bırakıldı)
+    - cron: '0 8 * * *'
+    # 14:00 TSİ — derin analiz (reports/<tarih>-derin-analiz.html) canlıda mi?
+    # (normalde ~13:30'da yayında olur). Pazartesi günleri makro analiz de
+    # kontrol edilir (haftalik yayin).
+    - cron: '0 11 * * *'
+  workflow_dispatch:
+    inputs:
+      kontrol:
+        description: 'Kontrol edilecek yayın: daily | derin | makro (boş: saate göre)'
+        required: false
+        default: ''
+permissions:
+  actions: write
+  contents: read
+concurrency:
+  group: yayin-nobetci
+  cancel-in-progress: false
+jobs:
+  kontrol:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Kontrol edilecek yayinlari sec
+        id: sec
+        run: |
+          TODAY=$(TZ=Europe/Istanbul date +%F)
+          GUN=$(TZ=Europe/Istanbul date +%u)   # 1=Pazartesi ... 7=Pazar
+          HEDEF="${{ inputs.kontrol }}"
+          if [ -z "$HEDEF" ]; then
+            SAAT=$(TZ=Europe/Istanbul date +%H)
+            if [ "$SAAT" = "08" ]; then
+              HEDEF="daily"
+            else
+              HEDEF="derin"
+              if [ "$GUN" = "1" ]; then HEDEF="derin makro"; fi
+            fi
+          fi
+          echo "tarih=$TODAY" >> "$GITHUB_OUTPUT"
+          echo "hedefler=$HEDEF" >> "$GITHUB_OUTPUT"
+          echo "Kontrol hedefleri: $HEDEF ($TODAY)"
+
+      - name: Canli sitede yayini denetle (hedef basina 3 deneme)
+        id: yayin
+        run: |
+          TODAY="${{ steps.sec.outputs.tarih }}"
+          EKSIK=""
+          for HEDEF in ${{ steps.sec.outputs.hedefler }}; do
+            case "$HEDEF" in
+              daily) DOSYA="reports/${TODAY}.html" ;;
+              derin) DOSYA="reports/${TODAY}-derin-analiz.html" ;;
+              makro) DOSYA="reports/${TODAY}-makro-analiz.html" ;;
+            esac
+            KOD=""
+            for deneme in 1 2 3; do
+              KOD=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 \
+                    "https://borsa-raporlari.pages.dev/${DOSYA}?nobetci=${TODAY}-${deneme}")
+              echo "Deneme $deneme: ${DOSYA} -> HTTP ${KOD}"
+              [ "$KOD" = "200" ] && break
+              [ "$deneme" -lt 3 ] && sleep 45
+            done
+            if [ "$KOD" != "200" ]; then
+              echo "EKSIK: ${DOSYA} (HTTP ${KOD:-yok})"
+              EKSIK="$EKSIK $HEDEF"
+            fi
+          done
+          if [ -z "$EKSIK" ]; then
+            echo "Tum hedef yayinlar canli sitede mevcut."
+          fi
+          echo "eksik=${EKSIK# }" >> "$GITHUB_OUTPUT"
+
+      - name: Eksik yayinlari ureten is akisini tetikle
+        if: steps.yayin.outputs.eksik != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EKSIK: ${{ steps.yayin.outputs.eksik }}
+        run: |
+          for HEDEF in $EKSIK; do
+            case "$HEDEF" in
+              daily) WF="daily.yml" ;;
+              derin) WF="derin-analiz.yml" ;;
+              makro) WF="makro-analiz.yml" ;;
+            esac
+            SURAN=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow="$WF" \
+                    --status in_progress --json databaseId --jq 'length')
+            if [ "${SURAN:-0}" -gt 0 ]; then
+              echo "$WF zaten suruyor ($SURAN kosu) — tekrar tetiklenmedi."
+              continue
+            fi
+            gh workflow run "$WF" --ref main
+            echo "$WF tetiklendi ($HEDEF yayini canli sitede yoktu)."
+          done

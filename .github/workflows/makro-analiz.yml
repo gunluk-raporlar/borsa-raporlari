@@ -9,6 +9,12 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+concurrency:
+  # Zamanlanmis kosu ile yayin-nobetci/manual dispatch cakismasin: ikinci
+  # kosu sırada bekler (3 denemelik uretim 3 saati buldugundan kesmek
+  # yerine kuyruklamak guvenli).
+  group: makro-analiz
+  cancel-in-progress: false
 jobs:
   analiz:
     runs-on: ubuntu-latest
