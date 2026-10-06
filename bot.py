@@ -462,6 +462,12 @@ def _sirket_baglam_metni(basliklar):
     eslesen = {}
     for satir in basliklar:
         for kod, ad in HISSE_ADLARI.items():
+            # Unvan/takma ad: buyuk-kucuk harf duyarsiz, min 5 karakter (kisa
+            # adlar yanlis eslesir — or. "BİM"). Hisse kodu: harf duyarli
+            # (buyuk harf token, baska kelimenin icine gomecek kadar kisik degil).
+            if kod in satir:
+                eslesen.setdefault(kod, []).append(satir)
+                continue
             anahtarlar = [a for a in ([ad] + SIRKET_TAKMA.get(kod, [])) if len(a) >= 5]
             if any(a.lower() in satir.lower() for a in anahtarlar):
                 eslesen.setdefault(kod, []).append(satir)
