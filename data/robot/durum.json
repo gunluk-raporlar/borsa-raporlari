@@ -1,16 +1,14 @@
 {
   "baslangic": "2026-09-25",
   "braket_versiyonu": 2,
-  "bugun_alinan": [
-    "TAVHL"
-  ],
+  "bugun_alinan": [],
   "bugun_satilan": [],
-  "bugun_tarih": "2026-10-06",
+  "bugun_tarih": "2026-10-07",
   "gerceklesen_kz": -1998.6835249999967,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 2,
+  "kontrol_sayisi": 1,
   "nakit": 63033.30210761202,
-  "onceki_kapanis_ozkaynak": 98144.05,
+  "onceki_kapanis_ozkaynak": 98046.28,
   "ozkayit": [
     [
       "2026-09-25",
