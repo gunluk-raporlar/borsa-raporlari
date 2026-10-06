@@ -155,7 +155,7 @@ def main():
         baslik=sarmal["baslik"],
         alt_baslik=sarmal["alt_baslik"],
         kok_yol=arsiv_yolu,
-        aciklama=f"{date_str} tarihli haftalik makro analiz raporu.",
+        aciklama=f"{bot._tr_tarih(date_str)} tarihli haftalik makro analiz raporu.",
     )
     with open(arsiv_yolu, "w", encoding="utf-8") as f:
         f.write(arsiv_sayfa)

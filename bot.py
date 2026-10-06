@@ -4744,8 +4744,11 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
                   ajanda=None):
     if kok_yol is None:
         kok_yol = f"reports/{date_str}.html"
+    # Gorunur tarihler Turkce (kullanici karari, 2026-10-06); dosya adlari ve
+    # JSON-LD/makine alanlari ISO kalir (siralanabilir + schema.org zorunlusu).
+    tr_tarih = _tr_tarih(date_str)
     if aciklama is None:
-        aciklama = (f"{date_str} tarihli BIST 30 {baslik.lower()}: yönetici özeti, haber ve makro "
+        aciklama = (f"{tr_tarih} tarihli BIST 30 {baslik.lower()}: yönetici özeti, haber ve makro "
                     f"değerlendirme, hisse bazlı teknik analiz ve model portföy önerisi.")
     # Ses: kucuk "🔊 Sesli Oku" dugmesi tarayicinin yerlesik sesiyle okur
     # (_sesli_okuma_js); MP3 varsa tek satirlik karmasik olmayan oynatici.
@@ -4761,9 +4764,9 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
     icerik = f"""
 <div class="hero">
 <h1>{baslik}</h1>
-<div class="meta"><span class="badge">{date_str}</span><span class="badge">{_yazim_ani_str()}</span><span>{alt_baslik}</span>
+<div class="meta"><span class="badge">{tr_tarih}</span><span class="badge">{_yazim_ani_str()}</span><span>{alt_baslik}</span>
 <button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button>
-{paylas_html(baslik + ' ' + date_str, SITE_URL + (kok_yol or f"reports/{date_str}.html"))}</div>
+{paylas_html(f"{baslik} — {tr_tarih}", SITE_URL + (kok_yol or f"reports/{date_str}.html"))}</div>
 </div>
 {_bist30_sepeti_sparkline()}
 {ses_bolumu}
@@ -4774,14 +4777,14 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
 {_sesli_okuma_js()}"""
     ld_ek = json.dumps({
         "@context": "https://schema.org", "@type": "Article",
-        "headline": f"{baslik} — {date_str}", "datePublished": date_str,
+        "headline": f"{baslik} — {tr_tarih}", "datePublished": date_str,
         "dateModified": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).isoformat(timespec="seconds"),
         "inLanguage": "tr", "description": aciklama,
         "author": {"@type": "Organization", "name": SITE_ADI, "url": SITE_URL},
         "publisher": {"@type": "Organization", "name": SITE_ADI, "url": SITE_URL},
         "mainEntityOfPage": SITE_URL + (kok_yol or ""),
     }, ensure_ascii=False)
-    return _sayfa(f"{baslik} - {date_str}", icerik, "raporlar", kok=kok,
+    return _sayfa(f"{baslik} - {tr_tarih}", icerik, "raporlar", kok=kok,
                   aciklama=aciklama, yol=kok_yol, ld_ek=ld_ek)
 
 
