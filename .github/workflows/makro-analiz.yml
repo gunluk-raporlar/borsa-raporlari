@@ -1,11 +1,13 @@
 name: Makro Analiz (GLM + DeepSeek yedek)
 on:
-  # Haftada bir, yalnizca Pazartesi TSİ 07:00'de taze makro analizi uretir
-  # (kullanici karari, 2026-10-01: arada guvenlik kosusu istenmiyor).
-  # Onceki aksam (Pazar 20:30) snapshot'i uzerine uretilir; Cumartesi/Pazar
-  # piyasa kapali oldugundan haftalik yayin icin yeterlidir.
+  # Ana kosu: Pazartesi TSİ 07:00 (onceki aksam snapshot'i uzerine uretilir).
+  # Guvenlik kosulari (Sali-Cuma TSİ 08:00, 2026-10-06): Pazartesi uretimi
+  # basarisizsa hafta ortasinda kendini onarir; makro_analiz.py'deki 48 saat
+  # tazelik kapisi taze sayfada gereksiz uretimi 1 dakikada keser. Son care
+  # yayini (uyari rozetli) ile "haftalarca bayat sayfa" senaryosu kapanmistir.
   schedule:
     - cron: '0 4 * * 1'
+    - cron: '0 5 * * 2-5'
   workflow_dispatch:
 permissions:
   contents: write
@@ -64,8 +66,9 @@ jobs:
             fi
             echo "Deneme $deneme basarisiz."
             if [ "$deneme" -lt 3 ]; then
-              echo "10 dakika beklenip tekrar denenecek..."
-              sleep 600
+              echo "5 dakika beklenip tekrar denenecek (son care yayini sayesinde tam basarisizlik bile rozetli cikti uretir)..."
+              sleep 300
+            fi
             fi
           done
           echo "3 denemenin hepsi basarisiz."

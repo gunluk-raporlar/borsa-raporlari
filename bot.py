@@ -3256,6 +3256,10 @@ Biçim kuralları (zorunlu):
 """
 
     son_hata = "ZAI anahtari yok" if glm_istemci is None else None
+    # Son çare yayını aday havuzu (2026-10-06): uydurma eşiğine takılan
+    # yanıtlardan en az düzeltme gerektirenin düzeltilmiş metni burada
+    # saklanır; tüm zincir başarısız olursa görünür rozetle yayımlanır.
+    en_iyi = {}
 
     # 1) AMD ana saglayici (DeepSeek-V4-Flash); Z.ai GLM yedek
     if client is not None:
@@ -3284,7 +3288,7 @@ Biçim kuralları (zorunlu):
                         icerik = rapor_son_islem(icerik)
                         dogrulanmis = _metin_dogrula_ve_kaydet(
                             icerik, " / makro analiz", snapshot=snapshot,
-                            uydurma_esigi=UYDURMA_ESIGI)
+                            uydurma_esigi=UYDURMA_ESIGI, en_iyi=en_iyi)
                         if dogrulanmis is None:
                             son_hata = "uydurma yogun yanit (AMD)"
                             logger.warning("[Makro Analiz] AMD yaniti cok sayida hatali sayi iceriyordu; reddedilip GLM yedegine geciliyor.")
@@ -3333,7 +3337,7 @@ Biçim kuralları (zorunlu):
                 icerik = rapor_son_islem(icerik)
                 dogrulanmis = _metin_dogrula_ve_kaydet(
                     icerik, " / makro analiz", snapshot=snapshot,
-                    uydurma_esigi=UYDURMA_ESIGI)
+                    uydurma_esigi=UYDURMA_ESIGI, en_iyi=en_iyi)
                 if dogrulanmis is None:
                     son_hata = f"uydurma yogun yanit ({mdl})"
                     logger.warning("[Makro Analiz] %s yaniti cok sayida hatali sayi iceriyordu; reddedilip siradaki model deneniyor.", mdl)
@@ -3375,7 +3379,7 @@ Biçim kuralları (zorunlu):
                         icerik = rapor_son_islem(icerik)
                         dogrulanmis = _metin_dogrula_ve_kaydet(
                             icerik, " / makro analiz", snapshot=snapshot,
-                            uydurma_esigi=UYDURMA_ESIGI)
+                            uydurma_esigi=UYDURMA_ESIGI, en_iyi=en_iyi)
                         if dogrulanmis is None:
                             son_hata = f"{son_hata} / uydurma yogun yanit (yedek)"
                             logger.warning("[Makro Analiz] Yedek yanit da cok sayida hatali sayi iceriyordu; reddedildi.")
@@ -3385,6 +3389,19 @@ Biçim kuralları (zorunlu):
             except Exception as e:
                 son_hata = str(e)[:200]
                 logger.warning("[Makro Analiz] AMD yedek basarisiz: %s", son_hata)
+    # Son çare yayını (2026-10-06): tüm adaylar uydurma eşiğine takıldıysa,
+    # EN AZ düzeltme gerektiren aday, görünür uyarı rozetiyle yayımlanır —
+    # "rapor hiç yok"tan iyidir; rozet düşük güvenilirliği açıkça bildirir.
+    # Tavan: eşiğin 2 katı; üstündeki adaylar yayımlanmayacak kadar bozuk sayılır.
+    son_care_esik = UYDURMA_ESIGI * 2
+    if en_iyi and en_iyi.get("adet", 10 ** 9) <= son_care_esik:
+        uyari = ("> ⚠️ **Düşük güvenilirlik sürümü:** Bu sayfa, üretim denemelerinin tamamı "
+                 f"kalite eşiğine takıldığı için en az düzeltme gerektiren adaydan ({en_iyi['adet']} "
+                 "sayı/isim otomatik düzeltildi) son çare olarak yayımlanmıştır. Rakamlar anlık "
+                 "snapshot'a göre deterministik doğrulamadan geçirilmiştir; metin akıcılığı standart "
+                 "yayından düşük olabilir.\n\n")
+        logger.warning("[Makro Analiz] son care yayini: %d duzeltmeli aday rozetle yayimlaniyor.", en_iyi["adet"])
+        return uyari + en_iyi["metin"]
     logger.error("[Makro Analiz] metin uretilemedi (GLM/AMD): %s", son_hata)
     return None
 
@@ -3626,7 +3643,7 @@ def _endeks_seviyeleri():
     return seviyeler
 
 
-def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None):
+def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None, en_iyi=None):
     """Yayin oncesi deterministik dogrulama; ayni snapshot promptla paylasilir.
 
     uydurma_esigi verilirse (derin/makro analiz): dogrulamanin duzeltmek
@@ -3694,6 +3711,11 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
                            + len(sonuc["endeks_duzeltme"]) + len(sonuc["faiz_duzeltme"])
                            + len(sonuc["makro_duzeltme"]) + len(sonuc["piyasa_duzeltme"]))
         if uydurma_esigi is not None and duzeltme_sayisi > uydurma_esigi:
+            # Son çare yayını için en iyi adayı sakla (2026-10-06): düzeltilmiş
+            # metin + düzeltme sayısı; çağıran son çareye karar verir.
+            if en_iyi is not None and en_iyi.get("adet", 10 ** 9) > duzeltme_sayisi:
+                en_iyi.clear()
+                en_iyi.update(adet=duzeltme_sayisi, metin=sonuc["metin"])
             logger.warning("[Dogrulama%s] %d sayi/isim duzeltildi (esik %d): "
                            "uydurma yogun yanit REDDEDILDI; siradaki model denenmeli.",
                            etiket, duzeltme_sayisi, uydurma_esigi)

@@ -82,6 +82,24 @@ def main():
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     date_str = datetime.now(tz).strftime("%Y-%m-%d")
 
+    # Tazelik kapisi (2026-10-06): Sali-Cuma guvenlik kosulari icin — arsivde
+    # 48 saatten taze makro raporu varsa uretim kesilir (1 dk'da cikar).
+    # MAKRO_FORCE=1 ile kapı atlanir (zorla yenileme).
+    if os.environ.get("MAKRO_FORCE") != "1":
+        import glob as _glob
+        arsivler = sorted(_glob.glob("reports/*-makro-analiz.html"))
+        if arsivler:
+            son_t = os.path.basename(arsivler[-1])[:10]
+            try:
+                son_d = datetime.strptime(son_t, "%Y-%m-%d").date()
+                fark = (datetime.now(tz).date() - son_d).days
+                if fark < 2:
+                    logger.info("Makro analiz %s tarihli (%d gun) — 48 saat taze, "
+                                "uretim atlandi (guvenlik kosusu).", son_t, fark)
+                    return 0
+            except ValueError:
+                pass
+
     logger.info("Onceki aksam makro snapshot'i yukleniyor...")
     try:
         snapshot = bot.makro_snapshot_cek(expected_report_date=date_str)
