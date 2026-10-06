@@ -6286,13 +6286,20 @@ def _sirket_profili_html(kod):
         marka_html = (f'<div style="margin:8px 0 0"><div style="color:var(--muted); font-size:12px; '
                       f'margin-bottom:5px">Markalar &amp; iştirakler</div>{rozetler}</div>')
     unvan = f'<div style="font-weight:700; margin-bottom:4px">{p.get("unvan", "")}</div>' if p.get("unvan") else ""
+    temel_html = ""
+    if p.get("temel"):
+        ogeler = "".join(f"<li style='margin:5px 0'>{html.escape(satir)}</li>" for satir in p["temel"])
+        temel_html = (f'<div style="margin:10px 0 0; padding-top:10px; border-top:1px solid var(--line)">'
+                      f'<div style="color:var(--muted); font-size:12px; margin-bottom:4px">Temel analiz özeti '
+                      f'(elle beslenir — sağılayıcı notlarla)</div>'
+                      f'<ul style="margin:0; padding-left:18px; font-size:13px">{ogeler}</ul></div>')
     return f"""
 <div class="card" style="margin:0 0 18px">
 <h3 style="margin:0 0 6px">🏢 Şirket Profili</h3>
 {unvan}
 <div class="meta" style="margin:0 0 8px">{''.join(meta)}</div>
 <p style="margin:0; font-size:14px">{p.get('faaliyet', '')}</p>
-{marka_html}{web_html}{_bilanco_ozeti(kod)}
+{temel_html}{marka_html}{web_html}{_bilanco_ozeti(kod)}
 </div>"""
 
 

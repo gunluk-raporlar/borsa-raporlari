@@ -408,6 +408,14 @@
       "Konaklı Metal Madencilik (%71,77)",
       "Özdemir Antimuan Madenleri (%99,04)"
     ],
-    "sorgu": "TR Anadolu Metal"
+    "sorgu": "TR Anadolu Metal",
+    "temel": [
+      "Çarpanlar (Midas, 06.10): F/K 24,02 · PD/DD 1,67 · PEG 0,20 · FD/Satışlar 1,23 · FD/FAVÖK 3,16 · PD/EFK 6,99",
+      "Büyüme 4/5: satış +%41,5 (enflasyon ardı reel ~%0), FAVÖK +%198, net kâr +%6; duran varlık büyümesi kısa vadeli kaynakla finanse ediliyor (uyarı)",
+      "Nakit akışı: işletme nakit akışı 6,28 milyar TL (+%28), serbest nakit akışı +616,6M, dönem sonu nakit 7,46 milyar TL; en büyük yatırım 5,93 milyar TL duran varlık alımı",
+      "Borçluluk: net borç YOK (nakit borçtan 21,7 milyar TL fazla), kaldıraç 0,13 (düşük); kısa vadeli borç payı %5,9→%8,7 ve finansal borç payı artışı (uyarı); faiz karşılama verisi eksik (uyarı)",
+      "Karlılık 3,8/5: faaliyet marjı %35 (artış), net marj %8 (azalış); özkaynak kârlılığı %8 (DuPont: kaldıraç ve devir hızı artışıyla)",
+      "Verimlilik: aktif devir hızı 0,40 · özkaynak devir hızı 0,87 · işletme sermayesi devir hızı 1,23"
+    ]
   }
 }
