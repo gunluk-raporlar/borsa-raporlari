@@ -35,58 +35,6 @@
     "finansal_borc": 5941949592.0,
     "donem": "2026/6"
   },
-  "BIMAS": {
-    "donen_varlik": 152411807000.0,
-    "duran_varlik": 276162543000.0,
-    "toplam_varlik": 428574350000.0,
-    "kisa_borc": 147697793000.0,
-    "uzun_borc": 77739194000.0,
-    "ozsermaye": 203137363000.0,
-    "odenmis_sermaye": 1200000000.0,
-    "satis": 449695235000.0,
-    "net_kar": 15094815000.0,
-    "finansal_borc": 62592510000.0,
-    "donem": "2026/6"
-  },
-  "EKGYO": {
-    "donen_varlik": 387011301000.0,
-    "duran_varlik": 36612383000.0,
-    "toplam_varlik": 423623684000.0,
-    "kisa_borc": 177353069000.0,
-    "uzun_borc": 91939011000.0,
-    "ozsermaye": 154331604000.0,
-    "odenmis_sermaye": 3800000000.0,
-    "satis": 51262860000.0,
-    "net_kar": 2981907000.0,
-    "finansal_borc": 62614128000.0,
-    "donem": "2026/6"
-  },
-  "ENKAI": {
-    "donen_varlik": 248557693000.0,
-    "duran_varlik": 294250678000.0,
-    "toplam_varlik": 542808371000.0,
-    "kisa_borc": 84728253000.0,
-    "uzun_borc": 41324552000.0,
-    "ozsermaye": 416755566000.0,
-    "odenmis_sermaye": 6021689000.0,
-    "satis": 84745798000.0,
-    "net_kar": 20485513000.0,
-    "finansal_borc": 7584491000.0,
-    "donem": "2026/6"
-  },
-  "EREGL": {
-    "donen_varlik": 265474934000.0,
-    "duran_varlik": 333624411000.0,
-    "toplam_varlik": 599099345000.0,
-    "kisa_borc": 148785900000.0,
-    "uzun_borc": 121532394000.0,
-    "ozsermaye": 328781051000.0,
-    "odenmis_sermaye": 7000000000.0,
-    "satis": 124567404000.0,
-    "net_kar": 9217143000.0,
-    "finansal_borc": 161073831000.0,
-    "donem": "2026/6"
-  },
   "FROTO": {
     "donen_varlik": 238888865000.0,
     "duran_varlik": 250348149000.0,
@@ -186,6 +134,19 @@
     "finansal_borc": 56086175000.0,
     "donem": "2026/6"
   },
+  "PGSUS": {
+    "donen_varlik": 91421290000.0,
+    "duran_varlik": 349052366000.0,
+    "toplam_varlik": 440473656000.0,
+    "kisa_borc": 108239055000.0,
+    "uzun_borc": 219574337000.0,
+    "ozsermaye": 112660264000.0,
+    "odenmis_sermaye": 500000000.0,
+    "satis": 78468731000.0,
+    "net_kar": -12551835000.0,
+    "finansal_borc": 255043577000.0,
+    "donem": "2026/6"
+  },
   "SAHOL": {
     "donen_varlik": 2790066761000.0,
     "duran_varlik": 1863056365000.0,
@@ -197,6 +158,19 @@
     "satis": 135127912000.0,
     "net_kar": 17917816000.0,
     "finansal_borc": 650933567000.0,
+    "donem": "2026/6"
+  },
+  "SASA": {
+    "donen_varlik": 41999806000.0,
+    "duran_varlik": 335290368000.0,
+    "toplam_varlik": 377290174000.0,
+    "kisa_borc": 72594744000.0,
+    "uzun_borc": 112019687000.0,
+    "ozsermaye": 192675743000.0,
+    "odenmis_sermaye": 47040879000.0,
+    "satis": 38875677000.0,
+    "net_kar": 491994000.0,
+    "finansal_borc": 139967097000.0,
     "donem": "2026/6"
   },
   "SISE": {
@@ -212,6 +186,19 @@
     "finansal_borc": 171631307000.0,
     "donem": "2026/6"
   },
+  "TAVHL": {
+    "donen_varlik": 47609649000.0,
+    "duran_varlik": 218222235000.0,
+    "toplam_varlik": 265831884000.0,
+    "kisa_borc": 54067268000.0,
+    "uzun_borc": 129114203000.0,
+    "ozsermaye": 82650413000.0,
+    "odenmis_sermaye": 363281000.0,
+    "satis": 45144268000.0,
+    "net_kar": 870651000.0,
+    "finansal_borc": 110976316000.0,
+    "donem": "2026/6"
+  },
   "TCELL": {
     "donen_varlik": 180560002000.0,
     "duran_varlik": 479333887000.0,
@@ -223,6 +210,91 @@
     "satis": 137467389000.0,
     "net_kar": 10194669000.0,
     "finansal_borc": 212068174000.0,
+    "donem": "2026/6"
+  },
+  "THYAO": {
+    "donen_varlik": 512191000000.0,
+    "duran_varlik": 1847846000000.0,
+    "toplam_varlik": 2360037000000.0,
+    "kisa_borc": 566751000000.0,
+    "uzun_borc": 774833000000.0,
+    "ozsermaye": 1018453000000.0,
+    "odenmis_sermaye": 1380000000.0,
+    "satis": 585069000000.0,
+    "net_kar": 18766000000.0,
+    "finansal_borc": 914234000000.0,
+    "donem": "2026/6"
+  },
+  "TOASO": {
+    "donen_varlik": 152293246000.0,
+    "duran_varlik": 63520131000.0,
+    "toplam_varlik": 215813377000.0,
+    "kisa_borc": 101307749000.0,
+    "uzun_borc": 48764802000.0,
+    "ozsermaye": 65740826000.0,
+    "odenmis_sermaye": 500000000.0,
+    "satis": 201797108000.0,
+    "net_kar": 6290532000.0,
+    "finansal_borc": 70364733000.0,
+    "donem": "2026/6"
+  },
+  "TRALT": {
+    "donen_varlik": 24877637000.0,
+    "duran_varlik": 36653414000.0,
+    "toplam_varlik": 61531051000.0,
+    "kisa_borc": 5268456000.0,
+    "uzun_borc": 3109210000.0,
+    "ozsermaye": 53153385000.0,
+    "odenmis_sermaye": 3202500000.0,
+    "satis": 14081230000.0,
+    "net_kar": 2834951000.0,
+    "finansal_borc": 82098000.0,
+    "donem": "2026/6"
+  },
+  "TTKOM": {
+    "donen_varlik": 109437499000.0,
+    "duran_varlik": 531721491000.0,
+    "toplam_varlik": 641158990000.0,
+    "kisa_borc": 133562772000.0,
+    "uzun_borc": 242341549000.0,
+    "ozsermaye": 265254669000.0,
+    "odenmis_sermaye": 3500000000.0,
+    "satis": 142212593000.0,
+    "net_kar": 17152145000.0,
+    "finansal_borc": 145064226000.0,
+    "donem": "2026/6"
+  },
+  "TUPRS": {
+    "donen_varlik": 439480874000.0,
+    "duran_varlik": 420506642000.0,
+    "toplam_varlik": 859987516000.0,
+    "kisa_borc": 325369321000.0,
+    "uzun_borc": 71311414000.0,
+    "ozsermaye": 463306781000.0,
+    "odenmis_sermaye": 1926796000.0,
+    "satis": 662788010000.0,
+    "net_kar": 50272473000.0,
+    "finansal_borc": 68200679000.0,
+    "donem": "2026/6"
+  },
+  "VAKBN": {
+    "donen_varlik": 790769000000.0,
+    "toplam_varlik": 5810756000000.0,
+    "kisa_borc": 3566974000000.0,
+    "ozsermaye": 353008000000.0,
+    "odenmis_sermaye": 9916000000.0,
+    "satis": 103701000000.0,
+    "net_kar": 30108000000.0,
+    "donem": "2026/6"
+  },
+  "YKBNK": {
+    "donen_varlik": 543329000000.0,
+    "toplam_varlik": 3572390000000.0,
+    "kisa_borc": 1985905000000.0,
+    "ozsermaye": 286488000000.0,
+    "odenmis_sermaye": 8447000000.0,
+    "satis": 107770000000.0,
+    "net_kar": 31010000000.0,
     "donem": "2026/6"
   }
 }

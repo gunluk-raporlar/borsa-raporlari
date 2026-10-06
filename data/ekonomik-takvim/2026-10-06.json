@@ -6,7 +6,7 @@
     "olay": "Retail Sales MoM",
     "onem": 0,
     "tahmin": 0.2,
-    "gercek": null,
+    "gercek": 0.1,
     "onceki": -0.6
   },
   {
@@ -71,6 +71,26 @@
   },
   {
     "tarih": "2026-10-06",
+    "saat": "16:00",
+    "ulke": "US",
+    "olay": "EIA Short-Term Energy Outlook",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-06",
+    "saat": "17:15",
+    "ulke": "US",
+    "olay": "Fed Schmid Speech",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-10-06",
     "saat": "20:30",
     "ulke": "US",
     "olay": "API Crude Oil Stock Change",
@@ -103,21 +123,21 @@
     "tarih": "2026-10-07",
     "saat": "14:30",
     "ulke": "US",
-    "olay": "EIA Gasoline Stocks Change",
-    "onem": 0,
-    "tahmin": null,
-    "gercek": null,
-    "onceki": -1.684
-  },
-  {
-    "tarih": "2026-10-07",
-    "saat": "14:30",
-    "ulke": "US",
     "olay": "EIA Crude Oil Stocks Change",
     "onem": 0,
     "tahmin": null,
     "gercek": null,
     "onceki": 0.922
+  },
+  {
+    "tarih": "2026-10-07",
+    "saat": "14:30",
+    "ulke": "US",
+    "olay": "EIA Gasoline Stocks Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -1.684
   },
   {
     "tarih": "2026-10-07",
