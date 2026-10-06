@@ -9,7 +9,9 @@ rm -rf dist
 mkdir -p dist
 
 # Sayfa klasorleri (mp3'ler dahil)
-for d in hisse reports radyo haftasonu haftasonu-egitimi en de ru zh; do
+# derin-analiz/ + makro-analiz/ (2026-10-07): agac yapisinde tarihli arsiv
+# sayfalari bu dizinlerde; listeye alinmazsa hub kartlari 404'e duser.
+for d in hisse reports derin-analiz makro-analiz radyo haftasonu haftasonu-egitimi en de ru zh; do
   if [ -d "$d" ]; then cp -r "$d" dist/; fi
 done
 
