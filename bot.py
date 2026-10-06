@@ -4509,7 +4509,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <header class="topbar"><div class="inner">
 <div class="brand-row"><a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
-<nav><a href="{kok}index.html"{a_ana}>Ana Sayfa</a><a href="{kok}raporlar.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}makro-analiz.html"{a_mk}>Makro Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a><a href="{kok}terimler.html"{a_trm}>Terimler</a><a href="{kok}muhasebe-terimleri.html"{a_muh}>Muhasebe Terimleri</a><a href="{kok}robot.html"{a_rb}>İşlem Robotu</a></nav>
+<nav><a href="{kok}index.html"{a_ana}>Ana Sayfa</a><a href="{kok}reports/"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}makro-analiz.html"{a_mk}>Makro Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a><a href="{kok}terimler.html"{a_trm}>Terimler</a><a href="{kok}muhasebe-terimleri.html"{a_muh}>Muhasebe Terimleri</a><a href="{kok}robot.html"{a_rb}>İşlem Robotu</a></nav>
 </div></header>
 {_kendi_ticker(kok)}
 {_kendi_ticker2(kok)}
@@ -4535,7 +4535,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 </main>
 
 <nav class="altbar" aria-label="Hızlı menü">
-<a href="{kok}raporlar.html"{a_alt_r}><span class="i" aria-hidden="true">📊</span>Raporlar</a>
+<a href="{kok}reports/"{a_alt_r}><span class="i" aria-hidden="true">📊</span>Raporlar</a>
 <a href="{kok}teknik-analiz.html"{a_alt_t}><span class="i" aria-hidden="true">📈</span>Teknik</a>
 <a href="{kok}hisse/index.html"{a_alt_his}><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
 <a href="{kok}portfolio.html"{a_alt_p}><span class="i" aria-hidden="true">💼</span>Portföy</a>
@@ -4867,7 +4867,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
 {_pano_html(teknik_satirlar, kok)}
 {_ajanda_html(ajanda or [], limit=14, kok=kok)}
 <article class="report" id="rapor-govde">{html_icerik}</article>
-<p style="margin-top:18px"><a href="{kok}raporlar.html">&larr; Tüm raporlara dön</a></p>
+<p style="margin-top:18px"><a href="{kok}reports/">&larr; Tüm raporlara dön</a></p>
 {_sesli_okuma_js()}"""
     ld_ek = json.dumps({
         "@context": "https://schema.org", "@type": "Article",
@@ -5174,10 +5174,10 @@ def _ders_konusu(dosya_adi):
     return konu or None
 
 
-def _hub_kartlari(dosyalar, alt_etiket, suffix=""):
+def _hub_kartlari(dosyalar, alt_etiket, suffix="", href_on="reports/"):
     """Arsiv dosya adlarini en yeni once rcard gridine dokar; bos ise not."""
     kartlar = [
-        f'<a class="rcard" href="reports/{fn}"><span class="date">'
+        f'<a class="rcard" href="{href_on}{fn}"><span class="date">'
         f'{_tr_tarih(fn[:-5].replace(suffix, ""))}</span>'
         f'<span class="sub">{alt_etiket} &rarr;</span></a>'
         for fn in sorted(dosyalar, reverse=True)
@@ -5225,6 +5225,21 @@ def build_hub_sayfalari():
 {_hub_kartlari(dosyalar, etiket, suffix)}"""
         with open(yol, "w", encoding="utf-8") as f:
             f.write(_sayfa(title, icerik, aktif, yol=yol, aciklama=aciklama))
+
+    # Agac yapisinin kok kopyasi (2026-10-06 kullanici karari): /reports/
+    # dizin yolu da arsiv hub'ina acilsin — reports/index.html CF tarafindan
+    # /reports/ olarak serve edilir; kartlar ayni dizindeki dosyalara
+    # goreceli baglanir (2026-10-06.html). raporlar.html ile ayni icerik,
+    # canonical /reports/.
+    icerik_r = f"""
+<div class="hero">
+<h1>Günlük Piyasa Raporları</h1>
+<div class="meta"><span>BIST 30 günlük piyasa raporlarının tamamı, en yeniden eskiye.</span></div>
+</div>
+{_hub_kartlari(gunluk, "Günlük raporu aç", href_on="")}"""
+    with open("reports/index.html", "w", encoding="utf-8") as f:
+        f.write(_sayfa("Günlük Raporlar Arşivi", icerik_r, "raporlar",
+                       yol="reports/", aciklama="BIST 30 günlük piyasa raporlarının tarihli arşivi."))
 
     # Borsa Okulu hub'i (2026-10-06): dersler haftasonu-egitimi/ altinda yasar;
     # kartlarda ders konusu da gosterilir (_ders_konusu h2 basligini okur).
@@ -8053,7 +8068,7 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
     lastmod'u dosyanin son degisiklik zamanindan okunur."""
     statik = [
         ("index.html", "daily"),
-        ("raporlar.html", "daily"),
+        ("reports/", "daily"),
         ("derin-analiz.html", "daily"),
         ("makro-analiz.html", "weekly"),
         ("teknik-analiz.html", "hourly"),
