@@ -7,7 +7,6 @@
     "ASELS": 388.25,
     "ASTOR": 295.0,
     "BIMAS": 415.75,
-    "DSTKF": 2320.0,
     "EKGYO": 19.44,
     "ENKAI": 87.25,
     "EREGL": 37.2,
@@ -31,7 +30,8 @@
     "TTKOM": 51.9,
     "TUPRS": 388.5,
     "VAKBN": 33.62,
-    "YKBNK": 35.9
+    "YKBNK": 35.9,
+    "TRMET": 129.5
   },
   "shares": {
     "AEFES": 180.67,
@@ -39,7 +39,6 @@
     "ASELS": 8.59,
     "ASTOR": 11.3,
     "BIMAS": 8.02,
-    "DSTKF": 1.44,
     "EKGYO": 171.47,
     "ENKAI": 38.2,
     "EREGL": 89.61,
@@ -63,7 +62,8 @@
     "TTKOM": 64.23,
     "TUPRS": 8.58,
     "VAKBN": 99.15,
-    "YKBNK": 92.85
+    "YKBNK": 92.85,
+    "TRMET": 6.95
   },
   "initial_benchmarks": {
     "USD": 48.2326,

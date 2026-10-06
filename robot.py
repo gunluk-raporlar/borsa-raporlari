@@ -39,10 +39,10 @@ log = logging.getLogger("robot")
 
 # ---- SABITLER ----
 HISSELER = [
-    "AEFES", "AKBNK", "ASELS", "ASTOR", "BIMAS", "DSTKF", "EKGYO", "ENKAI",
+    "AEFES", "AKBNK", "ASELS", "ASTOR", "BIMAS", "EKGYO", "ENKAI",
     "EREGL", "FROTO", "GARAN", "GUBRF", "ISCTR", "KCHOL", "KRDMD", "MGROS",
     "PETKM", "PGSUS", "SAHOL", "SASA", "SISE", "TAVHL", "TCELL", "THYAO",
-    "TOASO", "TRALT", "TTKOM", "TUPRS", "VAKBN", "YKBNK",
+    "TOASO", "TRALT", "TRMET", "TTKOM", "TUPRS", "VAKBN", "YKBNK",
 ]
 DURUM_YOL = "data/robot/durum.json"
 ISLEM_YOL = "data/robot/islemler.jsonl"

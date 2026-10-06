@@ -260,10 +260,10 @@ gemini_client = OpenAI(
 
 # Takip edilen BIST30 hisseleri (Guncel liste)
 HISSELER = [
-    "AEFES", "AKBNK", "ASELS", "ASTOR", "BIMAS", "DSTKF", "EKGYO", "ENKAI",
+    "AEFES", "AKBNK", "ASELS", "ASTOR", "BIMAS", "EKGYO", "ENKAI",
     "EREGL", "FROTO", "GARAN", "GUBRF", "ISCTR", "KCHOL", "KRDMD", "MGROS",
     "PETKM", "PGSUS", "SAHOL", "SASA", "SISE", "TAVHL", "TCELL", "THYAO",
-    "TOASO", "TRALT", "TTKOM", "TUPRS", "VAKBN", "YKBNK"
+    "TOASO", "TRALT", "TRMET", "TTKOM", "TUPRS", "VAKBN", "YKBNK"
 ]
 
 # ---- YEREL VERI DEPOSU (hafiza katmani) ----
@@ -3548,14 +3548,15 @@ TTS_SESI = os.environ.get("TTS_SESI") or "tr-TR-EmelNeural"
 # Sesli okumada ticker ve kısaltmaların doğal telaffuzu
 HISSE_ADLARI = {
     "AEFES": "Anadolu Efes", "AKBNK": "Akbank", "ASELS": "Aselsan",
-    "ASTOR": "Astor Enerji", "BIMAS": "BİM", "DSTKF": "Destek Finans Faktoring",
+    "ASTOR": "Astor Enerji", "BIMAS": "BİM",
     "EKGYO": "Emlak Konut GYO", "ENKAI": "Enka İnşaat", "EREGL": "Ereğli Demir Çelik",
     "FROTO": "Ford Otosan", "GARAN": "Garanti BBVA", "GUBRF": "Gübre Fabrikaları",
     "ISCTR": "İş Bankası", "KCHOL": "Koç Holding", "KRDMD": "Kardemir",
     "MGROS": "Migros", "PETKM": "Petkim", "PGSUS": "Pegasus",
     "SAHOL": "Sabancı Holding", "SASA": "Sasa Polyester", "SISE": "Şişecam",
     "TAVHL": "TAV Havalimanları", "TCELL": "Turkcell", "THYAO": "Türk Hava Yolları",
-    "TOASO": "Tofaş", "TRALT": "Türk Altın İşletmeleri", "TTKOM": "Türk Telekom",
+    "TOASO": "Tofaş", "TRALT": "Türk Altın İşletmeleri", "TRMET": "TR Anadolu Metal",
+    "TTKOM": "Türk Telekom",
     "TUPRS": "Tüpraş", "VAKBN": "Vakıfbank", "YKBNK": "Yapı Kredi",
 }
 
@@ -5348,22 +5349,19 @@ def build_portfolio_html(p):
 hafta içi her sabah bir önceki işlem gününün kapanış fiyatlarıyla otomatik güncellenir.</p>
 </div>
 <div class="card" style="border-left:4px solid #dc2626;padding:12px 16px;margin:0 0 22px">
-<div style="font-weight:700;margin-bottom:6px">⚠️ DSTKF pozisyonu hakkında önemli not (6 Ekim 2026)</div>
+<div style="font-weight:700;margin-bottom:6px">🔄 Portföy revizyonu: DSTKF → TRMET (6 Ekim 2026)</div>
 <p style="margin:0 0 8px;color:var(--muted);font-size:13.5px;line-height:1.7">
-Sepetteki DSTKF fiyat serisi, BIST'in <b>±%10 taban/tavan</b> bandıyla bağdaşmayan iki kesikli düşüş
-içeriyor (25 Eylül ve 5 Ekim; her biri tek günde yaklaşık <b>-%27</b>). Normal işlem gününde bu mümkün
-değildir; iki bilinen açıklaması vardır: <b>(1) sermaye azaltımı (divalans)</b> — pay başına nakit ödenir,
-fiyat mekanik düşer; bu durumda sepetteki zararın bir kısmı gölgedir, gerçek değer gösterilenden yüksektir.
-<b>(2) İşlem durdurma sonrası yeni baz fiyattan açılış</b> (özel durum) — bu durumda nakit ödeme yoktur ve
-zarar gerçektir. Hangisi olduğu KAP bildiriminden netleşince getiri buna göre düzeltilir. Pozisyon
-bilerek satılmamıştır: taban serisinde satış varsayımı gerçekçi değildir; 1,44 lot (6 Eylül eşit dağıtımından
-kalma) piyasa değerinde yer yer 800 TL'nin altındadır ve orana etkisi küçüktür. Ayrıca BIST, DSTKF'i 22 Eylül'de
-duyurulan çeyreklik revizyonla <b>1 Ekim 2026'dan itibaren BIST 30/50/100 endekslerinden çıkardı</b> ve payı Yıldız
-Pazar'dan Ana Pazar'a taşıdı — bu tarihten sonra XU030/XU100 kıyaslamaları DSTKF'i içermez, sepetimiz ise hâlâ tutar.</p>
+BIST'in 1 Ekim 2026 çeyreklik revizyonu DSTKF'i BIST 30/50/100 endekslerinden çıkardı (Yıldız → Ana Pazar)
+ve yerine TR Anadolu Metal'i aldı. Sepetimizdeki 1,44 lot DSTKF (6 Eylül eşit dağıtımından kalma), son kayıtlı
+sepet fiyatıyla (625,00 TL) 900,00 TL karşılığında sepette kapatılıp yerine TRMET 6,95 lot (129,50 TL) yazıldı;
+sepet toplamı değişmedi. DSTKF'in fiyat serisi ±%10 taban/tavan bandıyla bağdaşmayan iki -%27'lik kırılma
+içeriyordu (25 Eylül, 5 Ekim): pay başına nakit ödenen divalans varsa bu zararın bir kısmı gölgedir, işlem
+durdurulup yeni baz fiyattan açılmışsa gerçektir — KAP bildirimi netleşince gerekirse düzeltilir. Gerçekleşen
+zarar (1,44 lot × (625,00 − 2.320,00) ≈ −2.448 ₺) 6 Eylül'den bu yana sepetin toplam getirisine yansıdır.</p>
 <p style="margin:0;color:var(--muted);font-size:13.5px;line-height:1.7">
-<b>DSTKF yayın politikası gereği kara listededir</b> (şirket ve bağlı sahiplerinin yatırım bağlantıları
-soruşturma konusu; Tera Holding bağlantılı haberler): sitede hiçbir yerde olumlu değerlendirilmez,
-teknik taramada AL üretilmez, işlem robotu AL adayı olarak almaz. İşlem robotu bu hisseyi hiç almamıştır.</p>
+<b>DSTKF yayın politikası gereği kara listede kalır</b> (şirket ve bağlı sahiplerinin yatırım bağlantıları
+soruşturma konusu; Tera Holding bağlantılı haberler): sitede hiçbir yerde olumlu değerlendirilmez, teknik
+taramada AL üretilmez, işlem robotu AL adayı olarak almaz. İşlem robotu bu hisseyi hiç almamıştır.</p>
 </div>
 <details class="card" style="margin-bottom:22px">
 <summary style="cursor:pointer; font-weight:700">📐 Metodoloji — bu portföy nasıl hesaplanıyor?</summary>
