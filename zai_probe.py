@@ -11,6 +11,9 @@ import urllib.error
 
 url = "https://api.z.ai/api/paas/v4/chat/completions"
 
+# (etiket, tamam_mi, kod/asinin_turu) — sonda net hüküm basmak için.
+SONUCLAR = []
+
 
 def dene(etiket, ek_alanlar):
     govde = {"model": "glm-5.3-flash",
@@ -25,10 +28,13 @@ def dene(etiket, ek_alanlar):
             d = json.loads(r.read().decode())
         icerik = (d.get("choices") or [{}])[0].get("message", {}).get("content", "")
         print(f"[{etiket}] OK | cevap: {str(icerik)[:40]!r} | usage: {d.get('usage')}")
+        SONUCLAR.append((etiket, True, "OK"))
     except urllib.error.HTTPError as e:
         print(f"[{etiket}] HTTP {e.code} | {e.read().decode()[:180]}")
+        SONUCLAR.append((etiket, False, e.code))
     except Exception as e:
         print(f"[{etiket}] HATA: {type(e).__name__}: {str(e)[:120]}")
+        SONUCLAR.append((etiket, False, type(e).__name__))
 
 
 if __name__ == "__main__":
@@ -55,3 +61,15 @@ if __name__ == "__main__":
     dene2("F: coding, param yok", {})
     dene2("G: coding, obj low", {"thinking": {"type": "low"}})
     dene("H: std, obj LOW", {"thinking": {"type": "LOW"}})
+
+    # Net hüküm: bot (bot.py) yalnızca CODING ucunu kullanır; standart ucun
+    # 429 bakiye hatası botu etkilemez (2026-10-06 karışıklık sonrası eklendi).
+    coding_sonuc = [(ok, code) for e, ok, code in SONUCLAR if e.startswith(("F:", "G:"))]
+    if any(ok for ok, _ in coding_sonuc):
+        print("SONUC: Coding paketi CALISIYOR — botun GLM yolu saglikli "
+              "(standart uc 429 verebilir; bot onu kullanmiyor).")
+    elif coding_sonuc and all(code == 429 for _, code in coding_sonuc):
+        print("SONUC: Coding paketi 429 (bakiye/kota) — botun GLM yolu cokmus, "
+              "AMD yedegi devreye girecek.")
+    else:
+        print("SONUC: Coding paketi erisilemez — yukaridaki F/G satirlarina bakin.")
