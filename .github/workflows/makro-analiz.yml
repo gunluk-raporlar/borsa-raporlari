@@ -9,6 +9,11 @@ on:
     - cron: '0 4 * * 1'
     - cron: '0 5 * * 2-5'
   workflow_dispatch:
+    inputs:
+      storm:
+        description: 'STORM modu: oz prompt (daha az sayi = daha az uydurma alani)'
+        required: false
+        default: 'false'
 permissions:
   contents: write
 concurrency:
@@ -58,8 +63,16 @@ jobs:
           BAIDU_SITE_DOGRULAMA: ${{ secrets.BAIDU_SITE_DOGRULAMA }}
           YANDEX_SITE_DOGRULAMA: ${{ secrets.YANDEX_SITE_DOGRULAMA }}
         run: |
+          # STORM modu: 2./3. denemelerde prompt ozlesir (kisa cikti = daha az
+          # uydurma alani). Elle tetiklemede -f storm=true ile 1. denemeden zorlanir.
+          if [ "${{ inputs.storm }}" = "true" ]; then
+            export STORM=1
+          fi
           for deneme in 1 2 3; do
-            echo "=== Makro analiz denemesi: $deneme/3 ==="
+            if [ "$deneme" -ge 2 ]; then
+              export STORM=1
+            fi
+            echo "=== Makro analiz denemesi: $deneme/3 (STORM=${STORM:-0}) ==="
             if python -u makro_analiz.py; then
               echo "Basarili (deneme $deneme)."
               exit 0

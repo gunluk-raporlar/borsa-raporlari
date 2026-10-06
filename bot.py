@@ -3223,6 +3223,8 @@ def makro_analiz_yap(yedek_amd=False, snapshot=None):
     Prompt, HTML tablosu ve deterministik dogrulama ayni onceki aksam
     makro snapshot'ini paylasir. Canli veri cagrisi veya eski snapshot
     fallback'i yoktur.
+    STORM=1 ortam degiskeni (2./3. denemelerde workflow tarafindan set edilir)
+    promptu ozlestirir: kisa cikti = daha az sayi = daha az uydurma alani.
 
     Birincil saglayici Z.ai GLM'dir (ZAI_API_KEY). Alinamazsa/basarisizsa
     yedek_omcu olarak AMD DeepSeek-V4-Flash denenir (yedek_amd=True ve
@@ -3230,6 +3232,11 @@ def makro_analiz_yap(yedek_amd=False, snapshot=None):
     anahtar koydugu icin yedek yalnizca gercek anahtarla acilir). Iki yol da
     metin uretmezse None.
     """
+    # STORM modu (2026-10-06): 2./3. denemelerde workflow STORM=1 set eder;
+    # prompt ozlesir, sayi yogunlugu duser, zayif modellerin uydurma alani daralir.
+    kisa = os.environ.get("STORM") == "1"
+    if kisa:
+        logger.info("[Makro Analiz] STORM modu: oz prompt kullanilacak (uydurma alani daraltiliyor).")
     anahtar = os.environ.get("ZAI_API_KEY", "")
     model = os.environ.get("ZAI_MODEL") or ZAI_MODEL_TERCIH[0]
     glm_istemci = (OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/coding/paas/v4/",
@@ -3244,6 +3251,12 @@ def makro_analiz_yap(yedek_amd=False, snapshot=None):
     snapshot = snapshot or makro_snapshot_cek()
     makro_tablo = makro_veri.frame_text(snapshot)
     piyasa_blogu = piyasa_verisi_metni(snapshot) or ""
+    # STORM modu icin prompt icine giren kosullu talimatlar:
+    oz_kurali = ("ÖZ MOD EK KURALI (en önemli kural): Toplam 600-800 kelime yazın; her bölüm "
+                 "3-5 cümleyi geçmesin; her bölümde EN FAZLA 2-3 sayı kullanın; veri bloğunda "
+                 "karşılığı olmayan hiçbir göstergeyi, oranı ya da sayıyı anmayın — söyleyecek "
+                 "veriniz yoksa o bölümü tamamen niteliksel geçirin.\n"
+                 if kisa else "")
 
     portfoy_ozet = ""
     p = load_portfolio()
@@ -3257,7 +3270,7 @@ def makro_analiz_yap(yedek_amd=False, snapshot=None):
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     bugun = datetime.now(tz).strftime("%d.%m.%Y")
 
-    prompt = f"""Sen makroekonomi alanında uzman, akademik derinlikte ama anlaşılır yazan bağımsız bir analist yapay zekâsısın (gerçek bir kişi veya kurum değilsin; kendini öyle tanıtma). Aşağıdaki KESİN verileri kullanarak Türkiye ve küresel makroekonomik görünümü değerlendiren, DERİNLEMESİNE ve UZUN (en az 1000 kelime) bir "Makroekonomik Değerlendirme" yazısı kaleme al. Yazı Türkçe olacak ve TÜM metinde doğru Türkçe karakterler (ç, ğ, ı, ö, ş, ü) kullanılacak.
+    prompt = f"""Sen makroekonomi alanında uzman, akademik derinlikte ama anlaşılır yazan bağımsız bir analist yapay zekâsısın (gerçek bir kişi veya kurum değilsin; kendini öyle tanıtma). Aşağıdaki KESİN verileri kullanarak Türkiye ve küresel makroekonomik görünümü değerlendiren, {("ÖZ ve YOĞUN (600-800 kelime; STORM MODU)") if kisa else ("DERİNLEMESİNE ve UZUN (en az 1000 kelime)")} bir "Makroekonomik Değerlendirme" yazısı kaleme al. Yazı Türkçe olacak ve TÜM metinde doğru Türkçe karakterler (ç, ğ, ı, ö, ş, ü) kullanılacak.
 
 Üslup: Bir makroekonomi profesörü gibi yaz — kavramları kısaca açıkla, mekanizmaları (aktarım kanallarını) adım adım kur, tek yönlü kehanet yerine koşullu senaryolar sun. Somut rakam YALNIZCA aşağıdaki veri bloklarından alınır; kendi hafızandan makro sayı (enflasyon, faiz, büyüme, kur, işsizlik vb.) ÜRETME. Veri bloğunda olmayan bir göstergeye ihtiyaç duyarsan sayı vermeden niteliksel konuş.
 
@@ -3292,7 +3305,7 @@ Yanıtını şu yapıda oluştur (başlıklar aynen bu şekilde, "## " ile):
 
 ## 10. Sonuç ve Değerlendirme
 
-Biçim kuralları (zorunlu):
+{oz_kurali}Biçim kuralları (zorunlu):
 - Kimlik satırı YAZMA: "Profesör", "Dr.", "Analist:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri geçmeyecek.
 - Metinde köşeli parantezli [...] yer tutucu kullanma; yazı doğrudan "## 1." başlığıyla başlasın.
 - Bugünün tarihi: {bugun}. Bunun dışında tarih/gün adı üretme.
