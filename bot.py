@@ -145,6 +145,17 @@ ZAI_MODEL_TERCIH = ["glm-5.3-flash"]
 # reddedilip siradaki (GLM-oncelikli) model denenir.
 UYDURMA_ESIGI = int(os.environ.get("UYDURMA_ESIGI", "10"))
 
+# Yayin politikasi (2026-10-06 kullanici karari): bu hisseler sitede asla
+# olumlu degerlendirilmez / AL sinyali uretilmez. Teknik tarama puani ne
+# olursa olsun "genel" degerlendirme NÖTR'e cekilir; robot da AL adayi olarak
+# almaz (robot.py'deki KARA_LISTE kopyasi ile senkron tutulmali).
+KARA_LISTE = {
+    "DSTKF": ("Şirket ve bağlı sahiplerinin yatırım bağlantıları soruşturma "
+              "konusu (Tera Holding bağlantılı haberler); divalans kaynaklı tek "
+              "gün -%27 fiyat kırılmaları (25 Eylül, 5 Ekim 2026) değerlendirme "
+              "serisini de bozuyor."),
+}
+
 if not (AMD_API_KEY or ALT_API_KEY or CF_API_KEY or OR_API_KEY or NVID_API_KEY
         or OPENCODE_API_KEY or OLLAMA_API_KEY or GEMINI_API_KEY):
     raise SystemExit("AMD/ALT/CF/OR/NVIDIA/OPENCODE/OLLAMA/GEMINI anahtarlarindan en az biri ayarlanmali!")
@@ -5666,6 +5677,12 @@ def teknik_tarama_yap():
             genel = "SAT"
         else:
             genel = "GÜÇLÜ SAT"
+
+        # Kara liste (bot.py basindaki KARA_LISTE): AL/GÜÇLÜ AL uretilmez,
+        # NÖTR'e cekilir (robot da AL adayi olarak almaz).
+        if hisse in KARA_LISTE and genel in ("GÜÇLÜ AL", "AL"):
+            genel = "NÖTR"
+            puansay = min(puansay, 2)
 
         satirlar.append({
             "hisse": hisse, "son": round(son, 2), "deg60": round(deg60, 2),

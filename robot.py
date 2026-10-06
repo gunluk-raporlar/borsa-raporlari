@@ -49,6 +49,11 @@ ISLEM_YOL = "data/robot/islemler.jsonl"
 GECMIS_DIR = "data/robot/gecmis"
 SAYFA_YOL = "robot.html"
 
+# Yayin politikasi (2026-10-06 kullanici karari) — bot.py KARA_LISTE kopyasi;
+# degisiklikte ikisi de guncellenmeli. Bu hisseler AL adayi olarak alinmaz ve
+# AL sinyalleri BEKLE'ye dusurulur.
+KARA_LISTE = {"DSTKF"}
+
 KAPITAL0 = 100_000.0        # sanal başlangıç sermayesi (TL)
 POZISYON_ORAN = 0.12        # özkaynağın en fazla %12'si tek hisseye
 MAKS_POZISYON = 8           # aynı anda en fazla 8 farklı hisse
@@ -313,6 +318,11 @@ def strateji_sinyalleri(seriler):
             "rsi": round(rsi, 1) if rsi is not None else None,
             "sma100": round(sma100, 2),
         }
+    # Kara liste (2026-10-06): yayin politikasi geregi AL sinyali uretilmez.
+    for h in list(sinyaller):
+        if sinyaller[h]["sinyal"] == "AL" and h in KARA_LISTE:
+            sinyaller[h]["sinyal"] = "BEKLE"
+            sinyaller[h]["gerekce"] = "yayin politikasi: kara listede (AL uretilmez)"
     return sinyaller
 
 
@@ -567,6 +577,25 @@ def dashboard_yaz(durum, sinyaller, notlar):
         stat("Kazanma Oranı", f"{_tr(kazanma_orani, 0)}%", "", "kpi-oran"),
         stat("Ödenen Kesinti", _tr(durum.get("toplam_kesinti", 0.0)) + " ₺", "neg", "kpi-kesinti"),
     ]) + "</div>"
+
+    # DSTKF uyarisi + kara liste (2026-10-06 kullanici karari; metin kullanici
+    # onayli). Divalans duzeltmesi muhasebeye islenmedigi surekli gecerli.
+    kara_uyari = f"""
+<div class="card" style="border-left:4px solid #dc2626;padding:12px 16px;margin:0 0 18px">
+<div style="font-weight:700;margin-bottom:6px">⚠️ Önemli uyarı: DSTKF ve gölge zarar (6 Ekim 2026)</div>
+<p style="margin:0 0 8px;color:var(--muted);font-size:13.5px;line-height:1.7">
+Önemli uyarı: Rakamın bir kısmı muhtemelen gerçek zarar değil. BIST'te bir işlem gününde fiyat
+en fazla <b>±%10</b> hareket edebilir (taban/tavan bandı); portföydeki DSTKF'te fiyat serisi buna
+rağmen iki kez TEK günde <b>-%27</b> düştü (25 Eylül ve 5 Ekim) — bu piyasadan kaynaklanamaz.
+Desen, pay başına nakit ödenen <b>divalans (sermaye azaltımı)</b>: fiyat mekanik olarak düşer ama
+hissedara nakit ödenir. Robot muhasebesi bu nakdi portföye işlemiyorsa, <b>{_tr(getiri)}%</b>'lik
+getiri içinde DSTKF kaynaklı gölge zarar vardır (kaba hesap ~1,5-2 puan).</p>
+<p style="margin:0;color:var(--muted);font-size:13.5px;line-height:1.7">
+<b>DSTKF yayın politikası gereği kara listededir</b> (şirket ve bağlı sahiplerinin yatırım bağlantıları
+soruşturma konusu; Tera Holding bağlantılı haberler): sitede hiçbir yerde olumlu değerlendirilmez,
+AL sinyali üretilmez — teknik taramada değerlendirmesi NÖTR'e çekilir, robot AL adayı olarak almaz.
+Portföydeki 1,44 lotluk kalıntı yalnızca SAT kuralı tetiklenince kapanır.</p>
+</div>"""
 
     poz_satirlar = ""
     for h, p in sorted(durum["pozisyonlar"].items()):
