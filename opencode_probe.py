@@ -10,9 +10,15 @@ import urllib.error
 import urllib.request
 
 BASE = "https://opencode.ai/zen/v1"
-# Ucretsiz katman (docs 2026-10-02); jev-1.13-free ozel /systemone ucugu
-# kullandigi icin listede yok.
+# Ucretsiz katman adaylari (2026-10-06): space-bunny ailesi bot'un tek
+# kullandigi havuz (bot.py OPENCODE_MODELS); jev-1.13 ucretli oldugundan ve
+# jev-1.13-free /systemone ucugu ham API'den 403 verdiginden karsilastirma
+# amaciyla listenin sonunda tutulur.
 MODELLER = [
+    "space-bunny-alpha",
+    "space-bunny-free",
+    "space-bunny",
+    "big-pickle",
     "jev-1.13-free",
     "jev-1.13",
 ]

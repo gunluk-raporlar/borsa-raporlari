@@ -174,12 +174,12 @@ def _is_vlm_model(name: str) -> bool:
 AMD_MODEL_LIST = [AMD_MODEL] + [m for m in AMD_FALLBACK_MODELS if m != AMD_MODEL]
 if not AMD_INCLUDE_VLM:
     AMD_MODEL_LIST = [m for m in AMD_MODEL_LIST if not _is_vlm_model(m)]
-# 2026-09-29 kullanici karari: glm-5.3 disi modeller asiri sayi uyduruyor;
-# AMD galerisindeki GLM-5.3-Flash ucretsiz — listede varsa one gecilir
-# (yoksa sira hic degismez, env override davranisi korunur).
+# 2026-10-06 kullanici karari: AMD havuzunda DeepSeek-V4-Flash (AMD_MODEL)
+# one gecsin. 2026-09-29'daki "GLM-5.3 once" siralamasi kaldirildi: AMD
+# galerisindeki GLM-5.3-Flash yogunluk limitine takiliyor (429, concurrency
+# 16; 2026-10-06 yoklamasi) ve zincir butcesini yiyor. Liste artik env
+# override'a saygi duyar: AMD_MODEL her zaman bastadir.
 _LLM_TIMEOUT = float(os.environ.get("LLM_TIMEOUT", "240"))  # saniye; uzun analitik yanitlarda env ile artirilir
-
-AMD_MODEL_LIST.sort(key=lambda m: "GLM-5.3" not in m.upper())
 
 client = OpenAI(
     api_key=AMD_API_KEY,
