@@ -5426,14 +5426,13 @@ SEKTORLER = {
     "Otomotiv": ["FROTO", "TOASO"],
     "Enerji & Petrokimya": ["TUPRS", "PETKM", "ENKAI", "ASTOR"],
     "Perakende": ["BIMAS", "MGROS"],
-    "Metal & Madencilik": ["EREGL", "KRDMD"],
+    "Metal & Madencilik": ["EREGL", "KRDMD", "TRMET"],
     "Kimya & Gübre": ["SASA", "GUBRF"],
     "Telekom": ["TCELL", "TTKOM"],
     "Gıda & İçecek": ["AEFES"],
     "Cam & Seramik": ["SISE"],
     "Savunma": ["ASELS"],
     "Gayrimenkul": ["EKGYO"],
-    "Finans (Diğer)": ["DSTKF"],
     "Sanayi (Diğer)": ["TRALT"],
 }
 
