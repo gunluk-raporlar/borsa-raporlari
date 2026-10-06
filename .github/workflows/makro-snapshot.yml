@@ -3,6 +3,14 @@ on:
   schedule:
     # 20:30 Türkiye saati (UTC+3) = 17:30 UTC. Rapor bu veriyi ertesi sabah okur.
     - cron: '30 17 * * *'
+    # Güvenlik ikinci tiki (23:00 TSİ = 20:00 UTC): GitHub cron'u ilk tiki
+    # saatlerce geciktirebiliyor (3-4 Ekm 2026: 00:04 TSİ'ye sarktı) ya da
+    # tamamen düşürebiliyor; ilk tik düşerse akşam snapshot'i o gün hiç
+    # yazılmıyordu. İkinci tik aynı TSİ akşamında geçer (18:00 kapısı yine
+    # aşılır); ilk koşu başarılıysa veri tazelenir, diff yoksa commit
+    # atlanır. Gece yarısına sarkan koşular makro_snapshot.py'deki
+    # normalizasyonla önceki akşama yazılır (3eeec24).
+    - cron: '0 20 * * *'
   workflow_dispatch:
 permissions:
   contents: write
