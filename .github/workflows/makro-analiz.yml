@@ -69,7 +69,6 @@ jobs:
               echo "5 dakika beklenip tekrar denenecek (son care yayini sayesinde tam basarisizlik bile rozetli cikti uretir)..."
               sleep 300
             fi
-            fi
           done
           echo "3 denemenin hepsi basarisiz."
           exit 1
