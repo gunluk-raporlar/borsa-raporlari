@@ -5254,31 +5254,44 @@ function arsivAc(btn) {{
 
     # Derin analiz bolumu: guncel sayfa + arsivdeki son 3 analiz
     # (Aciklama tarihe referanslidir: "2 Ekim 2026 gununun derin analizi".)
+    # Guncel kart (2026-10-06 kullanici karari): "Guncel" yazar + tarih gosterir
+    # ve TikLANDIGINDA o tarihin TAM SAYFASINI acar (reports/...); kok
+    # derin-analiz.html artik hub oldugu icin buraya baglanmaz.
     derin_bolumu = ""
     if derin_dosyalari:
-        derin_kartlar = "".join(
+        son_derin = derin_dosyalari[0]
+        son_derin_t = son_derin[:-5].replace("-derin-analiz", "")
+        derin_eski = "".join(
             f'<a class="rcard" href="reports/{fn}"><span class="date">{_tr_tarih(fn[:-5].replace("-derin-analiz", ""))}</span>'
             f'<span class="sub">{_tr_tarih_sade(fn[:-5].replace("-derin-analiz", "")) or fn[:-5].replace("-derin-analiz", "")} gününün derin analizi &rarr;</span></a>'
-            for fn in derin_dosyalari[:3]
+            for fn in derin_dosyalari[1:4]
         )
         derin_bolumu = f"""
 <h2 class="section-title">Derin Analiz</h2>
-<div class="grid"><a class="rcard" href="derin-analiz.html"><span class="date">Güncel Derin Analiz</span>
-<span class="sub">Piyasanın detaylı değerlendirmesi &rarr;</span></a>{derin_kartlar}</div>"""
+<div class="grid"><a class="rcard" href="reports/{son_derin}"><span class="date">Güncel Derin Analiz — {_tr_tarih(son_derin_t)}</span>
+<span class="sub">Piyasanın detaylı değerlendirmesi &rarr;</span></a>{derin_eski}</div>"""
 
-    # Makro analiz bolumu: haftalik makro analizi — guncel sayfa + son 3 arsiv
-    # (Aciklama tarihe referanslidir: "2 Ekim 2026 makro analizi".)
-    # Guncel kart HER ZAMAN gorunur (makro-analiz.html kok sayfasi hep mevcut);
-    # arsiv kartlari reports/ altindaki tarihli kopyalar geldikce eklenir.
-    makro_kartlar = "".join(
+    # Makro analiz bolumu: haftalik makro analizi — guncel sayfa + son 3 arsiv.
+    # Guncel kart (2026-10-06 kullanici karari): tarihli tam sayfaya gider; kok
+    # makro-analiz.html hub oldugundan yalnizca arsiv HIC yoksa hub'a baglanir
+    # (o durumda kart "Arsiv olusuyor" notu tasir).
+    makro_eski = "".join(
         f'<a class="rcard" href="reports/{fn}"><span class="date">{_tr_tarih(fn[:-5].replace("-makro-analiz", ""))}</span>'
         f'<span class="sub">{_tr_tarih_sade(fn[:-5].replace("-makro-analiz", "")) or fn[:-5].replace("-makro-analiz", "")} makro analizi &rarr;</span></a>'
-        for fn in makro_dosyalari[:3]
+        for fn in makro_dosyalari[1:4]
     )
-    makro_bolumu = f"""
+    if makro_dosyalari:
+        son_makro = makro_dosyalari[0]
+        son_makro_t = son_makro[:-5].replace("-makro-analiz", "")
+        makro_bolumu = f"""
 <h2 class="section-title">Makro Analiz</h2>
-<div class="grid"><a class="rcard" href="makro-analiz.html"><span class="date">Güncel Makro Analiz</span>
-<span class="sub">Haftalık makro göstergelerin derinlemesine değerlendirmesi &rarr;</span></a>{makro_kartlar}</div>"""
+<div class="grid"><a class="rcard" href="reports/{son_makro}"><span class="date">Güncel Makro Analiz — {_tr_tarih(son_makro_t)}</span>
+<span class="sub">Haftalık makro göstergelerin derinlemesine değerlendirmesi &rarr;</span></a>{makro_eski}</div>"""
+    else:
+        makro_bolumu = f"""
+<h2 class="section-title">Makro Analiz</h2>
+<div class="grid"><a class="rcard" href="makro-analiz.html"><span class="date">Makro Analiz Arşivi</span>
+<span class="sub">Arşiv henüz oluşuyor — tüm makro analizler &rarr;</span></a></div>"""
 
     teknik_bolumu = ""
     if teknik_oneriler:
