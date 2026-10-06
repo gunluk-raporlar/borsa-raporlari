@@ -12,7 +12,20 @@
       "Efes Malt",
       "Coca-Cola İçecek"
     ],
-    "sorgu": "Anadolu Efes"
+    "sorgu": "Anadolu Efes",
+    "temel": [
+      "Son çeyrek (2026/6): satış 154.294.387.000 TL, net kâr marjı %9,1 (normal).",
+      "Satış büyümesi: YoY %+4.8 (artış).",
+      "Net kâr büyümesi: YoY %+1.1 (artış).",
+      "Özkaynak büyümesi: YoY %+7.0 (artış).",
+      "Aktif devir hızı 1,4 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %42,1 (makul kaldıraç); toplam borç (kısa+uzun) / özkaynak %96,4.",
+      "Net finansal borç 65.655.268.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 1,0 — dengeli likidite.",
+      "Cari oran (TradingView bilanso kesiti) 1,0 — dengeli likidite.",
+      "Çarpanlar: F/K 11,4 · PD/DD 0,9 · EV/FAVÖK 6,2 · temettü verimi %1,9.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "AKBNK": {
     "unvan": "Akbank",
@@ -26,7 +39,18 @@
       "Ak Yatırım",
       "Ak Portföy"
     ],
-    "sorgu": "Akbank"
+    "sorgu": "Akbank",
+    "temel": [
+      "Son çeyrek (2026/6): satış 83.173.000.000 TL, net kâr marjı %41,3 (yüksek).",
+      "Satış büyümesi: YoY %+128.2 (artış).",
+      "Net kâr büyümesi: YoY %+38.3 (artış).",
+      "Özkaynak büyümesi: YoY %+7.3 (artış).",
+      "Aktif devir hızı 0,1 (TTM satış / toplam varlık) — ağır varlık tabanı (sermaye yoğun sektör normu olabilir).",
+      "Finansal borç / özkaynak %0,0 (düşük kaldıraç); toplam borç (kısa+uzun) / özkaynak %0,0.",
+      "Cari oran (TradingView bilanso kesiti) 0,3 — kısa vadeli yükümlülük baskısı.",
+      "Çarpanlar: F/K 5,4 · PD/DD 1,1 · temettü verimi %3,2.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "ASELS": {
     "unvan": "Aselsan",
@@ -37,7 +61,20 @@
     "sermaye_donem": "2026/6",
     "web": "aselsan.com.tr",
     "markalar": [],
-    "sorgu": "Aselsan"
+    "sorgu": "Aselsan",
+    "temel": [
+      "Son çeyrek (2026/6): satış 88.494.252.000 TL, net kâr marjı %16,3 (normal).",
+      "Satış büyümesi: YoY %+24.7 (artış).",
+      "Net kâr büyümesi: YoY %+70.6 (artış).",
+      "Özkaynak büyümesi: YoY %+9.1 (artış).",
+      "Aktif devir hızı 0,8 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %23,8 (makul kaldıraç); toplam borç (kısa+uzun) / özkaynak %78,2.",
+      "Net finansal borç 33.824.364.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 1,5 — dengeli likidite.",
+      "Cari oran (TradingView bilanso kesiti) 1,5 — dengeli likidite.",
+      "Çarpanlar: F/K 45,4 · PD/DD 5,5 · EV/FAVÖK 30,9 · temettü verimi %0,1.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "ASTOR": {
     "unvan": "Astor Enerji",
@@ -50,7 +87,20 @@
     "markalar": [
       "Astor Trafo"
     ],
-    "sorgu": "Astor Enerji"
+    "sorgu": "Astor Enerji",
+    "temel": [
+      "Son çeyrek (2026/6): satış 19.214.635.242 TL, net kâr marjı %24,2 (yüksek).",
+      "Satış büyümesi: YoY %+7.5 (artış).",
+      "Net kâr büyümesi: YoY %+87.7 (artış).",
+      "Özkaynak büyümesi: YoY %+14.0 (artış).",
+      "Aktif devir hızı 1,3 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %13,6 (düşük kaldıraç); toplam borç (kısa+uzun) / özkaynak %61,1.",
+      "Net finansal borç 4.863.023.705 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 2,0 — güçlü likidite.",
+      "Cari oran (TradingView bilanso kesiti) 2,0 — güçlü likidite.",
+      "Çarpanlar: F/K 18,7 · PD/DD 4,3 · EV/FAVÖK 14,3 · temettü verimi %1,1.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "BIMAS": {
     "unvan": "Bim Birleşik Mağazalar",
@@ -61,7 +111,20 @@
     "sermaye_donem": "2026/6",
     "web": "bim.com.tr",
     "markalar": [],
-    "sorgu": "BİM Mağazalar"
+    "sorgu": "BİM Mağazalar",
+    "temel": [
+      "Son çeyrek (2026/6): satış 449.695.235.000 TL, net kâr marjı %3,4 (ince).",
+      "Satış büyümesi: YoY %+9.9 (artış).",
+      "Net kâr büyümesi: YoY %+105.8 (artış).",
+      "Özkaynak büyümesi: YoY %+6.5 (artış).",
+      "Aktif devir hızı 4,7 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %30,8 (makul kaldıraç); toplam borç (kısa+uzun) / özkaynak %111,0.",
+      "Net finansal borç 58.348.152.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 1,0 — dengeli likidite.",
+      "Cari oran (TradingView bilanso kesiti) 1,0 — dengeli likidite.",
+      "Çarpanlar: F/K 17,9 · PD/DD 2,4 · EV/FAVÖK 10,2 · temettü verimi %1,7.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "EKGYO": {
     "unvan": "Emlak Konut Gayrimenkul Yatırım Ortaklığı",
@@ -72,7 +135,20 @@
     "sermaye_donem": "2026/6",
     "web": "emlakkonut.com.tr",
     "markalar": [],
-    "sorgu": "Emlak Konut"
+    "sorgu": "Emlak Konut",
+    "temel": [
+      "Son çeyrek (2026/6): satış 51.262.860.000 TL, net kâr marjı %5,8 (normal).",
+      "Satış büyümesi: YoY %-18.4 (daralma).",
+      "Net kâr büyümesi: YoY %-72.7 (daralma).",
+      "Özkaynak büyümesi: YoY %+6.3 (artış).",
+      "Aktif devir hızı 0,5 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %40,6 (makul kaldıraç); toplam borç (kısa+uzun) / özkaynak %174,5.",
+      "Net finansal borç 55.932.751.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 2,2 — güçlü likidite.",
+      "Cari oran (TradingView bilanso kesiti) 2,1 — güçlü likidite.",
+      "Çarpanlar: PD/DD 0,5 · EV/FAVÖK 5,6 · temettü verimi %3,0.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "ENKAI": {
     "unvan": "Enka İnşaat ve Sanayi",
@@ -85,7 +161,20 @@
     "markalar": [
       "Enka Power"
     ],
-    "sorgu": "Enka İnşaat"
+    "sorgu": "Enka İnşaat",
+    "temel": [
+      "Son çeyrek (2026/6): satış 84.745.798.000 TL, net kâr marjı %24,2 (yüksek).",
+      "Satış büyümesi: YoY %+31.7 (artış).",
+      "Net kâr büyümesi: YoY %+24.7 (artış).",
+      "Özkaynak büyümesi: YoY %+6.5 (artış).",
+      "Aktif devir hızı 0,8 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %1,8 (düşük kaldıraç); toplam borç (kısa+uzun) / özkaynak %30,2.",
+      "Net finansal borç YOK — nakit, brüt borçtan 42.541.920.000 TL fazla.",
+      "Cari oran (dönen varlık / kısa borç) 2,9 — güçlü likidite.",
+      "Cari oran (TradingView bilanso kesiti) 2,9 — güçlü likidite.",
+      "Çarpanlar: F/K 12,6 · PD/DD 1,2 · EV/FAVÖK 9,8 · temettü verimi %4,8.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "EREGL": {
     "unvan": "Ereğli Demir Çelik (Erdemir)",
@@ -99,7 +188,20 @@
       "Erdemir",
       "İSDemir"
     ],
-    "sorgu": "Erdemir"
+    "sorgu": "Erdemir",
+    "temel": [
+      "Son çeyrek (2026/6): satış 124.567.404.000 TL, net kâr marjı %7,4 (normal).",
+      "Satış büyümesi: YoY %+31.2 (artış).",
+      "Net kâr büyümesi: YoY %+407.6 (artış).",
+      "Özkaynak büyümesi: YoY %+7.9 (artış).",
+      "Aktif devir hızı 1,0 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %49,0 (makul kaldıraç); toplam borç (kısa+uzun) / özkaynak %82,2.",
+      "Net finansal borç 39.747.738.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 1,8 — dengeli likidite.",
+      "Cari oran (TradingView bilanso kesiti) 1,8 — dengeli likidite.",
+      "Çarpanlar: F/K 32,3 · PD/DD 0,8 · EV/FAVÖK 12,3 · temettü verimi %1,5.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "FROTO": {
     "unvan": "Ford Otosan",
@@ -113,7 +215,20 @@
       "Ford Transit",
       "Ford Ranger"
     ],
-    "sorgu": "Ford Otosan"
+    "sorgu": "Ford Otosan",
+    "temel": [
+      "Son çeyrek (2026/6): satış 427.069.180.000 TL, net kâr marjı %2,4 (ince).",
+      "Satış büyümesi: YoY %-11.5 (daralma).",
+      "Net kâr büyümesi: YoY %-39.8 (daralma).",
+      "Özkaynak büyümesi: YoY %+9.0 (artış).",
+      "Aktif devir hızı 4,5 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %93,8 (yüksek kaldıraç); toplam borç (kısa+uzun) / özkaynak %173,0.",
+      "Net finansal borç 111.981.980.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 1,3 — dengeli likidite.",
+      "Cari oran (TradingView bilanso kesiti) 1,3 — dengeli likidite.",
+      "Çarpanlar: F/K 8,8 · PD/DD 1,5 · EV/FAVÖK 7,9 · temettü verimi %13,0.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "GARAN": {
     "unvan": "Garanti BBVA",
@@ -127,7 +242,18 @@
       "Garanti Yatırım",
       "Garanti Portföy"
     ],
-    "sorgu": "Garanti BBVA"
+    "sorgu": "Garanti BBVA",
+    "temel": [
+      "Son çeyrek (2026/6): satış 118.208.000.000 TL, net kâr marjı %53,9 (yüksek).",
+      "Satış büyümesi: YoY %+87.1 (artış).",
+      "Net kâr büyümesi: YoY %+18.8 (artış).",
+      "Özkaynak büyümesi: YoY %+7.9 (artış).",
+      "Aktif devir hızı 0,1 (TTM satış / toplam varlık) — ağır varlık tabanı (sermaye yoğun sektör normu olabilir).",
+      "Finansal borç / özkaynak %0,0 (düşük kaldıraç); toplam borç (kısa+uzun) / özkaynak %0,0.",
+      "Cari oran (TradingView bilanso kesiti) 0,5 — kısa vadeli yükümlülük baskısı.",
+      "Çarpanlar: F/K 4,5 · PD/DD 1,1 · temettü verimi %4,0.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "GUBRF": {
     "unvan": "Gübre Fabrikaları (Gübretaş)",
@@ -138,7 +264,20 @@
     "sermaye_donem": "2026/3",
     "web": "gubretas.com.tr",
     "markalar": [],
-    "sorgu": "Gübretaş"
+    "sorgu": "Gübretaş",
+    "temel": [
+      "Son çeyrek (2026/6): satış 37.831.188.332 TL, net kâr marjı %11,9 (normal).",
+      "Satış büyümesi: YoY %+21.6 (artış).",
+      "Net kâr büyümesi: YoY %+89.6 (artış).",
+      "Özkaynak büyümesi: YoY %+9.4 (artış).",
+      "Aktif devir hızı 2,0 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %21,1 (makul kaldıraç); toplam borç (kısa+uzun) / özkaynak %70,9.",
+      "Net finansal borç YOK — nakit, brüt borçtan 5.306.600.205 TL fazla.",
+      "Cari oran (dönen varlık / kısa borç) 1,6 — dengeli likidite.",
+      "Cari oran (TradingView bilanso kesiti) 1,6 — dengeli likidite.",
+      "Çarpanlar: F/K 18,1 · PD/DD 3,5 · EV/FAVÖK 10,0.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "ISCTR": {
     "unvan": "Türkiye İş Bankası (C grubu)",
@@ -153,7 +292,18 @@
       "Anadolu Hayat",
       "İş Yatırım"
     ],
-    "sorgu": "İş Bankası"
+    "sorgu": "İş Bankası",
+    "temel": [
+      "Son çeyrek (2026/6): satış 75.129.909.844 TL, net kâr marjı %39,9 (yüksek).",
+      "Satış büyümesi: YoY %+130.5 (artış).",
+      "Net kâr büyümesi: YoY %+0.7 (artış).",
+      "Özkaynak büyümesi: YoY %+7.8 (artış).",
+      "Aktif devir hızı 0,1 (TTM satış / toplam varlık) — ağır varlık tabanı (sermaye yoğun sektör normu olabilir).",
+      "Finansal borç / özkaynak %0,0 (düşük kaldıraç); toplam borç (kısa+uzun) / özkaynak %0,0.",
+      "Cari oran (TradingView bilanso kesiti) 0,3 — kısa vadeli yükümlülük baskısı.",
+      "Çarpanlar: F/K 4,7 · PD/DD 0,7 · temettü verimi %4,2.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "KCHOL": {
     "unvan": "Koç Holding",
@@ -174,7 +324,20 @@
       "Setur",
       "Divan"
     ],
-    "sorgu": "Koç Holding"
+    "sorgu": "Koç Holding",
+    "temel": [
+      "Son çeyrek (2026/6): satış 1.180.496.000.000 TL, net kâr marjı %4,0 (ince).",
+      "Satış büyümesi: YoY %+14.7 (artış).",
+      "Net kâr büyümesi: YoY %+272.3 (artış).",
+      "Özkaynak büyümesi: YoY %+12.9 (artış).",
+      "Aktif devir hızı 0,8 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %123,0 (yüksek kaldıraç); toplam borç (kısa+uzun) / özkaynak %382,5.",
+      "Net finansal borç 792.748.000.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 0,9 — kısa vadeli yükümlülük baskısı.",
+      "Cari oran (TradingView bilanso kesiti) 0,9 — kısa vadeli yükümlülük baskısı.",
+      "Çarpanlar: F/K 15,3 · PD/DD 0,7 · EV/FAVÖK 6,8 · temettü verimi %3,2.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "KRDMD": {
     "unvan": "Kardemir (D)",
@@ -185,7 +348,20 @@
     "sermaye_donem": "2026/6",
     "web": "kardemir.com.tr",
     "markalar": [],
-    "sorgu": "Kardemir"
+    "sorgu": "Kardemir",
+    "temel": [
+      "Son çeyrek (2026/6): satış 25.564.895.647 TL, net kâr marjı %16,0 (normal).",
+      "Satış büyümesi: YoY %-5.4 (daralma).",
+      "Net kâr büyümesi: YoY %-1879.3 (daralma).",
+      "Özkaynak büyümesi: YoY %+16.0 (artış).",
+      "Aktif devir hızı 1,2 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %7,1 (düşük kaldıraç); toplam borç (kısa+uzun) / özkaynak %42,1.",
+      "Net finansal borç 721.191.390 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 1,4 — dengeli likidite.",
+      "Cari oran (TradingView bilanso kesiti) 1,4 — dengeli likidite.",
+      "Çarpanlar: F/K 11,0 · PD/DD 0,5 · EV/FAVÖK 5,9.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "MGROS": {
     "unvan": "Migros Ticaret",
@@ -199,7 +375,20 @@
       "Tansas",
       "5M"
     ],
-    "sorgu": "Migros"
+    "sorgu": "Migros",
+    "temel": [
+      "Son çeyrek (2026/6): satış 241.298.039.000 TL, net kâr marjı %0,4 (ince).",
+      "Satış büyümesi: YoY %+4.5 (artış).",
+      "Net kâr büyümesi: YoY %-44.4 (daralma).",
+      "Özkaynak büyümesi: YoY %+5.3 (artış).",
+      "Aktif devir hızı 4,5 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %41,6 (makul kaldıraç); toplam borç (kısa+uzun) / özkaynak %166,2.",
+      "Net finansal borç 6.477.262.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 0,8 — kısa vadeli yükümlülük baskısı.",
+      "Cari oran (TradingView bilanso kesiti) 0,8 — kısa vadeli yükümlülük baskısı.",
+      "Çarpanlar: F/K 15,4 · PD/DD 1,0 · EV/FAVÖK 12,2 · temettü verimi %1,6.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "PETKM": {
     "unvan": "Petkim Petrokimya",
@@ -210,7 +399,20 @@
     "sermaye_donem": "2026/6",
     "web": "petkim.com.tr",
     "markalar": [],
-    "sorgu": "Petkim"
+    "sorgu": "Petkim",
+    "temel": [
+      "Son çeyrek (2026/6): satış 65.303.261.000 TL, net kâr marjı %6,7 (normal).",
+      "Satış büyümesi: YoY %+28.0 (artış).",
+      "Net kâr büyümesi: YoY %-199.9 (daralma).",
+      "Özkaynak büyümesi: YoY %+10.8 (artış).",
+      "Aktif devir hızı 1,4 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %74,5 (yüksek kaldıraç); toplam borç (kısa+uzun) / özkaynak %141,2.",
+      "Net finansal borç 49.860.402.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 0,6 — kısa vadeli yükümlülük baskısı.",
+      "Cari oran (TradingView bilanso kesiti) 0,6 — kısa vadeli yükümlülük baskısı.",
+      "Çarpanlar: PD/DD 0,7 · EV/FAVÖK 895,6.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "PGSUS": {
     "unvan": "Pegasus Hava Taşımacılığı",
@@ -221,7 +423,20 @@
     "sermaye_donem": "2026/6",
     "web": "flypgs.com",
     "markalar": [],
-    "sorgu": "Pegasus"
+    "sorgu": "Pegasus",
+    "temel": [
+      "Son çeyrek (2026/6): satış 78.468.731.000 TL, net kâr marjı %-16,0 (negatif).",
+      "Satış büyümesi: YoY %+26.5 (artış).",
+      "Net kâr büyümesi: YoY %-602.5 (daralma).",
+      "Özkaynak büyümesi: YoY %-2.7 (daralma).",
+      "Aktif devir hızı 0,9 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %226,4 (yüksek kaldıraç); toplam borç (kısa+uzun) / özkaynak %291,0.",
+      "Net finansal borç 194.810.777.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 0,8 — kısa vadeli yükümlülük baskısı.",
+      "Cari oran (TradingView bilanso kesiti) 0,8 — kısa vadeli yükümlülük baskısı.",
+      "Çarpanlar: PD/DD 0,6 · EV/FAVÖK 8,7.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "SAHOL": {
     "unvan": "Sabancı Holding",
@@ -239,7 +454,19 @@
       "Aksigorta",
       "Sabancı DX"
     ],
-    "sorgu": "Sabancı Holding"
+    "sorgu": "Sabancı Holding",
+    "temel": [
+      "Son çeyrek (2026/6): satış 135.127.912.000 TL, net kâr marjı %13,3 (normal).",
+      "Satış büyümesi: YoY %-5.9 (daralma).",
+      "Net kâr büyümesi: YoY %-608.6 (daralma).",
+      "Özkaynak büyümesi: YoY %+9.4 (artış).",
+      "Aktif devir hızı 0,1 (TTM satış / toplam varlık) — ağır varlık tabanı (sermaye yoğun sektör normu olabilir).",
+      "Finansal borç / özkaynak %95,1 (yüksek kaldıraç); toplam borç (kısa+uzun) / özkaynak %579,7.",
+      "Cari oran (dönen varlık / kısa borç) 0,8 — kısa vadeli yükümlülük baskısı.",
+      "Cari oran (TradingView bilanso kesiti) 0,6 — kısa vadeli yükümlülük baskısı.",
+      "Çarpanlar: F/K 9,3 · PD/DD 0,4 · temettü verimi %1,6.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "SASA": {
     "unvan": "Sasa Polyester Sanayi",
@@ -250,7 +477,20 @@
     "sermaye_donem": "2026/6",
     "web": "sasa.com.tr",
     "markalar": [],
-    "sorgu": "Sasa Polyester"
+    "sorgu": "Sasa Polyester",
+    "temel": [
+      "Son çeyrek (2026/6): satış 38.875.677.000 TL, net kâr marjı %1,3 (ince).",
+      "Satış büyümesi: YoY %+31.4 (artış).",
+      "Net kâr büyümesi: YoY %-104.2 (daralma).",
+      "Özkaynak büyümesi: YoY %+12.2 (artış).",
+      "Aktif devir hızı 0,4 (TTM satış / toplam varlık) — orta varlık kullanımı.",
+      "Finansal borç / özkaynak %72,6 (yüksek kaldıraç); toplam borç (kısa+uzun) / özkaynak %95,8.",
+      "Net finansal borç 136.155.078.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 0,6 — kısa vadeli yükümlülük baskısı.",
+      "Cari oran (TradingView bilanso kesiti) 0,6 — kısa vadeli yükümlülük baskısı.",
+      "Çarpanlar: PD/DD 0,5 · EV/FAVÖK 19,8.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "SISE": {
     "unvan": "Şişecam",
@@ -266,7 +506,20 @@
       "Nude",
       "Kromsan"
     ],
-    "sorgu": "Şişecam"
+    "sorgu": "Şişecam",
+    "temel": [
+      "Son çeyrek (2026/6): satış 122.325.387.000 TL, net kâr marjı %3,7 (ince).",
+      "Satış büyümesi: YoY %-8.1 (daralma).",
+      "Net kâr büyümesi: YoY %-15.6 (daralma).",
+      "Özkaynak büyümesi: YoY %+4.9 (artış).",
+      "Aktif devir hızı 1,1 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %57,2 (makul kaldıraç); toplam borç (kısa+uzun) / özkaynak %80,9.",
+      "Net finansal borç 150.024.148.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 1,8 — dengeli likidite.",
+      "Cari oran (TradingView bilanso kesiti) 1,8 — dengeli likidite.",
+      "Çarpanlar: F/K 9,6 · PD/DD 0,4 · EV/FAVÖK 17,0 · temettü verimi %1,5.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "TAVHL": {
     "unvan": "TAV Holding",
@@ -280,7 +533,20 @@
       "TAV İnşaat",
       "BTA"
     ],
-    "sorgu": "TAV Havalimanları"
+    "sorgu": "TAV Havalimanları",
+    "temel": [
+      "Son çeyrek (2026/6): satış 45.144.268.000 TL, net kâr marjı %1,9 (ince).",
+      "Satış büyümesi: YoY %+32.9 (artış).",
+      "Net kâr büyümesi: YoY %-151.6 (daralma).",
+      "Özkaynak büyümesi: YoY %+6.2 (artış).",
+      "Aktif devir hızı 0,8 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %134,3 (yüksek kaldıraç); toplam borç (kısa+uzun) / özkaynak %221,6.",
+      "Net finansal borç 96.193.503.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 0,9 — kısa vadeli yükümlülük baskısı.",
+      "Cari oran (TradingView bilanso kesiti) 0,9 — kısa vadeli yükümlülük baskısı.",
+      "Çarpanlar: F/K 19,1 · PD/DD 1,2 · EV/FAVÖK 6,7 · temettü verimi %1,3.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "TCELL": {
     "unvan": "Turkcell",
@@ -296,7 +562,20 @@
       "TV+",
       "fizy"
     ],
-    "sorgu": "Turkcell"
+    "sorgu": "Turkcell",
+    "temel": [
+      "Son çeyrek (2026/6): satış 137.467.389.000 TL, net kâr marjı %7,4 (normal).",
+      "Satış büyümesi: YoY %+5.7 (artış).",
+      "Net kâr büyümesi: YoY %+3.3 (artış).",
+      "Özkaynak büyümesi: YoY %+6.4 (artış).",
+      "Aktif devir hızı 1,0 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %68,5 (yüksek kaldıraç); toplam borç (kısa+uzun) / özkaynak %113,2.",
+      "Net finansal borç 122.793.156.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 1,5 — dengeli likidite.",
+      "Cari oran (TradingView bilanso kesiti) 1,5 — dengeli likidite.",
+      "Çarpanlar: F/K 11,4 · PD/DD 0,7 · EV/FAVÖK 2,7 · temettü verimi %4,0.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "THYAO": {
     "unvan": "Türk Hava Yolları",
@@ -310,7 +589,20 @@
       "Turkish Technic",
       "AJet"
     ],
-    "sorgu": "Türk Hava Yolları"
+    "sorgu": "Türk Hava Yolları",
+    "temel": [
+      "Son çeyrek (2026/6): satış 585.069.000.000 TL, net kâr marjı %3,2 (ince).",
+      "Satış büyümesi: YoY %+43.4 (artış).",
+      "Net kâr büyümesi: YoY %-24.7 (daralma).",
+      "Özkaynak büyümesi: YoY %+5.4 (artış).",
+      "Aktif devir hızı 1,1 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %89,8 (yüksek kaldıraç); toplam borç (kısa+uzun) / özkaynak %131,7.",
+      "Net finansal borç 833.888.000.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 0,9 — kısa vadeli yükümlülük baskısı.",
+      "Cari oran (TradingView bilanso kesiti) 0,9 — kısa vadeli yükümlülük baskısı.",
+      "Çarpanlar: F/K 3,6 · PD/DD 0,4 · EV/FAVÖK 7,1.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "TOASO": {
     "unvan": "Tofaş Türk Otomobil Fabrikası",
@@ -324,7 +616,20 @@
       "Fiat",
       "Jeep"
     ],
-    "sorgu": "Tofaş"
+    "sorgu": "Tofaş",
+    "temel": [
+      "Son çeyrek (2026/6): satış 201.797.108.000 TL, net kâr marjı %3,1 (ince).",
+      "Satış büyümesi: YoY %+60.6 (artış).",
+      "Net kâr büyümesi: YoY %+197.2 (artış).",
+      "Özkaynak büyümesi: YoY %+11.5 (artış).",
+      "Aktif devir hızı 4,0 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %107,0 (yüksek kaldıraç); toplam borç (kısa+uzun) / özkaynak %228,3.",
+      "Net finansal borç 59.356.234.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 1,5 — dengeli likidite.",
+      "Cari oran (TradingView bilanso kesiti) 1,5 — dengeli likidite.",
+      "Çarpanlar: F/K 10,6 · PD/DD 2,1 · EV/FAVÖK 13,2 · temettü verimi %7,6.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "TRALT": {
     "unvan": "Türk Altın İşletmeleri",
@@ -335,7 +640,20 @@
     "sermaye_donem": "2026/6",
     "web": "",
     "markalar": [],
-    "sorgu": "Türk Altın"
+    "sorgu": "Türk Altın",
+    "temel": [
+      "Son çeyrek (2026/6): satış 14.081.230.000 TL, net kâr marjı %20,1 (yüksek).",
+      "Satış büyümesi: YoY %+47.5 (artış).",
+      "Net kâr büyümesi: YoY %+28.0 (artış).",
+      "Özkaynak büyümesi: YoY %+9.2 (artış).",
+      "Aktif devir hızı 0,9 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %0,2 (düşük kaldıraç); toplam borç (kısa+uzun) / özkaynak %15,8.",
+      "Net finansal borç YOK — nakit, brüt borçtan 5.519.959.000 TL fazla.",
+      "Cari oran (dönen varlık / kısa borç) 4,7 — güçlü likidite.",
+      "Cari oran (TradingView bilanso kesiti) 4,7 — güçlü likidite.",
+      "Çarpanlar: F/K 28,1 · PD/DD 2,6 · EV/FAVÖK 12,9 · temettü verimi %1,1.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "TTKOM": {
     "unvan": "Türk Telekom",
@@ -350,7 +668,20 @@
       "İnnova",
       "Argela"
     ],
-    "sorgu": "Türk Telekom"
+    "sorgu": "Türk Telekom",
+    "temel": [
+      "Son çeyrek (2026/6): satış 142.212.593.000 TL, net kâr marjı %12,1 (normal).",
+      "Satış büyümesi: YoY %+9.0 (artış).",
+      "Net kâr büyümesi: YoY %+25.9 (artış).",
+      "Özkaynak büyümesi: YoY %+8.9 (artış).",
+      "Aktif devir hızı 1,0 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %54,7 (makul kaldıraç); toplam borç (kısa+uzun) / özkaynak %141,7.",
+      "Net finansal borç 119.058.122.000 TL (TradingView bilanso kesiti).",
+      "Cari oran (dönen varlık / kısa borç) 0,8 — kısa vadeli yükümlülük baskısı.",
+      "Cari oran (TradingView bilanso kesiti) 0,8 — kısa vadeli yükümlülük baskısı.",
+      "Çarpanlar: F/K 6,6 · PD/DD 0,7 · EV/FAVÖK 2,7.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "TUPRS": {
     "unvan": "Tüpraş (Türkiye Petrol Rafinerileri)",
@@ -364,7 +695,20 @@
       "Opet",
       "DİTAŞ"
     ],
-    "sorgu": "Tüpraş"
+    "sorgu": "Tüpraş",
+    "temel": [
+      "Son çeyrek (2026/6): satış 662.788.010.000 TL, net kâr marjı %7,6 (normal).",
+      "Satış büyümesi: YoY %+42.8 (artış).",
+      "Net kâr büyümesi: YoY %+319.6 (artış).",
+      "Özkaynak büyümesi: YoY %+28.7 (artış).",
+      "Aktif devir hızı 2,9 (TTM satış / toplam varlık) — verimli varlık kullanımı.",
+      "Finansal borç / özkaynak %14,7 (düşük kaldıraç); toplam borç (kısa+uzun) / özkaynak %85,6.",
+      "Net finansal borç YOK — nakit, brüt borçtan 129.079.896.000 TL fazla.",
+      "Cari oran (dönen varlık / kısa borç) 1,4 — dengeli likidite.",
+      "Cari oran (TradingView bilanso kesiti) 1,4 — dengeli likidite.",
+      "Çarpanlar: F/K 10,6 · PD/DD 1,6 · EV/FAVÖK 5,5 · temettü verimi %4,4.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "VAKBN": {
     "unvan": "VakıfBank",
@@ -378,7 +722,18 @@
       "Vakıf Yatırım",
       "VakıfPort"
     ],
-    "sorgu": "VakıfBank"
+    "sorgu": "VakıfBank",
+    "temel": [
+      "Son çeyrek (2026/6): satış 103.701.000.000 TL, net kâr marjı %29,0 (yüksek).",
+      "Satış büyümesi: YoY %+111.7 (artış).",
+      "Net kâr büyümesi: YoY %+0.1 (yok denecek düzeyde).",
+      "Özkaynak büyümesi: YoY %+6.5 (artış).",
+      "Aktif devir hızı 0,1 (TTM satış / toplam varlık) — ağır varlık tabanı (sermaye yoğun sektör normu olabilir).",
+      "Finansal borç / özkaynak %0,0 (düşük kaldıraç); toplam borç (kısa+uzun) / özkaynak %0,0.",
+      "Cari oran (TradingView bilanso kesiti) 0,3 — kısa vadeli yükümlülük baskısı.",
+      "Çarpanlar: F/K 4,4 · PD/DD 0,9.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "YKBNK": {
     "unvan": "Yapı Kredi Bankası",
@@ -392,7 +747,18 @@
       "Yapı Kredi Yatırım",
       "Yapı Kredi Portföy"
     ],
-    "sorgu": "Yapı Kredi"
+    "sorgu": "Yapı Kredi",
+    "temel": [
+      "Son çeyrek (2026/6): satış 107.770.000.000 TL, net kâr marjı %28,8 (yüksek).",
+      "Satış büyümesi: YoY %+88.6 (artış).",
+      "Net kâr büyümesi: YoY %+36.3 (artış).",
+      "Özkaynak büyümesi: YoY %+5.7 (artış).",
+      "Aktif devir hızı 0,1 (TTM satış / toplam varlık) — ağır varlık tabanı (sermaye yoğun sektör normu olabilir).",
+      "Finansal borç / özkaynak %0,0 (düşük kaldıraç); toplam borç (kısa+uzun) / özkaynak %0,0.",
+      "Cari oran (TradingView bilanso kesiti) 0,3 — kısa vadeli yükümlülük baskısı.",
+      "Çarpanlar: F/K 5,5 · PD/DD 1,1.",
+      "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
+    ]
   },
   "TRMET": {
     "unvan": "TR Anadolu Metal Madencilik İşletmeleri A.Ş. (eski adı: Koza Anadolu Metal)",
