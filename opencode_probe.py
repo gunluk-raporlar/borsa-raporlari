@@ -11,16 +11,16 @@ import urllib.request
 
 BASE = "https://opencode.ai/zen/v1"
 # Ucretsiz katman adaylari (2026-10-06): space-bunny ailesi bot'un tek
-# kullandigi havuz (bot.py OPENCODE_MODELS); jev-1.13 ucretli oldugundan ve
-# jev-1.13-free /systemone ucugu ham API'den 403 verdiginden karsilastirma
-# amaciyla listenin sonunda tutulur.
+# kullandigi havuz (bot.py OPENCODE_MODELS). jev adi burada yalnizca OpenCode
+# Zen katalogundaki ayni adli modeller icindir; rapor analizleri Jev'i
+# KULLANMAZ (Jev bot.py:jev_haber_ele'da yalnizca haber ayiklamadir, ayri
+# TYPESAFE_API_KEY). Yine de karmasayi onlemek icin jev modelleri
+# yoklamadan cikarildi (2026-10-06 kullanici notu).
 MODELLER = [
     "space-bunny-alpha",
     "space-bunny-free",
     "space-bunny",
     "big-pickle",
-    "jev-1.13-free",
-    "jev-1.13",
 ]
 
 
