@@ -5260,7 +5260,8 @@ def build_hub_sayfalari():
 {_hub_kartlari(gunluk, "Günlük raporu aç", href_on="")}"""
     with open("reports/index.html", "w", encoding="utf-8") as f:
         f.write(_sayfa("Günlük Raporlar Arşivi", icerik_r, "raporlar",
-                       yol="reports/", aciklama="BIST 30 günlük piyasa raporlarının tarihli arşivi."))
+                       kok="../", yol="reports/",
+                       aciklama="BIST 30 günlük piyasa raporlarının tarihli arşivi."))
 
     # Borsa Okulu hub'i (2026-10-06): dersler haftasonu-egitimi/ altinda yasar;
     # kartlarda ders konusu da gosterilir (_ders_konusu h2 basligini okur).
