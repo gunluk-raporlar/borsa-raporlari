@@ -58,31 +58,23 @@ def main():
         # uretim olmadigini gizliyor (makro_analiz.py ile ayni duzeltme).
         return 1
 
-    sarmal = dict(
-        baslik="Derin Analiz",
-        alt_baslik="BIST 30 &bull; Yapay zeka destekli derinlemesine analiz",
-        kok_yol="derin-analiz.html",
-        aciklama=("BIST 30'un günlük derinlemesine analizi: sektör değerlendirmesi, EMA ve "
-                  "Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları."),
-    )
-    html = bot.rapor_sayfasi(bot.markdown_to_html(analiz), date_str, **sarmal)
-    with open("derin-analiz.html", "w", encoding="utf-8") as f:
-        f.write(html)
-    # Tarihli arşiv kopyasi: gunluk raporlar gibi gecmis de korunur
-    # (derin-analiz.html her gun uzerine yazilir; dünkü analiz kaybolmasin)
+    # 2026-10-06 kullanici karari: kok derin-analiz.html artik 'en son raporun
+    # tam sayfasi' DEGIL, tum derin analizlerin kart listesi (hub). Tam sayfa
+    # yalnizca tarihli arsiv dosyasinda yasar; kok hub olarak yeniden yazilir.
     os.makedirs("reports", exist_ok=True)
-    # Arsiv sayfasi reports/ altinda yasar; kok yolu bir seviye derin
     arsiv_html = bot.rapor_sayfasi(
         bot.markdown_to_html(analiz), date_str,
         baslik="Derin Analiz",
         alt_baslik="BIST 30 &bull; Yapay zeka destekli derinlemesine analiz",
         kok_yol=f"reports/{date_str}-derin-analiz.html",
-        aciklama=sarmal["aciklama"],
+        aciklama=("BIST 30'un günlük derinlemesine analizi: sektör değerlendirmesi, EMA ve "
+                  "Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları."),
     )
     with open(f"reports/{date_str}-derin-analiz.html", "w", encoding="utf-8") as f:
         f.write(arsiv_html)
+    bot.build_hub_sayfalari()
     try:
-        bot.indexnow_ping(["derin-analiz.html", "index.html"])
+        bot.indexnow_ping(["derin-analiz.html", "raporlar.html", "index.html"])
     except Exception:
         logger.exception("IndexNow ping atlanamadi (sorun degil).")
     print(f"DERIN ANALIZ SAYFA URETILDI: {date_str} | {len(analiz)} karakter", flush=True)

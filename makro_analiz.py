@@ -66,40 +66,16 @@ def _veri_tablosu(makro):
 
 
 def _placeholder_yaz(makro, eksik_anahtar):
-    """Tam analiz yokken sayfanin 404 VERMEMESI icin veri tablosuyla basit sayfa yazar.
+    """Tam analiz yokken kok makro-analiz.html'i hub olarak tazeler (2026-10-06).
 
-    Haftalik workflow basariyla calistiginda tam analiz bu sayfanin yerine yazar;
-    amac yalnizca nav/sitemap/IndexNow linkini yasli tutmamak.
+    Hub (tum makro raporlarin kart listesi) kok sayfanin yeni rolu; tam analiz
+    uretilse de üretilmese de kok bu listeden yeniden yazilir. Eski davranis
+    (kok'e tam sayfa/placeholder yazmak) kaldirildi: kok artik her zaman hub.
     """
-    if os.path.exists("makro-analiz.html") and eksik_anahtar:
-        # Anahtar gecici olarak yoksa yayindaki iyi sayfayi bozma.
-        logger.info("Mevcut makro-analiz.html korunuyor.")
-        return
-    if os.path.exists("makro-analiz.html") and not eksik_anahtar:
-        logger.info("Model hatasi; yayindaki makro-analiz.html korunuyor.")
-        return
-    tarih = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m.%Y")
-    metin = (f"## Makroekonomik Değerlendirme\n\n"
-             f"Bu sayfa, {tarih} itibarıyla güncellenen makro veri tabanını "
-             "yayınlar. Derinlemesine makroekonomik değerlendirme, haftalık "
-             "otomatik analiz çalışmasında bu sayfada yayınlanacaktır.\n\n"
-             "Aşağıdaki tablo, analizde kullanılan kesin göstergelerin "
-             "güncel değerleridir.")
-    sarmal = dict(
-        baslik="Makroekonomik Değerlendirme",
-        alt_baslik="Türkiye ve küresel makro görünüm &bull; Yapay zeka destekli derinlemesine analiz",
-        kok_yol="makro-analiz.html",
-        aciklama=("Türkiye ve küresel makroekonomik görünümün derinlemesine değerlendirmesi: "
-                  "enflasyon, politika faizi, büyüme, cari denge, aktarım mekanizmaları "
-                  "ve BIST 30'a sektör kanallarıyla yansımalar."),
-    )
-    html = bot.rapor_sayfasi(
-        bot.markdown_to_html(metin) + _veri_tablosu(makro),
-        datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%Y-%m-%d"),
-        **sarmal)
-    with open("makro-analiz.html", "w", encoding="utf-8") as f:
-        f.write(html)
-    logger.info("Placeholder makro-analiz.html yazildi (veri tablosuyla).")
+    bot.build_hub_sayfalari()
+    logger.info("kok makro-analiz.html hub olarak tazelendi (arsiv: %d).",
+                len([fn for fn in os.listdir("reports")
+                     if fn.endswith("-makro-analiz.html")]))
 
 
 def main():
@@ -134,33 +110,22 @@ def main():
     # Veri tablosu bolumu: metnin altina her zaman guncel gosterge tablosu
     veri_bolumu = _veri_tablosu(makro)
 
-    sarmal = dict(
-        baslik="Makroekonomik Değerlendirme",
-        alt_baslik="Türkiye ve küresel makro görünüm &bull; Yapay zeka destekli derinlemesine analiz",
-        kok_yol="makro-analiz.html",
-        aciklama=("Türkiye ve küresel makroekonomik görünümün derinlemesine değerlendirmesi: "
-                  "enflasyon, politika faizi, büyüme, cari denge, aktarım mekanizmaları "
-                  "ve BIST 30'a sektör kanallarıyla yansımalar."),
-    )
-    html = bot.rapor_sayfasi(
-        bot.markdown_to_html(analiz) + veri_bolumu, date_str, **sarmal)
-    with open("makro-analiz.html", "w", encoding="utf-8") as f:
-        f.write(html)
-    # Tarihli arsiv kopyasi: haftalik makro analiz gecmisi korunur ve ana
-    # sayfanin "Makro Analiz" bolumunde kart olarak listelenir (derin analiz
-    # modeli ile ayni yapi).
+    # 2026-10-06 kullanici karari: kok makro-analiz.html artik 'en son raporun
+    # tam sayfasi' DEGIL, tum makro analizlerin kart listesi (hub). Tam sayfa
+    # yalnizca tarihli arsiv dosyasinda yasar; kok hub olarak tazelenir.
     arsiv_yolu = f"reports/{date_str}-makro-analiz.html"
     arsiv_sayfa = bot.rapor_sayfasi(
         bot.markdown_to_html(analiz) + veri_bolumu, date_str,
-        baslik=sarmal["baslik"],
-        alt_baslik=sarmal["alt_baslik"],
+        baslik="Makroekonomik Değerlendirme",
+        alt_baslik="Türkiye ve küresel makro görünüm &bull; Yapay zeka destekli derinlemesine analiz",
         kok_yol=arsiv_yolu,
         aciklama=f"{bot._tr_tarih(date_str)} tarihli haftalik makro analiz raporu.",
     )
     with open(arsiv_yolu, "w", encoding="utf-8") as f:
         f.write(arsiv_sayfa)
+    bot.build_hub_sayfalari()
     try:
-        bot.indexnow_ping(["makro-analiz.html", arsiv_yolu, "index.html"])
+        bot.indexnow_ping(["makro-analiz.html", "raporlar.html", "index.html"])
     except Exception:
         logger.exception("IndexNow ping atlandi (sorun degil).")
     print(f"MAKRO ANALIZ SAYFA URETILDI: {date_str} | {len(analiz)} karakter", flush=True)

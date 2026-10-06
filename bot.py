@@ -4350,6 +4350,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     "teknik-analiz.html", "reports/2026-09-08.html", "" = ana sayfa).
     ld_ek: varsa <head>'e eklenen ikinci JSON-LD blogu (or. Article semasi)."""
     a_r = ' class="active"' if aktif == "raporlar" else ""
+    a_ana = ' class="active"' if aktif == "anasayfa" else ""
     a_p = ' class="active"' if aktif == "portfoy" else ""
     a_t = ' class="active"' if aktif == "teknik" else ""
     a_b = ' class="active"' if aktif == "borsapy" else ""
@@ -4415,7 +4416,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <header class="topbar"><div class="inner">
 <div class="brand-row"><a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
-<nav><a href="{kok}index.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}makro-analiz.html"{a_mk}>Makro Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a><a href="{kok}terimler.html"{a_trm}>Terimler</a><a href="{kok}muhasebe-terimleri.html"{a_muh}>Muhasebe Terimleri</a><a href="{kok}robot.html"{a_rb}>İşlem Robotu</a></nav>
+<nav><a href="{kok}index.html"{a_ana}>Ana Sayfa</a><a href="{kok}raporlar.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}makro-analiz.html"{a_mk}>Makro Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a><a href="{kok}terimler.html"{a_trm}>Terimler</a><a href="{kok}muhasebe-terimleri.html"{a_muh}>Muhasebe Terimleri</a><a href="{kok}robot.html"{a_rb}>İşlem Robotu</a></nav>
 </div></header>
 {_kendi_ticker(kok)}
 {_kendi_ticker2(kok)}
@@ -4441,7 +4442,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 </main>
 
 <nav class="altbar" aria-label="Hızlı menü">
-<a href="{kok}index.html"{a_alt_r}><span class="i" aria-hidden="true">📊</span>Raporlar</a>
+<a href="{kok}raporlar.html"{a_alt_r}><span class="i" aria-hidden="true">📊</span>Raporlar</a>
 <a href="{kok}teknik-analiz.html"{a_alt_t}><span class="i" aria-hidden="true">📈</span>Teknik</a>
 <a href="{kok}hisse/index.html"{a_alt_his}><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
 <a href="{kok}portfolio.html"{a_alt_p}><span class="i" aria-hidden="true">💼</span>Portföy</a>
@@ -4773,7 +4774,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
 {_pano_html(teknik_satirlar, kok)}
 {_ajanda_html(ajanda or [], limit=14, kok=kok)}
 <article class="report" id="rapor-govde">{html_icerik}</article>
-<p style="margin-top:18px"><a href="{kok}index.html">&larr; Tüm raporlara dön</a></p>
+<p style="margin-top:18px"><a href="{kok}raporlar.html">&larr; Tüm raporlara dön</a></p>
 {_sesli_okuma_js()}"""
     ld_ek = json.dumps({
         "@context": "https://schema.org", "@type": "Article",
@@ -5080,6 +5081,61 @@ def _ders_konusu(dosya_adi):
     return konu or None
 
 
+def _hub_kartlari(dosyalar, alt_etiket, suffix=""):
+    """Arsiv dosya adlarini en yeni once rcard gridine dokar; bos ise not."""
+    kartlar = [
+        f'<a class="rcard" href="reports/{fn}"><span class="date">'
+        f'{_tr_tarih(fn[:-5].replace(suffix, ""))}</span>'
+        f'<span class="sub">{alt_etiket} &rarr;</span></a>'
+        for fn in sorted(dosyalar, reverse=True)
+    ]
+    if kartlar:
+        return f'<div class="grid">{"".join(kartlar)}</div>'
+    return ('<p style="color:var(--muted)">Bu bölümde henüz arşiv raporu yok; '
+            "ilk rapor üretildiğinde burada listelenecek.</p>")
+
+
+def build_hub_sayfalari():
+    """Rapor turu basina arsiv-hub sayfalari yazar (2026-10-06 kullanici karari).
+
+    kok derin-analiz.html / makro-analiz.html artik 'en son raporun tam sayfasi'
+    DEGIL; o ture ait tum raporlarin kart listesi (hub). En son raporun tam
+    sayfasi her zaman tarihli arsiv dosyasinda (reports/<tarih>...). raporlar.html
+    de gunluk raporlarin hub'i — anasayfa ile arsiv artik ayri sayfalar.
+    Gunluk bot, derin_analiz.py ve makro_analiz.py her yayindan sonra cagirir;
+    reports/ klasorunu taradigindan hangi kosu tetiklerse tetiklesin 3 hub da
+    taze kalir.
+    """
+    tum = sorted((fn for fn in os.listdir("reports") if fn.endswith(".html")),
+                 reverse=True)
+    gunluk = [fn for fn in tum if re.fullmatch(r"\d{4}-\d{2}-\d{2}\.html", fn)]
+    derin = [fn for fn in tum if fn.endswith("-derin-analiz.html")]
+    makro = [fn for fn in tum if fn.endswith("-makro-analiz.html")]
+
+    hublar = [
+        ("raporlar.html", "raporlar", "Günlük Raporlar Arşivi", "Günlük Piyasa Raporları",
+         "BIST 30 günlük piyasa raporlarının tamamı, en yeniden eskiye.",
+         gunluk, "Günlük raporu aç", ""),
+        ("derin-analiz.html", "derin", "Derin Analiz Arşivi", "Derin Analizler",
+         "BIST 30'un günün kapanışıyla üretilen derinlemesine analizlerinin tamamı.",
+         derin, "Derin analizi aç", "-derin-analiz"),
+        ("makro-analiz.html", "makro", "Makro Analiz Arşivi", "Makro Analizler",
+         "Haftalık makroekonomik değerlendirmelerin tamamı.",
+         makro, "Makro analizi aç", "-makro-analiz"),
+    ]
+    for yol, aktif, title, h1, aciklama, dosyalar, etiket, suffix in hublar:
+        icerik = f"""
+<div class="hero">
+<h1>{h1}</h1>
+<div class="meta"><span>{aciklama}</span></div>
+</div>
+{_hub_kartlari(dosyalar, etiket, suffix)}"""
+        with open(yol, "w", encoding="utf-8") as f:
+            f.write(_sayfa(title, icerik, aktif, yol=yol, aciklama=aciklama))
+    logger.info("[Hub] %d gunluk / %d derin / %d makro karti yazildi.",
+                len(gunluk), len(derin), len(makro))
+
+
 def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     # Derin analiz ve makro analiz arsiv dosyalari rapor arsivine degil,
     # kendi bolumlerine gider
@@ -5227,7 +5283,7 @@ function arsivAc(btn) {{
 {teknik_bolumu}
 {portfoy_bolumu}"""
     return _sayfa(
-        "BIST 30 Günlük Raporlar", icerik, "raporlar", yol="",
+        "BIST 30 Günlük Raporlar", icerik, "anasayfa", yol="",
         aciklama="BIST 30'un yapay zeka destekli günlük raporları, teknik tarama ve osilatör sinyalleri, model portföy önerileri ve 100.000 TL'lik sanal deneme portföyünün takibi.",
         grafik=True,
     )
@@ -7742,6 +7798,7 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
     lastmod'u dosyanin son degisiklik zamanindan okunur."""
     statik = [
         ("index.html", "daily"),
+        ("raporlar.html", "daily"),
         ("derin-analiz.html", "daily"),
         ("makro-analiz.html", "weekly"),
         ("teknik-analiz.html", "hourly"),
@@ -7956,6 +8013,11 @@ if __name__ == "__main__":
         reverse=True)
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(build_index_html(p, raporlar, teknik_oneriler))
+    try:
+        build_hub_sayfalari()
+    except Exception:
+        logger.exception("[Hub] rapor turu arsiv sayfalari yazilamadi; "
+                         "diger sayfalar etkilenmez.")
     if p and p.get("history"):
         with open("portfolio.html", "w", encoding="utf-8") as f:
             f.write(build_portfolio_html(p))
