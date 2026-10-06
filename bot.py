@@ -6934,6 +6934,11 @@ ortalama <strong class="{_renk(ort)}">{_ty(ort)}%</strong> (brüt), isabet oran�
 Komisyon+BSMV masrafı (~%0,10) sonrası: ortalama <strong class="{_renk(net_ort)}">{_ty(net_ort)}%</strong>,
 isabet <strong>{_ts0(net_isabet)}%</strong> (varsayımsal masraf senaryosu; gerçek oran aracı kuruma göre değişir).
 (Geçmiş performans gelecek getirinin garantisi değildir; yöntem basit tutulmuştur.)</p>
+<p style="margin:0; color:var(--muted); font-size:12.5px">Son denetim: {_tr_tarih(datetime.now(
+    zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%Y-%m-%d"))} {datetime.now(
+    zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%H:%M")} TSİ — {len(kayitlar)} AL sinyali
+yeniden test edildi. Tablo yalnızca yeni bir sinyal 5 işlem gününü doldurduğunda değişir;
+gün içinde değişmemesi "denetlenmedi" anlamına gelmez.</p>
 </div>
 <div class="grid">
 <div class="card"><h3 style="margin:0 0 8px">🏆 En iyi 3</h3>{_mini_liste(en_iyi)}</div>
