@@ -5132,8 +5132,38 @@ def build_hub_sayfalari():
 {_hub_kartlari(dosyalar, etiket, suffix)}"""
         with open(yol, "w", encoding="utf-8") as f:
             f.write(_sayfa(title, icerik, aktif, yol=yol, aciklama=aciklama))
-    logger.info("[Hub] %d gunluk / %d derin / %d makro karti yazildi.",
-                len(gunluk), len(derin), len(makro))
+
+    # Borsa Okulu hub'i (2026-10-06): dersler haftasonu-egitimi/ altinda yasar;
+    # kartlarda ders konusu da gosterilir (_ders_konusu h2 basligini okur).
+    try:
+        dersler = sorted((fn for fn in os.listdir("haftasonu-egitimi")
+                          if fn.endswith(".html")), reverse=True)
+    except OSError:
+        dersler = []
+    ders_kartlari = []
+    for fn in dersler:
+        konu = _ders_konusu(fn) or "Dersi aç"
+        if len(konu) > 80:
+            konu = konu[:77] + "..."
+        ders_kartlari.append(
+            f'<a class="rcard" href="haftasonu-egitimi/{fn}"><span class="date">'
+            f'{_tr_tarih(fn[:-5])}</span><span class="sub">{konu} &rarr;</span></a>')
+    ders_govde = (f'<div class="grid">{"".join(ders_kartlari)}</div>' if ders_kartlari else
+                  '<p style="color:var(--muted)">Henüz ders yayımlanmadı; ilk ders '
+                  'hafta sonunda burada listelenecek.</p>')
+    icerik_e = f"""
+<div class="hero">
+<h1>Hafta Sonu Borsa Okulu</h1>
+<div class="meta"><span>Tüm dersler, en yeniden eskiye — her Cumartesi/Pazar yeni ders.</span></div>
+</div>
+{ders_govde}"""
+    with open("haftasonu-egitimi.html", "w", encoding="utf-8") as f:
+        f.write(_sayfa("Borsa Okulu Arşivi", icerik_e, "egitim",
+                       yol="haftasonu-egitimi.html",
+                       aciklama="Hafta sonu borsa eğitimi derslerinin tamamı; "
+                                "her Cumartesi/Pazar yeni ders."))
+    logger.info("[Hub] %d gunluk / %d derin / %d makro / %d ders karti yazildi.",
+                len(gunluk), len(derin), len(makro), len(ders_kartlari))
 
 
 def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
