@@ -5357,7 +5357,9 @@ fiyat mekanik düşer; bu durumda sepetteki zararın bir kısmı gölgedir, ger�
 <b>(2) İşlem durdurma sonrası yeni baz fiyattan açılış</b> (özel durum) — bu durumda nakit ödeme yoktur ve
 zarar gerçektir. Hangisi olduğu KAP bildiriminden netleşince getiri buna göre düzeltilir. Pozisyon
 bilerek satılmamıştır: taban serisinde satış varsayımı gerçekçi değildir; 1,44 lot (6 Eylül eşit dağıtımından
-kalma) piyasa değerinde yer yer 800 TL'nin altındadır ve orana etkisi küçüktür.</p>
+kalma) piyasa değerinde yer yer 800 TL'nin altındadır ve orana etkisi küçüktür. Ayrıca BIST, DSTKF'i 22 Eylül'de
+duyurulan çeyreklik revizyonla <b>1 Ekim 2026'dan itibaren BIST 30/50/100 endekslerinden çıkardı</b> ve payı Yıldız
+Pazar'dan Ana Pazar'a taşıdı — bu tarihten sonra XU030/XU100 kıyaslamaları DSTKF'i içermez, sepetimiz ise hâlâ tutar.</p>
 <p style="margin:0;color:var(--muted);font-size:13.5px;line-height:1.7">
 <b>DSTKF yayın politikası gereği kara listededir</b> (şirket ve bağlı sahiplerinin yatırım bağlantıları
 soruşturma konusu; Tera Holding bağlantılı haberler): sitede hiçbir yerde olumlu değerlendirilmez,
