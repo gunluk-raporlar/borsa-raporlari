@@ -27,17 +27,20 @@ logger = logging.getLogger("makro-snapshot")
 def main():
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     now = datetime.now(tz)
-    # GitHub cron hafta sonunda koşuyu saatlerce geciktirebiliyor (3-4 Ekim
-    # 2026: aksam slotu yerine 00:04 TSİ). Gece koşuları bir önceki akşamın
-    # GECİKMİŞ koşusu sayılır: snapshot tarihi önceki güne alınır ve
-    # captured_at o gunun nominal slotuna (18:05 TSİ, 2026-10-06 kullanici
-    # karari) normalize edilir; yoksa 18:00 kapisi ve tarih kontrolleri
-    # snapshoti reddediyor, ertesi sabah raporu cokuyordu.
-    if now.hour < 6:
+    # Veri gunu gece yarisi degil, BIST acilisinda baslar (10:00 TSİ; 2026-10-06
+    # kullanici karari). Bu yuzden 00:00-09:59 arasindaki gecikmis kosular bir
+    # onceki gunun aksamina DAHILDIR: snapshot tarihi onceki gune alinir ve
+    # captured_at nominal slota (18:05 TSİ) normalize edilir. Oncesi 06:00
+    # idi; 3-4 Ekim 2026'da GitHub cron koşuyu 00:04'e sarkitip 18:00 kapisi
+    # reddediyor, ertesi sabah raporu cokuyordu. 10:00-17:59 arasi kosular
+    # BIST icinde oldugundan aksine dahil edilmez: kapı reddeder (gun ici
+    # verisinin aksam snapshot'ina karismasi istenmez).
+    if now.hour < 10:
         now = (now - timedelta(days=1)).replace(hour=18, minute=5,
                                                 second=0, microsecond=0)
-        logger.warning("Gece yarisi koşusu algılandı; snapshot önceki akşam "
-                       "(%s) olarak yazılacak.", now.isoformat(timespec="seconds"))
+        logger.warning("Veri günü dışı (gece/öğleden önce) koşusu algılandı; "
+                       "snapshot önceki akşam (%s) olarak yazılacak.",
+                       now.isoformat(timespec="seconds"))
     logger.info("Canli makro verisi cekiliyor...")
     canli = bot.makro_cek()
     if not canli or not canli.get("gostergeler"):
