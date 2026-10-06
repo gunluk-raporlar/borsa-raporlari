@@ -442,6 +442,48 @@ def jev_haber_ele(basliklar):
     return [b for b in basliklar if b in tutulan_kume]
 
 
+# Sirket adi eslestirme takmalari (2026-10-06 RAG katmani): haber basliklarinda
+# hisse kodu gecmedigi icin unvan/takma adla eslestirme yapilir. DSTKF satiri
+# KARA_LISTE ile birlikte modeli "bu hisse krizde, AL/olumlu yok" seklinde
+# baglar (Tera/Destek vakasi: baslik "Tera Finansal" der, kod DSTKF yazmaz).
+SIRKET_TAKMA = {
+    "DSTKF": ["Tera Finansal", "Tera Holding", "Destek Finans", "Destek Faktoring"],
+    "TRMET": ["TR Anadolu Metal", "Koza Anadolu"],
+    "TRALT": ["Türk Altın"],
+}
+
+
+def _sirket_baglam_metni(basliklar):
+    """Haber basliklarini sirket unvanlariyla eslestirip modele 'sirket baglami'
+    blogu uretir: kara liste uyarisi + eslesen basliklar. Eslisme yoksa bos
+    doner (prompt kirlenmez). Kural tabanlidir; LLM kullanmaz."""
+    if not basliklar:
+        return ""
+    eslesen = {}
+    for satir in basliklar:
+        for kod, ad in HISSE_ADLARI.items():
+            anahtarlar = [a for a in ([ad] + SIRKET_TAKMA.get(kod, [])) if len(a) >= 5]
+            if any(a.lower() in satir.lower() for a in anahtarlar):
+                eslesen.setdefault(kod, []).append(satir)
+    if not eslesen:
+        return ""
+    # Kara liste + haber cokluguna gore oncelik; en fazla 8 sirket, 3 baslik.
+    sirali = sorted(eslesen, key=lambda k: (k not in KARA_LISTE, -len(eslesen[k])))[:8]
+    satirlar = []
+    for kod in sirali:
+        parca = f"- {kod} ({HISSE_ADLARI.get(kod, '')})"
+        if kod in KARA_LISTE:
+            parca += " — KARA LİSTE: sitede AL sinyali/olumlu değerlendirme üretilmez; "
+            parca += KARA_LISTE[kod][0]
+        basliklar_k = [b.split(']', 1)[-1].strip() for b in eslesen[kod][:3]]
+        if basliklar_k:
+            parca += " İlgili başlıklar: " + " | ".join(basliklar_k)
+        satirlar.append(parca)
+    return ("\n[ŞİRKET BAĞLAMI — KESİN BİLGİLER: şirket olaylarına yalnızca buradaki "
+            "başlıklarla atıf yap; bu hisseler için kendi hafızandan bilgi ekleme]\n"
+            + "\n".join(satirlar))
+
+
 def news_agent(state: AgentState):
     logger.info("[Haber Ajani] Finans haberleri toplaniyor...")
     print("[Haber Ajani] Finans haberleri toplaniyor...", flush=True)
@@ -494,7 +536,6 @@ def news_agent(state: AgentState):
         toplanan = jev_sonuc
     if toplanan:
         save_daily("news", bugun, toplanan[:28])
-
     # Gecmis haberleri de ekle (hafiza)
     gecmis = load_recent("news", gun=7)
     gecmis_metin = ""
@@ -506,7 +547,15 @@ def news_agent(state: AgentState):
     if not toplanan and not gecmis:
         return {"news_data": "Haber verisi alinamadi."}
     bugun_metin = "\n".join(toplanan[:28]) if toplanan else "(bugun haber alinamadi)"
-    return {"news_data": bugun_metin + gecmis_metin}
+    # Sirket baglam katmani (2026-10-06 RAG): basliklarda hisse kodu gecmese de
+    # unvan/takma adla eslesen sirket olaylarini (SPK suclamasi, divalans,
+    # endeks cikisi...) modele kesin bilgi olarak baglar. DSTKF/Tera vakasi:
+    # haber vardi ama "Tera Finansal" ile DSTKF eslestirilmedigi icin rapor
+    # baglami kuramamisti.
+    tum_basliklar = list(toplanan)
+    for g in (gecmis or []):
+        tum_basliklar.extend(g.get("data", [])[:5])
+    return {"news_data": bugun_metin + gecmis_metin + _sirket_baglam_metni(tum_basliklar)}
 
 
 # ---------- TEKNIK AJAN (hisse fiyatlari toplu cekim) ----------

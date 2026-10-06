@@ -40,9 +40,14 @@ def main():
     # Bugunun haber basliklari (varsa) prompta eklenir
     haber_yolu = os.path.join(bot.DATA_DIR, "news", f"{date_str}.json")
     haberler = ""
+    baslik_liste = []
     if os.path.exists(haber_yolu):
         with open(haber_yolu, encoding="utf-8") as f:
-            haberler = "\n".join(json.load(f)[:20])
+            baslik_liste = json.load(f)[:20]
+        haberler = "\n".join(baslik_liste)
+    # Sirket baglam katmani (2026-10-06 RAG): unvan/takma ad eslesmesiyle
+    # sirket olaylarini (SPK, divalans, endeks cikisi) modele kesin baglar.
+    haberler += bot._sirket_baglam_metni(baslik_liste)
 
     durum = {
         "news_data": haberler or "(bugun haber cekilmedi)",
