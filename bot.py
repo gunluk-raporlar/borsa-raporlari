@@ -5347,6 +5347,21 @@ def build_portfolio_html(p):
 <p>BIST 30 hisselerine eşit dağıtılmış {_ts0(p['initial_capital'])} TL'lik sanal portföy. Alım-satım yapılmaz, sadece takip edilir;
 hafta içi her sabah bir önceki işlem gününün kapanış fiyatlarıyla otomatik güncellenir.</p>
 </div>
+<div class="card" style="border-left:4px solid #dc2626;padding:12px 16px;margin:0 0 22px">
+<div style="font-weight:700;margin-bottom:6px">⚠️ Önemli uyarı: DSTKF ve gölge zarar (6 Ekim 2026)</div>
+<p style="margin:0 0 8px;color:var(--muted);font-size:13.5px;line-height:1.7">
+Sepetin getirisinin bir kısmı muhtemelen göründüğü kadar zarar değil. BIST'te bir işlem gününde fiyat
+en fazla <b>±%10</b> hareket edebilir (taban/tavan bandı); sepetteki DSTKF'te fiyat serisi buna rağmen
+iki kez TEK günde <b>-%27</b> düştü (25 Eylül ve 5 Ekim) — bu piyasadan kaynaklanamaz. Desen, pay
+başına nakit ödenen <b>divalans (sermaye azaltımı)</b>: fiyat mekanik olarak düşer ama hissedara nakit
+ödenir. Sepet muhasebesi bu nakdi işlemediği için <b>{_ty(son['pct'])}%</b>'lik getirinin içinde DSTKF
+kaynaklı gölge zarar vardır (kaba hesap ~1,5-2 puan); gerçek değer muhtemelen gösterilenden yüksektir.</p>
+<p style="margin:0;color:var(--muted);font-size:13.5px;line-height:1.7">
+<b>DSTKF yayın politikası gereği kara listededir</b> (şirket ve bağlı sahiplerinin yatırım bağlantıları
+soruşturma konusu; Tera Holding bağlantılı haberler): sitede hiçbir yerde olumlu değerlendirilmez,
+teknik taramada AL üretilmez, işlem robotu AL adayı olarak almaz. Sepetteki 1,44 lot, 6 Eylül'deki
+başlangıç eşit dağıtımından kalan pozisyondur; işlem robotu bu hisseyi hiç almamıştır.</p>
+</div>
 <details class="card" style="margin-bottom:22px">
 <summary style="cursor:pointer; font-weight:700">📐 Metodoloji — bu portföy nasıl hesaplanıyor?</summary>
 <div style="margin-top:10px; font-size:14px; display:grid; gap:6px">
