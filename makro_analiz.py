@@ -128,10 +128,10 @@ def main():
     # Veri tablosu bolumu: metnin altina her zaman guncel gosterge tablosu
     veri_bolumu = _veri_tablosu(makro)
 
-    # 2026-10-06 kullanici karari: kok makro-analiz.html artik 'en son raporun
-    # tam sayfasi' DEGIL, tum makro analizlerin kart listesi (hub). Tam sayfa
-    # yalnizca tarihli arsiv dosyasinda yasar; kok hub olarak tazelenir.
-    arsiv_yolu = f"reports/{date_str}-makro-analiz.html"
+    # 2026-10-06 agac yapisi: tam sayfa kendi dizininde yasar —
+    # makro-analiz/<tarih>.html (kok makro-analiz.html = hub).
+    os.makedirs("makro-analiz", exist_ok=True)
+    arsiv_yolu = f"makro-analiz/{date_str}.html"
     arsiv_sayfa = bot.rapor_sayfasi(
         bot.markdown_to_html(analiz) + veri_bolumu, date_str,
         baslik="Makroekonomik Değerlendirme",

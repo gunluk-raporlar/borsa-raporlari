@@ -5187,6 +5187,14 @@ def _ders_konusu(dosya_adi):
     return konu or None
 
 
+def _html_dosyalari(dizin):
+    """Dizindeki .html dosyalari, en yeni once (isim sirali ISO tarih)."""
+    try:
+        return sorted((fn for fn in os.listdir(dizin) if fn.endswith(".html")), reverse=True)
+    except OSError:
+        return []
+
+
 def _hub_kartlari(dosyalar, alt_etiket, suffix="", href_on="reports/"):
     """Arsiv dosya adlarini en yeni once rcard gridine dokar; bos ise not."""
     kartlar = [
@@ -5215,27 +5223,27 @@ def build_hub_sayfalari():
     tum = sorted((fn for fn in os.listdir("reports") if fn.endswith(".html")),
                  reverse=True)
     gunluk = [fn for fn in tum if re.fullmatch(r"\d{4}-\d{2}-\d{2}\.html", fn)]
-    derin = [fn for fn in tum if fn.endswith("-derin-analiz.html")]
-    makro = [fn for fn in tum if fn.endswith("-makro-analiz.html")]
+    derin = _html_dosyalari("derin-analiz")
+    makro = _html_dosyalari("makro-analiz")
 
     hublar = [
         ("raporlar.html", "raporlar", "Günlük Raporlar Arşivi", "Günlük Piyasa Raporları",
          "BIST 30 günlük piyasa raporlarının tamamı, en yeniden eskiye.",
-         gunluk, "Günlük raporu aç", ""),
+         gunluk, "Günlük raporu aç", "", "reports/"),
         ("derin-analiz.html", "derin", "Derin Analiz Arşivi", "Derin Analizler",
          "BIST 30'un günün kapanışıyla üretilen derinlemesine analizlerinin tamamı.",
-         derin, "Derin analizi aç", "-derin-analiz"),
+         derin, "Derin analizi aç", "", "derin-analiz/"),
         ("makro-analiz.html", "makro", "Makro Analiz Arşivi", "Makro Analizler",
          "Haftalık makroekonomik değerlendirmelerin tamamı.",
-         makro, "Makro analizi aç", "-makro-analiz"),
+         makro, "Makro analizi aç", "", "makro-analiz/"),
     ]
-    for yol, aktif, title, h1, aciklama, dosyalar, etiket, suffix in hublar:
+    for yol, aktif, title, h1, aciklama, dosyalar, etiket, suffix, href_on in hublar:
         icerik = f"""
 <div class="hero">
 <h1>{h1}</h1>
 <div class="meta"><span>{aciklama}</span></div>
 </div>
-{_hub_kartlari(dosyalar, etiket, suffix)}"""
+{_hub_kartlari(dosyalar, etiket, suffix, href_on=href_on)}"""
         with open(yol, "w", encoding="utf-8") as f:
             f.write(_sayfa(title, icerik, aktif, yol=yol, aciklama=aciklama))
 
@@ -5288,12 +5296,12 @@ def build_hub_sayfalari():
 
 
 def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
-    # Derin analiz ve makro analiz arsiv dosyalari rapor arsivine degil,
-    # kendi bolumlerine gider
+    # Derin analiz ve makro analiz arsivleri KENDI dizinlerinde yasar
+    # (2026-10-06 agac yapisi): derin-analiz/<tarih>.html, makro-analiz/<tarih>.html
     gundem_dosyalari = [fn for fn in (rapor_dosyalari or [])
                         if "-derin-analiz" not in fn and "-makro-analiz" not in fn]
-    derin_dosyalari = [fn for fn in (rapor_dosyalari or []) if "-derin-analiz" in fn]
-    makro_dosyalari = [fn for fn in (rapor_dosyalari or []) if "-makro-analiz" in fn]
+    derin_dosyalari = _html_dosyalari("derin-analiz")
+    makro_dosyalari = _html_dosyalari("makro-analiz")
 
     arsiv_bolumu = ""
     if gundem_dosyalari:
@@ -5369,15 +5377,15 @@ function arsivAc(btn) {{
     derin_bolumu = ""
     if derin_dosyalari:
         son_derin = derin_dosyalari[0]
-        son_derin_t = son_derin[:-5].replace("-derin-analiz", "")
+        son_derin_t = son_derin[:-5]
         derin_eski = "".join(
-            f'<a class="rcard" href="reports/{fn}"><span class="date">{_tr_tarih(fn[:-5].replace("-derin-analiz", ""))}</span>'
-            f'<span class="sub">{_tr_tarih_sade(fn[:-5].replace("-derin-analiz", "")) or fn[:-5].replace("-derin-analiz", "")} gününün derin analizi &rarr;</span></a>'
+            f'<a class="rcard" href="derin-analiz/{fn}"><span class="date">{_tr_tarih(fn[:-5])}</span>'
+            f'<span class="sub">{_tr_tarih_sade(fn[:-5]) or fn[:-5]} gününün derin analizi &rarr;</span></a>'
             for fn in derin_dosyalari[1:4]
         )
         derin_bolumu = f"""
 <h2 class="section-title">Derin Analiz</h2>
-<div class="grid"><a class="rcard" href="reports/{son_derin}"><span class="date">Güncel Derin Analiz — {_tr_tarih(son_derin_t)}</span>
+<div class="grid"><a class="rcard" href="derin-analiz/{son_derin}"><span class="date">Güncel Derin Analiz — {_tr_tarih(son_derin_t)}</span>
 <span class="sub">Piyasanın detaylı değerlendirmesi &rarr;</span></a>{derin_eski}</div>"""
 
     # Makro analiz bolumu: haftalik makro analizi — guncel sayfa + son 3 arsiv.
@@ -5385,16 +5393,16 @@ function arsivAc(btn) {{
     # makro-analiz.html hub oldugundan yalnizca arsiv HIC yoksa hub'a baglanir
     # (o durumda kart "Arsiv olusuyor" notu tasir).
     makro_eski = "".join(
-        f'<a class="rcard" href="reports/{fn}"><span class="date">{_tr_tarih(fn[:-5].replace("-makro-analiz", ""))}</span>'
-        f'<span class="sub">{_tr_tarih_sade(fn[:-5].replace("-makro-analiz", "")) or fn[:-5].replace("-makro-analiz", "")} makro analizi &rarr;</span></a>'
+        f'<a class="rcard" href="makro-analiz/{fn}"><span class="date">{_tr_tarih(fn[:-5])}</span>'
+        f'<span class="sub">{_tr_tarih_sade(fn[:-5]) or fn[:-5]} makro analizi &rarr;</span></a>'
         for fn in makro_dosyalari[1:4]
     )
     if makro_dosyalari:
         son_makro = makro_dosyalari[0]
-        son_makro_t = son_makro[:-5].replace("-makro-analiz", "")
+        son_makro_t = son_makro[:-5]
         makro_bolumu = f"""
 <h2 class="section-title">Makro Analiz</h2>
-<div class="grid"><a class="rcard" href="reports/{son_makro}"><span class="date">Güncel Makro Analiz — {_tr_tarih(son_makro_t)}</span>
+<div class="grid"><a class="rcard" href="makro-analiz/{son_makro}"><span class="date">Güncel Makro Analiz — {_tr_tarih(son_makro_t)}</span>
 <span class="sub">Haftalık makro göstergelerin derinlemesine değerlendirmesi &rarr;</span></a>{makro_eski}</div>"""
     else:
         makro_bolumu = f"""
@@ -7952,7 +7960,7 @@ def rapor_podcast_yaz():
             boyut = os.path.getsize(yol)
         except OSError:
             boyut = 0
-        rapor_link = SITE_URL + ("reports/" + ad[:-4] + "-derin-analiz.html" if "-derin-analiz" in ad
+        rapor_link = SITE_URL + ("derin-analiz/" + tarih + ".html" if "-derin-analiz" in ad
                                  else "reports/" + tarih + ".html")
         ogeler.append(
             f"<item><title>{tarih} — {tur}</title><guid isPermaLink=\"false\">rapor-{ad[:-4]}</guid>"
@@ -8066,6 +8074,11 @@ def site_arama_json_yaz(rapor_dosyalari):
         metin = makale_metni(os.path.join("reports", fn))
         if metin:
             sayfalar.append({"b": f"Günlük Rapor — {fn[:-5]}", "u": f"reports/{fn}", "t": metin[:3500]})
+    for dizin, etiket in (("derin-analiz", "Derin Analiz"), ("makro-analiz", "Makro Analiz")):
+        for fn in _html_dosyalari(dizin)[::-1]:
+            metin = makale_metni(os.path.join(dizin, fn))
+            if metin:
+                sayfalar.append({"b": f"{etiket} — {fn[:-5]}", "u": f"{dizin}/{fn}", "t": metin[:3500]})
     veri = {
         "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M"),
         "sayfalar": sayfalar,
@@ -8109,13 +8122,14 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
             f"<changefreq>{frekans}</changefreq>"
             f"<priority>{oncelik.get(yol, '0.8')}</priority></url>"
         )
-    for fn in rapor_dosyalari:
-        try:
-            lm = datetime.fromtimestamp(os.path.getmtime(os.path.join("reports", fn))).strftime("%Y-%m-%d")
-        except OSError:
-            lm = bugun
-        url_blokleri.append(
-            f"  <url><loc>{SITE_URL}reports/{_guzel_url(fn)}</loc><lastmod>{lm}</lastmod>"
+    for dizin in ("reports", "derin-analiz", "makro-analiz"):
+        for fn in _html_dosyalari(dizin)[::-1]:
+            try:
+                lm = datetime.fromtimestamp(os.path.getmtime(os.path.join(dizin, fn))).strftime("%Y-%m-%d")
+            except OSError:
+                lm = bugun
+            url_blokleri.append(
+                f"  <url><loc>{SITE_URL}{dizin}/{_guzel_url(fn)}</loc><lastmod>{lm}</lastmod>"
             f"<changefreq>monthly</changefreq><priority>0.6</priority></url>"
         )
     # Hisse detay sayfalari
