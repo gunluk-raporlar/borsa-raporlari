@@ -333,7 +333,9 @@ def frame_text(snapshot):
         "KURAL: Aşağıdaki değerleri, ülke/gösterge eşleşmelerini, birimleri ve dönemleri "
         "DEĞİŞTİRME. Listedeki başka bir ülkenin değerini bu ülkeye taşıma. "
         "Burada olmayan makro sayı yazma; niteliksel ifade kullan. Tahmin ve önceki "
-        "değerleri yalnız kaynakta açıkça verilmişse kullan.",
+        "değerleri yalnız kaynakta açıkça verilmişse kullan. Ay/çeyrek adı "
+        "yazarken referans dönemini esas al: veri dönemi yayım tarihi olabilir; "
+        "metin verinin AİT olduğu dönemi söylemeli.",
     ]
     for r in snapshot["records"]:
         ayrinti = [f"gerçekleşen: {r['value']}{r['unit']}"]
@@ -343,9 +345,13 @@ def frame_text(snapshot):
             ayrinti.append(f"önceki: {r['previous']}{r['unit']}")
         kaynak = r.get("confirmed_by") or r.get("provenance") \
             or r.get("source_title", r["label"])
+        donem = f"veri dönemi: {r['period']}"
+        kaynak_donem = str(r.get("source_period") or "")
+        if kaynak_donem and kaynak_donem not in str(r["period"]):
+            donem += f" (referans dönemi: {kaynak_donem})"
         satirlar.append(
             f"- [{r['country_code']}] {r['country']} / {r['label']}: "
-            f"{' | '.join(ayrinti)} | veri dönemi: {r['period']} | "
+            f"{' | '.join(ayrinti)} | {donem} | "
             f"frekans: {r.get('frequency') or '-'} | kaynak: {kaynak}")
     if snapshot.get("piyasa"):
         satirlar.append("[AKŞAM PİYASA VERİLERİ — KİLİTLİ]")
