@@ -1,0 +1,45 @@
+name: Qwen3-TTS-Tiny-TR Yoklamasi (gecici)
+# Kullanici onerisi (2026-10-07): https://huggingface.co/erkamk/qwen3-tts-tiny-tr
+# Turkce TTS + ses klonlama (Apache 2.0, ~370M paketli) — EMA Lightning'in
+# tek-ses kisitina karsi coklu-ses adayi. GPU'suz runner'da hiz testi;
+# referans ses olarak EMA yoklamasinin ciktisi kullanilir.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: ffmpeg kur
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: torch + torchaudio (CPU surumu) kur
+        run: |
+          pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+      - name: qwen-tts kur
+        run: pip install "qwen-tts==0.1.1" soundfile
+      - name: Yoklama (olcum + ornek ses)
+        run: python -u qwen3_tts_probe.py
+      - name: Ornek sesleri repoya isle
+        run: |
+          git config user.name "borsa-bot"
+          git config user.email "borsa-bot@users.noreply.github.com"
+          git add radyo/deneme
+          if ! git diff --cached --quiet; then
+            git commit -m "Qwen3-TTS-Tiny-TR yoklama ornekleri [CI Skip]"
+            git pull --rebase -X theirs origin main
+            git push origin main
+          fi
+      - name: Artifact yukle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qwen3-deneme
+          path: radyo/deneme
