@@ -42,15 +42,29 @@ def _ses_suresi(yol):
 
 
 def _mp3_den_wav():
-    """EMA ornek mp3'unu referans wav'a cevirir (klonlama girdisi)."""
+    """EMA ornek mp3'lerini ~9 sn'lik referans wav'a cevirir.
+
+    Kart 5-10 sn temiz referans istiyor; ilk iki kosuda 2,8 sn'lik tek
+    ornek kullanilmisti ve sesler kisaydi (108 karakter -> 3,7 sn).
+    Uc ornek birlestirilip 9 sn'ye kesilir.
+    """
     ffmpeg = shutil.which("ffmpeg")
     if not ffmpeg:
         return False
-    if not REF_KAYNAK.exists():
-        print(f"referans bulunamadi: {REF_KAYNAK} — klonlama testi atlanir")
+    kaynaklar = sorted(CIKTI.glob("ema-deneme-*.mp3"))
+    if len(kaynaklar) < 3:
+        print(f"yeterli EMA ornegi yok ({len(kaynaklar)}) — klonlama atlanir")
         return False
-    subprocess.run([ffmpeg, "-y", "-v", "error", "-i", str(REF_KAYNAK),
-                    "-ar", "24000", "-ac", "1", str(REF_WAV)], check=True)
+    liste = CIKTI / "qwen3-ref-liste.txt"
+    liste.write_text(
+        "".join(f"file '{Path(k).resolve()}'\n" for k in kaynaklar),
+        encoding="utf-8")
+    subprocess.run([ffmpeg, "-y", "-v", "error", "-f", "concat", "-safe", "0",
+                    "-i", str(liste), "-t", "9", "-ar", "24000", "-ac", "1",
+                    str(REF_WAV)], check=True)
+    liste.unlink()
+    sure = _ses_suresi(str(REF_WAV))
+    print(f"referans hazir: {REF_WAV} ({sure and f'{sure:.1f} sn'})")
     return True
 
 
