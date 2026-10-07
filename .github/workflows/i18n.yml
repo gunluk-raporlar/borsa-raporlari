@@ -23,6 +23,7 @@ on:
 
 permissions:
   contents: write
+  actions: write  # nobetci zincirini gun ici uyandirmak icin (2026-10-07)
 
 concurrency:
   group: i18n
@@ -97,4 +98,18 @@ jobs:
             git commit -m "Cok dilli sayfalar guncellendi (ceviri kosusu) [CI Skip]"
             git pull --rebase --quiet -X theirs origin main || true
             git push
+          fi
+      # 2026-10-07: GitHub sabah yuk penceresinde schedule kosularini
+      # dusurdugu icin yayin nobetcisi gun ici bu kadar guvenilir kaynakla
+      # uyandirilir (nobetci kendi zincirini kurar; bu yalnizca baslangic).
+      - name: Nobetci zincirini uyandir (hafta ici 08-16 TSI)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          GUN=$(TZ=Europe/Istanbul date +%u)
+          SAAT=$(TZ=Europe/Istanbul date +%H)
+          if [ "$GUN" -le 5 ] && [ "$SAAT" -ge 8 ] && [ "$SAAT" -le 15 ]; then
+            gh workflow run yayin-nobetci.yml --repo "$GITHUB_REPOSITORY" --ref main               && echo "Nobetci zinciri tetiklendi." || echo "Tetikleme atlandi."
+          else
+            echo "Zincir baslatma penceresi disi (TSI $SAAT, gun $GUN)."
           fi

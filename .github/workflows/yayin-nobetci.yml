@@ -27,7 +27,8 @@ concurrency:
 jobs:
   kontrol:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # Zincir turu kendi icinde 40 sn uyur + kontroller: 50 dk tavan
+    timeout-minutes: 50
     steps:
       - name: Kontrol edilecek yayinlari sec
         id: sec
@@ -110,3 +111,23 @@ jobs:
             gh workflow run "$WF" --repo "$GITHUB_REPOSITORY" --ref main
             echo "$WF tetiklendi ($HEDEF yayini canli sitede yoktu)."
           done
+      # 2026-10-07: GitHub, 08:00-12:00 UTC yuk penceresinde zamanlanmis
+      # (schedule) kosulari gun boyu SESSIZCE dusuruyor (bugun gunluk rapor,
+      # nobetci ve derin analiz cronlarinin hicbiri calismadi; ayni dakika
+      # dilimindeki workflow_dispatch'lar ise %100 calisti). Bu adim her tur
+      # sonunda 40 dk sonra bir sonraki turu KENDI tetikler: zincir bir kez
+      # basladigi gun 16:00 TSİ'ye kadar kesintisiz devam eder.
+      - name: Zincir — 40 dk sonra sonraki turu tetikle (schedule dusmelerine karsi)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          GUN=$(TZ=Europe/Istanbul date +%u)
+          SAAT=$(TZ=Europe/Istanbul date +%H)
+          if [ "$GUN" -ge 6 ] || [ "$SAAT" -ge 16 ]; then
+            echo "Zincir durduruldu (hafta sonu veya TSI $SAAT:00 sonrasi)."
+            exit 0
+          fi
+          echo "Sonraki kontrol 40 dk sonra (simdi TSI $SAAT)."
+          sleep 2400
+          gh workflow run yayin-nobetci.yml --repo "$GITHUB_REPOSITORY" --ref main             && echo "Sonraki nobetci turu tetiklendi."
+
