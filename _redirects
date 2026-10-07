@@ -27,3 +27,7 @@
 /reports  /raporlar.html  301
 /raporlar/  /raporlar.html  301
 /reports/*  /raporlar/:splat  301
+/en/reports/*  /en/raporlar/:splat  301
+/de/reports/*  /de/raporlar/:splat  301
+/ru/reports/*  /ru/raporlar/:splat  301
+/zh/reports/*  /zh/raporlar/:splat  301
