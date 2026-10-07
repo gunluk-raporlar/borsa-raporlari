@@ -1,0 +1,45 @@
+name: EMA Lightning Yoklamasi (gecici)
+# Kullanici onerisi (2026-10-07): https://huggingface.co/canberkkkkkk/ema-lightning
+# Turkce TTS (Apache 2.0, 8.6M parametre) — radyo hattinin edge-tts
+# yedegi adayi. GPU'suz runner'da kurulum + hiz + ornek ses testi.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: ffmpeg kur
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: torch (CPU surumu) kur
+        # pip'in varsayilan torch'u CUDA paketi (~2 GB+); runner GPU'suz,
+        # CPU wheel'i hem kucuk hem yeterli.
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: ema-lightning kur
+        run: pip install "ema-lightning==1.0.1"
+      - name: Yoklama (olcum + ornek ses)
+        run: python -u ema_probe.py
+      - name: Ornek sesleri repoya isle
+        run: |
+          git config user.name "borsa-bot"
+          git config user.email "borsa-bot@users.noreply.github.com"
+          git add radyo/deneme
+          if ! git diff --cached --quiet; then
+            git commit -m "EMA Lightning yoklama ornekleri [CI Skip]"
+            git pull --rebase -X theirs origin main
+            git push origin main
+          fi
+      - name: Artifact yukle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ema-deneme
+          path: radyo/deneme
