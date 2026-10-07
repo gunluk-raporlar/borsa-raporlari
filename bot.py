@@ -1823,7 +1823,7 @@ def _tuik_seride_guncel(gosterge, as_of=None):
             "unit": makro_katalog.KOD_GOSTERGE[gosterge][2],
             "period": donem, "source_title": tanim["dataflow"],
             "source_period": str(row.get("TIME_PERIOD") or donem),
-            "frequency": "TÜİK"}
+            "frequency": "aylık"}
 
 
 def _tuik_satir_bul(ham):

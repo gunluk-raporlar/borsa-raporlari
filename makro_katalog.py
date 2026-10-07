@@ -21,9 +21,10 @@ GOSTERGE_TANIMLARI = [
      ("core pce price index yoy",), "aylık"),
     ("core_pce_mom", "Çekirdek PCE (aylık)", "%",
      ("core pce price index mom",), "aylık"),
+    # ECB/Komisyon "consumer inflation expectations" anket skoru (0-100
+    # endeksi) % olarak okunuyordu (EU 35,2 hatali); yalnizca Michigan tutulur.
     ("inflation_expectation_1y", "Enflasyon Beklentisi (1 yıl)", "%",
-     ("michigan inflation expectations final", "consumer inflation expectations",
-      "ecb consumer inflation expectations"), "aylık"),
+     ("michigan inflation expectations final",), "aylık"),
     ("inflation_expectation_5y", "Enflasyon Beklentisi (5 yıl)", "%",
      ("michigan 5 year inflation expectations final",), "aylık"),
     ("producer_prices_yoy", "ÜFE (yıllık)", "%",
@@ -91,7 +92,7 @@ GOSTERGE_TANIMLARI = [
      ("foreign exchange reserves",), "haftalık"),
     ("m3_yoy", "M3 Para Arzı (yıllık)", "%",
      ("m3 money supply yoy",), "aylık"),
-    ("consumer_credit", "Tüketici Kredisi Değişimi", "%",
+    ("consumer_credit", "Tüketici Kredisi Değişimi", "milyar $",
      ("consumer credit change",), "aylık"),
     ("initial_jobless_claims", "İlk İşsizlik Başvurusu", "bin kişi",
      ("initial jobless claims",), "haftalık"),
