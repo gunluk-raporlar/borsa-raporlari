@@ -77,9 +77,12 @@ def isim_duzelt(metin, adlar):
 
 
 # Enflasyon cumlelerindeki yuzdeler. Yuzde iki konumda da olabilir; en az bir
-# tanesi yuzde isareti icermelidir. Uc haneli degerleri de kapsar.
+# tanesi yuzde isareti icermelidir. Uc haneli degerleri de kapsar. "yüzde 43"
+# yazimi da yakalanir (2026-10-07, ChatGPT denetimi; LLM'ler % yerine sik sik
+# "yüzde" yazar).
 _SAYI = re.compile(
-    r"(?:%\s*\d{1,3}(?:[.,]\d{1,3})?|\b\d{1,3}(?:[.,]\d{1,3})?\s*%)",
+    r"(?:%\s*\d{1,3}(?:[.,]\d{1,3})?|\b\d{1,3}(?:[.,]\d{1,3})?\s*%"
+    r"|\b(?:yüzde|yuzde)\s*\d{1,3}(?:[.,]\d{1,3})?)",
     re.IGNORECASE,
 )
 _ENFLASYON_KELIME = re.compile(r"\b(enflasyon|tüfe|tufe)", re.IGNORECASE)
@@ -159,6 +162,7 @@ def _yuzde_degeri(yazi):
     durumda virgul ondaliga cevrilir ("3.4" -> 3.4 sayilmaz, "3,4" -> 3.4).
     """
     metin = yazi.replace("%", "").strip()
+    metin = re.sub(r"^[yY][üÜuU][zZ][dD][eE]\s*", "", metin)
     try:
         if re.fullmatch(r"-?\d{1,3}(?:\.\d{3})+(?:,\d+)?", metin):
             return float(metin.replace(".", "").replace(",", "."))
@@ -168,8 +172,12 @@ def _yuzde_degeri(yazi):
 
 
 def _enflasyon_yuzde_temizle(yazi, dogru):
-    """Mevcut yuzde bicimini koruyarak dogru degeri yazar."""
-    return "%" + dogru if yazi.lstrip().startswith("%") else dogru + "%"
+    """Mevcut yuzde bicimini koruyarak dogru degeri yazar; "yüzde 43" yazimi
+    da "%43" olarak normalize edilir (2026-10-07)."""
+    on = yazi.lstrip().lower()
+    if on.startswith("%") or on.startswith("yüzde") or on.startswith("yuzde"):
+        return "%" + dogru
+    return dogru + "%"
 
 
 def _ulke_anahtari(cumle, sayi_pos):
@@ -353,16 +361,18 @@ def faiz_duzelt(metin, oranlar, tolerans=0.005, izinli=None):
 
                 def _faiz_duzelt_bir(m, oran_deger):
                     yazi = m.group(0)
-                    try:
-                        sayi = float(yazi.replace("%", "").replace(",", ".").strip())
-                    except ValueError:
+                    # _yuzde_degeri "%43" ve "yüzde 43" yazimlarini cevirir
+                    sayi = _yuzde_degeri(yazi)
+                    if sayi is None:
                         return None
                     if sayi is None or abs(sayi - oran_deger) <= tolerans:
                         return None
                     if _gercek_mi(sayi, izinli):
                         return None
                     dy = ("%.2f" % oran_deger).rstrip("0").rstrip(".").replace(".", ",")
-                    dogru = "%" + dy if yazi.startswith("%") else dy + "%"
+                    on = yazi.lstrip().lower()
+                    dogru = ("%" + dy if (on.startswith("%") or on.startswith("yüzde")
+                                          or on.startswith("yuzde")) else dy + "%")
                     return (m, dogru, yazi)
 
                 if coklu:
@@ -482,10 +492,14 @@ _U6_ETIKET = re.compile(r"\bU-?6\b", re.IGNORECASE)
 _GOSTERGE_KELIMELER = {
     "producer_prices_yoy": re.compile(r"\b(?:ÜFE|üretici fiyat)\w*", re.IGNORECASE),
     "core_inflation_yoy": re.compile(r"\bçekirdek\s+enflasyon\w*", re.IGNORECASE),
-    "pce_inflation_yoy": re.compile(r"\byıllık\s+(?:PCE enflasyon|PCE fiyat endeksi)\w*", re.IGNORECASE),
-    "pce_inflation_mom": re.compile(r"\baylık\s+(?:PCE enflasyon|PCE fiyat endeksi)\w*", re.IGNORECASE),
-    "core_pce_yoy": re.compile(r"\bçekirdek\s+yıllık\s+PCE\w*", re.IGNORECASE),
-    "core_pce_mom": re.compile(r"\bçekirdek\s+aylık\s+PCE\w*", re.IGNORECASE),
+    "pce_inflation_yoy": re.compile(
+        r"\b(?:yıllık\s+)?(?:PCE\s+enflasyon(?:u)?|PCE\s+fiyat\s+endeksi)\w*",
+        re.IGNORECASE),
+    "pce_inflation_mom": re.compile(
+        r"\b(?:aylık\s+)?(?:PCE\s+enflasyon(?:u)?|PCE\s+fiyat\s+endeksi)\w*",
+        re.IGNORECASE),
+    "core_pce_yoy": re.compile(r"\bçekirdek\s+(?:yıllık\s+)?PCE\w*", re.IGNORECASE),
+    "core_pce_mom": re.compile(r"\bçekirdek\s+(?:aylık\s+)?PCE\w*", re.IGNORECASE),
     "inflation_expectation_1y": re.compile(r"\b1 yıllık\s+enflasyon beklentisi\w*", re.IGNORECASE),
     "inflation_expectation_5y": re.compile(r"\b5 yıllık\s+enflasyon beklentisi\w*", re.IGNORECASE),
     "growth_yoy": re.compile(r"\b(?:yıllık büyüme|GSYH büyümesi|büyüme)\w*", re.IGNORECASE),
@@ -545,10 +559,14 @@ _GOSTERGE_KELIMELER = {
 }
 _SAYI_YUZDELI = re.compile(
     r"(?<![\w.])(?:%\s*-?\d{1,3}(?:[.,]\d{1,3})?"
-    r"|-?\d{1,3}(?:[.,]\d{1,3})?\s*%)(?!\w)"
+    r"|-?\d{1,3}(?:[.,]\d{1,3})?\s*%"
+    r"|(?:yüzde|yuzde)\s*-?\d{1,3}(?:[.,]\d{1,3})?)(?!\w)"
 )
+# Tam sayi dalli: "NFP 180000", "ilk issizlik basvurusu 220000" gibi ondaliksiz
+# buyuk degerler onceden tamamen kaciyordu (2026-10-07, ChatGPT denetimi).
+# Yil korumasi aday dongusunde uygulanir (1900-2100).
 _SAYI_ONLIKLI = re.compile(
-    r"(?<![\w.])(?:%\s*-?\d+[.,]\d+|-?\d+[.,]\d+\s*%?)(?!\w)"
+    r"(?<![\w.])(?:%\s*-?\d+[.,]\d+|-?\d+[.,]\d+\s*%?|-?\d{3,})(?!\w)"
 )
 
 
@@ -601,9 +619,6 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005, izinli=None):
         parcalar = re.split(r"(?<=[.!?])\s+", satir)
         yeni_parcalar = []
         for cumle in parcalar:
-            if _BEKLENTI.search(cumle):
-                yeni_parcalar.append(cumle)
-                continue
             duzeltilecek = []
             yuzdeli_gostergeler = {
                 "producer_prices_yoy", "producer_prices_mom",
@@ -634,6 +649,11 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005, izinli=None):
                     deger = _yuzde_degeri(sayi_m.group(0))
                     if deger is None:
                         continue
+                    # Yil korumasi (2026-10-07): tam-sayi dalindan yakalanan
+                    # "2026" gibi tarihler gosterge degeri sanilip duzeltilemez.
+                    if (1900 <= deger <= 2100
+                            and not re.search(r"[.,]", sayi_m.group(0))):
+                        continue
                     # GERCEK DEGER KORUMASI (2026-10-07): sayi baska bir
                     # gostergedeki gercek degerse (or. turizm 15,9, issizlik
                     # %7,7) anahtar-kelime yanilgisiyla degistirilmez.
@@ -642,6 +662,14 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005, izinli=None):
                     d_ind = _kelime_mesafesi(cumle, sayi_m.start(), desen)
                     if d_ind is None or d_ind > 50:
                         continue
+                    # Beklenti/hedef kelimesi sayiya gostergedens daha yakinsa
+                    # bu yuzde beklenti/hedeftir (2026-10-07, ChatGPT denetimi:
+                    # butun cumleyi atlamak GSYH buyumesi gibi gostergeleri de
+                    # denetimsiz birakiyordu; inflation_expectation gostergeleri
+                    # artik gercekten calisir).
+                    d_bek = _kelime_mesafesi(cumle, sayi_m.start(), _BEKLENTI)
+                    if d_bek is not None and d_bek < d_ind:
+                        continue
                     # Frekans ayrimi: "aylik ... %x" sayisi yillik gostergeye
                     # (ve tersi) yazilmaz; ipucu yoksa gosterge kirilimi esas.
                     sikil = _gosterge_sikligi(gosterge)
@@ -649,30 +677,52 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005, izinli=None):
                         continue
                     ulke = _ulke_anahtari(cumle, sayi_m.start())
                     hedef = _gosterge_hedef(gostergeler, ulke, gosterge) if ulke else None
+                    if (hedef is None and ulke == "tr"
+                            and not (_ULKE_TR.search(cumle) or _ULKE_FED.search(cumle)
+                                     or _ULKE_EU.search(cumle))):
+                        # Ulke ipucu yok (tr VARSAYILANDI) ve gosterge
+                        # snapshot'ta tek bir ulkede varsa (or. NFP/basvuru/
+                        # JOLTs yalniz ABD) o deger kullanilir; acik ulke
+                        # kelimesi varsa karisma riskine karsi kullanilmaz
+                        # (2026-10-07, ChatGPT denetimi bulgu 8/5).
+                        sahipler = [u for u, tablo in gostergeler.items()
+                                    if _gosterge_hedef(gostergeler, u, gosterge)
+                                    is not None]
+                        if len(sahipler) == 1:
+                            hedef = _gosterge_hedef(gostergeler, sahipler[0],
+                                                    gosterge)
                     if hedef is not None:
-                        adaylar.append((d_ind, sayi_m, hedef, deger))
+                        # Frekans ipucu yokken yillik kirilim varsayilan; yakinlik
+                        # esitse yillik gosterge, o da esitse deger yakinligi
+                        # kazansin (2026-10-07).
+                        bul = _siklik_bul(cumle, sayi_m.start())
+                        tercih = (0 if (sikil is None or bul == sikil)
+                                  else 1 if (bul is None and sikil == "yıllık")
+                                  else 2)
+                        adaylar.append((d_ind, sayi_m, hedef, deger, tercih))
                 if adaylar:
-                    yakin, sayi_m, hedef, deger = min(
+                    yakin, sayi_m, hedef, deger, tercih = min(
                         adaylar, key=lambda x: x[0])
                     if abs(deger - hedef) > tolerans:
                         # deger tuplende tasinir: ayni sayiya bakan gostergeler
                         # arasinda secim sozluk sirasina degil, anahtar-kelime
                         # yakinligina (esitse deger yakinligina) gore yapilir
                         # (2026-10-07: turizm 15,9 ihracatla degistiriliyordu).
-                        duzeltilecek.append((gosterge, yakin, sayi_m, hedef, deger))
+                        duzeltilecek.append((gosterge, yakin, sayi_m, hedef,
+                                             deger, tercih))
             # Ayni sayi birden fazla gosterge adayinda gorundugunde eski
             # uygulama ayni konuma iki kez yaziyordu (metin kaymasi); yalnizca
             # ilk aday uygulanir (sozluk sirasi yillik tercih eder).
             gorulen, tek_aday = set(), []
             for aday in sorted(duzeltilecek,
-                               key=lambda x: (x[2].start(), x[1],
+                               key=lambda x: (x[2].start(), x[1], x[5],
                                               abs(x[4] - x[3]))):
                 if aday[2].start() in gorulen:
                     continue
                 gorulen.add(aday[2].start())
                 tek_aday.append(aday)
             duzeltilecek = tek_aday
-            for gosterge, _, m, hedef, _deger in sorted(
+            for gosterge, _, m, hedef, _deger, _tercih in sorted(
                     duzeltilecek, key=lambda x: x[2].start(), reverse=True):
                 yazi = m.group(0)
                 birim = "%" if gosterge in yuzdeli_gostergeler else ""
@@ -775,7 +825,7 @@ def piyasa_serileri_duzelt(metin, seriler, tolerans=0.005, izinli=None):
 # disindaysa DOGRU seviyeyle degistirilir; "destek > direnc" gibi mantik
 # hatalari ayrica uyari olarak doner.
 _SEVIYE_YAZI = re.compile(
-    r"\b(\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d{5,6}(?:,\d{1,2})?)\b"
+    r"\b(\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d{4,6}(?:,\d{1,2})?)\b"
 )
 _ENDEKS_BAGLAM = re.compile(r"(endeks|BIST\s*30|BIST\s*100|XU0?30|XU0?100)", re.I)
 _SEVIYE_BAGLAM = re.compile(
@@ -844,6 +894,25 @@ def _seviye_etiketi(cumle):
     return d, r
 
 
+def _baska_endeks_mi(cumle, sayi_pos):
+    """Sayidan onceki en yakin 'endeks' tokeninin onunde buyuk harfli yabanci
+    bir sıfat varsa (or. 'Sınai endeksi', 'Tüketici endeksi') bu sayi BIST
+    seviyesi degildir -> dogrulama atlanir. Cumle basi/baskan genel 'Endeksin'
+    kullanimi BIST sayilir (recall korunur)."""
+    son = None
+    for m2 in re.finditer(r"\bendeks\w*", cumle, re.I):
+        if m2.end() <= sayi_pos:
+            son = m2
+    if not son:
+        return False
+    oncesi = cumle[:son.start()].rstrip()
+    son_kelime = re.search(r"([A-Za-zÇĞİÖŞÜçğıöşü]+)$", oncesi)
+    if not son_kelime:
+        return False
+    kelime = son_kelime.group(1)
+    return kelime[0].isupper() and kelime.upper() not in {"BIST", "XU030", "XU100"}
+
+
 def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15,
                          endeks_seviyeleri=None, izinli=None):
     """Endeks cumlelerindeki seviyeleri gercek degerle karsilastirir.
@@ -904,6 +973,10 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15,
                 elif etiket30:
                     hedef_seviye = haritalar.get("30", varsayilan)
                 else:
+                    # Genel "endeksi" kelimesi BIST varsayilanina döner; yalnız
+                    # önünde büyük harfli yabancı bir sıfat varsa ("Sınai
+                    # endeksi") bu baska borsanin endeksidir -> _bak atlar
+                    # (2026-10-07, ChatGPT denetimi; _baska_endeks_mi).
                     hedef_seviye = varsayilan
                 if hedef_seviye:
                     if per_number:
@@ -912,6 +985,8 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15,
                         dogru_varsayilan = _binlik(hedef_seviye)
 
                     def _bak(m):
+                        if not per_number and _baska_endeks_mi(cumle, m.start()):
+                            return m.group(0)  # "Sınai endeksi" gibi baska borsa
                         if per_number:
                             oncekiler = [(p, k) for p, k in etiketler
                                          if p < m.start()]
@@ -933,6 +1008,17 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15,
                             return m.group(0)
                         if deger <= 0:
                             return m.group(0)
+                        # Yil korumasi (2026-10-07): 4 haneli duz sayilar desene
+                        # girdiginden "2026'da" gibi tarihler seviye sanilip
+                        # duzeltilemez.
+                        if 1900 <= deger <= 2100:
+                            return m.group(0)
+                        # Buyukluk korumasi (2026-10-07, ChatGPT denetimi):
+                        # "islem hacmi 25.000.000" gibi hacim sayilari BIST
+                        # seviyesi sanilip 15.327'e cevriliyordu; endeks
+                        # seviyeleri 7 haneye ulasmaz.
+                        if deger >= 10_000_000:
+                            return m.group(0)
                         # GERCEK DEGER KORUMASI (2026-10-07): sayi snapshot'taki
                         # herhangi bir gercek degerse dokunulmaz.
                         if _gercek_mi(deger, izinli, tolerans=0.0005):
@@ -953,7 +1039,9 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15,
                         duzeltmeler.append((m.group(1), dogru))
                         return dogru
                     cumle = _SEVIYE_YAZI.sub(_bak, cumle)
-                # "16.372-16.372" gibi tekrarlari tek sayiya indir
+                # "16.372-16.372" gibi tekrarlari tek sayiya indir + destek>
+                # direnc mantik uyarisi: hedef etiketi olmayan (genel "endeks")
+                # cumlelerde de calismali (2026-10-07, mimar uyarisi).
                 cumle = re.sub(r"(\d{1,3}(?:\.\d{3})+)\s*[-–]\s*\1", r"\1", cumle)
                 d, r = _seviye_etiketi(cumle)
                 if d is not None and r is not None and d > r:
@@ -1356,5 +1444,53 @@ if __name__ == "__main__":
         "BIST 30 endeksi 10.000 direnc, DXY endeksi 102.500 direnc.",
         15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
     assert "10.000" not in bd[0] and "15.327" in bd[0] and "102.500" in bd[0] and bd[1], bd
+
+    # --- 2026-10-07 ChatGPT ENVANTERI taramasindan duzeltilenler ---
+    # 7) beklenti kelimesi tum cumleyi kapatmayacak: buyume denetlenir,
+    #    beklenti sayisi kendi gostergesine duzeltilir.
+    r7 = makro_gosterge_duzelt(
+        "GSYH büyümesi %5,0 olurken 1 yıllık enflasyon beklentisi %8,0.",
+        {"tr": {"growth_yoy": 2.3, "inflation_expectation_1y": 4.6}})
+    assert "%2,3" in r7[0] and "%4,6" in r7[0] and len(r7[1]) == 2, r7
+    # 8) tam-sayi makro degerleri (NFP/basvuru) artik yakalanir; acik ulke
+    #    kelimesi varken baska ulkenin degeri kullanilmaz.
+    m8 = makro_gosterge_duzelt(
+        "İşsizlik dışı istihdam 180.000 kişi oldu.",
+        {"us": {"nonfarm_payroll": 200.0}})
+    assert "200" in m8[0] and m8[1], m8
+    m8b = makro_gosterge_duzelt(
+        "Türkiye'de işsizlik oranı %8,0 seviyesinde.",
+        {"us": {"unemployment_rate": 4.2}})
+    assert m8b[1] == [], f"acik ulkeyle baska ulke degeri kullanildi: {m8b}"
+    # 9) "yüzde 43" yazimi: % isareti yerine yazilan yuzde sozcugu de denetlenir.
+    f9 = faiz_duzelt("TCMB politika faizi yüzde 43.", ORAN)
+    assert "%37" in f9[0], f9
+    e9 = enflasyon_duzelt("Enflasyon yüzde 28,4 seviyesinde.", 31.51,
+                          oranlar={"tr": 31.51})
+    assert "%31,51" in e9[0], e9
+    # 10) PCE dogal dil sirasi ("çekirdek PCE yıllık").
+    p10 = makro_gosterge_duzelt(
+        "Çekirdek PCE yıllık %3,5 seviyesinde.",
+        {"us": {"core_pce_yoy": 3.0, "core_pce_mom": 0.2}})
+    assert "%3 seviyesinde" in p10[0] and p10[1], p10
+    # 12) baska borsanin endeksi BIST seviyesine donusturulmez ("Sınai endeksi").
+    p12 = endeks_seviye_duzelt(
+        "Sınai endeksi 12.000 destek seviyesine geldi.",
+        15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
+    assert p12[1] == [] and "12.000" in p12[0], p12
+    # 13) hacim gibi 7+ haneli sayilar BIST seviyesi sanilip ezilmez.
+    p13 = endeks_seviye_duzelt(
+        "BIST 30 endeksi 16.000 destek, işlem hacmi 25.000.000 oldu.",
+        15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
+    assert p13[1] == [] and "25.000.000" in p13[0], p13
+    # 15) 4 haneli ayiracsiz seviye artik yakalanir; yillar koruma altinda.
+    p15 = endeks_seviye_duzelt(
+        "BIST 30 endeksi 4200 seviyesinde kaldi.",
+        15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
+    assert p15[1] and "15.327" in p15[0], p15
+    p15b = endeks_seviye_duzelt(
+        "BIST 30 2026 hedef konuşuluyor.",
+        15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
+    assert p15b[1] == [] and "2026" in p15b[0], p15b
 
     print("dogrulama.py: tum kendini testler gecti.")
