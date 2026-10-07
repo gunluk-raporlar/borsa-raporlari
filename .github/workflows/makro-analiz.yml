@@ -93,6 +93,18 @@ jobs:
           done
           echo "3 denemenin hepsi basarisiz."
           exit 1
+      # Uretilmis sayfayi bagimsiz denetle (Claude taslagindan, 2026-10-07).
+      # Su asamada non-blocking: bulgular log'a duser, esikler birkaq kosu
+      # gunlendikten sonra ERROR durumunda yayini durduracak sekilde
+      # sertistirilabilir.
+      - name: Rapor denetimi (rapor_denetle.py)
+        run: |
+          F=$(ls -t makro-analiz/2026-*.html 2>/dev/null | head -1)
+          if [ -n "$F" ]; then
+            python rapor_denetle.py "$F" || echo "::warning::Rapor denetimi ERROR buldu: $F"
+          else
+            echo "Denetlenecek rapor yok (uretim basarisiz olabilir)."
+          fi
       - name: Degisiklikleri yayinla
         run: |
           git config user.name "borsa-bot"
