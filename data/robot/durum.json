@@ -2,17 +2,13 @@
   "baslangic": "2026-09-25",
   "braket_versiyonu": 2,
   "bugun_alinan": [],
-  "bugun_satilan": [
-    "BIMAS",
-    "KRDMD",
-    "TAVHL"
-  ],
-  "bugun_tarih": "2026-10-07",
+  "bugun_satilan": [],
+  "bugun_tarih": "2026-10-08",
   "gerceklesen_kz": -3072.8583749999943,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 3,
+  "kontrol_sayisi": 1,
   "nakit": 96927.13605761202,
-  "onceki_kapanis_ozkaynak": 98046.28,
+  "onceki_kapanis_ozkaynak": 96927.14,
   "ozkayit": [
     [
       "2026-09-25",
@@ -620,7 +616,7 @@
     ]
   ],
   "pozisyonlar": {},
-  "son_bar_tarihi": "2026-10-06",
+  "son_bar_tarihi": "2026-10-07",
   "son_fiyatlar": {
     "AEFES": 18.15,
     "AKBNK": 69.25,
