@@ -1065,6 +1065,16 @@ def _gercek_mi(deger, izinli, tolerans=0.005):
         fark = abs(deger - g)
         if fark <= tolerans or fark <= tolerans * abs(g):
             return True
+        # Isaret-farki korumasi (2026-10-07, makro sayfa denetimi): metin
+        # negatif degeri mutlak yazabilir — "ticaret acigi 5,23 milyar dolar"
+        # tablodaki -5,23 ile ayni gercektir; isaret uyusmazligi duzeltme
+        # tetiklememeli.
+        if fark <= tolerans + tolerans * abs(g):
+            pass
+        if abs(abs(deger) - abs(g)) <= tolerans or (
+                abs(deger) > tolerans and
+                abs(abs(deger) - abs(g)) <= tolerans * abs(g)):
+            return True
     return False
 
 
