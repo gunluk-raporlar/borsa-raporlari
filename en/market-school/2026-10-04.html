@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekend Stock Market School - 2026-10-04</title>
+<meta name="description" content="Weekend stock market education: AI instructor explains one term, indicator, or chart topic each Saturday/Sunday using real BIST data.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/en/market-school/2026-10-04">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-04">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-10-04">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-10-04">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-10-04">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/market-school/2026-10-04">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-04">
+<link rel="icon" href="..//favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="..//favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Daily Reports">
+<meta property="og:title" content="Weekend Stock Market School - 2026-10-04">
+<meta property="og:description" content="Weekend stock market education: AI instructor explains one term, indicator, or chart topic each Saturday/Sunday using real BIST data.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/en/market-school/2026-10-04">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Daily Reports cover image">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Weekend Stock Market School - 2026-10-04">
+<meta name="twitter:description" content="Weekend stock market education: AI instructor explains one term, indicator, or chart topic each Saturday/Sunday using real BIST data.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Weekend Stock Market School - 2026-10-04", "description": "Weekend stock market education: AI instructor explains one term, indicator, or chart topic each Saturday/Sunday using real BIST data.", "url": "https://borsa-raporlari.pages.dev/en/market-school/2026-10-04", "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}}</script>
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="../style.css">
+
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="../index.html">BIST 30 Daily Reports</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Light/dark theme" aria-label="Change theme">🌙</button></div>
+<nav><a href="../index.html">Reports</a><a href="../stocks/index.html">Stocks</a><a href="../deep-analysis.html">Deep Analysis</a><a href="../macro-analysis.html">Macro Analysis</a><a href="../technical-scan.html">Technical Scan</a><a href="../signal-scorecard.html">Signal Scorecard</a><a href="../borsapy-signals.html">Borsapy Signals</a><a href="../news.html">News</a><a href="../company-news.html">Company News</a><a href="../portfolio.html">Demo Portfolio</a><a href="../weekend.html">Weekend</a><a href="../market-school.html" class="active">Market School</a><a href="../calendar.html">📅 Calendar</a><a href="../glossary.html">Glossary</a><a href="../terms.html">Terms</a><a href="../accounting-terms.html">Accounting Terms</a><a href="../trading-robot.html">Trading Robot</a></nav>
+</div></header>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Loading prices…</span></div>
+</div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Prices could not be loaded temporarily; they will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
+
+<div class="ticker-bant" id="ticker-bant2" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Loading market data...</span></div>
+</div>
+<script>
+(function() {
+  var kutu = document.getElementById('ticker-bant2');
+  if (!kutu) return;
+  var kok = kutu.dataset.kok || '';
+  var iz = document.getElementById('ticker-iz2');
+
+  function bicim(g) {
+    var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
+    var rozet = (typeof g.d === 'number')
+      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+        Number(g.d).toFixed(2) + '%</span>'
+      : '';
+    var birim = g.b || g.birim || '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (birim ? ' ' + birim : '') + rozet + '</span>';
+  }
+  function ciz(veri) {
+    var ogeler = (veri.gostergeler || []).map(bicim).join('');
+    if (!ogeler) throw new Error('bos');
+    var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
+               (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Market data could not be loaded temporarily; it will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/piyasa?t=' + Date.now());
+  setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Loading...</span>
+            <span id="istanbul-weather">🌤️ Istanbul Weather...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Select page language">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-04" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/market-school/2026-10-04" hreflang="en" lang="en" data-dil="en" class="aktif" aria-current="true">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-10-04" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-10-04" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-10-04" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+</nav>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
+
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Search stock, topic or date..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '../';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\?\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\.|mi|mı|icin)\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Search index could not be loaded.</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+
+
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Play / Pause">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Volume level" title="Sound">
+  <span class="radyo-linkler"><a href="../radio/index.html">📻 All broadcasts &amp; Podcast page</a> <span class="ayrac">•</span> <a href="../radio/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">For listening purposes only • Fictional AI servers • For informational purposes, not investment advice.</span>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='../';
+  if(!btn||!ses) return;
+  if(ayar){ ses.volume=(parseInt(ayar.value,10)||80)/100; }
+  var hazir=false;
+  function hazirla(geri){
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){return r.json();}).then(function(d){
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){ ses.src=kok+l[0].dosya; }
+      hazir=true; geri();
+    }).catch(function(){ hazir=true; geri(); });
+  }
+  btn.addEventListener('click',function(){
+    if(ses.paused){ hazirla(function(){ var p=ses.play(); if(p&&p.catch){p.catch(function(){});} }); }
+    else { ses.pause(); }
+  });
+  ses.addEventListener('play',function(){ btn.textContent='❚❚'; btn.setAttribute('aria-label','Duraklat'); });
+  ses.addEventListener('pause',function(){ btn.textContent='▶'; btn.setAttribute('aria-label','Oynat'); });
+  if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
+})();
+</script>
+
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>Weekend Market School</h1>
+<div class="meta"><span class="badge">2026-10-04</span><span>Lesson 8/26 • Statistics • Fictional AI instructor</span></div>
+</div>
+<article class="report" id="rapor-ses-metin"><figure style="margin:0 0 18px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 320" role="img" style="width:100%;height:auto;background:#fff;border:1px solid #e2e8f0;border-radius:10px;"><text x="14" y="26" font-family="Segoe UI,Arial" font-size="15" font-weight="700" fill="#0f172a">Correlation (r)</text><g transform="translate(0,40)"><rect x="40" y="36" width="260" height="160" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/><circle cx="156.5" cy="116.2" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="212.9" cy="99.5" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="270.2" cy="77.9" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="274.0" cy="53.1" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="262.8" cy="63.9" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="280.7" cy="53.1" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="128.6" cy="131.9" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="224.5" cy="90.3" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="250.5" cy="93.8" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="108.3" cy="161.9" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="191.9" cy="83.9" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="148.7" cy="145.1" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="231.6" cy="99.9" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="287.6" cy="79.2" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="228.6" cy="98.2" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="162.4" cy="99.9" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="148.0" cy="126.0" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="176.1" cy="120.7" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="282.7" cy="71.8" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="114.3" cy="134.7" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="145.2" cy="139.8" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="78.3" cy="141.6" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="84.8" cy="172.3" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="254.8" cy="63.0" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="268.0" cy="89.1" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="153.7" cy="140.2" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="252.5" cy="63.5" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="267.8" cy="74.6" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="203.8" cy="85.8" r="3.6" fill="#0d9488" opacity="0.85"/><circle cx="54.6" cy="153.6" r="3.6" fill="#0d9488" opacity="0.85"/><line x1="48" y1="171.0" x2="292" y2="61.4" stroke="#2563eb" stroke-width="2.6"/><text x="40" y="211" font-family="Segoe UI,Arial" font-size="11" fill="#64748b">Asset A →</text><text x="40" y="30" font-family="Segoe UI,Arial" font-size="11" fill="#64748b">Asset B ↓</text><text x="40" y="229" font-family="Segoe UI,Arial" font-size="13.5" font-weight="600" fill="#0f172a">r ≈ +0.82 — same direction movement</text><text x="40" y="246" font-family="Segoe UI,Arial" font-size="11.5" fill="#64748b">Price and indicator together — trend is reliable</text></g></svg><figcaption style="color:var(--muted);font-size:12px;margin-top:6px">Figure: Pearson correlation (r) — schematic representation for educational purposes (not real market data)</figcaption></figure><h2>Today's Lesson: Pearson correlation (r)</h2>
+<p>Hello friends, welcome to our weekend stock market school! Today we will learn about a measure that we encounter everywhere in the market but often makes us say "what was that?":<strong>Pearson correlation (r)</strong>. Don't worry, without getting into the mathematical atmosphere, let's start with a story.</p>
+<h2>1. What is it?</h2>
+<p>Think of two dancers. If one steps to the right and the other also steps to the right, there is perfect harmony. If one steps to the right while the other steps to the left, they are dancing in completely opposite directions. If one is dancing while the other is doing their own thing... there is no harmony, everyone is in their own rhythm.</p>
+<p>And that's exactly what Pearson correlation (r) measures:<strong>It expresses the direction and strength of two series moving together, with a number between -1 and +1.</strong></p>
+<p>So the answer to the question:<strong>What does r=0.82 tell us?</strong> + A value quite close to 1. That is, the two series<strong>moving strongly in the same direction</strong> moving together. One rises while the other most likely rises as well. High correlation, obvious movement together.</p>
+<h2>2. Why is it important?</h2>
+<p>This small number gives investors three big benefits:</p>
+<ul>
+<li>
+<p><strong>Diversification Awareness:</strong> Buying two assets that move in the same direction doesn't reduce risk; it's like putting two eggs in the same basket. Low or negatively correlated assets provide balance.</p>
+</li>
+<li>
+<p><strong>Index Relationship:</strong> Is the stock moving with the market or against it? r summarizes this in a single number.</p>
+</li>
+<li>
+<p><strong>Scenario Building:</strong> " It gives a crude but useful answer to the question: "What happens if the market rises?"</p>
+</li>
+</ul>
+<h2>3. How to Read / Use?</h2>
+<p>Let’s go step by step:</p>
+<ol>
+<li><strong>Look at the sign:</strong> Plus (+) means same direction, minus (-) means opposite direction.</li>
+<li><strong>Look at the magnitude:</strong> Generally accepted thresholds are:</li>
+</ol>
+<ul>
+<li>
+<p>Near 0 (between 0 and 0.30): weak relationship</p>
+</li>
+<li>
+<p>Between 0.30 – 0.70: moderate relationship</p>
+</li>
+<li>
+<p>0.70 and above: strong relationship<br />
+3. <strong>Look at the context:</strong> r doesn't say "why", it only says "move together."<br />
+4. <strong>It's temporary:</strong> Correlation changes over time; in volatile markets, many assets can fall at the same time.</p>
+</li>
+</ul>
+<p>For the curious: a quick note: r squared (r²) shows how much of the movement in two series can be explained together. For example, for r=0.82, r² is approximately 0.67; meaning about two-thirds of the variation can be explained by common movement.</p>
+<h2>4. Real Example</h2>
+<p>Let's read the r values in today's three most active stocks together:</p>
+<ul>
+<li>
+<p><strong>DSTKF:</strong> Last price 694.00 TL, daily -9.99% change, channel 7%, r=-0.47. Medium level <strong>negative</strong> relationship: when the compared series rises, this stock tends to move in the opposite direction most of the time. However, -0.47 is below the "strong" threshold (-0.70); the relationship is noticeable but not absolute.</p>
+</li>
+<li>
+<p><strong>SASA:</strong> Last price 1.92 TL, daily +6.67% change, channel 9%, r=-0.41. Again medium level <strong>negative</strong>, relationship similar to DSTKF but slightly weaker inverse relationship.</p>
+</li>
+<li>
+<p><strong>VAKBN:</strong> Last price 33.92 TL, daily +5.15% change, channel 41%, r=0.72. Just above the strong threshold: <strong>strong positive</strong> relationship. This stock likely tends to move in the same direction as the compared series.</p>
+</li>
+</ul>
+<p>Note: Although r=0.72 for VAKBN, the channel is 41%. So the relationship may be strong but volatility is also high. Correlation alone doesn't tell the whole story; it's read together with accompanying information.</p>
+<h2>5. Common Mistakes</h2>
+<ul>
+<li>
+<p><strong>Mistaking correlation for causation:</strong> r=0.90 doesn't mean "one affects the other." It just means they move together.</p>
+</li>
+<li>
+<p><strong>Thinking correlation is permanent:</strong> Yesterday's r won't be the same as tomorrow's movement. Correlations typically change during periods of crisis.</p>
+</li>
+<li>
+<p><strong>Looking only at the sign:</strong> A negative but weak r (-0.20) carries less information than a strong positive r. The magnitude as well as the sign is important.</p>
+</li>
+<li>
+<p><strong>Using r alone as a decision tool:</strong> r without information like channel width, daily change, and volatility is half a whole.</p>
+</li>
+</ul>
+<h2>6. Mini Test</h2>
+<p><strong>Question 1:</strong> A friend said "the correlation between these two stocks is r=0.82". How would you explain this to them in one sentence?</p>
+<p><strong>Answer:</strong> " There is a strong positive relationship; these two stocks are likely to move in the same direction.</p>
+<p><strong>Question 2:</strong> If you add two assets with r=-0.90 to your portfolio, what does this mean in terms of diversification?</p>
+<p><strong>Answer:</strong> Strong inverse relationship; one tends to fall when the other rises, which could balance your portfolio. However, this is not guaranteed as the relationship can change over time.</p>
+<p><strong>Question 3:</strong> In today's data, r=0.72 for VAKBN. How would you classify this value?</p>
+<p><strong>Answer:</strong> Since values of 0.70 and above are considered "strong", VAKBN has a strong positive relationship with the series it's compared to; high tendency to move in the same direction.</p>
+<h2>7. Summary</h2>
+<ul>
+<li>
+<p>Pearson correlation (r) measures the co-movement of two series<strong>- between -1 and +1</strong> .</p>
+</li>
+<li>
+<p><strong>+</strong> same direction; <strong>-</strong> opposite direction; values approaching 0 indicate a weak relationship.</p>
+</li>
+<li>
+<p><strong>r=0.82</strong>, is a strong positive correlation: the two series likely move together in the same direction.</p>
+</li>
+<li>
+<p>Correlation <strong>is not causation</strong> and can change over time.</p>
+</li>
+<li>
+<p>Never evaluate r in isolation; always consider it with other information like volatility, channels, and daily change.</p>
+</li>
+</ul>
+<p>See you in our next lesson, take care!</p>
+<p>This lesson is for educational purposes, not investment advice.</p></article>
+<p style="margin:22px 0 0; color:var(--muted); font-size:13px"><strong>Practice with real data:</strong> The table below comes from today's technical scan — you can click on a cell to see the name/formula bar, and sort by clicking on column headers.</p>
+<style>
+.xlsx-box{--x-ink:#0f172a;--x-muted:#64748b;--x-line:#d7dde6;--x-line2:#e6ebf2;
+  --x-head:#0f172a;--x-accent:#0f766e;--x-pos:#047857;--x-neg:#b91c1c;
+  --x-gutter:#eef2f7;--x-sel:#0e9f6e;
+  background:#fff;border:1px solid var(--x-line);border-radius:10px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(15,23,42,.06);margin:18px 0 22px;font-size:13px;color:var(--x-ink);}
+.xlsx-titlebar{display:flex;align-items:center;gap:10px;padding:8px 12px;
+  background:linear-gradient(180deg,#10715f,#0d5f51);color:#fff;}
+.xlsx-titlebar .xlsx-dosya{font-weight:700;font-size:13.5px;letter-spacing:.2px;}
+.xlsx-titlebar .xlsx-rota{font-size:11.5px;opacity:.85;}
+.xlsx-titlebar .xlsx-tarihbadge{margin-left:auto;background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:600;}
+.xlsx-toolbar{display:flex;align-items:stretch;border-bottom:1px solid var(--x-line);background:#f8fafc;}
+.xlsx-adkutu{min-width:64px;padding:6px 10px;border-right:1px solid var(--x-line);
+  font-weight:700;font-size:12.5px;text-align:center;background:#fff;color:var(--x-ink);}
+.xlsx-fxetiket{padding:6px 10px;border-right:1px solid var(--x-line);color:var(--x-muted);
+  font-style:italic;font-family:Georgia,serif;font-size:13px;display:flex;align-items:center;}
+.xlsx-fxdeger{padding:6px 12px;font-size:12.5px;color:var(--x-ink);display:flex;align-items:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.xlsx-sheet{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.xlsx-box table{display:table;width:100%;min-width:780px;border-collapse:separate;border-spacing:0;
+  margin:0;font-size:13px;line-height:1.45;}
+.xlsx-box table caption{display:none;}
+.xlsx-box th,.xlsx-box td{border-bottom:1px solid var(--x-line2);border-right:1px solid var(--x-line2);
+  padding:7px 10px;text-align:left;font-weight:400;text-transform:none;letter-spacing:0;background:#fff;}
+.xlsx-box th:last-child,.xlsx-box td:last-child{border-right:none;}
+.xlsx-box tbody tr:last-child td{border-bottom:none;}
+.xlsx-harfler th{background:var(--x-gutter);color:#475569;font-size:11px;font-weight:600;
+  text-align:center;padding:3px 10px;border-bottom:1px solid var(--x-line);}
+.xlsx-gutter{background:var(--x-gutter)!important;color:#64748b;font-size:11px;text-align:center!important;
+  font-weight:600!important;width:34px;min-width:34px;}
+.xlsx-baslik th{background:var(--x-head);color:#fff;font-size:12px;font-weight:600;
+  white-space:nowrap;cursor:pointer;user-select:none;}
+.xlsx-baslik th:hover{background:#1e293b;}
+.xlsx-baslik th.xlsx-sirali{background:#134e4a;box-shadow:inset 0 -2px 0 #2dd4bf;}
+.xlsx-ok{font-size:9px;margin-left:5px;opacity:.9;}
+.xlsx-box td.num,.xlsx-box th.num{text-align:right;font-variant-numeric:tabular-nums;}
+.xlsx-satirno{position:relative;}
+.xlsx-box td{position:relative;}
+.xlsx-databar{position:absolute;left:0;top:0;bottom:0;background:rgba(15,118,110,.13);
+  border-right:2px solid rgba(15,118,110,.4);}
+.xlsx-barval{position:relative;}
+.posx{color:var(--x-pos);font-weight:600;}
+.negx{color:var(--x-neg);font-weight:600;}
+.ntrx{color:#475569;}
+.xlsx-badge{display:inline-block;border-radius:999px;padding:1px 9px;font-size:11px;font-weight:700;white-space:nowrap;}
+.xlsx-badge.gua{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;}
+.xlsx-badge.al{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;}
+.xlsx-badge.notr{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;}
+.xlsx-badge.sat{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;}
+.xlsx-badge.gus{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+.xlsx-secili{outline:2px solid var(--x-sel);outline-offset:-2px;background:#f0fdfa!important;
+  box-shadow:inset 0 0 0 1px var(--x-sel);}
+.xlsx-secili.xlsx-gutter{background:#e2e8f0!important;}
+.xlsx-tabs{display:flex;gap:2px;align-items:flex-end;border-top:1px solid var(--x-line);background:#f1f5f9;padding:0 8px;}
+.xlsx-tab{background:#fff;border:1px solid var(--x-line);border-bottom:none;border-radius:6px 6px 0 0;
+  margin:6px 2px 0;padding:4px 14px;font-size:12px;font-weight:700;color:var(--x-accent);
+  box-shadow:0 -1px 0 rgba(15,23,42,.04) inset;}
+.xlsx-tab.pasif{background:#e8edf3;color:#64748b;font-weight:500;}
+.xlsx-status{display:flex;flex-wrap:wrap;gap:4px 16px;padding:7px 14px;background:var(--x-head);
+  color:#cbd5e1;font-size:11.5px;}
+.xlsx-status b{color:#fff;font-weight:600;}
+.xlsx-not{padding:6px 14px 9px;color:var(--x-muted);font-size:11.5px;background:#fbfcfe;border-top:1px dashed var(--x-line2);}
+@media (max-width:640px){
+  .xlsx-box{font-size:12px;}
+  .xlsx-box th,.xlsx-box td{padding:5px 7px;}
+  .xlsx-fxetiket{display:none;}
+}
+</style><div class="xlsx-box" id="xlsx-egitim" role="group" aria-label="Real technical scan data, Excel view"><div class="xlsx-titlebar"><span class="xlsx-dosya">📊 TECHNICAL-SCAN.XLSX</span><span class="xlsx-rota">real BIST technical scan</span><span class="xlsx-tarihbadge">2026-10-02</span></div><div class="xlsx-toolbar"><div class="xlsx-adkutu">—</div><div class="xlsx-fxetiket">fx</div><div class="xlsx-fxdeger">Click on a cell…</div></div><div class="xlsx-sheet"><table><thead><tr class="xlsx-harfler" aria-hidden="true"><th class="xlsx-gutter"></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th></tr><tr class="xlsx-baslik"><th class="xlsx-gutter">1</th><th data-sort="hisse" data-yon="">Stock<span class="xlsx-ok"></span></th><th data-sort="son" data-yon="">Last (TL)<span class="xlsx-ok"></span></th><th data-sort="gunluk" data-yon="">Daily %<span class="xlsx-ok"></span></th><th data-sort="deg60" data-yon="">60-Day %<span class="xlsx-ok"></span></th><th data-sort="konum" data-yon="">Channel %<span class="xlsx-ok"></span></th><th data-sort="r" data-yon="">Correlation r<span class="xlsx-ok"></span></th><th data-sort="genel" data-yon="">Signal<span class="xlsx-ok"></span></th></tr></thead><tbody class="xlsx-data"><tr data-hisse="DSTKF" data-son="694.0" data-gunluk="-9.99" data-deg60="-81.9" data-konum="7.0" data-r="-0.47" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">2</td><td data-ref="A2" data-fx="= A2  →  DSTKF • Stock = DSTKF" data-hisse="DSTKF"><b>DSTKF</b></td><td class="num" data-ref="B2" data-fx="= B2  →  DSTKF • Last (TL) = 694.00" data-son="694.0">694.00</td><td class="num" data-ref="C2" data-fx="= C2  →  DSTKF • Daily % = -9.99%" data-gunluk="-9.99" data-preselect="1"><span class="negx">-9.99% ▼</span></td><td class="num" data-ref="D2" data-fx="= D2  →  DSTKF • 60 Day % = -81.90%" data-deg60="-81.9"><span class="negx">-81.90%</span></td><td class="num" data-ref="E2" data-fx="= E2  →  DSTKF • Channel % = 7%" data-konum="7.0"><span class="xlsx-databar" style="width:4.7%"></span><span class="xlsx-barval">7%</span></td><td class="num ntrx" data-ref="F2" data-fx="= F2  →  DSTKF • Correlation r = -0.47" data-r="-0.47">-0.47</td><td data-ref="G2" data-fx="= G2  →  DSTKF • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="SASA" data-son="1.92" data-gunluk="6.67" data-deg60="-13.9" data-konum="9.0" data-r="-0.41" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">3</td><td data-ref="A3" data-fx="= A3  →  SASA • Stock = SASA" data-hisse="SASA"><b>SASA</b></td><td class="num" data-ref="B3" data-fx="= B3  →  SASA • Last (TL) = 1.92" data-son="1.92">1.92</td><td class="num" data-ref="C3" data-fx="= C3  →  SASA • Daily % = +6.67%" data-gunluk="6.67"><span class="posx">+6.67% ▲</span></td><td class="num" data-ref="D3" data-fx="= D3  →  SASA • 60 Day % = -13.90%" data-deg60="-13.9"><span class="negx">-13.90%</span></td><td class="num" data-ref="E3" data-fx="= E3  →  SASA • Channel % = 9%" data-konum="9.0"><span class="xlsx-databar" style="width:6.0%"></span><span class="xlsx-barval">9%</span></td><td class="num ntrx" data-ref="F3" data-fx="= F3  →  SASA • Correlation r = -0.41" data-r="-0.41">-0.41</td><td data-ref="G3" data-fx="= G3  →  SASA • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="VAKBN" data-son="33.92" data-gunluk="5.15" data-deg60="9.7" data-konum="41.0" data-r="0.72" data-genel="2"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">4</td><td data-ref="A4" data-fx="= A4  →  VAKBN • Stock = VAKBN" data-hisse="VAKBN"><b>VAKBN</b></td><td class="num" data-ref="B4" data-fx="= B4  →  VAKBN • Last (TL) = 33.92" data-son="33.92">33.92</td><td class="num" data-ref="C4" data-fx="= C4  →  VAKBN • Daily % = +5.15%" data-gunluk="5.15"><span class="posx">+5.15% ▲</span></td><td class="num" data-ref="D4" data-fx="= D4  →  VAKBN • 60 Day % = +9.70%" data-deg60="9.7"><span class="posx">+9.70%</span></td><td class="num" data-ref="E4" data-fx="= E4  →  VAKBN • Channel % = 41%" data-konum="41.0"><span class="xlsx-databar" style="width:27.3%"></span><span class="xlsx-barval">41%</span></td><td class="num ntrx" data-ref="F4" data-fx="= F4  →  VAKBN • Correlation r = +0.72" data-r="0.72">+0.72</td><td data-ref="G4" data-fx="= G4  →  VAKBN • Sinyal = NEUTRAL" data-genel="2"><span class="xlsx-badge notr">NEUTRAL</span></td></tr><tr data-hisse="ASTOR" data-son="220.0" data-gunluk="4.96" data-deg60="-27.81" data-konum="16.0" data-r="-0.57" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">5</td><td data-ref="A5" data-fx="= A5  →  ASTOR • Stock = ASTOR" data-hisse="ASTOR"><b>ASTOR</b></td><td class="num" data-ref="B5" data-fx="= B5  →  ASTOR • Last (TL) = 220.00" data-son="220.0">220.00</td><td class="num" data-ref="C5" data-fx="= C5  →  ASTOR • Daily % = +4.96%" data-gunluk="4.96"><span class="posx">+4.96% ▲</span></td><td class="num" data-ref="D5" data-fx="= D5  →  ASTOR • 60 Day % = -27.81%" data-deg60="-27.81"><span class="negx">-27.81%</span></td><td class="num" data-ref="E5" data-fx="= E5  →  ASTOR • Channel % = 16%" data-konum="16.0"><span class="xlsx-databar" style="width:10.7%"></span><span class="xlsx-barval">16%</span></td><td class="num ntrx" data-ref="F5" data-fx="= F5  →  ASTOR • Correlation r = -0.57" data-r="-0.57">-0.57</td><td data-ref="G5" data-fx="= G5  →  ASTOR • Signal = SELL" data-genel="1"><span class="xlsx-badge sat">SELL</span></td></tr><tr data-hisse="MGROS" data-son="515.0" data-gunluk="3.0" data-deg60="-17.73" data-konum="69.0" data-r="-0.9" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">6</td><td data-ref="A6" data-fx="= A6  →  MGROS • Stock = MGROS" data-hisse="MGROS"><b>MGROS</b></td><td class="num" data-ref="B6" data-fx="= B6  →  MGROS • Last (TL) = 515.00" data-son="515.0">515.00</td><td class="num" data-ref="C6" data-fx="= C6  →  MGROS • Daily % = +3.00%" data-gunluk="3.0"><span class="posx">+3.00% ▲</span></td><td class="num" data-ref="D6" data-fx="= D6  →  MGROS • 60 Day % = -17.73%" data-deg60="-17.73"><span class="negx">-17.73%</span></td><td class="num" data-ref="E6" data-fx="= E6  →  MGROS • Channel % = 69%" data-konum="69.0"><span class="xlsx-databar" style="width:46.0%"></span><span class="xlsx-barval">69%</span></td><td class="num ntrx" data-ref="F6" data-fx="= F6  →  MGROS • Correlation r = -0.90" data-r="-0.9">-0.90</td><td data-ref="G6" data-fx="= G6  →  MGROS • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="TUPRS" data-son="387.0" data-gunluk="2.86" data-deg60="53.58" data-konum="2.0" data-r="0.91" data-genel="2"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">7</td><td data-ref="A7" data-fx="= A7  →  TUPRS • Stock = TUPRS" data-hisse="TUPRS"><b>TUPRS</b></td><td class="num" data-ref="B7" data-fx="= B7  →  TUPRS • Last (TL) = 387.00" data-son="387.0">387.00</td><td class="num" data-ref="C7" data-fx="= C7  →  TUPRS • Daily % = +2.86%" data-gunluk="2.86"><span class="posx">+2.86% ▲</span></td><td class="num" data-ref="D7" data-fx="= D7  →  TUPRS • 60 Day % = +53.58%" data-deg60="53.58"><span class="posx">+53.58%</span></td><td class="num" data-ref="E7" data-fx="= E7  →  TUPRS • Channel % = 2%" data-konum="2.0"><span class="xlsx-databar" style="width:1.3%"></span><span class="xlsx-barval">2%</span></td><td class="num ntrx" data-ref="F7" data-fx="= F7  →  TUPRS • Correlation r = +0.91" data-r="0.91">+0.91</td><td data-ref="G7" data-fx="= G7  →  TUPRS • Signal = NEUTRAL" data-genel="2"><span class="xlsx-badge notr">NEUTRAL</span></td></tr><tr data-hisse="TOASO" data-son="259.25" data-gunluk="-2.26" data-deg60="-12.12" data-konum="22.0" data-r="-0.2" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">8</td><td data-ref="A8" data-fx="= A8  →  TOASO • Stock = TOASO" data-hisse="TOASO"><b>TOASO</b></td><td class="num" data-ref="B8" data-fx="= B8  →  TOASO • Last (TL) = 259.25" data-son="259.25">259.25</td><td class="num" data-ref="C8" data-fx="= C8  →  TOASO • Daily % = -2.26%" data-gunluk="-2.26"><span class="negx">-2.26% ▼</span></td><td class="num" data-ref="D8" data-fx="= D8  →  TOASO • 60 Day % = -12.12%" data-deg60="-12.12"><span class="negx">-12.12%</span></td><td class="num" data-ref="E8" data-fx="= E8  →  TOASO • Channel % = 22%" data-konum="22.0"><span class="xlsx-databar" style="width:14.7%"></span><span class="xlsx-barval">22%</span></td><td class="num ntrx" data-ref="F8" data-fx="= F8  →  TOASO • Correlation r = -0.20" data-r="-0.2">-0.20</td><td data-ref="G8" data-fx="= G8  →  TOASO • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="ASELS" data-son="362.75" data-gunluk="-1.96" data-deg60="1.11" data-konum="23.0" data-r="0.3" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">9</td><td data-ref="A9" data-fx="= A9  →  ASELS • Stock = ASELS" data-hisse="ASELS"><b>ASELS</b></td><td class="num" data-ref="B9" data-fx="= B9  →  ASELS • Last (TL) = 362.75" data-son="362.75">362.75</td><td class="num" data-ref="C9" data-fx="= C9  →  ASELS • Daily % = -1.96%" data-gunluk="-1.96"><span class="negx">-1.96% ▼</span></td><td class="num" data-ref="D9" data-fx="= D9  →  ASELS • 60 Day % = +1.11%" data-deg60="1.11"><span class="posx">+1.11%</span></td><td class="num" data-ref="E9" data-fx="= E9  →  ASELS • Channel % = 23%" data-konum="23.0"><span class="xlsx-databar" style="width:15.3%"></span><span class="xlsx-barval">23%</span></td><td class="num ntrx" data-ref="F9" data-fx="= F9  →  ASELS • Correlation r = +0.30" data-r="0.3">+0.30</td><td data-ref="G9" data-fx="= G9  →  ASELS • Signal = SELL" data-genel="1"><span class="xlsx-badge sat">SELL</span></td></tr><tr data-hisse="PETKM" data-son="19.25" data-gunluk="1.8" data-deg60="0.16" data-konum="15.0" data-r="0.3" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">10</td><td data-ref="A10" data-fx="= A10  →  PETKM • Stock = PETKM" data-hisse="PETKM"><b>PETKM</b></td><td class="num" data-ref="B10" data-fx="= B10  →  PETKM • Last (TL) = 19.25" data-son="19.25">19.25</td><td class="num" data-ref="C10" data-fx="= C10  →  PETKM • Daily % = +1.80%" data-gunluk="1.8"><span class="posx">+1.80% ▲</span></td><td class="num" data-ref="D10" data-fx="= D10  →  PETKM • 60 Day % = +0.16%" data-deg60="0.16"><span class="posx">+0.16%</span></td><td class="num" data-ref="E10" data-fx="= E10  →  PETKM • Channel % = 15%" data-konum="15.0"><span class="xlsx-databar" style="width:10.0%"></span><span class="xlsx-barval">15%</span></td><td class="num ntrx" data-ref="F10" data-fx="= F10  →  PETKM • Correlation r = +0.30" data-r="0.3">+0.30</td><td data-ref="G10" data-fx="= G10  →  PETKM • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="FROTO" data-son="74.15" data-gunluk="-1.72" data-deg60="-8.29" data-konum="20.0" data-r="-0.52" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">11</td><td data-ref="A11" data-fx="= A11  →  FROTO • Stock = FROTO" data-hisse="FROTO"><b>FROTO</b></td><td class="num" data-ref="B11" data-fx="= B11  →  FROTO • Last (TL) = 74.15" data-son="74.15">74.15</td><td class="num" data-ref="C11" data-fx="= C11  →  FROTO • Daily % = -1.72%" data-gunluk="-1.72"><span class="negx">-1.72% ▼</span></td><td class="num" data-ref="D11" data-fx="= D11  →  FROTO • 60 Day % = -8.29%" data-deg60="-8.29"><span class="negx">-8.29%</span></td><td class="num" data-ref="E11" data-fx="= E11  →  FROTO • Channel % = 20%" data-konum="20.0"><span class="xlsx-databar" style="width:13.3%"></span><span class="xlsx-barval">20%</span></td><td class="num ntrx" data-ref="F11" data-fx="= F11  →  FROTO • Correlation r = -0.52" data-r="-0.52">-0.52</td><td data-ref="G11" data-fx="= G11  →  FROTO • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="TCELL" data-son="97.7" data-gunluk="1.66" data-deg60="-7.31" data-konum="54.0" data-r="-0.77" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">12</td><td data-ref="A12" data-fx="= A12  →  TCELL • Stock = TCELL" data-hisse="TCELL"><b>TCELL</b></td><td class="num" data-ref="B12" data-fx="= B12  →  TCELL • Last (TL) = 97.70" data-son="97.7">97.70</td><td class="num" data-ref="C12" data-fx="= C12  →  TCELL • Daily % = +1.66%" data-gunluk="1.66"><span class="posx">+1.66% ▲</span></td><td class="num" data-ref="D12" data-fx="= D12  →  TCELL • 60 Day % = -7.31%" data-deg60="-7.31"><span class="negx">-7.31%</span></td><td class="num" data-ref="E12" data-fx="= E12  →  TCELL • Channel % = 54%" data-konum="54.0"><span class="xlsx-databar" style="width:36.0%"></span><span class="xlsx-barval">54%</span></td><td class="num ntrx" data-ref="F12" data-fx="= F12  →  TCELL • Correlation r = -0.77" data-r="-0.77">-0.77</td><td data-ref="G12" data-fx="= G12  →  TCELL • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="ENKAI" data-son="84.0" data-gunluk="1.63" data-deg60="-5.08" data-konum="39.0" data-r="-0.4" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">13</td><td data-ref="A13" data-fx="= A13  →  ENKAI • Stock = ENKAI" data-hisse="ENKAI"><b>ENKAI</b></td><td class="num" data-ref="B13" data-fx="= B13  →  ENKAI • Last (TL) = 84.00" data-son="84.0">84.00</td><td class="num" data-ref="C13" data-fx="= C13  →  ENKAI • Daily % = +1.63%" data-gunluk="1.63"><span class="posx">+1.63% ▲</span></td><td class="num" data-ref="D13" data-fx="= D13  →  ENKAI • 60 Day % = -5.08%" data-deg60="-5.08"><span class="negx">-5.08%</span></td><td class="num" data-ref="E13" data-fx="= E13  →  ENKAI • Channel % = 39%" data-konum="39.0"><span class="xlsx-databar" style="width:26.0%"></span><span class="xlsx-barval">39%</span></td><td class="num ntrx" data-ref="F13" data-fx="= F13  →  ENKAI • Correlation r = -0.40" data-r="-0.4">-0.40</td><td data-ref="G13" data-fx="= G13  →  ENKAI • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="TAVHL" data-son="266.25" data-gunluk="1.62" data-deg60="2.48" data-konum="34.0" data-r="0.1" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">14</td><td data-ref="A14" data-fx="= A14  →  TAVHL • Stock = TAVHL" data-hisse="TAVHL"><b>TAVHL</b></td><td class="num" data-ref="B14" data-fx="= B14  →  TAVHL • Last (TL) = 266.25" data-son="266.25">266.25</td><td class="num" data-ref="C14" data-fx="= C14  →  TAVHL • Daily % = +1.62%" data-gunluk="1.62"><span class="posx">+1.62% ▲</span></td><td class="num" data-ref="D14" data-fx="= D14  →  TAVHL • 60 Day % = +2.48%" data-deg60="2.48"><span class="posx">+2.48%</span></td><td class="num" data-ref="E14" data-fx="= E14  →  TAVHL • Channel % = 34%" data-konum="34.0"><span class="xlsx-databar" style="width:22.7%"></span><span class="xlsx-barval">34%</span></td><td class="num ntrx" data-ref="F14" data-fx="= F14  →  TAVHL • Correlation r = +0.10" data-r="0.1">+0.10</td><td data-ref="G14" data-fx="= G14  →  TAVHL • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="KCHOL" data-son="206.8" data-gunluk="-1.48" data-deg60="11.72" data-konum="-12.0" data-r="0.79" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">15</td><td data-ref="A15" data-fx="= A15  →  KCHOL • Stock = KCHOL" data-hisse="KCHOL"><b>KCHOL</b></td><td class="num" data-ref="B15" data-fx="= B15  →  KCHOL • Last (TL) = 206.80" data-son="206.8">206.80</td><td class="num" data-ref="C15" data-fx="= C15  →  KCHOL • Daily % = -1.48%" data-gunluk="-1.48"><span class="negx">-1.48% ▼</span></td><td class="num" data-ref="D15" data-fx="= D15  →  KCHOL • 60 Day % = +11.72%" data-deg60="11.72"><span class="posx">+11.72%</span></td><td class="num" data-ref="E15" data-fx="= E15  →  KCHOL • Channel % = -12%" data-konum="-12.0"><span class="xlsx-databar" style="width:0.0%"></span><span class="xlsx-barval">-12%</span></td><td class="num ntrx" data-ref="F15" data-fx="= F15  →  KCHOL • Correlation r = +0.79" data-r="0.79">+0.79</td><td data-ref="G15" data-fx="= G15  →  KCHOL • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="BIMAS" data-son="414.0" data-gunluk="1.47" data-deg60="14.11" data-konum="15.0" data-r="0.83" data-genel="2"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">16</td><td data-ref="A16" data-fx="= A16  →  BIMAS • Stock = BIMAS" data-hisse="BIMAS"><b>BIMAS</b></td><td class="num" data-ref="B16" data-fx="= B16  →  BIMAS • Last (TL) = 414.00" data-son="414.0">414.00</td><td class="num" data-ref="C16" data-fx="= C16  →  BIMAS • Daily % = +1.47%" data-gunluk="1.47"><span class="posx">+1.47% ▲</span></td><td class="num" data-ref="D16" data-fx="= D16  →  BIMAS • 60 Day % = +14.11%" data-deg60="14.11"><span class="posx">+14.11%</span></td><td class="num" data-ref="E16" data-fx="= E16  →  BIMAS • Channel % = 15%" data-konum="15.0"><span class="xlsx-databar" style="width:10.0%"></span><span class="xlsx-barval">15%</span></td><td class="num ntrx" data-ref="F16" data-fx="= F16  →  BIMAS • Correlation r = +0.83" data-r="0.83">+0.83</td><td data-ref="G16" data-fx="= G16  →  BIMAS • Sinyal = NEUTRAL" data-genel="2"><span class="xlsx-badge notr">NEUTRAL</span></td></tr><tr data-hisse="AEFES" data-son="18.04" data-gunluk="1.29" data-deg60="-8.47" data-konum="54.0" data-r="-0.79" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">17</td><td data-ref="A17" data-fx="= A17  →  AEFES • Stock = AEFES" data-hisse="AEFES"><b>AEFES</b></td><td class="num" data-ref="B17" data-fx="= B17  →  AEFES • Last (TL) = 18.04" data-son="18.04">18.04</td><td class="num" data-ref="C17" data-fx="= C17  →  AEFES • Daily % = +1.29%" data-gunluk="1.29"><span class="posx">+1.29% ▲</span></td><td class="num" data-ref="D17" data-fx="= D17  →  AEFES • 60 Day % = -8.47%" data-deg60="-8.47"><span class="negx">-8.47%</span></td><td class="num" data-ref="E17" data-fx="= E17  →  AEFES • Channel % = 54%" data-konum="54.0"><span class="xlsx-databar" style="width:36.0%"></span><span class="xlsx-barval">54%</span></td><td class="num ntrx" data-ref="F17" data-fx="= F17  →  AEFES • Correlation r = -0.79" data-r="-0.79">-0.79</td><td data-ref="G17" data-fx="= G17  →  AEFES • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="THYAO" data-son="286.5" data-gunluk="1.15" data-deg60="-13.7" data-konum="61.0" data-r="-0.9" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">18</td><td data-ref="A18" data-fx="= A18  →  THYAO • Stock = THYAO" data-hisse="THYAO"><b>THYAO</b></td><td class="num" data-ref="B18" data-fx="= B18  →  THYAO • Last (TL) = 286.50" data-son="286.5">286.50</td><td class="num" data-ref="C18" data-fx="= C18  →  THYAO • Daily % = +1.15%" data-gunluk="1.15"><span class="posx">+1.15% ▲</span></td><td class="num" data-ref="D18" data-fx="= D18  →  THYAO • 60 Day % = -13.70%" data-deg60="-13.7"><span class="negx">-13.70%</span></td><td class="num" data-ref="E18" data-fx="= E18  →  THYAO • Channel % = 61%" data-konum="61.0"><span class="xlsx-databar" style="width:40.7%"></span><span class="xlsx-barval">61%</span></td><td class="num ntrx" data-ref="F18" data-fx="= F18  →  THYAO • Correlation r = -0.90" data-r="-0.9">-0.90</td><td data-ref="G18" data-fx="= G18  →  THYAO • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="EREGL" data-son="37.02" data-gunluk="1.09" data-deg60="-7.59" data-konum="65.0" data-r="-0.77" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">19</td><td data-ref="A19" data-fx="= A19  →  EREGL • Stock = EREGL" data-hisse="EREGL"><b>EREGL</b></td><td class="num" data-ref="B19" data-fx="= B19  →  EREGL • Last (TL) = 37.02" data-son="37.02">37.02</td><td class="num" data-ref="C19" data-fx="= C19  →  EREGL • Daily % = +1.09%" data-gunluk="1.09"><span class="posx">+1.09% ▲</span></td><td class="num" data-ref="D19" data-fx="= D19  →  EREGL • 60 Day % = -7.59%" data-deg60="-7.59"><span class="negx">-7.59%</span></td><td class="num" data-ref="E19" data-fx="= E19  →  EREGL • Channel % = 65%" data-konum="65.0"><span class="xlsx-databar" style="width:43.3%"></span><span class="xlsx-barval">65%</span></td><td class="num ntrx" data-ref="F19" data-fx="= F19  →  EREGL • Correlation r = -0.77" data-r="-0.77">-0.77</td><td data-ref="G19" data-fx="= G19  →  EREGL • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="TRALT" data-son="43.84" data-gunluk="0.97" data-deg60="-18.13" data-konum="3.0" data-r="-0.06" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">20</td><td data-ref="A20" data-fx="= A20  →  TRALT • Stock = TRALT" data-hisse="TRALT"><b>TRALT</b></td><td class="num" data-ref="B20" data-fx="= B20  →  TRALT • Last (TL) = 43.84" data-son="43.84">43.84</td><td class="num" data-ref="C20" data-fx="= C20  →  TRALT • Daily % = +0.97%" data-gunluk="0.97"><span class="posx">+0.97% ▲</span></td><td class="num" data-ref="D20" data-fx="= D20  →  TRALT • 60 Day % = -18.13%" data-deg60="-18.13"><span class="negx">-18.13%</span></td><td class="num" data-ref="E20" data-fx="= E20  →  TRALT • Channel % = 3%" data-konum="3.0"><span class="xlsx-databar" style="width:2.0%"></span><span class="xlsx-barval">3%</span></td><td class="num ntrx" data-ref="F20" data-fx="= F20  →  TRALT • Correlation r = -0.06" data-r="-0.06">-0.06</td><td data-ref="G20" data-fx="= G20  →  TRALT • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="GUBRF" data-son="414.75" data-gunluk="0.85" data-deg60="-4.38" data-konum="3.0" data-r="0.44" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">21</td><td data-ref="A21" data-fx="= A21  →  GUBRF • Stock = GUBRF" data-hisse="GUBRF"><b>GUBRF</b></td><td class="num" data-ref="B21" data-fx="= B21  →  GUBRF • Last (TL) = 414.75" data-son="414.75">414.75</td><td class="num" data-ref="C21" data-fx="= C21  →  GUBRF • Daily % = +0.85%" data-gunluk="0.85"><span class="posx">+0.85% ▲</span></td><td class="num" data-ref="D21" data-fx="= D21  →  GUBRF • 60 Day % = -4.38%" data-deg60="-4.38"><span class="negx">-4.38%</span></td><td class="num" data-ref="E21" data-fx="= E21  →  GUBRF • Channel % = 3%" data-konum="3.0"><span class="xlsx-databar" style="width:2.0%"></span><span class="xlsx-barval">3%</span></td><td class="num ntrx" data-ref="F21" data-fx="= F21  →  GUBRF • Correlation r = +0.44" data-r="0.44">+0.44</td><td data-ref="G21" data-fx="= G21  →  GUBRF • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="PGSUS" data-son="141.6" data-gunluk="0.78" data-deg60="-15.36" data-konum="40.0" data-r="-0.82" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">22</td><td data-ref="A22" data-fx="= A22  →  PGSUS • Stock = PGSUS" data-hisse="PGSUS"><b>PGSUS</b></td><td class="num" data-ref="B22" data-fx="= B22  →  PGSUS • Last (TL) = 141.60" data-son="141.6">141.60</td><td class="num" data-ref="C22" data-fx="= C22  →  PGSUS • Daily % = +0.78%" data-gunluk="0.78"><span class="posx">+0.78% ▲</span></td><td class="num" data-ref="D22" data-fx="= D22  →  PGSUS • 60 Day % = -15.36%" data-deg60="-15.36"><span class="negx">-15.36%</span></td><td class="num" data-ref="E22" data-fx="= E22  →  PGSUS • Channel % = 40%" data-konum="40.0"><span class="xlsx-databar" style="width:26.7%"></span><span class="xlsx-barval">40%</span></td><td class="num ntrx" data-ref="F22" data-fx="= F22  →  PGSUS • Correlation r = -0.82" data-r="-0.82">-0.82</td><td data-ref="G22" data-fx="= G22  →  PGSUS • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="SAHOL" data-son="86.7" data-gunluk="0.7" data-deg60="-2.75" data-konum="15.0" data-r="0.22" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">23</td><td data-ref="A23" data-fx="= A23  →  SAHOL • Stock = SAHOL" data-hisse="SAHOL"><b>SAHOL</b></td><td class="num" data-ref="B23" data-fx="= B23  →  SAHOL • Last (TL) = 86.70" data-son="86.7">86.70</td><td class="num" data-ref="C23" data-fx="= C23  →  SAHOL • Daily % = +0.70%" data-gunluk="0.7"><span class="posx">+0.70% ▲</span></td><td class="num" data-ref="D23" data-fx="= D23  →  SAHOL • 60 Day % = -2.75%" data-deg60="-2.75"><span class="negx">-2.75%</span></td><td class="num" data-ref="E23" data-fx="= E23  →  SAHOL • Channel % = 15%" data-konum="15.0"><span class="xlsx-databar" style="width:10.0%"></span><span class="xlsx-barval">15%</span></td><td class="num ntrx" data-ref="F23" data-fx="= F23  →  SAHOL • Correlation r = +0.22" data-r="0.22">+0.22</td><td data-ref="G23" data-fx="= G23  →  SAHOL • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="AKBNK" data-son="67.1" data-gunluk="-0.67" data-deg60="-4.42" data-konum="-1.0" data-r="0.55" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">24</td><td data-ref="A24" data-fx="= A24  →  AKBNK • Stock = AKBNK" data-hisse="AKBNK"><b>AKBNK</b></td><td class="num" data-ref="B24" data-fx="= B24  →  AKBNK • Last (TL) = 67.10" data-son="67.1">67.10</td><td class="num" data-ref="C24" data-fx="= C24  →  AKBNK • Daily % = -0.67%" data-gunluk="-0.67"><span class="negx">-0.67% ▼</span></td><td class="num" data-ref="D24" data-fx="= D24  →  AKBNK • 60 Day % = -4.42%" data-deg60="-4.42"><span class="negx">-4.42%</span></td><td class="num" data-ref="E24" data-fx="= E24  →  AKBNK • Channel % = -1%" data-konum="-1.0"><span class="xlsx-databar" style="width:0.0%"></span><span class="xlsx-barval">-1%</span></td><td class="num ntrx" data-ref="F24" data-fx="= F24  →  AKBNK • Correlation r = +0.55" data-r="0.55">+0.55</td><td data-ref="G24" data-fx="= G24  →  AKBNK • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="KRDMD" data-son="43.28" data-gunluk="0.65" data-deg60="18.51" data-konum="9.0" data-r="0.65" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">25</td><td data-ref="A25" data-fx="= A25  →  KRDMD • Stock = KRDMD" data-hisse="KRDMD"><b>KRDMD</b></td><td class="num" data-ref="B25" data-fx="= B25  →  KRDMD • Last (TL) = 43.28" data-son="43.28">43.28</td><td class="num" data-ref="C25" data-fx="= C25  →  KRDMD • Daily % = +0.65%" data-gunluk="0.65"><span class="posx">+0.65% ▲</span></td><td class="num" data-ref="D25" data-fx="= D25  →  KRDMD • 60 Day % = +18.51%" data-deg60="18.51"><span class="posx">+18.51%</span></td><td class="num" data-ref="E25" data-fx="= E25  →  KRDMD • Channel % = 9%" data-konum="9.0"><span class="xlsx-databar" style="width:6.0%"></span><span class="xlsx-barval">9%</span></td><td class="num ntrx" data-ref="F25" data-fx="= F25  →  KRDMD • Correlation r = +0.65" data-r="0.65">+0.65</td><td data-ref="G25" data-fx="= G25  →  KRDMD • Signal = SELL" data-genel="1"><span class="xlsx-badge sat">SELL</span></td></tr><tr data-hisse="ISCTR" data-son="12.45" data-gunluk="-0.48" data-deg60="-10.43" data-konum="26.0" data-r="0.07" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">26</td><td data-ref="A26" data-fx="= A26  →  ISCTR • Stock = ISCTR" data-hisse="ISCTR"><b>ISCTR</b></td><td class="num" data-ref="B26" data-fx="= B26  →  ISCTR • Last (TL) = 12.45" data-son="12.45">12.45</td><td class="num" data-ref="C26" data-fx="= C26  →  ISCTR • Daily % = -0.48%" data-gunluk="-0.48"><span class="negx">-0.48% ▼</span></td><td class="num" data-ref="D26" data-fx="= D26  →  ISCTR • 60 Day % = -10.43%" data-deg60="-10.43"><span class="negx">-10.43%</span></td><td class="num" data-ref="E26" data-fx="= E26  →  ISCTR • Channel % = 26%" data-konum="26.0"><span class="xlsx-databar" style="width:17.3%"></span><span class="xlsx-barval">26%</span></td><td class="num ntrx" data-ref="F26" data-fx="= F26  →  ISCTR • Correlation r = +0.07" data-r="0.07">+0.07</td><td data-ref="G26" data-fx="= G26  →  ISCTR • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="YKBNK" data-son="34.94" data-gunluk="0.34" data-deg60="-2.57" data-konum="16.0" data-r="0.61" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">27</td><td data-ref="A27" data-fx="=A27  →  YKBNK • Hisse = YKBNK" data-hisse="YKBNK"><b>YKBNK</b></td><td class="num" data-ref="B27" data-fx="= B27  →  YKBNK • Last (TL) = 34.94" data-son="34.94">34.94</td><td class="num" data-ref="C27" data-fx="= C27  →  YKBNK • Daily % = +0.34%" data-gunluk="0.34"><span class="posx">+0.34% ▲</span></td><td class="num" data-ref="D27" data-fx="= D27  →  YKBNK • 60 Day % = -2.57%" data-deg60="-2.57"><span class="negx">-2.57%</span></td><td class="num" data-ref="E27" data-fx="= E27  →  YKBNK • Channel % = 16%" data-konum="16.0"><span class="xlsx-databar" style="width:10.7%"></span><span class="xlsx-barval">16%</span></td><td class="num ntrx" data-ref="F27" data-fx="= F27  →  YKBNK • Correlation r = +0.61" data-r="0.61">+0.61</td><td data-ref="G27" data-fx="= G27  →  YKBNK • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="SISE" data-son="37.22" data-gunluk="-0.32" data-deg60="-11.84" data-konum="26.0" data-r="-0.59" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">28</td><td data-ref="A28" data-fx="= A28  →  SISE • Stock = SISE" data-hisse="SISE"><b>SISE</b></td><td class="num" data-ref="B28" data-fx="= B28  →  SISE • Last (TL) = 37.22" data-son="37.22">37.22</td><td class="num" data-ref="C28" data-fx="= C28  →  SISE • Daily % = -0.32%" data-gunluk="-0.32"><span class="negx">-0.32% ▼</span></td><td class="num" data-ref="D28" data-fx="= D28  →  SISE • 60 Day % = -11.84%" data-deg60="-11.84"><span class="negx">-11.84%</span></td><td class="num" data-ref="E28" data-fx="= E28  →  SISE • Channel % = 26%" data-konum="26.0"><span class="xlsx-databar" style="width:17.3%"></span><span class="xlsx-barval">26%</span></td><td class="num ntrx" data-ref="F28" data-fx="= F28  →  SISE • Correlation r = -0.59" data-r="-0.59">-0.59</td><td data-ref="G28" data-fx="= G28  →  SISE • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="GARAN" data-son="125.9" data-gunluk="-0.24" data-deg60="-3.23" data-konum="4.0" data-r="0.39" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">29</td><td data-ref="A29" data-fx="= A29  →  GARAN • Stock = GARAN" data-hisse="GARAN"><b>GARAN</b></td><td class="num" data-ref="B29" data-fx="= B29  →  GARAN • Last (TL) = 125.90" data-son="125.9">125.90</td><td class="num" data-ref="C29" data-fx="= C29  →  GARAN • Daily % = -0.24%" data-gunluk="-0.24"><span class="negx">-0.24% ▼</span></td><td class="num" data-ref="D29" data-fx="= D29  →  GARAN • 60 Day % = -3.23%" data-deg60="-3.23"><span class="negx">-3.23%</span></td><td class="num" data-ref="E29" data-fx="= E29  →  GARAN • Channel % = 4%" data-konum="4.0"><span class="xlsx-databar" style="width:2.7%"></span><span class="xlsx-barval">4%</span></td><td class="num ntrx" data-ref="F29" data-fx="= F29  →  GARAN • Correlation r = +0.39" data-r="0.39">+0.39</td><td data-ref="G29" data-fx="= G29  →  GARAN • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="EKGYO" data-son="19.07" data-gunluk="0.21" data-deg60="-6.34" data-konum="38.0" data-r="0.09" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">30</td><td data-ref="A30" data-fx="= A30  →  EKGYO • Stock = EKGYO" data-hisse="EKGYO"><b>EKGYO</b></td><td class="num" data-ref="B30" data-fx="= B30  →  EKGYO • Last (TL) = 19.07" data-son="19.07">19.07</td><td class="num" data-ref="C30" data-fx="= C30  →  EKGYO • Daily % = +0.21%" data-gunluk="0.21"><span class="posx">+0.21% ▲</span></td><td class="num" data-ref="D30" data-fx="= D30  →  EKGYO • 60 Day % = -6.34%" data-deg60="-6.34"><span class="negx">-6.34%</span></td><td class="num" data-ref="E30" data-fx="= E30  →  EKGYO • Channel % = 38%" data-konum="38.0"><span class="xlsx-databar" style="width:25.3%"></span><span class="xlsx-barval">38%</span></td><td class="num ntrx" data-ref="F30" data-fx="= F30  →  EKGYO • Correlation r = +0.09" data-r="0.09">+0.09</td><td data-ref="G30" data-fx="= G30  →  EKGYO • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr><tr data-hisse="TTKOM" data-son="52.45" data-gunluk="0" data-deg60="-7.5" data-konum="48.0" data-r="-0.38" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">31</td><td data-ref="A31" data-fx="= A31  →  TTKOM • Stock = TTKOM" data-hisse="TTKOM"><b>TTKOM</b></td><td class="num" data-ref="B31" data-fx="= B31  →  TTKOM • Last (TL) = 52.45" data-son="52.45">52.45</td><td class="num" data-ref="C31" data-fx="= C31  →  TTKOM • Daily % = 0.00%" data-gunluk="0"><span class="ntrx">0.00% •</span></td><td class="num" data-ref="D31" data-fx="= D31  →  TTKOM • 60 Day % = -7.50%" data-deg60="-7.5"><span class="negx">-7.50%</span></td><td class="num" data-ref="E31" data-fx="= E31  →  TTKOM • Channel % = 48%" data-konum="48.0"><span class="xlsx-databar" style="width:32.0%"></span><span class="xlsx-barval">48%</span></td><td class="num ntrx" data-ref="F31" data-fx="= F31  →  TTKOM • Correlation r = -0.38" data-r="-0.38">-0.38</td><td data-ref="G31" data-fx="= G31  →  TTKOM • Signal = STRONG SELL" data-genel="0"><span class="xlsx-badge gus">STRONG SELL</span></td></tr></tbody></table></div><div class="xlsx-tabs"><span class="xlsx-tab">Technical Scan</span><span class="xlsx-tab pasif">Source: data/teknik/2026-10-02.json</span></div><div class="xlsx-status"><span><b>30</b> record</span><span><b>7</b> column</span><span>Avg. daily: <b>+0.66%</b></span><span>Most active: <b>DSTKF -9.99%</b></span><span>Click on column header to sort</span></div><div class="xlsx-not">Cell values are taken from the actual technical scan as of 2026-10-02 (BIST 30). Channel %: position of the price within the 60-day range • r: Pearson correlation. For educational purposes, not investment advice.</div></div><script>
+(function(){
+  var kutu = document.getElementById('xlsx-egitim');
+  if(!kutu || kutu.getAttribute('data-xlsx-init')) return;
+  kutu.setAttribute('data-xlsx-init','1');
+  var adkutu = kutu.querySelector('.xlsx-adkutu');
+  var fx = kutu.querySelector('.xlsx-fxdeger');
+  function sec(td){
+    var eski = kutu.querySelectorAll('.xlsx-secili');
+    for(var i=0;i<eski.length;i++) eski[i].classList.remove('xlsx-secili');
+    td.classList.add('xlsx-secili');
+    adkutu.textContent = td.getAttribute('data-ref')||'';
+    fx.textContent = td.getAttribute('data-fx')||'';
+  }
+  kutu.addEventListener('click', function(ev){
+    var td = ev.target && ev.target.closest ? ev.target.closest('td[data-ref]') : null;
+    if(td) sec(td);
+  });
+  var ilk = kutu.querySelector('td[data-preselect]') || kutu.querySelector('td[data-ref]');
+  if(ilk) sec(ilk);
+  var basliklar = kutu.querySelectorAll('.xlsx-baslik th[data-sort]');
+  for(var i=0;i<basliklar.length;i++){
+    basliklar[i].addEventListener('click', function(){
+      var th = this;
+      var key = th.getAttribute('data-sort');
+      var yon = th.getAttribute('data-yon')==='asc' ? 'desc' : 'asc';
+      for(var j=0;j<basliklar.length;j++){
+        basliklar[j].removeAttribute('data-yon');
+        basliklar[j].classList.remove('xlsx-sirali');
+        var ok = basliklar[j].querySelector('.xlsx-ok');
+        if(ok) ok.textContent='';
+      }
+      th.setAttribute('data-yon', yon);
+      th.classList.add('xlsx-sirali');
+      var ok = th.querySelector('.xlsx-ok');
+      if(ok) ok.textContent = yon==='asc' ? '\u25B2' : '\u25BC';
+      var govde = kutu.querySelector('tbody.xlsx-data');
+      var satirlar = Array.prototype.slice.call(govde.querySelectorAll('tr'));
+      satirlar.sort(function(a,b){
+        var va=a.getAttribute('data-'+key), vb=b.getAttribute('data-'+key);
+        var na=parseFloat(va), nb=parseFloat(vb);
+        var r = (!isNaN(na)&&!isNaN(nb)) ? (na-nb) : String(va).localeCompare(String(vb),'tr');
+        return yon==='asc' ? r : -r;
+      });
+      for(var k=0;k<satirlar.length;k++){
+        govde.appendChild(satirlar[k]);
+        var no = satirlar[k].querySelector('.xlsx-satirno');
+        if(no) no.textContent = String(k+2);
+      }
+    });
+  }
+})();
+</script>
+<p style="margin-top:16px; color:var(--muted); font-size:13px"><strong>Previous lessons:</strong> <a href="../market-school/2026-10-03.html" style="margin:0 10px 0 0">October 3, 2026, Saturday</a> <a href="../market-school/2026-09-27.html" style="margin:0 10px 0 0">September 27, 2026, Sunday</a> <a href="../market-school/2026-09-26.html" style="margin:0 10px 0 0">September 26, 2026, Saturday</a> <a href="../market-school/2026-09-20.html" style="margin:0 10px 0 0">September 20, 2026, Sunday</a> <a href="../market-school/2026-09-19.html" style="margin:0 10px 0 0">September 19, 2026, Saturday</a> <a href="../market-school/2026-09-13.html" style="margin:0 10px 0 0">September 13, 2026, Sunday</a></p>
+<p style="margin-top:12px"><a href="../index.html">← Back to homepage</a></p>
+</main>
+
+<nav class="altbar" aria-label="Quick menu">
+<a href="../index.html"><span class="i" aria-hidden="true">📊</span>Reports</a>
+<a href="../technical-scan.html"><span class="i" aria-hidden="true">📈</span>Technical</a>
+<a href="../stocks/index.html"><span class="i" aria-hidden="true">🏦</span>Stocks</a>
+<a href="../portfolio.html"><span class="i" aria-hidden="true">💼</span>Portfolio</a>
+<a href="../news.html"><span class="i" aria-hidden="true">📰</span>News</a>
+<a href="../calendar.html"><span class="i" aria-hidden="true">📅</span>Calendar</a>
+</nav>
+
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+
+<footer class="footer">The information, comments and recommendations contained herein are for informational purposes only; they do not constitute investment advisory or investment advice. The accuracy of the data cannot be guaranteed and the user is responsible for any decisions that may arise from the content.<br>Data sources: İş Yatırım, RSS news feeds • Analysis: artificial intelligence (multi-agent system)<br><a href="../privacy.html" style="color:inherit">Privacy &amp; Data Protection</a></footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+</body></html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GARAN — Stock Analysis</title>
+<meta name="description" content="GARAN (Banking) last price, technical signals, 7-day news and past evaluations in the report archive.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/en/stocks/GARAN">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/hisse/GARAN">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/hisse/GARAN">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/hisse/GARAN">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/hisse/GARAN">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/stocks/GARAN">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/GARAN">
+<link rel="icon" href="..//favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="..//favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Daily Reports">
+<meta property="og:title" content="GARAN — Stock Analysis">
+<meta property="og:description" content="GARAN (Banking) last price, technical signals, 7-day news and past evaluations in the report archive.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/en/stocks/GARAN">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Daily Reports cover image">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GARAN — Stock Analysis">
+<meta name="twitter:description" content="GARAN (Banking) last price, technical signals, 7-day news and past evaluations in the report archive.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<meta name="yandex-verification" content="2c8df12d0b97a734">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "GARAN — Stock Analysis", "description": "GARAN (Banking) last price, technical signals, 7-day news and past evaluations in the report archive.", "url": "https://borsa-raporlari.pages.dev/en/stocks/GARAN", "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}}</script>
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="../style.css">
+
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="../index.html">BIST 30 Daily Reports</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Light/dark theme" aria-label="Change theme">🌙</button></div>
+<nav><a href="../index.html">Home Page</a><a href="../reports.html">Reports</a><a href="../stocks/index.html" class="active">Stocks</a><a href="../deep-analysis.html">Deep Analysis</a><a href="../macro-analysis.html">Macro Analysis</a><a href="../technical-scan.html">Technical Scan</a><a href="../signal-scorecard.html">Signal Scorecard</a><a href="../borsapy-signals.html">Borsapy Signals</a><a href="../news.html">News</a><a href="../company-news.html">Company News</a><a href="../portfolio.html">Demo Portfolio</a><a href="../weekend.html">Weekend</a><a href="../market-school.html">Market School</a><a href="../calendar.html">📅 Calendar</a><a href="../glossary.html">Glossary</a><a href="../terms.html">Terms</a><a href="../accounting-terms.html">Accounting Terms</a><a href="../trading-robot.html">Trading Robot</a></nav>
+</div></header>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Loading prices…</span></div>
+</div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Prices could not be loaded temporarily; they will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
+
+<div class="ticker-bant" id="ticker-bant2" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Loading market data...</span></div>
+</div>
+<script>
+(function() {
+  var kutu = document.getElementById('ticker-bant2');
+  if (!kutu) return;
+  var kok = kutu.dataset.kok || '';
+  var iz = document.getElementById('ticker-iz2');
+
+  function bicim(g) {
+    var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
+    var rozet = (typeof g.d === 'number')
+      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+        Number(g.d).toFixed(2) + '%</span>'
+      : '';
+    var birim = g.b || g.birim || '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (birim ? ' ' + birim : '') + rozet + '</span>';
+  }
+  function ciz(veri) {
+    var ogeler = (veri.gostergeler || []).map(bicim).join('');
+    if (!ogeler) throw new Error('bos');
+    var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
+               (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Market data could not be loaded temporarily; it will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/piyasa?t=' + Date.now());
+  setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Loading...</span>
+            <span id="istanbul-weather">🌤️ Istanbul Weather...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Select page language">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/hisse/GARAN" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/stocks/GARAN" hreflang="en" lang="en" data-dil="en" class="aktif" aria-current="true">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/hisse/GARAN" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/hisse/GARAN" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/hisse/GARAN" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+</nav>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
+
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Search stock, topic or date..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '../';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\?\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\.|mi|mı|icin)\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Search index could not be loaded.</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+
+
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Play / Pause">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Volume level" title="Sound">
+  <span class="radyo-linkler"><a href="../radio/index.html">📻 All broadcasts &amp; Podcast page</a> <span class="ayrac">•</span> <a href="../radio/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">For listening purposes only • Fictional AI servers • For informational purposes, not investment advice.</span>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='../';
+  if(!btn||!ses) return;
+  if(ayar){ ses.volume=(parseInt(ayar.value,10)||80)/100; }
+  var hazir=false;
+  function hazirla(geri){
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){return r.json();}).then(function(d){
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){ ses.src=kok+l[0].dosya; }
+      hazir=true; geri();
+    }).catch(function(){ hazir=true; geri(); });
+  }
+  btn.addEventListener('click',function(){
+    if(ses.paused){ hazirla(function(){ var p=ses.play(); if(p&&p.catch){p.catch(function(){});} }); }
+    else { ses.pause(); }
+  });
+  ses.addEventListener('play',function(){ btn.textContent='❚❚'; btn.setAttribute('aria-label','Duraklat'); });
+  ses.addEventListener('pause',function(){ btn.textContent='▶'; btn.setAttribute('aria-label','Oynat'); });
+  if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
+})();
+</script>
+
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>GARAN <span style="font-size:16px; color:var(--muted)">Banking</span></h1>
+<div class="meta"><span class="badge">SELL</span>
+<span><strong>131.20 TL</strong></span>
+<span class="pos">+ 0.61% (daily)</span>
+<span class='neg' style='font-weight:700'>- 0.2% (since 2026-09-05)</span></div>
+</div>
+<div class="card" style="margin-bottom:16px">
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
+<strong style="font-size:14px">📊 GARAN price chart</strong>
+<span style="color:var(--muted); font-size:12px">last 19 days • closing prices</span>
+</div>
+<svg viewBox="0 0 520 90" class="chart" role="img" aria-label="GARAN fiyat grafiği (son 19 gün)" style="max-width:520px"> <polyline fill="none" stroke="#b91c1c" stroke-width="2.5" points="0.0,31.2 28.9,31.2 57.8,31.2 86.7,20.6 115.6,8.0 144.4,21.1 173.3,17.1 202.2,18.6 231.1,49.3 260.0,84.0 288.9,25.6 317.8,38.7 346.7,22.6 375.6,19.1 404.4,39.2 433.3,39.2 462.2,41.2 491.1,42.7 520.0,32.2" /></svg>
+<div style="color:var(--muted); font-size:12px">GARAN closing prices (TL) from 2026-09-05 to date. Not a comparison chart.</div>
+</div>
+
+<div class="card" style="margin:0 0 18px">
+<h3 style="margin:0 0 6px">🏢 Company Profile</h3>
+<div style="font-weight:700; margin-bottom:4px">Garanti BBVA</div>
+<div class="meta" style="margin:0 0 8px"><span>Establishment: <strong>25.04,1946</strong></span><span>Major shareholder: <strong>BBVA</strong></span><span>Paid-up capital: <strong>4,200,000,000 TL</strong> (2026/6)</span></div>
+<p style="margin:0; font-size:14px">Commercial banking.</p>
+<div style="margin:8px 0 0"><div style="color:var(--muted); font-size:12px; margin-bottom:5px">Brands &amp; affiliates</div><span class="badge" style="margin:0 6px 6px 0; font-size:11.5px">Garanti Investment</span><span class="badge" style="margin:0 6px 6px 0; font-size:11.5px">Garanti Portfolio</span></div><div style="margin:8px 0 0; font-size:13.5px">🌐 <a href="https://garantibbva.com.tr" target="_blank" rel="noopener">garantibbva.com.tr</a></div>
+</div>
+
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 4px">📋 Announced Financial Statements<span style="font-weight:400; color:var(--muted); font-size:12.5px">· manually added financial table summary · last pull: 2026-09-23</span></h3>
+<div class="tbl-wrap"><table style="font-size:12.5px"><tr><th>Period</th><th>Net Interest Income (mlr TL)</th><th>Net Profit (mlr TL)</th><th>Profit Margin</th><th>Total Assets (mlr TL)</th><th>Equity (mlr TL)</th></tr><tr><td><strong>2026/6</strong></td><td>118.2 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 87.1% YoY)</span></td><td>63.7 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 18.8% YoY)</span></td><td>53.9%</td><td>4,412.3</td><td>487.2</td></tr><tr><td><strong>2026/3</strong></td><td>60.8 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 99.9% YoY)</span></td><td>33.3 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 31.8% YoY)</span></td><td>54.8%</td><td>4,016.8</td><td>451.3</td></tr><tr><td><strong>2025/12</strong></td><td>165.3 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 64.7% YoY)</span></td><td>110.6 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 20.0% YoY)</span></td><td>66.9%</td><td>3,820.9</td><td>444.4</td></tr><tr><td><strong>2025/9</strong></td><td>108.6 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 53.5% YoY)</span></td><td>84.0 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 25.6% YoY)</span></td><td>77.4%</td><td>3,499.0</td><td>410.4</td></tr><tr><td><strong>2025/6</strong></td><td>63.2 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 37.8% YoY)</span></td><td>53.6 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 19.6% YoY)</span></td><td>84.8%</td><td>3,246.0</td><td>377.6</td></tr><tr><td><strong>2025/3</strong></td><td>30.4 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 54.8% YoY)</span></td><td>25.3 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 13.3% YoY)</span></td><td>83.1%</td><td>3,035.0</td><td>339.5</td></tr><tr><td><strong>2024/12</strong></td><td>100.3</td><td>92.2</td><td>91.9%</td><td>2,607.7</td><td>329.9</td></tr><tr><td><strong>2024/9</strong></td><td>70.7</td><td>66.9</td><td>94.6%</td><td>2,496.2</td><td>302.6</td></tr><tr><td><strong>2024/6</strong></td><td>45.9</td><td>44.8</td><td>97.8%</td><td>2,313.1</td><td>279.3</td></tr><tr><td><strong>2024/3</strong></td><td>19.7</td><td>22.3</td><td>113.5%</td><td>2,165.0</td><td>255.3</td></tr></table></div>
+<p style="margin:8px 0 0; color:var(--muted); font-size:12px">Gelir tablosu kalemleri (net faiz geliri ve net kâr) yıl başından itibaren kümülatiftir; bilanço kalemleri dönem sonu bakiyesidir. Kaynak: İş Yatırım mali tabloları (KAP bildirimleri esas alınır).</p>
+</div>
+<div class="grid-iki">
+<div class="card"><h3 style="margin:0 0 8px">Valuation and Profitability <span style="font-weight:400;color:var(--muted);font-size:12.5px">· single source, last 12 months</span></h3><p style="margin:0 0 8px;font-size:13px">Last 5 trading days return: <strong class="neg">-1.9%</strong></p><table style="font-size:13.5px"><tr><td>Market value</td><td><strong>551.0 mlr TL</strong></td></tr><tr><td>Equity (2026/6)</td><td><strong>487.2 billion TL</strong></td></tr><tr><td>Net profit (last 12 months)</td><td><strong>120.7 billion TL</strong></td></tr><tr><td>P/E (last 12 months)</td><td><strong>4.6</strong></td></tr><tr><td>P/B</td><td><strong>1.13</strong></td></tr><tr><td>ROE (last 12 months)</td><td><strong>24.8%</strong></td></tr><tr><td>Financial debt / equity</td><td><strong>—</strong></td></tr></table><p style="margin:8px 0 0;color:var(--muted);font-size:12px">Source: İş Yatırım financial statements (KAP disclosures) — same source as the balance sheet table.</p></div>
+<div class="card"><h3 style="margin:0 0 8px">Macro Sensitivity <span style="font-weight:400;color:var(--muted);font-size:12.5px">· Banking sector</span></h3><p style="margin:0 0 8px;font-size:13.5px">Regime: <strong>yüksek enflasyon + sıkı para politikası (7.27 puan reel faiz) · ılımlı iç talep</strong></p><table style="font-size:13.5px"><tr><td>Trend</td><td><strong class="pos">positive</strong></td></tr><tr><td>Score</td><td><strong>+2</strong></td></tr><tr><td>Channels</td><td>interest increase, domestic_demand increase</td></tr></table><p style="margin:8px 0 0;color:var(--muted);font-size:12px">Sector sensitivity matrix x current macro regime; detail <a href="../macro-analysis.html">Macroeconomic Evaluation</a>.</p></div>
+</div>
+<div class="grid-iki">
+<div class="card"><h3 style="margin:0 0 8px">Technical Status</h3>
+<table style="font-size:13.5px"><tr><td>General</td><td><strong>SELL</strong></td></tr><tr><td>Short term (EMA 5-8-13-21)</td><td><strong>BEKLE</strong></td></tr><tr><td>Medium term (EMA 34-55)</td><td><strong>BEKLE</strong></td></tr><tr><td>Long term (EMA 89-144)</td><td><strong>BEKLE</strong></td></tr><tr><td>Wave Trend</td><td><strong>BUY</strong></td></tr><tr><td>Channel position</td><td><strong>46%</strong></td></tr><tr><td>Trend strength (r)</td><td><strong>0.38</strong></td></tr><tr><td>Score</td><td><strong>1</strong></td></tr></table>
+<p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA sequence + Wave Trend + 60-day regression channel. Details: <a href="../technical-scan.html">Technical Scan</a></p></div>
+<div class="card"><h3 style="margin:0 0 8px">Last 7 Days News</h3>
+<ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMi9wFBVV95cUxQOWhMQXZGQ2o1NEg1TzF0NFpHMVNzTFA2aTQ1UDhGaWZtb3doNkRONXo4alhnaVNIUWZkc0VQWkRzZm1QSk9MVWVIWGF6VXZGdElGWjhkRkZPMXBOTFBMSndXNmcxLW5rdmw0cHpOTy0xQ0lSbThuamoyUTZPZm9GcmxsQ182VHBfV3lEWVZnX2VaRDVxUWt4YXp4YkpLd0MyenJxWU50cXc3X1JvQWxiWXE0bF9LU2VLTnVBN0Iwb1A4V2xPeE5WeXdwRWNYR1RxUXpSRk1JZWJSbHpSVVA0TlpQV2lJalBPSDdiX20xckpoMGlTdnVj?oc=5' target='_blank' rel='noopener'>KAP *** GARANTİ PORTFÖY GARANTİ BBVA İKLİM ENDEKSİ HİSSE SENEDİ (TL) FONU (HİSSE SENEDİ YOĞUN FON) *** GPY *** Fon Gider Bilgileri</a> <span style='color:var(--muted); font-size:12px'>— GZT · 06.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiuAFBVV95cUxNWkFESi1kZExJMFR5OUFUMEtYbnB4Vk9BMVlhczlpcy15SjliX09RQUYyR2c2a1lheEdsRnI1d2NEMGZwS1BWMEFDMEtYY1RvYVBGT3A4RHE2M09wQ2hXazhzSjREVGtTaGhxWDRyRkFRQnJwQ2ZnQ1pFdk9VSF9RWlJnMHFabFZ4dDMtam9DcUdlUzVYSTMzYzlmUTVRem40cFpzR0pzYUpMV09ESkJOUGtrRjhweUxl?oc=5' target='_blank' rel='noopener'>Garanti BBVA "Türkiye'nin Gençleri" araştırmasının sonuçlarını açıkladı</a> <span style='color:var(--muted); font-size:12px'>— Anadolu Ajansı · 06.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMikwFBVV95cUxPNzFpNlBCN1ZrUjZ2aVd0bWJKcE1Tdk10WEU3Q05qbDYxSWN1NFdnZlNZNnZ5bUc3U0FrbW4wQlBfZmRJMkdKcEl4ODlMNmpoOWJIYlJERzZlRVRvRUZnbkhXaGl3VnhhSUJScjNyRXJyYUZWRU5ESkJrTWtuVmQzSDZtTE9XbzJOMEdIbUdXVlZ0c0U?oc=5' target='_blank' rel='noopener'>Garanti BBVA’da çalışan deneyimi bütünsel yolculuk</a> <span style='color:var(--muted); font-size:12px'>— Hürriyet · 04.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMidEFVX3lxTE4xMlRhM1FubE1rRWhtbnMzcERqZGowR19RMDF3STQ5N044RjZsNUNsSkdSbGVGM1pxMjRSRnM5cEVlZ01LblphbE5DYUQ1NmxZZTRCV0xIUjV4NDFtck4tWmhjN3FnWXI3RVpzYUdieE1CQmNw?oc=5' target='_blank' rel='noopener'>Garanti BBVA Leasing yeni kaynak sağladı</a> <span style='color:var(--muted); font-size:12px'>— Yeşil Ekonomi · 01.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMitgFBVV95cUxQeS0tSFVwSHZmdko4UHVZMnBZZDVtYnRBLWNHMHMtTHcyX3AzSFNrVUZsaEZmdHJfSnpoV0w3ZWlJZ3ROU1Q4bGpjejc3ZnB5WFEwdGJST2NZRGU1WXJ2UWxvZWRFSlNsa25rc2p6SUpkNVZNenVkTkJGNDlJNjI3UHRCRHNpZ0tQZUk3MmF2OEtIOTlmM1FvLXpsaHZMS1FVMEFvWlNMRlE1OGdCZHEtX19FblIwdw?oc=5' target='_blank' rel='noopener'>Garanti BBVA 20 milyon euroluk orta vadeli bonoyu itfa etti</a> <span style='color:var(--muted); font-size:12px'>— Investing.com Turkey · 30.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMinwFBVV95cUxQTGNZUEVfYXdUQ2dLazI1c3JJVTlVamliTVljMGVBS1ZrUHczSF9SRklhQjJhOGkwWVJQa2p0YWUtNU5TUEdxSFRhZkFDQlowZmdvSWN2NTBTN0dIRk1fR1NMT3RPOGw5dGw5bDR6dS1veDZ6eW41N014c1ZudWw3Mm5RbC12TlV1MmdfekNrWHhENUJMZ0Fic0d3cV9FWWvSAaQBQVVfeXFMTkJWZjRrSURKczI1d0ljdnR1aUVoWThKWlNMakVROWZGNllsMjd5bF9nSnlYVUZyR3JtVlV0ckFjQTROZkZlb3VRRDhFRWd1OVlPcjE3azdqS0ZKOXVBd3dab3lfN2l3c1F1LVI3T3M4SXZCYXMzS3FsanFZa29lVkJ6dFh2THF6aWF2VVdGUG81T3hkX09NaW9MS3FlQS1PM1M3WF8?oc=5' target='_blank' rel='noopener'>Garanti BBVA Leasing'e FMO'dan 30 milyon Euro kredi</a> <span style='color:var(--muted); font-size:12px'>— Ekonomim · 30.09</span></li></ul>
+<p style="margin:8px 0 0; font-size:12.5px"><a href="../company-news.html#H-GARAN">All company news →</a></p></div>
+</div>
+
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 2px">📝 Evaluations<span style="font-weight:400; color:var(--muted); font-size:12.5px">· prepared manually · last update: 23.09,2026</span></h3>
+<h4 style="margin:12px 0 0; font-size:14.5px">📈 Technical Analysis</h4><p style="margin:6px 0 0; font-size:14px">Garanti BBVA is trading at 133.70 TL with a 0.15% decline on September 23, 2026. With short and medium-term EMA sequence, it's in Wave Trend AL position; while long-term EMA remains at BEKLE, the chart is summarized as 3/4 AL. Channel position is 64% and trend strength (r) is 0.23, indicating an upward but low-momentum structure. The stock is priced 11% below its 60-day peak of 150.00 TL and 19% above the 112.55 TL support zone; it's moving in line with the strong performance in the banking index.</p><h4 style="margin:12px 0 0; font-size:14.5px">🌍 Macroeconomic Evaluation</h4><p style="margin:6px 0 0; font-size:14px">The deepening of the disinflation program is doubly positive for quality banks like Garanti: While TÜFE's decline to 31.5% reduces returns on TÜFE-indexed securities, interest rate cuts support credit volume and net interest margins, and valuation gains occur in the securities portfolio. In periods of accelerated foreign investor inflows, Garanti has historically generated returns above the index; the downward trend in CDS risk premium strengthens this channel. The balanced movement of USD/TL at 48.83 facilitates the bank's foreign exchange position management. The scale advantage in digital banking protects against branch cost inflation. With gram gold at 6.786 TL, stable deposit behavior maintains a strong funding base. Main risks: slow decline in inflation, regulatory interventions, and macroprudential limits on credit growth.</p><h4 style="margin:12px 0 0; font-size:14.5px">🧾 Balance Sheet Evaluation</h4><p style="margin:6px 0 0; font-size:14px">Garanti BBVA increased its net profit by 18.8% annually in the first half of 2026; in the second quarter, it maintained stable profit generation with 30.4 billion TL net profit (+7.3%). The bank, which generated a total of 120.7 billion TL net profit in the last four quarters, is priced with a market value of ~562 billion TL at ~4.7x P/E and ~1.2x P/B ratios; since FD/EBITDA is not meaningful in banking, evaluation is based on these two multiples and profitability. ROE of 24.8% in the last four quarters is above the sector average and offers an equity return close to inflation; strong growth in fee-commission income supports profit quality. The normalization of profit/revenue ratio from 84.8% to 52.9% compared to the same period last year shows that the extraordinary base effect created by inflation accounting has been eliminated and profitability has settled on a sustainable ground. Asset quality and provision buffers are solid; core capital ratio is high. Dividend yield of around 3.9% is above the sector average. BBVA's majority ownership provides a corporate governance premium among foreign investors. Overall assessment: Garanti is among the strongest in terms of profitability-quality balance among BIST banks; it carries potential for multiple expansion in a macro normalization scenario.</p>
+<p style="margin:10px 0 0; color:var(--muted); font-size:12px">This section is manually updated; for informational purposes only, not investment advice.</p>
+</div>
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 8px">Content related to GARAN</h3>
+<p style="margin:0"><a href="https://borsa-raporlari-web.pages.dev/ara?q=GARAN" target="_blank" rel="noopener">🔍 All report sections containing "GARAN" in semantic search →</a></p>
+<p style="margin:6px 0 0"><a href="../index.html">Daily report archive →</a></p>
+</div>
+</main>
+
+<nav class="altbar" aria-label="Quick menu">
+<a href="../reports.html"><span class="i" aria-hidden="true">📊</span>Reports</a>
+<a href="../technical-scan.html"><span class="i" aria-hidden="true">📈</span>Technical</a>
+<a href="../stocks/index.html" class="active"><span class="i" aria-hidden="true">🏦</span>Stocks</a>
+<a href="../portfolio.html"><span class="i" aria-hidden="true">💼</span>Portfolio</a>
+<a href="../news.html"><span class="i" aria-hidden="true">📰</span>News</a>
+<a href="../calendar.html"><span class="i" aria-hidden="true">📅</span>Calendar</a>
+</nav>
+
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+
+<footer class="footer">The information, comments and recommendations contained herein are for informational purposes only; they do not constitute investment advisory or investment advice. The accuracy of the data cannot be guaranteed and the user is responsible for any decisions that may arise from the content.<br>Data sources: İş Yatırım, RSS news feeds • Analysis: artificial intelligence (multi-agent system)<br><a href="../privacy.html" style="color:inherit">Privacy &amp; Data Protection</a></footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+</body></html>

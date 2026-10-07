@@ -1495,21 +1495,49 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
 # ----------------------------------------------------------------------------
 # 5.5) INGILIZCE YOL ESLEME (2026-10-07 kullanici karari)
 # ----------------------------------------------------------------------------
-# Turkce agac "raporlar" dediginde Ingilizce sayfalar Ingilizce adlari kullansin:
-# /en/reports.html (hub) + /en/reports/<tarih>.html. Yalnizca URL baglamlarinda
-# uygulanir (href/src/content, JSON-LD url, arama indeksinin "u" alani) ve
-# /de/ /ru/ /zh/ on ekli degerler korunur — o diller Turkce yapiyi yansitir.
-EN_YOL_ESLEME = "reports"
+# Site Turkce; diger diller eklenirken URL adlari da dile gore degisir:
+# /en/reports.html, /en/deep-analysis.html, /en/macro-analysis/ ... (2026-10-07)
+# Tablo NAV etiketlerinden turetilmistir; UZUNLUGA GORE TERSTEN SIRALI olmali
+# (haftasonu-egitimi, haftasonu'dan once; muhasebe-terimleri, terimler'den once).
+EN_SLUG_ESLEME = [
+    ("muhasebe-terimleri", "accounting-terms"),
+    ("sirket-haberleri", "company-news"),
+    ("haftasonu-egitimi", "market-school"),
+    ("borsapy-analiz", "borsapy-signals"),
+    ("sinyal-karnesi", "signal-scorecard"),
+    ("teknik-analiz", "technical-scan"),
+    ("derin-analiz", "deep-analysis"),
+    ("makro-analiz", "macro-analysis"),
+    ("haftasonu", "weekend"),
+    ("haberler", "news"),
+    ("raporlar", "reports"),
+    ("takvim", "calendar"),
+    ("sozluk", "glossary"),
+    ("terimler", "terms"),
+    ("gizlilik", "privacy"),
+    ("radyo", "radio"),
+    ("hisse", "stocks"),
+    ("robot", "trading-robot"),
+]
+
+# Slug iceren nitelik degerlerini hizli eleme icin
+_EN_SLUG_BIRLESIK = "|".join(re.escape(e) for e, _ in EN_SLUG_ESLEME)
+_EN_SLUG_TANI = re.compile(_EN_SLUG_BIRLESIK)
 
 
-def _en_yol_degistir(deger: str) -> str:
-    # Segment-guvenli: yalnizca bagimsiz "raporlar" yolu parcasini degistirir;
-    # "borsa-raporlari" (domain) ve "raporlari" gibi ek almis sozcuklere dokunmaz.
-    return re.sub(r"(?<![a-z0-9-])(?<!/de/)(?<!/ru/)(?<!/zh/)raporlar(?![a-z0-9çğıöşü])", EN_YOL_ESLEME, deger)
+def _en_slug_degistir(deger: str) -> str:
+    """URL degerindeki Turkce slug'lari Ingilizce karsiliklariyla degistirir.
+    Guvenlik katmanlari: kelime siniri (borsa-raporlari domain'i, raporlari gibi
+    ek almıs sozcukler), Turkce harfle devam (raporlarin), dil oneki (/de/ /ru/
+    /zh/ baglantileri Turkce yapiyi yansitir, dokunulmaz)."""
+    for eski, yeni in EN_SLUG_ESLEME:
+        deger = re.sub(r"(?<![a-z0-9])(?<!/de/)(?<!/ru/)(?<!/zh/)" + re.escape(eski) +
+                       r"(?![a-z0-9çğıöşü])", yeni, deger)
+    return deger
 
 
 def en_yollarini_ingilizcele(kok: Path) -> int:
-    """en/ altindaki raporlar yollarini reports'a cevirir; donus: degisen dosya sayisi."""
+    """en/ altindaki Turkce slug'li yollari Ingilizce adlara cevirir; donus: degisen dosya sayisi."""
     en_kok = kok / "en"
     if not en_kok.exists():
         return 0
@@ -1517,8 +1545,17 @@ def en_yollarini_ingilizcele(kok: Path) -> int:
     jsonld_re = re.compile(r'("(?:url|mainEntityOfPage)"\s*:\s*"[^"]*")')
 
     def _nitelik(m: "re.Match[str]") -> str:
-        deger = m.group(2)
-        return f'{m.group(1)}="{_en_yol_degistir(deger)}"' if "raporlar" in deger else m.group(0)
+        nitelik, deger = m.group(1), m.group(2)
+        if not _EN_SLUG_TANI.search(deger):
+            return m.group(0)
+        # content= hem og:url (URL) hem og:description (metin) tasiyabilir:
+        # yalnizca URL bicimli degerlerde slug degistir, metne dokunma.
+        if nitelik == "content" and not deger.startswith(("http://", "https://", "/")):
+            return m.group(0)
+        # Mutlak URL ve /en/ icermiyorsa TR canonical veya dis baglantidir.
+        if deger.startswith(("http://", "https://")) and "/en/" not in deger:
+            return m.group(0)
+        return f'{nitelik}="{_en_slug_degistir(deger)}"'
 
     sayi = 0
     hedefler = list(en_kok.rglob("*.html")) + list(en_kok.rglob("*.xml")) + [kok / "sitemap.xml"] + [en_kok / "site-arama.json"]
@@ -1526,30 +1563,47 @@ def en_yollarini_ingilizcele(kok: Path) -> int:
         if not dosya.exists():
             continue
         metin = dosya.read_text(encoding="utf-8", errors="replace")
-        if "raporlar" not in metin:
+        if not _EN_SLUG_TANI.search(metin):
             continue
         if dosya.suffix == ".json":
-            yeni = re.sub(r'("u"\s*:\s*"[^"]*?)raporlar', r"reports", metin)
-        elif dosya.suffix == ".xml" and dosya.name == "sitemap.xml":
+            yeni = re.sub(r'("u"\s*:\s*"[^"]*")',
+                          lambda m: '"u":"' + _en_slug_degistir(m.group(1)[5:-1]) + '"', metin)
+        elif dosya.suffix == ".xml" and dosya.name == "sitemap.xml" and dosya.parent == kok:
             # kok sitemap: yalnizca hreflang="en" alternatifleri degisir
             yeni = re.sub(r'(<xhtml:link[^>]*hreflang="en"[^>]*>)',
-                          lambda m: _en_yol_degistir(m.group(1)), metin)
+                          lambda m: _en_slug_degistir(m.group(1)), metin)
         else:
             yeni = nitelik_re.sub(_nitelik, metin)
 
             def _jsonld(m: "re.Match[str]") -> str:
-                return _en_yol_degistir(m.group(1))
+                parca = m.group(1)
+                if parca.startswith('"https') and "/en/" not in parca:
+                    return parca  # TR canonical veya dis URL
+                return _en_slug_degistir(parca)
             yeni = jsonld_re.sub(_jsonld, yeni)
         if yeni != metin:
             dosya.write_text(yeni, encoding="utf-8")
             sayi += 1
-    hub = en_kok / "raporlar.html"
-    if hub.exists():
-        hub.rename(en_kok / "reports.html")
-        sayi += 1
-    dizin = en_kok / "raporlar"
-    if dizin.exists():
-        dizin.rename(en_kok / "reports")
+    # Dosya/dizin adlari (kok duzey; en/reports/ icindeki legacy -derin-analiz
+    # dosya adlari eski URL'leri kirmamak icin korunur)
+    import os as _os
+    for eski, yeni in EN_SLUG_ESLEME:
+        eski_hub, yeni_hub = en_kok / (eski + ".html"), en_kok / (yeni + ".html")
+        if eski_hub.exists():
+            if yeni_hub.exists():
+                yeni_hub.unlink()
+            eski_hub.rename(yeni_hub)
+            sayi += 1
+        eski_dizin, yeni_dizin = en_kok / eski, en_kok / yeni
+        if eski_dizin.exists() and eski_dizin.is_dir():
+            if yeni_dizin.exists():
+                import shutil as _shutil
+                _shutil.rmtree(yeni_dizin)
+            eski_dizin.rename(yeni_dizin)
+            sayi += 1
+    podcast = en_kok / "radio" / "podcast-raporlar.xml"
+    if podcast.exists():
+        podcast.rename(en_kok / "radio" / "podcast-reports.xml")
         sayi += 1
     return sayi
 

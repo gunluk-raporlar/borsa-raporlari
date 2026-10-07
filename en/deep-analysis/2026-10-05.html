@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Analysis - 2026-10-05</title>
+<meta name="description" content="BIST 30 deep analysis report dated 2026-10-05.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/en/deep-analysis/2026-10-05">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-05">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-05">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-05">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-05">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/deep-analysis/2026-10-05">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-05">
+<link rel="icon" href="..//favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="..//favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Daily Reports">
+<meta property="og:title" content="Deep Analysis - 2026-10-05">
+<meta property="og:description" content="BIST 30 deep analysis report dated 2026-10-05.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/en/deep-analysis/2026-10-05">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Daily Reports cover image">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Deep Analysis - 2026-10-05">
+<meta name="twitter:description" content="BIST 30 deep analysis report dated 2026-10-05.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<meta name="yandex-verification" content="2c8df12d0b97a734">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Deep Analysis - 2026-10-05", "description": "BIST 30 deep analysis report dated 2026-10-05.", "url": "https://borsa-raporlari.pages.dev/en/deep-analysis/2026-10-05", "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Deep Analysis - 2026-10-05", "datePublished": "2026-10-05", "dateModified": "2026-10-05T13:02:04+03:00", "inLanguage": "en", "description": "BIST 30 deep analysis report dated 2026-10-05.", "author": {"@type": "Organization", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}, "publisher": {"@type": "Organization", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}, "mainEntityOfPage": "https://borsa-raporlari.pages.dev/en/deep-analysis/2026-10-05.html"}</script>
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="../style.css">
+
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="../index.html">BIST 30 Daily Reports</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Light/dark theme" aria-label="Change theme">🌙</button></div>
+<nav><a href="../index.html" class="active">Reports</a><a href="../stocks/index.html">Stocks</a><a href="../deep-analysis.html">Deep Analysis</a><a href="../macro-analysis.html">Macro Analysis</a><a href="../technical-scan.html">Technical Scan</a><a href="../signal-scorecard.html">Signal Scorecard</a><a href="../borsapy-signals.html">Borsapy Signals</a><a href="../news.html">News</a><a href="../company-news.html">Company News</a><a href="../portfolio.html">Demo Portfolio</a><a href="../weekend.html">Weekend</a><a href="../market-school.html">Market School</a><a href="../calendar.html">📅 Calendar</a><a href="../glossary.html">Glossary</a><a href="../terms.html">Terms</a><a href="../accounting-terms.html">Accounting Terms</a><a href="../trading-robot.html">Trading Robot</a></nav>
+</div></header>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Loading prices…</span></div>
+</div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Prices could not be loaded temporarily; they will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
+
+<div class="ticker-bant" id="ticker-bant2" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Loading market data...</span></div>
+</div>
+<script>
+(function() {
+  var kutu = document.getElementById('ticker-bant2');
+  if (!kutu) return;
+  var kok = kutu.dataset.kok || '';
+  var iz = document.getElementById('ticker-iz2');
+
+  function bicim(g) {
+    var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
+    var rozet = (typeof g.d === 'number')
+      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+        Number(g.d).toFixed(2) + '%</span>'
+      : '';
+    var birim = g.b || g.birim || '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (birim ? ' ' + birim : '') + rozet + '</span>';
+  }
+  function ciz(veri) {
+    var ogeler = (veri.gostergeler || []).map(bicim).join('');
+    if (!ogeler) throw new Error('bos');
+    var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
+               (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Market data could not be loaded temporarily; it will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/piyasa?t=' + Date.now());
+  setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Loading...</span>
+            <span id="istanbul-weather">🌤️ Istanbul Weather...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Select page language">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-05" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/deep-analysis/2026-10-05" hreflang="en" lang="en" data-dil="en" class="aktif" aria-current="true">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-05" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-05" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-05" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+</nav>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
+
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Search stock, topic or date..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '../';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\?\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\.|mi|mı|icin)\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Search index could not be loaded.</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+
+
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Play / Pause">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Volume level" title="Sound">
+  <span class="radyo-linkler"><a href="../radio/index.html">📻 All broadcasts &amp; Podcast page</a> <span class="ayrac">•</span> <a href="../radio/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">For listening purposes only • Fictional AI servers • For informational purposes, not investment advice.</span>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='../';
+  if(!btn||!ses) return;
+  if(ayar){ ses.volume=(parseInt(ayar.value,10)||80)/100; }
+  var hazir=false;
+  function hazirla(geri){
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){return r.json();}).then(function(d){
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){ ses.src=kok+l[0].dosya; }
+      hazir=true; geri();
+    }).catch(function(){ hazir=true; geri(); });
+  }
+  btn.addEventListener('click',function(){
+    if(ses.paused){ hazirla(function(){ var p=ses.play(); if(p&&p.catch){p.catch(function(){});} }); }
+    else { ses.pause(); }
+  });
+  ses.addEventListener('play',function(){ btn.textContent='❚❚'; btn.setAttribute('aria-label','Duraklat'); });
+  ses.addEventListener('pause',function(){ btn.textContent='▶'; btn.setAttribute('aria-label','Oynat'); });
+  if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
+})();
+</script>
+
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>Deep Analysis</h1>
+<div class="meta"><span class="badge">2026-10-05</span><span class="badge">Writing time: 13:02 (TSI)</span><span>BIST 30 • AI-powered in-depth analysis</span>
+<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Read report aloud">🔊 Read Aloud</button>
+<span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px"><a class="paylas" href="https://twitter.com/intent/tweet?text=Derin+Analiz+2026-10-05&url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-10-05-derin-analiz.html" target="_blank" rel="noopener" title="Share on X">𝕏</a><a class="paylas" href="https://t.me/share/url?url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-10-05-derin-analiz.html&text=Derin+Analiz+2026-10-05" target="_blank" rel="noopener" title="Share on Telegram">✈</a><a class="paylas" href="https://wa.me/?text=Derin+Analiz+2026-10-05%20https%3A%2F%2Fborsa-raporlari.pages.dev%2Freports%2F2026-10-05-derin-analiz.html" target="_blank" rel="noopener" title="Share on WhatsApp">💬</a><a class="paylas" href="javascript:void(0)" title="Copy link" onclick="if(navigator.clipboard){navigator.clipboard.writeText('https://borsa-raporlari.pages.dev/en/derin-analiz/2026-10-05.html');this.textContent='✓';}">🔗</a></span></div>
+</div>
+
+<div class="card" style="margin:0 0 18px; padding:14px 18px">
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
+<strong style="font-size:14px">BIST 30 basket — last 16 days</strong>
+<span class="neg" style="font-weight:700">-8.77%</span>
+</div>
+<svg viewBox="0 0 520 90" class="chart" role="img" aria-label="BIST 30 basket price chart (last 16 days)" style="max-width:520px"> <polyline fill="none" stroke="#b91c1c" stroke-width="2.5" points="0.0,41.5 34.7,30.8 69.3,16.0 104.0,23.8 138.7,8.0 173.3,17.5 208.0,40.9 242.7,66.8 277.3,40.4 312.0,50.4 346.7,43.8 381.3,47.3 416.0,31.9 450.7,55.8 485.3,49.7 520.0,84.0" /></svg>
+<div style="color:var(--muted); font-size:12px">Equal-weighted basket of 30 stocks, normalized to the first seen price.</div>
+</div>
+
+
+
+<article class="report" id="rapor-govde"><h2>1. Market Summary and Overview</h2>
+<p>October 5, 2026, Monday, 12:42 (Turkey time) - BIST 30 (XU030) last close 15.514.20 | previous close 15.205.39 | daily +2.03%. BIST 100 (XU100) last close 12.491.09 | previous close 12.270.18 | daily +1.80%. USD/TRY 49,135 | previous 49.12 | daily +0.08%. XU030 daily performance in USD terms +1.95% (TL return adjusted for exchange rate movement).</p>
+<p>During the trading session, the BIST 30 index showed a narrow rise with a daily increase of 2.03%. The 1.95% return in USD terms is explained by the slight depreciation of the TL, while the only 0.08% increase in USD/TRY indicated stable market liquidity. The 1.80% rise in BIST 100 points to more limited participation compared to BIST 30's performance; this suggests that the index's rise was driven mainly by a few large codes within BIST 30.</p>
+<p>From a sectoral perspective, technical scan signals are concentrated with "BUY" and "STRONG BUY" predominantly in banking (Yapi Kredi), real estate (Emlak Konut GYO), aviation (TAV Airports), metal-mining (Kardemir, Eregli Demir Celik), and defense (Aselsan) stocks. On the other hand, "SELL" and "STRONG SELL" signals dominate in codes such as energy-petrochemicals (Astor Enerji), finance-other (Destek Finans Faktoring), and aviation (Turk Hava Yollari).</p>
+<p>In the macro environment, September consumer inflation showed a slight slowdown at 31.51% annually (1.84% monthly), while producer inflation continued its upward trend at 27.95% annually (2.57% monthly). With the policy rate remaining steady at 37.0%, deposit rates declined to 43,795%, while consumer loan rates remained high at 64.74%. Loan growth continues at 2.3% annually, and M3 money supply is up 29.71%. This structure offers an environment where funding costs for the banking sector may improve slightly, but loan demand could slow down.</p>
+<p>As for exchange rate movement, USD/TRY showed limited weakness with a 0.08% increase, while the 0,1743% decline in DXY indicates a slight decrease in global risk appetite. The real effective exchange rate remained unchanged from the 23.47 index level; this provides a competitive advantage for exporters while increasing cost pressure on producers using imported inputs.</p>
+<p>In summary, the rise of BIST 30 with narrow participation is based on the performance of a limited group of stocks giving technical "BUY" signals. Macro data show that although consumer-side inflation is slowing, producer prices still create pressure, while credit conditions are tending to soften. In this framework, the sustainability of the market movement depends on the ability of codes giving "BUY" signals to broaden participation and on macro risks (inflation, exchange rate, loan growth) maintaining stability.</p>
+<hr />
+<h2>2. Sector-Based Evaluation</h2>
+<h3>2.1. Hot Sectors (BUY signal density)</h3>
+<table>
+<thead>
+<tr>
+<th>Sector</th>
+<th>Number of BUY/STRONG BUY codes</th>
+<th>Prominent stocks</th>
+<th>Channel % (proximity)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Banking</td>
+<td>Yapi Kredi (YKBNK)</td>
+<td>Yapi Kredi (YKBNK)</td>
+<td>43%</td>
+</tr>
+<tr>
+<td>Real Estate</td>
+<td>Emlak Konut GYO (EKGYO)</td>
+<td>Emlak Konut GYO (EKGYO)</td>
+<td>54%</td>
+</tr>
+<tr>
+<td>Aviation &amp; Transportation</td>
+<td>TAV Airports (TAVHL)</td>
+<td>TAV Airports (TAVHL)</td>
+<td>53%</td>
+</tr>
+<tr>
+<td>Metal &amp; Mining</td>
+<td>2 (KRDMD, EREGL)</td>
+<td>Kardemir (KRDMD), Ereğli Demir Çelik (EREGL)</td>
+<td>36% – 83%</td>
+</tr>
+<tr>
+<td>Defense</td>
+<td>Aselsan (ASELS)</td>
+<td>Aselsan (ASELS)</td>
+<td>41%</td>
+</tr>
+<tr>
+<td>Telecommunications</td>
+<td>Turkcell (TCELL)</td>
+<td>Turkcell (TCELL)</td>
+<td>79%</td>
+</tr>
+</tbody>
+</table>
+<p>Bu sektörlerde "AL" sinyali, hem teknik tarama (WT=AL) hem de osilatör (oneri=AL veya GÜÇLÜ AL) tarafından destekleniyor. Kanal yüzdeleri, fiyatın ilgili teknik kanal içinde ne kadar yer kapladığını gösteriyor; 40%‑60% aralığı, fiyatın kanal ortasına yakın olduğunu ve potansiyel bir kırılma ya da devam hareketi için yeterli boşluk olduğunu işaret ediyor. Özellikle metal‑madencilikte Ereğli Demir Çelik'in 83% kanal içinde olması, fiyatın üst sınıra yaklaşmakta olduğunu ve bir direnç kırılması riskinin yüksek olduğunu gösteriyor.</p>
+<h3>2.2 Weak Sectors (SELL/STRONG SELL code count)</h3>
+<table>
+<thead>
+<tr>
+<th>Sector</th>
+<th>SELL/STRONG SELL code count</th>
+<th>Prominent stocks</th>
+<th>Channel % (proximity)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Energy &amp; Petrochemicals</td>
+<td>3 (ASTOR, TUPRS, ENKAI)</td>
+<td>Astor Energy, Tüpraş, Enka Construction</td>
+<td>7% – 36%</td>
+</tr>
+<tr>
+<td>Finance (Other)</td>
+<td>2 (DSTKF, GUBRF)</td>
+<td>Destek Finance Factoring, Gübre Factories</td>
+<td>3% – 14%</td>
+</tr>
+<tr>
+<td>Aviation &amp; Transportation</td>
+<td>3 (THYAO, PGSUS, TCELL (SELL))</td>
+<td>Türk Hava Yolları, Pegasus, Turkcell (SAT)</td>
+<td>93% – 79%</td>
+</tr>
+<tr>
+<td>Automotive</td>
+<td>2 (TOASO, FROTO)</td>
+<td>Tofaş, Ford Otosan</td>
+<td>35% – 29%</td>
+</tr>
+<tr>
+<td>Chemicals &amp; Fertilizers</td>
+<td>2 (SASA, GUBRF)</td>
+<td>Sasa Polyester, Gübre Fabrikaları</td>
+<td>25% – 14%</td>
+</tr>
+<tr>
+<td>Holding</td>
+<td>2 (KCHOL, SAHOL)</td>
+<td>Koç Holding, Sabancı Holding</td>
+<td>13% – 33%</td>
+</tr>
+</tbody>
+</table>
+<p>Bu gruplarda "SAT" sinyalleri hâkim; fiyatların teknik kanalların üst sınırına (örneğin THYAO 93%) yaklaşması, aşırı alım riskine işaret ediyor. Ayrıca düşük kanal yüzdeleri (örneğin ASTOR 7%) fiyatın alt sınıra yakın olduğunu ve "dip" (dip‑buy) stratejilerinin hâlâ geçerli olabileceğini gösteriyor. Ancak, "GÜÇLÜ SAT" sinyalleriyle birlikte MACD ve ADX değerlerinin negatif yönü, momentumun zayıfladığını ve geri çekilme ihtimalinin yüksek olduğunu ortaya koyuyor.</p>
+<h3>2.3. Sektörel Rotasyon Riski</h3>
+<p>BIST 30'da "AL" sinyali veren sektörlerin toplam ağırlığı hâlâ 30%'un altında kalıyor. Bu durum, endeksin dar bir katılımla yükselmesinin sürdürülebilirliğini tehdit ediyor. Eğer "AL" sinyali taşıyan kodların fiyatları kanal üst sınırına çarparsa (örneğin EREGL 83%), kısa vadeli bir kâr realizasyonu tetiklenebilir ve endeksin yükselişi yavaşlayabilir. Öte yandan, "SAT" sinyali veren enerji‑petrokimya ve finans‑diğer kodlar, düşük kanal yüzdeleriyle (ASTOR 7%, DSTKF 3%) dip‑buy fırsatı sunabilir; ancak bu fırsatların gerçekleşmesi, makro risklerin (yüksek enflasyon, kur dalgalanmaları) hafiflemesiyle mümkün olacaktır.</p>
+<hr />
+<h2>3. Technical Visual Analysis</h2>
+<h3>3.1. EMA Dizilimleri ve Trend Yönü</h3>
+<p>Teknik tarama verileri, kısa‑orta‑uzun vadeli EMA (Exponential Moving Average) yönlerini "kısa=BEKLE, orta=AL, uzun=AL" gibi ifadelerle özetliyor. "AL" yönü, fiyatın ilgili EMA'nın üzerinde seyretmesi ve yükseliş trendinin hâlâ aktif olduğunu gösteriyor. Özellikle Kardemir (KRDMD), Ereğli Demir Çelik (EREGL) ve Aselsan (ASELS) gibi kodlarda orta‑ve uzun‑EMA'nın "AL" sinyali, fiyatın uzun vadeli trend içinde konumlandığını teyit ediyor. </p>
+<h3>3.2. Wave Trend (WT) ve Sinyal Uyumu</h3>
+<p>WT sinyalleri, fiyatın dalga yapısına göre "AL", "SAT" veya "DİPTE AL" olarak sınıflandırılmış. "AL" sinyali veren hisseler (YKBNK, EKGYO, TAVHL, EREGL, KRDMD, ASELS, TCELL) aynı zamanda osilatör AL ile de uyumlu; bu çift yönlü onay, kısa‑orta vadeli bir yükselişin olasılığını artırıyor. </p>
+<p>Astor Enerji (ASTOR) ise WT="DİPTE AL" sinyali taşısa da osilatör SAT olduğu için çelişki mevcut; bu durum, fiyatın dip seviyesinden toparlanma ihtimalinin düşük olduğunu gösteriyor. </p>
+<h3>3.3. Regresyon Kanalı ve Pearson r</h3>
+<p>Regresyon kanalı içinde fiyatın konumu, "kanal %" olarak verilmiş; 40%‑60% aralığı orta konumu, 80% üzeri ise üst sınıra yaklaşmayı gösterir. Pearson r değeri, fiyatın regresyon hattına ne kadar bağlı olduğunu ölçer; +1'e yakın değerler güçlü pozitif ilişki, -1'e yakın değerler negatif ilişki anlamına gelir. </p>
+<ul>
+<li>
+<p><strong>Yüksek Pozitif r</strong>: Tüpraş (r = 0.88), Koç Holding (r = 0.77), Yapı Kredi (r = 0.64). Bu hisseler, fiyat hareketinin regresyon eğrisine sıkı sıkıya bağlı olduğunu ve trendin sürdürülebilirliğinin yüksek olduğunu gösteriyor. </p>
+</li>
+<li>
+<p><strong>Low/Negative r</strong>: Ereğli Demir Çelik (r = ‑0.77), Turkcell (r = ‑0.77), Aselsan (r = 0.30). Negatif r, fiyatın regresyon eğrisinden sapma eğiliminde olduğunu, yani volatilite ve geri dönüş riskinin yüksek olduğunu işaret eder. </p>
+</li>
+</ul>
+<h3>3.4. Diverging Stocks</h3>
+<p>Divergence occurs when there is inconsistency between technical signals (WT=BUY) and Pearson r values. For example:</p>
+<ul>
+<li>
+<p><strong>EREGL</strong>: WT=BUY, but r = -0.77 and channel 83% (near the upper band). This combination suggests the price may be emerging from a short-term bottom, while also signaling that the long-term trend is weakening.</p>
+</li>
+<li>
+<p><strong>TCELL</strong>: WT=BUY, r = -0.77, channel 79%. Similarly, a high channel percentage and negative correlation increase the risk of a pullback after a short-term rise.</p>
+</li>
+</ul>
+<p>These diverging stocks, despite the "BUY" signal, offer risky opportunities for portfolio managers as codes that need careful monitoring.</p>
+<hr />
+<h2>4. Oscillator and Momentum Readings</h2>
+<h3>4.1. RSI (Relative Strength Index)</h3>
+<p>Stocks with RSI values in the 50-55 range show neutral momentum. Among the stocks giving "BUY" signals:</p>
+<ul>
+<li>
+<p><strong>YKBNK</strong>: RSI = 53.09 – approaching the slightly overbought zone.</p>
+</li>
+<li>
+<p><strong>EKGYO</strong>: RSI = 52.49 – a similar position.</p>
+</li>
+<li>
+<p><strong>TAVHL</strong>: RSI = 51.78 – neutral.</p>
+</li>
+<li>
+<p><strong>EREGL</strong>: RSI = 51.72 – neutral.</p>
+</li>
+<li>
+<p><strong>KRDMD</strong>: RSI = 51.40 – neutral.</p>
+</li>
+<li>
+<p><strong>ASELS</strong>: RSI = 51.35 – neutral.</p>
+</li>
+<li>
+<p><strong>TCELL</strong>: RSI = 50.72 – neutral.</p>
+</li>
+</ul>
+<p>Since RSI above 70 (overbought zone) has not yet been observed, the risk of a short-term pullback is low, but the sustainability of the rally needs to be supported by volume and other indicators.</p>
+<h3>4.2. MACD (Moving Average Convergence Divergence)</h3>
+<p>MACD values are generally negative (e.g., TCELL -0.87, TAVHL -1.47) or very low positive (YKBNK +0.17). Negative MACD indicates bearish momentum, while positive but low values (YKBNK, VAKBN) point to a slight upward tendency. In particular, <strong>YKBNK</strong>' s positive MACD provides momentum support consistent with the technical "BUY" signal.</p>
+<h3>4.3. Stochastic K (StochK)</h3>
+<p>StochK values are in the 50-66 range; values above 80 do not produce an overbought signal.<strong>YKBNK</strong> ( 66.67) and <strong>ASELS</strong> ( 66.57) have the highest StochK values, which indicates there may be short-term overbought pressure. However, StochK remaining within the 20-80 range signals that the risk of an extreme momentum breakdown has not yet materialized.</p>
+<h3>4.4. CCI20 (Commodity Channel Index, 20-period)</h3>
+<p>CCI20 values are generally negative (e.g., YKBNK -31.53, ASELS +28.57). Positive CCI20 indicates the price is above the average, while negative values indicate the price is below the average.<strong>ASELS</strong>' ASELS's +28.57 CCI20 confirms that the price is in a strong position within the trend, while <strong>YKBNK</strong>' YKBNK's -31.53 value indicates that the price carries short-term decline potential.</p>
+<h3>4.5. ADX (Average Directional Index)</h3>
+<p>ADX measures trend strength; the 20-25 range means a "weak-moderate" trend, and 25-40 means a "strong" trend.<strong>YKBNK</strong> ( 20.69) and <strong>EKGYO</strong> ( 17.89) show a weak trend with low ADX values, while <strong>ASELS</strong> ( 25.92) and <strong>TCELL</strong> ( 27.52) indicate the presence of a stronger trend. This shows that price movement is more stable in the defense and telecommunications sectors.</p>
+<h3>4.6. Summary</h3>
+<p>" Stocks carrying a "BUY" signal are seen together with RSI in the neutral-slightly overbought zone, MACD mostly negative but with a slightly positive tendency, StochK in the 50-70 range, and ADX between 20-30. This combination indicates that the rally has not yet formed full momentum accumulation, but technical and oscillator signals are harmoniously aligned in the "BUY" direction. Investors are advised to set stop-loss levels, especially for codes with negative Pearson r and high channel % values (EREGL, TCELL), against the risk of short-term pullbacks.</p>
+<hr />
+<h2>5. Risk Map and Scenarios</h2>
+<h3>5.1. Upside Scenario (Optimistic)</h3>
+<ul>
+<li>
+<p><strong>Condition</strong>: " If the prices of codes carrying a "BUY" signal (YKBNK, EKGYO, TAVHL, EREGL, KRDMD, ASELS, TCELL) exceed the channel midpoint (40%-60%) and reach 70%-80% levels, ADX values are expected to rise above 25-30 and MACD to move into positive territory.</p>
+</li>
+<li>
+<p><strong>Impact</strong>: The BIST 30 index could add an additional 0.5%-1.0% return on top of its current 2.03% gain; BIST 100 could also rise to the 1.5%-2.0% level with a similar increase.</p>
+</li>
+<li>
+<p><strong>Support Levels</strong>: For YKBNK 34.00 TRY, for EKGYO 19.00 TRY, for TAVHL 260.00 TRY, for EREGL 37.00 TRY, for KRDMD 44.00 TRY, for ASELS 380.00 TRY, for TCELL 101.00 TRY. These levels are positioned below the lower channel boundary and the 60-day average prices.</p>
+</li>
+</ul>
+<h3>5.2. Downside Scenario (Negative)</h3>
+<ul>
+<li>
+<p><strong>Condition</strong>: " Stocks carrying a "BUY" signal hit the upper channel boundary (80%-90%) and simultaneously MACD deepens into negative territory, while ADX falls below 20. Especially in tickers with negative Pearson r (EREGL, TCELL) and high channel % (EREGL 83%, TCELL 79%), a price pullback of 5%-7% is likely.</p>
+</li>
+<li>
+<p><strong>Impact</strong>: BIST 30 may lose its current gain of 2.03% and retreat to the 0.5%-1.0% level; BIST 100 may also undergo a similar correction, showing a decline of 0.5%-1.0%.</p>
+</li>
+<li>
+<p><strong>Support Levels</strong>: For YKBNK 33.00 TRY, for EKGYO 18.50 TRY, for TAVHL 255.00 TRY, for EREGL 35.50 TRY, for KRDMD 42.00 TRY, for ASELS 370.00 TRY, for TCELL 98.00 TRY. These levels can be considered close to the lower channel boundary and past 60-day lows.</p>
+</li>
+</ul>
+<h3>5.3. Invalidation Conditions</h3>
+<ul>
+<li>
+<p><strong>Signal Collapse</strong>: If the oscillator recommendation for stocks carrying a "BUY" signal turns to "NEUTRAL" or "SELL" (as seen in tickers such as GARAN, THYAO), this leads to the invalidation of the upside scenario.</p>
+</li>
+<li>
+<p><strong>Macro Deterioration</strong>: If inflation unexpectedly rises from the annual 31.51% level to 37%-34%, the policy rate increases to 38%, and USD/TRY exceeds the 50.00 level with a rise above 0.5%, risk appetite may shrink, eroding the performance of "BUY" tickers.</p>
+</li>
+<li>
+<p><strong>Liquidity Squeeze</strong>: If the performance gap between BIST 100 and BIST 30 (2.03% vs 1.80%) exceeds 0.5% and large-cap tickers (e.g., KOC Holding, Sabanci Holding) receive a "SELL" signal, market participation may narrow and the rally may become unsustainable.</p>
+</li>
+</ul>
+<h3>5.4. Strategic Recommendation</h3>
+<ul>
+<li>
+<p><strong>Broadening Participation</strong>: " Volume increases and new investor inflows into tickers carrying a "BUY" signal may allow the index to move beyond a narrow-based rally and spread to a broader base.</p>
+</li>
+<li>
+<p><strong>Stop-Loss and Take-Profit</strong>: Levels near the lower channel boundary (30%-40%) should be used as stop-loss, while levels near the upper channel boundary (70%-80%) should be used as take-profit targets.</p>
+</li>
+<li>
+<p><strong>Portfolio Weight</strong>: Keeping the total weight of "BUY" signal tickers in the portfolio between 30%-35% can balance the risk of a narrow-based rally.</p>
+</li>
+</ul>
+<hr />
+<h2>6. Recommended Stocks for the Day</h2>
+<table>
+<thead>
+<tr>
+<th>Stock</th>
+<th>Signal</th>
+<th>Base Scenario</th>
+<th>Optimistic Scenario</th>
+<th>Invalidation Condition</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>YKBNK – Yapı Kredi</td>
+<td>STRONG BUY</td>
+<td>Price within 43% of channel, Pearson r = 0.64, RSI = 53.09, MACD = +0.17, ADX = 20.69.</td>
+<td>Channel reaches 70%-80% level, ADX &gt; 25, MACD turns positive; index contribution increases.</td>
+<td>Oscillator recommendation turns to "NEUTRAL"/"SELL", MACD falls into negative territory, ADX &lt; 20.</td>
+<td>Technical "BUY" signal, strong Pearson r and mid-channel position; oscillator "STRONG BUY" recommendation supports sustainability of the uptrend.</td>
+</tr>
+<tr>
+<td>EKGYO – Emlak Konut GYO</td>
+<td>BUY</td>
+<td>Within 54% of channel, r = 0.13, RSI = 52.49, MACD = -0.17, ADX = 17.89.</td>
+<td>Channel rises to 70%-80%, ADX &gt; 20, MACD approaches zero; price rises with increasing real estate demand.</td>
+<td>Oscillator recommendation shifts to "SELL"/"NEUTRAL", ADX &lt; 15, price falls below 30% of channel.</td>
+<td>" BUY" WT and oscillator recommendation alignment; although low r value signals volatility risk, mid-channel and positive momentum offer a short-term buying opportunity.</td>
+</tr>
+<tr>
+<td>TAVHL – TAV Airports</td>
+<td>BUY</td>
+<td>Within 53% of channel, r = 0.09, RSI = 51.78, MACD = -1.47, ADX = 16.78.</td>
+<td>Channel reaches 70%-80%, MACD turns from negative to positive, ADX &gt; 20; improvement in aviation demand supports price.</td>
+<td>Oscillator recommendation turns to "SELL"/"NEUTRAL", MACD becomes more negative, ADX &lt; 15.</td>
+<td>Technical "BUY" and oscillator "BUY" recommendation align with recovery expectations in the aviation sector; although low r and ADX highlight volatility risk, mid-channel offers a safe entry level.</td>
+</tr>
+<tr>
+<td>EREGL – Ereğli Demir Çelik</td>
+<td>BUY</td>
+<td>Within 83% of channel, r = -0.77, RSI = 51.72, MACD = -0.38, ADX = 13.5.</td>
+<td>Channel rises to 90%-95%, MACD approaches zero, ADX &gt; 20; if metal prices rise, price may exit the bottom.</td>
+<td>Oscillator recommendation turns to "SELL"/"NEUTRAL", MACD deepens negative, ADX &lt; 10, price falls back to 30%-40% of channel.</td>
+<td>" AL" WT present but negative Pearson r and high channel 83%, indicating price is near the upper band and at risk of pullback; the optimistic scenario could materialize if metal prices rise.</td>
+</tr>
+<tr>
+<td>KRDMD – Kardemir</td>
+<td>BUY</td>
+<td>Within channel 36%, r = 0.62, RSI = 51.40, MACD = +0.06, ADX = 15.08.</td>
+<td>Channel rises to 70%-80%, ADX &gt; 20, MACD turns positive; rising metal demand supports the price.</td>
+<td>Oscillator signal shifts to "SELL"/"NEUTRAL", MACD turns negative, ADX &lt; 15, price falls to channel 30%-40%.</td>
+<td>Technical "BUY" and positive r indicate price is tied to the regression line; mid-channel position and slightly positive MACD support continued upside.</td>
+</tr>
+<tr>
+<td>ASELS – Aselsan</td>
+<td>BUY</td>
+<td>Within channel 41%, r = 0.30, RSI = 51.35, MACD = -5.63, ADX = 25.92.</td>
+<td>Channel reaches 70%-80%, MACD crosses from negative to positive, ADX &gt; 30; rising defense spending could push the price.</td>
+<td>Oscillator signal turns to "SELL"/"NEUTRAL", MACD becomes more negative, ADX &lt; 20, price retreats to channel 30%-40%.</td>
+<td>" AL" WT and oscillator "BUY" signal align with long-term growth expectations in the defense sector; MACD is negative but strong ADX shows the trend is still active.</td>
+</tr>
+<tr>
+<td>TCELL – Turkcell</td>
+<td>BUY</td>
+<td>Within channel 79%, r = -0.77, RSI = 50.72, MACD = -0.87, ADX = 27.52.</td>
+<td>Channel rises to 90%-95%, MACD approaches zero, ADX &gt; 30; rising telecom service demand supports the price.</td>
+<td>Oscillator signal turns to "SELL"/"NEUTRAL", MACD becomes more negative, ADX &lt; 20, price retreats to channel 30%-40%.</td>
+<td>" AL" WT present but negative r and high channel 79%, indicating price is near the upper band and at risk of pullback; the optimistic scenario is MACD turning positive with data traffic and new service launches.</td>
+</tr>
+</tbody>
+</table>
+<p>* The "Base Scenario" in the table defines the expected price movement if current technical and oscillator conditions persist; the "Optimistic Scenario" defines the price reaching the upper channel bound if additional positive macro-technical triggers (e.g., ADX increase, MACD turning positive) occur; the "Invalidation Condition" defines adverse changes that could break the signal (oscillator signal change, MACD turning negative, ADX decline, etc.). The "Rationale" section summarizes the technical-oscillator alignment and channel-r-momentum relationship for each stock.</p>
+<hr />
+<p><strong>Result</strong>: BIST 30's intraday gain of 2.03% is driven by the performance of a limited number of codes carrying "BUY" signals (YKBNK, EKGYO, TAVHL, EREGL, KRDMD, ASELS, TCELL). Macro data is supported by a slight decline in consumer inflation and easing credit conditions, while producer inflation remaining high and currency fluctuations remain risk factors. Investors are advised to maintain stop-loss levels against the possibility of short-term pullbacks in stocks approaching the upper bound of technical channels (especially EREGL, TCELL), while also monitoring volume and participation increases in codes with "BUY" signals to seize the opportunity to broaden the index's narrow-based rally.</p></article>
+<p style="margin-top:18px"><a href="../index.html">← Back to all reports</a></p>
+<script>
+(function() {
+  if (!('speechSynthesis' in window)) { return; }
+  // Chrome bazi sesleri gec yukler; sayfa acilir acilmaz ses listesini isit.
+  var sesleriIsit = function() { try { window.speechSynthesis.getVoices(); } catch (e) {} };
+  sesleriIsit();
+  if (window.speechSynthesis.onvoiceschanged === null) {
+    window.speechSynthesis.onvoiceschanged = sesleriIsit;
+  }
+  window.sesliOkuToggle = function(btn, kaynakId) {
+    var S = window.speechSynthesis;
+    var durum = btn.getAttribute('data-durum') || 'durdu';
+    if (durum === 'okunuyor') { S.pause(); btn.textContent = '\u25b6 Devam'; btn.setAttribute('data-durum', 'bekliyor'); return; }
+    if (durum === 'bekliyor') { S.resume(); btn.textContent = '\u23f8 Duraklat'; btn.setAttribute('data-durum', 'okunuyor'); return; }
+    S.cancel();
+    var kaynak = document.getElementById(kaynakId);
+    var metin = kaynak ? (kaynak.textContent || '') : '';
+    metin = metin.replace(/\s+/g, ' ').trim();
+    if (!metin) { return; }
+    var u = new SpeechSynthesisUtterance(metin);
+    u.lang = 'tr-TR';
+    var sesListe = S.getVoices() || [];
+    var trSes = sesListe.filter(function(v) { return v.lang && v.lang.toLowerCase().indexOf('tr') === 0; })[0] || null;
+    if (trSes) { u.voice = trSes; }
+    u.rate = 1.0;
+    u.onend = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    u.onerror = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    btn.textContent = '\u23f8 Duraklat';
+    btn.setAttribute('data-durum', 'okunuyor');
+    S.speak(u);
+  };
+})();
+</script>
+</main>
+
+<nav class="altbar" aria-label="Quick menu">
+<a href="../index.html" class="active"><span class="i" aria-hidden="true">📊</span>Reports</a>
+<a href="../technical-scan.html"><span class="i" aria-hidden="true">📈</span>Technical</a>
+<a href="../stocks/index.html"><span class="i" aria-hidden="true">🏦</span>Stocks</a>
+<a href="../portfolio.html"><span class="i" aria-hidden="true">💼</span>Portfolio</a>
+<a href="../news.html"><span class="i" aria-hidden="true">📰</span>News</a>
+<a href="../calendar.html"><span class="i" aria-hidden="true">📅</span>Calendar</a>
+</nav>
+
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+
+<footer class="footer">The information, comments and recommendations contained herein are for informational purposes only; they do not constitute investment advisory or investment advice. The accuracy of the data cannot be guaranteed and the user is responsible for any decisions that may arise from the content.<br>Data sources: İş Yatırım, RSS news feeds • Analysis: artificial intelligence (multi-agent system)<br><a href="../privacy.html" style="color:inherit">Privacy &amp; Data Protection</a></footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+</body></html>

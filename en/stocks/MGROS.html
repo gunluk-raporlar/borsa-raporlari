@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MGROS — Stock Analysis</title>
+<meta name="description" content="MGROS (Retail) last price, technical signals, 7-day news and past evaluations in the report archive.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/en/stocks/MGROS">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/hisse/MGROS">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/hisse/MGROS">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/hisse/MGROS">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/hisse/MGROS">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/stocks/MGROS">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/MGROS">
+<link rel="icon" href="..//favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="..//favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Daily Reports">
+<meta property="og:title" content="MGROS — Stock Analysis">
+<meta property="og:description" content="MGROS (Retail) last price, technical signals, 7-day news and past evaluations in the report archive.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/en/stocks/MGROS">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Daily Reports cover image">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MGROS — Stock Analysis">
+<meta name="twitter:description" content="MGROS (Retail) last price, technical signals, 7-day news and past evaluations in the report archive.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<meta name="yandex-verification" content="2c8df12d0b97a734">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "MGROS — Stock Analysis", "description": "MGROS (Retail) last price, technical signals, 7-day news and past evaluations in the report archive.", "url": "https://borsa-raporlari.pages.dev/en/stocks/MGROS", "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}}</script>
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="../style.css">
+
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="../index.html">BIST 30 Daily Reports</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Light/dark theme" aria-label="Change theme">🌙</button></div>
+<nav><a href="../index.html">Home Page</a><a href="../reports.html">Reports</a><a href="../stocks/index.html" class="active">Stocks</a><a href="../deep-analysis.html">Deep Analysis</a><a href="../macro-analysis.html">Macro Analysis</a><a href="../technical-scan.html">Technical Scan</a><a href="../signal-scorecard.html">Signal Scorecard</a><a href="../borsapy-signals.html">Borsapy Signals</a><a href="../news.html">News</a><a href="../company-news.html">Company News</a><a href="../portfolio.html">Demo Portfolio</a><a href="../weekend.html">Weekend</a><a href="../market-school.html">Market School</a><a href="../calendar.html">📅 Calendar</a><a href="../glossary.html">Glossary</a><a href="../terms.html">Terms</a><a href="../accounting-terms.html">Accounting Terms</a><a href="../trading-robot.html">Trading Robot</a></nav>
+</div></header>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Loading prices…</span></div>
+</div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Prices could not be loaded temporarily; they will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
+
+<div class="ticker-bant" id="ticker-bant2" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Loading market data...</span></div>
+</div>
+<script>
+(function() {
+  var kutu = document.getElementById('ticker-bant2');
+  if (!kutu) return;
+  var kok = kutu.dataset.kok || '';
+  var iz = document.getElementById('ticker-iz2');
+
+  function bicim(g) {
+    var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
+    var rozet = (typeof g.d === 'number')
+      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+        Number(g.d).toFixed(2) + '%</span>'
+      : '';
+    var birim = g.b || g.birim || '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (birim ? ' ' + birim : '') + rozet + '</span>';
+  }
+  function ciz(veri) {
+    var ogeler = (veri.gostergeler || []).map(bicim).join('');
+    if (!ogeler) throw new Error('bos');
+    var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
+               (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Market data could not be loaded temporarily; it will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/piyasa?t=' + Date.now());
+  setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Loading...</span>
+            <span id="istanbul-weather">🌤️ Istanbul Weather...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Select page language">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/hisse/MGROS" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/stocks/MGROS" hreflang="en" lang="en" data-dil="en" class="aktif" aria-current="true">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/hisse/MGROS" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/hisse/MGROS" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/hisse/MGROS" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+</nav>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
+
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Search stock, topic or date..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '../';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\?\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\.|mi|mı|icin)\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Search index could not be loaded.</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+
+
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Play / Pause">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Volume level" title="Sound">
+  <span class="radyo-linkler"><a href="../radio/index.html">📻 All broadcasts &amp; Podcast page</a> <span class="ayrac">•</span> <a href="../radio/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">For listening purposes only • Fictional AI servers • For informational purposes, not investment advice.</span>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='../';
+  if(!btn||!ses) return;
+  if(ayar){ ses.volume=(parseInt(ayar.value,10)||80)/100; }
+  var hazir=false;
+  function hazirla(geri){
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){return r.json();}).then(function(d){
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){ ses.src=kok+l[0].dosya; }
+      hazir=true; geri();
+    }).catch(function(){ hazir=true; geri(); });
+  }
+  btn.addEventListener('click',function(){
+    if(ses.paused){ hazirla(function(){ var p=ses.play(); if(p&&p.catch){p.catch(function(){});} }); }
+    else { ses.pause(); }
+  });
+  ses.addEventListener('play',function(){ btn.textContent='❚❚'; btn.setAttribute('aria-label','Duraklat'); });
+  ses.addEventListener('pause',function(){ btn.textContent='▶'; btn.setAttribute('aria-label','Oynat'); });
+  if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
+})();
+</script>
+
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>MGROS <span style="font-size:16px; color:var(--muted)">Retail</span></h1>
+<div class="meta"><span class="badge">SELL</span>
+<span><strong>511.00 TL</strong></span>
+<span class="neg">-1.26% (günlük)</span>
+<span class='neg' style='font-weight:700'>- 1.2% (since 2026-09-06)</span></div>
+</div>
+<div class="card" style="margin-bottom:16px">
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
+<strong style="font-size:14px">📊 MGROS price chart</strong>
+<span style="color:var(--muted); font-size:12px">last 16 days • closing prices</span>
+</div>
+<svg viewBox="0 0 520 90" class="chart" role="img" aria-label="MGROS price chart (last 16 days)" style="max-width:520px"> <polyline fill="none" stroke="#b91c1c" stroke-width="2.5" points="0.0,53.2 34.7,51.0 69.3,39.9 104.0,20.1 138.7,8.0 173.3,27.8 208.0,84.0 242.7,58.7 277.3,57.6 312.0,28.9 346.7,26.7 381.3,31.1 416.0,60.9 450.7,60.9 485.3,42.1 520.0,67.5" /></svg>
+<div style="color:var(--muted); font-size:12px">MGROS closing prices (TL) from 2026-09-06 to present. Not a comparison chart.</div>
+</div>
+
+<div class="card" style="margin:0 0 18px">
+<h3 style="margin:0 0 6px">🏢 Company Profile</h3>
+<div style="font-weight:700; margin-bottom:4px">Migros Trade</div>
+<div class="meta" style="margin:0 0 8px"><span>Establishment: <strong>19.03,2008 (roots back to 1954 Migros)</strong></span><span>Major shareholder: <strong>Anadolu Group &amp; Fiba</strong></span><span>Paid-up capital: <strong>181,054,000 TL</strong> (2026/6)</span></div>
+<p style="margin:0; font-size:14px">Trade of all kinds of food and consumer goods and operation of shopping centers.</p>
+<div style="margin:8px 0 0"><div style="color:var(--muted); font-size:12px; margin-bottom:5px">Brands &amp; affiliates</div><span class="badge" style="margin:0 6px 6px 0; font-size:11.5px">Tansas</span><span class="badge" style="margin:0 6px 6px 0; font-size:11.5px">5M</span></div><div style="margin:8px 0 0; font-size:13.5px">🌐 <a href="https://migros.com.tr" target="_blank" rel="noopener">migros.com.tr</a></div>
+<div style="margin:10px 0 0; padding-top:8px; border-top:1px solid var(--line)">
+<div style="color:var(--muted); font-size:12px; margin-bottom:2px">Bilanço — 2026/6 dönemi (2026-10-06 verisi)</div>
+<table style="font-size:12.5px">
+<tr><td>Total Assets</td><td><strong>250.1 mlr TL</strong></td><td>Total Debt</td><td><strong>156.1 mlr TL</strong></td></tr>
+<tr><td>Current Assets</td><td>88.4 mlr TL</td><td>Equity</td><td><strong>93.9 mlr TL</strong></td></tr>
+<tr><td>Financial Debt</td><td>39.0 mlr TL</td><td>Net Profit</td><td class='pos'><strong>1.1 mlr TL</strong></td></tr>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 4px">📋 Announced Financial Statements<span style="font-weight:400; color:var(--muted); font-size:12.5px">· manually added financial table summary · last pull: 2026-09-23</span></h3>
+<div class="tbl-wrap"><table style="font-size:12.5px"><tr><th>Period</th><th>Sales Revenues (mlr TL)</th><th>Net Profit (mlr TL)</th><th>Profit Margin</th><th>Total Assets (mlr TL)</th><th>Equity (mlr TL)</th><th>Financial Debt (mlr TL)</th><th>Financial Debt / Equity</th></tr><tr><td><strong>2026/6</strong></td><td>241.3 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 4.5% YoY)</span></td><td>1.1 <span style="color:var(--muted); font-weight:400; font-size:11px">(- 44.4% YoY)</span></td><td>0.4%</td><td>250.1</td><td>93.9</td><td>39.0</td><td>41.6%</td></tr><tr><td><strong>2026/3</strong></td><td>109.2 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 6.4% YoY)</span></td><td>1.6 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 19.3% YoY)</span></td><td>1.5%</td><td>229.7</td><td>89.2</td><td>36.5</td><td>41.0%</td></tr><tr><td><strong>2025/12</strong></td><td>486.1 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 26.4% YoY)</span></td><td>8.0 <span style="color:var(--muted); font-weight:400; font-size:11px">(- 7.0% YoY)</span></td><td>1.6%</td><td>246.8</td><td>94.1</td><td>37.4</td><td>39.8%</td></tr><tr><td><strong>2025/9</strong></td><td>294.8 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 7.2% YoY)</span></td><td>5.6 <span style="color:var(--muted); font-weight:400; font-size:11px">(- 23.0% YoY)</span></td><td>1.9%</td><td>195.4</td><td>76.4</td><td>30.9</td><td>40.5%</td></tr><tr><td><strong>2025/6</strong></td><td>231.0 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 41.3% YoY)</span></td><td>1.9 <span style="color:var(--muted); font-weight:400; font-size:11px">(- 27.6% YoY)</span></td><td>0.8%</td><td>178.9</td><td>67.4</td><td>27.6</td><td>40.9%</td></tr><tr><td><strong>2025/3</strong></td><td>102.6 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 41.9% YoY)</span></td><td>1.4 <span style="color:var(--muted); font-weight:400; font-size:11px">(- 22.8% YoY)</span></td><td>1.3%</td><td>162.4</td><td>64.4</td><td>25.4</td><td>39.3%</td></tr><tr><td><strong>2024/12</strong></td><td>384.5</td><td>8.6</td><td>2.2%</td><td>196.4</td><td>75.5</td><td>27.6</td><td>36.6%</td></tr><tr><td><strong>2024/9</strong></td><td>275.0</td><td>7.3</td><td>2.7%</td><td>135.2</td><td>54.4</td><td>18.5</td><td>34.0%</td></tr><tr><td><strong>2024/6</strong></td><td>163.4</td><td>2.7</td><td>1.6%</td><td>118.5</td><td>45.8</td><td>14.5</td><td>31.7%</td></tr><tr><td><strong>2024/3</strong></td><td>72.3</td><td>1.7</td><td>2.4%</td><td>105.5</td><td>42.8</td><td>12.6</td><td>29.5%</td></tr></table></div>
+<p style="margin:8px 0 0; color:var(--muted); font-size:12px">Income statement items (sales revenues and net profit) are cumulative from the beginning of the year; balance sheet items are period-end balances. Source: İş Yatırım financial statements (based on KAP announcements).</p>
+</div>
+<div class="grid-iki">
+<div class="card"><h3 style="margin:0 0 8px">Valuation and Profitability <span style="font-weight:400;color:var(--muted);font-size:12.5px">· single source, last 12 months</span></h3><p style="margin:0 0 8px;font-size:13px">Last 5 trading days return: <strong class="neg">-3.4%</strong></p><table style="font-size:13.5px"><tr><td>Market value</td><td><strong>92.5 mlr TL</strong></td></tr><tr><td>Equity (2026/6)</td><td><strong>93.9 mlr TL</strong></td></tr><tr><td>Net profit (last 12 months)</td><td><strong>7.1 mlr TL</strong></td></tr><tr><td>P/E (last 12 months)</td><td><strong>13.0</strong></td></tr><tr><td>P/B</td><td><strong>0.98</strong></td></tr><tr><td>ROE (last 12 months)</td><td><strong>7.6%</strong></td></tr><tr><td>Financial debt / equity</td><td><strong>42%</strong></td></tr></table><p style="margin:8px 0 0;color:var(--muted);font-size:12px">Source: İş Yatırım financial statements (KAP disclosures) — same source as the balance sheet table.</p><div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)"><div style="font-size:12.5px;color:var(--muted);margin-bottom:6px">EBITDA · TradingView consolidated (TTM)</div><table style="font-size:13.5px"><tr><td>EBITDA (last 12 months)</td><td><strong>8.2 mlr TL</strong></td></tr><tr><td>EBITDA margin</td><td><strong>1.8%</strong></td></tr><tr><td>EV / EBITDA</td><td><strong>12.2</strong></td></tr></table><p style="margin:6px 0 0;color:var(--muted);font-size:11.5px">EBITDA margin is profitability before interest/depreciation/taxes; it should not be confused with net profit margin.</p></div></div>
+<div class="card"><h3 style="margin:0 0 8px">Macro Sensitivity <span style="font-weight:400;color:var(--muted);font-size:12.5px">· Retail sector</span></h3><p style="margin:0 0 8px;font-size:13.5px">Regime: <strong>yüksek enflasyon + sıkı para politikası (7.27 puan reel faiz) · ılımlı iç talep</strong></p><table style="font-size:13.5px"><tr><td>Trend</td><td><strong class="pos">positive</strong></td></tr><tr><td>Score</td><td><strong>+2</strong></td></tr><tr><td>Channels</td><td>interest rate increase, domestic demand increase, commodity decrease</td></tr></table><p style="margin:8px 0 0;color:var(--muted);font-size:12px">Sector sensitivity matrix x current macro regime; detail <a href="../macro-analysis.html">Macroeconomic Evaluation</a>.</p></div>
+</div>
+<div class="grid-iki">
+<div class="card"><h3 style="margin:0 0 8px">Technical Status</h3>
+<table style="font-size:13.5px"><tr><td>General</td><td><strong>SELL</strong></td></tr><tr><td>Short term (EMA 5-8-13-21)</td><td><strong>SELL</strong></td></tr><tr><td>Medium term (EMA 34-55)</td><td><strong>SELL</strong></td></tr><tr><td>Long term (EMA 89-144)</td><td><strong>SELL</strong></td></tr><tr><td>Wave Trend</td><td><strong>BUY</strong></td></tr><tr><td>Channel position</td><td><strong>69%</strong></td></tr><tr><td>Trend strength (r)</td><td><strong>-0.90</strong></td></tr><tr><td>Score</td><td><strong>1</strong></td></tr></table>
+<p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA sequence + Wave Trend + 60-day regression channel. Details: <a href="../technical-scan.html">Technical Scan</a></p></div>
+<div class="card"><h3 style="margin:0 0 8px">Last 7 Days News</h3>
+<ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMivwFBVV95cUxNQWhDOEQtcTV0RmhTMGY4TDZqWExQSDRCTGNmbHFGM0F0N3dzNEtCNEZnNHJ4QnZKbmZiT1hYbUVQcnJtWU42T0hyUlBJNGludDJuS2tjYmtNTHpDdU5jSnpENnRmbWk3TFRiOW5xY1VCbFdlTU5DN1pYWWMxeTlLRDlESWpuV21vdHZYRDJCYWN5ZEFPWEUtWHpsRTVDSm1rcVFrcWstZFhGbW5vRDVzM1VRZWFEclNoRHhIbGJHY9IBvwFBVV95cUxNQWhDOEQtcTV0RmhTMGY4TDZqWExQSDRCTGNmbHFGM0F0N3dzNEtCNEZnNHJ4QnZKbmZiT1hYbUVQcnJtWU42T0hyUlBJNGludDJuS2tjYmtNTHpDdU5jSnpENnRmbWk3TFRiOW5xY1VCbFdlTU5DN1pYWWMxeTlLRDlESWpuV21vdHZYRDJCYWN5ZEFPWEUtWHpsRTVDSm1rcVFrcWstZFhGbW5vRDVzM1VRZWFEclNoRHhIbGJHYw?oc=5' target='_blank' rel='noopener'>Migros’ta indirim başladı: Bu ürünlerin fiyatı dikkatinizi çekebilir</a> <span style='color:var(--muted); font-size:12px'>— Kocaeli Barış Gazetesi · 06.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMidEFVX3lxTE5IN2E5UEZ4NFZhb2FYd25yQU53Q1YweXZ2Qm1xMC1DeDg3RVJRb2piWHJNUFByU0djcXBSdkpuWmY2X19LRTFiZkdCdUhyWjhzSFpCUXU3WlZlYWpwYldyUGh3WDNQbm1uM1hFeXpmQU9EaG9W?oc=5' target='_blank' rel='noopener'>Migros Ticaret mağaza sayısını 3827’ye çıkardı</a> <span style='color:var(--muted); font-size:12px'>— Paratic Haber · 05.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMif0FVX3lxTE1KM0dac0RwRGxLblFRRG9SWmRSTW5XNEZ0MFhLb05EeUE2WFFma0JMRFZNNVRiUkVoOHRObndxbXVoNnA4dmlUdURXLWlEQ09iSXNXc1JMWXRkeF95TGtQUVJ4Yk5DMjltdFNvSzZkbGFLZ2VUU3p4Y25tRy1pMkE?oc=5' target='_blank' rel='noopener'>MIGROS TICARET A - KAP Haberleri - 2026-10-05 tarihli</a> <span style='color:var(--muted); font-size:12px'>— Bloomberght · 05.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMinwFBVV95cUxNSnA1a2ZwaGtYSERBcEw4SGhfMHhURkdKMlV3NHYxaS1TcEZvQV93S000OWV3UVdISDc2eFNUaW5zS0Y3bWJVc0pYU1ZCcnRCZGQ0T3ZjYmpzVmsxdTZLUmZqNHc0dmRVa1pCNmhOc09SMnRPTnVwZ0pIbTVCR0pKZ3RvdGwyS1NOSDRORDZUVWFralh2T1AzUHBZS0ZhbFnSAaQBQVVfeXFMTlRvN0pYTFhVNk0yTWgzWkZlTkRCYW1SbjlCQjFadlBmQ1hudWh0aC1wZjNvYzluYko0TmpWTHowbXZ6NU80ZVdfTFVfTE1wREtZVHlKWVZOaEpfaDJaeHN2NkJ1NWpxZVZ2SXdBX1VZc0lodlhDd3ZucnhDVm5PYWlDZnRIVXdVZDhOQnRTRDJjX1A4QnMza2pTVHdhWFVBcXNxdTc?oc=5' target='_blank' rel='noopener'>BofA's stake in Migros exceeded 3%</a> <span style='color:var(--muted); font-size:12px'>— Economy · 02.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMilwFBVV95cUxNczNFNlliT3RwQldpLTRDUEFENFhwTUo2ZG8tSUowMTczUW1xNGQ1ZUctX1NtTjd1QU02djB0TkdnOVFUaG1zV3hRVV96aXpWQzVxUlFkTHFNMzBPc2FZVG5aYWVEcXl4N0FKNXBwT1AyVDBUTUdHWWlxS2Z2VzMyWXZtUFlvcFVma2hQQ3dyR1BkY3VlVW80?oc=5' target='_blank' rel='noopener'>Migros Ülker Çikolata çekiliş sonuçları açıklandı! Asil ve yedek talihliler</a> <span style='color:var(--muted); font-size:12px'>— Takvim · 01.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMi3gFBVV95cUxNMTJ1NjcyNWM2RWJVSEU0bmtGWlhUd3AwS1hETTc4dk55OWMwNnpIVGs2alY3YjlfVS1ad194WHRMZzVXQlNHdTUyNjFKVlE2NlZwOUx2M1loVFkzWWpxanVIZmpXa0NCRXJuNkpMWlh2Tk4zdlFKNWVhU1ZNNGc3amZ1LXQ2bEZGNHJmWkE0Vm14dnVSSkdudTVNZjR6SEp3ME9ta1J6OS1tZkVoUk9vZldZVEJYcnM1ZGllOWJXeU14V2EtTDluSGxraGdLUmVPQk15bWtZVnlXdGtOVlE?oc=5' target='_blank' rel='noopener'>Migros Science Firefly Learning Unit reaches children in earthquake region for fourth year</a> <span style='color:var(--muted); font-size:12px'>— Anadolu Agency · 30.09</span></li></ul>
+<p style="margin:8px 0 0; font-size:12.5px"><a href="../company-news.html#H-MGROS">All company news →</a></p></div>
+</div>
+
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 2px">📝 Evaluations<span style="font-weight:400; color:var(--muted); font-size:12.5px">· prepared manually · last update: 23.09,2026</span></h3>
+<h4 style="margin:12px 0 0; font-size:14.5px">📈 Technical Analysis</h4><p style="margin:6px 0 0; font-size:14px">Migros is trading at 535.50 TL with a 0.65% decline on September 23, 2026. Medium and long-term EMA sequence is in SELL position; Wave Trend is BUY, short-term WAIT — chart is at 1/4 SELL level. Channel position is at 76%, with trend strength (r) -0.90, continuing to seek a reaction within a strong downtrend. The stock is priced 10% above the 60-day low of 486.00 TL and 21% below the 60-day high of 678.00 TL; 60-day return is -20.0%, reflecting weak performance in the sector.</p><h4 style="margin:12px 0 0; font-size:14.5px">🌍 Macroeconomic Evaluation</h4><p style="margin:6px 0 0; font-size:14px">The macro picture for organized food retail is sharp at both ends: inflation falling to 31.5% is trimming nominal revenue growth, but rising financing costs, the main pressure on Migros' net profit, can rapidly erode with interest rate cuts. As the Central Bank of the Republic of Turkey's easing path deepens, declining costs for credit cards and consumer finance also support basket size. Real wage increases and employment outlook are supporting domestic demand; discount channels are challenging pricing discipline through competition. USD/TL's level at 48.83 is balancing import input costs. In an environment where gold gram is at 6.786 TL, interest in defensive stocks with predictable cash flows continues. Main risks: delay in interest rate cuts, rigidity in rental costs, and margin pressure from competition.</p><h4 style="margin:12px 0 0; font-size:14.5px">🧾 Balance Sheet Evaluation</h4><p style="margin:6px 0 0; font-size:14px">Migros increased sales by 4.5% in the first half of 2026; however, in the second quarter, it announced a net loss of 0.5 billion TL against sales of 132.1 billion TL, and first-half profit fell by 44.4%. The main drivers of the quarterly loss were increased net financing costs in a high-interest environment and margin pressure from rent/wage inflation. The company, which generated 496.4 billion TL in revenue and 7.1 billion TL in net profit over the last four quarters, has a market cap of ~96 billion TL; with P/E ~13.4x, P/B ~1.0x, and EV/EBITDA ~6.8x, it's in a reasonable range based on valuation multiples. EV/EBITDA being in single digits shows that the net profit pressure is essentially from financing costs, and operational profitability has been maintained. Financial debt/equity is 41.6%, net debt ~6.5 billion TL is only ~0.4 times EBITDA; the balance sheet is solid and carries high sensitivity to interest rate cuts directly impacting profitability. ROE is 7.6%, low; with potential for recovery from interest rate easing. 2.8% dividend yield is reasonable. In summary, Migros is one of the most leveraged defensive stories in the interest rate cut cycle; while the operational side is solid, net profit is on a recovery path entirely dependent on the normalization of financing costs.</p>
+<p style="margin:10px 0 0; color:var(--muted); font-size:12px">This section is manually updated; for informational purposes only, not investment advice.</p>
+</div>
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 8px">Content related to MGROS</h3>
+<p style="margin:0"><a href="https://borsa-raporlari-web.pages.dev/ara?q=MGROS" target="_blank" rel="noopener">🔍 All report sections containing "MGROS" in semantic search →</a></p>
+<p style="margin:6px 0 0"><a href="../index.html">Daily report archive →</a></p>
+</div>
+</main>
+
+<nav class="altbar" aria-label="Quick menu">
+<a href="../reports.html"><span class="i" aria-hidden="true">📊</span>Reports</a>
+<a href="../technical-scan.html"><span class="i" aria-hidden="true">📈</span>Technical</a>
+<a href="../stocks/index.html" class="active"><span class="i" aria-hidden="true">🏦</span>Stocks</a>
+<a href="../portfolio.html"><span class="i" aria-hidden="true">💼</span>Portfolio</a>
+<a href="../news.html"><span class="i" aria-hidden="true">📰</span>News</a>
+<a href="../calendar.html"><span class="i" aria-hidden="true">📅</span>Calendar</a>
+</nav>
+
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+
+<footer class="footer">The information, comments and recommendations contained herein are for informational purposes only; they do not constitute investment advisory or investment advice. The accuracy of the data cannot be guaranteed and the user is responsible for any decisions that may arise from the content.<br>Data sources: İş Yatırım, RSS news feeds • Analysis: artificial intelligence (multi-agent system)<br><a href="../privacy.html" style="color:inherit">Privacy &amp; Data Protection</a></footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+</body></html>
