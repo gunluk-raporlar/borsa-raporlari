@@ -1503,7 +1503,9 @@ EN_YOL_ESLEME = "reports"
 
 
 def _en_yol_degistir(deger: str) -> str:
-    return re.sub(r"(?<!/de/)(?<!/ru/)(?<!/zh/)raporlar", EN_YOL_ESLEME, deger)
+    # Segment-guvenli: yalnizca bagimsiz "raporlar" yolu parcasini degistirir;
+    # "borsa-raporlari" (domain) ve "raporlari" gibi ek almis sozcuklere dokunmaz.
+    return re.sub(r"(?<![a-z0-9-])raporlar(?![a-z0-9])", EN_YOL_ESLEME, deger)
 
 
 def en_yollarini_ingilizcele(kok: Path) -> int:
@@ -1512,7 +1514,7 @@ def en_yollarini_ingilizcele(kok: Path) -> int:
     if not en_kok.exists():
         return 0
     nitelik_re = re.compile(r'(href|src|content)="([^"]*)"')
-    jsonld_re = re.compile(r'((?:url|mainEntityOfPage|id)\s*:\s*"[^"]*?)raporlar')
+    jsonld_re = re.compile(r'("(?:url|mainEntityOfPage)"\s*:\s*"[^"]*")')
 
     def _nitelik(m: "re.Match[str]") -> str:
         deger = m.group(2)
@@ -1534,7 +1536,10 @@ def en_yollarini_ingilizcele(kok: Path) -> int:
                           lambda m: _en_yol_degistir(m.group(1)), metin)
         else:
             yeni = nitelik_re.sub(_nitelik, metin)
-            yeni = jsonld_re.sub(lambda m: m.group(1) + EN_YOL_ESLEME, yeni)
+
+            def _jsonld(m: "re.Match[str]") -> str:
+                return _en_yol_degistir(m.group(1))
+            yeni = jsonld_re.sub(_jsonld, yeni)
         if yeni != metin:
             dosya.write_text(yeni, encoding="utf-8")
             sayi += 1
