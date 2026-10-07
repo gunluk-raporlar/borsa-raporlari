@@ -1491,6 +1491,64 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
     return ozet
 
 
+
+# ----------------------------------------------------------------------------
+# 5.5) INGILIZCE YOL ESLEME (2026-10-07 kullanici karari)
+# ----------------------------------------------------------------------------
+# Turkce agac "raporlar" dediginde Ingilizce sayfalar Ingilizce adlari kullansin:
+# /en/reports.html (hub) + /en/reports/<tarih>.html. Yalnizca URL baglamlarinda
+# uygulanir (href/src/content, JSON-LD url, arama indeksinin "u" alani) ve
+# /de/ /ru/ /zh/ on ekli degerler korunur — o diller Turkce yapiyi yansitir.
+EN_YOL_ESLEME = "reports"
+
+
+def _en_yol_degistir(deger: str) -> str:
+    return re.sub(r"(?<!/de/)(?<!/ru/)(?<!/zh/)raporlar", EN_YOL_ESLEME, deger)
+
+
+def en_yollarini_ingilizcele(kok: Path) -> int:
+    """en/ altindaki raporlar yollarini reports'a cevirir; donus: degisen dosya sayisi."""
+    en_kok = kok / "en"
+    if not en_kok.exists():
+        return 0
+    nitelik_re = re.compile(r'(href|src|content)="([^"]*)"')
+    jsonld_re = re.compile(r'((?:url|mainEntityOfPage|id)\s*:\s*"[^"]*?)raporlar')
+
+    def _nitelik(m: "re.Match[str]") -> str:
+        deger = m.group(2)
+        return f'{m.group(1)}="{_en_yol_degistir(deger)}"' if "raporlar" in deger else m.group(0)
+
+    sayi = 0
+    hedefler = list(en_kok.rglob("*.html")) + list(en_kok.rglob("*.xml")) + [kok / "sitemap.xml"] + [en_kok / "site-arama.json"]
+    for dosya in hedefler:
+        if not dosya.exists():
+            continue
+        metin = dosya.read_text(encoding="utf-8", errors="replace")
+        if "raporlar" not in metin:
+            continue
+        if dosya.suffix == ".json":
+            yeni = re.sub(r'("u"\s*:\s*"[^"]*?)raporlar', r"reports", metin)
+        elif dosya.suffix == ".xml" and dosya.name == "sitemap.xml":
+            # kok sitemap: yalnizca hreflang="en" alternatifleri degisir
+            yeni = re.sub(r'(<xhtml:link[^>]*hreflang="en"[^>]*>)',
+                          lambda m: _en_yol_degistir(m.group(1)), metin)
+        else:
+            yeni = nitelik_re.sub(_nitelik, metin)
+            yeni = jsonld_re.sub(lambda m: m.group(1) + EN_YOL_ESLEME, yeni)
+        if yeni != metin:
+            dosya.write_text(yeni, encoding="utf-8")
+            sayi += 1
+    hub = en_kok / "raporlar.html"
+    if hub.exists():
+        hub.rename(en_kok / "reports.html")
+        sayi += 1
+    dizin = en_kok / "raporlar"
+    if dizin.exists():
+        dizin.rename(en_kok / "reports")
+        sayi += 1
+    return sayi
+
+
 # ----------------------------------------------------------------------------
 # 6) SITEMAP ALTERNATIFLERI (opt-in)
 # ----------------------------------------------------------------------------
@@ -1768,6 +1826,11 @@ def main() -> int:
 
     if args.sitemap:
         print("[i18n] sitemap:", json.dumps(sitemap_guncelle(kok, diller), ensure_ascii=False))
+
+    if "en" in diller and not args.dogrula:
+        en_n = en_yollarini_ingilizcele(kok)
+        if en_n:
+            print(f"[i18n] en yollari ingilizcelestirildi: {en_n} dosya (raporlar -> reports)")
 
     # --- Turkce koruma kontrolu ---
     tr_sonra = tr_hashleri(kok)
