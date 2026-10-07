@@ -17,10 +17,14 @@ BASE = "https://opencode.ai/zen/v1"
 # TYPESAFE_API_KEY). Yine de karmasayi onlemek icin jev modelleri
 # yoklamadan cikarildi (2026-10-06 kullanici notu).
 MODELLER = [
-    "space-bunny-alpha",
+    "exo-free",
     "space-bunny-free",
-    "space-bunny",
-    "big-pickle",
+    "mimo-v2.6-flash-free",
+    "longcat-2.5-preview-free",
+    "ling-3.1-flash-free",
+    "nemotron-3-ultra-free",
+    "nemotron-3.5-lightning-free",
+    "fledge-alpha-free",
 ]
 
 
@@ -66,6 +70,9 @@ def dene(model):
 
 SORULAR = [
     "Does this market condition suggest bullish sentiment? Index up 1.2% at 9850, USD/TRY stable at 34.20. Answer yes or no.",
+    # Uzun-form Turkce yeterlilik testi (site raporlari icin kritik olan
+    # ozellikler: dogru Turkce karakter, tutarli paragraf, veriye dayali anlatim)
+    "Tüm harfleri doğru Türkçe karakterlerle (ç, ğ, ı, ö, ş, ü) kısa bir paragraf yaz: Türkiye'de enflasyonun %29,73'e inmesi ve politika faizinin %37'de tutulması yatırımcı için ne anlama gelir? 3-4 cümle yeter.",
 ]
 
 if __name__ == "__main__":
