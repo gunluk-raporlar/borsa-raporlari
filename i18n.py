@@ -1505,7 +1505,7 @@ EN_YOL_ESLEME = "reports"
 def _en_yol_degistir(deger: str) -> str:
     # Segment-guvenli: yalnizca bagimsiz "raporlar" yolu parcasini degistirir;
     # "borsa-raporlari" (domain) ve "raporlari" gibi ek almis sozcuklere dokunmaz.
-    return re.sub(r"(?<![a-z0-9-])raporlar(?![a-z0-9])", EN_YOL_ESLEME, deger)
+    return re.sub(r"(?<![a-z0-9-])(?<!/de/)(?<!/ru/)(?<!/zh/)raporlar(?![a-z0-9çğıöşü])", EN_YOL_ESLEME, deger)
 
 
 def en_yollarini_ingilizcele(kok: Path) -> int:
