@@ -14,6 +14,10 @@ on:
         description: 'STORM modu: oz prompt (daha az sayi = daha az uydurma alani)'
         required: false
         default: 'false'
+      force:
+        description: '48 saat tazelik kapisini atla (MAKRO_FORCE=1, yeniden uretim)'
+        required: false
+        default: 'false'
 permissions:
   contents: write
 concurrency:
@@ -67,6 +71,10 @@ jobs:
           # uydurma alani). Elle tetiklemede -f storm=true ile 1. denemeden zorlanir.
           if [ "${{ inputs.storm }}" = "true" ]; then
             export STORM=1
+          fi
+          # Elle yeniden uretim: 48 saat tazelik kapisini atla (2026-10-07).
+          if [ "${{ inputs.force }}" = "true" ]; then
+            export MAKRO_FORCE=1
           fi
           for deneme in 1 2 3; do
             if [ "$deneme" -ge 2 ]; then
