@@ -77,11 +77,26 @@ def main():
     for i, cumle in enumerate(CUMLELER, 1):
         yol = str(CIKTI / f"qwen3-deneme-{i}.wav")
         t1 = time.time()
-        if prompt is not None:
-            wavs, oran = model.generate_voice_clone(
-                text=cumle, language="Auto", voice_clone_prompt=prompt)
-        else:
-            raise SystemExit("Referans ses yok; klonlama yolu test edilemedi.")
+        # Ilk kosuda (2026-10-07) language="Auto" ile kisa sesler dustu
+        # (108 karakter -> 0,6 sn): karttaki "son kelimeler dusuyor" sorunu.
+        # Dil acik verilmeli; token ustunu de yukseltmeyi deniyoruz.
+        wavs, oran = None, None
+        for dil in ("Turkish", "Auto"):
+            for ekstra in ({"max_new_tokens": 1000}, {}):
+                try:
+                    if prompt is not None:
+                        wavs, oran = model.generate_voice_clone(
+                            text=cumle, language=dil,
+                            voice_clone_prompt=prompt, **ekstra)
+                    break
+                except TypeError:
+                    continue
+            if wavs is not None:
+                if dil != "Turkish" or not ekstra:
+                    print(f"cumle {i}: dil={dil!r} ekstra={bool(ekstra)}")
+                break
+        if wavs is None:
+            raise SystemExit("generate_voice_clone hicbir ayarla calismadi.")
         sentez = time.time() - t1
         with open(yol, "wb") as f:
             import soundfile as sf
