@@ -24,7 +24,7 @@ jobs:
         # CPU wheel'i hem kucuk hem yeterli.
         run: pip install torch --index-url https://download.pytorch.org/whl/cpu
       - name: ema-lightning kur
-        run: pip install "ema-lightning==1.0.1"
+        run: pip install "ema-lightning==1.0.1" edge-tts
       - name: Yoklama (olcum + ornek ses)
         run: python -u ema_probe.py
       - name: Radyo yedegi entegrasyon testi (edge-tts simule kesinti)
