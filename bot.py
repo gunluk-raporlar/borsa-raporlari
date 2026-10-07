@@ -5296,6 +5296,28 @@ def build_hub_sayfalari():
                 len(gunluk), len(derin), len(makro), len(ders_kartlari))
 
 
+def ana_sayfa_tazele():
+    """Ana sayfayi (index.html) guncel arsivlerle yeniden uretir.
+
+    Gunluk bot sabah build_index_html ile uretir; derin (12:23 TSI) ve
+    makro yayinlari gun icinde SONRA geldiginden ana sayfa kartlari bir
+    sonraki sabaha kadar bayat kaliyordu (2026-10-07: derin karti dünkü
+    raporda kaldi). Derin/makro akislari yayindan sonra bunu cagirir.
+    Teknik secimleri son dolu haliyle data/teknik-oneriler.json'dan
+    geri okunur.
+    """
+    raporlar = sorted((fn for fn in os.listdir("raporlar")
+                       if fn.endswith(".html")), reverse=True)
+    teknik_oneriler = None
+    try:
+        with open("data/teknik-oneriler.json", encoding="utf-8") as tf:
+            teknik_oneriler = json.load(tf)
+    except (OSError, ValueError):
+        teknik_oneriler = None
+    with open("index.html", "w", encoding="utf-8") as f:
+        f.write(build_index_html(load_portfolio(), raporlar, teknik_oneriler))
+
+
 def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     # Derin analiz ve makro analiz arsivleri KENDI dizinlerinde yasar
     # (2026-10-06 agac yapisi): derin-analiz/<tarih>.html, makro-analiz/<tarih>.html
@@ -8309,6 +8331,15 @@ if __name__ == "__main__":
     raporlar = sorted(
         (fn for fn in os.listdir("raporlar") if fn.endswith(".html")),
         reverse=True)
+    # Ana sayfa tazelemesi (ana_sayfa_tazele) gun icinde derin/makro
+    # yayinlarindan da cagirilir; teknik secimleri kaybolmasin diye son
+    # dolu liste kalici saklanir (2026-10-07).
+    if teknik_oneriler:
+        try:
+            with open("data/teknik-oneriler.json", "w", encoding="utf-8") as tf:
+                json.dump(teknik_oneriler, tf, ensure_ascii=False)
+        except OSError:
+            logger.exception("[Index] teknik-oneriler.json yazilamadi.")
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(build_index_html(p, raporlar, teknik_oneriler))
     try:

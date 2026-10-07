@@ -78,6 +78,10 @@ def main():
         f.write(arsiv_html)
     bot.build_hub_sayfalari()
     try:
+        bot.ana_sayfa_tazele()
+    except Exception:
+        logger.exception("Ana sayfa tazelenemedi; diger ciktilar etkilenmez.")
+    try:
         bot.indexnow_ping(["derin-analiz.html", "raporlar.html", "index.html"])
     except Exception:
         logger.exception("IndexNow ping atlanamadi (sorun degil).")
