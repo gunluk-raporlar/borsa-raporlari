@@ -19,8 +19,8 @@ jobs:
           python-version: '3.12'
       - name: ffmpeg kur
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
-      - name: torch (CPU) kur
-        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: torch + torchaudio (CPU) kur
+        run: pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
       - name: qwen-tts kur
         run: pip install "qwen-tts==0.1.1" soundfile
       - name: Resmi tarife yoklama
