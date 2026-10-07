@@ -114,6 +114,12 @@ _ULKE_EU = re.compile(
 # ifadeleri yaygindir ve TR cumlelerini EU degeriyle denetletip dogru TR
 # degerini EU oraniyla degistirtiyor (dogrulanmis saldiri vektoru, 2026-10-05).
 # Merkez bankasi adlari, karsilastirma yapan cumlede de sahibi gosterir.
+# Turkiye baglami: en yakin ulke kelimesi mantiginda ABD/Avrupa ile yarisir
+# (2026-10-07). "TCMB" hem kurum hem ulke ipucu olarak tr verir.
+_ULKE_TR = re.compile(
+    r"\b(?:Türkiye|Turkiye|Türkiye Cumhuriyet Merkez Bankası|TCMB)\b",
+    re.IGNORECASE,
+)
 _MERKEZ_FED = re.compile(r"\b(?:Federal Reserve|Fed)\b", re.IGNORECASE)
 _MERKEZ_EU = re.compile(
     r"\b(?:Avrupa Merkez Bankası|ECB|European Central Bank|EZB)\b", re.IGNORECASE
@@ -182,14 +188,19 @@ def _ulke_anahtari(cumle, sayi_pos):
         return min(merkezler)[1]
 
     onceki = []
-    for desen, anahtar in ((_ULKE_FED, "us"), (_ULKE_EU, "eu")):
+    for desen, anahtar in ((_ULKE_FED, "us"), (_ULKE_EU, "eu"),
+                           (_ULKE_TR, "tr")):
         for m in desen.finditer(cumle, 0, sayi_pos):
             onceki.append((m.start(), anahtar))
     if onceki:
+        # 2026-10-07: TR deseni eklendi — "ABD enflasyonu %3,4, Türkiye
+        # enflasyonu %28,4" cumlesinde Türkiye sayısı ABD oranına
+        # değiştiriliyordu (en yakın önceki ülke kelimesi kazanır).
         return max(onceki)[1]
 
     sonraki = set()
-    for desen, anahtar in ((_ULKE_FED, "us"), (_ULKE_EU, "eu")):
+    for desen, anahtar in ((_ULKE_FED, "us"), (_ULKE_EU, "eu"),
+                           (_ULKE_TR, "tr")):
         if desen.search(cumle, sayi_pos):
             sonraki.add(anahtar)
     if len(sonraki) == 1:
@@ -308,10 +319,25 @@ def faiz_duzelt(metin, oranlar, tolerans=0.005, izinli=None):
         yeni_parcalar = []
         for cumle in parcalar:
             if _FAIZ_KELIME.search(cumle) and _SAYI.search(cumle):
+                # Kurum konumlari: coklu kurumlu cumlelerde her sayi KENDI en
+                # yakin kurumuyla denetlenir (2026-10-07: "Fed faizi %5, ECB
+                # politika faizi %4" cumlesinde ECB sayisi Fed havuzuyla
+                # eslesip duzeltilmeden kaliyordu).
+                kurumlar = []
+                for m2 in _MERKEZ_FED.finditer(cumle):
+                    kurumlar.append((m2.start(), "us"))
+                for m2 in _MERKEZ_EU.finditer(cumle):
+                    kurumlar.append((m2.start(), "eu"))
+                for m2 in _MERKEZ_TCMB.finditer(cumle):
+                    kurumlar.append((m2.start(), "tr"))
+                coklu = len({k for _, k in kurumlar}) > 1
+
                 if _MERKEZ_FED.search(cumle):
                     oran = oranlar.get("us")
                 elif _MERKEZ_EU.search(cumle):
                     oran = oranlar.get("eu")
+                elif _MERKEZ_TCMB.search(cumle):
+                    oran = oranlar.get("tr")
                 elif _ULKE_FED.search(cumle):
                     oran = oranlar.get("us")
                 elif _ULKE_EU.search(cumle):
@@ -324,47 +350,92 @@ def faiz_duzelt(metin, oranlar, tolerans=0.005, izinli=None):
                 if oran is None:
                     yeni_parcalar.append(cumle)
                     continue
-                dogru_yazi = ("%.2f" % oran).rstrip("0").rstrip(".").replace(".", ",")
-                # Enflasyona daha yakin yuzdeler enflasyon denetimine aittir;
-                # faize en yakin adayi sec.
-                aday = None
-                for m in _SAYI.finditer(cumle):
-                    ef = _kelime_mesafesi(cumle, m.start(), _ENFLASYON_KELIME_DOKU)
-                    ff = _kelime_mesafesi(cumle, m.start(), _FAIZ_SAHIP_KELIME)
-                    fb = _kelime_mesafesi(cumle, m.start(), _BEKLENTI)
-                    if ff is None:
-                        ff = _kelime_mesafesi(cumle, m.start(), _FAIZ_KELIME)
-                        # "Merkez bankasi %2 hedefi" cumlesinde genel kurum
-                        # adini faiz sahibi sayma.
-                        if fb is not None and (ff is None or fb <= ff + 5):
-                            continue
-                    if ef is not None and (ff is None or ef < ff):
-                        continue  # bu yuzde enflasyona ait
-                    if ff is None:
-                        continue  # faiz kelimesiyle arada iliski yok
-                    if fb is not None and fb <= ff:
-                        continue  # bu yuzde faiz beklentisi/hedefi
-                    # Bileşik faiz türü (mevduat/kredi/reel faizi...) politika
-                    # faizi değildir: sayının solundaki yakın bölümde tür adı
-                    # varsa bu yüzde politika faiziyle denetlenmez — aksi halde
-                    # DOĞRU mevduat faizi (%43,8) politika faiziyle (%37)
-                    # değiştiriliyordu (dogrulanmis saldiri vektoru, 2026-10-05).
-                    sol = cumle[max(0, m.start() - 30):m.start()]
-                    if _FAIZ_TURU.search(sol):
-                        continue
-                    aday = m
-                    break
-                if aday is not None:
-                    yazi = aday.group(0)
+
+                def _faiz_duzelt_bir(m, oran_deger):
+                    yazi = m.group(0)
                     try:
                         sayi = float(yazi.replace("%", "").replace(",", ".").strip())
                     except ValueError:
-                        sayi = None
-                    if (sayi is not None and abs(sayi - oran) > tolerans
-                            and not _gercek_mi(sayi, izinli)):
-                        dogru = "%" + dogru_yazi if yazi.startswith("%") else dogru_yazi + "%"
-                        cumle = cumle[: aday.start()] + dogru + cumle[aday.end():]
+                        return None
+                    if sayi is None or abs(sayi - oran_deger) <= tolerans:
+                        return None
+                    if _gercek_mi(sayi, izinli):
+                        return None
+                    dy = ("%.2f" % oran_deger).rstrip("0").rstrip(".").replace(".", ",")
+                    dogru = "%" + dy if yazi.startswith("%") else dy + "%"
+                    return (m, dogru, yazi)
+
+                if coklu:
+                    adaylar = []
+                    for m in _SAYI.finditer(cumle):
+                        ef = _kelime_mesafesi(cumle, m.start(), _ENFLASYON_KELIME_DOKU)
+                        ff = _kelime_mesafesi(cumle, m.start(), _FAIZ_SAHIP_KELIME)
+                        fb = _kelime_mesafesi(cumle, m.start(), _BEKLENTI)
+                        if ff is None:
+                            ff = _kelime_mesafesi(cumle, m.start(), _FAIZ_KELIME)
+                            if fb is not None and (ff is None or fb <= ff + 5):
+                                continue
+                        if ef is not None and (ff is None or ef < ff):
+                            continue  # bu yuzde enflasyona ait
+                        if ff is None:
+                            continue  # faiz kelimesiyle arada iliski yok
+                        if fb is not None and fb <= ff:
+                            continue  # bu yuzde faiz beklentisi/hedefi
+                        sol = cumle[max(0, m.start() - 30):m.start()]
+                        if _FAIZ_TURU.search(sol):
+                            continue
+                        oncekiler = [(p, k) for p, k in kurumlar if p < m.start()]
+                        if oncekiler:
+                            o2 = oranlar.get(max(oncekiler)[1])
+                            if o2 is not None:
+                                oran_deger = o2
+                        else:
+                            oran_deger = oran
+                        r = _faiz_duzelt_bir(m, oran_deger)
+                        if r:
+                            adaylar.append(r)
+                    # Sagdan sola uygula (konum kaymasini onler).
+                    for m, dogru, yazi in sorted(
+                            adaylar, key=lambda x: x[0].start(), reverse=True):
+                        cumle = cumle[: m.start()] + dogru + cumle[m.end():]
                         duzeltmeler.append((yazi, dogru))
+                else:
+                    dogru_yazi = ("%.2f" % oran).rstrip("0").rstrip(".").replace(".", ",")
+                    # Enflasyona daha yakin yuzdeler enflasyon denetimine aittir;
+                    # faize en yakin adayi sec.
+                    aday = None
+                    for m in _SAYI.finditer(cumle):
+                        ef = _kelime_mesafesi(cumle, m.start(), _ENFLASYON_KELIME_DOKU)
+                        ff = _kelime_mesafesi(cumle, m.start(), _FAIZ_SAHIP_KELIME)
+                        fb = _kelime_mesafesi(cumle, m.start(), _BEKLENTI)
+                        if ff is None:
+                            ff = _kelime_mesafesi(cumle, m.start(), _FAIZ_KELIME)
+                            # "Merkez bankasi %2 hedefi" cumlesinde genel kurum
+                            # adini faiz sahibi sayma.
+                            if fb is not None and (ff is None or fb <= ff + 5):
+                                continue
+                        if ef is not None and (ff is None or ef < ff):
+                            continue  # bu yuzde enflasyona ait
+                        if ff is None:
+                            continue  # faiz kelimesiyle arada iliski yok
+                        if fb is not None and fb <= ff:
+                            continue  # bu yuzde faiz beklentisi/hedefi
+                        # Bileşik faiz türü (mevduat/kredi/reel faizi...) politika
+                        # faizi değildir: sayının solundaki yakın bölümde tür adı
+                        # varsa bu yüzde politika faiziyle denetlenmez — aksi halde
+                        # DOĞRU mevduat faizi (%43,8) politika faiziyle (%37)
+                        # değiştiriliyordu (dogrulanmis saldiri vektoru, 2026-10-05).
+                        sol = cumle[max(0, m.start() - 30):m.start()]
+                        if _FAIZ_TURU.search(sol):
+                            continue
+                        aday = m
+                        break
+                    if aday is not None:
+                        r = _faiz_duzelt_bir(aday, oran)
+                        if r:
+                            m, dogru, yazi = r
+                            cumle = cumle[: m.start()] + dogru + cumle[m.end():]
+                            duzeltmeler.append((yazi, dogru))
             yeni_parcalar.append(cumle)
         cikti.append(" ".join(yeni_parcalar) if len(parcalar) > 1 else yeni_parcalar[0])
     return "\n".join(cikti), duzeltmeler
@@ -710,6 +781,9 @@ _SEVIYE_SAG = re.compile(
 )
 
 
+# TCMB kurum adi: coklu-kurum cumlelerinde sayiya tr oranini esler.
+_MERKEZ_TCMB = re.compile(
+    r"\b(?:TCMB|Türkiye Cumhuriyet Merkez Bankası)\b", re.IGNORECASE)
 # Yabanci endeks adi gecen cumleler BIST seviyesiyle denetlenmez; aksi halde
 # "DXY endeksi 102.500 seviyesine cikti" ifadesindeki 102.500, XU030 degeriyle
 # (15.327) degistiriliyordu (dogrulanmis saldiri vektoru, 2026-10-05).
@@ -793,12 +867,26 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15,
         yeni_parcalar = []
         for cumle in parcalar:
             if _ENDEKS_BAGLAM.search(cumle) and _SEVIYE_BAGLAM.search(cumle):
-                if _YABANCI_ENDEKS.search(cumle):
-                    yeni_parcalar.append(cumle)
-                    continue
+                yabanci = _YABANCI_ENDEKS.search(cumle)
                 etiket100 = re.search(r"(BIST\s*100|XU0?100)", cumle, re.I)
                 etiket30 = re.search(r"(BIST\s*30|XU0?30)", cumle, re.I)
-                if etiket100 and etiket30:
+                per_number = bool(yabanci)
+                if per_number:
+                    # Yabanci endeks gecen cumlede sayi-basina etiket esleme
+                    # (2026-10-07): sayidan onceki en yakin etiket kurumu
+                    # belirler; acik BIST/XU etiketi YOKSA sayi ATLANIR —
+                    # varsayilana (XU030) dusmez, aksi halde "DXY endeksi
+                    # 102.500" ifadesi 16.372'ye "duzeltilirdi" (5 Ekim vektoru).
+                    etiketler = []
+                    for m2 in re.finditer(r"(BIST\s*100|XU0?100)", cumle, re.I):
+                        etiketler.append((m2.start(), "100"))
+                    for m2 in re.finditer(r"(BIST\s*30|XU0?30)", cumle, re.I):
+                        etiketler.append((m2.start(), "30"))
+                    for m2 in _YABANCI_ENDEKS.finditer(cumle):
+                        etiketler.append((m2.start(), None))
+                    etiketler.sort()
+                    hedef_seviye = True  # sayi-basina mod
+                elif etiket100 and etiket30:
                     hedef_seviye = None      # karsilastirma cumlesi: belirsiz
                 elif etiket100:
                     hedef_seviye = haritalar.get("100", varsayilan)
@@ -807,9 +895,27 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15,
                 else:
                     hedef_seviye = varsayilan
                 if hedef_seviye:
-                    dogru = _binlik(hedef_seviye)
+                    if per_number:
+                        dogru_varsayilan = None
+                    else:
+                        dogru_varsayilan = _binlik(hedef_seviye)
 
                     def _bak(m):
+                        if per_number:
+                            oncekiler = [(p, k) for p, k in etiketler
+                                         if p < m.start()]
+                            if not oncekiler:
+                                return m.group(0)   # acik etiket yok -> atla
+                            k2 = max(oncekiler)[1]
+                            if k2 is None:
+                                return m.group(0)   # yabanci endekse ait -> atla
+                            hedef = haritalar.get(k2, varsayilan)
+                            if not hedef:
+                                return m.group(0)
+                            dogru = _binlik(hedef)
+                        else:
+                            hedef = hedef_seviye
+                            dogru = dogru_varsayilan
                         try:
                             deger = _sayiya(m.group(1))
                         except ValueError:
@@ -828,10 +934,10 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15,
                         # icinde kaldigi icin baska turlu gorunmez).
                         for diger_k, diger_v in haritalar.items():
                             if (diger_v and abs(deger / diger_v - 1) <= 0.005
-                                    and abs(deger / hedef_seviye - 1) > 0.01):
+                                    and abs(deger / hedef - 1) > 0.01):
                                 duzeltmeler.append((m.group(1), dogru))
                                 return dogru
-                        if abs(deger / hedef_seviye - 1) <= tolerans:
+                        if abs(deger / hedef - 1) <= tolerans:
                             return m.group(0)
                         duzeltmeler.append((m.group(1), dogru))
                         return dogru
@@ -1190,5 +1296,31 @@ if __name__ == "__main__":
     u2 = makro_gosterge_duzelt(
         "ABD'de u-6 işsizlik oranı %8,1 seviyesine cikti.", U6, izinli=[4.2])
     assert u2[1] and u2[1][0][0] == "u6_unemployment" and "7,6" in u2[0],         f"u-6 uydurmasi yanlis gostergese gitti: {u2}"
+
+    # --- COKLU-ULKE / COKLU-KURUM CUMLELERI (2026-10-07, ChatGPT stres testi) ---
+    # 1) "ABD enflasyonu %3,4, Türkiye enflasyonu %28,4": TR sayisi ABD
+    #    oranina degistiriliyordu (_ulke_anahtari'da TR deseni yoktu).
+    sm1 = metin_dogrula(
+        "ABD enflasyonu %3,4, Türkiye enflasyonu %28,4 seviyesinde.",
+        ADLAR, enflasyon_yuzde=29.73,
+        enflasyon_oranlari={"tr": 29.73, "us": 3.4},
+        izinli_degerler=[3.4, 29.73])
+    assert "%3,4," in sm1["metin"] and "Türkiye enflasyonu %29,73" in sm1["metin"],         f"TR sayisi yanlis ulkeye gitti: {sm1['metin']}"
+    # 2) "Fed faizi %5, ECB politika faizi %4,5": ECB sayisi Fed havuzuyla
+    #    eslesiyordu; artik her sayi kendi en yakin kurumuyla denetlenir.
+    sf2 = faiz_duzelt(
+        "Fed faizi %5, ECB politika faizi %4,5.",
+        {"tr": 37.0, "us": 4.0, "eu": 2.65}, izinli=[4.0, 2.65])
+    assert "%4," in sf2[0] and "2,65" in sf2[0] and "%4,5" not in sf2[0],         f"coklu kurum eslemesi calismadi: {sf2}"
+    # 3) Yabanci endeksli cumlede BIST sayisi artik denetlenir, yabanci
+    #    sayi dokunulmaz kalir; etiketsiz sayi yine atlanir.
+    se1 = endeks_seviye_duzelt(
+        "BIST 30 12000 seviyesinde kapandi, DXY 102.500 seviyesinde.",
+        15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
+    assert "15.327" in se1[0] and "102.500" in se1[0], f"DXY/BIST karisti: {se1}"
+    se2 = endeks_seviye_duzelt(
+        "DXY endeksi 102.500 seviyesine cikti.",
+        15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
+    assert se2[1] == [] and "102.500" in se2[0], f"etiketsiz sayi bozuldu: {se2}"
 
     print("dogrulama.py: tum kendini testler gecti.")
