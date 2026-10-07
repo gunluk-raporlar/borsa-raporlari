@@ -1,13 +1,17 @@
 name: Yayın Nöbetçisi (site kontrolü)
 on:
   schedule:
-    # 11:00 TSİ — günün günlük raporu (raporlar/<tarih>.html) canlı sitede mi?
-    # (normalde ~08:10'da yayında olur; 3 saatlik gecikme payı bırakıldı)
-    - cron: '0 8 * * *'
-    # 14:00 TSİ — derin analiz (derin-analiz/<tarih>.html) canlıda mi?
-    # (normalde ~13:30'da yayında olur). Pazartesi günleri makro analiz de
-    # kontrol edilir (haftalik yayin).
-    - cron: '0 11 * * *'
+    # 2026-10-07: GitHub, tam saatlere yakin zamanlanmis kosulari yuk
+    # dagiliminda SESSIZCE DI-SU-RUYOR (bu sabah gunluk raporun 04:05 UTC
+    # cronu hic calismadi, nobetcinin 08:00 UTC cronu da). Tek-saat-disi ve
+    # sik pencereler: her pencere 4 kontrol; bir kosu duserse sonraki
+    # kontrol ~1 saat icinde telafi eder.
+    # 08:23-11:23 TSİ — gunluk rapor (raporlar/<tarih>.html) canlıda mi?
+    # (normalde ~08:10'da yayında olur; 3 saatlik gecikme/telafi payı)
+    - cron: '23 5,6,7,8 * * 1-5'
+    # 12:23-15:23 TSİ — derin analiz (derin-analiz/<tarih>.html). Pazartesi
+    # gunleri makro analiz de kontrol edilir (haftalik yayin).
+    - cron: '23 9,10,11,12 * * 1-5'
   workflow_dispatch:
     inputs:
       kontrol:
@@ -38,8 +42,12 @@ jobs:
             echo "Hafta sonu — uretim/kontrol yok."
           fi
           if [ -z "$HEDEF" ]; then
+            # cronlar UTC; secim TSİ saat araligiyla yapilir (eski kod '08'
+            # esitligi ariyordu: 08:00 UTC kosusunda TSİ 11 oldugundan gunluk
+            # rapor zamanlanmis turda HIC kontrol edilmiyordu — 2026-10-07
+            # sabahi gorulen kok neden).
             SAAT=$(TZ=Europe/Istanbul date +%H)
-            if [ "$SAAT" = "08" ]; then
+            if [ "$SAAT" -ge 8 ] && [ "$SAAT" -le 11 ]; then
               HEDEF="daily"
             else
               HEDEF="derin"

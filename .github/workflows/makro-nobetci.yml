@@ -8,7 +8,7 @@ on:
     # karışması olmaz. ~05:10'da biter; 07:05'teki günlük rapordan ~2 saat
     # önce taze arşiv hazır olur. 06:00'tan sonra tetiklemek YANLIŞ olurdu:
     # pencere kapanır ve kapı koşuyu reddederdi.
-    - cron: '0 2 * * *'
+    - cron: '13 2 * * *'
   workflow_dispatch:
 permissions:
   actions: write

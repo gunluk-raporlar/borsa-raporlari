@@ -6,8 +6,8 @@ on:
   # tazelik kapisi taze sayfada gereksiz uretimi 1 dakikada keser. Son care
   # yayini (uyari rozetli) ile "haftalarca bayat sayfa" senaryosu kapanmistir.
   schedule:
-    - cron: '0 4 * * 1'
-    - cron: '0 5 * * 2-5'
+    - cron: '41 4 * * 1'
+    - cron: '41 5 * * 2-5'
   workflow_dispatch:
     inputs:
       storm:
