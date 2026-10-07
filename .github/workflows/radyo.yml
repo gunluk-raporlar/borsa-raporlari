@@ -26,6 +26,13 @@ jobs:
           python-version: '3.12'
       - name: Kutuphaneleri kur
         run: pip install -r requirements.txt
+      - name: EMA yedegi kur (edge-tts duserse yerel Turkce TTS)
+        # pip'in varsayilan torch'u CUDA paketi (~2 GB); runner GPU'suz,
+        # CPU wheel'i yeterli. ema-lightning: HF canberkkkkkk/ema-lightning
+        # (2026-10-07 yoklamasi: kurulum ~4 dk, sentez ~10x gercek zamanli).
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install "ema-lightning==1.0.1"
       - name: ffmpeg kur
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Yayini uret

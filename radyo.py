@@ -456,18 +456,70 @@ def _ffmpeg_bul():
         return None
 
 
+_ema_model = None
+
+
+def _ema_seslendir(metin, konusan, cikti_yolu):
+    """edge-tts yedegi: EMA Lightning (yerel, offline Turkce TTS).
+
+    Microsoft'un gayriresmi uc noktasi gittiginde yayin devam etsin diye
+    eklendi (2026-10-07; HF canberkkkkkk/ema-lightning, Apache 2.0,
+    8.6M parametre — runner'da ~10x gercek zamanli, yoklama: ema_probe.py).
+    Tek seslidir; konusan farki hiz ile verilir (ELA 1.0, MERT 0.94).
+    Kurulum yalnizca radyo is akisinda yapilir (torch CPU + ema-lightning);
+    burada ImportError'une karsi sessizce tekrar yukseltilir.
+    """
+    global _ema_model
+    try:
+        from ema_lightning import EMA
+    except ImportError as e:
+        raise RuntimeError(
+            "edge-tts basarisiz ve EMA yedegi kurulu degil "
+            "(pip install ema-lightning)") from e
+    if _ema_model is None:
+        logger.info("[Radyo] EMA Lightning yukleniyor (yedek motor)...")
+        _ema_model = EMA()
+    hiz = 0.94 if konusan == "MERT" else 1.0
+    wav_yolu = os.path.splitext(cikti_yolu)[0] + ".wav"
+    try:
+        _ema_model.say(metin, path=wav_yolu, speed=hiz)
+    except TypeError:
+        # paket surumu speed parametresini desteklemiyorsa hizsiz devam
+        _ema_model.say(metin, path=wav_yolu)
+    ffmpeg = _ffmpeg_bul()
+    if not ffmpeg:
+        raise RuntimeError("EMA yedegi icin ffmpeg bulunamadi")
+    r = os.system(f'"{ffmpeg}" -y -loglevel error -i "{wav_yolu}" '
+                  f'-c:a libmp3lame -b:a 48k -ar 24000 "{cikti_yolu}"')
+    if r != 0:
+        raise RuntimeError(f"EMA wav->mp3 donusumu basarisiz ({r})")
+    os.remove(wav_yolu)
+    return cikti_yolu
+
+
 async def _replik_seslendir(replik, konusan, cikti_yolu):
-    from edge_tts import Communicate
-    ses = SESLER.get(konusan, SESLER["ELA"])
     metin = _tl_konusma_metni(replik)
     metin = bot._konusma_metni_normalize(metin)
+    try:
+        from edge_tts import Communicate
+    except ImportError:
+        logger.warning("[Radyo] edge-tts kurulu degil; EMA yedegi kullaniliyor.")
+        return await asyncio.to_thread(_ema_seslendir, metin, konusan, cikti_yolu)
+    ses = SESLER.get(konusan, SESLER["ELA"])
     # Radyo karakterleri: ses + hiz + perde farki (tekduzeligi kirar)
     if konusan == "MERT":
         rate, pitch, volume = "+8%", "+6Hz", "+0%"
     else:  # ELA
         rate, pitch, volume = "+3%", "-5Hz", "+0%"
-    com = Communicate(metin, ses, rate=rate, pitch=pitch, volume=volume)
-    await com.save(cikti_yolu)
+    try:
+        com = Communicate(metin, ses, rate=rate, pitch=pitch, volume=volume)
+        await com.save(cikti_yolu)
+    except Exception as e:
+        # Microsoft ucnoktasi gitti/limitlendi: yayini kurtarmak icin yerel
+        # EMA ile devam (2026-10-07). Karakter farki yedekte yalnizca hizdir.
+        logger.warning("[Radyo] edge-tts basarisiz (%s); EMA yedegine geciliyor",
+                       str(e)[:120])
+        return await asyncio.to_thread(_ema_seslendir, metin, konusan, cikti_yolu)
     return cikti_yolu
 
 
@@ -559,8 +611,14 @@ def main():
     try:
         import edge_tts  # noqa: F401
     except ImportError:
-        logger.error("edge-tts kurulu degil (pip install edge-tts).")
-        return 1
+        try:
+            import ema_lightning  # noqa: F401
+            logger.warning("edge-tts kurulu degil; tum replikler EMA yedegi "
+                           "ile seslendirilecek (tek ses).")
+        except ImportError:
+            logger.error("edge-tts de EMA yedegi de kurulu degil "
+                         "(pip install edge-tts ema-lightning).")
+            return 1
 
     veri = _gunun_verisi()
     veri["bolum"] = bolum

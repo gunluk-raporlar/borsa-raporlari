@@ -27,6 +27,29 @@ jobs:
         run: pip install "ema-lightning==1.0.1"
       - name: Yoklama (olcum + ornek ses)
         run: python -u ema_probe.py
+      - name: Radyo yedegi entegrasyon testi (edge-tts simule kesinti)
+        env:
+          OPENCODE_API_KEY: deneme  # bot importu icin kukla anahtar (ag cagrisi yok)
+        run: |
+          python - <<'PY'
+          import asyncio, os
+          import edge_tts
+          import radyo
+
+          class Patlak:
+              def __init__(self, *a, **k):
+                  pass
+              async def save(self, yol):
+                  raise ConnectionError("simule edge-tts kesintisi")
+
+          edge_tts.Communicate = Patlak  # fallback zorla tetiklenir
+          os.makedirs("radyo/deneme", exist_ok=True)
+          asyncio.run(radyo._replik_seslendir(
+              "Merhaba, ben Mert. Yedek motor testi: BIST 30 günü yüzde 1,2 "
+              "kazançla kapandı.", "MERT",
+              "radyo/deneme/ema-yedek-test.mp3"))
+          print("YEDEK TEST OK: radyo/deneme/ema-yedek-test.mp3")
+          PY
       - name: Ornek sesleri repoya isle
         run: |
           git config user.name "borsa-bot"
