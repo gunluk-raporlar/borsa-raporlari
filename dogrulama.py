@@ -200,7 +200,7 @@ def _ulke_anahtari(cumle, sayi_pos):
 
 
 def enflasyon_duzelt(metin, oran_yuzde, tolerans=0.005, oranlar=None,
-                     oranlar_aylik=None):
+                     oranlar_aylik=None, izinli=None):
     """Enflasyon/TUFE yuzdelerini ulke ve gosterge baglamindan duzeltir.
 
     `oranlar` = {"tr": .., "us": .., "eu": ..}. Verilmedigi ulke icin
@@ -249,6 +249,10 @@ def enflasyon_duzelt(metin, oran_yuzde, tolerans=0.005, oranlar=None,
                     hedef = (oranlar_aylik or {}).get(anahtar)
                 if hedef is None or abs(deger - hedef) <= tolerans:
                     continue
+                # GERCEK DEGER KORUMASI: sayi snapshot'in baska bir satirinda
+                # gercekse (or. ABD enflasyonu %3,4) dokunulmaz (2026-10-07).
+                if _gercek_mi(deger, izinli):
+                    continue
                 # Ayni ulke icin yalnizca enflasyona en yakin yuzdeyi duzelt.
                 if anahtar not in en_iyi or d_enf < en_iyi[anahtar][0]:
                     en_iyi[anahtar] = (d_enf, m, hedef)
@@ -289,7 +293,7 @@ _FAIZ_TURU = re.compile(
 _ULKE_BAGLAM = re.compile(r"\b(avrupa|euro bölgesi|ECB)\b", re.IGNORECASE)
 
 
-def faiz_duzelt(metin, oranlar, tolerans=0.005):
+def faiz_duzelt(metin, oranlar, tolerans=0.005, izinli=None):
     """Politika faizi cumlelerinde gercek orandan sapan sayiyi duzeltir.
 
     oranlar: {"tr": 37.0, "us": 4.0, "eu": 2.65} biciminde ulke bazli oranlar
@@ -356,7 +360,8 @@ def faiz_duzelt(metin, oranlar, tolerans=0.005):
                         sayi = float(yazi.replace("%", "").replace(",", ".").strip())
                     except ValueError:
                         sayi = None
-                    if sayi is not None and abs(sayi - oran) > tolerans:
+                    if (sayi is not None and abs(sayi - oran) > tolerans
+                            and not _gercek_mi(sayi, izinli)):
                         dogru = "%" + dogru_yazi if yazi.startswith("%") else dogru_yazi + "%"
                         cumle = cumle[: aday.start()] + dogru + cumle[aday.end():]
                         duzeltmeler.append((yazi, dogru))
@@ -501,7 +506,7 @@ def _sayi_bicimle(deger, yazi, birim):
     return ("%" + sayi) if yuzde else sayi
 
 
-def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005):
+def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005, izinli=None):
     """Snapshot'taki diger gercek gostergeleri ulke/indikator baglaminda duzeltir."""
     if not metin or not gostergeler:
         return metin, []
@@ -542,6 +547,11 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005):
                 for sayi_m in sayi_deseni.finditer(cumle):
                     deger = _yuzde_degeri(sayi_m.group(0))
                     if deger is None:
+                        continue
+                    # GERCEK DEGER KORUMASI (2026-10-07): sayi baska bir
+                    # gostergedeki gercek degerse (or. turizm 15,9, issizlik
+                    # %7,7) anahtar-kelime yanilgisiyla degistirilmez.
+                    if _gercek_mi(deger, izinli):
                         continue
                     d_ind = _kelime_mesafesi(cumle, sayi_m.start(), desen)
                     if d_ind is None or d_ind > 50:
@@ -590,7 +600,7 @@ def _etiket_cekirdegi(etiket):
     return re.sub(r"\s*\([^)]*\)\s*$", "", etiket).strip()
 
 
-def piyasa_serileri_duzelt(metin, seriler, tolerans=0.005):
+def piyasa_serileri_duzelt(metin, seriler, tolerans=0.005, izinli=None):
     """Gece piyasa snapshot'ındaki değerleri metinde deterministik düzeltir.
 
     Etiketler en uzun cekirdekten eslesir; bir serinin etiketi diger bir
@@ -653,7 +663,8 @@ def piyasa_serileri_duzelt(metin, seriler, tolerans=0.005):
                         continue
                     kapali.append((sayi_m.start(), sayi_m.end()))
                     hedef = float(r["value"])
-                    if abs(deger - hedef) > max(tolerans, abs(hedef) * 0.0005):
+                    if (abs(deger - hedef) > max(tolerans, abs(hedef) * 0.0005)
+                            and not _gercek_mi(deger, izinli)):
                         adaylar.append((sayi_m, hedef, r.get("unit", ""),
                                         str(r.get("label", ""))))
             for m, hedef, birim, etiket in sorted(
@@ -739,7 +750,7 @@ def _seviye_etiketi(cumle):
 
 
 def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15,
-                         endeks_seviyeleri=None):
+                         endeks_seviyeleri=None, izinli=None):
     """Endeks cumlelerindeki seviyeleri gercek degerle karsilastirir.
 
     Donus: (yeni_metin, duzeltmeler, uyarilar); duzeltme = (eski, yeni),
@@ -795,6 +806,10 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15,
                             return m.group(0)
                         if deger <= 0:
                             return m.group(0)
+                        # GERCEK DEGER KORUMASI (2026-10-07): sayi snapshot'taki
+                        # herhangi bir gercek degerse dokunulmaz.
+                        if _gercek_mi(deger, izinli, tolerans=0.0005):
+                            return m.group(0)
                         # Kopya saptamasi (tolerans denetiminden ONCE): sayi
                         # haritadaki BASKA bir endeksin gercek degerine yakinsa
                         # ve hedef endeksten acik sekilde sapiyorsa model o
@@ -821,10 +836,28 @@ def endeks_seviye_duzelt(metin, endeks_seviyesi, tolerans=0.15,
     return "\n".join(cikti), duzeltmeler, uyarilar
 
 
+def _gercek_mi(deger, izinli, tolerans=0.005):
+    """Sayi, snapshot'in herhangi bir gercek degerine yaklasik eslesiyor mu?
+
+    Bagil tolerans (%0,5): 61,6~61,563, 26,0~25,98, 29,7~29,73 gibi yuvarlama
+    biçimleri korunur; 3,4 (ABD enflasyonu) gibi baska bir gercek deger de
+    korunur — dogrulayici gercek degerleri BIRBIRIYLE degistirmemeli
+    (2026-10-07: canli yayinda dogrulayicinin kendisi %3,4 -> %29,73 yazmisti).
+    """
+    if not izinli:
+        return False
+    for g in izinli:
+        fark = abs(deger - g)
+        if fark <= tolerans or fark <= tolerans * abs(g):
+            return True
+    return False
+
+
 def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
                    faiz_oranlari=None, enflasyon_oranlari=None,
                    makro_gostergeleri=None, piyasa_serileri=None,
-                   enflasyon_aylik_oranlari=None, endeks_seviyeleri=None):
+                   enflasyon_aylik_oranlari=None, endeks_seviyeleri=None,
+                   izinli_degerler=None):
     """Tum dogrulama zinciri. Donus sozlugu:
     {"metin": ..., "isim_duzeltme": [...], "enflasyon_duzeltme": [...],
      "endeks_duzeltme": [...], "endeks_uyari": [...], "faiz_duzeltme": [...],
@@ -836,12 +869,16 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
     """
     metin, isim = isim_duzelt(metin, adlar)
     metin, enf = enflasyon_duzelt(metin, enflasyon_yuzde, oranlar=enflasyon_oranlari,
-                                  oranlar_aylik=enflasyon_aylik_oranlari)
-    metin, faiz = faiz_duzelt(metin, faiz_oranlari)
-    metin, makro = makro_gosterge_duzelt(metin, makro_gostergeleri)
-    metin, piyasa = piyasa_serileri_duzelt(metin, piyasa_serileri)
+                                  oranlar_aylik=enflasyon_aylik_oranlari,
+                                  izinli=izinli_degerler)
+    metin, faiz = faiz_duzelt(metin, faiz_oranlari, izinli=izinli_degerler)
+    metin, makro = makro_gosterge_duzelt(metin, makro_gostergeleri,
+                                         izinli=izinli_degerler)
+    metin, piyasa = piyasa_serileri_duzelt(metin, piyasa_serileri,
+                                           izinli=izinli_degerler)
     metin, endeks, uyari = endeks_seviye_duzelt(metin, endeks_seviyesi,
-                                                endeks_seviyeleri=endeks_seviyeleri)
+                                                endeks_seviyeleri=endeks_seviyeleri,
+                                                izinli=izinli_degerler)
     return {"metin": metin, "isim_duzeltme": isim, "enflasyon_duzeltme": enf,
             "endeks_duzeltme": endeks, "endeks_uyari": uyari,
             "faiz_duzeltme": faiz, "makro_duzeltme": makro,
@@ -1068,5 +1105,56 @@ if __name__ == "__main__":
         "DXY endeksi 102.500 seviyesine cikti; BIST uygulamasi izlendi.",
         15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
     assert sy[1] == [] and "102.500" in sy[0], f"DXY bozuldu: {sy[0]}"
+
+    # --- GERCEK DEGER KORUMASI (2026-10-07, canli STORM kosusu vakalari) ---
+    # Dogrulayici, snapshot'ta VAR olan bir degeri baska bir gercek degerle
+    # "duzeltiyordu": %3,4 (ABD enflasyonu) -> %29,73 (TR enflasyonu) yazmisti.
+    IZINLI = [3.4, 29.73, 1.84, 37.0, 4.0, 2.65, 64.74, 43.795, 7.7, 15.9,
+              25.98, 36.3222, 61.563, 27.38, 8.2, 3.8, 2.2, 5.4, 1.2, -0.3234]
+    # 1) ABD bolumunde DOGRU %3,4 yazilmisti; %29,73 ile degistiriliyordu.
+    sa = metin_dogrula(
+        "ABD ekonomisi manşet enflasyon %3,4 seviyesinde; politika faizi %4,0 seviyesinde.",
+        ADLAR, enflasyon_yuzde=29.73,
+        enflasyon_oranlari={"tr": 29.73, "us": 3.4},
+        faiz_oranlari={"tr": 37.0, "us": 4.0},
+        izinli_degerler=IZINLI)
+    assert "%3,4" in sa["metin"], f"gercek ABD enflasyonu bozuldu: {sa['metin']}"
+    assert "%29,73" not in sa["metin"], f"TR degeri ABD cumlesine yazildi: {sa['metin']}"
+    # 2) Tuketici kredisi faizi %64,74 politika faizi havuzuyla degistiriliyordu.
+    sk2 = faiz_duzelt("Tuketici kredisi faizi %64,74 seviyesine cikti.",
+                      {"tr": 37.0, "us": 4.0, "eu": 2.65}, izinli=IZINLI)
+    assert "%64,74" in sk2[0] and sk2[1] == [], f"kredi faizi bozuldu: {sk2}"
+    # 3) Issizlik orani %7,7 sanayi uretimiyle (-0,323) degistiriliyordu.
+    sg = makro_gosterge_duzelt(
+        "Turkiye'de issizlik orani %7,7 seviyesinde kaldi.",
+        {"tr": {"unemployment_rate": 7.7, "industrial_production_yoy": -0.3234}},
+        izinli=IZINLI)
+    assert "%7,7" in sg[0] and sg[1] == [], f"issizlik orani bozuldu: {sg}"
+    # 4) Turizm gelirleri 15,9 ihracatla (25,98) degistiriliyordu; cumlede
+    # ihracat kelimesi gectigi icin exports desenine yakaliyordu.
+    sg2 = makro_gosterge_duzelt(
+        "Ihracat artisiyla turizm gelirleri 15,9 milyar dolara ulasti.",
+        {"tr": {"exports": 25.98, "tourism_revenue": 15.9}},
+        izinli=IZINLI)
+    assert "15,9" in sg2[0] and sg2[1] == [], f"turizm geliri bozuldu: {sg2}"
+    # 5) ECB faizi %2,65 "buyume" kelimesi yuzunden buyume degeriyle (1,2)
+    # degistiriliyordu.
+    sg3 = makro_gosterge_duzelt(
+        "ECB politika faizi %2,65 ile buyume dengesini ariyor.",
+        {"eu": {"growth_yoy": 1.2}},
+        izinli=IZINLI)
+    assert "%2,65" in sg3[0] and sg3[1] == [], f"ECB faizi bozuldu: {sg3}"
+    # 6) UYDURMA hala duzeltilir: evrende olmayan %55,1 TR oraniyla degisir.
+    su2 = metin_dogrula("Turkiye'de yillik enflasyon %55,1 seviyesinde.",
+                        ADLAR, enflasyon_yuzde=29.73,
+                        enflasyon_oranlari={"tr": 29.73},
+                        izinli_degerler=IZINLI)
+    assert "%29,73" in su2["metin"], "uydurma artik duzeltilmiyor!"
+    # 7) Yuvarlama korunur: %29,7, gercek %29,73'e dokunulmadan kalir.
+    sy2 = metin_dogrula("Turkiye'de yillik enflasyon %29,7 seviyesinde.",
+                        ADLAR, enflasyon_yuzde=29.73,
+                        enflasyon_oranlari={"tr": 29.73},
+                        izinli_degerler=IZINLI)
+    assert "%29,7 seviyesinde" in sy2["metin"], f"yuvarlama bozuldu: {sy2['metin']}"
 
     print("dogrulama.py: tum kendini testler gecti.")

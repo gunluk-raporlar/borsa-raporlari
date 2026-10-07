@@ -3741,6 +3741,16 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
                 endeks = float(pv["XU030"]["son"])
         except Exception:
             endeks = None
+        # GERCEK DEGER EVRENI (2026-10-07): dogrulayici artik snapshot'ta
+        # VAR olan hicbir sayiyi baska degerle degistiremez (canli vakit:
+        # %3,4 ABD enflasyonu TR'nin %29,73'iyle 'duzeltilmisti').
+        izinli = set(makro_veri.deger_evreni(snapshot))
+        izinli.update(faiz_oranlari.values())
+        izinli.update(enflasyon_oranlari.values())
+        if enflasyon:
+            izinli.add(float(enflasyon["yuzde"]))
+        endeks_map = _endeks_seviyeleri()
+        izinli.update(float(v) for v in endeks_map.values() if v)
         sonuc = dogrulama.metin_dogrula(
             metin, HISSE_ADLARI, enflasyon["yuzde"] if enflasyon else None,
             endeks_seviyesi=endeks, faiz_oranlari=faiz_oranlari,
@@ -3748,7 +3758,8 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
             enflasyon_aylik_oranlari=makro_veri.inflation_mom_map(snapshot),
             makro_gostergeleri=gostergeler,
             piyasa_serileri=piyasa_serileri,
-            endeks_seviyeleri=_endeks_seviyeleri())
+            endeks_seviyeleri=endeks_map,
+            izinli_degerler=sorted(izinli))
         if (sonuc["isim_duzeltme"] or sonuc["enflasyon_duzeltme"]
                 or sonuc["endeks_duzeltme"] or sonuc["faiz_duzeltme"]
                 or sonuc["makro_duzeltme"] or sonuc["piyasa_duzeltme"]):

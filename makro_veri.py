@@ -387,6 +387,30 @@ def inflation_mom_map(snapshot):
     return sonuc
 
 
+def deger_evreni(snapshot):
+    """Snapshot'taki TUM gercek sayisal degerler (dogrulayici korumasi, 2026-10-07).
+
+    Dogrulayicinin en buyuk hatasi gercek bir degeri baska bir gercek degerle
+    'duzeltmek' oldu (ABD enflasyonu %3,4 -> TR enflasyonu %29,73). Bu evren
+    olusturulunca dogrulayici evrende VAR olan hicbir sayiya dokunmaz: ulke/
+    gosterge fark etmeksizin gerceklesen, tahmin ve onceki kolonlari + piyasa
+    serileri (value/previous/change) toplanir.
+    """
+    validate(snapshot)
+    degerler = []
+    for r in snapshot["records"]:
+        for alan in ("value", "forecast", "previous"):
+            v = r.get(alan)
+            if isinstance(v, (int, float)) and not isinstance(v, bool):
+                degerler.append(float(v))
+    for r in (snapshot.get("piyasa") or []):
+        for alan in ("value", "previous", "change"):
+            v = r.get(alan)
+            if isinstance(v, (int, float)) and not isinstance(v, bool):
+                degerler.append(float(v))
+    return degerler
+
+
 def piyasa_map(snapshot):
     """Snapshot piyasa kayıtlarını doğrulayıcı için listeye çevirir."""
     validate(snapshot)
