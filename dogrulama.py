@@ -581,6 +581,17 @@ def _sayi_bicimle(deger, yazi, birim):
     return ("%" + sayi) if yuzde else sayi
 
 
+def _gosterge_hedef(gostergeler, ulke, gosterge):
+    """Gosterge degerini okur; bilinen anahtar alias'larini destekler
+    (2026-10-07, ChatGPT incelemesi): tourism_revenues/tourism_revenue
+    tekil-cogul karisikligi ayni sayiyi hic duzeltmeden geciriyordu."""
+    tablo = gostergeler.get(ulke) or {}
+    hedef = tablo.get(gosterge)
+    if hedef is None and gosterge == "tourism_revenues":
+        hedef = tablo.get("tourism_revenue")
+    return hedef
+
+
 def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005, izinli=None):
     """Snapshot'taki diger gercek gostergeleri ulke/indikator baglaminda duzeltir."""
     if not metin or not gostergeler:
@@ -637,7 +648,7 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005, izinli=None):
                     if sikil and _siklik_bul(cumle, sayi_m.start()) not in (None, sikil):
                         continue
                     ulke = _ulke_anahtari(cumle, sayi_m.start())
-                    hedef = (gostergeler.get(ulke) or {}).get(gosterge) if ulke else None
+                    hedef = _gosterge_hedef(gostergeler, ulke, gosterge) if ulke else None
                     if hedef is not None:
                         adaylar.append((d_ind, sayi_m, hedef, deger))
                 if adaylar:
@@ -1322,5 +1333,28 @@ if __name__ == "__main__":
         "DXY endeksi 102.500 seviyesine cikti.",
         15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
     assert se2[1] == [] and "102.500" in se2[0], f"etiketsiz sayi bozuldu: {se2}"
+
+    # --- ChatGPT yeniden-yazim incelemesinden alinan ek regresyonlar ---
+    # Anahtar alias: cogul (tourism_revenues) deseni tekil anahtarli veriyle
+    # de calismali; aksi halde ayni sayi hic duzeltilmeden geciyordu.
+    tg1 = makro_gosterge_duzelt(
+        "Turizm gelirleri 20,0 milyar dolar oldu.",
+        {"tr": {"tourism_revenue": 15.9}})
+    assert "15,9" in tg1[0] and tg1[1], f"tekil anahtar alias calismadi: {tg1}"
+    # Fed+ECB ayni cumlede, izinli'siz: her sayi kendi kurumuna duzeltilir.
+    fe = faiz_duzelt(
+        "Fed faizi %5, ECB politika faizi %4.",
+        {"tr": 37.0, "us": 4.0, "eu": 2.65})
+    assert fe[0] == "Fed faizi %4, ECB politika faizi %2,65." and len(fe[1]) == 2, fe
+    # ABD+TR ayni cumlede, izinli'siz (uydurma TR sayisi TR oranina gider).
+    tu = enflasyon_duzelt(
+        "ABD enflasyonu %3,4, Türkiye enflasyonu %28,4.",
+        31.51, oranlar={"tr": 31.51, "us": 3.4, "eu": 3.8})
+    assert tu[0] == "ABD enflasyonu %3,4, Türkiye enflasyonu %31,51.", tu
+    # Yabanci endeksli cumlede BIST denetlenir, yabanci sayi korunur.
+    bd = endeks_seviye_duzelt(
+        "BIST 30 endeksi 10.000 direnc, DXY endeksi 102.500 direnc.",
+        15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
+    assert "10.000" not in bd[0] and "15.327" in bd[0] and "102.500" in bd[0] and bd[1], bd
 
     print("dogrulama.py: tum kendini testler gecti.")
