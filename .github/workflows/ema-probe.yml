@@ -31,6 +31,7 @@ jobs:
         env:
           OPENCODE_API_KEY: deneme  # bot importu icin kukla anahtar (ag cagrisi yok)
         run: |
+          pip install -q -r requirements.txt
           python - <<'PY'
           import asyncio, os
           import edge_tts
