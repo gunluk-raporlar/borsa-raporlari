@@ -404,6 +404,10 @@ def _gosterge_sikligi(kod):
 
 
 # Snapshot'taki kalan makro gostergeleri icin genel deterministik denetim.
+# "U-6"/"u-6"/"U6" yazimlari genel issizlik denetiminden ayrilir (2026-10-07:
+# kucuk harfli "u-6" cumlesi genel oranla degistiriliyordu).
+_U6_ETIKET = re.compile(r"\bU-?6\b", re.IGNORECASE)
+
 _GOSTERGE_KELIMELER = {
     "producer_prices_yoy": re.compile(r"\b(?:ÜFE|üretici fiyat)\w*", re.IGNORECASE),
     "core_inflation_yoy": re.compile(r"\bçekirdek\s+enflasyon\w*", re.IGNORECASE),
@@ -539,7 +543,7 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005, izinli=None):
             for gosterge, desen in _GOSTERGE_KELIMELER.items():
                 if not desen.search(cumle):
                     continue
-                if gosterge == "unemployment_rate" and "U-6" in cumle:
+                if gosterge == "unemployment_rate" and _U6_ETIKET.search(cumle):
                     continue
                 adaylar = []
                 sayi_deseni = (_SAYI_YUZDELI if gosterge in yuzdeli_gostergeler
@@ -569,18 +573,24 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005, izinli=None):
                     yakin, sayi_m, hedef, deger = min(
                         adaylar, key=lambda x: x[0])
                     if abs(deger - hedef) > tolerans:
-                        duzeltilecek.append((gosterge, yakin, sayi_m, hedef))
+                        # deger tuplende tasinir: ayni sayiya bakan gostergeler
+                        # arasinda secim sozluk sirasina degil, anahtar-kelime
+                        # yakinligina (esitse deger yakinligina) gore yapilir
+                        # (2026-10-07: turizm 15,9 ihracatla degistiriliyordu).
+                        duzeltilecek.append((gosterge, yakin, sayi_m, hedef, deger))
             # Ayni sayi birden fazla gosterge adayinda gorundugunde eski
             # uygulama ayni konuma iki kez yaziyordu (metin kaymasi); yalnizca
             # ilk aday uygulanir (sozluk sirasi yillik tercih eder).
             gorulen, tek_aday = set(), []
-            for aday in sorted(duzeltilecek, key=lambda x: x[2].start()):
+            for aday in sorted(duzeltilecek,
+                               key=lambda x: (x[2].start(), x[1],
+                                              abs(x[4] - x[3]))):
                 if aday[2].start() in gorulen:
                     continue
                 gorulen.add(aday[2].start())
                 tek_aday.append(aday)
             duzeltilecek = tek_aday
-            for gosterge, _, m, hedef in sorted(
+            for gosterge, _, m, hedef, _deger in sorted(
                     duzeltilecek, key=lambda x: x[2].start(), reverse=True):
                 yazi = m.group(0)
                 birim = "%" if gosterge in yuzdeli_gostergeler else ""
@@ -1134,7 +1144,7 @@ if __name__ == "__main__":
     # ihracat kelimesi gectigi icin exports desenine yakaliyordu.
     sg2 = makro_gosterge_duzelt(
         "Ihracat artisiyla turizm gelirleri 15,9 milyar dolara ulasti.",
-        {"tr": {"exports": 25.98, "tourism_revenue": 15.9}},
+        {"tr": {"exports": 25.98, "tourism_revenues": 15.9}},
         izinli=IZINLI)
     assert "15,9" in sg2[0] and sg2[1] == [], f"turizm geliri bozuldu: {sg2}"
     # 5) ECB faizi %2,65 "buyume" kelimesi yuzunden buyume degeriyle (1,2)
@@ -1156,5 +1166,29 @@ if __name__ == "__main__":
                         enflasyon_oranlari={"tr": 29.73},
                         izinli_degerler=IZINLI)
     assert "%29,7 seviyesinde" in sy2["metin"], f"yuvarlama bozuldu: {sy2['metin']}"
+
+    # --- AYNI SAYIYA BIRDEN FAZLA GOSTERGE: sozluk sirasi degil yakınlık
+    # kazansin (2026-10-07, Replit incelemesi). "Turizm gelirleri" sayiya en
+    # yakin kelime; exports degeriyle degistirilmesi hataydi.
+    g1 = makro_gosterge_duzelt(
+        "Ihracat artisiyla turizm gelirleri 14,2 milyar dolara ulasti.",
+        {"tr": {"exports": 25.98, "tourism_revenues": 15.9}}, izinli=IZINLI)
+    assert g1[1] and g1[1][0][0] == "tourism_revenues" and "15,9" in g1[0],         f"yakinlik secimi calismadi: {g1}"
+    # Gercek deger korunur kurali ayni vaka: 15,9 zaten gercekse hic dokunma.
+    g2 = makro_gosterge_duzelt(
+        "Ihracat artisiyla turizm gelirleri 15,9 milyar dolara ulasti.",
+        {"tr": {"exports": 25.98, "tourism_revenues": 15.9}}, izinli=IZINLI)
+    assert g2[1] == [] and "15,9" in g2[0], f"gercek deger bozuldu: {g2}"
+
+    # --- U-6 kontrolu buyuk/kucuk harf duyarsiz (Replit incelemesi):
+    # kucuk harfli "u-6" cumlesi genel issizlik oraniyla degistiriliyordu.
+    U6 = {"us": {"unemployment_rate": 4.2, "u6_unemployment": 7.6}}
+    u1 = makro_gosterge_duzelt(
+        "ABD'de u-6 işsizlik oranı %7,6 seviyesinde kaldi.", U6)
+    assert u1[1] == [] and "%7,6" in u1[0], f"u-6 gercek degeri bozuldu: {u1}"
+    # Uydurma u-6 degeri dogru gostergese (u6) duzeltilir, genel orana degil.
+    u2 = makro_gosterge_duzelt(
+        "ABD'de u-6 işsizlik oranı %8,1 seviyesine cikti.", U6, izinli=[4.2])
+    assert u2[1] and u2[1][0][0] == "u6_unemployment" and "7,6" in u2[0],         f"u-6 uydurmasi yanlis gostergese gitti: {u2}"
 
     print("dogrulama.py: tum kendini testler gecti.")
