@@ -78,7 +78,7 @@ def main():
         f.write(arsiv_html)
     bot.build_hub_sayfalari()
     try:
-        bot.indexnow_ping(["derin-analiz.html", "reports/", "index.html"])
+        bot.indexnow_ping(["derin-analiz.html", "raporlar.html", "index.html"])
     except Exception:
         logger.exception("IndexNow ping atlanamadi (sorun degil).")
     print(f"DERIN ANALIZ SAYFA URETILDI: {date_str} | {len(analiz)} karakter", flush=True)

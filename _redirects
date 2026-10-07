@@ -22,3 +22,8 @@
 /reports/2026-10-06-derin-analiz.html  /derin-analiz/2026-10-06.html  301
 /reports/2026-10-07-makro-analiz.html  /makro-analiz/2026-10-07.html  301
 /reports/2026-10-07-makro-analiz  /makro-analiz/2026-10-07.html  301
+/reports/index.html  /raporlar.html  301
+/reports/  /raporlar.html  301
+/reports  /raporlar.html  301
+/raporlar/  /raporlar.html  301
+/reports/*  /raporlar/:splat  301

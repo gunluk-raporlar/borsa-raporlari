@@ -73,9 +73,9 @@ def _placeholder_yaz(makro, eksik_anahtar):
     (kok'e tam sayfa/placeholder yazmak) kaldirildi: kok artik her zaman hub.
     """
     bot.build_hub_sayfalari()
+    import glob as _glob
     logger.info("kok makro-analiz.html hub olarak tazelendi (arsiv: %d).",
-                len([fn for fn in os.listdir("reports")
-                     if fn.endswith("-makro-analiz.html")]))
+                len(_glob.glob("makro-analiz/????-??-??.html")))
 
 
 def main():
@@ -87,7 +87,7 @@ def main():
     # MAKRO_FORCE=1 ile kapı atlanir (zorla yenileme).
     if os.environ.get("MAKRO_FORCE") != "1":
         import glob as _glob
-        arsivler = sorted(_glob.glob("reports/*-makro-analiz.html"))
+        arsivler = sorted(_glob.glob("makro-analiz/????-??-??.html"))
         if arsivler:
             son_t = os.path.basename(arsivler[-1])[:10]
             try:

@@ -57,7 +57,7 @@ export async function raporListesi(limit = 60) {
     out.push({
       tarih,
       baslik: `Günlük Rapor — ${tarih}`,
-      url: `https://borsa-raporlari.pages.dev/reports/${tarih}.html`,
+      url: `https://borsa-raporlari.pages.dev/raporlar/${tarih}.html`,
     });
   }
   return out.sort((a, b) => b.tarih.localeCompare(a.tarih)).slice(0, limit);
@@ -66,7 +66,7 @@ export async function raporListesi(limit = 60) {
 /** Rapor sayfası içeriği: GitHub raw'dan HTML, script/iframe temizlenmiş. */
 export async function raporHtmlGetir(tarih) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(tarih)) return null;
-  const r = await fetch(`${REPO_RAW}/reports/${tarih}.html`, { next: { revalidate: 3600 } });
+  const r = await fetch(`${REPO_RAW}/raporlar/${tarih}.html`, { next: { revalidate: 3600 } });
   if (!r.ok) return null;
   let html = await r.text();
   html = html

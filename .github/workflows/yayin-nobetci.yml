@@ -1,10 +1,10 @@
 name: Yayın Nöbetçisi (site kontrolü)
 on:
   schedule:
-    # 11:00 TSİ — günün günlük raporu (reports/<tarih>.html) canlı sitede mi?
+    # 11:00 TSİ — günün günlük raporu (raporlar/<tarih>.html) canlı sitede mi?
     # (normalde ~08:10'da yayında olur; 3 saatlik gecikme payı bırakıldı)
     - cron: '0 8 * * *'
-    # 14:00 TSİ — derin analiz (reports/<tarih>-derin-analiz.html) canlıda mi?
+    # 14:00 TSİ — derin analiz (derin-analiz/<tarih>.html) canlıda mi?
     # (normalde ~13:30'da yayında olur). Pazartesi günleri makro analiz de
     # kontrol edilir (haftalik yayin).
     - cron: '0 11 * * *'
@@ -57,13 +57,13 @@ jobs:
           EKSIK=""
           for HEDEF in ${{ steps.sec.outputs.hedefler }}; do
             case "$HEDEF" in
-              daily) DOSYA="reports/${TODAY}.html" ;;
-              derin) DOSYA="reports/${TODAY}-derin-analiz.html" ;;
-              makro) DOSYA="reports/${TODAY}-makro-analiz.html" ;;
+              daily) DOSYA="raporlar/${TODAY}.html" ;;
+              derin) DOSYA="derin-analiz/${TODAY}.html" ;;
+              makro) DOSYA="makro-analiz/${TODAY}.html" ;;
             esac
             KOD=""
             for deneme in 1 2 3; do
-              # -L: site reports/...html adreslerini 308 ile yonlendiriyor
+              # -L: site raporlar/...html adreslerini 308 ile yonlendiriyor
               # (guzel URL); takip edilmezse yayinda olsa bile 308 doner.
               KOD=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 30 \
                     "https://borsa-raporlari.pages.dev/${DOSYA}?nobetci=${TODAY}-${deneme}")

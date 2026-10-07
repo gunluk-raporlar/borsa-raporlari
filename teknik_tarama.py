@@ -57,7 +57,7 @@ def main():
     except Exception:
         logger.exception("borsapy-analiz.html uretilemedi; teknik sayfa etkilenmez.")
 
-    raporlar = sorted((fn for fn in os.listdir("reports") if fn.endswith(".html")), reverse=True)
+    raporlar = sorted((fn for fn in os.listdir("raporlar") if fn.endswith(".html")), reverse=True)
     p = bot.load_portfolio()
     oneriler = [s for s in satirlar if s["genel"] in ("GÜÇLÜ AL", "AL")][:6]
     if _yaz_degistiyse("index.html", bot.build_index_html(p, raporlar, oneriler)):

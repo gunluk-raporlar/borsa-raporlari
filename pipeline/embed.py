@@ -2,7 +2,7 @@
 """Borsa raporlarını embedding'leyip Supabase (pgvector) veritabanına yazar.
 
 Ne yapar?
-  1. reports/, haftasonu/, haftasonu-egitimi/ altındaki HTML raporları metne
+  1. raporlar/, haftasonu/, haftasonu-egitimi/ altındaki HTML raporları metne
      çıkarır, cümle sınırlarına dikkat ederek ~1400 karakterlik parçalara böler.
   2. Cloudflare Workers AI'nin OpenAI-uyumlu embeddings endpoint'i (bge-m3)
      üzerinden parçaları ASYNC + BATCH embedding'ler (asyncio + AsyncOpenAI;
@@ -36,8 +36,8 @@ from html.parser import HTMLParser
 
 KAYNAKLAR = [
     # (kaynak adı, klasör, dosya adı deseni)
-    ("gunluk-rapor", "reports", re.compile(r"^\d{4}-\d{2}-\d{2}\.html$")),
-    ("derin-analiz", "reports", re.compile(r"^\d{4}-\d{2}-\d{2}-derin-analiz\.html$")),
+    ("gunluk-rapor", "raporlar", re.compile(r"^\d{4}-\d{2}-\d{2}\.html$")),
+    ("derin-analiz", "derin-analiz", re.compile(r"^\d{4}-\d{2}-\d{2}\.html$")),
     ("haftasonu", "haftasonu", re.compile(r"^\d{4}-\d{2}-\d{2}\.html$")),
     ("egitim", "haftasonu-egitimi", re.compile(r"^\d{4}-\d{2}-\d{2}\.html$")),
 ]

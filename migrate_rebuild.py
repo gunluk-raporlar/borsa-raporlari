@@ -3,7 +3,7 @@
 statik sayfaları bot.py'nin yeni şablonuyla yeniden üretir.
 
 Kapsam:
-  - reports/*.html   : kimlik bloğu (Tarih/Yayıncı/Konu) ve [PORTFOY OZETI]
+  - raporlar/*.html   : kimlik bloğu (Tarih/Yayıncı/Konu) ve [PORTFOY OZETI]
                        ham verisi temizlenir, h3 bölümler h2'ye yükseltilir,
                        başlıklar doğru Türkçeye çevrilir, SEO kabuğu eklenir.
   - derin-analiz.html: ASCII başlık kelimeleri düzeltilir, SEO kabuğu eklenir.
@@ -183,15 +183,15 @@ def borsapy_ayikla(dosya):
 
 
 def main():
-    raporlar = sorted((fn for fn in os.listdir("reports") if fn.endswith(".html")), reverse=True)
+    raporlar = sorted((fn for fn in os.listdir("raporlar") if fn.endswith(".html")), reverse=True)
     if not raporlar:
-        raise SystemExit("reports/ altında HTML yok")
+        raise SystemExit("raporlar/ altında HTML yok")
     son_tarih = raporlar[0][:-5]
 
     # 1) Günlük raporlar
     for fn in raporlar:
         tarih = fn[:-5]
-        makale = makale_ayikla(os.path.join("reports", fn))
+        makale = makale_ayikla(os.path.join("raporlar", fn))
         temiz = gunluk_rapor_temizle(makale)
         # Kimlik bloğu hâlâ duruyorsa uyar (regex kaçtıysa)
         if ("Yayıncı" in temiz[:500] or "[PORTFOY" in temiz
@@ -200,11 +200,11 @@ def main():
             print(f"UYARI: {fn} içinde kimlik bloğu kalıntısı olabilir — elle kontrol edin.")
         # Varsa o güne ait MP3 sesli bülten sayfaya oynatıcı olarak gömülür
         ses_url = None
-        if os.path.exists(os.path.join("reports", f"{tarih}.mp3")):
-            ses_url = f"../reports/{tarih}.mp3"
-        with open(os.path.join("reports", fn), "w", encoding="utf-8") as f:
+        if os.path.exists(os.path.join("raporlar", f"{tarih}.mp3")):
+            ses_url = f"../raporlar/{tarih}.mp3"
+        with open(os.path.join("raporlar", fn), "w", encoding="utf-8") as f:
             f.write(bot.rapor_sayfasi(temiz, tarih, ses_url=ses_url))
-        print(f"[OK] reports/{fn} yeniden üretildi")
+        print(f"[OK] raporlar/{fn} yeniden üretildi")
 
     # 2) Derin analiz
     derin_yol = "derin-analiz.html"

@@ -3537,7 +3537,7 @@ def _guzel_url(yol):
     """Cloudflare Pages, .html'li adresleri uzantısız adrese 308 ile
     yonlendirir. Canonical/og:url/sitemap adresleri bu hedefle ayni olsun
     diye yol guzel (uzantisiz) biçime cevrilir: 'hisse/index.html' ->
-    'hisse/', 'reports/x.html' -> 'reports/x'."""
+    'hisse/', 'raporlar/x.html' -> 'raporlar/x'."""
     yol = re.sub(r"index\.html$", "", yol or "")
     return re.sub(r"\.html$", "", yol)
 SITE_ADI = "BIST 30 Günlük Raporlar"
@@ -3825,7 +3825,7 @@ def _ses_metni_hazirla(html):
 
 
 def rapor_sesi_uret(html, date_str):
-    """Raporu Edge-TTS ile reports/{tarih}.mp3 olarak okur. Basarisizlik
+    """Raporu Edge-TTS ile raporlar/{tarih}.mp3 olarak okur. Basarisizlik
     rapor uretimini ASLA etkilemez (False doner)."""
     try:
         import asyncio
@@ -3840,11 +3840,11 @@ def rapor_sesi_uret(html, date_str):
 
     async def _uret():
         ses = edge_tts.Communicate(metin, TTS_SESI, rate="+8%")
-        await ses.save(f"reports/{date_str}.mp3")
+        await ses.save(f"raporlar/{date_str}.mp3")
 
     try:
         asyncio.run(_uret())
-        logger.info("[TTS] reports/%s.mp3 uretildi (%s, %d kr)", date_str, TTS_SESI, len(metin))
+        logger.info("[TTS] raporlar/%s.mp3 uretildi (%s, %d kr)", date_str, TTS_SESI, len(metin))
         return True
     except Exception as e:
         logger.warning("[TTS] ses uretilemedi: %s", e)
@@ -3854,9 +3854,9 @@ def rapor_sesi_uret(html, date_str):
 def _eski_sesleri_temizle(kal=14):
     """Repo sismesin: son N gunun MP3'u kalir, eskiler silinir."""
     try:
-        dosyalar = sorted(f for f in os.listdir("reports") if f.endswith(".mp3"))
+        dosyalar = sorted(f for f in os.listdir("raporlar") if f.endswith(".mp3"))
         for f in dosyalar[:-kal]:
-            os.remove(os.path.join("reports", f))
+            os.remove(os.path.join("raporlar", f))
             logger.info("[TTS] eski ses silindi: %s", f)
     except OSError as e:
         logger.warning("[TTS] ses temizligi basarisiz: %s", e)
@@ -4453,7 +4453,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 
     aciklama: <meta name="description"> ve og:description icin kisa ozet.
     yol: sayfanin site kokune gore yolu (canonical + og:url icin; or.
-    "teknik-analiz.html", "reports/2026-09-08.html", "" = ana sayfa).
+    "teknik-analiz.html", "raporlar/2026-09-08.html", "" = ana sayfa).
     ld_ek: varsa <head>'e eklenen ikinci JSON-LD blogu (or. Article semasi)."""
     a_r = ' class="active"' if aktif == "raporlar" else ""
     a_ana = ' class="active"' if aktif == "anasayfa" else ""
@@ -4522,7 +4522,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <header class="topbar"><div class="inner">
 <div class="brand-row"><a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
-<nav><a href="{kok}index.html"{a_ana}>Ana Sayfa</a><a href="{kok}reports/"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}makro-analiz.html"{a_mk}>Makro Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a><a href="{kok}terimler.html"{a_trm}>Terimler</a><a href="{kok}muhasebe-terimleri.html"{a_muh}>Muhasebe Terimleri</a><a href="{kok}robot.html"{a_rb}>İşlem Robotu</a></nav>
+<nav><a href="{kok}index.html"{a_ana}>Ana Sayfa</a><a href="{kok}raporlar.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}makro-analiz.html"{a_mk}>Makro Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a><a href="{kok}terimler.html"{a_trm}>Terimler</a><a href="{kok}muhasebe-terimleri.html"{a_muh}>Muhasebe Terimleri</a><a href="{kok}robot.html"{a_rb}>İşlem Robotu</a></nav>
 </div></header>
 {_kendi_ticker(kok)}
 {_kendi_ticker2(kok)}
@@ -4548,7 +4548,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 </main>
 
 <nav class="altbar" aria-label="Hızlı menü">
-<a href="{kok}reports/"{a_alt_r}><span class="i" aria-hidden="true">📊</span>Raporlar</a>
+<a href="{kok}raporlar.html"{a_alt_r}><span class="i" aria-hidden="true">📊</span>Raporlar</a>
 <a href="{kok}teknik-analiz.html"{a_alt_t}><span class="i" aria-hidden="true">📈</span>Teknik</a>
 <a href="{kok}hisse/index.html"{a_alt_his}><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
 <a href="{kok}portfolio.html"{a_alt_p}><span class="i" aria-hidden="true">💼</span>Portföy</a>
@@ -4850,7 +4850,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
                   kok_yol=None, aciklama=None, ses_url=None, teknik_satirlar=None,
                   ajanda=None):
     if kok_yol is None:
-        kok_yol = f"reports/{date_str}.html"
+        kok_yol = f"raporlar/{date_str}.html"
     # Gorunur tarihler Turkce (kullanici karari, 2026-10-06); dosya adlari ve
     # JSON-LD/makine alanlari ISO kalir (siralanabilir + schema.org zorunlusu).
     tr_tarih = _tr_tarih(date_str)
@@ -4873,14 +4873,14 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
 <h1>{baslik}</h1>
 <div class="meta"><span class="badge">{tr_tarih}</span><span class="badge">{_yazim_ani_str()}</span><span>{alt_baslik}</span>
 <button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button>
-{paylas_html(f"{baslik} — {tr_tarih}", SITE_URL + (kok_yol or f"reports/{date_str}.html"))}</div>
+{paylas_html(f"{baslik} — {tr_tarih}", SITE_URL + (kok_yol or f"raporlar/{date_str}.html"))}</div>
 </div>
 {_bist30_sepeti_sparkline()}
 {ses_bolumu}
 {_pano_html(teknik_satirlar, kok)}
 {_ajanda_html(ajanda or [], limit=14, kok=kok)}
 <article class="report" id="rapor-govde">{html_icerik}</article>
-<p style="margin-top:18px"><a href="{kok}reports/">&larr; Tüm raporlara dön</a></p>
+<p style="margin-top:18px"><a href="{kok}raporlar.html">&larr; Tüm raporlara dön</a></p>
 {_sesli_okuma_js()}"""
     ld_ek = json.dumps({
         "@context": "https://schema.org", "@type": "Article",
@@ -4902,8 +4902,8 @@ def build_html(report, date_str, teknik_satirlar=None, ajanda=None):
     report = re.sub(r"^##\s*1\.\s*Gün[üu]n Verileri[^\n]*\n(?:^(?!##).*\n?)*", "",
                     report, flags=re.M)
     ses_url = None
-    if os.path.exists(os.path.join("reports", f"{date_str}.mp3")):
-        ses_url = f"../reports/{date_str}.mp3"
+    if os.path.exists(os.path.join("raporlar", f"{date_str}.mp3")):
+        ses_url = f"../raporlar/{date_str}.mp3"
     return rapor_sayfasi(gunun_verileri_tablosu_html(teknik_satirlar) + markdown_to_html(report),
                          date_str, ses_url=ses_url,
                          teknik_satirlar=teknik_satirlar, ajanda=ajanda)
@@ -5195,7 +5195,7 @@ def _html_dosyalari(dizin):
         return []
 
 
-def _hub_kartlari(dosyalar, alt_etiket, suffix="", href_on="reports/"):
+def _hub_kartlari(dosyalar, alt_etiket, suffix="", href_on="raporlar/"):
     """Arsiv dosya adlarini en yeni once rcard gridine dokar; bos ise not."""
     kartlar = [
         f'<a class="rcard" href="{href_on}{fn}"><span class="date">'
@@ -5214,13 +5214,13 @@ def build_hub_sayfalari():
 
     kok derin-analiz.html / makro-analiz.html artik 'en son raporun tam sayfasi'
     DEGIL; o ture ait tum raporlarin kart listesi (hub). En son raporun tam
-    sayfasi her zaman tarihli arsiv dosyasinda (reports/<tarih>...). raporlar.html
+    sayfasi her zaman tarihli arsiv dosyasinda (raporlar/<tarih>...). raporlar.html
     de gunluk raporlarin hub'i — anasayfa ile arsiv artik ayri sayfalar.
     Gunluk bot, derin_analiz.py ve makro_analiz.py her yayindan sonra cagirir;
-    reports/ klasorunu taradigindan hangi kosu tetiklerse tetiklesin 3 hub da
+    raporlar/ klasorunu taradigindan hangi kosu tetiklerse tetiklesin 3 hub da
     taze kalir.
     """
-    tum = sorted((fn for fn in os.listdir("reports") if fn.endswith(".html")),
+    tum = sorted((fn for fn in os.listdir("raporlar") if fn.endswith(".html")),
                  reverse=True)
     gunluk = [fn for fn in tum if re.fullmatch(r"\d{4}-\d{2}-\d{2}\.html", fn)]
     derin = _html_dosyalari("derin-analiz")
@@ -5229,7 +5229,7 @@ def build_hub_sayfalari():
     hublar = [
         ("raporlar.html", "raporlar", "Günlük Raporlar Arşivi", "Günlük Piyasa Raporları",
          "BIST 30 günlük piyasa raporlarının tamamı, en yeniden eskiye.",
-         gunluk, "Günlük raporu aç", "", "reports/"),
+         gunluk, "Günlük raporu aç", "", "raporlar/"),
         ("derin-analiz.html", "derin", "Derin Analiz Arşivi", "Derin Analizler",
          "BIST 30'un günün kapanışıyla üretilen derinlemesine analizlerinin tamamı.",
          derin, "Derin analizi aç", "", "derin-analiz/"),
@@ -5247,21 +5247,10 @@ def build_hub_sayfalari():
         with open(yol, "w", encoding="utf-8") as f:
             f.write(_sayfa(title, icerik, aktif, yol=yol, aciklama=aciklama))
 
-    # Agac yapisinin kok kopyasi (2026-10-06 kullanici karari): /reports/
-    # dizin yolu da arsiv hub'ina acilsin — reports/index.html CF tarafindan
-    # /reports/ olarak serve edilir; kartlar ayni dizindeki dosyalara
-    # goreceli baglanir (2026-10-06.html). raporlar.html ile ayni icerik,
-    # canonical /reports/.
-    icerik_r = f"""
-<div class="hero">
-<h1>Günlük Piyasa Raporları</h1>
-<div class="meta"><span>BIST 30 günlük piyasa raporlarının tamamı, en yeniden eskiye.</span></div>
-</div>
-{_hub_kartlari(gunluk, "Günlük raporu aç", href_on="")}"""
-    with open("reports/index.html", "w", encoding="utf-8") as f:
-        f.write(_sayfa("Günlük Raporlar Arşivi", icerik_r, "raporlar",
-                       kok="../", yol="reports/",
-                       aciklama="BIST 30 günlük piyasa raporlarının tarihli arşivi."))
+    # (2026-10-07 kullanici karari): /raporlar/ ara yolu KALDIRILDI — gunluk
+    # raporlar diger turler gibi kendi adiyla agac kurar: /raporlar (hub,
+    # kok raporlar.html) + /raporlar/<tarih>.html. Eski /raporlar/* URL'leri
+    # _redirects ile /raporlar tarafina 301'lenir.
 
     # Borsa Okulu hub'i (2026-10-06): dersler haftasonu-egitimi/ altinda yasar;
     # kartlarda ders konusu da gosterilir (_ders_konusu h2 basligini okur).
@@ -5308,7 +5297,7 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     if gundem_dosyalari:
         GORUNEN_ARŞİV = 3
         kart_liste = [
-            f'<a class="rcard" href="reports/{fn}"><span class="date">{_tr_tarih(fn[:-5])}</span>'
+            f'<a class="rcard" href="raporlar/{fn}"><span class="date">{_tr_tarih(fn[:-5])}</span>'
             f'<span class="sub">Günlük raporu aç &rarr;</span></a>'
             for fn in gundem_dosyalari
         ]
@@ -5373,7 +5362,7 @@ function arsivAc(btn) {{
     # Derin analiz bolumu: guncel sayfa + arsivdeki son 3 analiz
     # (Aciklama tarihe referanslidir: "2 Ekim 2026 gununun derin analizi".)
     # Guncel kart (2026-10-06 kullanici karari): "Guncel" yazar + tarih gosterir
-    # ve TikLANDIGINDA o tarihin TAM SAYFASINI acar (reports/...); kok
+    # ve TikLANDIGINDA o tarihin TAM SAYFASINI acar (raporlar/...); kok
     # derin-analiz.html artik hub oldugu icin buraya baglanmaz.
     derin_bolumu = ""
     if derin_dosyalari:
@@ -7944,29 +7933,29 @@ def _rss_pubdate(tarih_str):
 
 
 def rapor_podcast_yaz():
-    """reports/*.mp3 -> radyo/podcast-raporlar.xml (Radyo'dan AYRI kategori).
+    """raporlar/*.mp3 -> radyo/podcast-raporlar.xml (Radyo'dan AYRI kategori).
     Gunluk rapor sesli bultenleri; '-derin-analiz.mp3' dosyalari da varsa
     kendi adlarıyla ayni aka girer. Dosya adi kaynaktir: 2026-09-15.mp3 gibi
     tarihten baslik/pubDate uretilir; MP3 yoksa aka oge dusmez."""
     try:
-        dosyalar = sorted(f for f in os.listdir("reports") if f.endswith(".mp3"))
+        dosyalar = sorted(f for f in os.listdir("raporlar") if f.endswith(".mp3"))
     except OSError:
         return
     ogeler = []
     for ad in reversed(dosyalar):  # en yeni once
         tarih = ad[:10]
         tur = "Derin Analiz Sesli Bülteni" if "-derin-analiz" in ad else "Günlük Rapor Sesli Bülteni"
-        yol = os.path.join("reports", ad)
+        yol = os.path.join("raporlar", ad)
         try:
             boyut = os.path.getsize(yol)
         except OSError:
             boyut = 0
         rapor_link = SITE_URL + ("derin-analiz/" + tarih + ".html" if "-derin-analiz" in ad
-                                 else "reports/" + tarih + ".html")
+                                 else "raporlar/" + tarih + ".html")
         ogeler.append(
             f"<item><title>{tarih} — {tur}</title><guid isPermaLink=\"false\">rapor-{ad[:-4]}</guid>"
             f"<pubDate>{_rss_pubdate(tarih)}</pubDate>"
-            f"<enclosure url=\"{SITE_URL}reports/{ad}\" type=\"audio/mpeg\" length=\"{boyut}\" />"
+            f"<enclosure url=\"{SITE_URL}raporlar/{ad}\" type=\"audio/mpeg\" length=\"{boyut}\" />"
             f"<link>{rapor_link}</link>"
             f"<description>{tarih} tarihli {tur.lower()} — yapay zeka sesiyle rapor okumasi. Yatirim tavsiyesi degildir.</description>"
             f"</item>"
@@ -8072,9 +8061,9 @@ def site_arama_json_yaz(rapor_dosyalari):
         sayfalar.append({"b": "Makroekonomik Değerlendirme (enflasyon, faiz, büyüme)", "u": "makro-analiz.html",
                          "t": makro_metin[:3500]})
     for fn in rapor_dosyalari:
-        metin = makale_metni(os.path.join("reports", fn))
+        metin = makale_metni(os.path.join("raporlar", fn))
         if metin:
-            sayfalar.append({"b": f"Günlük Rapor — {fn[:-5]}", "u": f"reports/{fn}", "t": metin[:3500]})
+            sayfalar.append({"b": f"Günlük Rapor — {fn[:-5]}", "u": f"raporlar/{fn}", "t": metin[:3500]})
     for dizin, etiket in (("derin-analiz", "Derin Analiz"), ("makro-analiz", "Makro Analiz")):
         for fn in _html_dosyalari(dizin)[::-1]:
             metin = makale_metni(os.path.join(dizin, fn))
@@ -8095,7 +8084,7 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
     lastmod'u dosyanin son degisiklik zamanindan okunur."""
     statik = [
         ("index.html", "daily"),
-        ("reports/", "daily"),
+        ("raporlar.html", "daily"),
         ("derin-analiz.html", "daily"),
         ("makro-analiz.html", "weekly"),
         ("teknik-analiz.html", "hourly"),
@@ -8123,7 +8112,7 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
             f"<changefreq>{frekans}</changefreq>"
             f"<priority>{oncelik.get(yol, '0.8')}</priority></url>"
         )
-    for dizin in ("reports", "derin-analiz", "makro-analiz"):
+    for dizin in ("raporlar", "derin-analiz", "makro-analiz"):
         for fn in _html_dosyalari(dizin)[::-1]:
             try:
                 lm = datetime.fromtimestamp(os.path.getmtime(os.path.join(dizin, fn))).strftime("%Y-%m-%d")
@@ -8242,7 +8231,7 @@ if __name__ == "__main__":
     result = app.invoke({"news_data": "", "tech_data": "", "tech_prices": {}, "fundamental_data": "", "final_report": ""})
     report = result["final_report"]
 
-    os.makedirs("reports", exist_ok=True)
+    os.makedirs("raporlar", exist_ok=True)
 
     # Sesli bülten: rapor yazilmadan ONCE uretilir; boylece sayfa MP3 oynaticiyi
     # gorebilirim. Basarisiszlik raporu asla engellemez.
@@ -8252,7 +8241,7 @@ if __name__ == "__main__":
         logger.exception("[TTS] ses uretimi atlandi; rapor uretimini etkilemez.")
     _eski_sesleri_temizle()
 
-    raporlar = sorted((fn for fn in os.listdir("reports") if fn.endswith(".html")), reverse=True)
+    raporlar = sorted((fn for fn in os.listdir("raporlar") if fn.endswith(".html")), reverse=True)
 
     # Ekonomik takvim: TradingView acik ucundan; rapora 'Gunluk Ajanda'
     # bolumu olarak girer ve takvim.html'de yayinlanir.
@@ -8266,7 +8255,7 @@ if __name__ == "__main__":
 
     # TUIK verisi akşam snapshot tarafından yazılır; rapor canlı veri çekmez.
 
-    with open(f"reports/{date_str}.html", "w", encoding="utf-8") as f:
+    with open(f"raporlar/{date_str}.html", "w", encoding="utf-8") as f:
         f.write(build_html(report, date_str, teknik_satirlar=_SON_TEKNIK, ajanda=ajanda))
 
     # Teknik tarama: LLM'den bagimsiz, saf matematik; basarisiz olursa diger
@@ -8300,14 +8289,14 @@ if __name__ == "__main__":
     # devam eder.
 
     p = load_portfolio()
-    # `raporlar` 7062'de, bugunku rapor(ler) reports/ altina YAZILMADAN once
+    # `raporlar` 7062'de, bugunku rapor(ler) raporlar/ altina YAZILMADAN once
     # listelenmisti: hem gunluk rapor (7076) hem derin-analiz arsiv kopyasi
     # (7127) sonra olusturuluyor. Tazelenmezse bugunun karti ana sayfa
     # arsivine, sitemap'e, site-arama.json'a ve indexnow ping'ine girmiyordu;
     # arsiv yalnizca siradaki Teknik Tarama run'una (piyasa saati) kadar
     # bayat kaliyordu.
     raporlar = sorted(
-        (fn for fn in os.listdir("reports") if fn.endswith(".html")),
+        (fn for fn in os.listdir("raporlar") if fn.endswith(".html")),
         reverse=True)
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(build_index_html(p, raporlar, teknik_oneriler))
@@ -8407,7 +8396,7 @@ if __name__ == "__main__":
     try:
         sitemap_metni = open("sitemap.xml", encoding="utf-8").read()
         tum_url = re.findall(r"<loc>([^<]+)</loc>", sitemap_metni) or \
-            INDEXNOW_ANA_SAYFALAR + [f"reports/{fn}" for fn in raporlar[:5]]
+            INDEXNOW_ANA_SAYFALAR + [f"raporlar/{fn}" for fn in raporlar[:5]]
         indexnow_ping(tum_url)
     except Exception:
         logger.exception("[IndexNow] ping atlamasi sorun degil.")
