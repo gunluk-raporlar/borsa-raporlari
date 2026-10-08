@@ -4,12 +4,14 @@
   "bugun_alinan": [
     "TAVHL"
   ],
-  "bugun_satilan": [],
+  "bugun_satilan": [
+    "TAVHL"
+  ],
   "bugun_tarih": "2026-10-08",
-  "gerceklesen_kz": -3072.8583749999943,
+  "gerceklesen_kz": -3028.0159249999942,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 2,
-  "nakit": 85410.08730761202,
+  "kontrol_sayisi": 3,
+  "nakit": 96971.97655761201,
   "onceki_kapanis_ozkaynak": 96927.14,
   "ozkayit": [
     [
@@ -619,50 +621,46 @@
     [
       "2026-10-08T17:13",
       96907.59
+    ],
+    [
+      "2026-10-08T22:57",
+      96971.98
     ]
   ],
-  "pozisyonlar": {
-    "TAVHL": {
-      "giris": "2026-10-08",
-      "hedef": 282.44,
-      "lot": 42,
-      "maliyet": 274.2154,
-      "stop": 265.99
-    }
-  },
-  "son_bar_tarihi": "2026-10-08",
+  "pozisyonlar": {},
+  "son_bar_tarihi": "2026-10-07",
   "son_fiyatlar": {
-    "AEFES": 18.24,
-    "AKBNK": 68.1,
-    "ASELS": 343.75,
-    "ASTOR": 197.4,
-    "BIMAS": 397.25,
-    "EKGYO": 19.48,
-    "ENKAI": 81.1,
-    "EREGL": 36.54,
-    "FROTO": 74.45,
+    "AEFES": 18.36,
+    "AKBNK": 68.15,
+    "ASELS": 348.75,
+    "ASTOR": 197.5,
+    "BIMAS": 401.0,
+    "EKGYO": 19.61,
+    "ENKAI": 81.6,
+    "EREGL": 36.6,
+    "FROTO": 74.4,
     "GARAN": 128.5,
-    "GUBRF": 406.5,
-    "ISCTR": 12.8,
-    "KCHOL": 212.7,
-    "KRDMD": 42.66,
-    "MGROS": 499.0,
+    "GUBRF": 407.5,
+    "ISCTR": 12.79,
+    "KCHOL": 212.4,
+    "KRDMD": 43.02,
+    "MGROS": 501.0,
     "PETKM": 20.64,
-    "PGSUS": 135.2,
-    "SAHOL": 88.5,
-    "SASA": 1.87,
-    "SISE": 37.78,
-    "TAVHL": 273.75,
-    "TCELL": 100.4,
+    "PGSUS": 135.6,
+    "SAHOL": 88.75,
+    "SASA": 1.88,
+    "SISE": 37.82,
+    "TAVHL": 275.75,
+    "TCELL": 100.2,
     "THYAO": 284.25,
-    "TOASO": 264.5,
-    "TRALT": 42.16,
-    "TRMET": 129.5,
-    "TTKOM": 52.35,
-    "TUPRS": 395.75,
-    "VAKBN": 33.62,
-    "YKBNK": 35.72
+    "TOASO": 269.0,
+    "TRALT": 42.24,
+    "TRMET": 130.8,
+    "TTKOM": 52.4,
+    "TUPRS": 392.25,
+    "VAKBN": 33.66,
+    "YKBNK": 35.66
   },
-  "toplam_kesinti": 304.42,
+  "toplam_kesinti": 318.24,
   "versiyon": 1
 }
