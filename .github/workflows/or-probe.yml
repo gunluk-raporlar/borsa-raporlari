@@ -1,0 +1,22 @@
+name: OpenRouter Anahtar Yoklamasi (gecici)
+# Kullanici "hesapta hic kullanım yok" dedi; oysa 2026-10-07 makro raporu
+# OR uzerinden yazildi (nemotron-3-ultra:free). Bu yoklama anahtarin
+# etiketini, kullanim sayacini ve gercek bir free cagriyi gosterir.
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Anahtar yoklamasi
+        env:
+          OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python -u or_probe.py
