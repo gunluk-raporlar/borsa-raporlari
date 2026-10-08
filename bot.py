@@ -1017,6 +1017,9 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogrulama
 
 
 _LLM_TOKEN_SAYAC = {"in": 0, "out": 0}
+# Kullanim defteri (2026-10-08): basarili cagrinin saglayici/model/deneme/
+# token bilgisi; kullanim_defteri.kaydet() rapor yazilirken bunu okur.
+_LLM_SON_BASARI = {}
 
 
 def _zai_call(prompt):
@@ -1074,6 +1077,8 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
     """
     import openai
     import random
+
+    _cagri_t0 = time.time()  # kullanim defteri: sure olcumu (2026-10-08)
 
     # 16000: havuzdaki dusunen modeller (GLM/MiMo ailesi) reasoning tokenlarini
     # da ayni butceden harcamakta; 8000'de uzun rapor + dusunme kesilebiliyor
@@ -1211,6 +1216,13 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
                     time.sleep(2)
                     continue
                 logger.warning("Son denemede de yanit token limitinde kesildi; kesik yanit kabul ediliyor.")
+            # Kullanim defteri: basarili cagrinin kimligi (2026-10-08)
+            _LLM_SON_BASARI.update({
+                "saglayici": etiket, "model": model, "deneme": deneme,
+                "prompt_tokens": getattr(_kullanim, "prompt_tokens", 0) or 0,
+                "completion_tokens": getattr(_kullanim, "completion_tokens", 0) or 0,
+                "sure_sn": round(time.time() - _cagri_t0, 1),
+            })
             _saglayici_temizle(etiket)
             return icerik
 
@@ -8554,6 +8566,11 @@ if __name__ == "__main__":
             logger.exception("[Index] teknik-oneriler.json yazilamadi.")
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(build_index_html(p, raporlar, teknik_oneriler))
+    try:
+        import kullanim_defteri
+        kullanim_defteri.kaydet("gunluk")
+    except Exception:
+        logger.exception("[Defter] gunluk rapor kaydi yazilamadi.")
     try:
         build_hub_sayfalari()
     except Exception:

@@ -78,6 +78,11 @@ def main():
         f.write(arsiv_html)
     bot.build_hub_sayfalari()
     try:
+        import kullanim_defteri
+        kullanim_defteri.kaydet("derin")
+    except Exception:
+        logger.exception("[Defter] derin analiz kaydi yazilamadi.")
+    try:
         bot.ana_sayfa_tazele()
     except Exception:
         logger.exception("Ana sayfa tazelenemedi; diger ciktilar etkilenmez.")

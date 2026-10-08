@@ -143,6 +143,11 @@ def main():
         f.write(arsiv_sayfa)
     bot.build_hub_sayfalari()
     try:
+        import kullanim_defteri
+        kullanim_defteri.kaydet("makro")
+    except Exception:
+        logger.exception("[Defter] makro kaydi yazilamadi.")
+    try:
         bot.ana_sayfa_tazele()
     except Exception:
         logger.exception("Ana sayfa tazelenemedi; diger ciktilar etkilenmez.")

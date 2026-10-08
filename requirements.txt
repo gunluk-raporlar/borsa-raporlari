@@ -8,3 +8,6 @@ yfinance
 borsapy
 edge-tts
 imageio-ffmpeg
+
+# Kullanim defteri Excel uretimi (kullanim_defteri.py, 2026-10-08)
+openpyxl>=3.1
