@@ -3946,6 +3946,23 @@ tr:last-child td { border-bottom:none; }
 .footer { text-align:center; color:var(--muted); font-size:12.5px; padding:26px 20px;
           border-top:1px solid var(--line); background:var(--card); }
 .chart { width:100%; height:auto; display:block; }
+
+/* ---- Hisse fiyat grafigi: aralik dugmeleri, lejant ve hover ipucu ---- */
+.grafik-aralik { display:flex; gap:6px; flex-wrap:wrap; margin:0 0 8px; }
+.grafik-aralik button { border:1px solid var(--line); background:var(--card); color:var(--ink);
+                        border-radius:8px; padding:3px 11px; font-size:12px; cursor:pointer;
+                        font-family:inherit; }
+.grafik-aralik button[aria-pressed="true"] { background:var(--accent-bg); border-color:var(--accent);
+                                             color:var(--accent); font-weight:700; }
+.grafik-kutu { position:relative; }
+.grafik-lejant { display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin:4px 0 0; }
+.grafik-lejant i { display:inline-block; width:16px; border-top:2px dashed; vertical-align:middle;
+                   margin:0 5px 3px 0; }
+.grafik-lejant i.lj-duz { border-top-style:solid; }
+.grafik-ipucu { position:absolute; pointer-events:none; background:#0f172a; color:#f8fafc; border-radius:6px;
+                padding:4px 9px; font-size:11.5px; line-height:1.5; opacity:0; white-space:nowrap;
+                z-index:5; transform:translate(-50%, -112%); transition:opacity .12s; }
+.grafik-ipucu b { font-size:12.5px; }
 @media (max-width:640px) {
   .report { padding:18px 16px; }
   table { font-size:13px; }
@@ -6813,21 +6830,199 @@ def _temel_analiz_oto_html(kod):
 </div>""")
 
 
-def build_hisse_html(kod, satir, tarihler, veriler, haberler, sirket_haberleri=None):
-    seri = [(t, v.get(kod)) for t, v in zip(tarihler, veriler) if v.get(kod)]
-    grafik = (_mini_sparkline([f for _, f in seri], etiket=f"{kod} fiyat grafiği (son {len(seri)} gün)")
-              if len(seri) >= 2 else "")
-    grafik_karti = (
-        f"""<div class="card" style="margin-bottom:16px">
+# ---------- HISSE FIYAT GRAFIGI (statik SVG + grafik.js etkilesimi) ----------
+_GRAFIK_G, _GRAFIK_H = 640, 280
+_GRAFIK_KENAR = {"sol": 54, "sag": 14, "ust": 18, "alt": 26}
+_SMA_RENKTEN = {20: "#d97706", 50: "#2563eb"}
+
+
+def _hisse_fiyat_seri(kod):
+    """Hisse sayfasinin tam fiyat serisi: fiyat deposu (data/fiyat/<KOD>.json,
+    ~300 islem gunu) ana kaynak; gunluk kesitler (data/prices/<tarih>.json)
+    yalnizca depoda olmayan tarihleri doldurur. Donus: [(tarih, kapanis)] artan.
+    Yalnizca kesit okunuyordu; yeni BIST30 uyesi (or. TRMET) 1-2 kayitla
+    grafiksiz kaliyordu."""
+    seri = fiyat_deposu_oku(kod)
+    try:
+        dosyalar = sorted(f for f in os.listdir("data/prices") if f.endswith(".json"))
+    except OSError:
+        dosyalar = []
+    for d in dosyalar:
+        try:
+            with open(os.path.join("data/prices", d), encoding="utf-8") as f:
+                v = json.load(f).get(kod)
+        except Exception:
+            continue
+        if v:
+            seri.setdefault(d[:-5], float(v))
+    return sorted(seri.items())
+
+
+def _grafik_sma(degerler, pencere):
+    """Basit hareketli ortalama; pencere dolana kadar None (cizgi o noktadan baslar)."""
+    cikti, toplam = [], 0.0
+    for i, v in enumerate(degerler):
+        toplam += v
+        if i >= pencere:
+            toplam -= degerler[i - pencere]
+        cikti.append(toplam / pencere if i >= pencere - 1 else None)
+    return cikti
+
+
+def _grafik_izgara(lo, hi, adet=4):
+    """Eksen icin 'guzel' adimli izgara degerleri (or. 100, 125, 150, 175)."""
+    if hi <= lo:
+        return []
+    ham = (hi - lo) / adet
+    kuvvet = 10 ** math.floor(math.log10(ham))
+    adim = next(c * kuvvet for c in (1, 2, 2.5, 5, 10) if c * kuvvet >= ham)
+    bas = math.ceil(lo / adim) * adim
+    return [round(bas + i * adim, 6) for i in range(int((hi - bas) / adim) + 1)]
+
+
+def _grafik_cizgi(noktalar, renk, genislik, dash=""):
+    ek = ' stroke-dasharray="%s"' % dash if dash else ""
+    return '<polyline fill="none" stroke="%s" stroke-width="%s"%s points="%s" />' % (
+        renk, genislik, ek, noktalar)
+
+
+def _grafik_etiket(x, y, metin, renk="var(--muted)", boyut=10.5, kalin=False):
+    agirlik = ' font-weight="700"' if kalin else ""
+    return ('<text x="%s" y="%s" text-anchor="middle" font-size="%s"%s fill="%s">%s</text>'
+            % (round(x, 1), round(y, 1), boyut, agirlik, renk, html.escape(metin)))
+
+
+def _fiyat_grafigi_svg(tarihler, fiyatlar, smalar, renk, id_onek=""):
+    """JS'siz gorunum: fiyat cizgisi + alan dolgusu, izgara + eksen etiketleri,
+    SMA20/50 cizgileri ve referans degerleri (donem basi, en dusuk, en yuksek,
+    son kapanis). hisse/grafik.js ayni cizimi tarayicida yeniden uretir."""
+    k = _GRAFIK_KENAR
+    pw, ph = _GRAFIK_G - k["sol"] - k["sag"], _GRAFIK_H - k["ust"] - k["alt"]
+    lo, hi = min(fiyatlar), max(fiyatlar)
+    for seri in smalar.values():
+        dolu = [v for v in seri if v is not None]
+        if dolu:
+            lo, hi = min(lo, min(dolu)), max(hi, max(dolu))
+    tampon = (hi - lo) * 0.06 if hi > lo else max(abs(hi) * 0.02, 0.5)
+    lo, hi = lo - tampon, hi + tampon
+    adim_x = pw / (len(fiyatlar) - 1)
+
+    def xy(i, v):
+        return k["sol"] + i * adim_x, k["ust"] + (1 - (v - lo) / (hi - lo)) * ph
+
+    def cnokta(seri, baslangic):
+        return " ".join(
+            "%s,%s" % (round(x, 1), round(y, 1))
+            for x, y in (xy(i, seri[i]) for i in range(baslangic, len(seri))))
+
+    b = ['<defs><linearGradient id="%sglg" x1="0" y1="0" x2="0" y2="1">'
+         '<stop offset="0" stop-color="%s" stop-opacity=".14"/>'
+         '<stop offset="1" stop-color="%s" stop-opacity="0"/></linearGradient></defs>'
+         % (id_onek, renk, renk)]
+    # izgara + y eksen etiketleri
+    for v in _grafik_izgara(lo, hi):
+        _, y = xy(0, v)
+        b.append('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="var(--line)" stroke-width="1" />'
+                 % (k["sol"], round(y, 1), _GRAFIK_G - k["sag"], round(y, 1)))
+        b.append(_grafik_etiket(k["sol"] - 7, y + 3.5, _ts(v, 2)))
+    # x eksen etiketleri (5 tarih)
+    n = len(fiyatlar)
+    for i in sorted({round(j * (n - 1) / 4) for j in range(5)}):
+        x, _ = xy(i, lo)
+        b.append(_grafik_etiket(min(max(x, k["sol"] + 16), _GRAFIK_G - k["sag"] - 16),
+                                _GRAFIK_H - 8, "%s.%s" % (tarihler[i][8:10], tarihler[i][5:7])))
+    # donem basi referansi: noktali yatay cizgi (ilk kapanis degeriyle okunur)
+    _, y_ilk = xy(0, fiyatlar[0])
+    b.append('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="var(--muted)" stroke-width="1" '
+             'stroke-dasharray="2 4" />' % (k["sol"], round(y_ilk, 1),
+                                            _GRAFIK_G - k["sag"], round(y_ilk, 1)))
+    # alan dolgusu + fiyat cizgisi
+    noktalar = " ".join("%s,%s" % (round(x, 1), round(y, 1))
+                        for x, y in (xy(i, v) for i, v in enumerate(fiyatlar)))
+    b.append('<polygon fill="url(#%sglg)" stroke="none" points="%s %s,%s %s,%s" />'
+             % (id_onek, noktalar, round(k["sol"] + (n - 1) * adim_x, 1), round(k["ust"] + ph, 1),
+                k["sol"], round(k["ust"] + ph, 1)))
+    b.append(_grafik_cizgi(noktalar, renk, 2))
+    # SMA cizgileri (pencere dolmayan on kisim cizilmez)
+    for pencere in sorted(smalar):
+        baslangic = next((i for i, v in enumerate(smalar[pencere]) if v is not None), None)
+        if baslangic is None:
+            continue
+        b.append(_grafik_cizgi(cnokta(smalar[pencere], baslangic),
+                               _SMA_RENKTEN[pencere], 1.6, dash="5 4"))
+    # referans isaretleri: en dusuk / en yuksek / son kapanis
+    i_min = min(range(n), key=lambda i: fiyatlar[i])
+    i_max = max(range(n), key=lambda i: fiyatlar[i])
+    if fiyatlar[i_min] != fiyatlar[i_max]:
+        for i, etiket, ofset in ((i_min, "En düşük", 16), (i_max, "En yüksek", -12)):
+            x, y = xy(i, fiyatlar[i])
+            t = tarihler[i]
+            b.append('<circle cx="%s" cy="%s" r="3" fill="%s" />'
+                     % (round(x, 1), round(y, 1), renk))
+            b.append(_grafik_etiket(min(max(x, k["sol"] + 56), _GRAFIK_G - k["sag"] - 56),
+                                    min(max(y + ofset, k["ust"] + 4), _GRAFIK_H - k["alt"] - 4),
+                                    "%s %s TL · %s.%s" % (etiket, _ts(fiyatlar[i], 2),
+                                                          t[8:10], t[5:7]),
+                                    kalin=True))
+    x_son, y_son = xy(n - 1, fiyatlar[-1])
+    b.append('<circle cx="%s" cy="%s" r="3.5" fill="%s" />'
+             % (round(x_son, 1), round(y_son, 1), renk))
+    b.append('<text x="%s" y="%s" text-anchor="end" font-size="11.5" font-weight="700" '
+             'fill="%s">%s TL</text>' % (round(x_son - 7, 1), round(y_son - 8, 1),
+                                         renk, _ts(fiyatlar[-1], 2)))
+    # hover katmani (grafik.js doldurur)
+    b.append('<line id="%simlec" x1="0" y1="%s" x2="0" y2="%s" stroke="var(--muted)" '
+             'stroke-width="1" visibility="hidden" />' % (id_onek, k["ust"], k["ust"] + ph))
+    b.append('<circle id="%simlecnokta" r="4" fill="var(--ink)" visibility="hidden" />' % id_onek)
+    return ('<svg viewBox="0 0 %s %s" class="chart" id="%ssvg" preserveAspectRatio="xMidYMid meet" '
+            'role="img" aria-label="%s-%s arasi %s gunluk kapanis fiyati grafigi" '
+            'style="width:100%%; height:auto; display:block">%s</svg>'
+            % (_GRAFIK_G, _GRAFIK_H, id_onek, tarihler[0], tarihler[-1], n, "".join(b)))
+
+
+def _interaktif_fiyat_grafigi(kod, seri):
+    """Hisse sayfasi fiyat grafigi karti: sunucuda cizilen SVG (JS kapaliyken de
+    grafik ve referans degerler gorunur) + gomulu seri; hisse/grafik.js aralik
+    dugmelerini (1A/3A/6A/1Y/Tumu), hover ipucunu ve yeniden cizimi ekler."""
+    if len(seri) < 2:
+        return ""
+    tarihler = [t for t, _ in seri]
+    fiyatlar = [float(v) for _, v in seri]
+    smalar = {}
+    for pencere in (20, 50):
+        if len(fiyatlar) >= pencere + 1:
+            smalar[pencere] = _grafik_sma(fiyatlar, pencere)
+    renk = "#047857" if fiyatlar[-1] >= fiyatlar[0] else "#b91c1c"
+    deg = (fiyatlar[-1] / fiyatlar[0] - 1) * 100
+    svg = _fiyat_grafigi_svg(tarihler, fiyatlar, smalar, renk, id_onek="grafik-")
+    lejant = "".join(
+        '<span><i class="%s" style="color:%s"></i>SMA%d (%s TL)</span>'
+        % ("lj-duz" if p == 20 else "", _SMA_RENKTEN[p], p, _ts(smalar[p][-1], 2))
+        for p in sorted(smalar))
+    # JSON'u script icinde guvenli kilmak icin </ dizisini kacir (JSON'da \/ gecerli)
+    veri = json.dumps({"kod": kod, "t": tarihler, "f": fiyatlar},
+                      separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/")
+    return """<div class="card" style="margin-bottom:16px">
 <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
-<strong style="font-size:14px">📊 {kod} fiyat grafiği</strong>
-<span style="color:var(--muted); font-size:12px">son {len(seri)} gün &bull; kapanış fiyatları</span>
+<strong style="font-size:14px">📊 %s fiyat grafiği</strong>
+<span style="color:var(--muted); font-size:12px"><span id="grafik-gun">son %d gün</span> &bull; kapanış fiyatları &bull; dönem: <span id="grafik-donem" class="%s" style="font-weight:700">%s%%</span></span>
 </div>
-{grafik}
-<div style="color:var(--muted); font-size:12px">{seri[0][0]} tarihinden bugüne {kod} kapanış fiyatları (TL). Karşılaştırma grafiği değildir.</div>
-</div>"""
-        if grafik else ""
-    )
+<div class="grafik-aralik" id="grafik-aralik"></div>
+<div class="grafik-kutu" id="grafik-kutu">
+%s
+<div class="grafik-ipucu" id="grafik-ipucu" aria-hidden="true"></div>
+</div>
+<div class="grafik-lejant">%s</div>
+<script type="application/json" id="fiyat-serisi">%s</script>
+<script src="grafik.js?v=1" defer></script>
+<div style="color:var(--muted); font-size:12px">%s tarihinden bugüne %s kapanış fiyatları (TL). Referanslar: dönem başı kapanış (noktalı), SMA20/SMA50 ortalamaları, en düşük/en yüksek/son kapanış.</div>
+</div>""" % (kod, len(seri), _renk(deg), _ty(deg), svg, lejant, veri,
+             tarihler[0], kod)
+
+
+def build_hisse_html(kod, satir, haberler, sirket_haberleri=None):
+    seri = _hisse_fiyat_seri(kod)
+    grafik_karti = _interaktif_fiyat_grafigi(kod, seri)
     degisim = None
     if len(seri) >= 2:
         degisim = (seri[-1][1] / seri[0][1] - 1) * 100
@@ -6954,6 +7149,7 @@ SIRKET_KISALTMALARI = {
     "AEFES": ["anadolu efes"],
     "TRALT": ["türk altın"],
     "TAVHL": ["tav havaliman", "tav airport"],
+    "TRMET": ["tr anadolu metal", "koza anadolu"],
 }
 
 def _sirket_adi_geciyor_mu(baslik, p, kod):
@@ -7095,7 +7291,6 @@ def hisse_sayfalari_yaz(teknik_satirlar):
         temel_veri_cek()
     except Exception:
         logger.warning("[Temel Veri] guncellenemedi; onceki veri kullanilacak.")
-    tarihler, veriler = _fiyat_gecmisi()
     haber_toplu = []
     try:
         for d in sorted(os.listdir("data/news"))[-7:]:
@@ -7109,7 +7304,7 @@ def hisse_sayfalari_yaz(teknik_satirlar):
         haberler = [h for h in haber_toplu if kod.lower() in h.lower()
                     and not _spor_haberi_mi(h)]
         with open(os.path.join("hisse", f"{kod}.html"), "w", encoding="utf-8") as f:
-            f.write(build_hisse_html(kod, s, tarihler, veriler, haberler,
+            f.write(build_hisse_html(kod, s, haberler,
                                      sirket_haberleri=sirket_haber_map.get(kod, [])))
     kartlar = "".join(
         f'<a class="rcard" data-kod="{s["hisse"]}" href="{s["hisse"]}.html"><span class="date">{s["hisse"]}</span>'

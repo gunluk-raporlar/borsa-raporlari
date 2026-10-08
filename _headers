@@ -19,6 +19,12 @@
   Cache-Control: public, max-age=60
 /hisse/isi-haritasi.js
   Cache-Control: public, max-age=300
+/hisse/grafik.js
+  Cache-Control: public, max-age=300
+/ru/hisse/grafik.js
+  Cache-Control: public, max-age=300
+/zh/hisse/grafik.js
+  Cache-Control: public, max-age=300
 /style.css
   Cache-Control: public, max-age=86400
 /og-cover.png
