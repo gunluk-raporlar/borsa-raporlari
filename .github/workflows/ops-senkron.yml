@@ -1,0 +1,21 @@
+name: Ops Defter Senkron Testi (manuel)
+# OPS_REPO_TOKEN secret'inin dogrulugunu ve ops deposuna yazma iznini
+# 30 saniyede test eder; istenildiginde defteri elle de senkronlar.
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  senkron:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Ops deposuna senkron
+        env:
+          OPS_REPO_TOKEN: ${{ secrets.OPS_REPO_TOKEN }}
+        run: python -u ops_sync.py
