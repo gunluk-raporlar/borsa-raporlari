@@ -64,4 +64,4 @@ jobs:
       - name: Kullanim defterini ops deposuna senkronla
         env:
           OPS_REPO_TOKEN: ${{ secrets.OPS_REPO_TOKEN }}
-        run: python -u ops_sync.py
+        run: python -u ops_sync.py || echo "::warning::Ops defter senkronu basarisiz — rapor yayini etkilenmez."
