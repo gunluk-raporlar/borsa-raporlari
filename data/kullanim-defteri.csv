@@ -1,0 +1,4 @@
+﻿tarih,saat,rapor_turu,saglayici,model,deneme,prompt_token,completion_token,sure_sn,hata_toplam,hata_detay,rozet
+2026-10-07,04:53,makro,OR,nvidia/nemotron-3-ultra-550b-a55b:free,2,-,-,-,10,log izi: 10 duzeltme (eski kosu — token kaydi yoktu),hayir
+2026-10-07,08:45,gunluk,YEDEK (Groq),openai/gpt-oss-120b,1,-,-,-,0,log izi (eski kosu — token kaydi yoktu),hayir
+2026-10-07,14:55,derin,OLLAMA,gpt-oss:120b,6,-,-,-,0,log izi (eski kosu — token kaydi yoktu),hayir

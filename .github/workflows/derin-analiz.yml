@@ -58,3 +58,10 @@ jobs:
           git commit --allow-empty -m "Site yayini (derin analiz)"
           git pull --rebase -X theirs origin main
           git push origin main
+
+      # Kullanim defterini private ops deposuna senkronla (2026-10-08).
+      # OPS_REPO_TOKEN secret'i yokken betik sessizce atlar.
+      - name: Kullanim defterini ops deposuna senkronla
+        env:
+          OPS_REPO_TOKEN: ${{ secrets.OPS_REPO_TOKEN }}
+        run: python -u ops_sync.py

@@ -87,3 +87,10 @@ jobs:
       # Not: Netlify yayini kaldirildi (kota doldu); site Cloudflare Pages uzerinden
       # yayinlanmaya devam eder. Yeni Next.js arayuzu ayri olarak 'Web (Next.js) Deploy'
       # workflow'u ile borsa-raporlari-web.pages.dev adresine gider.
+
+      # Kullanim defterini private ops deposuna senkronla (2026-10-08).
+      # OPS_REPO_TOKEN secret'i yokken betik sessizce atlar.
+      - name: Kullanim defterini ops deposuna senkronla
+        env:
+          OPS_REPO_TOKEN: ${{ secrets.OPS_REPO_TOKEN }}
+        run: python -u ops_sync.py
