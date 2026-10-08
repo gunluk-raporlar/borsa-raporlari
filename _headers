@@ -21,6 +21,8 @@
   Cache-Control: public, max-age=300
 /hisse/grafik.js
   Cache-Control: public, max-age=300
+/de/hisse/grafik.js
+  Cache-Control: public, max-age=300
 /ru/hisse/grafik.js
   Cache-Control: public, max-age=300
 /zh/hisse/grafik.js

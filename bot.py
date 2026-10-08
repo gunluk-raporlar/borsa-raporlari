@@ -6886,10 +6886,12 @@ def _grafik_cizgi(noktalar, renk, genislik, dash=""):
         renk, genislik, ek, noktalar)
 
 
-def _grafik_etiket(x, y, metin, renk="var(--muted)", boyut=10.5, kalin=False):
+def _grafik_etiket(x, y, metin, renk="var(--muted)", boyut=10.5, kalin=False, hiza="middle"):
+    """SVG metin etiketi. hiza: text-anchor (y ekseni etiketlerinde 'end' —
+    grafik.js ile ayni davranis; cift-taraf cizim sapmasini onler)."""
     agirlik = ' font-weight="700"' if kalin else ""
-    return ('<text x="%s" y="%s" text-anchor="middle" font-size="%s"%s fill="%s">%s</text>'
-            % (round(x, 1), round(y, 1), boyut, agirlik, renk, html.escape(metin)))
+    return ('<text x="%s" y="%s" text-anchor="%s" font-size="%s"%s fill="%s">%s</text>'
+            % (round(x, 1), round(y, 1), hiza, boyut, agirlik, renk, html.escape(metin)))
 
 
 def _fiyat_grafigi_svg(tarihler, fiyatlar, smalar, renk, id_onek=""):
@@ -6924,7 +6926,7 @@ def _fiyat_grafigi_svg(tarihler, fiyatlar, smalar, renk, id_onek=""):
         _, y = xy(0, v)
         b.append('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="var(--line)" stroke-width="1" />'
                  % (k["sol"], round(y, 1), _GRAFIK_G - k["sag"], round(y, 1)))
-        b.append(_grafik_etiket(k["sol"] - 7, y + 3.5, _ts(v, 2)))
+        b.append(_grafik_etiket(k["sol"] - 7, y + 3.5, _ts(v, 2), hiza="end"))
     # x eksen etiketleri (5 tarih)
     n = len(fiyatlar)
     for i in sorted({round(j * (n - 1) / 4) for j in range(5)}):
@@ -7306,6 +7308,21 @@ def hisse_sayfalari_yaz(teknik_satirlar):
         with open(os.path.join("hisse", f"{kod}.html"), "w", encoding="utf-8") as f:
             f.write(build_hisse_html(kod, s, haberler,
                                      sirket_haberleri=sirket_haber_map.get(kod, [])))
+    # Yaz-sonrasi oz-denetim: grafik imzasi + gomulu serinin gecerliligi.
+    for s in teknik_satirlar:
+        kod = s["hisse"]
+        try:
+            with open(os.path.join("hisse", f"{kod}.html"), encoding="utf-8") as f:
+                metin = f.read()
+            m = re.search(r'<script type="application/json" id="fiyat-serisi">(.*?)</script>',
+                          metin, re.S)
+            if 'id="grafik-svg"' not in metin or not m:
+                raise ValueError("grafik imzasi eksik")
+            veri = json.loads(m.group(1))
+            if len(veri["t"]) != len(veri["f"]) or len(veri["t"]) < 2:
+                raise ValueError("seri tutarsiz")
+        except Exception as e:
+            logger.warning("[Hisseler] %s grafigi dogrulanamadi: %s", kod, e)
     kartlar = "".join(
         f'<a class="rcard" data-kod="{s["hisse"]}" href="{s["hisse"]}.html"><span class="date">{s["hisse"]}</span>'
         f'<span class="sub">{s.get("genel", "")} &bull; {_ts(s.get("son", 0))} TL</span>'

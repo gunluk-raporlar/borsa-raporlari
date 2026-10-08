@@ -38,8 +38,9 @@ flowchart TD
 
     subgraph CIKTI["Üretilen site (git'e commit)"]
         trhtml["TR HTML: index.html, reports/, hisse/,<br/>haftasonu/, haftasonu-egitimi/, radyo/ ..."]
+        grafikjs["hisse/grafik.js<br/>etkileşimli fiyat grafiği (vanilla JS):<br/>gömülü seriden aralık/hover'lı yeniden çizim"]
         cache["i18n-cache.json (makine)<br/>i18n-elle.json (elle)"]
-        dilhtml["en/ de/ ru/ zh/<br/>aynı sayfa ağacının çevirileri"]
+        dilhtml["en/ de/ ru/ zh/<br/>aynı sayfa ağacının çevirileri<br/>(+ css/js varlık kopyaları)"]
     end
 
     llm["LLM zinciri<br/>Z.AI → AMD → NVIDIA → Groq → OpenRouter"]
@@ -60,6 +61,7 @@ flowchart TD
     robot <--> d
     egitim <--> d
     bot --> trhtml
+    bot --> grafikjs
     egitim --> trhtml
     haftasonu --> trhtml
     robot --> trhtml
@@ -76,6 +78,7 @@ flowchart TD
 
     cache --> buildsh
     trhtml --> buildsh
+    grafikjs --> buildsh
     dilhtml --> buildsh
     buildsh --> cf
     publish -- "boş commit = build tetikleyici" --> cf
@@ -87,6 +90,16 @@ flowchart TD
   portfolio/teknik/haber/takvim/sözlük sayfalarını yazar; çeviri YAPMAZ (2026-09-21'den
   beri çeviri ayrı workflow'da). Ana sayfa kartları (`_ders_konusu`, `_tr_tarih_sade`)
   ders dosyasından günün konusunu çıkarır; ders dosyası yoksa statik yedek metne döner.
+  Hisse sayfalarının fiyat grafiği alt sistemi (`_hisse_fiyat_seri`, `_fiyat_grafigi_svg`,
+  `_interaktif_fiyat_grafigi`): tam seriyi fiyat deposundan (`data/fiyat/<KOD>.json`,
+  ana kaynak) okuyup `data/prices/<tarih>.json` günlük kesitleriyle yalnızca eksik
+  tarihleri doldurur (yeni BIST30 üyesinin grafiksiz kalması düzeltildi); sunucuda
+  JS'siz görülen statik SVG çizer ve seriyi `<script type="application/json"
+  id="fiyat-serisi">` olarak gömer. İstemci tarafı `hisse/grafik.js` (vanilla, CDN yok)
+  aynı çizimi tarayıcıda yeniden üretir: aralık düğmeleri (1A/3A/6A/1Y/Tümü), SMA20/50,
+  hover ipucu, `documentElement.lang`'a göre etiketler. İki tarafın sabitleri
+  (640×280, kenar boşlukları, SMA renkleri, kesikli çizgi desenleri) eşleşmek
+  zorundadır — bir tarafı değiştirirsen diğerini de değiştir.
 - **egitim.py** — hafta sonu borsa okulu: Cmt/Paz ders üretir,
   `haftasonu-egitimi.html` + `haftasonu-egitimi/<tarih>.html` yazar; müfredat
   deterministik, içerik LLM.
@@ -115,9 +128,11 @@ flowchart TD
   `i18n.yml` 2 saatte bir çeviri (`[CI Skip]` commit), `publish.yml` günde 2 kez
   boş "Site yayini" commit'i ile Cloudflare build'ini tetikler; `[CI Skip]` içeren
   commit'ler build başlatmaz.
-- **data/** — tek doğruluk kaynağı: teknik tarama çıktıları, fiyat serileri,
-  haberler, portföy geçmişi, robot günlüğü, makro snapshot/rejim. Botlar bunun
-  üzerine yazan deterministik + LLM destekli HTML üretir.
+- **data/** — tek doğruluk kaynağı: teknik tarama çıktıları, fiyat serileri
+  (`data/fiyat/<KOD>.json` fiyat deposu ≈300-420 işlem günü, hisse sayfası
+  grafiklerinin ana kaynağı; `data/prices/<tarih>.json` günlük kesitleri, piyasa
+  geneli seriler + doldurma), haberler, portföy geçmişi, robot günlüğü, makro
+  snapshot/rejim. Botlar bunun üzerine yazan deterministik + LLM destekli HTML üretir.
 - **reports/ + en/de/ru/zh/** — üretilen çıktı git'te yaşar; deploy = git checkout.
   TR sayfa ile dil kopyası arasındaki yapısal eşdeğerlik `i18n.py --esdeger` ile
   denetlenir.

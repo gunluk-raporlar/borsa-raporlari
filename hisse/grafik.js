@@ -26,12 +26,14 @@
   var CEVIRI = {
     tr: { tumu: "Tümü", min: "En düşük", max: "En yüksek", gunluk: "günlük",
           gun: "son {n} gün" },
+    en: { tumu: "All", min: "Lowest", max: "Highest", gunluk: "daily",
+          gun: "last {n} days" },
+    de: { tumu: "Alle", min: "Tiefstwert", max: "Höchstwert", gunluk: "täglich",
+          gun: "letzte {n} Tage" },
     ru: { tumu: "Всё", min: "Минимум", max: "Максимум", gunluk: "за день",
           gun: "последние {n} дн." },
     zh: { tumu: "全部", min: "最低", max: "最高", gunluk: "日变动",
-          gun: "近 {n} 天" },
-    en: { tumu: "All", min: "Lowest", max: "Highest", gunluk: "daily",
-          gun: "last {n} days" }
+          gun: "近 {n} 天" }
   };
   function soz(anahtar) {
     var dil = (document.documentElement.lang || "tr").slice(0, 2);
