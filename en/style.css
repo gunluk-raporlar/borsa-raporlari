@@ -71,6 +71,23 @@ tr:last-child td { border-bottom:none; }
 .footer { text-align:center; color:var(--muted); font-size:12.5px; padding:26px 20px;
           border-top:1px solid var(--line); background:var(--card); }
 .chart { width:100%; height:auto; display:block; }
+
+/* ---- Hisse fiyat grafigi: aralik dugmeleri, lejant ve hover ipucu ---- */
+.grafik-aralik { display:flex; gap:6px; flex-wrap:wrap; margin:0 0 8px; }
+.grafik-aralik button { border:1px solid var(--line); background:var(--card); color:var(--ink);
+                        border-radius:8px; padding:3px 11px; font-size:12px; cursor:pointer;
+                        font-family:inherit; }
+.grafik-aralik button[aria-pressed="true"] { background:var(--accent-bg); border-color:var(--accent);
+                                             color:var(--accent); font-weight:700; }
+.grafik-kutu { position:relative; }
+.grafik-lejant { display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin:4px 0 0; }
+.grafik-lejant i { display:inline-block; width:16px; border-top:2px dashed; vertical-align:middle;
+                   margin:0 5px 3px 0; }
+.grafik-lejant i.lj-duz { border-top-style:solid; }
+.grafik-ipucu { position:absolute; pointer-events:none; background:#0f172a; color:#f8fafc; border-radius:6px;
+                padding:4px 9px; font-size:11.5px; line-height:1.5; opacity:0; white-space:nowrap;
+                z-index:5; transform:translate(-50%, -112%); transition:opacity .12s; }
+.grafik-ipucu b { font-size:12.5px; }
 @media (max-width:640px) {
   .report { padding:18px 16px; }
   table { font-size:13px; }
