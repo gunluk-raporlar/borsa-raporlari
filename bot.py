@@ -2267,8 +2267,7 @@ PROFESYONEL_YAZIM_KURALLARI = (
     "koyu (bold) satirlardan olusan uzun listeler yerine '### Alt Baslik' biçiminde alt "
     "basliklarla ver; her alt basligin altina en fazla 3-5 cumlelik kisa paragraf yaz; bir "
     "paragrafi 5 cumleyi veya 600 karakteri gecirme. Koyu yazi YALNIZCA cumle icinde kritik "
-    "vurgu icindir; baslik yerine koyu satir kullanma.
-"
+    "vurgu icindir; baslik yerine koyu satir kullanma.\n"
     "  - Ic tutarliblik: metinde tekrar eden her rakam birebir ayni olmali; bolum sonuclari, tablolar, "
     "portfoy agirliklari, nakit orani ve senaryolar birbirini yalanlamamali.\n"
     "  - Kesin olmayan degerleri 'yaklasik', '~' veya aralikla isaretle; veri setindeki yuvarlamayi ve "
