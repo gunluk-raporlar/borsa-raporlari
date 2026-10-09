@@ -1022,6 +1022,9 @@ _LLM_TOKEN_SAYAC = {"in": 0, "out": 0}
 _LLM_SON_BASARI = {}
 # Bolum-bazli raporlarda yazar dagilimi (bolum basina +1; kaydet okur)
 _LLM_YAZARLAR = {}
+# Kosu toplami: kabul EDILMeyen denemelerin token'i dahil GERCEK harcama
+# (kaydet bunu okur; SON_BASARI yalnizca kabul edilen cagriyi tutar)
+_LLM_KOSU_TOKEN = {"in": 0, "out": 0}
 
 
 def _zai_call(prompt):
@@ -1178,8 +1181,12 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
             # 3 dk bekleyip TypeError ile yanitin cöpe gitmesine yol acmisti).
             _kullanim = getattr(resp, "usage", None)
             if _kullanim:
-                _LLM_TOKEN_SAYAC["in"] += getattr(_kullanim, "prompt_tokens", 0) or 0
-                _LLM_TOKEN_SAYAC["out"] += getattr(_kullanim, "completion_tokens", 0) or 0
+                _p = getattr(_kullanim, "prompt_tokens", 0) or 0
+                _q = getattr(_kullanim, "completion_tokens", 0) or 0
+                _LLM_TOKEN_SAYAC["in"] += _p
+                _LLM_TOKEN_SAYAC["out"] += _q
+                _LLM_KOSU_TOKEN["in"] += _p
+                _LLM_KOSU_TOKEN["out"] += _q
             if not getattr(resp, "choices", None):
                 logger.warning("%s/%s 200 dondu ama choices bos; siradaki model denenecek.", etiket, model)
                 print(f"[Uyari] {etiket}/{model} 200 dondu ama choices bos; siradaki model deneniyor ({deneme}/{max_deneme})...", flush=True)
@@ -1335,6 +1342,8 @@ def _zai_call_ic(prompt):
                     "saglayici": "ZAI", "model": mdl, "deneme": deneme + 1,
                     "prompt_tokens": getattr(_k, "prompt_tokens", 0) or 0,
                     "completion_tokens": getattr(_k, "completion_tokens", 0) or 0})
+                _LLM_KOSU_TOKEN["in"] += getattr(_k, "prompt_tokens", 0) or 0
+                _LLM_KOSU_TOKEN["out"] += getattr(_k, "completion_tokens", 0) or 0
                 return _tekrar_satirlarini_temizle(icerik)
             except Exception as e:
                 son_hata = str(e)[:200]
@@ -3206,6 +3215,8 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
                 "saglayici": "ZAI", "model": mdl, "deneme": deneme + 1,
                 "prompt_tokens": getattr(_k, "prompt_tokens", 0) or 0,
                 "completion_tokens": getattr(_k, "completion_tokens", 0) or 0})
+            _LLM_KOSU_TOKEN["in"] += getattr(_k, "prompt_tokens", 0) or 0
+            _LLM_KOSU_TOKEN["out"] += getattr(_k, "completion_tokens", 0) or 0
             if icerik.strip():
                 if _derin_dongu_var(icerik):
                     son_hata = "tekrar dongusu"
@@ -3415,6 +3426,8 @@ Yanıtını şu yapıda oluştur (başlıklar aynen bu şekilde, "## " ile):
                 "saglayici": "ZAI", "model": mdl, "deneme": deneme + 1,
                 "prompt_tokens": getattr(_k, "prompt_tokens", 0) or 0,
                 "completion_tokens": getattr(_k, "completion_tokens", 0) or 0})
+            _LLM_KOSU_TOKEN["in"] += getattr(_k, "prompt_tokens", 0) or 0
+            _LLM_KOSU_TOKEN["out"] += getattr(_k, "completion_tokens", 0) or 0
             if icerik.strip():
                 if _derin_dongu_var(icerik):
                     son_hata = "tekrar dongusu"

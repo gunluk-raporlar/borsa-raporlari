@@ -25,7 +25,8 @@ CSV_YOL = os.path.join("data", "kullanim-defteri.csv")
 XLSX_YOL = os.path.join("data", "kullanim-defteri.xlsx")
 SUTUNLAR = ["tarih", "saat", "rapor_turu", "saglayici", "model", "deneme",
             "prompt_token", "completion_token", "sure_sn", "hata_toplam",
-            "hata_detay", "rozet", "yazan_dagilimi"]
+            "hata_detay", "rozet", "yazan_dagilimi",
+            "kosu_token_in", "kosu_token_out"]
 _IST_ANAHTARLARI = ("isim", "enflasyon", "toplam_metin", "endeks",
                     "faiz", "makro", "piyasa")
 
@@ -79,11 +80,14 @@ def kaydet(rapor_turu, rozet=False, csv_yol=CSV_YOL, xlsx_yol=XLSX_YOL,
         "rozet": "evet" if rozet else "hayir",
         "yazan_dagilimi": ", ".join(f"{k2}x{v}" for k2, v in sorted(
             getattr(b, "_LLM_YAZARLAR", {}).items(), key=lambda x: -x[1])),
+        # kosu toplami: reddedilen denemeler dahil GERCEK harcama
+        "kosu_token_in": (getattr(b, "_LLM_KOSU_TOKEN", {}) or {}).get("in", "-"),
+        "kosu_token_out": (getattr(b, "_LLM_KOSU_TOKEN", {}) or {}).get("out", "-"),
     }
     os.makedirs(os.path.dirname(csv_yol) or ".", exist_ok=True)
     yeni = not os.path.exists(csv_yol)
     with open(csv_yol, "a", encoding="utf-8-sig", newline="") as fh:
-        yazici = csv.DictWriter(fh, fieldnames=SUTUNLAR)
+        yazici = csv.DictWriter(fh, fieldnames=SUTUNLAR, restval="-")
         if yeni:
             yazici.writeheader()
         yazici.writerow(satir)
