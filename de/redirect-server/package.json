@@ -1,0 +1,12 @@
+{
+  "name": "borsa-yonlendirme",
+  "version": "1.0.0",
+  "private": true,
+  "description": "borsa-raporlari.onrender.com -> borsa-raporlari.pages.dev 301 yonlendirme servisi",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
