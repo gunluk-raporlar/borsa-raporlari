@@ -178,3 +178,17 @@ html.dark .ticker-bant, html.dark .topbar { background:#0b1220; border-bottom:1p
 .isi-hucre { border-radius:10px; padding:10px 6px; text-align:center; color:#fff; }
 .isi-hucre b { display:block; font-size:13.5px; letter-spacing:.4px; }
 .isi-hucre span { font-size:12px; font-weight:700; }
+
+/* ---- Rapor okunabilirlik (2026-10-09): bolum-bazi bold listeler ve duvar
+   paragraflar icin — .report altindaki tum rapor sayfalarinda gecerli ---- */
+.report p { margin:12px 0; max-width:78ch; line-height:1.7; }
+.report ul { margin:12px 0; padding-left:4px; list-style:none; }
+.report ul > li { margin:0 0 10px; padding:10px 14px 10px 15px;
+                  border:1px solid var(--line); border-left:4px solid var(--accent);
+                  border-radius:8px; background:var(--accent-bg); line-height:1.6; }
+.report ul > li > ul { margin:8px 0 0; padding-left:8px; }
+.report ul > li > ul > li { border:none; border-left:2px solid var(--line); border-radius:0 6px 6px 0;
+                            background:transparent; padding:2px 4px 2px 10px; margin:0 0 6px; }
+.report li > strong:first-child { display:block; color:var(--accent); font-size:14.5px;
+                                  margin:0 0 3px; letter-spacing:.2px; }
+.report p > strong:first-child { color:var(--accent); }
