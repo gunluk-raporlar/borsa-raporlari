@@ -38,7 +38,7 @@ jobs:
             echo "uretim=true" >> "$GITHUB_OUTPUT"; exit 0
           fi
           BUGUN=$(TZ=Europe/Istanbul date +%F)
-          if [ -f "derin-analiz/${{BUGUN}}.html" ]; then
+          if [ -f "derin-analiz/${BUGUN}.html" ]; then
             echo "Bugunun raporu zaten yayinda (${BUGUN}) — uretim atlandi."
             echo "uretim=false" >> "$GITHUB_OUTPUT"
           else
