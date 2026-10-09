@@ -25,7 +25,7 @@ CSV_YOL = os.path.join("data", "kullanim-defteri.csv")
 XLSX_YOL = os.path.join("data", "kullanim-defteri.xlsx")
 SUTUNLAR = ["tarih", "saat", "rapor_turu", "saglayici", "model", "deneme",
             "prompt_token", "completion_token", "sure_sn", "hata_toplam",
-            "hata_detay", "rozet"]
+            "hata_detay", "rozet", "yazan_dagilimi"]
 _IST_ANAHTARLARI = ("isim", "enflasyon", "toplam_metin", "endeks",
                     "faiz", "makro", "piyasa")
 
@@ -77,6 +77,8 @@ def kaydet(rapor_turu, rozet=False, csv_yol=CSV_YOL, xlsx_yol=XLSX_YOL,
         "hata_toplam": toplam,
         "hata_detay": detay,
         "rozet": "evet" if rozet else "hayir",
+        "yazan_dagilimi": ", ".join(f"{k2}x{v}" for k2, v in sorted(
+            getattr(b, "_LLM_YAZARLAR", {}).items(), key=lambda x: -x[1])),
     }
     os.makedirs(os.path.dirname(csv_yol) or ".", exist_ok=True)
     yeni = not os.path.exists(csv_yol)

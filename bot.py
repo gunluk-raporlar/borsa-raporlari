@@ -1020,6 +1020,8 @@ _LLM_TOKEN_SAYAC = {"in": 0, "out": 0}
 # Kullanim defteri (2026-10-08): basarili cagrinin saglayici/model/deneme/
 # token bilgisi; kullanim_defteri.kaydet() rapor yazilirken bunu okur.
 _LLM_SON_BASARI = {}
+# Bolum-bazli raporlarda yazar dagilimi (bolum basina +1; kaydet okur)
+_LLM_YAZARLAR = {}
 
 
 def _zai_call(prompt):
@@ -1217,6 +1219,8 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
                     continue
                 logger.warning("Son denemede de yanit token limitinde kesildi; kesik yanit kabul ediliyor.")
             # Kullanim defteri: basarili cagrinin kimligi (2026-10-08)
+            _yazar = f"{etiket}/{model}"
+            _LLM_YAZARLAR[_yazar] = _LLM_YAZARLAR.get(_yazar, 0) + 1
             _LLM_SON_BASARI.update({
                 "saglayici": etiket, "model": model, "deneme": deneme,
                 "prompt_tokens": getattr(_kullanim, "prompt_tokens", 0) or 0,
