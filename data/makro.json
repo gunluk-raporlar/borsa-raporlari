@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-10-08 23:42",
+ "guncelleme": "2026-10-09 23:07",
  "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + EVDS(5) + Resmi AB/ABD(25)",
  "gostergeler": [
   {
@@ -91,13 +91,13 @@
   {
    "ulke": "Türkiye",
    "ad": "Sanayi Üretimi (yıllık)",
-   "deger": -0.3234,
+   "deger": -1.8618,
    "birim": "%",
-   "donem": "2026-07-01",
+   "donem": "2026-08-01",
    "tahmin": null,
    "onceki": null,
    "kaynak_baslik": "DF_SANAYI_URETIM_ENDEKS_ANA_C",
-   "kaynak_periyot": "2026-07",
+   "kaynak_periyot": "2026-08",
    "frekans": "aylık",
    "teyit": "TÜİK",
    "kaynak_durumu": "TÜİK resmi verisi"
@@ -261,13 +261,13 @@
   {
    "ulke": "Türkiye",
    "ad": "Döviz rezervleri",
-   "deger": 61.563,
+   "deger": 60.33,
    "birim": "milyar $",
-   "donem": "2026-10-01",
+   "donem": "2026-10-08",
    "tahmin": null,
-   "onceki": 62.808,
+   "onceki": 61.563,
    "kaynak_baslik": "Foreign Exchange Reserves",
-   "kaynak_periyot": "Sep/25",
+   "kaynak_periyot": "Oct/02",
    "frekans": "haftalık"
   },
   {
@@ -714,7 +714,7 @@
    "deger": 1716.0,
    "birim": "bin kişi",
    "donem": "2026-09-26",
-   "tahmin": 1730.0,
+   "tahmin": 1710.0,
    "onceki": 1699.0,
    "kaynak_baslik": "FRED haftalık devam eden başvurular (SA)",
    "kaynak_periyot": "2026-09-26",
@@ -1087,11 +1087,11 @@
    "ad": "Politika faizi",
    "deger": 4.0,
    "birim": "%",
-   "donem": "2026-10-08",
+   "donem": "2026-10-09",
    "tahmin": 4.0,
    "onceki": 4.0,
    "kaynak_baslik": "FRED Fed fon ust siniri",
-   "kaynak_periyot": "2026-10-08",
+   "kaynak_periyot": "2026-10-09",
    "frekans": "olay",
    "teyit": "FRED",
    "kaynak_durumu": "FRED resmi verisi"
@@ -1115,11 +1115,11 @@
    "ad": "Politika faizi",
    "deger": 2.65,
    "birim": "%",
-   "donem": "2026-10-08",
+   "donem": "2026-10-09",
    "tahmin": 2.65,
    "onceki": 2.65,
    "kaynak_baslik": "ECB MRO ana refinansman faizi",
-   "kaynak_periyot": "2026-10-08",
+   "kaynak_periyot": "2026-10-09",
    "frekans": "olay",
    "teyit": "ECB",
    "kaynak_durumu": "ECB resmi verisi"
