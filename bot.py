@@ -2263,6 +2263,12 @@ PROFESYONEL_YAZIM_KURALLARI = (
     "yerine olasilik ve kosul dili kullan; firsatlarla riskleri ayni agirlikta yaz.\n"
     "  - Birim ve bicim tutarliligi: her rakam birimiyle yazilsin (TL, bin TL, milyar TL, %, baz puan); "
     "metin boyunca binlik/ayrac bicimi degistirmez (TR raporu: 16.217, %2,4 bicimi).\n"
+    "  - Yapi ve bicim: alt konulari, sektor incelemelerini ve hisse degerlendirmelerini "
+    "koyu (bold) satirlardan olusan uzun listeler yerine '### Alt Baslik' biçiminde alt "
+    "basliklarla ver; her alt basligin altina en fazla 3-5 cumlelik kisa paragraf yaz; bir "
+    "paragrafi 5 cumleyi veya 600 karakteri gecirme. Koyu yazi YALNIZCA cumle icinde kritik "
+    "vurgu icindir; baslik yerine koyu satir kullanma.
+"
     "  - Ic tutarliblik: metinde tekrar eden her rakam birebir ayni olmali; bolum sonuclari, tablolar, "
     "portfoy agirliklari, nakit orani ve senaryolar birbirini yalanlamamali.\n"
     "  - Kesin olmayan degerleri 'yaklasik', '~' veya aralikla isaretle; veri setindeki yuvarlamayi ve "
