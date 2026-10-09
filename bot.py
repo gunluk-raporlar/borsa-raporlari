@@ -1326,6 +1326,11 @@ def _zai_call_ic(prompt):
                     logger.warning("[Z.ai] %s bozuk yanit uretti; siradaki deneniyor.", mdl)
                     break
                 logger.info("[Z.ai] rapor alindi (%s): %d karakter", mdl, len(icerik))
+                _k = getattr(resp, "usage", None)
+                _LLM_SON_BASARI.update({
+                    "saglayici": "ZAI", "model": mdl, "deneme": deneme + 1,
+                    "prompt_tokens": getattr(_k, "prompt_tokens", 0) or 0,
+                    "completion_tokens": getattr(_k, "completion_tokens", 0) or 0})
                 return _tekrar_satirlarini_temizle(icerik)
             except Exception as e:
                 son_hata = str(e)[:200]
@@ -3192,6 +3197,11 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
             )
             secim = resp.choices[0]
             icerik = secim.message.content or ""
+            _k = getattr(resp, "usage", None)
+            _LLM_SON_BASARI.update({
+                "saglayici": "ZAI", "model": mdl, "deneme": deneme + 1,
+                "prompt_tokens": getattr(_k, "prompt_tokens", 0) or 0,
+                "completion_tokens": getattr(_k, "completion_tokens", 0) or 0})
             if icerik.strip():
                 if _derin_dongu_var(icerik):
                     son_hata = "tekrar dongusu"
@@ -3396,6 +3406,11 @@ Yanıtını şu yapıda oluştur (başlıklar aynen bu şekilde, "## " ile):
             )
             secim = resp.choices[0]
             icerik = secim.message.content or ""
+            _k = getattr(resp, "usage", None)
+            _LLM_SON_BASARI.update({
+                "saglayici": "ZAI", "model": mdl, "deneme": deneme + 1,
+                "prompt_tokens": getattr(_k, "prompt_tokens", 0) or 0,
+                "completion_tokens": getattr(_k, "completion_tokens", 0) or 0})
             if icerik.strip():
                 if _derin_dongu_var(icerik):
                     son_hata = "tekrar dongusu"

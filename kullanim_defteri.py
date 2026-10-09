@@ -49,8 +49,17 @@ def kaydet(rapor_turu, rozet=False, csv_yol=CSV_YOL, xlsx_yol=XLSX_YOL,
     rapor_turu: "gunluk" | "derin" | "makro" | "radyo" ...
     rozet: son-care yayini ise True (dusuk guvenilirlik isareti).
     """
+    import sys
     import bot as _b
     b = bot_modul or _b
+    # KRITIK (2026-10-09): bot.py script olarak calisirken modul adi
+    # "__main__" olur; kaydet'in `import bot`'u IKINCI bir kopya yaratir ve
+    # bos sozluk okur (bugunku bos gunluk satirinin kok nedeni). __main__
+    # icinde dolu sozluk varsa onu esas al.
+    if b is None or not getattr(b, "_LLM_SON_BASARI", None):
+        ana = sys.modules.get("__main__")
+        if ana is not None and getattr(ana, "_LLM_SON_BASARI", None):
+            b = ana
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     simdi = datetime.datetime.now(tz)
     bilgi = dict(getattr(b, "_LLM_SON_BASARI", {}) or {})
