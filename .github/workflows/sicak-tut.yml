@@ -1,0 +1,20 @@
+name: Yonlendirme servisini sicak tut
+
+# Render ucretsiz web servisleri 15 dakika bos kalirsa uyur; Googlebot
+# uyanana kadar bekleyemez. Bu is her 10 dakikada bir ping atarak servisi
+# ayik tutar. Servis henüz kurulu degilse ping 404/503 donebilir; sorun degil.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch: {}
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping
+        run: |
+          kod=$(curl -s -o /dev/null -w '%{http_code}' --max-time 60 https://borsa-raporlari.onrender.com/ || true)
+          echo "Donen HTTP kodu: $kod"
