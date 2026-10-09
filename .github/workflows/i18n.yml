@@ -102,13 +102,15 @@ jobs:
       # 2026-10-07: GitHub sabah yuk penceresinde schedule kosularini
       # dusurdugu icin yayin nobetcisi gun ici bu kadar guvenilir kaynakla
       # uyandirilir (nobetci kendi zincirini kurar; bu yalnizca baslangic).
-      - name: Nobetci zincirini uyandir (hafta ici 08-16 TSI)
+      # 2026-10-09: pencere 07:00'den itibaren — gunluk cronu (07:17 TSI)
+      # sabah dusme penceresinde yine dusecegi icin telafi bir saat erken.
+      - name: Nobetci zincirini uyandir (hafta ici 07-16 TSI)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           GUN=$(TZ=Europe/Istanbul date +%u)
           SAAT=$(TZ=Europe/Istanbul date +%H)
-          if [ "$GUN" -le 5 ] && [ "$SAAT" -ge 8 ] && [ "$SAAT" -le 15 ]; then
+          if [ "$GUN" -le 5 ] && [ "$SAAT" -ge 7 ] && [ "$SAAT" -le 15 ]; then
             gh workflow run yayin-nobetci.yml --repo "$GITHUB_REPOSITORY" --ref main               && echo "Nobetci zinciri tetiklendi." || echo "Tetikleme atlandi."
           else
             echo "Zincir baslatma penceresi disi (TSI $SAAT, gun $GUN)."
