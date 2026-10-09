@@ -8,6 +8,11 @@ on:
     # ayni anda baslamasin. Hafta sonu piyasa kapali — uretim yok.
     - cron: '17 4 * * 1-5'
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Bugunun raporu varsa bile yeniden uret'
+        type: boolean
+        default: false
 permissions:
   contents: write
   issues: write
@@ -30,7 +35,26 @@ jobs:
           python-version: '3.12'
       - name: Kutuphaneleri kur
         run: pip install -r requirements.txt
+      # Tazelik kapisi (2026-10-09): gecikmis GitHub cron'lari ayni gunun
+      # raporunu IKINCI kez uretip eziyordu (8 Ekim: derin analiz 2 kez
+      # uretildi). Bugunun dosyasi varsa uretim atlanir; force=true ile
+      # elle zorlanabilir (makro'daki MAKRO_FORCE deseninin aynisi).
+      - name: Tazelik kapisi
+        id: kapisi
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "FORCE — uretim zorlandi."
+            echo "uretim=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          BUGUN=$(TZ=Europe/Istanbul date +%F)
+          if [ -f "raporlar/${BUGUN}.html" ]; then
+            echo "Bugunun raporu zaten yayinda (${BUGUN}) — uretim atlandi."
+            echo "uretim=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "uretim=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Botu calistir
+        if: steps.kapisi.outputs.uretim != 'false'
         env:
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
