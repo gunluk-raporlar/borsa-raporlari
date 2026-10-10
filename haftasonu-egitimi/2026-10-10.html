@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hafta Sonu Borsa Okulu - 2026-10-10</title>
+<meta name="description" content="Hafta sonu borsa eğitimi: yapay zeka eğitmen her Cumartesi/Pazar bir terim, gösterge veya grafik konusunu gerçek BIST verisiyle anlatır.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-10">
+<link rel="icon" href="/favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Günlük Raporlar">
+<meta property="og:title" content="Hafta Sonu Borsa Okulu - 2026-10-10">
+<meta property="og:description" content="Hafta sonu borsa eğitimi: yapay zeka eğitmen her Cumartesi/Pazar bir terim, gösterge veya grafik konusunu gerçek BIST verisiyle anlatır.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-10">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Günlük Raporlar kapak görseli">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hafta Sonu Borsa Okulu - 2026-10-10">
+<meta name="twitter:description" content="Hafta sonu borsa eğitimi: yapay zeka eğitmen her Cumartesi/Pazar bir terim, gösterge veya grafik konusunu gerçek BIST verisiyle anlatır.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Hafta Sonu Borsa Okulu - 2026-10-10", "description": "Hafta sonu borsa eğitimi: yapay zeka eğitmen her Cumartesi/Pazar bir terim, gösterge veya grafik konusunu gerçek BIST verisiyle anlatır.", "url": "https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-10", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="../style.css">
+
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="../index.html">BIST 30 Günlük Raporlar</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
+<nav><a href="../index.html">Ana Sayfa</a><a href="../raporlar.html">Raporlar</a><a href="../hisse/index.html">Hisseler</a><a href="../derin-analiz.html">Derin Analiz</a><a href="../makro-analiz.html">Makro Analiz</a><a href="../teknik-analiz.html">Teknik Tarama</a><a href="../sinyal-karnesi.html">Sinyal Karnesi</a><a href="../borsapy-analiz.html">Borsapy Sinyal</a><a href="../haberler.html">Haberler</a><a href="../sirket-haberleri.html">Şirket Haberleri</a><a href="../portfolio.html">Deneme Portföyü</a><a href="../haftasonu.html">Hafta Sonu</a><a href="../haftasonu-egitimi.html" class="active">Borsa Okulu</a><a href="../takvim.html">📅 Takvim</a><a href="../sozluk.html">Sözlük</a><a href="../terimler.html">Terimler</a><a href="../muhasebe-terimleri.html">Muhasebe Terimleri</a><a href="../robot.html">İşlem Robotu</a></nav>
+</div></header>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Fiyatlar yükleniyor...</span></div>
+</div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
+
+<div class="ticker-bant" id="ticker-bant2" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Piyasa verileri yükleniyor...</span></div>
+</div>
+<script>
+(function() {
+  var kutu = document.getElementById('ticker-bant2');
+  if (!kutu) return;
+  var kok = kutu.dataset.kok || '';
+  var iz = document.getElementById('ticker-iz2');
+
+  function bicim(g) {
+    var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
+    var rozet = (typeof g.d === 'number')
+      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+        Number(g.d).toFixed(2) + '%</span>'
+      : '';
+    var birim = g.b || g.birim || '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (birim ? ' ' + birim : '') + rozet + '</span>';
+  }
+  function ciz(veri) {
+    var ogeler = (veri.gostergeler || []).map(bicim).join('');
+    if (!ogeler) throw new Error('bos');
+    var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
+               (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Piyasa verileri geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
+      });
+  }
+  yukle('/api/piyasa?t=' + Date.now());
+  setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Yükleniyor...</span>
+            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Sayfa dili seçin">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-10" hreflang="tr" lang="tr" data-dil="tr" class="aktif" aria-current="true">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/haftasonu-egitimi/2026-10-10" hreflang="en" lang="en" data-dil="en">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-10-10" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-10-10" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-10-10" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+</nav>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
+
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Hisse, konu veya tarih ara…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Ara</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '../';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\?\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\.|mi|mı|icin)\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+
+
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Oynat / Duraklat">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Ses seviyesi" title="Ses">
+  <span class="radyo-linkler"><a href="../radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> <span class="ayrac">•</span> <a href="../radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</span>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='../';
+  if(!btn||!ses) return;
+  if(ayar){ ses.volume=(parseInt(ayar.value,10)||80)/100; }
+  var hazir=false;
+  function hazirla(geri){
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){return r.json();}).then(function(d){
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){ ses.src=kok+l[0].dosya; }
+      hazir=true; geri();
+    }).catch(function(){ hazir=true; geri(); });
+  }
+  btn.addEventListener('click',function(){
+    if(ses.paused){ hazirla(function(){ var p=ses.play(); if(p&&p.catch){p.catch(function(){});} }); }
+    else { ses.pause(); }
+  });
+  ses.addEventListener('play',function(){ btn.textContent='❚❚'; btn.setAttribute('aria-label','Duraklat'); });
+  ses.addEventListener('pause',function(){ btn.textContent='▶'; btn.setAttribute('aria-label','Oynat'); });
+  if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
+})();
+</script>
+
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>Hafta Sonu Borsa Okulu</h1>
+<div class="meta"><span class="badge">2026-10-10</span><span>Ders 9/26 &bull; Teknik Analiz &bull; Kurgusal yapay zeka eğitmen</span></div>
+</div>
+<article class="report" id="rapor-ses-metin"><figure style="margin:0 0 18px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 300" role="img" style="width:100%;height:auto;background:#fff;border:1px solid #e2e8f0;border-radius:10px;"><text x="14" y="26" font-family="Segoe UI,Arial" font-size="15" font-weight="700" fill="#0f172a">Regresyon Kanalı — %0 alt bant, %100 üst bant</text><text x="550" y="292" font-family="Segoe UI,Arial" font-size="11" fill="#64748b" text-anchor="end">şematik — temsilidir</text><g transform="translate(0,40)"><line x1="46" y1="12" x2="46" y2="209" stroke="#e2e8f0" stroke-width="1"/><line x1="129" y1="12" x2="129" y2="209" stroke="#e2e8f0" stroke-width="1"/><line x1="213" y1="12" x2="213" y2="209" stroke="#e2e8f0" stroke-width="1"/><line x1="296" y1="12" x2="296" y2="209" stroke="#e2e8f0" stroke-width="1"/><line x1="379" y1="12" x2="379" y2="209" stroke="#e2e8f0" stroke-width="1"/><line x1="463" y1="12" x2="463" y2="209" stroke="#e2e8f0" stroke-width="1"/><text x="46" y="224" font-family="Segoe UI,Arial" font-size="11" fill="#64748b">zaman →</text><polyline points="46.0,146.3 54.5,146.2 62.9,144.1 71.4,152.8 79.9,156.8 88.4,159.1 96.8,168.6 105.3,158.5 113.8,170.2 122.3,169.4 130.7,174.6 139.2,177.7 147.7,190.4 156.2,179.0 164.6,170.4 173.1,184.6 181.6,179.7 190.1,177.7 198.5,174.8 207.0,173.7 215.5,171.1 224.0,163.3 232.4,153.4 240.9,140.1 249.4,143.2 257.9,142.6 266.3,147.7 274.8,147.5 283.3,142.3 291.8,135.3 300.2,115.9 308.7,111.2 317.2,98.8 325.7,97.0 334.1,93.3 342.6,94.4 351.1,104.5 359.6,107.9 368.0,85.0 376.5,82.5 385.0,72.4 393.5,75.3 401.9,66.5 410.4,63.0 418.9,70.7 427.4,67.4 435.8,59.3 444.3,52.5 452.8,54.6 461.3,57.8 469.7,59.0 478.2,63.4 486.7,46.0 495.2,44.3 503.6,32.5 512.1,31.9 520.6,32.1 529.1,34.8 537.5,47.2 546.0,25.6" fill="none" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/><polyline points="46.0,195.4 54.5,192.7 62.9,189.9 71.4,187.2 79.9,184.5 88.4,181.8 96.8,179.0 105.3,176.3 113.8,173.6 122.3,170.8 130.7,168.1 139.2,165.4 147.7,162.6 156.2,159.9 164.6,157.2 173.1,154.4 181.6,151.7 190.1,149.0 198.5,146.2 207.0,143.5 215.5,140.8 224.0,138.0 232.4,135.3 240.9,132.6 249.4,129.8 257.9,127.1 266.3,124.4 274.8,121.6 283.3,118.9 291.8,116.2 300.2,113.4 308.7,110.7 317.2,108.0 325.7,105.2 334.1,102.5 342.6,99.8 351.1,97.0 359.6,94.3 368.0,91.6 376.5,88.8 385.0,86.1 393.5,83.4 401.9,80.6 410.4,77.9 418.9,75.2 427.4,72.4 435.8,69.7 444.3,67.0 452.8,64.2 461.3,61.5 469.7,58.8 478.2,56.0 486.7,53.3 495.2,50.6 503.6,47.8 512.1,45.1 520.6,42.4 529.1,39.7 537.5,36.9 546.0,34.2" fill="none" stroke="#0d9488" stroke-width="2.6" stroke-linejoin="round"/><polyline points="46.0,140.4 54.5,138.4 62.9,136.5 71.4,134.5 79.9,132.6 88.4,130.6 96.8,128.7 105.3,126.7 113.8,124.8 122.3,122.9 130.7,120.9 139.2,119.0 147.7,117.0 156.2,115.1 164.6,113.1 173.1,111.2 181.6,109.2 190.1,107.3 198.5,105.3 207.0,103.4 215.5,101.5 224.0,99.5 232.4,97.6 240.9,95.6 249.4,93.7 257.9,91.7 266.3,89.8 274.8,87.8 283.3,85.9 291.8,83.9 300.2,82.0 308.7,80.1 317.2,78.1 325.7,76.2 334.1,74.2 342.6,72.3 351.1,70.3 359.6,68.4 368.0,66.4 376.5,64.5 385.0,62.5 393.5,60.6 401.9,58.7 410.4,56.7 418.9,54.8 427.4,52.8 435.8,50.9 444.3,48.9 452.8,47.0 461.3,45.0 469.7,43.1 478.2,41.1 486.7,39.2 495.2,37.3 503.6,35.3 512.1,33.4 520.6,31.4 529.1,29.5 537.5,27.5 546.0,25.6" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6,4"/><polyline points="46.0,195.4 54.5,193.5 62.9,191.5 71.4,189.6 79.9,187.6 88.4,185.7 96.8,183.7 105.3,181.8 113.8,179.9 122.3,177.9 130.7,176.0 139.2,174.0 147.7,172.1 156.2,170.1 164.6,168.2 173.1,166.2 181.6,164.3 190.1,162.3 198.5,160.4 207.0,158.5 215.5,156.5 224.0,154.6 232.4,152.6 240.9,150.7 249.4,148.7 257.9,146.8 266.3,144.8 274.8,142.9 283.3,140.9 291.8,139.0 300.2,137.1 308.7,135.1 317.2,133.2 325.7,131.2 334.1,129.3 342.6,127.3 351.1,125.4 359.6,123.4 368.0,121.5 376.5,119.5 385.0,117.6 393.5,115.7 401.9,113.7 410.4,111.8 418.9,109.8 427.4,107.9 435.8,105.9 444.3,104.0 452.8,102.0 461.3,100.1 469.7,98.1 478.2,96.2 486.7,94.3 495.2,92.3 503.6,90.4 512.1,88.4 520.6,86.5 529.1,84.5 537.5,82.6 546.0,80.6" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6,4"/><line x1="60" y1="18" x2="76" y2="18" stroke="#0f172a" stroke-width="2.6"/><text x="82" y="22" font-family="Segoe UI,Arial" font-size="11.5" fill="#0f172a">Fiyat</text><line x1="170" y1="18" x2="186" y2="18" stroke="#0d9488" stroke-width="2.6"/><text x="192" y="22" font-family="Segoe UI,Arial" font-size="11.5" fill="#0f172a">Regresyon (orta)</text><line x1="350" y1="18" x2="366" y2="18" stroke="#94a3b8" stroke-width="2.6"/><text x="372" y="22" font-family="Segoe UI,Arial" font-size="11.5" fill="#0f172a">±2σ bant</text></g></svg><figcaption style="color:var(--muted);font-size:12px;margin-top:6px">Şekil: Regresyon kanalı — eğitim amaçlı şematik gösterim (gerçek piyasa verisi değildir)</figcaption></figure><h2>Bugünün Dersi: Regresyon kanalı</h2>
+<p>Merhaba arkadaşlar! Hafta sonunun en keyifli saati: Borsa Okulu. Bugün grafiklerinize bir "istatistik gözlüğü" takıyoruz. Hazırsanız başlıyoruz.</p>
+<h2>1. Nedir?</h2>
+<p>Önce benzetme: Bir yolda yürüyen bir bisikletli düşünün. Yol düz bir eğim; bisikletli ise yol boyunca sağa sola savrulur. Yolun iki kenarında da korkuluklar var.</p>
+<p>Regresyon kanalı da aynen budur:</p>
+<ul>
+<li>
+<p><strong>Ortadaki çizgi:</strong> Son 60 günün fiyat hareketine en iyi uyan düz trend çizgisi (bisikletlinin izlediği yol).</p>
+</li>
+<li>
+<p><strong>Alt bant:</strong> Kanalın %0 seviyesi (sol korkuluk).</p>
+</li>
+<li>
+<p><strong>Üst bant:</strong> Kanalın %100 seviyesi (sağ korkuluk).</p>
+</li>
+</ul>
+<p>Net tanım: Regresyon kanalı, son 60 günün lineer trendi etrafına çizilen istatistiksel banttır. Fiyat bu bantların içinde konumunu gösterir; %0 alt bant, %100 üst bant demektir.</p>
+<h2>2. Neden Önemli?</h2>
+<p>Çünkü gözümüz bizi kandırır, istatistik etmez.</p>
+<ul>
+<li>
+<p><strong>Trendi nesnelleştirir:</strong> "Bence yükselişte" demek yerine, 60 günlük matematiğe bakarsınız.</p>
+</li>
+<li>
+<p><strong>Konum bilir verir:</strong> Fiyat trende göre bantların neresinde? Aşağıda mı, tepede mi? Tek bakışta görürsünüz.</p>
+</li>
+<li>
+<p><strong>Güven ölçer:</strong> r değeri sayesinde trendin ne kadar "gerçek" olduğunu anlarsınız. Şekil çizmek kolay; şeklin veriye oturup oturmadığını r söyler.</p>
+</li>
+</ul>
+<p>Kısacası: Regresyon kanalı, hisseyi trendinin içinde değerlendirmenizi sağlar.</p>
+<h2>3. Nasıl Okunur / Kullanılır?</h2>
+<p>Üç soruyu sırayla sorun:</p>
+<p><strong>Adım 1 – Trend yönü ne?</strong><br />
+Ortadaki çizginin eğimine bakın. Yukarı eğimli = yükseliş trendi. Aşağı eğimli = düşüş trendi. Düz = yatay piyasa.</p>
+<p><strong>Adım 2 – Fiyat kanalın neresinde? (Kanal % değeri)</strong></p>
+<ul>
+<li>
+<p><strong>%0'a yakın:</strong> Fiyat alt bantta. Trende göre "taban" bölge.</p>
+</li>
+<li>
+<p><strong>%50 civarı:</strong> Fiyat kanalın tam ortasında. Nötr bölge.</p>
+</li>
+<li>
+<p><strong>%100'e yakın:</strong> Fiyat üst bantta. Trende göre "tavan" bölge.</p>
+</li>
+<li>
+<p><strong>%0'ın altı (eksi değer):</strong> Fiyat kanalın altına taşmış. Dikkatli bakın.</p>
+</li>
+</ul>
+<p><strong>Adım 3 – Trend ne kadar güvenilir? (r değeri)</strong></p>
+<ul>
+<li>
+<p><strong>r = 0,70 ve üzeri:</strong> Güçlü uyum. Trend çizgisi veriyi iyi temsil ediyor.</p>
+</li>
+<li>
+<p><strong>r = 0,30 – 0,70:</strong> Orta uyum. Kanal fikir verir ama tek başına yeterli değil.</p>
+</li>
+<li>
+<p><strong>r = 0,30 altı:</strong> Zayıf uyum. Kanalın söylediklerine az güvenin.</p>
+</li>
+<li>
+<p><strong>r negatifse:</strong> 60 günlük eğim aşağı, yani düşüş trendi var.</p>
+</li>
+</ul>
+<p>Altın kural: Bu üç soruyu <strong>birlikte</strong> cevaplayın. Tek başına hiçbiri sinyal değildir.</p>
+<h2>4. Gerçek Örnek</h2>
+<p>Bugünkü verilerimizle dört hisseyi birlikte okuyalım.</p>
+<p><strong>VAKBN – Sitenin "güçlü al" listesinden:</strong><br />
+Son fiyat 33,90 TL, günlük değişim +%0,71. Kanal %32, r = 0,76.<br />
+Okuması: Trendin uyumu güçlü (r = 0,76), yani çizdiğimiz kanal anlamlı. Fiyat ise kanalın alt yarısında (%32); üst banda epey mesafe var. "Güçlü al" etiketini kanalla birleştirince şöyle diyoruz: "Trend oturmuş, fiyat trendin alt bölgesinde."</p>
+<p><strong>SAHOL:</strong><br />
+Son fiyat 83,50 TL, günlük değişim -%5,92. Kanal -%2, r = 0,11.<br />
+Okuması: Fiyat kanalın altına taşmış (-%2). Ama r = 0,11! Trend veriye oturmuyor; kanal "konuşmuyor". Bant altı görüntüsüne fazla anlam yüklememek gerek.</p>
+<p><strong>TRMET:</strong><br />
+Son fiyat 137,30 TL, günlük değişim +%4,97. Kanal %52, r = 0,26.<br />
+Okuması: Fiyat tam ortada (%52). Uyum zayıf olduğu için kanal nötr bir çerçeve; çarpıcı bir bilgi vermiyor.</p>
+<p><strong>TRALT:</strong><br />
+Son fiyat 43,90 TL, günlük değişim +%3,93. Kanal %24, r = -0,22.<br />
+Okuması: Asıl ders burada! R negatif, yani 60 günlük eğim aşağı. Günlük +%3,93'lük yükseliş, düşen trende karşı bir hamle. Tek güçlü gün, trendi değiştirmez.</p>
+<p>Gördünüz mü? Aynı gün, dört farklı hikâye.</p>
+<h2>5. Sık Yapılan Hatalar</h2>
+<ul>
+<li>
+<p><strong>Üst banda dokunmayı tek başına satış sinyali sanmak:</strong> Güçlü trendlerde fiyat üst banda yapışıp yol alabilir. Bant, tek kelimeyle "sat" demez.</p>
+</li>
+<li>
+<p><strong>Zayıf r'li kanaldan anlamlı çıkarım yapmak:</strong> r = 0,10 – 0,25 aralığındaki kanallar güvenirlik vermez. Önce r'ye bakın, sonra yorum yapın.</p>
+</li>
+<li>
+<p><strong>Tek günlük hareketle trend sonucu çıkarmak:</strong> TRALT örneğini unutmayın; günlük +%3,93 ile 60 günlük negatif eğim birbirini iptal etmez.</p>
+</li>
+<li>
+<p><strong>Her grafikte kanal aramak:</strong> Yatay ve karışık piyasalarda regresyon kanalı anlamını yitirir. r zayıfsa aracı çizmeyin.</p>
+</li>
+</ul>
+<h2>6. Mini Test</h2>
+<p><strong>Soru 1:</strong> Bir hissenin kanal % değeri %100 ise fiyat nerededir?<br />
+Cevap: Tam üst banttadır. Trende göre "tavan" bölgesindedir; ama bu tek başına satış sinyali değildir.</p>
+<p><strong>Soru 2:</strong> r = 0,20 olan bir kanala ne kadar güvenmeliyiz?<br />
+Cevap: Çok az. Uyum zayıftır; trend çizgisi fiyat hareketini temsil etmiyor olabilir. Kanalı yorum aracı olarak kullanmak yanıltır.</p>
+<p><strong>Soru 3:</strong> TRALT günlük +%3,93 yükselmiş ama r = -0,22. Bu ikisi birlikte ne söyler?<br />
+Cevap: 60 günlük eğim aşağı yönlü; günün yükselişi trende karşı bir hamledir. Tek gün, kurulmuş bir trendi değiştirmeye yetmez.</p>
+<h2>7. Özet</h2>
+<ul>
+<li>
+<p>Regresyon kanalı, son 60 günün lineer trendi etrafına çizilen istatistiksel banttır; %0 alt bant, %100 üst banttır.</p>
+</li>
+<li>
+<p><strong>Kanal %</strong> fiyatın bantlar içindeki konumunu, <strong>r</strong> trendin veriye uyum gücünü gösterir.</p>
+</li>
+<li>
+<p>r yüksekse kanal konuşur; r zayıf ya da negatifse yorumu değiştirir.</p>
+</li>
+<li>
+<p>Bant kenarları, trende göre dikkat bölgeleridir; tek başına al-sat sinyali değildir.</p>
+</li>
+<li>
+<p>Her zaman üç soruyu birlikte sorun: Yön? Konum? Güven?</p>
+</li>
+</ul>
+<p>Haftaya başka bir konuyla görüşmek üzere, sağlıcakla kalın!</p>
+<p>Bu ders eğitim amaçlıdır, yatırım tavsiyesi değildir.</p></article>
+<p style="margin:22px 0 0; color:var(--muted); font-size:13px"><strong>Gerçek veriyle pratik:</strong> Aşağıdaki tablo bugünün teknik taramasından gelir — bir hücreye tıklayıp ad/formül çubuğunu görebilir, sütun başlıklarına tıklayarak sıralayabilirsin.</p>
+<style>
+.xlsx-box{--x-ink:#0f172a;--x-muted:#64748b;--x-line:#d7dde6;--x-line2:#e6ebf2;
+  --x-head:#0f172a;--x-accent:#0f766e;--x-pos:#047857;--x-neg:#b91c1c;
+  --x-gutter:#eef2f7;--x-sel:#0e9f6e;
+  background:#fff;border:1px solid var(--x-line);border-radius:10px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(15,23,42,.06);margin:18px 0 22px;font-size:13px;color:var(--x-ink);}
+.xlsx-titlebar{display:flex;align-items:center;gap:10px;padding:8px 12px;
+  background:linear-gradient(180deg,#10715f,#0d5f51);color:#fff;}
+.xlsx-titlebar .xlsx-dosya{font-weight:700;font-size:13.5px;letter-spacing:.2px;}
+.xlsx-titlebar .xlsx-rota{font-size:11.5px;opacity:.85;}
+.xlsx-titlebar .xlsx-tarihbadge{margin-left:auto;background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:600;}
+.xlsx-toolbar{display:flex;align-items:stretch;border-bottom:1px solid var(--x-line);background:#f8fafc;}
+.xlsx-adkutu{min-width:64px;padding:6px 10px;border-right:1px solid var(--x-line);
+  font-weight:700;font-size:12.5px;text-align:center;background:#fff;color:var(--x-ink);}
+.xlsx-fxetiket{padding:6px 10px;border-right:1px solid var(--x-line);color:var(--x-muted);
+  font-style:italic;font-family:Georgia,serif;font-size:13px;display:flex;align-items:center;}
+.xlsx-fxdeger{padding:6px 12px;font-size:12.5px;color:var(--x-ink);display:flex;align-items:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.xlsx-sheet{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.xlsx-box table{display:table;width:100%;min-width:780px;border-collapse:separate;border-spacing:0;
+  margin:0;font-size:13px;line-height:1.45;}
+.xlsx-box table caption{display:none;}
+.xlsx-box th,.xlsx-box td{border-bottom:1px solid var(--x-line2);border-right:1px solid var(--x-line2);
+  padding:7px 10px;text-align:left;font-weight:400;text-transform:none;letter-spacing:0;background:#fff;}
+.xlsx-box th:last-child,.xlsx-box td:last-child{border-right:none;}
+.xlsx-box tbody tr:last-child td{border-bottom:none;}
+.xlsx-harfler th{background:var(--x-gutter);color:#475569;font-size:11px;font-weight:600;
+  text-align:center;padding:3px 10px;border-bottom:1px solid var(--x-line);}
+.xlsx-gutter{background:var(--x-gutter)!important;color:#64748b;font-size:11px;text-align:center!important;
+  font-weight:600!important;width:34px;min-width:34px;}
+.xlsx-baslik th{background:var(--x-head);color:#fff;font-size:12px;font-weight:600;
+  white-space:nowrap;cursor:pointer;user-select:none;}
+.xlsx-baslik th:hover{background:#1e293b;}
+.xlsx-baslik th.xlsx-sirali{background:#134e4a;box-shadow:inset 0 -2px 0 #2dd4bf;}
+.xlsx-ok{font-size:9px;margin-left:5px;opacity:.9;}
+.xlsx-box td.num,.xlsx-box th.num{text-align:right;font-variant-numeric:tabular-nums;}
+.xlsx-satirno{position:relative;}
+.xlsx-box td{position:relative;}
+.xlsx-databar{position:absolute;left:0;top:0;bottom:0;background:rgba(15,118,110,.13);
+  border-right:2px solid rgba(15,118,110,.4);}
+.xlsx-barval{position:relative;}
+.posx{color:var(--x-pos);font-weight:600;}
+.negx{color:var(--x-neg);font-weight:600;}
+.ntrx{color:#475569;}
+.xlsx-badge{display:inline-block;border-radius:999px;padding:1px 9px;font-size:11px;font-weight:700;white-space:nowrap;}
+.xlsx-badge.gua{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;}
+.xlsx-badge.al{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;}
+.xlsx-badge.notr{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;}
+.xlsx-badge.sat{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;}
+.xlsx-badge.gus{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+.xlsx-secili{outline:2px solid var(--x-sel);outline-offset:-2px;background:#f0fdfa!important;
+  box-shadow:inset 0 0 0 1px var(--x-sel);}
+.xlsx-secili.xlsx-gutter{background:#e2e8f0!important;}
+.xlsx-tabs{display:flex;gap:2px;align-items:flex-end;border-top:1px solid var(--x-line);background:#f1f5f9;padding:0 8px;}
+.xlsx-tab{background:#fff;border:1px solid var(--x-line);border-bottom:none;border-radius:6px 6px 0 0;
+  margin:6px 2px 0;padding:4px 14px;font-size:12px;font-weight:700;color:var(--x-accent);
+  box-shadow:0 -1px 0 rgba(15,23,42,.04) inset;}
+.xlsx-tab.pasif{background:#e8edf3;color:#64748b;font-weight:500;}
+.xlsx-status{display:flex;flex-wrap:wrap;gap:4px 16px;padding:7px 14px;background:var(--x-head);
+  color:#cbd5e1;font-size:11.5px;}
+.xlsx-status b{color:#fff;font-weight:600;}
+.xlsx-not{padding:6px 14px 9px;color:var(--x-muted);font-size:11.5px;background:#fbfcfe;border-top:1px dashed var(--x-line2);}
+@media (max-width:640px){
+  .xlsx-box{font-size:12px;}
+  .xlsx-box th,.xlsx-box td{padding:5px 7px;}
+  .xlsx-fxetiket{display:none;}
+}
+</style><div class="xlsx-box" id="xlsx-egitim" role="group" aria-label="Gerçek teknik tarama verisi, Excel görünümü"><div class="xlsx-titlebar"><span class="xlsx-dosya">📊 TEKNIK-TARAMA.XLSX</span><span class="xlsx-rota">gerçek BIST teknik taraması</span><span class="xlsx-tarihbadge">2026-10-09</span></div><div class="xlsx-toolbar"><div class="xlsx-adkutu">—</div><div class="xlsx-fxetiket">fx</div><div class="xlsx-fxdeger">Bir hücreye tıklayın…</div></div><div class="xlsx-sheet"><table><thead><tr class="xlsx-harfler" aria-hidden="true"><th class="xlsx-gutter"></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th></tr><tr class="xlsx-baslik"><th class="xlsx-gutter">1</th><th data-sort="hisse" data-yon="">Hisse<span class="xlsx-ok"></span></th><th data-sort="son" data-yon="">Son (TL)<span class="xlsx-ok"></span></th><th data-sort="gunluk" data-yon="">Günlük %<span class="xlsx-ok"></span></th><th data-sort="deg60" data-yon="">60 Gün %<span class="xlsx-ok"></span></th><th data-sort="konum" data-yon="">Kanal %<span class="xlsx-ok"></span></th><th data-sort="r" data-yon="">Korelasyon r<span class="xlsx-ok"></span></th><th data-sort="genel" data-yon="">Sinyal<span class="xlsx-ok"></span></th></tr></thead><tbody class="xlsx-data"><tr data-hisse="SAHOL" data-son="83.5" data-gunluk="-5.92" data-deg60="-5.54" data-konum="-2.0" data-r="0.11" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">2</td><td data-ref="A2" data-fx="=A2  →  SAHOL • Hisse = SAHOL" data-hisse="SAHOL"><b>SAHOL</b></td><td class="num" data-ref="B2" data-fx="=B2  →  SAHOL • Son (TL) = 83,50" data-son="83.5">83,50</td><td class="num" data-ref="C2" data-fx="=C2  →  SAHOL • Günlük % = -%5,92" data-gunluk="-5.92"><span class="negx">-%5,92 ▼</span></td><td class="num" data-ref="D2" data-fx="=D2  →  SAHOL • 60 Gün % = -%5,54" data-deg60="-5.54"><span class="negx">-%5,54</span></td><td class="num" data-ref="E2" data-fx="=E2  →  SAHOL • Kanal % = -%2" data-konum="-2.0"><span class="xlsx-databar" style="width:0.0%"></span><span class="xlsx-barval">-%2</span></td><td class="num ntrx" data-ref="F2" data-fx="=F2  →  SAHOL • Korelasyon r = +0,11" data-r="0.11">+0,11</td><td data-ref="G2" data-fx="=G2  →  SAHOL • Sinyal = GÜÇLÜ SAT" data-genel="0"><span class="xlsx-badge gus">GÜÇLÜ SAT</span></td></tr><tr data-hisse="TRMET" data-son="137.3" data-gunluk="4.97" data-deg60="14.7" data-konum="52.0" data-r="0.26" data-genel="3"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">3</td><td data-ref="A3" data-fx="=A3  →  TRMET • Hisse = TRMET" data-hisse="TRMET"><b>TRMET</b></td><td class="num" data-ref="B3" data-fx="=B3  →  TRMET • Son (TL) = 137,30" data-son="137.3">137,30</td><td class="num" data-ref="C3" data-fx="=C3  →  TRMET • Günlük % = +%4,97" data-gunluk="4.97"><span class="posx">+%4,97 ▲</span></td><td class="num" data-ref="D3" data-fx="=D3  →  TRMET • 60 Gün % = +%14,70" data-deg60="14.7"><span class="posx">+%14,70</span></td><td class="num" data-ref="E3" data-fx="=E3  →  TRMET • Kanal % = %52" data-konum="52.0"><span class="xlsx-databar" style="width:34.7%"></span><span class="xlsx-barval">%52</span></td><td class="num ntrx" data-ref="F3" data-fx="=F3  →  TRMET • Korelasyon r = +0,26" data-r="0.26">+0,26</td><td data-ref="G3" data-fx="=G3  →  TRMET • Sinyal = AL" data-genel="3"><span class="xlsx-badge al">AL</span></td></tr><tr data-hisse="TRALT" data-son="43.9" data-gunluk="3.93" data-deg60="-11.63" data-konum="24.0" data-r="-0.22" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">4</td><td data-ref="A4" data-fx="=A4  →  TRALT • Hisse = TRALT" data-hisse="TRALT"><b>TRALT</b></td><td class="num" data-ref="B4" data-fx="=B4  →  TRALT • Son (TL) = 43,90" data-son="43.9">43,90</td><td class="num" data-ref="C4" data-fx="=C4  →  TRALT • Günlük % = +%3,93" data-gunluk="3.93"><span class="posx">+%3,93 ▲</span></td><td class="num" data-ref="D4" data-fx="=D4  →  TRALT • 60 Gün % = -%11,63" data-deg60="-11.63"><span class="negx">-%11,63</span></td><td class="num" data-ref="E4" data-fx="=E4  →  TRALT • Kanal % = %24" data-konum="24.0"><span class="xlsx-databar" style="width:16.0%"></span><span class="xlsx-barval">%24</span></td><td class="num ntrx" data-ref="F4" data-fx="=F4  →  TRALT • Korelasyon r = -0,22" data-r="-0.22">-0,22</td><td data-ref="G4" data-fx="=G4  →  TRALT • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="ASTOR" data-son="204.4" data-gunluk="3.49" data-deg60="-28.66" data-konum="28.0" data-r="-0.69" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">5</td><td data-ref="A5" data-fx="=A5  →  ASTOR • Hisse = ASTOR" data-hisse="ASTOR"><b>ASTOR</b></td><td class="num" data-ref="B5" data-fx="=B5  →  ASTOR • Son (TL) = 204,40" data-son="204.4">204,40</td><td class="num" data-ref="C5" data-fx="=C5  →  ASTOR • Günlük % = +%3,49" data-gunluk="3.49"><span class="posx">+%3,49 ▲</span></td><td class="num" data-ref="D5" data-fx="=D5  →  ASTOR • 60 Gün % = -%28,66" data-deg60="-28.66"><span class="negx">-%28,66</span></td><td class="num" data-ref="E5" data-fx="=E5  →  ASTOR • Kanal % = %28" data-konum="28.0"><span class="xlsx-databar" style="width:18.7%"></span><span class="xlsx-barval">%28</span></td><td class="num ntrx" data-ref="F5" data-fx="=F5  →  ASTOR • Korelasyon r = -0,69" data-r="-0.69">-0,69</td><td data-ref="G5" data-fx="=G5  →  ASTOR • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="SASA" data-son="1.93" data-gunluk="2.66" data-deg60="-20.58" data-konum="32.0" data-r="-0.61" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">6</td><td data-ref="A6" data-fx="=A6  →  SASA • Hisse = SASA" data-hisse="SASA"><b>SASA</b></td><td class="num" data-ref="B6" data-fx="=B6  →  SASA • Son (TL) = 1,93" data-son="1.93">1,93</td><td class="num" data-ref="C6" data-fx="=C6  →  SASA • Günlük % = +%2,66" data-gunluk="2.66"><span class="posx">+%2,66 ▲</span></td><td class="num" data-ref="D6" data-fx="=D6  →  SASA • 60 Gün % = -%20,58" data-deg60="-20.58"><span class="negx">-%20,58</span></td><td class="num" data-ref="E6" data-fx="=E6  →  SASA • Kanal % = %32" data-konum="32.0"><span class="xlsx-databar" style="width:21.3%"></span><span class="xlsx-barval">%32</span></td><td class="num ntrx" data-ref="F6" data-fx="=F6  →  SASA • Korelasyon r = -0,61" data-r="-0.61">-0,61</td><td data-ref="G6" data-fx="=G6  →  SASA • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="GUBRF" data-son="418.0" data-gunluk="2.58" data-deg60="1.21" data-konum="24.0" data-r="0.13" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">7</td><td data-ref="A7" data-fx="=A7  →  GUBRF • Hisse = GUBRF" data-hisse="GUBRF"><b>GUBRF</b></td><td class="num" data-ref="B7" data-fx="=B7  →  GUBRF • Son (TL) = 418,00" data-son="418.0">418,00</td><td class="num" data-ref="C7" data-fx="=C7  →  GUBRF • Günlük % = +%2,58" data-gunluk="2.58"><span class="posx">+%2,58 ▲</span></td><td class="num" data-ref="D7" data-fx="=D7  →  GUBRF • 60 Gün % = +%1,21" data-deg60="1.21"><span class="posx">+%1,21</span></td><td class="num" data-ref="E7" data-fx="=E7  →  GUBRF • Kanal % = %24" data-konum="24.0"><span class="xlsx-databar" style="width:16.0%"></span><span class="xlsx-barval">%24</span></td><td class="num ntrx" data-ref="F7" data-fx="=F7  →  GUBRF • Korelasyon r = +0,13" data-r="0.13">+0,13</td><td data-ref="G7" data-fx="=G7  →  GUBRF • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="ENKAI" data-son="83.5" data-gunluk="2.33" data-deg60="-7.94" data-konum="42.0" data-r="-0.4" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">8</td><td data-ref="A8" data-fx="=A8  →  ENKAI • Hisse = ENKAI" data-hisse="ENKAI"><b>ENKAI</b></td><td class="num" data-ref="B8" data-fx="=B8  →  ENKAI • Son (TL) = 83,50" data-son="83.5">83,50</td><td class="num" data-ref="C8" data-fx="=C8  →  ENKAI • Günlük % = +%2,33" data-gunluk="2.33"><span class="posx">+%2,33 ▲</span></td><td class="num" data-ref="D8" data-fx="=D8  →  ENKAI • 60 Gün % = -%7,94" data-deg60="-7.94"><span class="negx">-%7,94</span></td><td class="num" data-ref="E8" data-fx="=E8  →  ENKAI • Kanal % = %42" data-konum="42.0"><span class="xlsx-databar" style="width:28.0%"></span><span class="xlsx-barval">%42</span></td><td class="num ntrx" data-ref="F8" data-fx="=F8  →  ENKAI • Korelasyon r = -0,40" data-r="-0.4">-0,40</td><td data-ref="G8" data-fx="=G8  →  ENKAI • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="KCHOL" data-son="208.0" data-gunluk="-2.07" data-deg60="5.58" data-konum="4.0" data-r="0.66" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">9</td><td data-ref="A9" data-fx="=A9  →  KCHOL • Hisse = KCHOL" data-hisse="KCHOL"><b>KCHOL</b></td><td class="num" data-ref="B9" data-fx="=B9  →  KCHOL • Son (TL) = 208,00" data-son="208.0">208,00</td><td class="num" data-ref="C9" data-fx="=C9  →  KCHOL • Günlük % = -%2,07" data-gunluk="-2.07"><span class="negx">-%2,07 ▼</span></td><td class="num" data-ref="D9" data-fx="=D9  →  KCHOL • 60 Gün % = +%5,58" data-deg60="5.58"><span class="posx">+%5,58</span></td><td class="num" data-ref="E9" data-fx="=E9  →  KCHOL • Kanal % = %4" data-konum="4.0"><span class="xlsx-databar" style="width:2.7%"></span><span class="xlsx-barval">%4</span></td><td class="num ntrx" data-ref="F9" data-fx="=F9  →  KCHOL • Korelasyon r = +0,66" data-r="0.66">+0,66</td><td data-ref="G9" data-fx="=G9  →  KCHOL • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="EREGL" data-son="37.32" data-gunluk="1.97" data-deg60="-11.86" data-konum="74.0" data-r="-0.76" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">10</td><td data-ref="A10" data-fx="=A10  →  EREGL • Hisse = EREGL" data-hisse="EREGL"><b>EREGL</b></td><td class="num" data-ref="B10" data-fx="=B10  →  EREGL • Son (TL) = 37,32" data-son="37.32">37,32</td><td class="num" data-ref="C10" data-fx="=C10  →  EREGL • Günlük % = +%1,97" data-gunluk="1.97"><span class="posx">+%1,97 ▲</span></td><td class="num" data-ref="D10" data-fx="=D10  →  EREGL • 60 Gün % = -%11,86" data-deg60="-11.86"><span class="negx">-%11,86</span></td><td class="num" data-ref="E10" data-fx="=E10  →  EREGL • Kanal % = %74" data-konum="74.0"><span class="xlsx-databar" style="width:49.3%"></span><span class="xlsx-barval">%74</span></td><td class="num ntrx" data-ref="F10" data-fx="=F10  →  EREGL • Korelasyon r = -0,76" data-r="-0.76">-0,76</td><td data-ref="G10" data-fx="=G10  →  EREGL • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="TCELL" data-son="98.55" data-gunluk="-1.65" data-deg60="-9.17" data-konum="60.0" data-r="-0.7" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">11</td><td data-ref="A11" data-fx="=A11  →  TCELL • Hisse = TCELL" data-hisse="TCELL"><b>TCELL</b></td><td class="num" data-ref="B11" data-fx="=B11  →  TCELL • Son (TL) = 98,55" data-son="98.55">98,55</td><td class="num" data-ref="C11" data-fx="=C11  →  TCELL • Günlük % = -%1,65" data-gunluk="-1.65"><span class="negx">-%1,65 ▼</span></td><td class="num" data-ref="D11" data-fx="=D11  →  TCELL • 60 Gün % = -%9,17" data-deg60="-9.17"><span class="negx">-%9,17</span></td><td class="num" data-ref="E11" data-fx="=E11  →  TCELL • Kanal % = %60" data-konum="60.0"><span class="xlsx-databar" style="width:40.0%"></span><span class="xlsx-barval">%60</span></td><td class="num ntrx" data-ref="F11" data-fx="=F11  →  TCELL • Korelasyon r = -0,70" data-r="-0.7">-0,70</td><td data-ref="G11" data-fx="=G11  →  TCELL • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="TUPRS" data-son="386.25" data-gunluk="-1.53" data-deg60="35.93" data-konum="14.0" data-r="0.82" data-genel="3"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">12</td><td data-ref="A12" data-fx="=A12  →  TUPRS • Hisse = TUPRS" data-hisse="TUPRS"><b>TUPRS</b></td><td class="num" data-ref="B12" data-fx="=B12  →  TUPRS • Son (TL) = 386,25" data-son="386.25">386,25</td><td class="num" data-ref="C12" data-fx="=C12  →  TUPRS • Günlük % = -%1,53" data-gunluk="-1.53"><span class="negx">-%1,53 ▼</span></td><td class="num" data-ref="D12" data-fx="=D12  →  TUPRS • 60 Gün % = +%35,93" data-deg60="35.93"><span class="posx">+%35,93</span></td><td class="num" data-ref="E12" data-fx="=E12  →  TUPRS • Kanal % = %14" data-konum="14.0"><span class="xlsx-databar" style="width:9.3%"></span><span class="xlsx-barval">%14</span></td><td class="num ntrx" data-ref="F12" data-fx="=F12  →  TUPRS • Korelasyon r = +0,82" data-r="0.82">+0,82</td><td data-ref="G12" data-fx="=G12  →  TUPRS • Sinyal = AL" data-genel="3"><span class="xlsx-badge al">AL</span></td></tr><tr data-hisse="TOASO" data-son="265.0" data-gunluk="-1.49" data-deg60="-13.89" data-konum="29.0" data-r="-0.04" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">13</td><td data-ref="A13" data-fx="=A13  →  TOASO • Hisse = TOASO" data-hisse="TOASO"><b>TOASO</b></td><td class="num" data-ref="B13" data-fx="=B13  →  TOASO • Son (TL) = 265,00" data-son="265.0">265,00</td><td class="num" data-ref="C13" data-fx="=C13  →  TOASO • Günlük % = -%1,49" data-gunluk="-1.49"><span class="negx">-%1,49 ▼</span></td><td class="num" data-ref="D13" data-fx="=D13  →  TOASO • 60 Gün % = -%13,89" data-deg60="-13.89"><span class="negx">-%13,89</span></td><td class="num" data-ref="E13" data-fx="=E13  →  TOASO • Kanal % = %29" data-konum="29.0"><span class="xlsx-databar" style="width:19.3%"></span><span class="xlsx-barval">%29</span></td><td class="num ntrx" data-ref="F13" data-fx="=F13  →  TOASO • Korelasyon r = -0,04" data-r="-0.04">-0,04</td><td data-ref="G13" data-fx="=G13  →  TOASO • Sinyal = GÜÇLÜ SAT" data-genel="0"><span class="xlsx-badge gus">GÜÇLÜ SAT</span></td></tr><tr data-hisse="EKGYO" data-son="19.85" data-gunluk="1.22" data-deg60="-2.6" data-konum="49.0" data-r="0.36" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">14</td><td data-ref="A14" data-fx="=A14  →  EKGYO • Hisse = EKGYO" data-hisse="EKGYO"><b>EKGYO</b></td><td class="num" data-ref="B14" data-fx="=B14  →  EKGYO • Son (TL) = 19,85" data-son="19.85">19,85</td><td class="num" data-ref="C14" data-fx="=C14  →  EKGYO • Günlük % = +%1,22" data-gunluk="1.22"><span class="posx">+%1,22 ▲</span></td><td class="num" data-ref="D14" data-fx="=D14  →  EKGYO • 60 Gün % = -%2,60" data-deg60="-2.6"><span class="negx">-%2,60</span></td><td class="num" data-ref="E14" data-fx="=E14  →  EKGYO • Kanal % = %49" data-konum="49.0"><span class="xlsx-databar" style="width:32.7%"></span><span class="xlsx-barval">%49</span></td><td class="num ntrx" data-ref="F14" data-fx="=F14  →  EKGYO • Korelasyon r = +0,36" data-r="0.36">+0,36</td><td data-ref="G14" data-fx="=G14  →  EKGYO • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="THYAO" data-son="287.5" data-gunluk="1.14" data-deg60="-12.75" data-konum="66.0" data-r="-0.88" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">15</td><td data-ref="A15" data-fx="=A15  →  THYAO • Hisse = THYAO" data-hisse="THYAO"><b>THYAO</b></td><td class="num" data-ref="B15" data-fx="=B15  →  THYAO • Son (TL) = 287,50" data-son="287.5">287,50</td><td class="num" data-ref="C15" data-fx="=C15  →  THYAO • Günlük % = +%1,14" data-gunluk="1.14"><span class="posx">+%1,14 ▲</span></td><td class="num" data-ref="D15" data-fx="=D15  →  THYAO • 60 Gün % = -%12,75" data-deg60="-12.75"><span class="negx">-%12,75</span></td><td class="num" data-ref="E15" data-fx="=E15  →  THYAO • Kanal % = %66" data-konum="66.0"><span class="xlsx-databar" style="width:44.0%"></span><span class="xlsx-barval">%66</span></td><td class="num ntrx" data-ref="F15" data-fx="=F15  →  THYAO • Korelasyon r = -0,88" data-r="-0.88">-0,88</td><td data-ref="G15" data-fx="=G15  →  THYAO • Sinyal = GÜÇLÜ SAT" data-genel="0"><span class="xlsx-badge gus">GÜÇLÜ SAT</span></td></tr><tr data-hisse="AEFES" data-son="18.56" data-gunluk="1.09" data-deg60="-9.92" data-konum="84.0" data-r="-0.81" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">16</td><td data-ref="A16" data-fx="=A16  →  AEFES • Hisse = AEFES" data-hisse="AEFES"><b>AEFES</b></td><td class="num" data-ref="B16" data-fx="=B16  →  AEFES • Son (TL) = 18,56" data-son="18.56">18,56</td><td class="num" data-ref="C16" data-fx="=C16  →  AEFES • Günlük % = +%1,09" data-gunluk="1.09"><span class="posx">+%1,09 ▲</span></td><td class="num" data-ref="D16" data-fx="=D16  →  AEFES • 60 Gün % = -%9,92" data-deg60="-9.92"><span class="negx">-%9,92</span></td><td class="num" data-ref="E16" data-fx="=E16  →  AEFES • Kanal % = %84" data-konum="84.0"><span class="xlsx-databar" style="width:56.0%"></span><span class="xlsx-barval">%84</span></td><td class="num ntrx" data-ref="F16" data-fx="=F16  →  AEFES • Korelasyon r = -0,81" data-r="-0.81">-0,81</td><td data-ref="G16" data-fx="=G16  →  AEFES • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="ISCTR" data-son="12.67" data-gunluk="-0.94" data-deg60="-7.38" data-konum="26.0" data-r="0.33" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">17</td><td data-ref="A17" data-fx="=A17  →  ISCTR • Hisse = ISCTR" data-hisse="ISCTR"><b>ISCTR</b></td><td class="num" data-ref="B17" data-fx="=B17  →  ISCTR • Son (TL) = 12,67" data-son="12.67">12,67</td><td class="num" data-ref="C17" data-fx="=C17  →  ISCTR • Günlük % = -%0,94" data-gunluk="-0.94"><span class="negx">-%0,94 ▼</span></td><td class="num" data-ref="D17" data-fx="=D17  →  ISCTR • 60 Gün % = -%7,38" data-deg60="-7.38"><span class="negx">-%7,38</span></td><td class="num" data-ref="E17" data-fx="=E17  →  ISCTR • Kanal % = %26" data-konum="26.0"><span class="xlsx-databar" style="width:17.3%"></span><span class="xlsx-barval">%26</span></td><td class="num ntrx" data-ref="F17" data-fx="=F17  →  ISCTR • Korelasyon r = +0,33" data-r="0.33">+0,33</td><td data-ref="G17" data-fx="=G17  →  ISCTR • Sinyal = GÜÇLÜ SAT" data-genel="0"><span class="xlsx-badge gus">GÜÇLÜ SAT</span></td></tr><tr data-hisse="PGSUS" data-son="134.4" data-gunluk="-0.88" data-deg60="-19.28" data-konum="6.0" data-r="-0.82" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">18</td><td data-ref="A18" data-fx="=A18  →  PGSUS • Hisse = PGSUS" data-hisse="PGSUS"><b>PGSUS</b></td><td class="num" data-ref="B18" data-fx="=B18  →  PGSUS • Son (TL) = 134,40" data-son="134.4">134,40</td><td class="num" data-ref="C18" data-fx="=C18  →  PGSUS • Günlük % = -%0,88" data-gunluk="-0.88"><span class="negx">-%0,88 ▼</span></td><td class="num" data-ref="D18" data-fx="=D18  →  PGSUS • 60 Gün % = -%19,28" data-deg60="-19.28"><span class="negx">-%19,28</span></td><td class="num" data-ref="E18" data-fx="=E18  →  PGSUS • Kanal % = %6" data-konum="6.0"><span class="xlsx-databar" style="width:4.0%"></span><span class="xlsx-barval">%6</span></td><td class="num ntrx" data-ref="F18" data-fx="=F18  →  PGSUS • Korelasyon r = -0,82" data-r="-0.82">-0,82</td><td data-ref="G18" data-fx="=G18  →  PGSUS • Sinyal = GÜÇLÜ SAT" data-genel="0"><span class="xlsx-badge gus">GÜÇLÜ SAT</span></td></tr><tr data-hisse="ASELS" data-son="351.25" data-gunluk="0.72" data-deg60="-0.07" data-konum="19.0" data-r="0.06" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">19</td><td data-ref="A19" data-fx="=A19  →  ASELS • Hisse = ASELS" data-hisse="ASELS"><b>ASELS</b></td><td class="num" data-ref="B19" data-fx="=B19  →  ASELS • Son (TL) = 351,25" data-son="351.25">351,25</td><td class="num" data-ref="C19" data-fx="=C19  →  ASELS • Günlük % = +%0,72" data-gunluk="0.72"><span class="posx">+%0,72 ▲</span></td><td class="num" data-ref="D19" data-fx="=D19  →  ASELS • 60 Gün % = -%0,07" data-deg60="-0.07"><span class="negx">-%0,07</span></td><td class="num" data-ref="E19" data-fx="=E19  →  ASELS • Kanal % = %19" data-konum="19.0"><span class="xlsx-databar" style="width:12.7%"></span><span class="xlsx-barval">%19</span></td><td class="num ntrx" data-ref="F19" data-fx="=F19  →  ASELS • Korelasyon r = +0,06" data-r="0.06">+0,06</td><td data-ref="G19" data-fx="=G19  →  ASELS • Sinyal = GÜÇLÜ SAT" data-genel="0"><span class="xlsx-badge gus">GÜÇLÜ SAT</span></td></tr><tr data-hisse="VAKBN" data-son="33.9" data-gunluk="0.71" data-deg60="9.35" data-konum="32.0" data-r="0.76" data-genel="4"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">20</td><td data-ref="A20" data-fx="=A20  →  VAKBN • Hisse = VAKBN" data-hisse="VAKBN"><b>VAKBN</b></td><td class="num" data-ref="B20" data-fx="=B20  →  VAKBN • Son (TL) = 33,90" data-son="33.9">33,90</td><td class="num" data-ref="C20" data-fx="=C20  →  VAKBN • Günlük % = +%0,71" data-gunluk="0.71" data-preselect="1"><span class="posx">+%0,71 ▲</span></td><td class="num" data-ref="D20" data-fx="=D20  →  VAKBN • 60 Gün % = +%9,35" data-deg60="9.35"><span class="posx">+%9,35</span></td><td class="num" data-ref="E20" data-fx="=E20  →  VAKBN • Kanal % = %32" data-konum="32.0"><span class="xlsx-databar" style="width:21.3%"></span><span class="xlsx-barval">%32</span></td><td class="num ntrx" data-ref="F20" data-fx="=F20  →  VAKBN • Korelasyon r = +0,76" data-r="0.76">+0,76</td><td data-ref="G20" data-fx="=G20  →  VAKBN • Sinyal = GÜÇLÜ AL" data-genel="4"><span class="xlsx-badge gua">GÜÇLÜ AL</span></td></tr><tr data-hisse="GARAN" data-son="129.3" data-gunluk="0.62" data-deg60="1.97" data-konum="32.0" data-r="0.34" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">21</td><td data-ref="A21" data-fx="=A21  →  GARAN • Hisse = GARAN" data-hisse="GARAN"><b>GARAN</b></td><td class="num" data-ref="B21" data-fx="=B21  →  GARAN • Son (TL) = 129,30" data-son="129.3">129,30</td><td class="num" data-ref="C21" data-fx="=C21  →  GARAN • Günlük % = +%0,62" data-gunluk="0.62"><span class="posx">+%0,62 ▲</span></td><td class="num" data-ref="D21" data-fx="=D21  →  GARAN • 60 Gün % = +%1,97" data-deg60="1.97"><span class="posx">+%1,97</span></td><td class="num" data-ref="E21" data-fx="=E21  →  GARAN • Kanal % = %32" data-konum="32.0"><span class="xlsx-databar" style="width:21.3%"></span><span class="xlsx-barval">%32</span></td><td class="num ntrx" data-ref="F21" data-fx="=F21  →  GARAN • Korelasyon r = +0,34" data-r="0.34">+0,34</td><td data-ref="G21" data-fx="=G21  →  GARAN • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="YKBNK" data-son="35.44" data-gunluk="-0.62" data-deg60="6.68" data-konum="24.0" data-r="0.61" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">22</td><td data-ref="A22" data-fx="=A22  →  YKBNK • Hisse = YKBNK" data-hisse="YKBNK"><b>YKBNK</b></td><td class="num" data-ref="B22" data-fx="=B22  →  YKBNK • Son (TL) = 35,44" data-son="35.44">35,44</td><td class="num" data-ref="C22" data-fx="=C22  →  YKBNK • Günlük % = -%0,62" data-gunluk="-0.62"><span class="negx">-%0,62 ▼</span></td><td class="num" data-ref="D22" data-fx="=D22  →  YKBNK • 60 Gün % = +%6,68" data-deg60="6.68"><span class="posx">+%6,68</span></td><td class="num" data-ref="E22" data-fx="=E22  →  YKBNK • Kanal % = %24" data-konum="24.0"><span class="xlsx-databar" style="width:16.0%"></span><span class="xlsx-barval">%24</span></td><td class="num ntrx" data-ref="F22" data-fx="=F22  →  YKBNK • Korelasyon r = +0,61" data-r="0.61">+0,61</td><td data-ref="G22" data-fx="=G22  →  YKBNK • Sinyal = GÜÇLÜ SAT" data-genel="0"><span class="xlsx-badge gus">GÜÇLÜ SAT</span></td></tr><tr data-hisse="SISE" data-son="38.04" data-gunluk="0.58" data-deg60="-13.94" data-konum="44.0" data-r="-0.6" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">23</td><td data-ref="A23" data-fx="=A23  →  SISE • Hisse = SISE" data-hisse="SISE"><b>SISE</b></td><td class="num" data-ref="B23" data-fx="=B23  →  SISE • Son (TL) = 38,04" data-son="38.04">38,04</td><td class="num" data-ref="C23" data-fx="=C23  →  SISE • Günlük % = +%0,58" data-gunluk="0.58"><span class="posx">+%0,58 ▲</span></td><td class="num" data-ref="D23" data-fx="=D23  →  SISE • 60 Gün % = -%13,94" data-deg60="-13.94"><span class="negx">-%13,94</span></td><td class="num" data-ref="E23" data-fx="=E23  →  SISE • Kanal % = %44" data-konum="44.0"><span class="xlsx-databar" style="width:29.3%"></span><span class="xlsx-barval">%44</span></td><td class="num ntrx" data-ref="F23" data-fx="=F23  →  SISE • Korelasyon r = -0,60" data-r="-0.6">-0,60</td><td data-ref="G23" data-fx="=G23  →  SISE • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="BIMAS" data-son="402.75" data-gunluk="0.44" data-deg60="4.97" data-konum="5.0" data-r="0.71" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">24</td><td data-ref="A24" data-fx="=A24  →  BIMAS • Hisse = BIMAS" data-hisse="BIMAS"><b>BIMAS</b></td><td class="num" data-ref="B24" data-fx="=B24  →  BIMAS • Son (TL) = 402,75" data-son="402.75">402,75</td><td class="num" data-ref="C24" data-fx="=C24  →  BIMAS • Günlük % = +%0,44" data-gunluk="0.44"><span class="posx">+%0,44 ▲</span></td><td class="num" data-ref="D24" data-fx="=D24  →  BIMAS • 60 Gün % = +%4,97" data-deg60="4.97"><span class="posx">+%4,97</span></td><td class="num" data-ref="E24" data-fx="=E24  →  BIMAS • Kanal % = %5" data-konum="5.0"><span class="xlsx-databar" style="width:3.3%"></span><span class="xlsx-barval">%5</span></td><td class="num ntrx" data-ref="F24" data-fx="=F24  →  BIMAS • Korelasyon r = +0,71" data-r="0.71">+0,71</td><td data-ref="G24" data-fx="=G24  →  BIMAS • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="AKBNK" data-son="67.85" data-gunluk="-0.44" data-deg60="2.03" data-konum="13.0" data-r="0.47" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">25</td><td data-ref="A25" data-fx="=A25  →  AKBNK • Hisse = AKBNK" data-hisse="AKBNK"><b>AKBNK</b></td><td class="num" data-ref="B25" data-fx="=B25  →  AKBNK • Son (TL) = 67,85" data-son="67.85">67,85</td><td class="num" data-ref="C25" data-fx="=C25  →  AKBNK • Günlük % = -%0,44" data-gunluk="-0.44"><span class="negx">-%0,44 ▼</span></td><td class="num" data-ref="D25" data-fx="=D25  →  AKBNK • 60 Gün % = +%2,03" data-deg60="2.03"><span class="posx">+%2,03</span></td><td class="num" data-ref="E25" data-fx="=E25  →  AKBNK • Kanal % = %13" data-konum="13.0"><span class="xlsx-databar" style="width:8.7%"></span><span class="xlsx-barval">%13</span></td><td class="num ntrx" data-ref="F25" data-fx="=F25  →  AKBNK • Korelasyon r = +0,47" data-r="0.47">+0,47</td><td data-ref="G25" data-fx="=G25  →  AKBNK • Sinyal = GÜÇLÜ SAT" data-genel="0"><span class="xlsx-badge gus">GÜÇLÜ SAT</span></td></tr><tr data-hisse="MGROS" data-son="503.0" data-gunluk="0.4" data-deg60="-20.85" data-konum="69.0" data-r="-0.91" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">26</td><td data-ref="A26" data-fx="=A26  →  MGROS • Hisse = MGROS" data-hisse="MGROS"><b>MGROS</b></td><td class="num" data-ref="B26" data-fx="=B26  →  MGROS • Son (TL) = 503,00" data-son="503.0">503,00</td><td class="num" data-ref="C26" data-fx="=C26  →  MGROS • Günlük % = +%0,40" data-gunluk="0.4"><span class="posx">+%0,40 ▲</span></td><td class="num" data-ref="D26" data-fx="=D26  →  MGROS • 60 Gün % = -%20,85" data-deg60="-20.85"><span class="negx">-%20,85</span></td><td class="num" data-ref="E26" data-fx="=E26  →  MGROS • Kanal % = %69" data-konum="69.0"><span class="xlsx-databar" style="width:46.0%"></span><span class="xlsx-barval">%69</span></td><td class="num ntrx" data-ref="F26" data-fx="=F26  →  MGROS • Korelasyon r = -0,91" data-r="-0.91">-0,91</td><td data-ref="G26" data-fx="=G26  →  MGROS • Sinyal = GÜÇLÜ SAT" data-genel="0"><span class="xlsx-badge gus">GÜÇLÜ SAT</span></td></tr><tr data-hisse="PETKM" data-son="20.56" data-gunluk="-0.39" data-deg60="-1.81" data-konum="41.0" data-r="0.16" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">27</td><td data-ref="A27" data-fx="=A27  →  PETKM • Hisse = PETKM" data-hisse="PETKM"><b>PETKM</b></td><td class="num" data-ref="B27" data-fx="=B27  →  PETKM • Son (TL) = 20,56" data-son="20.56">20,56</td><td class="num" data-ref="C27" data-fx="=C27  →  PETKM • Günlük % = -%0,39" data-gunluk="-0.39"><span class="negx">-%0,39 ▼</span></td><td class="num" data-ref="D27" data-fx="=D27  →  PETKM • 60 Gün % = -%1,81" data-deg60="-1.81"><span class="negx">-%1,81</span></td><td class="num" data-ref="E27" data-fx="=E27  →  PETKM • Kanal % = %41" data-konum="41.0"><span class="xlsx-databar" style="width:27.3%"></span><span class="xlsx-barval">%41</span></td><td class="num ntrx" data-ref="F27" data-fx="=F27  →  PETKM • Korelasyon r = +0,16" data-r="0.16">+0,16</td><td data-ref="G27" data-fx="=G27  →  PETKM • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="TAVHL" data-son="274.75" data-gunluk="-0.36" data-deg60="4.85" data-konum="62.0" data-r="-0.01" data-genel="2"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">28</td><td data-ref="A28" data-fx="=A28  →  TAVHL • Hisse = TAVHL" data-hisse="TAVHL"><b>TAVHL</b></td><td class="num" data-ref="B28" data-fx="=B28  →  TAVHL • Son (TL) = 274,75" data-son="274.75">274,75</td><td class="num" data-ref="C28" data-fx="=C28  →  TAVHL • Günlük % = -%0,36" data-gunluk="-0.36"><span class="negx">-%0,36 ▼</span></td><td class="num" data-ref="D28" data-fx="=D28  →  TAVHL • 60 Gün % = +%4,85" data-deg60="4.85"><span class="posx">+%4,85</span></td><td class="num" data-ref="E28" data-fx="=E28  →  TAVHL • Kanal % = %62" data-konum="62.0"><span class="xlsx-databar" style="width:41.3%"></span><span class="xlsx-barval">%62</span></td><td class="num ntrx" data-ref="F28" data-fx="=F28  →  TAVHL • Korelasyon r = -0,01" data-r="-0.01">-0,01</td><td data-ref="G28" data-fx="=G28  →  TAVHL • Sinyal = NÖTR" data-genel="2"><span class="xlsx-badge notr">NÖTR</span></td></tr><tr data-hisse="FROTO" data-son="74.65" data-gunluk="0.34" data-deg60="-10.71" data-konum="34.0" data-r="-0.54" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">29</td><td data-ref="A29" data-fx="=A29  →  FROTO • Hisse = FROTO" data-hisse="FROTO"><b>FROTO</b></td><td class="num" data-ref="B29" data-fx="=B29  →  FROTO • Son (TL) = 74,65" data-son="74.65">74,65</td><td class="num" data-ref="C29" data-fx="=C29  →  FROTO • Günlük % = +%0,34" data-gunluk="0.34"><span class="posx">+%0,34 ▲</span></td><td class="num" data-ref="D29" data-fx="=D29  →  FROTO • 60 Gün % = -%10,71" data-deg60="-10.71"><span class="negx">-%10,71</span></td><td class="num" data-ref="E29" data-fx="=E29  →  FROTO • Kanal % = %34" data-konum="34.0"><span class="xlsx-databar" style="width:22.7%"></span><span class="xlsx-barval">%34</span></td><td class="num ntrx" data-ref="F29" data-fx="=F29  →  FROTO • Korelasyon r = -0,54" data-r="-0.54">-0,54</td><td data-ref="G29" data-fx="=G29  →  FROTO • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="KRDMD" data-son="43.12" data-gunluk="0.23" data-deg60="0.84" data-konum="16.0" data-r="0.49" data-genel="1"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">30</td><td data-ref="A30" data-fx="=A30  →  KRDMD • Hisse = KRDMD" data-hisse="KRDMD"><b>KRDMD</b></td><td class="num" data-ref="B30" data-fx="=B30  →  KRDMD • Son (TL) = 43,12" data-son="43.12">43,12</td><td class="num" data-ref="C30" data-fx="=C30  →  KRDMD • Günlük % = +%0,23" data-gunluk="0.23"><span class="posx">+%0,23 ▲</span></td><td class="num" data-ref="D30" data-fx="=D30  →  KRDMD • 60 Gün % = +%0,84" data-deg60="0.84"><span class="posx">+%0,84</span></td><td class="num" data-ref="E30" data-fx="=E30  →  KRDMD • Kanal % = %16" data-konum="16.0"><span class="xlsx-databar" style="width:10.7%"></span><span class="xlsx-barval">%16</span></td><td class="num ntrx" data-ref="F30" data-fx="=F30  →  KRDMD • Korelasyon r = +0,49" data-r="0.49">+0,49</td><td data-ref="G30" data-fx="=G30  →  KRDMD • Sinyal = SAT" data-genel="1"><span class="xlsx-badge sat">SAT</span></td></tr><tr data-hisse="TTKOM" data-son="52.3" data-gunluk="-0.19" data-deg60="-10.06" data-konum="43.0" data-r="-0.25" data-genel="0"><td class="xlsx-gutter xlsx-satirno" aria-hidden="true">31</td><td data-ref="A31" data-fx="=A31  →  TTKOM • Hisse = TTKOM" data-hisse="TTKOM"><b>TTKOM</b></td><td class="num" data-ref="B31" data-fx="=B31  →  TTKOM • Son (TL) = 52,30" data-son="52.3">52,30</td><td class="num" data-ref="C31" data-fx="=C31  →  TTKOM • Günlük % = -%0,19" data-gunluk="-0.19"><span class="negx">-%0,19 ▼</span></td><td class="num" data-ref="D31" data-fx="=D31  →  TTKOM • 60 Gün % = -%10,06" data-deg60="-10.06"><span class="negx">-%10,06</span></td><td class="num" data-ref="E31" data-fx="=E31  →  TTKOM • Kanal % = %43" data-konum="43.0"><span class="xlsx-databar" style="width:28.7%"></span><span class="xlsx-barval">%43</span></td><td class="num ntrx" data-ref="F31" data-fx="=F31  →  TTKOM • Korelasyon r = -0,25" data-r="-0.25">-0,25</td><td data-ref="G31" data-fx="=G31  →  TTKOM • Sinyal = GÜÇLÜ SAT" data-genel="0"><span class="xlsx-badge gus">GÜÇLÜ SAT</span></td></tr></tbody></table></div><div class="xlsx-tabs"><span class="xlsx-tab">Teknik Tarama</span><span class="xlsx-tab pasif">Kaynak: data/teknik/2026-10-09.json</span></div><div class="xlsx-status"><span><b>30</b> kayıt</span><span><b>7</b> sütun</span><span>Ort. günlük: <b>+%0,43</b></span><span>En hareketli: <b>SAHOL -%5,92</b></span><span>Sıralamak için sütun başlığına tıklayın</span></div><div class="xlsx-not">Hücre değerleri 2026-10-09 tarihli gerçek teknik taramasından alınmıştır (BIST 30). Kanal %: fiyatın 60 günlük aralıktaki konumu • r: Pearson korelasyonu. Eğitim amaçlıdır, yatırım tavsiyesi değildir.</div></div><script>
+(function(){
+  var kutu = document.getElementById('xlsx-egitim');
+  if(!kutu || kutu.getAttribute('data-xlsx-init')) return;
+  kutu.setAttribute('data-xlsx-init','1');
+  var adkutu = kutu.querySelector('.xlsx-adkutu');
+  var fx = kutu.querySelector('.xlsx-fxdeger');
+  function sec(td){
+    var eski = kutu.querySelectorAll('.xlsx-secili');
+    for(var i=0;i<eski.length;i++) eski[i].classList.remove('xlsx-secili');
+    td.classList.add('xlsx-secili');
+    adkutu.textContent = td.getAttribute('data-ref')||'';
+    fx.textContent = td.getAttribute('data-fx')||'';
+  }
+  kutu.addEventListener('click', function(ev){
+    var td = ev.target && ev.target.closest ? ev.target.closest('td[data-ref]') : null;
+    if(td) sec(td);
+  });
+  var ilk = kutu.querySelector('td[data-preselect]') || kutu.querySelector('td[data-ref]');
+  if(ilk) sec(ilk);
+  var basliklar = kutu.querySelectorAll('.xlsx-baslik th[data-sort]');
+  for(var i=0;i<basliklar.length;i++){
+    basliklar[i].addEventListener('click', function(){
+      var th = this;
+      var key = th.getAttribute('data-sort');
+      var yon = th.getAttribute('data-yon')==='asc' ? 'desc' : 'asc';
+      for(var j=0;j<basliklar.length;j++){
+        basliklar[j].removeAttribute('data-yon');
+        basliklar[j].classList.remove('xlsx-sirali');
+        var ok = basliklar[j].querySelector('.xlsx-ok');
+        if(ok) ok.textContent='';
+      }
+      th.setAttribute('data-yon', yon);
+      th.classList.add('xlsx-sirali');
+      var ok = th.querySelector('.xlsx-ok');
+      if(ok) ok.textContent = yon==='asc' ? '\u25B2' : '\u25BC';
+      var govde = kutu.querySelector('tbody.xlsx-data');
+      var satirlar = Array.prototype.slice.call(govde.querySelectorAll('tr'));
+      satirlar.sort(function(a,b){
+        var va=a.getAttribute('data-'+key), vb=b.getAttribute('data-'+key);
+        var na=parseFloat(va), nb=parseFloat(vb);
+        var r = (!isNaN(na)&&!isNaN(nb)) ? (na-nb) : String(va).localeCompare(String(vb),'tr');
+        return yon==='asc' ? r : -r;
+      });
+      for(var k=0;k<satirlar.length;k++){
+        govde.appendChild(satirlar[k]);
+        var no = satirlar[k].querySelector('.xlsx-satirno');
+        if(no) no.textContent = String(k+2);
+      }
+    });
+  }
+})();
+</script>
+<p style="margin-top:16px; color:var(--muted); font-size:13px"><strong>Önceki dersler:</strong> <a href="haftasonu-egitimi/2026-10-04.html" style="margin:0 10px 0 0">4 Ekim 2026, Pazar</a> <a href="haftasonu-egitimi/2026-10-03.html" style="margin:0 10px 0 0">3 Ekim 2026, Cumartesi</a> <a href="haftasonu-egitimi/2026-09-27.html" style="margin:0 10px 0 0">27 Eylül 2026, Pazar</a> <a href="haftasonu-egitimi/2026-09-26.html" style="margin:0 10px 0 0">26 Eylül 2026, Cumartesi</a> <a href="haftasonu-egitimi/2026-09-20.html" style="margin:0 10px 0 0">20 Eylül 2026, Pazar</a> <a href="haftasonu-egitimi/2026-09-19.html" style="margin:0 10px 0 0">19 Eylül 2026, Cumartesi</a></p>
+<p style="margin-top:12px"><a href="index.html">&larr; Ana sayfaya dön</a></p>
+</main>
+
+<nav class="altbar" aria-label="Hızlı menü">
+<a href="../raporlar.html"><span class="i" aria-hidden="true">📊</span>Raporlar</a>
+<a href="../teknik-analiz.html"><span class="i" aria-hidden="true">📈</span>Teknik</a>
+<a href="../hisse/index.html"><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
+<a href="../portfolio.html"><span class="i" aria-hidden="true">💼</span>Portföy</a>
+<a href="../haberler.html"><span class="i" aria-hidden="true">📰</span>Haberler</a>
+<a href="../takvim.html"><span class="i" aria-hidden="true">📅</span>Takvim</a>
+</nav>
+
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+
+<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)<br><a href="../gizlilik.html" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+</body></html>
