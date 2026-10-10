@@ -1,11 +1,18 @@
 name: Borsa Okulu (Hafta Sonu Dersi)
 on:
   schedule:
-    # Cumartesi + Pazar 10:30 Turkiye saati (07:30 UTC) — gundemden 1,5 saat sonra (model yuku ayrissin)
-    - cron: '30 7 * * 6,0'
+    # Cumartesi + Pazar 09:47 Turkiye saati (06:47 UTC) — gundemden ~1,5 saat
+    # sonra (model yuku ayrissin). 2026-10-10: eski cron (07:30 UTC, dakika 30)
+    # GitHub yuk dagiliminda SESSIZCE dustu; tek-saat-disi dakikaya tasindi,
+    # duserse yayin-nobetci telafi eder.
+    - cron: '47 6 * * 6,0'
   workflow_dispatch:
 permissions:
+  actions: write
   contents: write
+concurrency:
+  group: haftasonu-egitim
+  cancel-in-progress: false
 jobs:
   egitim:
     runs-on: ubuntu-latest

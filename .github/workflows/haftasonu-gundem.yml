@@ -1,11 +1,17 @@
 name: Hafta Sonu Gundem Ajani
 on:
   schedule:
-    # Cumartesi + Pazar 09:00 Turkiye saati (06:00 UTC)
-    - cron: '0 6 * * 6,0'
+    # Cumartesi + Pazar 08:23 Turkiye saati (05:23 UTC). 2026-10-10: eski
+    # tam-saat cronu (06:00 UTC) GitHub yuk dagiliminda SESSIZCE dustu;
+    # tek-saat-disi dakikaya tasindi, duserse yayin-nobetci telafi eder.
+    - cron: '23 5 * * 6,0'
   workflow_dispatch:
 permissions:
+  actions: write
   contents: write
+concurrency:
+  group: haftasonu-gundem
+  cancel-in-progress: false
 jobs:
   gundem:
     runs-on: ubuntu-latest

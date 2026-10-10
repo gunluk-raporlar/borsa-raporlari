@@ -6,16 +6,20 @@ on:
     # cronu hic calismadi, nobetcinin 08:00 UTC cronu da). Tek-saat-disi ve
     # sik pencereler: her pencere 4 kontrol; bir kosu duserse sonraki
     # kontrol ~1 saat icinde telafi eder.
-    # 08:23-11:23 TSİ — gunluk rapor (raporlar/<tarih>.html) canlıda mi?
-    # (normalde ~08:10'da yayında olur; 3 saatlik gecikme/telafi payı)
-    - cron: '23 5,6,7,8 * * 1-5'
+    # Hafta ici: 08:23-11:23 TSİ — gunluk rapor (raporlar/<tarih>.html).
     # 12:23-15:23 TSİ — derin analiz (derin-analiz/<tarih>.html). Pazartesi
     # gunleri makro analiz de kontrol edilir (haftalik yayin).
+    - cron: '23 5,6,7,8 * * 1-5'
     - cron: '23 9,10,11,12 * * 1-5'
+    # Hafta sonu: 10:43-14:43 TSİ — hafta sonu gundem (haftasonu.html)
+    # ve borsa okulu (haftasonu-egitimi.html) + yayin akisi (publish.yml).
+    # Uretim cronlari: gundem 08:23, egitim 09:47 TSİ; ilk pencere 10:43
+    # telafi payi ~1-2 saat; 5 pencere ~4 saat kapsar.
+    - cron: '43 7,8,9,10,11 * * 6,0'
   workflow_dispatch:
     inputs:
       kontrol:
-        description: 'Kontrol edilecek yayın: daily | derin | makro (boş: saate göre)'
+        description: 'Kontrol edilecek yayın: daily | derin | makro | gundem | egitim | yayin (boş: saate göre)'
         required: false
         default: ''
 permissions:
@@ -36,31 +40,40 @@ jobs:
           TODAY=$(TZ=Europe/Istanbul date +%F)
           GUN=$(TZ=Europe/Istanbul date +%u)   # 1=Pazartesi ... 7=Pazar
           HEDEF="${{ inputs.kontrol }}"
-          if [ -z "$HEDEF" ] && { [ "$GUN" = "6" ] || [ "$GUN" = "7" ]; }; then
-            # Hafta sonu uretim yok (daily.yml 1-5 cronlu); kontrol ve tetikleme
-            # atlanir. Elle tetiklemede bu kural uygulanmaz.
-            HEDEF="YOK"
-            echo "Hafta sonu — uretim/kontrol yok."
-          fi
           if [ -z "$HEDEF" ]; then
-            # cronlar UTC; secim TSİ saat araligiyla yapilir (eski kod '08'
-            # esitligi ariyordu: 08:00 UTC kosusunda TSİ 11 oldugundan gunluk
-            # rapor zamanlanmis turda HIC kontrol edilmiyordu — 2026-10-07
-            # sabahi gorulen kok neden).
             SAAT=$(TZ=Europe/Istanbul date +%H)
-            if [ "$SAAT" -ge 8 ] && [ "$SAAT" -le 11 ]; then
-              HEDEF="daily"
+            if [ "$GUN" -le 5 ]; then
+              # Hafta ici: 08-11 => daily; diger => derin (+ pazartesi makro)
+              if [ "$SAAT" -ge 8 ] && [ "$SAAT" -le 11 ]; then
+                HEDEF="daily"
+              else
+                HEDEF="derin"
+                if [ "$GUN" = "1" ]; then HEDEF="derin makro"; fi
+              fi
             else
-              HEDEF="derin"
-              if [ "$GUN" = "1" ]; then HEDEF="derin makro"; fi
+              # Hafta sonu (cumartesi/pazar): 10-14 => gundem egitim yayin
+              # (uretim: gundem 08:23, egitim 09:47; ilk pencere 10:43).
+              if [ "$SAAT" -ge 10 ] && [ "$SAAT" -le 14 ]; then
+                HEDEF="gundem egitim yayin"
+              else
+                # Saat disinda Elle tetikleme disinda YOK
+                HEDEF="YOK"
+              fi
             fi
           fi
+          # Elle tetikleme: daily|derin|makro|gundem|egitim|yayin|YOK
+          case " $HEDEF " in
+            *" YOK "*) HEDEF="YOK" ;;
+          esac
           echo "tarih=$TODAY" >> "$GITHUB_OUTPUT"
           echo "hedefler=$HEDEF" >> "$GITHUB_OUTPUT"
           echo "Kontrol hedefleri: $HEDEF ($TODAY)"
 
-      - name: Canli sitede yayini denetle (hedef basina 3 deneme)
+      - name: Yayin varligini denetle (git icerigi + canli site yedek)
         id: yayin
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
         run: |
           TODAY="${{ steps.sec.outputs.tarih }}"
           EKSIK=""
@@ -69,24 +82,50 @@ jobs:
               daily) DOSYA="raporlar/${TODAY}.html" ;;
               derin) DOSYA="derin-analiz/${TODAY}.html" ;;
               makro) DOSYA="makro-analiz/${TODAY}.html" ;;
+              gundem) DOSYA="haftasonu/${TODAY}.html" ;;
+              egitim) DOSYA="haftasonu-egitimi/${TODAY}.html" ;;
+              yayin)
+                # yayin hedefi: git'te dosya varken canli sitede yoksa publish tetikle
+                # (iki dosya ust-uste dusmemesi icin OR mantigi: herhangi biri eksikse yayin calisir)
+                EKSIK_YAYIN=0
+                for PUB_DOSYA in "haftasonu/${TODAY}.html" "haftasonu-egitimi/${TODAY}.html"; do
+                  # once git'te var mi?
+                  HTTP=$(gh api "repos/${REPO}/contents/${PUB_DOSYA}?ref=main" --jq .message 2>/dev/null || echo "NOT_FOUND")
+                  if [ "$HTTP" = "Not Found" ] || [ "$HTTP" = "NOT_FOUND" ]; then
+                    echo "EKSIK (git): ${PUB_DOSYA} — henuz commit edilmemis"
+                    EKSIK_YAYIN=1
+                    continue
+                  fi
+                  # git'te varsa canli site kontrol
+                  KOD=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 30 \
+                        "https://borsa-raporlari.pages.dev/${PUB_DOSYA}?nobetci=${TODAY}-pub")
+                  echo "Canli kontrol: ${PUB_DOSYA} -> HTTP ${KOD}"
+                  case "$KOD" in 2*) ;; *) EKSIK_YAYIN=1 ;; esac
+                done
+                if [ "$EKSIK_YAYIN" -eq 1 ]; then
+                  echo "EKSIK: yayin (hafta sonu icerik git'te var ama canli degil)"
+                  EKSIK="$EKSIK yayin"
+                fi
+                continue
+                ;;
+              *) echo "Bilinmeyen hedef: $HEDEF"; continue ;;
             esac
-            KOD=""
-            for deneme in 1 2 3; do
-              # -L: site raporlar/...html adreslerini 308 ile yonlendiriyor
-              # (guzel URL); takip edilmezse yayinda olsa bile 308 doner.
-              KOD=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 30 \
-                    "https://borsa-raporlari.pages.dev/${DOSYA}?nobetci=${TODAY}-${deneme}")
-              echo "Deneme $deneme: ${DOSYA} -> HTTP ${KOD}"
-              case "$KOD" in 2*) KOD=2xx; break ;; esac
-              [ "$deneme" -lt 3 ] && sleep 45
-            done
-            if [ "$KOD" != "2xx" ]; then
-              echo "EKSIK: ${DOSYA} (HTTP ${KOD:-yok})"
+
+            # Hafta ici hedefleri: git icerigi kontrolu (hizli, deploy gecikmesinden bagimsiz)
+            HTTP=$(gh api "repos/${REPO}/contents/${DOSYA}?ref=main" --jq .message 2>/dev/null || echo "NOT_FOUND")
+            if [ "$HTTP" = "Not Found" ] || [ "$HTTP" = "NOT_FOUND" ]; then
+              echo "EKSIK (git): ${DOSYA} — henuz commit edilmemis"
               EKSIK="$EKSIK $HEDEF"
+              continue
             fi
+            # git'te varsa canli site yedek kontrol (opsiyonel)
+            KOD=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 30 \
+                  "https://borsa-raporlari.pages.dev/${DOSYA}?nobetci=${TODAY}-live")
+            echo "Canli yedek: ${DOSYA} -> HTTP ${KOD}"
+            case "$KOD" in 2*) ;; *) echo "UYARI: git'te var ama canli degil";; esac
           done
           if [ -z "$EKSIK" ]; then
-            echo "Tum hedef yayinlar canli sitede mevcut."
+            echo "Tum hedef yayinlar git'te mevcut."
           fi
           echo "eksik=${EKSIK# }" >> "$GITHUB_OUTPUT"
 
@@ -101,30 +140,39 @@ jobs:
               daily) WF="daily.yml" ;;
               derin) WF="derin-analiz.yml" ;;
               makro) WF="makro-analiz.yml" ;;
+              gundem) WF="haftasonu-gundem.yml" ;;
+              egitim) WF="haftasonu-egitim.yml" ;;
+              yayin) WF="publish.yml" ;;
+              *) echo "Bilinmeyen hedef: $HEDEF"; continue ;;
             esac
+            # in_progress VE queued kosulari kontrol et (cift tetikleme onleme)
             SURAN=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow="$WF" \
                     --status in_progress --json databaseId --jq 'length')
-            if [ "${SURAN:-0}" -gt 0 ]; then
-              echo "$WF zaten suruyor ($SURAN kosu) — tekrar tetiklenmedi."
+            BEKLIYEN=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow="$WF" \
+                    --status queued --json databaseId --jq 'length')
+            if [ "${SURAN:-0}" -gt 0 ] || [ "${BEKLIYEN:-0}" -gt 0 ]; then
+              echo "$WF zaten suruyor/bekliyor (in_progress=${SURAN:-0}, queued=${BEKLIYEN:-0}) — tekrar tetiklenmedi."
               continue
             fi
             gh workflow run "$WF" --repo "$GITHUB_REPOSITORY" --ref main
-            echo "$WF tetiklendi ($HEDEF yayini canli sitede yoktu)."
+            echo "$WF tetiklendi ($HEDEF yayini eksikti)."
           done
       # 2026-10-07: GitHub, 08:00-12:00 UTC yuk penceresinde zamanlanmis
       # (schedule) kosulari gun boyu SESSIZCE dusuruyor (bugun gunluk rapor,
       # nobetci ve derin analiz cronlarinin hicbiri calismadi; ayni dakika
       # dilimindeki workflow_dispatch'lar ise %100 calisti). Bu adim her tur
       # sonunda 40 dk sonra bir sonraki turu KENDI tetikler: zincir bir kez
-      # basladigi gun 16:00 TSİ'ye kadar kesintisiz devam eder.
+      # basladigi gun 18:00 TSİ'ye kadar kesintisiz devam eder (hafta sonu
+      # icin 10:43-14:43 pencere grubunu + gecikme payini kapsar).
       - name: Zincir — 40 dk sonra sonraki turu tetikle (schedule dusmelerine karsi)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           GUN=$(TZ=Europe/Istanbul date +%u)
           SAAT=$(TZ=Europe/Istanbul date +%H)
-          if [ "$GUN" -ge 6 ] || [ "$SAAT" -ge 16 ]; then
-            echo "Zincir durduruldu (hafta sonu veya TSI $SAAT:00 sonrasi)."
+          # Hafta ici: 16:00 TSİ sonrasi dur; Hafta sonu: 18:00 TSİ sonrasi dur
+          if { [ "$GUN" -le 5 ] && [ "$SAAT" -ge 16 ]; } || { [ "$GUN" -ge 6 ] && [ "$SAAT" -ge 18 ]; }; then
+            echo "Zincir durduruldu (TSI $SAAT:00 sonrasi)."
             exit 0
           fi
           echo "Sonraki kontrol 40 dk sonra (simdi TSI $SAAT)."

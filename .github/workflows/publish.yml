@@ -5,8 +5,11 @@ name: Site Yayini (gunluk publish)
 # Aylik tuketim ~60 build (500 limitinin ~%12'si).
 on:
   schedule:
-    - cron: '30 7 * * *'   # 10:30 Turkiye saati — oglen yayini
-    - cron: '30 16 * * *'  # 19:30 Turkiye saati — aksam yayini (robot kapanis kosusundan sonra)
+    # 2026-10-10: dakika-30 cronlari da ayni sekilde sessiz dustugu icin
+    # tek-saat-disi dakikalara tasindi (nobetci de publish eksigini
+    # yakalayip bu akisi tetikliyor).
+    - cron: '37 7 * * *'   # 10:37 Turkiye saati — oglen yayini
+    - cron: '43 16 * * *'  # 19:43 Turkiye saati — aksam yayini (robot kapanisi 19:15'ten sonra)
   workflow_dispatch:
   # Sabah gunluk raporu bittigi an siteye gitsin; 10:30'u beklemesin
   # (2026-09-29: rapor 08:52'de repodaydi, site 10:30'a kadar eski kaldi).
