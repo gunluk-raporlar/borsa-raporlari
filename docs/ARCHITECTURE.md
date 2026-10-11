@@ -9,11 +9,11 @@ TR sayfalar asla bot dışından değiştirilmez.
 ```mermaid
 flowchart TD
     subgraph CI["GitHub Actions (.github/workflows)"]
-        daily["daily.yml<br/>hafta içi 04:05 UTC"]
+        daily["daily.yml<br/>hafta içi 04:17 UTC"]
         teknikw["teknik-tarama.yml<br/>piyasa saatleri, 30 dk"]
         robotw["robot.yml<br/>piyasa saatleri, 15-30 dk"]
         makrow["makro-snapshot.yml her akşam<br/>makro-analiz.yml Pazartesi"]
-        derinw["derin-analiz.yml<br/>workflow_dispatch"]
+        derinw["derin-analiz.yml<br/>hafta içi 12:23 TSİ + dispatch<br/>(tazelik + hafta sonu kapısı)"]
         radyow["radyo.yml<br/>3 x gün"]
         hsegitim["haftasonu-egitim.yml<br/>Cmt + Paz 07:30"]
         hsgundem["haftasonu-gundem.yml<br/>Cmt + Paz 06:00"]
@@ -115,7 +115,11 @@ flowchart TD
   kilitli (22.09 olayı). Kısa (≤60 karakter) dizelerde önbellek değeri kaynağa
   birebir eşitse bile kabul edilir — bilinen zehir girişi (bkz. aşağı).
 - **derin_analiz.py** — derin analiz sayfasını günlük bottan bağımsız üretir
-  (workflow_dispatch; ZAI anahtarı yoksa yazmadan çıkar).
+  (hafta içi 12:23 TSİ cron + workflow_dispatch; ZAI anahtarı yoksa yazmadan
+  çıkar). Gün kapısı iş akışı katmanındadır: cron '23 9 * * 1-5' + "Tazelik
+  kapısı" adımı içinde hafta sonu kapısı — üretim anındaki Istanbul günü
+  Cmt/Paz ise atlar, force=true ile zorlanır (2026-10-11; betiğin kendisinde
+  gün/tatil kontrolü YOK, bkz. Bilinen riskler).
 - **makro_*.py** — makro katman: `makro_veri/katalog` (veri + tanımlar),
   `makro_rejim` (kural tabanlı rejim etiketi, `data/makro-rejim/`),
   `makro_snapshot` (akşam göstergeleri), `makro_analiz` sayfası üretimi.
@@ -127,7 +131,12 @@ flowchart TD
 - **.github/workflows** — üretim takvimi (bkz. diyagram): `daily.yml` rapor,
   `i18n.yml` 2 saatte bir çeviri (`[CI Skip]` commit), `publish.yml` günde 2 kez
   boş "Site yayini" commit'i ile Cloudflare build'ini tetikler; `[CI Skip]` içeren
-  commit'ler build başlatmaz.
+  commit'ler build başlatmaz. `yayin-nobetci.yml` eksik yayını tespit edip
+  ilgili iş akışını `gh workflow run` ile tetikler (hafta sonu kapısı bu yolu
+  da korur). Yanlış yayını geri alma deseni (2026-10-11): dosya(lar) silinir,
+  hub/ana sayfa kartları ve 5 sitemap temizlenir, kalıcı erişim için
+  `_redirects`'e 301 kuralı eklenir (ör. 10 Ekim Cumartesi derin analizi →
+  aynı Cuma verisini taşıyan 9 Ekim raporu).
 - **data/** — tek doğruluk kaynağı: teknik tarama çıktıları, fiyat serileri
   (`data/fiyat/<KOD>.json` fiyat deposu ≈300-420 işlem günü, hisse sayfası
   grafiklerinin ana kaynağı; `data/prices/<tarih>.json` günlük kesitleri, piyasa
@@ -155,3 +164,7 @@ flowchart TD
 - **Ana sayfa index.html elle yamalı**: 2026-10-05 itibarıyla depodaki index.html
   (ve 4 dil kopyası) geçerli `build_index_html` çıktısı değildir; sıradaki
   `daily.yml` koşusu onu doğal haliyle yeniden üretir.
+- **Resmi tatil boşluğu**: gün kapıları yalnızca hafta sonu bilir; `resmi_tatil.py`
+  jeneratörlere (bot/derin/makro) bağlı değildir — piyasa tatilinde cron 1-5
+  filtresi geçer, bayram günü de eski-kapanışlı rapor yayılanır (10 Ekim
+  olayının aynı sınıfı; 2026-10-11 incelemesi).
