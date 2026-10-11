@@ -88,7 +88,13 @@ flowchart TD
 
 - **bot.py** — günlük rapor üreticisi: piyasa verisi çeker, rapor + `index.html` +
   portfolio/teknik/haber/takvim/sözlük sayfalarını yazar; çeviri YAPMAZ (2026-09-21'den
-  beri çeviri ayrı workflow'da). Ana sayfa kartları (`_ders_konusu`, `_tr_tarih_sade`)
+  beri çeviri ayrı workflow'da). **style.css BASE_CSS sabitinden üretilir**
+  (`style_css_yaz()` her koşuda kök style.css'i ezer): CSS değişikliği önce
+  BASE_CSS'e yapılır, sonra 5 kopyaya (kök + en/de/ru/zh) taşınır; aksi halde
+  ilk bot koşusu elle yapılan CSS düzeltmesini siler (11 Ekim Pazar koşusu
+  `.report` bloğunu böyle sildi). Deploy tarafında `build.sh` dil kopyalarının
+  style.css'ini kökle eşitler, `_headers` style.css önbelleğini 3600 sn'de
+  tutar (sürüm parametresi yok; 86400 idi, CSS düzeltmeleri 1 gün gecikirdi). Ana sayfa kartları (`_ders_konusu`, `_tr_tarih_sade`)
   ders dosyasından günün konusunu çıkarır; ders dosyası yoksa statik yedek metne döner.
   Hisse sayfalarının fiyat grafiği alt sistemi (`_hisse_fiyat_seri`, `_fiyat_grafigi_svg`,
   `_interaktif_fiyat_grafigi`): tam seriyi fiyat deposundan (`data/fiyat/<KOD>.json`,
@@ -131,12 +137,21 @@ flowchart TD
 - **.github/workflows** — üretim takvimi (bkz. diyagram): `daily.yml` rapor,
   `i18n.yml` 2 saatte bir çeviri (`[CI Skip]` commit), `publish.yml` günde 2 kez
   boş "Site yayini" commit'i ile Cloudflare build'ini tetikler; `[CI Skip]` içeren
-  commit'ler build başlatmaz. `yayin-nobetci.yml` eksik yayını tespit edip
+  commit'ler build başlatmaz. `yayin-nobetci.yml` eksik yayini tespit edip
   ilgili iş akışını `gh workflow run` ile tetikler (hafta sonu kapısı bu yolu
   da korur). Yanlış yayını geri alma deseni (2026-10-11): dosya(lar) silinir,
-  hub/ana sayfa kartları ve 5 sitemap temizlenir, kalıcı erişim için
-  `_redirects`'e 301 kuralı eklenir (ör. 10 Ekim Cumartesi derin analizi →
-  aynı Cuma verisini taşıyan 9 Ekim raporu).
+  hub/ana sayfa kartları, arama dizini girdileri, podcast feed item'ları ve
+  5 sitemap temizlenir, kalıcı erişim için `_redirects`'e 301 kuralı eklenir
+  (ör. 10 Ekim Cumartesi derin analizi → 9 Ekim raporu; 11 Ekim Pazar günlük
+  raporu → 9 Ekim raporu).
+  **Gün kapıları (2026-10-11):** `daily.yml` ve `derin-analiz.yml` "Tazelik
+  kapısı" adımında hafta sonu kontrolü var — üretim anındaki Istanbul günü
+  Cmt/Paz ise (force=true hariç) üretim yok. Gerekçe: cron'daki `1-5` filtresi
+  yalnız schedule yolunu korur; 11 Ekim Pazar raporu HARİCİ bir
+  `workflow_dispatch` ile üretildi. Hafta sonu üreticileri (`haftasonu-gundem`,
+  `haftasonu-egitim`) de tazelik kapısı + `force` girdisi taşıyor ve her biri
+  yük-dışı yedek cron penceresine sahip — GitHub schedule koşularını sessizce
+  düşürdüğü için tek cron tek hata noktası sayılmaz.
 - **data/** — tek doğruluk kaynağı: teknik tarama çıktıları, fiyat serileri
   (`data/fiyat/<KOD>.json` fiyat deposu ≈300-420 işlem günü, hisse sayfası
   grafiklerinin ana kaynağı; `data/prices/<tarih>.json` günlük kesitleri, piyasa
@@ -168,3 +183,15 @@ flowchart TD
   jeneratörlere (bot/derin/makro) bağlı değildir — piyasa tatilinde cron 1-5
   filtresi geçer, bayram günü de eski-kapanışlı rapor yayılanır (10 Ekim
   olayının aynı sınıfı; 2026-10-11 incelemesi).
+- **Bilinmeyen harici dispatcher**: `gunluk-raporlar` hesabı kimliğinden, repo
+  dışından gelen `workflow_dispatch` çağrıları birden çok sabah `daily.yml`'yi
+  (7-9 Ekim) ve 11 Ekim Pazar günü hafta sonu kapısı olmayan `daily.yml`'yi
+  çalıştırdı; 11 Ekim'te `derin-analiz.yml`'yi de tetikledi (kapıya takıldı).
+  daily/derin kapılı; diğer dispatch-açık iş akışları (radyo, makro, teknik...)
+  kapısız. Kalıcı çözüm: GitHub security log + PAT/OAuth denetimi ve gerekirse
+  environment protection kuralı (2026-10-11 incelemesi).
+- **GitHub schedule sessiz düşürme**: yük penceresinde schedule koşuları iş
+  akışı başına sessizce düşebiliyor (7, 10 ve 11 Ekim vakaları); 11 Ekim'de
+  hafta sonu üretici + nöbetçi cronlarının TAMAMI düştü. Önlem: çoklu yük-dışı
+  cron pencereleri + tazelik kapıları + nöbetçi zinciri; köklü çözüm adayı
+  (ileride): Cloudflare Worker Cron Trigger ile GH dispatch API kick'i.
