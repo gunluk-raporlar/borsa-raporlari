@@ -46,6 +46,16 @@ jobs:
             echo "FORCE — uretim zorlandi."
             echo "uretim=true" >> "$GITHUB_OUTPUT"; exit 0
           fi
+          # Hafta sonu kapisi (2026-10-11): cron'daki 1-5 filtresi dispatch
+          # yoluyla gelen kosulari korumaz — 11 Ekim Pazar raporu harici bir
+          # workflow_dispatch ile uretildi. Uretim anindaki Istanbul gunu
+          # Cmt/Paz ise uretim yapilmaz; force=true ile elle zorlanabilir
+          # (derin-analiz.yml'deki ayni adin kopyasi).
+          GUN=$(TZ=Europe/Istanbul date +%u)   # 6=Cumartesi, 7=Pazar
+          if [ "$GUN" -ge 6 ]; then
+            echo "Hafta sonu (TSI $(TZ=Europe/Istanbul date +%F)) — gunluk rapor hafta ici yayinlanir; uretim atlandi."
+            echo "uretim=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
           BUGUN=$(TZ=Europe/Istanbul date +%F)
           if [ -f "raporlar/${BUGUN}.html" ]; then
             echo "Bugunun raporu zaten yayinda (${BUGUN}) — uretim atlandi."

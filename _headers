@@ -28,7 +28,7 @@
 /zh/hisse/grafik.js
   Cache-Control: public, max-age=300
 /style.css
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=3600
 /og-cover.png
   Cache-Control: public, max-age=86400
 /favicon.svg

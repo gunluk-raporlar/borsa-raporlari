@@ -21,4 +21,11 @@ cp *.html *.css *.json *.png *.svg *.xml *.txt _headers _redirects dist/ 2>/dev/
 # Site disi metin dosyalari
 rm -f dist/joblog.txt dist/requirements.txt
 
+# Dil kopyalarinin style.css'ini kokle esitle (2026-10-11): bot koşusu kök
+# style.css'i güncelleyip i18n koşusu dil kopyalarını eski halde birakirsa
+# yayindaki dil sayfalari kökle ayni stili paylasir.
+for l in en de ru zh; do
+  if [ -f "dist/style.css" ] && [ -d "dist/$l" ]; then cp dist/style.css "dist/$l/style.css"; fi
+done
+
 echo "dist hazir: $(find dist -type f | wc -l) dosya"

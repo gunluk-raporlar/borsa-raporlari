@@ -1566,8 +1566,13 @@ def en_yollarini_ingilizcele(kok: Path) -> int:
         if not _EN_SLUG_TANI.search(metin):
             continue
         if dosya.suffix == ".json":
-            yeni = re.sub(r'("u"\s*:\s*"[^"]*")',
-                          lambda m: '"u":"' + _en_slug_degistir(m.group(1)[5:-1]) + '"', metin)
+            # 2026-10-11: eski lambda degeri group(1)[5:-1] ile kirpiyordu; bot
+            # dosyayi "u": "..." (iki nokta sonrasi bosluklu) yazdigi icin
+            # degerin acilis tirnagi iceride kaliyor ve "u":""deger" olusuyordu
+            # (en/site-arama.json 9 Ekim'den beri gecersiz JSON). Simdi yalniz
+            # deger yakalanip donusturuluyor; bicim (bosluklar) korunur.
+            yeni = re.sub(r'("u"\s*:\s*")([^"]*)(")',
+                          lambda m: m.group(1) + _en_slug_degistir(m.group(2)) + m.group(3), metin)
         elif dosya.suffix == ".xml" and dosya.name == "sitemap.xml" and dosya.parent == kok:
             # kok sitemap: yalnizca hreflang="en" alternatifleri degisir
             yeni = re.sub(r'(<xhtml:link[^>]*hreflang="en"[^>]*>)',
