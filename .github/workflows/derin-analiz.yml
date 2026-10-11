@@ -1,7 +1,11 @@
 name: Derin Analiz (Z.ai GLM)
 on:
   schedule:
-    - cron: '23 9 * * *'   # 12:00 Turkiye saati — oglen derin analizi (piyasa acik; gun ici veriyle yazar)
+    # 12:23 Turkiye saati — oglen derin analizi (piyasa acik; gun ici
+    # veriyle yazar). 1-5 hafta ici filtresi (2026-10-11): gundelik bottan
+    # ayri kosuya gecerken (ac04c072) dusmustu; 10 Ekim 2026 Cumartesi
+    # raporu bu eksik yuzden yayinlandi.
+    - cron: '23 9 * * 1-5'
   workflow_dispatch:
     inputs:
       force:
@@ -36,6 +40,16 @@ jobs:
           if [ "${{ inputs.force }}" = "true" ]; then
             echo "FORCE — uretim zorlandi."
             echo "uretim=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          # Hafta sonu kapisi (2026-10-11): cron'daki 1-5 filtresi gecikmis
+          # kosularda islemeyebilir (GitHub saat-siniri kaymalari); uretim
+          # anindaki Istanbul gunune bakilir. Cmt/Paz uretim yapilmaz —
+          # 10 Ekim Cumartesi raporu bu kapi yokken yayinlandi.
+          BUGUN=$(TZ=Europe/Istanbul date +%F)
+          GUN=$(TZ=Europe/Istanbul date +%u)   # 6=Cumartesi, 7=Pazar
+          if [ "$GUN" -ge 6 ]; then
+            echo "Hafta sonu (${BUGUN}) — derin analiz hafta ici yayinlanir; uretim atlandi."
+            echo "uretim=false" >> "$GITHUB_OUTPUT"; exit 0
           fi
           BUGUN=$(TZ=Europe/Istanbul date +%F)
           if [ -f "derin-analiz/${BUGUN}.html" ]; then
