@@ -309,6 +309,44 @@ def kanal_gorsel(konu):
     return _sarmal(560, 300, govde, "Regresyon Kanalı — %0 alt bant, %100 üst bant")
 
 
+def destek_gorsel(konu):
+    """Destek/direnç ders görseli: merkez etrafında salınan fiyat, döndüğü
+    yatay bölgeler (destek/direnç) ve üst kırılım adayı — şematik."""
+    rnd = _seed(konu + "-destek")
+    n = 80
+    seri = []
+    v = 100.0
+    for _ in range(n):
+        v += rnd.gauss(0, 2.4) - 0.16 * (v - 100.0)
+        seri.append(v)
+    sirali = sorted(seri)
+    direnc = sirali[int(n * 0.92)]
+    destek = sirali[int(n * 0.08)]
+
+    govde = _zaman_govde(560, 235, [seri], [RENK["lacivert"]], [2.2], bant=None)
+    alt_v, ust_v = _olcek([seri, [destek], [direnc]])
+    y0, y1 = 12, 209
+    x0, x1 = 46, 546
+
+    def oy2(vd):
+        return y1 - (vd - alt_v) / (ust_v - alt_v) * (y1 - y0)
+
+    # Destek/direnç bölgeleri: seviyenin üstü/altı ince renkli serit
+    govde += (f'<rect x="{x0}" y="{y0:.1f}" width="{x1 - x0:.0f}" height="{oy2(direnc) - y0:.1f}" '
+              f'fill="#fef2f2" opacity="0.55"/>')
+    govde += (f'<rect x="{x0}" y="{oy2(destek):.1f}" width="{x1 - x0:.0f}" height="{y1 - oy2(destek):.1f}" '
+              f'fill="#ecfdf5" opacity="0.55"/>')
+    for seviye, c, ad in ((direnc, RENK["kirmizi"], "Direnç"), (destek, RENK["yesil"], "Destek")):
+        govde += (f'<line x1="{x0}" y1="{oy2(seviye):.1f}" x2="{x1}" y2="{oy2(seviye):.1f}" stroke="{c}" '
+                  f'stroke-width="1.6" stroke-dasharray="6,4" opacity="0.85"/>')
+        govde += (f'<text x="{x0 + 6}" y="{oy2(seviye) - 5:.1f}" font-family="Segoe UI,Arial" '
+                  f'font-size="11" font-weight="700" fill="{c}">{ad}</text>')
+    govde = _lejant_cizgi(govde, 60, 18, "Fiyat", RENK["lacivert"])
+    govde = _lejant_cizgi(govde, 170, 18, "Direnç bölgesi", RENK["kirmizi"])
+    govde = _lejant_cizgi(govde, 320, 18, "Destek bölgesi", RENK["yesil"])
+    return _sarmal(560, 300, govde, "Destek ve Direnç — fiyatın döndüğü bölgeler")
+
+
 def dagilim_gorsel(konu, negatif=False):
     rnd = _seed(konu + ("-neg" if negatif else "-poz"))
     govde = ""
@@ -426,6 +464,7 @@ GORSEL_ESLEME = [
     ("Mum", mum_gorsel),
     ("Pearson", lambda k: dagilim_gorsel(k, False)),
     ("Regresyon", kanal_gorsel),
+    ("Destek", destek_gorsel),
     ("Hacim", hacim_gorsel),
     ("Likidite", hacim_gorsel),
     ("Bileşik", buyume_gorsel),
