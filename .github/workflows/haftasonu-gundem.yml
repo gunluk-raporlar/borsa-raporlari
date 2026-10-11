@@ -4,8 +4,17 @@ on:
     # Cumartesi + Pazar 08:23 Turkiye saati (05:23 UTC). 2026-10-10: eski
     # tam-saat cronu (06:00 UTC) GitHub yuk dagiliminda SESSIZCE dustu;
     # tek-saat-disi dakikaya tasindi, duserse yayin-nobetci telafi eder.
+    # 2026-10-11 (Pazar): 05:23 cronu da dustu (hafta sonu icerigi hic
+    # uretilmedi, nobetci pencereleri de dustu). Ikinci, yuk-disi yedek
+    # pencere eklendi; ikisi de dusersenin ihtimalini dusurmek icin.
     - cron: '23 5 * * 6,0'
+    - cron: '37 2 * * 6,0'   # 05:37 TSİ yuk-disi yedek pencere
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Bugunun gundemi varsa bile yeniden uret'
+        type: boolean
+        default: false
 permissions:
   actions: write
   contents: write
@@ -25,7 +34,25 @@ jobs:
           python-version: '3.12'
       - name: Kutuphaneleri kur
         run: pip install -r requirements.txt
+      # Tazelik kapisi (2026-10-11): coklu cron/dispatch yollarindan ikinci
+      # bir kosu ayni gunun gundemini LLM ile yeniden uretmesin; force=true
+      # ile elle zorlanabilir (daily.yml'deki ayni desen).
+      - name: Tazelik kapisi
+        id: kapisi
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "FORCE — uretim zorlandi."
+            echo "uretim=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          BUGUN=$(TZ=Europe/Istanbul date +%F)
+          if [ -f "haftasonu/${BUGUN}.html" ]; then
+            echo "Bugunun gundemi zaten yayinda (${BUGUN}) — uretim atlandi."
+            echo "uretim=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "uretim=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Gundemi uret
+        if: steps.kapisi.outputs.uretim != 'false'
         env:
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}

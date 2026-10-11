@@ -5,8 +5,15 @@ on:
     # sonra (model yuku ayrissin). 2026-10-10: eski cron (07:30 UTC, dakika 30)
     # GitHub yuk dagiliminda SESSIZCE dustu; tek-saat-disi dakikaya tasindi,
     # duserse yayin-nobetci telafi eder.
+    # 2026-10-11 (Pazar): 06:47 cronu da dustu; yuk-disi yedek pencere eklendi.
     - cron: '47 6 * * 6,0'
+    - cron: '11 4 * * 6,0'   # 07:11 TSİ yuk-disi yedek pencere
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Bugunun dersi varsa bile yeniden uret'
+        type: boolean
+        default: false
 permissions:
   actions: write
   contents: write
@@ -26,7 +33,25 @@ jobs:
           python-version: '3.12'
       - name: Kutuphaneleri kur
         run: pip install -r requirements.txt
+      # Tazelik kapisi (2026-10-11): coklu cron/dispatch yollarindan ikinci
+      # bir kosu ayni gunun dersini LLM ile yeniden uretmesin; force=true
+      # ile elle zorlanabilir (daily.yml'deki ayni desen).
+      - name: Tazelik kapisi
+        id: kapisi
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "FORCE — uretim zorlandi."
+            echo "uretim=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          BUGUN=$(TZ=Europe/Istanbul date +%F)
+          if [ -f "haftasonu-egitimi/${BUGUN}.html" ]; then
+            echo "Bugunun dersi zaten yayinda (${BUGUN}) — uretim atlandi."
+            echo "uretim=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "uretim=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Borsa okulu dersini uret
+        if: steps.kapisi.outputs.uretim != 'false'
         env:
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}

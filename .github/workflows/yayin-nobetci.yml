@@ -16,6 +16,13 @@ on:
     # Uretim cronlari: gundem 08:23, egitim 09:47 TSİ; ilk pencere 10:43
     # telafi payi ~1-2 saat; 5 pencere ~4 saat kapsar.
     - cron: '43 7,8,9,10,11 * * 6,0'
+    # 2026-10-11 (Pazar): yukaridaki 5 hafta sonu penceresinin TAMAMI dustu
+    # ve zincir ilk halkasini atamadi — hafta sonu icerigi hic uretilmedi.
+    # Erken pencere: 09:43 TSİ, uretim cronlari duserse telafiyi ~1 saat
+    # one alir; cift tetikleme zaten 'suruyor/bekliyor' kontrolu + uretici
+    # tazelik kapilariyla korunur. Zincir bu kosudan sonra kendini 40 dk'da
+    # bir tekrar tetikler.
+    - cron: '43 6 * * 6,0'
   workflow_dispatch:
     inputs:
       kontrol:
@@ -51,9 +58,10 @@ jobs:
                 if [ "$GUN" = "1" ]; then HEDEF="derin makro"; fi
               fi
             else
-              # Hafta sonu (cumartesi/pazar): 10-14 => gundem egitim yayin
-              # (uretim: gundem 08:23, egitim 09:47; ilk pencere 10:43).
-              if [ "$SAAT" -ge 10 ] && [ "$SAAT" -le 14 ]; then
+              # Hafta sonu (cumartesi/pazar): 09-14 => gundem egitim yayin
+              # (uretim: gundem 08:23, egitim 09:47; erken pencere 09:43,
+              # asil pencereler 10:43-14:43).
+              if [ "$SAAT" -ge 9 ] && [ "$SAAT" -le 14 ]; then
                 HEDEF="gundem egitim yayin"
               else
                 # Saat disinda Elle tetikleme disinda YOK
