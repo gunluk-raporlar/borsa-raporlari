@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-10-11 22:31",
+ "guncelleme": "2026-10-13 01:31",
  "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + EVDS(5) + Resmi AB/ABD(25)",
  "gostergeler": [
   {
@@ -117,25 +117,25 @@
   {
    "ulke": "Türkiye",
    "ad": "Perakende Satış (yıllık)",
-   "deger": 10.4,
+   "deger": 10.1,
    "birim": "%",
-   "donem": "2026-09-11",
+   "donem": "2026-10-12",
    "tahmin": null,
-   "onceki": 11.5,
+   "onceki": 9.9,
    "kaynak_baslik": "Retail Sales YoY",
-   "kaynak_periyot": "Jul",
+   "kaynak_periyot": "Aug",
    "frekans": "aylık"
   },
   {
    "ulke": "Türkiye",
    "ad": "Perakende Satış (aylık)",
-   "deger": 0.2,
+   "deger": 1.4,
    "birim": "%",
-   "donem": "2026-09-11",
+   "donem": "2026-10-12",
    "tahmin": null,
-   "onceki": 0.5,
+   "onceki": 0.2,
    "kaynak_baslik": "Retail Sales MoM",
-   "kaynak_periyot": "Jul",
+   "kaynak_periyot": "Aug",
    "frekans": "aylık"
   },
   {
@@ -1060,20 +1060,6 @@
   },
   {
    "ulke": "ABD",
-   "ad": "Politika faizi",
-   "deger": 4.0,
-   "birim": "%",
-   "donem": "2026-10-11",
-   "tahmin": 4.0,
-   "onceki": 4.0,
-   "kaynak_baslik": "FRED Fed fon ust siniri",
-   "kaynak_periyot": "2026-10-11",
-   "frekans": "olay",
-   "teyit": "FRED",
-   "kaynak_durumu": "FRED resmi verisi"
-  },
-  {
-   "ulke": "ABD",
    "ad": "Büyüme (yıllık)",
    "deger": 2.2,
    "birim": "%",
@@ -1087,15 +1073,29 @@
    "teyit": "FRED"
   },
   {
+   "ulke": "ABD",
+   "ad": "Politika faizi",
+   "deger": 4.0,
+   "birim": "%",
+   "donem": "2026-10-12",
+   "tahmin": 4.0,
+   "onceki": 4.0,
+   "kaynak_baslik": "FRED Fed fon ust siniri",
+   "kaynak_periyot": "2026-10-12",
+   "frekans": "olay",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
+  },
+  {
    "ulke": "Euro Bölgesi",
    "ad": "Politika faizi",
    "deger": 2.65,
    "birim": "%",
-   "donem": "2026-10-11",
+   "donem": "2026-10-12",
    "tahmin": 2.65,
    "onceki": 2.65,
    "kaynak_baslik": "ECB MRO ana refinansman faizi",
-   "kaynak_periyot": "2026-10-11",
+   "kaynak_periyot": "2026-10-12",
    "frekans": "olay",
    "teyit": "ECB",
    "kaynak_durumu": "ECB resmi verisi"
