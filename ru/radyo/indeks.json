@@ -1,6 +1,14 @@
 {
- "guncelleme": "09.10 23:02",
+ "guncelleme": "12.10 19:44",
  "bolumler": [
+  {
+   "id": "2026-10-12-kapanis",
+   "tarih": "2026-10-12",
+   "bolum": "kapanis",
+   "baslik": "2026-10-12 — Kapanış Yayını",
+   "dosya": "radyo/2026-10-12-kapanis.mp3",
+   "sure_sn": 463
+  },
   {
    "id": "2026-10-09-kapanis",
    "tarih": "2026-10-09",
@@ -152,14 +160,6 @@
    "baslik": "2026-09-29 — Kapanış Yayını",
    "dosya": "radyo/2026-09-29-kapanis.mp3",
    "sure_sn": 168
-  },
-  {
-   "id": "2026-09-28-acilis",
-   "tarih": "2026-09-28",
-   "bolum": "acilis",
-   "baslik": "2026-09-28 — Açılış Yayını",
-   "dosya": "radyo/2026-09-28-acilis.mp3",
-   "sure_sn": 484
   }
  ]
 }
