@@ -330,6 +330,15 @@ class Cevirmen:
         self.yavas_uc = {u.strip() for u in os.environ.get(
             "I18N_YAVAS_UC", "NVIDIA,NVIDIA2,NVIDIA3,NVIDIA4").split(",") if u.strip()}
         self.yavas_timeout = float(os.environ.get("I18N_YAVAS_TIMEOUT", "200"))
+        # ORTA hiz: RPM sinirli saglayicilar. 2026-10-13 kullanicinin AMD paneli:
+        #   "RPM Limit 20", günde 139 basarili DeepSeek istegi, kota kullanimi %1.97.
+        # Yani kota YOK; sorun 20 istek/dk siniri. Bir model basarisiz olup siradaki
+        # denendiginde istekler arasi bekleme olmadan arka arkaya gidiyor, AMD kuyruga
+        # aliyor ve cevap 30 sn'yi asiyor -> "The read operation timed out".
+        # Bu grupta model basina daha cok sure verilir.
+        self.orta_uc = {u.strip() for u in os.environ.get(
+            "I18N_ORTA_UC", "AMD").split(",") if u.strip()}
+        self.orta_timeout = float(os.environ.get("I18N_ORTA_TIMEOUT", "75"))
         self.hizli_timeout = float(os.environ.get("I18N_TIMEOUT", "30"))
         self.istek_timeout = self.hizli_timeout
         self.devre_disi: set[str] = set()      # devre disi saglayici ETIKETLERI (ad; "deepl" de olabilir)
@@ -349,6 +358,21 @@ class Cevirmen:
         self.sozlukten = 0
         self.kirilli_elle = 0
         self.reddedilen_ceviri = 0
+
+    # -- RPM korumasi ----------------------------------------------------
+    def _rpm_bekle(self, ad: str, katsayi: float = 1.0) -> None:
+        """Basarisiz bir denemeden sonra bu saglayiciye gore kisa bekleme.
+
+        2026-10-13: AMD panelinde RPM Limit 20. Bir model dustugunde sirayi dogrudan
+        denemek istekleri arka arkaya yigiyor, AMD kuyruga aliyor ve sonraki istekler
+        de zaman asimina tasiyordu. Bekleme, saglayicinin kendi RPM sinirindan turetilir.
+        """
+        rpm = {"AMD": float(os.environ.get("AMD_RPM", "20"))}.get(ad, 0.0)
+        if rpm <= 0:
+            return
+        sn = (60.0 / rpm) * katsayi
+        if sn > 0:
+            time.sleep(min(sn, 6.0))
 
     # -- onbellek --------------------------------------------------------
     @staticmethod
@@ -572,7 +596,7 @@ class Cevirmen:
         # NVIDIA'ın 2 dakikalik soguk cevabi (kullanicinin arayuzde dogruladigi gibi)
         # pencere kapisina takilip "pencere zaman asimi" ile atlanirdi.
         PENCERE_ZAMAN_ASIMI = float(os.environ.get(
-            "I18N_PENCERE_ASIMI", str(max(60, self.yavas_timeout + 20))))
+            "I18N_PENCERE_ASIMI", str(max(60, self.yavas_timeout + 20, self.orta_timeout + 20))))
         dil_hedefi = {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
         for bas in range(0, len(parcalar), PENCERE):
             # sure butcesi: asilirsa kalanlari cevirmeden don (site uretimi asla bloke olmasin)
@@ -610,6 +634,7 @@ class Cevirmen:
                 for model in modeller:
                     # Yavas uc (NVIDIA) daha cok zaman alir; hizlilere 30 sn yeter.
                     zaman_asimi = (self.yavas_timeout if ad in self.yavas_uc
+                                   else self.orta_timeout if ad in self.orta_uc
                                    else self.hizli_timeout)
                     # MODEL BASINA KISA YOL (2026-10-13): canli testte AMD'nin
                     # GLM-5.3-Flash'i 60 sn sonra zaman asimina dustu. Bir model
@@ -683,6 +708,12 @@ class Cevirmen:
                         son = None
                     except Exception as hata:
                         print(f"[i18n] LLM hatasi ({ad}/{model}): {hata}", file=sys.stderr)
+                        # RPM KORUMASI (2026-10-13): AMD panelinde "RPM Limit: 20".
+                        # Bir model basarisiz olunca hemen siradaki deneniyordu; istekler
+                        # arka arkaya gidince AMD kuyruga alip cevabi geciktiriyor ve
+                        # zincir zaman asimina tasiyordu. Basarisiz denemeden sonra kisa
+                        # bir bekleme RPM payini korur.
+                        self._rpm_bekle(ad)
                         # Zaman asimi GECICIDIR. Canli kosum 13.10'da gosterdi:
                         # AMD 60 dize sorunsuz cevirdi, sonra tek bir zaman asimi
                         # modeli "bu kosuda bir daha denenmez" ile tamamen devre disi
