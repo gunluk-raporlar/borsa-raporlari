@@ -35,8 +35,8 @@ KULLANIM
 
 ANAHTARLAR (env)
 ----------------
-  ZAI_API_KEY / NVIDIA_API_KEY / OPENROUTER_API_KEY / ORCAROUTER_API_KEY /
-  OPENCODE_API_KEY  -> --provider llm
+  ZAI_API_KEY / NVIDIA_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY /
+  ORCAROUTER_API_KEY / OPENCODE_API_KEY  -> --provider llm
   OLLAMA_BASE_URL (opsiyonel, yerel)  -> --provider llm
   DEEPL_API_KEY                      -> --provider deepl  (free: <key>:fx)
 """
@@ -446,7 +446,15 @@ class Cevirmen:
                 "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b"
             ).split(",") if m.strip()]
             uclar.append((nvid_url, nvid_anahtar, nvid_modeller))
-        # 3) OpenRouter — Nemotron 3 Ultra ucretsiz surumu
+        # 3) Google Gemini — OpenAI uyumlu uc, ucretsiz kotasi comert (GEMINI_API_KEY zaten tanimli)
+        gem_anahtar = os.environ.get("GEMINI_API_KEY")
+        if gem_anahtar:
+            gem_url = os.environ.get("GEM_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai").rstrip("/") + "/chat/completions"
+            gem_modeller = [m.strip() for m in os.environ.get(
+                "GEM_MODELS",
+                "gemini-3.8-flash,gemini-2.5-flash,gemini-2.0-flash").split(",") if m.strip()]
+            uclar.append((gem_url, gem_anahtar, gem_modeller))
+        # 4) OpenRouter — Nemotron 3 Ultra ucretsiz surumu
         or_anahtar = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OR_API_KEY")
         if or_anahtar:
             or_url = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/") + "/chat/completions"
@@ -501,7 +509,7 @@ class Cevirmen:
         uclar = self._uclari_kur()
         if not uclar:
             raise SystemExit(
-                "[i18n] HATA: --provider llm icin ZAI_API_KEY / NVIDIA_API_KEY / OPENROUTER_API_KEY / ORCAROUTER_API_KEY / OPENCODE_API_KEY'den en az biri gerekli."
+                "[i18n] HATA: --provider llm icin ZAI_API_KEY / NVIDIA_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY / ORCAROUTER_API_KEY / OPENCODE_API_KEY'den en az biri gerekli."
             )
 
         cikti: list[str] = []
@@ -1169,6 +1177,8 @@ def saglayici_test() -> int:
             return "Z.AI"
         if "nvidia" in url:
             return "NVIDIA"
+        if "generativelanguage" in url or "gemini" in url:
+            return "Gemini"
         if "orcarouter" in url:
             return "OrcaRouter"
         if "opencode" in url:
