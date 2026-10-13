@@ -805,11 +805,29 @@ class Cevirmen:
             if son_uc:
                 self._model_esik_sayi.pop(son_uc, None)
                 self._model_esik.pop(son_uc, None)
-            # DeepL yedegi 2026-10-13'te kaldirildi (kullanici karari).
-            #Sebep: Free planda kota tamamen tukenmis — canli test
-            #   /v2/usage -> {"character_count": 1000000, "character_limit": 1000000}
-            # ve her ceviri denemesi HTTP 456 donuyordu. Kota bitene kadar
-            # sadece zaman kaybiydi. `--provider deepl` elle secilirse yine calisir.
+            # DeepL YEDEGI (2026-10-13): once kotasi tukenmesi yuzunden kaldirilmis
+            # ti (canli test: character_count=1000000 / limit=1000000, her ceviri 456).
+            # Kullanici yeni DEEPL2 anahtari ekledi -> koca kota ile geri geldi.
+            # LLM zinciri tukendiginde DEGILMeyen, uydurmayan son care. Kotasi biten
+            # anahtar devre disi birakilir (456/403/401) ki her pencerede denenmesin.
+            for _ad, _ortam in (("deepl", "DEEPL_API_KEY"), ("deepl2", "DEEPL2_API_KEY")):
+                _k = os.environ.get(_ortam) or os.environ.get(_ortam.replace("_API_KEY", "_KEY"))
+                if _ad in self.devre_disi or not _k:
+                    continue
+                try:
+                    aday = self._deepl(dilim, dil, hedef=dil_hedefi, anahtar=_k)
+                    if aday and len(aday) == len(dilim) and any(aday):
+                        son = aday
+                        son_uc = _ad
+                        print(f"[i18n] {_ad} yedeginden cevrildi", file=sys.stderr)
+                        break
+                except urllib.error.HTTPError as _h:
+                    print(f"[i18n] {_ad} hatasi: HTTP {_h.code}", file=sys.stderr)
+                    if _h.code in (456, 403, 401):
+                        self.devre_disi.add(_ad)
+                        print(f"[i18n] {_ad} devre disi (HTTP {_h.code})", file=sys.stderr)
+                except Exception as _h:
+                    print(f"[i18n] {_ad} hatasi: {_h}", file=sys.stderr)
             if not son:
                 self.atlanan_parca += len(dilim)
                 self._ust_uste_bos += 1
@@ -926,8 +944,11 @@ class Cevirmen:
             raise
 
     @staticmethod
-    def _deepl(parcalar: list[str], dil: str, hedef: str | None = None) -> list[str]:
-        anahtar = os.environ.get("DEEPL_API_KEY") or os.environ.get("DEEPL_KEY")
+    def _deepl(parcalar: list[str], dil: str, hedef: str | None = None,
+               anahtar: str | None = None) -> list[str]:
+        # 2026-10-13: anahtar parametre olarak alinabiliyor; iki DeepL anahtari
+        # (DEEPL / DEEPL2) sirayla denenir, kotasi biten devre disi birakilir.
+        anahtar = anahtar or os.environ.get("DEEPL_API_KEY") or os.environ.get("DEEPL_KEY")
         if not anahtar:
             raise SystemExit("[i18n] HATA: DeepL icin DEEPL_API_KEY gerekli.")
         hedef = hedef or {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
