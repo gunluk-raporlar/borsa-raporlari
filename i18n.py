@@ -1323,7 +1323,10 @@ def saglayici_test() -> int:
             baslangic = time.time()
             kutu = []
             try:
-                sonuc = Cevirmen._llm_istek(url, anahtar, model, sistem, dilim, 60, kutu)
+                # Sabit 60 sn burada da NVIDIA'in 2 dakikalik soguk cevabini kesiyor ve
+                # test "calismiyor" diye yalan soylemeye devam ediyordu.
+                _z = c.yavas_timeout if ev in c.yavas_uc else c.hizli_timeout
+                sonuc = Cevirmen._llm_istek(url, anahtar, model, sistem, dilim, _z, kutu)
                 sure = (time.time() - baslangic) * 1000
                 ok = isinstance(sonuc, list) and len(sonuc) == 1
                 tok = ""
