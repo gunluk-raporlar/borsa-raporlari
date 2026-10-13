@@ -71,6 +71,8 @@ jobs:
           ORCAROUTER2_API_KEY: ${{ secrets.ORCAROUTER2_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GROQ2_API_KEY: ${{ secrets.GROQ2_API_KEY }}
+          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
+          DEEPL2_API_KEY: ${{ secrets.DEEPL2_API_KEY }}
           ORCA_MODELS: "tencent/hy4-preview-free,deepseek/deepseek-v4-flash-free,z-ai/glm-5.3-flash-free"
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OPENCODE_MODELS: "space-bunny-free,ling-3.1-flash-free,cat-jam-free"
@@ -97,6 +99,8 @@ jobs:
           GEMINI2_API_KEY: ${{ secrets.GEMINI2_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GROQ2_API_KEY: ${{ secrets.GROQ2_API_KEY }}
+          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
+          DEEPL2_API_KEY: ${{ secrets.DEEPL2_API_KEY }}
         run: |
           python -u i18n_kalite_testi.py
           echo "::group::NVIDIA model hiz probu (hangi model kac sn suruyor?)"
@@ -140,6 +144,8 @@ jobs:
           ORCAROUTER2_API_KEY: ${{ secrets.ORCAROUTER2_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GROQ2_API_KEY: ${{ secrets.GROQ2_API_KEY }}
+          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
+          DEEPL2_API_KEY: ${{ secrets.DEEPL2_API_KEY }}
           ORCA_MODELS: "tencent/hy4-preview-free,deepseek/deepseek-v4-flash-free,z-ai/glm-5.3-flash-free"
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OPENCODE_MODELS: "space-bunny-free,ling-3.1-flash-free,cat-jam-free"
