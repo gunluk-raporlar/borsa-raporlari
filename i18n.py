@@ -516,6 +516,10 @@ class Cevirmen:
 
         cikti: list[str] = []
         PENCERE = int(os.environ.get("I18N_PENCERE", "10"))  # istek basina dize sayisi (kucuk parti = daha az JSON bozulmasi)
+        # Tek pencerede harcanacak max saniye. Cok saglayici sirasiyla zaman asimi
+        # yerse (hepsi kotasiz/5xx) pencereyi birakir; yoksa log basilmadan dakikalarca
+        # sessiz kalir, kullaniciya "takildi" gibi gorunur.
+        PENCERE_ZAMAN_ASIMI = float(os.environ.get("I18N_PENCERE_ASIMI", "60"))
         dil_hedefi = {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
         for bas in range(0, len(parcalar), PENCERE):
             # sure butcesi: asilirsa kalanlari cevirmeden don (site uretimi asla bloke olmasin)
@@ -530,13 +534,22 @@ class Cevirmen:
                 print(f"[i18n] tum saglayicilar devre disi; kalan {len(parcalar)-bas} parca atlaniyor", file=sys.stderr)
                 break
             dilim = parcalar[bas:bas + PENCERE]
-            if bas % (PENCERE * 10) == 0:
-                print(f"[i18n] {dil}: {bas}/{len(parcalar)} dize (atlanan: {self.atlanan_parca})", flush=True)
+            # Her pencerede kisa ilerleme logu bas: CI logu canli aksar, sessiz
+            # "takildi" izlenimi olusmaz.
+            print(f"[i18n] {dil}: {bas}/{len(parcalar)} dize (atlanan: {self.atlanan_parca})", flush=True)
+            pencere_t0 = time.time()
             son = None
             son_uc = None   # hangi saglayici cevirdi (gecikme ona gore)
             for url, anahtar, modeller in uclar:
                 if url in self.devre_disi:
                     continue
+                # Bu pencerede cok zaman gectiyse (saglayicilar sirayla zaman asimi
+                # yiyor) kalan saglayicilari denemeden pencereyi birak -> log canli
+                # akmaya devam eder, "takildi" izlenimi olusmaz.
+                if time.time() - pencere_t0 > PENCERE_ZAMAN_ASIMI:
+                    print(f"[i18n] pencere zaman asimi ({PENCERE_ZAMAN_ASIMI:.0f} sn); "
+                          f"kalan saglayicilar bu pencere icin atlandi", file=sys.stderr)
+                    break
                 for model in modeller:
                     try:
                         aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, self.istek_timeout)
