@@ -54,6 +54,7 @@ except Exception:  # kurulu degilse kendi toleransli ayristiricimiz devrede
 import os
 import re
 import shutil
+import socket
 import sys
 import time
 import urllib.parse
@@ -329,6 +330,10 @@ class Cevirmen:
         self.istek_timeout = self.hizli_timeout
         self.devre_disi: set[str] = set()      # devre disi saglayici ETIKETLERI (ad; "deepl" de olabilir)
         self.hata_sayaci: dict[str, int] = {}  # gecici hatalar (timeout/429/5xx)
+        # Zaman asimi yiyen MODEL -> bu kosuda bir daha denenmez (saglayici basina 1).
+        # Canli test: AMD/GLM-5.3-Flash 60 sn sonra dustu, her pencerede tekrar tekrar
+        # denenmesi kosuyu uzatirdi.
+        self._model_esik: dict[str, str] = {}
         self.atlanan_parca = 0
         self.sure_doldu = False
         self.hicbiri_calismadi = False      # ust uste bircok pencere cevrilemedi -> calisan saglayici yok
@@ -565,6 +570,14 @@ class Cevirmen:
                     # Yavas uc (NVIDIA) daha cok zaman alir; hizlilere 30 sn yeter.
                     zaman_asimi = (self.yavas_timeout if ad in self.yavas_uc
                                    else self.hizli_timeout)
+                    # MODEL BASINA KISA YOL (2026-10-13): canli testte AMD'nin
+                    # GLM-5.3-Flash'i 60 sn sonra zaman asimina dustu. Bir model
+                    # yanit vermediginde butun sureyi harcayarak siradaki modele
+                    # gecmek yerine kisa bir esik uygulanir; esigi gecen model
+                    # bu saglayici icin bir daha denenmez (donem ici).
+                    # Canli olcum: DeepSeek-V4-Flash 2 sn, Qwen3.8-Flash-Next 7 sn.
+                    if self._model_esik.get(ad) == model:
+                        continue
                     try:
                         aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, zaman_asimi)
                         if aday and len(aday) == len(dilim):
@@ -621,6 +634,12 @@ class Cevirmen:
                         son = None
                     except Exception as hata:
                         print(f"[i18n] LLM hatasi ({ad}/{model}): {hata}", file=sys.stderr)
+                        # Zaman asimi/yildiz hatalar modelin kendisindendir: ayni model
+                        # her pencerede ayni sekilde takilacaktir -> bir daha denenmez.
+                        if isinstance(hata, (TimeoutError, socket.timeout)):
+                            self._model_esik[ad] = model
+                            print(f"[i18n] model atlandi (zaman asimi, bu kosuda bir daha "
+                                  f"denenmez): {ad}/{model}", file=sys.stderr)
                         self.hata_sayaci[ad] = self.hata_sayaci.get(ad, 0) + 1
                         if self.hata_sayaci[ad] >= HATA_ESIGI:
                             self.devre_disi.add(ad)
@@ -629,16 +648,11 @@ class Cevirmen:
                         son = None
                 if son:
                     break
-            # son yedek: DeepL (DEEPL_API_KEY varsa) — LLM'ler dusunce tek kurtaricimiz
-            if not son and (os.environ.get("DEEPL_API_KEY") or os.environ.get("DEEPL_KEY")):
-                try:
-                    aday = self._deepl(dilim, dil, hedef=dil_hedefi)
-                    if aday and len(aday) == len(dilim):
-                        son = aday
-                        son_uc = "deepl"
-                        print("[i18n] DeepL yedeginden cevrildi", file=sys.stderr)
-                except Exception as hata:
-                    print(f"[i18n] DeepL hatasi: {hata}", file=sys.stderr)
+            # DeepL yedegi 2026-10-13'te kaldirildi (kullanici karari).
+            #Sebep: Free planda kota tamamen tukenmis — canli test
+            #   /v2/usage -> {"character_count": 1000000, "character_limit": 1000000}
+            # ve her ceviri denemesi HTTP 456 donuyordu. Kota bitene kadar
+            # sadece zaman kaybiydi. `--provider deepl` elle secilirse yine calisir.
             if not son:
                 self.atlanan_parca += len(dilim)
                 self._ust_uste_bos += 1
@@ -659,9 +673,8 @@ class Cevirmen:
             # hiz sinirina karsi ara: Z.AI hizli ve limiti yuksek -> kisa; AMD 20/dk -> uzun
             if bas + PENCERE < len(parcalar):
                 if son_uc == "AMD":
-                    aralik = float(os.environ.get("I18N_ARALIK_ZAI", "0.4"))
-                elif son_uc == "deepl":
-                    aralik = 0.1
+                    # AMD 20 istek/dk -> istekler arasi ~3 sn (canli test: 2-7 sn/yanit)
+                    aralik = float(os.environ.get("I18N_ARALIK_AMD", "3.5"))
                 else:
                     aralik = float(os.environ.get("I18N_ARALIK", "1.0"))
                 if aralik > 0:
