@@ -471,13 +471,13 @@ class Cevirmen:
                 "tencent/hy4-preview-free,z-ai/glm-5.3-flash-free,deepseek/deepseek-v4-flash-free"
             ).split(",") if m.strip()]
             uclar.append((orca_url, orca_anahtar, orca_modeller))
-        # 7) OpenCode Zen (opencode.ai) — ucretsiz space-bunny ailesi. 13.10.2026
-        # itibariyla yeni uc /inference/v1 (eski /zen/v1 de ayni davranir); istemci
-        # "opencode" kimligi tasimali (bot.py + opencode_probe.py deseni). Istek
-        # reddedilirse (403 FreeTierError) saglayici kosu boyunca atlanir.
+        # 7) OpenCode Zen (opencode.ai/zen/v1) — ucretsiz space-bunny ailesi.
+        # Adres, 8 Ekim aksamki derin analiz kosusunda calisan adresle birebir ayni
+        # (bot.py + opencode_probe.py deseni); istemci "opencode" kimligi tasimali.
+        # Istek reddedilirse (403 FreeTierError) saglayici kosu boyunca atlanir.
         oc_anahtar = os.environ.get("OPENCODE_API_KEY") or os.environ.get("OC_API_KEY")
         if oc_anahtar:
-            oc_url = os.environ.get("OPENCODE_BASE_URL", "https://opencode.ai/inference/v1").rstrip("/") + "/chat/completions"
+            oc_url = os.environ.get("OPENCODE_BASE_URL", "https://opencode.ai/zen/v1").rstrip("/") + "/chat/completions"
             oc_modeller = [m.strip() for m in
                            os.environ.get("OPENCODE_MODELS", os.environ.get("OC_MODELS", "space-bunny-free")).split(",")
                            if m.strip()]
