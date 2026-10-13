@@ -288,6 +288,10 @@ ICERIK_META_RE = re.compile(r'<(?:meta)\b[^>]*\b(?:name|property)\s*=\s*"(descri
 # 2026-10-13: eskiden 6'ydi ama log "(3 hata)" yaziyordu ve yumusak 429 dalinda sayac
 # hic artmiyordu -> ucretsiz katmanlar sonsuza kadar denendi, kosu 60 dk surdu.
 HATA_ESIGI = int(os.environ.get("I18N_HATA_ESIGI", "3"))
+# Bir model kac kez ardisik zaman asimi yiyorsa gecici olarak atlanir.
+# Tek seferlik zaman asimi YETMEZ: canli kosumda AMD 60 dizeyi sorunsuz cevirdi,
+# sonra tek bir takilma modeli tum kosu boyunca devre disi birakip her seyi atlatti.
+MODEL_ESIGI_ADET = int(os.environ.get("I18N_MODEL_ESIGI", "2"))
 
 
 class Cevirmen:
@@ -334,6 +338,7 @@ class Cevirmen:
         # Canli test: AMD/GLM-5.3-Flash 60 sn sonra dustu, her pencerede tekrar tekrar
         # denenmesi kosuyu uzatirdi.
         self._model_esik: dict[str, str] = {}
+        self._model_esik_sayi: dict[str, int] = {}
         self.atlanan_parca = 0
         self.sure_doldu = False
         self.hicbiri_calismadi = False      # ust uste bircok pencere cevrilemedi -> calisan saglayici yok
@@ -619,6 +624,14 @@ class Cevirmen:
                         if aday and len(aday) == len(dilim):
                             son = aday
                             son_uc = ad
+                            # BASARI SAYACI SIFIRLAR. Canli kosum 13.10'da gosterdi:
+                            # AMD ilk 60 dizeyi sorunsuz cevirdi, TEK bir zaman asimi
+                            # sonrasi model "bu kosuda bir daha denenmez" ile o kosuda
+                            # tamamen devre disi kaldi ve geri kalan her sey atlandi.
+                            # Ardisik (consecutive) hata sayacı dogru davranistir:
+                            # calisan bir saglayici sayacini sifirlar.
+                            self.hata_sayaci[ad] = 0
+                            self._model_esik.pop(ad, None)
                             break
                     except urllib.error.HTTPError as hata:
                         kod = hata.code
@@ -670,12 +683,19 @@ class Cevirmen:
                         son = None
                     except Exception as hata:
                         print(f"[i18n] LLM hatasi ({ad}/{model}): {hata}", file=sys.stderr)
-                        # Zaman asimi/yildiz hatalar modelin kendisindendir: ayni model
-                        # her pencerede ayni sekilde takilacaktir -> bir daha denenmez.
+                        # Zaman asimi GECICIDIR. Canli kosum 13.10'da gosterdi:
+                        # AMD 60 dize sorunsuz cevirdi, sonra tek bir zaman asimi
+                        # modeli "bu kosuda bir daha denenmez" ile tamamen devre disi
+                        # birakti ve kalan her sey atlandi (atlanan: 61, 62, 63...).
+                        # Duzeltme: esik KALICI degil; asagidaki dongu kendiliginden
+                        # sifirlar. Model ancak ardisik 2 zaman asiminin ardindan atlanir.
                         if isinstance(hata, (TimeoutError, socket.timeout)):
                             self._model_esik[ad] = model
-                            print(f"[i18n] model atlandi (zaman asimi, bu kosuda bir daha "
-                                  f"denenmez): {ad}/{model}", file=sys.stderr)
+                            self._model_esik_sayi[ad] = self._model_esik_sayi.get(ad, 0) + 1
+                            if self._model_esik_sayi[ad] >= MODEL_ESIGI_ADET:
+                                print(f"[i18n] model gecici olarak atlandi "
+                                      f"({self._model_esik_sayi[ad]} x zaman asimi): {ad}/{model}",
+                                      file=sys.stderr)
                         self.hata_sayaci[ad] = self.hata_sayaci.get(ad, 0) + 1
                         if self.hata_sayaci[ad] >= HATA_ESIGI:
                             self.devre_disi.add(ad)
@@ -684,6 +704,14 @@ class Cevirmen:
                         son = None
                 if son:
                     break
+            # PENCERE SONU: gecici engelleri birak (2026-10-13 canli kosum duzeltmesi).
+            # Model esigi ve ardisik-hata sayaci kalici degildir. Aksi halde AMD 60 dize
+            # cevirdikten sonra tek bir zaman asimi modeli tum kosu boyunca olduruyordu.
+            # Sifirlama yalnizca ARDISIK (consecutive) hata mantigini korur: art arda
+            # basarisiz pencerelerde sayac birikir ve devre kesici yine devreye girer.
+            if son_uc:
+                self._model_esik_sayi.pop(son_uc, None)
+                self._model_esik.pop(son_uc, None)
             # DeepL yedegi 2026-10-13'te kaldirildi (kullanici karari).
             #Sebep: Free planda kota tamamen tukenmis — canli test
             #   /v2/usage -> {"character_count": 1000000, "character_limit": 1000000}
