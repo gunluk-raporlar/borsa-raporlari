@@ -35,7 +35,9 @@ KULLANIM
 
 ANAHTARLAR (env)
 ----------------
-  OPENROUTER_API_KEY | GROQ_API_KEY  -> --provider llm
+  ZAI_API_KEY / NVIDIA_API_KEY / OPENROUTER_API_KEY / ORCAROUTER_API_KEY /
+  OPENCODE_API_KEY  -> --provider llm
+  OLLAMA_BASE_URL (opsiyonel, yerel)  -> --provider llm
   DEEPL_API_KEY                      -> --provider deepl  (free: <key>:fx)
 """
 
@@ -440,23 +442,48 @@ class Cevirmen:
             nvid_url = os.environ.get("NVID_BASE_URL", "https://integrate.api.nvidia.com/v1").rstrip("/") + "/chat/completions"
             nvid_modeller = [m.strip() for m in os.environ.get(
                 "NVID_MODELS",
-                "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b,"
-                "z-ai/glm-5.3"
+                "z-ai/glm-5.3-flash,z-ai/glm-5.3,"
+                "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b"
             ).split(",") if m.strip()]
             uclar.append((nvid_url, nvid_anahtar, nvid_modeller))
-        alt_anahtar = os.environ.get("ALT_API_KEY") or os.environ.get("GROQ_API_KEY")
-        if alt_anahtar:
-            alt_url = os.environ.get("ALT_BASE_URL", "https://api.groq.com/openai/v1").rstrip("/") + "/chat/completions"
-            alt_modeller = [m.strip() for m in os.environ.get("ALT_MODELS", "llama-3.3-70b-versatile").split(",") if m.strip()]
-            uclar.append((alt_url, alt_anahtar, alt_modeller))
+        # 3) OpenRouter — Nemotron 3 Ultra ucretsiz surumu
         or_anahtar = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OR_API_KEY")
         if or_anahtar:
             or_url = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/") + "/chat/completions"
-            varsayilan_or = "meta-llama/llama-3.3-70b-instruct:free,deepseek/deepseek-chat-v3.1:free"
+            varsayilan_or = "nvidia/nemotron-3-ultra-550b-a55b:free"
             or_modeller = [m.strip() for m in
                            os.environ.get("OR_MODELS", os.environ.get("OR_MODEL", varsayilan_or)).split(",")
                            if m.strip()]
             uclar.append((or_url, or_anahtar, or_modeller))
+        # 4) OrcaRouter — ucretsiz katman (tencent/hy4-preview-free, deepseek/deepseek-v4-flash-free, z-ai/glm-5.3-flash-free)
+        #    Not: OrcaRouter OpenAI uyumlu; -free ekli modeller kotasi ayri ve ucretsiz.
+        orca_anahtar = os.environ.get("ORCAROUTER_API_KEY")
+        if orca_anahtar:
+            orca_url = os.environ.get("ORCA_BASE_URL", "https://api.orcarouter.ai/v1").rstrip("/") + "/chat/completions"
+            orca_modeller = [m.strip() for m in
+                             os.environ.get("ORCA_MODELS",
+                                            "tencent/hy4-preview-free,deepseek/deepseek-v4-flash-free,z-ai/glm-5.3-flash-free").split(",")
+                             if m.strip()]
+            uclar.append((orca_url, orca_anahtar, orca_modeller))
+        # 5) OpenCode Zen — space-bunny-free (8 Ekim derin analiz kosusunda calan model)
+        #    Not: opencode.ai/zen/v1 OpenAI uyumlu; model adlari sade onekli (space-bunny-free).
+        oc_anahtar = os.environ.get("OPENCODE_API_KEY")
+        if oc_anahtar:
+            oc_url = os.environ.get("OPENCODE_BASE_URL", "https://opencode.ai/zen/v1").rstrip("/") + "/chat/completions"
+            oc_modeller = [m.strip() for m in
+                           os.environ.get("OPENCODE_MODELS",
+                                          "space-bunny-free,ling-3.1-flash-free,cat-jam-free").split(",")
+                           if m.strip()]
+            uclar.append((oc_url, oc_anahtar, oc_modeller))
+        # 6) Ollama (yerel) — sadece OLLAMA_BASE_URL tanimliysa (GitHub Actions'ta localhost yok)
+        #    Not: Ollama OpenAI uyumlu /v1 ucunu sunar; anahtar yer tutucu.
+        ol_url = os.environ.get("OLLAMA_BASE_URL")
+        if ol_url:
+            ol_anahtar = os.environ.get("OLLAMA_API_KEY") or "ollama"
+            ol_modeller = [m.strip() for m in
+                           os.environ.get("OLLAMA_MODELS", "nemotron-ultra-3").split(",")
+                           if m.strip()]
+            uclar.append((ol_url.rstrip("/") + "/chat/completions", ol_anahtar, ol_modeller))
         return uclar
 
     def _llm(self, parcalar: list[str], dil: str) -> list[str]:
@@ -474,7 +501,7 @@ class Cevirmen:
         uclar = self._uclari_kur()
         if not uclar:
             raise SystemExit(
-                "[i18n] HATA: --provider llm icin AMD_API_KEY / ALT_API_KEY / OPENROUTER_API_KEY'den en az biri gerekli."
+                "[i18n] HATA: --provider llm icin ZAI_API_KEY / NVIDIA_API_KEY / OPENROUTER_API_KEY / ORCAROUTER_API_KEY / OPENCODE_API_KEY'den en az biri gerekli."
             )
 
         cikti: list[str] = []
@@ -1140,10 +1167,14 @@ def saglayici_test() -> int:
             return "AMD"
         if "z.ai" in url:
             return "Z.AI"
-        if "groq" in url:
-            return "Groq/ALT"
         if "nvidia" in url:
             return "NVIDIA"
+        if "orcarouter" in url:
+            return "OrcaRouter"
+        if "opencode" in url:
+            return "OpenCode Zen"
+        if "ollama" in url or "11434" in url:
+            return "Ollama"
         return "OpenRouter"
 
     # 0) Her saglayicinin GERCEK model listesi (destekliyorsa)
@@ -1190,9 +1221,6 @@ def saglayici_test() -> int:
 
     for url, anahtar, _m in uclar:
         ev = ev_ad(url)
-        if "groq" in url:
-            print(f"--- {ev}: model listesi sorgulanmiyor (403/engelli)")
-            continue
         models_url = url.replace("/chat/completions", "/models")
         try:
             liste = _modelleri_al(models_url, anahtar)
