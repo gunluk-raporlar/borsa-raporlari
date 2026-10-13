@@ -324,7 +324,7 @@ class Cevirmen:
         # NVIDIA'in kotasi/yavasligi degil, YANLIS ZAMAN ASIMI'ydi.
         # Yavas ilk cevap veren uca daha fazla süre veriliyor.
         self.yavas_uc = {u.strip() for u in os.environ.get(
-            "I18N_YAVAS_UC", "NVIDIA,NVIDIA2").split(",") if u.strip()}
+            "I18N_YAVAS_UC", "NVIDIA,NVIDIA2,NVIDIA3,NVIDIA4").split(",") if u.strip()}
         self.yavas_timeout = float(os.environ.get("I18N_YAVAS_TIMEOUT", "200"))
         self.hizli_timeout = float(os.environ.get("I18N_TIMEOUT", "30"))
         self.istek_timeout = self.hizli_timeout
@@ -472,7 +472,8 @@ class Cevirmen:
         #    biri kotalaninca digeri hizla devreye girer.
         nvid_taban = os.environ.get("NVID_BASE_URL", "https://integrate.api.nvidia.com/v1").rstrip("/")
         nvid_varsayilan = ("z-ai/glm-5.3,z-ai/glm-5.3-flash,nvidia/nemotron-3-ultra-550b-a55b")
-        for _ad, _ortam in (("NVIDIA", "NVIDIA_API_KEY"), ("NVIDIA2", "NVIDIA2_API_KEY")):
+        for _ad, _ortam in (("NVIDIA", "NVIDIA_API_KEY"), ("NVIDIA2", "NVIDIA2_API_KEY"),
+                           ("NVIDIA3", "NVIDIA3_API_KEY"), ("NVIDIA4", "NVIDIA4_API_KEY")):
             nvid_anahtar = os.environ.get(_ortam)
             if not nvid_anahtar and _ad == "NVIDIA":
                 nvid_anahtar = os.environ.get("NIM_API_KEY")      # eski adlandirma
@@ -483,25 +484,60 @@ class Cevirmen:
                               or nvid_varsayilan).split(",") if m.strip()]
             nvid_modeller = list(dict.fromkeys(nvid_modeller))
             uclar.append((_ad, nvid_taban + "/chat/completions", nvid_anahtar, nvid_modeller))
-        # 3) OpenRouter — Nemotron 3 Ultra ucretsiz surumu
-        or_anahtar = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OR_API_KEY")
-        if or_anahtar:
-            or_url = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/") + "/chat/completions"
-            varsayilan_or = "nvidia/nemotron-3-ultra-550b-a55b:free"
+        # 3) OpenRouter — Nemotron 3 Ultra ucretsiz surumu. IKI anahtar, ayri devre kesici kutusu.
+        or_taban = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/")
+        for _ad, _ortam in (("OpenRouter", "OPENROUTER_API_KEY"),
+                            ("OpenRouter2", "OPENROUTER2_API_KEY")):
+            or_anahtar = os.environ.get(_ortam)
+            if not or_anahtar and _ad == "OpenRouter":
+                or_anahtar = os.environ.get("OR_API_KEY")
+            if not or_anahtar:
+                continue
             or_modeller = [m.strip() for m in
-                           os.environ.get("OR_MODELS", os.environ.get("OR_MODEL", varsayilan_or)).split(",")
+                           os.environ.get("OR_MODELS", os.environ.get("OR_MODEL",
+                                                                    "nvidia/nemotron-3-ultra-550b-a55b:free")).split(",")
                            if m.strip()]
-            uclar.append(("OpenRouter", or_url, or_anahtar, or_modeller))
+            uclar.append((_ad, or_taban + "/chat/completions", or_anahtar, or_modeller))
         # 4) OrcaRouter — ucretsiz katman (deepseek/deepseek-v4-flash-free, tencent/hy4-preview-free)
         #    Not: OrcaRouter OpenAI uyumlu; -free ekli modeller kotasi ayri ve ucretsiz.
-        orca_anahtar = os.environ.get("ORCAROUTER_API_KEY")
-        if orca_anahtar:
-            orca_url = os.environ.get("ORCA_BASE_URL", "https://api.orcarouter.ai/v1").rstrip("/") + "/chat/completions"
+        orca_taban = os.environ.get("ORCA_BASE_URL", "https://api.orcarouter.ai/v1").rstrip("/")
+        for _ad, _ortam in (("OrcaRouter", "ORCAROUTER_API_KEY"),
+                            ("OrcaRouter2", "ORCAROUTER2_API_KEY")):
+            orca_anahtar = os.environ.get(_ortam)
+            if not orca_anahtar:
+                continue
             orca_modeller = [m.strip() for m in
                              os.environ.get("ORCA_MODELS",
                                             "deepseek/deepseek-v4-flash-free,tencent/hy4-preview-free").split(",")
                              if m.strip()]
-            uclar.append(("OrcaRouter", orca_url, orca_anahtar, orca_modeller))
+            uclar.append((_ad, orca_taban + "/chat/completions", orca_anahtar, orca_modeller))
+        # 5) Google Gemini — OpenAI uyumlu uc. Gunlük kota PROJE bazli oldugu icin ikinci
+        #    anahtar (GEMINI2_API_KEY) gercekten ek kota kazandirir; free havuzlarin aksine.
+        gem_taban = os.environ.get("GEM_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai").rstrip("/")
+        for _ad, _ortam in (("Gemini", "GEMINI_API_KEY"), ("Gemini2", "GEMINI2_API_KEY")):
+            gem_anahtar = os.environ.get(_ortam)
+            if not gem_anahtar:
+                continue
+            gem_modeller = [m.strip() for m in os.environ.get(
+                "GEM_MODELS", "gemini-3.8-flash").split(",") if m.strip()]
+            uclar.append((_ad, gem_taban + "/chat/completions", gem_anahtar, gem_modeller))
+        # 6) Groq — KART GEREKTIRMEYEN deneme katmani (Developer Plan).
+        #    DIKKAT: Groq'ta OpenRouter gibi ":free" ekli model YOKTUR; her model
+        #    normal fiyatlidir. Ekledigin GROQ2 ayni sinirli kotayi paylasir.
+        #    Bos bir kutu olmamasi icin varsayilan model gercek bir Groq modelidir.
+        groq_taban = os.environ.get("GROQ_BASE_URL", "https://api.groq.com/openai/v1").rstrip("/")
+        for _ad, _ortam in (("Groq", "GROQ_API_KEY"), ("Groq2", "GROQ2_API_KEY")):
+            groq_anahtar = os.environ.get(_ortam)
+            if not groq_anahtar and _ad == "Groq":
+                groq_anahtar = os.environ.get("ALT_API_KEY")     # bot.py'nin eski adi
+            if not groq_anahtar:
+                continue
+            # On ek ONEMLI: Groq tam model adi ister ("gpt-oss-120b" -> 404).
+            groq_modeller = [m.strip() for m in os.environ.get(
+                "GROQ_MODELS",
+                "openai/gpt-oss-120b,openai/gpt-oss-20b,llama-3.3-70b-versatile").split(",")
+                if m.strip()]
+            uclar.append((_ad, groq_taban + "/chat/completions", groq_anahtar, groq_modeller))
         return uclar
 
     def _llm(self, parcalar: list[str], dil: str) -> list[str]:
