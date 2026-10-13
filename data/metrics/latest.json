@@ -1,11 +1,11 @@
 {
  "embedding": {
   "belge_sayisi": 22,
-  "embed_edilen_parca": 67,
-  "sure_sn": 7.7,
-  "son_guncelleme": "2026-10-12T13:28:22+03:00"
+  "embed_edilen_parca": 24,
+  "sure_sn": 4.8,
+  "son_guncelleme": "2026-10-13T12:55:19+03:00"
  },
- "guncelleme": "2026-10-13T07:35:45+03:00",
+ "guncelleme": "2026-10-13T12:55:19+03:00",
  "llm": {
   "adet": 8,
   "ortalama_sn": 91.258,
