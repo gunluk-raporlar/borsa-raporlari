@@ -35,8 +35,7 @@ KULLANIM
 
 ANAHTARLAR (env)
 ----------------
-  Saglayici zinciri (llm, sirayla denenir): ZAI_API_KEY -> AMD_API_KEY ->
-  NVIDIA_API_KEY -> ALT/GROQ_API_KEY -> OPENROUTER_API_KEY -> OPENCODE_API_KEY
+  OPENROUTER_API_KEY | GROQ_API_KEY  -> --provider llm
   DEEPL_API_KEY                      -> --provider deepl  (free: <key>:fx)
 """
 
@@ -458,15 +457,6 @@ class Cevirmen:
                            os.environ.get("OR_MODELS", os.environ.get("OR_MODEL", varsayilan_or)).split(",")
                            if m.strip()]
             uclar.append((or_url, or_anahtar, or_modeller))
-        # 6) OpenCode Zen (opencode.ai/zen) — ucretsiz space-bunny ailesi. Anahtar repoda
-        # hazirdi (bot.py'de zaten calisiyor) ama ceviri katmanina bagli degildi (2026-10-13).
-        oc_anahtar = os.environ.get("OPENCODE_API_KEY") or os.environ.get("OC_API_KEY")
-        if oc_anahtar:
-            oc_url = os.environ.get("OPENCODE_BASE_URL", "https://opencode.ai/zen/v1").rstrip("/") + "/chat/completions"
-            oc_modeller = [m.strip() for m in
-                           os.environ.get("OPENCODE_MODELS", os.environ.get("OC_MODELS", "space-bunny-free")).split(",")
-                           if m.strip()]
-            uclar.append((oc_url, oc_anahtar, oc_modeller))
         return uclar
 
     def _llm(self, parcalar: list[str], dil: str) -> list[str]:
@@ -484,7 +474,7 @@ class Cevirmen:
         uclar = self._uclari_kur()
         if not uclar:
             raise SystemExit(
-                "[i18n] HATA: --provider llm icin ZAI / AMD / NVIDIA / ALT / OPENROUTER / OPENCODE anahtarlarindan en az biri gerekli."
+                "[i18n] HATA: --provider llm icin AMD_API_KEY / ALT_API_KEY / OPENROUTER_API_KEY'den en az biri gerekli."
             )
 
         cikti: list[str] = []
@@ -525,15 +515,6 @@ class Cevirmen:
                             print(f"[i18n] saglayici devre disi: {url} (HTTP {kod})", file=sys.stderr)
                             break
                         if kod == 429:                        # hiz siniri: bekle, bir kez daha dene
-                            # Kota TUKENMESI gecici yogunluk degildir: z.ai 429 "Limit
-                            # Exhausted" her partide 6 sn bekle-dene dongusu uretip kosuyu
-                            # 1,5 saate kadar uzatiyor (13.10.2026 vakasi). Boyle 429'larda
-                            # saglayici kosunun sonuna kadar devre disi kalir; kota yenilenince
-                            # sonraki kosuda kendiliginden geri doner.
-                            if "exhausted" in govde_hata.lower():
-                                self.devre_disi.add(url)
-                                print(f"[i18n] kota tukenmis ({model}) — saglayici bu kosuda devre disi: {url}", file=sys.stderr)
-                                break
                             # 429 = gecici yogunluk. Saglayiciyi devre disi BIRAKMA, sadece bekle.
                             bekle = min(float(hata.headers.get("Retry-After") or 6), 30)
                             print(f"[i18n] 429 hiz siniri ({model}); {bekle:.0f} sn bekleniyor", file=sys.stderr)
@@ -611,13 +592,6 @@ class Cevirmen:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {anahtar}",
         })
-        # CF bot korumasi python-urllib UA'sini 1010 ile banliyor (bot.py 25.09 bulgusu).
-        # OpenCode icin opencode/1.0 istemci kimligi sart; ayni imzayi tasiyan Groq
-        # 403'unde de urllib kimligi degistirilir (ispat: bot.py opencode istemcisi).
-        if "opencode.ai" in url:
-            istek.add_header("User-Agent", "opencode/1.0")
-        elif "groq.com" in url:
-            istek.add_header("User-Agent", "borsa-raporlari/1.0")
         with urllib.request.urlopen(istek, timeout=timeout) as yanit:
             veri = json.loads(yanit.read().decode("utf-8"))
         if usage_kutusu is not None and isinstance(veri.get("usage"), dict):
@@ -1170,8 +1144,6 @@ def saglayici_test() -> int:
             return "Groq/ALT"
         if "nvidia" in url:
             return "NVIDIA"
-        if "opencode" in url:
-            return "OpenCode"
         return "OpenRouter"
 
     # 0) Her saglayicinin GERCEK model listesi (destekliyorsa)
@@ -1224,7 +1196,7 @@ def saglayici_test() -> int:
         models_url = url.replace("/chat/completions", "/models")
         try:
             liste = _modelleri_al(models_url, anahtar)
-            ilgi = [m for m in liste if any(k in m.lower() for k in ("glm", "deepseek", "qwen", "flash", "nemotron", "bunny"))]
+            ilgi = [m for m in liste if any(k in m.lower() for k in ("glm", "deepseek", "qwen", "flash"))]
             goster = ilgi if ilgi else liste
             print(f"--- {ev}: {len(liste)} model erisilebilir ---")
             for m in goster[:45]:
