@@ -318,6 +318,8 @@ class Cevirmen:
         self.hata_sayaci: dict[str, int] = {}  # gecici hatalar (timeout/429/5xx)
         self.atlanan_parca = 0
         self.sure_doldu = False
+        self.hicbiri_calismadi = False      # ust uste bircok pencere cevrilemedi -> calisan saglayici yok
+        self._ust_uste_bos = 0              # ardisik cevrilemeyen pencere sayaci
         self.yeni = 0
         self.onbellekten = 0
         self.elle_adedi = 0
@@ -603,6 +605,16 @@ class Cevirmen:
                     print(f"[i18n] DeepL hatasi: {hata}", file=sys.stderr)
             if not son:
                 self.atlanan_parca += len(dilim)
+                self._ust_uste_bos += 1
+                # 2 pencere ust uste hicbir saglayicidan sonuc gelmediyse (tumu kota/
+                # zaman asimi/5xx) bosuna beklemeyi birak: kalan sayfalari erken birak.
+                if self._ust_uste_bos >= 2:
+                    self.hicbiri_calismadi = True
+                    print(f"[i18n] 2 pencere ust uste cevrilemedi; hicbir saglayici su an calismiyor. "
+                          f"Kalan {len(parcalar)-bas-PENCERE} parca erken birakildi.", file=sys.stderr)
+                    break
+            else:
+                self._ust_uste_bos = 0
             # DIKKAT: cevrilemeyen parca icin kaynak metin yerine BOS dondurulur.
             # (Aksi halde cagiran taraf bunu "cevrildi" sanip onbellege yazar ve bir daha denemez.)
             cikti.extend(son if son else [""] * len(dilim))
@@ -1976,6 +1988,7 @@ def main() -> int:
         "devre_disi_saglayici": sorted(cevirmen.devre_disi),
         "cevrilmeyen_parca": cevirmen.atlanan_parca,
         "sure_doldu": cevirmen.sure_doldu,
+        "saglayici_yok": cevirmen.hicbiri_calismadi,
         "toplam_sayfa": ozet["sayfa"],
         "kopyalanan_varlik": kopya,
         "onarilan_baglanti": ozet["onarilan_baglanti"],
@@ -1992,6 +2005,11 @@ def main() -> int:
     if degisen and not args.zorla:
         print("[i18n] DURDU: Turkce sayfalar degismis! Bu bir hatadir.", file=sys.stderr)
         return 2
+    # Hicbir saglayici calismadiysa (tumu kota/zaman asimi/5xx) kosuyu BASARISIZ bitir.
+    # Boylece CI kirmizi gorunur, sessiz "success" ile maskelenmez.
+    if cevirmen.hicbiri_calismadi:
+        print("[i18n] HATA: hicbir saglayici calismadi (cevrilemedi). Kosu basarisiz.", file=sys.stderr)
+        return 1
     print("[i18n] OK — Turkce sayfalar degismedi.")
     return 0
 
