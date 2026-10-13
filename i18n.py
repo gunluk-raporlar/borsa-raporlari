@@ -1255,7 +1255,7 @@ def saglayici_test() -> int:
             baslangic = time.time()
             kutu = []
             try:
-                sonuc = Cevirmen._llm_istek(url, anahtar, model, sistem, dilim, 30, kutu)
+                sonuc = Cevirmen._llm_istek(url, anahtar, model, sistem, dilim, 60, kutu)
                 sure = (time.time() - baslangic) * 1000
                 ok = isinstance(sonuc, list) and len(sonuc) == 1
                 tok = ""
