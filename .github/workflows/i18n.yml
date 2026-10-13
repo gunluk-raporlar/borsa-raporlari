@@ -55,7 +55,7 @@ jobs:
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEM_MODELS: "gemini-3.8-flash,gemini-2.5-flash,gemini-2.0-flash"
+          GEM_MODELS: "gemini-3.8-flash"
           NVIDIA_MODELS: "z-ai/glm-5.3-flash,z-ai/glm-5.3,nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b"
           AMD_MODEL: "DeepSeek-V4-Flash"
           AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
@@ -85,7 +85,7 @@ jobs:
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEM_MODELS: "gemini-3.8-flash,gemini-2.5-flash,gemini-2.0-flash"
+          GEM_MODELS: "gemini-3.8-flash"
           NVIDIA_MODELS: "z-ai/glm-5.3-flash,z-ai/glm-5.3,nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b"
           AMD_MODEL: "DeepSeek-V4-Flash"
           AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"

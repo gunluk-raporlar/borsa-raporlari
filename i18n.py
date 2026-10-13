@@ -452,7 +452,7 @@ class Cevirmen:
             gem_url = os.environ.get("GEM_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai").rstrip("/") + "/chat/completions"
             gem_modeller = [m.strip() for m in os.environ.get(
                 "GEM_MODELS",
-                "gemini-3.8-flash,gemini-2.5-flash,gemini-2.0-flash").split(",") if m.strip()]
+                "gemini-3.8-flash").split(",") if m.strip()]
             uclar.append((gem_url, gem_anahtar, gem_modeller))
         # 4) OpenRouter — Nemotron 3 Ultra ucretsiz surumu
         or_anahtar = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OR_API_KEY")
