@@ -35,7 +35,9 @@ KULLANIM
 
 ANAHTARLAR (env)
 ----------------
-  OPENROUTER_API_KEY | GROQ_API_KEY  -> --provider llm
+  Saglayici zinciri (llm, sirayla denenir): ZAI_API_KEY -> AMD_API_KEY ->
+  NVIDIA_API_KEY -> ALT/GROQ_API_KEY -> OPENROUTER_API_KEY -> ORCAROUTER_API_KEY
+  -> OPENCODE_API_KEY -> DeepL_API_KEY (son care)
   DEEPL_API_KEY                      -> --provider deepl  (free: <key>:fx)
 """
 
@@ -457,6 +459,29 @@ class Cevirmen:
                            os.environ.get("OR_MODELS", os.environ.get("OR_MODEL", varsayilan_or)).split(",")
                            if m.strip()]
             uclar.append((or_url, or_anahtar, or_modeller))
+        # 6) OrcaRouter (orcarouter.ai) — birlesik AI gecidi; ucretsiz modeller
+        # resmi model listesinden dogrulandi (GET https://api.orcarouter.ai/v1/models,
+        # 13.10.2026): tencent/hy4-preview-free, z-ai/glm-5.3-flash-free,
+        # deepseek/deepseek-v4-flash-free. ORCA_MODELS ile degistirilebilir.
+        orca_anahtar = os.environ.get("ORCAROUTER_API_KEY") or os.environ.get("ORCA_API_KEY")
+        if orca_anahtar:
+            orca_url = os.environ.get("ORCA_BASE_URL", "https://api.orcarouter.ai/v1").rstrip("/") + "/chat/completions"
+            orca_modeller = [m.strip() for m in os.environ.get(
+                "ORCA_MODELS",
+                "tencent/hy4-preview-free,z-ai/glm-5.3-flash-free,deepseek/deepseek-v4-flash-free"
+            ).split(",") if m.strip()]
+            uclar.append((orca_url, orca_anahtar, orca_modeller))
+        # 7) OpenCode Zen (opencode.ai) — ucretsiz space-bunny ailesi. 13.10.2026
+        # itibariyla yeni uc /inference/v1 (eski /zen/v1 de ayni davranir); istemci
+        # "opencode" kimligi tasimali (bot.py + opencode_probe.py deseni). Istek
+        # reddedilirse (403 FreeTierError) saglayici kosu boyunca atlanir.
+        oc_anahtar = os.environ.get("OPENCODE_API_KEY") or os.environ.get("OC_API_KEY")
+        if oc_anahtar:
+            oc_url = os.environ.get("OPENCODE_BASE_URL", "https://opencode.ai/inference/v1").rstrip("/") + "/chat/completions"
+            oc_modeller = [m.strip() for m in
+                           os.environ.get("OPENCODE_MODELS", os.environ.get("OC_MODELS", "space-bunny-free")).split(",")
+                           if m.strip()]
+            uclar.append((oc_url, oc_anahtar, oc_modeller))
         return uclar
 
     def _llm(self, parcalar: list[str], dil: str) -> list[str]:
@@ -474,7 +499,7 @@ class Cevirmen:
         uclar = self._uclari_kur()
         if not uclar:
             raise SystemExit(
-                "[i18n] HATA: --provider llm icin AMD_API_KEY / ALT_API_KEY / OPENROUTER_API_KEY'den en az biri gerekli."
+                "[i18n] HATA: --provider llm icin ZAI / AMD / NVIDIA / ALT / OPENROUTER / ORCAROUTER / OPENCODE anahtarlarindan en az biri gerekli."
             )
 
         cikti: list[str] = []
@@ -592,6 +617,10 @@ class Cevirmen:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {anahtar}",
         })
+        # OpenCode: istekler "opencode" istemci kimligi tasimali (bot.py 2026-10-02
+        # canli testi; ham urllib kimligi CF 1010 / FreeTier kapisina takilir).
+        if "opencode.ai" in url:
+            istek.add_header("User-Agent", "opencode/1.0")
         with urllib.request.urlopen(istek, timeout=timeout) as yanit:
             veri = json.loads(yanit.read().decode("utf-8"))
         if usage_kutusu is not None and isinstance(veri.get("usage"), dict):
@@ -1144,6 +1173,10 @@ def saglayici_test() -> int:
             return "Groq/ALT"
         if "nvidia" in url:
             return "NVIDIA"
+        if "orcarouter" in url:
+            return "OrcaRouter"
+        if "opencode" in url:
+            return "OpenCode"
         return "OpenRouter"
 
     # 0) Her saglayicinin GERCEK model listesi (destekliyorsa)
@@ -1196,7 +1229,7 @@ def saglayici_test() -> int:
         models_url = url.replace("/chat/completions", "/models")
         try:
             liste = _modelleri_al(models_url, anahtar)
-            ilgi = [m for m in liste if any(k in m.lower() for k in ("glm", "deepseek", "qwen", "flash"))]
+            ilgi = [m for m in liste if any(k in m.lower() for k in ("glm", "deepseek", "qwen", "flash", "nemotron", "bunny", "hy4", "orca"))]
             goster = ilgi if ilgi else liste
             print(f"--- {ev}: {len(liste)} model erisilebilir ---")
             for m in goster[:45]:

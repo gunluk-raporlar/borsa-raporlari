@@ -3,7 +3,8 @@ name: Cok Dilli Sayfa Guncelleme
 # Ceviri ayri bir kosuda yapilir; gunluk rapor kosusu ceviri yuzunden uzamaz/iptal olmaz.
 # AMD: RPM limiti 20/dk -> istekler arasi 3.5 sn. Buyuk model kapasite doluysa yedege devreder.
 # 13.10.2026: z.ai haftalik kotasi bitik + AMD yogun -> NVIDIA NIM (glm-5.3 + nemotron-3-ultra),
-# OpenRouter ucretsiz buyuk modeller ve OpenCode space-bunny ceviri zincirine baglandi.
+# OpenRouter ucretsiz buyuk modeller, OrcaRouter ucretsiz modeller ve OpenCode
+# space-bunny ceviri zincirine baglandi (13.10.2026).
 # KULLANICI POLITIKASI: UCRETSIZ ve BUYUK modeller sadece; ucretli slug asla eklenmez.
 
 on:
@@ -65,6 +66,8 @@ jobs:
           OR_MODELS: "nvidia/nemotron-3-ultra-550b-a55b:free,nvidia/nemotron-3-super-120b-a12b:free"
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OPENCODE_MODELS: "space-bunny-free"
+          ORCAROUTER_API_KEY: ${{ secrets.ORCAROUTER_API_KEY }}
+          ORCA_MODELS: "tencent/hy4-preview-free,z-ai/glm-5.3-flash-free,deepseek/deepseek-v4-flash-free"
           DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
           TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
         run: python -u i18n.py --saglayici-test
@@ -79,7 +82,7 @@ jobs:
           I18N_TIMEOUT: "60"
           I18N_SURE_SINIRI_DK: "60"
           # Zincir: Z.AI (kotasi bitikse otomatik atlanir) -> AMD -> NVIDIA NIM -> Groq
-          # -> OpenRouter (ucretsiz buyuk) -> OpenCode space-bunny -> DeepL (son care).
+          # -> OpenRouter (ucretsiz buyuk) -> OrcaRouter (ucretsiz) -> OpenCode space-bunny -> DeepL (son care).
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
           ZAI_MODEL: "glm-5.3-flash"
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
@@ -92,6 +95,8 @@ jobs:
           OR_MODELS: "nvidia/nemotron-3-ultra-550b-a55b:free,nvidia/nemotron-3-super-120b-a12b:free"
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OPENCODE_MODELS: "space-bunny-free"
+          ORCAROUTER_API_KEY: ${{ secrets.ORCAROUTER_API_KEY }}
+          ORCA_MODELS: "tencent/hy4-preview-free,z-ai/glm-5.3-flash-free,deepseek/deepseek-v4-flash-free"
           DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
           TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
         run: python -u i18n.py --diller en,de,ru,zh --provider ${{ inputs.provider || 'llm' }} --sitemap

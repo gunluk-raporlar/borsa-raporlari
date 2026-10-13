@@ -1,7 +1,8 @@
 """OpenCode Zen yoklamasi (gecici tani araci — amd_probe.py deseni).
 
-Anahtar /zen/v1/models listesini ve 1-2 ucretsiz modele tek istek atar;
+Anahtar /inference/v1/models listesini ve 1-2 ucretsiz modele tek istek atar;
 durum + gecikme + yanit ilk satiri basar. Anahtar ASLA yazdirilmaz.
+13.10.2026: yeni uc /inference/v1 (eski /zen/v1 yerine; ikisi de ayni davranir).
 """
 import json
 import os
@@ -9,7 +10,7 @@ import time
 import urllib.error
 import urllib.request
 
-BASE = "https://opencode.ai/zen/v1"
+BASE = "https://opencode.ai/inference/v1"
 # Ucretsiz katman adaylari (2026-10-06): space-bunny ailesi bot'un tek
 # kullandigi havuz (bot.py OPENCODE_MODELS). jev adi burada yalnizca OpenCode
 # Zen katalogundaki ayni adli modeller icindir; rapor analizleri Jev'i
@@ -17,14 +18,14 @@ BASE = "https://opencode.ai/zen/v1"
 # TYPESAFE_API_KEY). Yine de karmasayi onlemek icin jev modelleri
 # yoklamadan cikarildi (2026-10-06 kullanici notu).
 MODELLER = [
-    "exo-free",
     "space-bunny-free",
+    "big-pickle",
+    "cat-jam-free",
     "mimo-v2.6-flash-free",
     "longcat-2.5-preview-free",
     "ling-3.1-flash-free",
-    "nemotron-3-ultra-free",
     "nemotron-3.5-lightning-free",
-    "fledge-alpha-free",
+    "muse-spark-1.3-contributor-free",
 ]
 
 
