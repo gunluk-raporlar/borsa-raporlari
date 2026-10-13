@@ -283,7 +283,10 @@ ICERIK_META_RE = re.compile(r'<(?:meta)\b[^>]*\b(?:name|property)\s*=\s*"(descri
 
 # ----------------------------------------------------------------------------
 # 3) CEVIRI SAGLAYICILARI
-# ----------------------------------------------------------------------------
+# Bir gecici hata (timeout / 5xx / yumusak 429) kac kez olunca saglayici devre disi olur?
+# 2026-10-13: eskiden 6'ydi ama log "(3 hata)" yaziyordu ve yumusak 429 dalinda sayac
+# hic artmiyordu -> ucretsiz katmanlar sonsuza kadar denendi, kosu 60 dk surdu.
+HATA_ESIGI = int(os.environ.get("I18N_HATA_ESIGI", "3"))
 
 
 class Cevirmen:
@@ -314,7 +317,7 @@ class Cevirmen:
         self.baslangic = time.time()
         self.sure_siniri = float(os.environ.get("I18N_SURE_SINIRI_DK", "20")) * 60
         self.istek_timeout = float(os.environ.get("I18N_TIMEOUT", "30"))
-        self.devre_disi: set[str] = set()      # kalici hata alan saglayicilar (401/402/403)
+        self.devre_disi: set[str] = set()      # devre disi saglayici ETIKETLERI (ad; "deepl" de olabilir)
         self.hata_sayaci: dict[str, int] = {}  # gecici hatalar (timeout/429/5xx)
         self.atlanan_parca = 0
         self.sure_doldu = False
@@ -420,43 +423,52 @@ class Cevirmen:
         return self._llm(parcalar, dil)
 
     def _uclari_kur(self) -> list:
-        """Saglayici + model listesi (oncelik sirasiyla). Test modu da bunu kullanir."""
+        """Saglayici + model listesi (oncelik sirasiyla). Test modu da bunu kullanir.
+
+        Her uc 4'lu demet dondurur: (ad, url, anahtar, modeller).
+        - `ad`: log ve devre-disi anahtari. NVIDIA ve NVIDIA2 ayni host'i paylastigi icin
+          devre kesici URL'e gore tutulursa biri cok kotalaninca digeri de yanlislikla
+          devre disi olurdu. Anahtar benzersiz `ad` etiketidir.
+        - `url`: gercek uc (rapor/teshis icin).
+
+        SIRALAMA (2026-10-13 kullanici karari): Z.AI cikarildi (haftalik kota 17 Ekim'de
+        sifirlanana kadar "Limit Exhausted" veriyordu). Onun yerine hizli/konusulan
+        saglayicilar one: AMD -> NVIDIA -> NVIDIA2 -> OpenRouter -> OrcaRouter.
+        Hicbiri surekli calismadigi icin devre kesici + hata sayaci zinciri kisa tutar.
+        """
         uclar = []
-        # 1) Z.AI (GLM) — kullanicinin kayitli anahtari; bot.py ile ayni uc ve modeller
-        zai_anahtar = os.environ.get("ZAI_API_KEY")
-        if zai_anahtar:
-            # Not: YALNIZCA glm-5.3-flash — 4.5/4.7 uydurma yapiyor, buyuk
-            # glm-5.3 ise haftalik kotayi hizla tuketiyor (bot.py ile ayni kural).
-            # ZAI_MODELS (virgullu) ile override hala mumkun.
-            ham = os.environ.get("ZAI_MODELS") or os.environ.get("ZAI_MODEL") or "glm-5.3-flash"
-            zai_modeller = [m.strip() for m in ham.split(",") if m.strip()] or ["glm-5.3-flash"]
-            zai_modeller = list(dict.fromkeys(zai_modeller))   # tekrarlari at
-            uclar.append(("https://api.z.ai/api/coding/paas/v4/chat/completions", zai_anahtar, zai_modeller))
-        # 2) AMD Radeon Developer Cloud (bot.py'nin ana saglayicisi)
+        # 1) AMD Radeon Developer Cloud — kullanicinin "bazen calisiyor" dedigi saglayici.
         amd_anahtar = os.environ.get("AMD_API_KEY")
         if amd_anahtar:
-            modeller = [os.environ.get("AMD_MODEL", "DeepSeek-V4-Flash")]
-            modeller += [m.strip() for m in os.environ.get("AMD_FALLBACK_MODELS", "Qwen3.8-Flash-Next").split(",") if m.strip()]
-            uclar.append(("https://developer.amd.com.cn/radeon/api/v1/chat/completions", amd_anahtar, modeller))
-        # 2b) NVIDIA NIM (build.nvidia.com) - ucretsiz kredili, OpenAI uyumlu
-        nvid_anahtar = os.environ.get("NVIDIA_API_KEY") or os.environ.get("NIM_API_KEY")
-        if nvid_anahtar:
-            nvid_url = os.environ.get("NVID_BASE_URL", "https://integrate.api.nvidia.com/v1").rstrip("/") + "/chat/completions"
-            nvid_modeller = [m.strip() for m in os.environ.get(
-                "NVID_MODELS",
-                "z-ai/glm-5.3-flash,z-ai/glm-5.3,"
-                "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b"
-            ).split(",") if m.strip()]
-            uclar.append((nvid_url, nvid_anahtar, nvid_modeller))
-        # 3) Google Gemini — OpenAI uyumlu uc, ucretsiz kotasi comert (GEMINI_API_KEY zaten tanimli)
-        gem_anahtar = os.environ.get("GEMINI_API_KEY")
-        if gem_anahtar:
-            gem_url = os.environ.get("GEM_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai").rstrip("/") + "/chat/completions"
-            gem_modeller = [m.strip() for m in os.environ.get(
-                "GEM_MODELS",
-                "gemini-3.8-flash").split(",") if m.strip()]
-            uclar.append((gem_url, gem_anahtar, gem_modeller))
-        # 4) OpenRouter — Nemotron 3 Ultra ucretsiz surumu
+            modeller = [m.strip() for m in os.environ.get(
+                "AMD_MODELS",
+                "DeepSeek-V4-Flash,DeepSeek-V4-Flash-Vision-Exp,"
+                "Qwen3.8-Flash-Next,GLM-5.3-Flash").split(",") if m.strip()]
+            # Eski tekil degiskenler geriye donuk uyum icin.
+            if os.environ.get("AMD_MODEL"):
+                modeller.insert(0, os.environ["AMD_MODEL"].strip())
+            modeller += [m.strip() for m in os.environ.get(
+                "AMD_FALLBACK_MODELS", "").split(",") if m.strip()]
+            modeller = list(dict.fromkeys(modeller))
+            uclar.append(("AMD", "https://developer.amd.com.cn/radeon/api/v1/chat/completions",
+                          amd_anahtar, modeller))
+        # 2) NVIDIA NIM (build.nvidia.com) — IKI ayri anahtarla ayri uc tanimli.
+        #    Ikisi de ayni host'i gosterdiginden devre kesici `ad` ile ayrilir; boylece
+        #    biri kotalaninca digeri hizla devreye girer.
+        nvid_taban = os.environ.get("NVID_BASE_URL", "https://integrate.api.nvidia.com/v1").rstrip("/")
+        nvid_varsayilan = ("z-ai/glm-5.3,z-ai/glm-5.3-flash,nvidia/nemotron-3-ultra-550b-a55b")
+        for _ad, _ortam in (("NVIDIA", "NVIDIA_API_KEY"), ("NVIDIA2", "NVIDIA2_API_KEY")):
+            nvid_anahtar = os.environ.get(_ortam)
+            if not nvid_anahtar and _ad == "NVIDIA":
+                nvid_anahtar = os.environ.get("NIM_API_KEY")      # eski adlandirma
+            if not nvid_anahtar:
+                continue
+            nvid_modeller = [m.strip() for m in
+                             (os.environ.get("NVID_MODELS") or os.environ.get("NVIDIA_MODELS")
+                              or nvid_varsayilan).split(",") if m.strip()]
+            nvid_modeller = list(dict.fromkeys(nvid_modeller))
+            uclar.append((_ad, nvid_taban + "/chat/completions", nvid_anahtar, nvid_modeller))
+        # 3) OpenRouter — Nemotron 3 Ultra ucretsiz surumu
         or_anahtar = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("OR_API_KEY")
         if or_anahtar:
             or_url = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/") + "/chat/completions"
@@ -464,36 +476,17 @@ class Cevirmen:
             or_modeller = [m.strip() for m in
                            os.environ.get("OR_MODELS", os.environ.get("OR_MODEL", varsayilan_or)).split(",")
                            if m.strip()]
-            uclar.append((or_url, or_anahtar, or_modeller))
-        # 4) OrcaRouter — ucretsiz katman (tencent/hy4-preview-free, deepseek/deepseek-v4-flash-free, z-ai/glm-5.3-flash-free)
+            uclar.append(("OpenRouter", or_url, or_anahtar, or_modeller))
+        # 4) OrcaRouter — ucretsiz katman (deepseek/deepseek-v4-flash-free, tencent/hy4-preview-free)
         #    Not: OrcaRouter OpenAI uyumlu; -free ekli modeller kotasi ayri ve ucretsiz.
         orca_anahtar = os.environ.get("ORCAROUTER_API_KEY")
         if orca_anahtar:
             orca_url = os.environ.get("ORCA_BASE_URL", "https://api.orcarouter.ai/v1").rstrip("/") + "/chat/completions"
             orca_modeller = [m.strip() for m in
                              os.environ.get("ORCA_MODELS",
-                                            "tencent/hy4-preview-free,deepseek/deepseek-v4-flash-free,z-ai/glm-5.3-flash-free").split(",")
+                                            "deepseek/deepseek-v4-flash-free,tencent/hy4-preview-free").split(",")
                              if m.strip()]
-            uclar.append((orca_url, orca_anahtar, orca_modeller))
-        # 5) OpenCode Zen — space-bunny-free (8 Ekim derin analiz kosusunda calan model)
-        #    Not: opencode.ai/zen/v1 OpenAI uyumlu; model adlari sade onekli (space-bunny-free).
-        oc_anahtar = os.environ.get("OPENCODE_API_KEY")
-        if oc_anahtar:
-            oc_url = os.environ.get("OPENCODE_BASE_URL", "https://opencode.ai/zen/v1").rstrip("/") + "/chat/completions"
-            oc_modeller = [m.strip() for m in
-                           os.environ.get("OPENCODE_MODELS",
-                                          "space-bunny-free,ling-3.1-flash-free,cat-jam-free").split(",")
-                           if m.strip()]
-            uclar.append((oc_url, oc_anahtar, oc_modeller))
-        # 6) Ollama (yerel) — sadece OLLAMA_BASE_URL tanimliysa (GitHub Actions'ta localhost yok)
-        #    Not: Ollama OpenAI uyumlu /v1 ucunu sunar; anahtar yer tutucu.
-        ol_url = os.environ.get("OLLAMA_BASE_URL")
-        if ol_url:
-            ol_anahtar = os.environ.get("OLLAMA_API_KEY") or "ollama"
-            ol_modeller = [m.strip() for m in
-                           os.environ.get("OLLAMA_MODELS", "nemotron-ultra-3").split(",")
-                           if m.strip()]
-            uclar.append((ol_url.rstrip("/") + "/chat/completions", ol_anahtar, ol_modeller))
+            uclar.append(("OrcaRouter", orca_url, orca_anahtar, orca_modeller))
         return uclar
 
     def _llm(self, parcalar: list[str], dil: str) -> list[str]:
@@ -528,10 +521,14 @@ class Cevirmen:
                 self.atlanan_parca += len(parcalar) - bas
                 print(f"[i18n] sure butcesi doldu ({self.sure_siniri/60:.0f} dk); kalan {len(parcalar)-bas} parca sonraki kosuya birakildi", file=sys.stderr)
                 break
-            # tum saglayicilar devre disi kaldiysa bosuna beklemeyi birak (ornegin kotalar tukendi)
-            if uclar and len(self.devre_disi) >= len(uclar):
+            # tum LLM uclari devre disi kaldiysa bosuna beklemeyi birak.
+            # `devre_disi` icinde "deepl" gibi LLM olmayan etiketler de olabilir; bu yuzden
+            # kume boyutlari karsilastirilmaz, uc listesinden sayilir.
+            olu_uclar = [ad for ad, *_ in uclar if ad in self.devre_disi]
+            if uclar and len(olu_uclar) >= len(uclar):
                 self.atlanan_parca += len(parcalar) - bas
-                print(f"[i18n] tum saglayicilar devre disi; kalan {len(parcalar)-bas} parca atlaniyor", file=sys.stderr)
+                print(f"[i18n] tum LLM saglayicilari devre disi ({', '.join(olu_uclar)}); "
+                      f"kalan {len(parcalar)-bas} parca atlaniyor", file=sys.stderr)
                 break
             dilim = parcalar[bas:bas + PENCERE]
             # Her pencerede kisa ilerleme logu bas: CI logu canli aksar, sessiz
@@ -540,8 +537,8 @@ class Cevirmen:
             pencere_t0 = time.time()
             son = None
             son_uc = None   # hangi saglayici cevirdi (gecikme ona gore)
-            for url, anahtar, modeller in uclar:
-                if url in self.devre_disi:
+            for ad, url, anahtar, modeller in uclar:
+                if ad in self.devre_disi:
                     continue
                 # Bu pencerede cok zaman gectiyse (saglayicilar sirayla zaman asimi
                 # yiyor) kalan saglayicilari denemeden pencereyi birak -> log canli
@@ -555,7 +552,7 @@ class Cevirmen:
                         aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, self.istek_timeout)
                         if aday and len(aday) == len(dilim):
                             son = aday
-                            son_uc = url
+                            son_uc = ad
                             break
                     except urllib.error.HTTPError as hata:
                         kod = hata.code
@@ -564,44 +561,53 @@ class Cevirmen:
                             govde_hata = hata.read().decode("utf-8", errors="replace")[:200]
                         except Exception:
                             govde_hata = ""
-                        print(f"[i18n] LLM hatasi ({model}): HTTP {kod} :: {govde_hata}", file=sys.stderr)
+                        print(f"[i18n] LLM hatasi ({ad}/{model}): HTTP {kod} :: {govde_hata}", file=sys.stderr)
                         if kod in (401, 402, 403, 404):      # kalici: anahtar/kota/yetki
-                            self.devre_disi.add(url)
-                            print(f"[i18n] saglayici devre disi: {url} (HTTP {kod})", file=sys.stderr)
+                            self.devre_disi.add(ad)
+                            print(f"[i18n] saglayici devre disi: {ad} (HTTP {kod})", file=sys.stderr)
                             break
                         if kod == 429:                        # hiz siniri: bekle, bir kez daha dene
-                            # 429 = gecici yogunluk. Saglayiciyi devre disi BIRAKMA, sadece bekle.
+                            # 429 = gecici yogunluk. Saglayiciyi hemen devre disi BIRAKMA.
                             # AMA: "Limit Exhausted / reset at ..." gibi KALICI kota tukenmesinde
                             # bekleyip tekrar denemek israf -> saglayiciyi hemen devre disi birak.
                             if _kalici_kota_mi(govde_hata):
-                                self.devre_disi.add(url)
-                                print(f"[i18n] kota tukendi ({model}); saglayici devre disi: {url} :: {govde_hata[:120]}", file=sys.stderr)
+                                self.devre_disi.add(ad)
+                                print(f"[i18n] kota tukendi ({ad}/{model}) :: {govde_hata[:120]}", file=sys.stderr)
+                                break
+                            # YUMUSAK 429 SAYACI (2026-10-13): bu dal sayaci hic artirmiyordu,
+                            # bu yuzden ucretsiz katmanlar (OrcaRouter) her pencerede 30 sn
+                            # bekleyip tekrar tekrar deniyor, "tum saglayicilar devre disi"
+                            # kontrolu hiç tetiklenmiyor ve kosu 60 dakika suruyordu.
+                            self.hata_sayaci[ad] = self.hata_sayaci.get(ad, 0) + 1
+                            if self.hata_sayaci[ad] >= HATA_ESIGI:
+                                self.devre_disi.add(ad)
+                                print(f"[i18n] saglayici devre disi ({HATA_ESIGI} x 429): {ad}", file=sys.stderr)
                                 break
                             bekle = min(float(hata.headers.get("Retry-After") or 6), 30)
-                            print(f"[i18n] 429 hiz siniri ({model}); {bekle:.0f} sn bekleniyor", file=sys.stderr)
+                            print(f"[i18n] 429 hiz siniri ({ad}/{model}); {bekle:.0f} sn bekleniyor", file=sys.stderr)
                             time.sleep(bekle)
                             try:
                                 aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, self.istek_timeout)
                                 if aday and len(aday) == len(dilim):
                                     son = aday
-                                    son_uc = url
+                                    son_uc = ad
                                     break
                             except Exception:
                                 pass
                             son = None
                             continue
-                        self.hata_sayaci[url] = self.hata_sayaci.get(url, 0) + 1
-                        if self.hata_sayaci[url] >= 6:
-                            self.devre_disi.add(url)
-                            print(f"[i18n] saglayici devre disi (3 hata): {url}", file=sys.stderr)
+                        self.hata_sayaci[ad] = self.hata_sayaci.get(ad, 0) + 1
+                        if self.hata_sayaci[ad] >= HATA_ESIGI:
+                            self.devre_disi.add(ad)
+                            print(f"[i18n] saglayici devre disi ({HATA_ESIGI} hata): {ad}", file=sys.stderr)
                             break
                         son = None
                     except Exception as hata:
-                        print(f"[i18n] LLM hatasi ({model}): {hata}", file=sys.stderr)
-                        self.hata_sayaci[url] = self.hata_sayaci.get(url, 0) + 1
-                        if self.hata_sayaci[url] >= 6:
-                            self.devre_disi.add(url)
-                            print(f"[i18n] saglayici devre disi (3 hata): {url}", file=sys.stderr)
+                        print(f"[i18n] LLM hatasi ({ad}/{model}): {hata}", file=sys.stderr)
+                        self.hata_sayaci[ad] = self.hata_sayaci.get(ad, 0) + 1
+                        if self.hata_sayaci[ad] >= HATA_ESIGI:
+                            self.devre_disi.add(ad)
+                            print(f"[i18n] saglayici devre disi ({HATA_ESIGI} hata): {ad}", file=sys.stderr)
                             break
                         son = None
                 if son:
@@ -623,8 +629,10 @@ class Cevirmen:
                 # zaman asimi/5xx) bosuna beklemeyi birak: kalan sayfalari erken birak.
                 if self._ust_uste_bos >= 2:
                     self.hicbiri_calismadi = True
+                    # Negatif sayi yaziliyordu (bas+PENCERE sonu gecmis olabiliyor).
+                    kalan = max(0, len(parcalar) - bas - PENCERE)
                     print(f"[i18n] 2 pencere ust uste cevrilemedi; hicbir saglayici su an calismiyor. "
-                          f"Kalan {len(parcalar)-bas-PENCERE} parca erken birakildi.", file=sys.stderr)
+                          f"Kalan {kalan} parca erken birakildi.", file=sys.stderr)
                     break
             else:
                 self._ust_uste_bos = 0
@@ -633,7 +641,7 @@ class Cevirmen:
             cikti.extend(son if son else [""] * len(dilim))
             # hiz sinirina karsi ara: Z.AI hizli ve limiti yuksek -> kisa; AMD 20/dk -> uzun
             if bas + PENCERE < len(parcalar):
-                if son_uc and "api.z.ai" in son_uc:
+                if son_uc == "AMD":
                     aralik = float(os.environ.get("I18N_ARALIK_ZAI", "0.4"))
                 elif son_uc == "deepl":
                     aralik = 0.1
@@ -1228,22 +1236,9 @@ def saglayici_test() -> int:
         print("Hic saglayici yapilandirilmamis (env bos).")
         return 2
 
-    def ev_ad(url):
-        if "amd" in url:
-            return "AMD"
-        if "z.ai" in url:
-            return "Z.AI"
-        if "nvidia" in url:
-            return "NVIDIA"
-        if "generativelanguage" in url or "gemini" in url:
-            return "Gemini"
-        if "orcarouter" in url:
-            return "OrcaRouter"
-        if "opencode" in url:
-            return "OpenCode Zen"
-        if "ollama" in url or "11434" in url:
-            return "Ollama"
-        return "OpenRouter"
+    # Uc etiketi artik _uclari_kur()'dan geliyor; URL'den tahmin etmeye gerek yok.
+    # (Eskiden NVIDIA ve NVIDIA2 ayni URL'i paylastigi icin ikisi de "NVIDIA" diye
+    #  yaziliyordu; hangi anahtarin calistigini ayirt etmek mumkun degildi.)
 
     # 0) Her saglayicinin GERCEK model listesi (destekliyorsa)
     deepl_anahtar = os.environ.get("DEEPL_API_KEY") or os.environ.get("DEEPL_KEY")
@@ -1287,8 +1282,7 @@ def saglayici_test() -> int:
         except Exception as h:
             print(f"    ceviri testi: HATA ({h})")
 
-    for url, anahtar, _m in uclar:
-        ev = ev_ad(url)
+    for ev, url, anahtar, _m in uclar:
         models_url = url.replace("/chat/completions", "/models")
         try:
             liste = _modelleri_al(models_url, anahtar)
@@ -1306,8 +1300,7 @@ def saglayici_test() -> int:
 
     sistem = "Cevirmen. Sana verilen JSON dizisini ayni uzunlukta cevrilmis JSON dizisi olarak dondur."
     dilim = ["BIST 30 gunluk rapor: destek ve direnc seviyeleri"]
-    for url, anahtar, modeller in uclar:
-        ev = ev_ad(url)
+    for ev, url, anahtar, modeller in uclar:
         print(f"--- {ev} ({url.split('/')[2]}) ---")
         for model in modeller:
             baslangic = time.time()
@@ -1564,6 +1557,15 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
         n = 0
         print(f"[i18n] --- {dil}: {len(hedef_liste)} sayfa cevirilecek ---", flush=True)
         for rel in hedef_liste:
+            # 2026-10-13: _llm() 2 pencerede sonuc alamayinca `hicbiri_calismadi` yapiyordu
+            # ama bu bayrak SADECE main() sonunda exit kodu icin okunuyordu; sayfa dongusu
+            # devam ediyordu. ~500 sayfa x 4 dil her birinde yeniden zaman asimi yiyor ->
+            # kosu 60 dakika suruyordu. Simdi ilk sayfada tum kalan sayfalar atlanir.
+            if cevirmen.hicbiri_calismadi:
+                if n == 0:
+                    print(f"[i18n] [{dil}] hicbir saglayici calismiyor; kalan sayfalar "
+                          f"bu kosuda cevrilmiyor (sonraki kosuya birakilir).", file=sys.stderr)
+                break
             kaynak = kok / rel
             ham = kaynak.read_text(encoding="utf-8", errors="replace")
             yeni = sayfayi_cevir(ham, dil, cevirmen, diller, rel)
