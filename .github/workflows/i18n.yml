@@ -78,6 +78,26 @@ jobs:
           TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
         run: python -u i18n.py --saglayici-test
 
+      # 2026-10-13: canli kosum yeni_ceviri=12 / reddedilen_ceviri=224 verdi.
+      # Saglayici "OK" donse bile ceviri kalite kontrolunden gecemiyordu.
+      # Bu adim HER saglayicidan ham cevabi tek tek yazip red sebebini gosterir
+      # (kimlik ceviri mi, bos JSON mu, Turkce sizintisi mi).
+      - name: Ceviri kalitesi teshisi (tek istek/uc)
+        if: ${{ inputs.test }}
+        env:
+          AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          NVIDIA2_API_KEY: ${{ secrets.NVIDIA2_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER2_API_KEY: ${{ secrets.OPENROUTER2_API_KEY }}
+          ORCAROUTER_API_KEY: ${{ secrets.ORCAROUTER_API_KEY }}
+          ORCAROUTER2_API_KEY: ${{ secrets.ORCAROUTER2_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI2_API_KEY: ${{ secrets.GEMINI2_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ2_API_KEY: ${{ secrets.GROQ2_API_KEY }}
+        run: python -u i18n_kalite_testi.py
+
       - name: Cok dilli sayfalari uret
         if: ${{ !inputs.test }}
         env:
