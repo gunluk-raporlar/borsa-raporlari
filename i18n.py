@@ -522,6 +522,11 @@ class Cevirmen:
                 self.atlanan_parca += len(parcalar) - bas
                 print(f"[i18n] sure butcesi doldu ({self.sure_siniri/60:.0f} dk); kalan {len(parcalar)-bas} parca sonraki kosuya birakildi", file=sys.stderr)
                 break
+            # tum saglayicilar devre disi kaldiysa bosuna beklemeyi birak (ornegin kotalar tukendi)
+            if uclar and len(self.devre_disi) >= len(uclar):
+                self.atlanan_parca += len(parcalar) - bas
+                print(f"[i18n] tum saglayicilar devre disi; kalan {len(parcalar)-bas} parca atlaniyor", file=sys.stderr)
+                break
             dilim = parcalar[bas:bas + PENCERE]
             if bas % (PENCERE * 10) == 0:
                 print(f"[i18n] {dil}: {bas}/{len(parcalar)} dize (atlanan: {self.atlanan_parca})", flush=True)
@@ -551,6 +556,12 @@ class Cevirmen:
                             break
                         if kod == 429:                        # hiz siniri: bekle, bir kez daha dene
                             # 429 = gecici yogunluk. Saglayiciyi devre disi BIRAKMA, sadece bekle.
+                            # AMA: "Limit Exhausted / reset at ..." gibi KALICI kota tukenmesinde
+                            # bekleyip tekrar denemek israf -> saglayiciyi hemen devre disi birak.
+                            if _kalici_kota_mi(govde_hata):
+                                self.devre_disi.add(url)
+                                print(f"[i18n] kota tukendi ({model}); saglayici devre disi: {url} :: {govde_hata[:120]}", file=sys.stderr)
+                                break
                             bekle = min(float(hata.headers.get("Retry-After") or 6), 30)
                             print(f"[i18n] 429 hiz siniri ({model}); {bekle:.0f} sn bekleniyor", file=sys.stderr)
                             time.sleep(bekle)
@@ -1135,10 +1146,32 @@ def sitemap_dogrula(kok: Path, diller: list[str]) -> dict:
         "tekrarlanan_loc": tekrar[:10],
         "sitemap_te_olmayan_turkce_sayfa": eksik_kayit[:20],
         "sitemap_te_olmayan_dil_sayfasi": dil_eksik[:20],
-        "eksik_sayilar": {"dosyasi_olmayan": len(yok), "tekrar": len(tekrar),
+        "eksik_sayilar": {"dosyasi_olmayan": len(yok), "tekrarlanan": len(tekrar),
                           "turkce_eksik": len(eksik_kayit), "dil_eksik": len(dil_eksik)},
         "hreflang_alternatif_satiri": len(re.findall(r'hreflang="', xml)),
     }
+
+
+def _kalici_kota_mi(govde: str) -> bool:
+    """429 govdesinde KALICI kota tukenmesi var mi? (gecici hiz siniri degil)
+
+    'Weekly/Monthly Limit Exhausted', 'reset at <tarih>', 'quota exceeded' gibi
+    ifadeler kota bitince bekleyip tekrar denemenin faydasiz oldugunu bildirir.
+    """
+    g = (govde or "").lower()
+    if not g:
+        return False
+    return any(k in g for k in (
+        "limit exhausted",
+        "weekly/monthly limit",
+        "limit will reset",
+        "reset at",
+        "quota exceeded",
+        "insufficient_quota",
+        "insufficient quota",
+        "billing hard limit",
+        "credit balance",
+    ))
 
 
 def _modelleri_al(url: str, anahtar: str, timeout: float = 30) -> list:
