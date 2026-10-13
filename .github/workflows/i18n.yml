@@ -49,7 +49,7 @@ jobs:
       - name: Saglayici testi (kotasiz)
         if: ${{ inputs.test }}
         env:
-          # Z.AI (GLM) — kullanicinin kayitli anahtari; ceviride birincil
+          # Z.AI (GLM) â€” kullanicinin kayitli anahtari; ceviride birincil
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
           ZAI_MODEL: "glm-5.3-flash"
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
@@ -60,7 +60,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI2_API_KEY: ${{ secrets.GEMINI2_API_KEY }}
           GEM_MODELS: "gemini-3.8-flash"
-          NVIDIA_MODELS: "z-ai/glm-5.3-flash,z-ai/glm-5.3,nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b"
+          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b,z-ai/glm-5.3,z-ai/glm-5.3-flash"
           AMD_MODEL: "DeepSeek-V4-Flash"
           AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -96,7 +96,11 @@ jobs:
           GEMINI2_API_KEY: ${{ secrets.GEMINI2_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GROQ2_API_KEY: ${{ secrets.GROQ2_API_KEY }}
-        run: python -u i18n_kalite_testi.py
+        run: |
+          python -u i18n_kalite_testi.py
+          echo "::group::NVIDIA model hiz probu (hangi model kac sn suruyor?)"
+          python -u nvidia_hiz_testi.py || echo "::warning::NVIDIA hiz probu tamamlanamadi"
+          echo "::endgroup::"
 
       - name: Cok dilli sayfalari uret
         if: ${{ !inputs.test }}
@@ -113,7 +117,7 @@ jobs:
           I18N_YAVAS_TIMEOUT: "200"
           I18N_SURE_SINIRI_DK: "60"
           # Sira: DeepSeek (birincil, daha guclu) -> Qwen (yedek). Kapasite doluysa 20 sn icinde devreder.
-          # Z.AI (GLM) — kullanicinin kayitli anahtari; ceviride birincil
+          # Z.AI (GLM) â€” kullanicinin kayitli anahtari; ceviride birincil
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
           ZAI_MODEL: "glm-5.3-flash"
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
@@ -124,7 +128,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI2_API_KEY: ${{ secrets.GEMINI2_API_KEY }}
           GEM_MODELS: "gemini-3.8-flash"
-          NVIDIA_MODELS: "z-ai/glm-5.3-flash,z-ai/glm-5.3,nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b"
+          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b,z-ai/glm-5.3,z-ai/glm-5.3-flash"
           AMD_MODEL: "DeepSeek-V4-Flash"
           AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -158,7 +162,7 @@ jobs:
       # 2026-10-07: GitHub sabah yuk penceresinde schedule kosularini
       # dusurdugu icin yayin nobetcisi gun ici bu kadar guvenilir kaynakla
       # uyandirilir (nobetci kendi zincirini kurar; bu yalnizca baslangic).
-      # 2026-10-09: pencere 07:00'den itibaren — gunluk cronu (07:17 TSI)
+      # 2026-10-09: pencere 07:00'den itibaren â€” gunluk cronu (07:17 TSI)
       # sabah dusme penceresinde yine dusecegi icin telafi bir saat erken.
       - name: Nobetci zincirini uyandir (hafta ici 07-16 TSI)
         env:

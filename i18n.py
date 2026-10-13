@@ -517,7 +517,12 @@ class Cevirmen:
         #    Ikisi de ayni host'i gosterdiginden devre kesici `ad` ile ayrilir; boylece
         #    biri kotalaninca digeri hizla devreye girer.
         nvid_taban = os.environ.get("NVID_BASE_URL", "https://integrate.api.nvidia.com/v1").rstrip("/")
-        nvid_varsayilan = ("z-ai/glm-5.3,z-ai/glm-5.3-flash,nvidia/nemotron-3-ultra-550b-a55b")
+        # NVIDIA SIRASI (2026-10-13 kullanici karari): Nemotron 3 Ultra one.
+        # Canli olcum (test kosumu 20:13): nemotron-3-ultra 2.3-3.1 sn, nemotron-3-super
+        # 2.4-3.3 sn, glm-5.3 4.3-10.6 sn, glm-5.3-flash 36-97 sn. glm-5.3-flash hem
+        # yavas hem yogun -> sona.
+        nvid_varsayilan = ("nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b,"
+                           "z-ai/glm-5.3,z-ai/glm-5.3-flash")
         for _ad, _ortam in (("NVIDIA", "NVIDIA_API_KEY"), ("NVIDIA2", "NVIDIA2_API_KEY"),
                            ("NVIDIA3", "NVIDIA3_API_KEY"), ("NVIDIA4", "NVIDIA4_API_KEY")):
             nvid_anahtar = os.environ.get(_ortam)
