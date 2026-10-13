@@ -316,7 +316,17 @@ class Cevirmen:
         # --- koruma mekanizmalari (2026-09-21: kosu timeout'undan sonra eklendi) ---
         self.baslangic = time.time()
         self.sure_siniri = float(os.environ.get("I18N_SURE_SINIRI_DK", "20")) * 60
-        self.istek_timeout = float(os.environ.get("I18N_TIMEOUT", "30"))
+        # SAGA LAYAN ZAMAN ASIMI. 2026-10-13: kullanici NVIDIA'i arayuzden test ederken
+        # glm-5.3 / glm-5.3-flash / nemotron-3-ultra'nin KALDIRILMIS bir anahtarla calistigini
+        # ve ilk cevabin ~2 DAKIKA surdugunu gordu. Tek global 60 sn degeri istegi
+        # cevap gelmeden iptal ediyordu; logdaki "The read operation timed out" bu yuzden
+        # NVIDIA'in kotasi/yavasligi degil, YANLIS ZAMAN ASIMI'ydi.
+        # Yavas ilk cevap veren uca daha fazla süre veriliyor.
+        self.yavas_uc = {u.strip() for u in os.environ.get(
+            "I18N_YAVAS_UC", "NVIDIA,NVIDIA2").split(",") if u.strip()}
+        self.yavas_timeout = float(os.environ.get("I18N_YAVAS_TIMEOUT", "200"))
+        self.hizli_timeout = float(os.environ.get("I18N_TIMEOUT", "30"))
+        self.istek_timeout = self.hizli_timeout
         self.devre_disi: set[str] = set()      # devre disi saglayici ETIKETLERI (ad; "deepl" de olabilir)
         self.hata_sayaci: dict[str, int] = {}  # gecici hatalar (timeout/429/5xx)
         self.atlanan_parca = 0
@@ -512,7 +522,11 @@ class Cevirmen:
         # Tek pencerede harcanacak max saniye. Cok saglayici sirasiyla zaman asimi
         # yerse (hepsi kotasiz/5xx) pencereyi birakir; yoksa log basilmadan dakikalarca
         # sessiz kalir, kullaniciya "takildi" gibi gorunur.
-        PENCERE_ZAMAN_ASIMI = float(os.environ.get("I18N_PENCERE_ASIMI", "60"))
+        # Pencere butcesi en az bir YAVAS ucun zaman asimi kadar olmali; aksi halde
+        # NVIDIA'ın 2 dakikalik soguk cevabi (kullanicinin arayuzde dogruladigi gibi)
+        # pencere kapisina takilip "pencere zaman asimi" ile atlanirdi.
+        PENCERE_ZAMAN_ASIMI = float(os.environ.get(
+            "I18N_PENCERE_ASIMI", str(max(60, self.yavas_timeout + 20))))
         dil_hedefi = {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
         for bas in range(0, len(parcalar), PENCERE):
             # sure butcesi: asilirsa kalanlari cevirmeden don (site uretimi asla bloke olmasin)
@@ -548,8 +562,11 @@ class Cevirmen:
                           f"kalan saglayicilar bu pencere icin atlandi", file=sys.stderr)
                     break
                 for model in modeller:
+                    # Yavas uc (NVIDIA) daha cok zaman alir; hizlilere 30 sn yeter.
+                    zaman_asimi = (self.yavas_timeout if ad in self.yavas_uc
+                                   else self.hizli_timeout)
                     try:
-                        aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, self.istek_timeout)
+                        aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, zaman_asimi)
                         if aday and len(aday) == len(dilim):
                             son = aday
                             son_uc = ad
@@ -587,7 +604,7 @@ class Cevirmen:
                             print(f"[i18n] 429 hiz siniri ({ad}/{model}); {bekle:.0f} sn bekleniyor", file=sys.stderr)
                             time.sleep(bekle)
                             try:
-                                aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, self.istek_timeout)
+                                aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, zaman_asimi)
                                 if aday and len(aday) == len(dilim):
                                     son = aday
                                     son_uc = ad
