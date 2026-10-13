@@ -301,6 +301,13 @@ UC_PAYI_SN = float(os.environ.get("I18N_UC_PAYI", "45"))
 # butcesi birkacin uc payini kapsayacak kadar olmali. 11 uc x 45 sn = 495 sn
 # demeydi; canli kosumda 220 sn AMD tarafindan tek basina tuketildi.
 PENCERE_ASIMI_TAVAN = float(os.environ.get("I18N_PENCERE_TAVAN", "150"))
+# "hicbir saglayici calismiyor" karari icin iki ek esik (2026-10-13).
+# Canli kosumda tek dilde 2 bos pencere yeterli sayilip de/en/ru hic denenmeden
+# atlandi (diller: zh=21, de=0, en=0, ru=0). Simdi hem daha cok bos pencere istenir
+# hem de kosu basindan belli bir sure gecmis olmalidir — kisa bir takilma tum
+# kosuyu iptal etmemeli.
+BOS_PENCERE_ESIGI = int(os.environ.get("I18N_BOS_PENCERE", "3"))
+BOS_SURE_ESIGI_SN = float(os.environ.get("I18N_BOS_SURE_SN", "90"))
 
 
 class Cevirmen:
@@ -672,6 +679,20 @@ class Cevirmen:
                     zaman_asimi = (self.yavas_timeout if ad in self.yavas_uc
                                    else self.orta_timeout if ad in self.orta_uc
                                    else self.hizli_timeout)
+                    # ISTEK ZAMAN ASIMINI KALAN PAYA SIINIRLA (2026-10-13 canli kosum).
+                    # Canli log:
+                    #   19:48:37 'AMD' payini (45 sn) doldurdu
+                    #   19:51:57 'NVIDIA' payini (45 sn) doldurdu   (3 DAKIKA 20 SN!)
+                    # NVIDIA'nin istek zaman asimi 200 sn, payi ise 45 sn. Yani tek
+                    # bir istek payin 4 kati kadar bekliyor, pencere butcesi (150 sn)
+                    # AMD + NVIDIA tarafindan tuketiliyor ve 1.9 sn'de cevap veren
+                    # OpenRouter2'YE HIC SIRA GELMIYORDU. Artik istek, kalan paya
+                    # gore kirpilir: hicbir uc pencereyi tek basina yiyemez.
+                    if UC_PAYI_SN > 0:
+                        kalan_pay = UC_PAYI_SN - (time.time() - uc_t0)
+                        if kalan_pay <= 5:
+                            break
+                        zaman_asimi = min(zaman_asimi, max(10.0, kalan_pay))
                     # MODEL BASINA KISA YOL (2026-10-13): canli testte AMD'nin
                     # GLM-5.3-Flash'i 60 sn sonra zaman asimina dustu. Bir model
                     # yanit vermediginde butun sureyi harcayarak siradaki modele
@@ -789,11 +810,11 @@ class Cevirmen:
                 self._ust_uste_bos += 1
                 # 2 pencere ust uste hicbir saglayicidan sonuc gelmediyse (tumu kota/
                 # zaman asimi/5xx) bosuna beklemeyi birak: kalan sayfalari erken birak.
-                if self._ust_uste_bos >= 2:
+                if self._ust_uste_bos >= BOS_PENCERE_ESIGI and (time.time() - self.baslangic) >= BOS_SURE_ESIGI_SN:
                     self.hicbiri_calismadi = True
                     # Negatif sayi yaziliyordu (bas+PENCERE sonu gecmis olabiliyor).
                     kalan = max(0, len(parcalar) - bas - PENCERE)
-                    print(f"[i18n] 2 pencere ust uste cevrilemedi; hicbir saglayici su an calismiyor. "
+                    print(f"[i18n] {self._ust_uste_bos} pencere ust uste cevrilemedi; hicbir saglayici su an calismiyor. "
                           f"Kalan {kalan} parca erken birakildi.", file=sys.stderr)
                     break
             else:
