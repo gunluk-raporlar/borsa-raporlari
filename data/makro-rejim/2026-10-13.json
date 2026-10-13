@@ -12,10 +12,10 @@
  "enflasyon_yonu": "yatay",
  "etiket": "yüksek enflasyon + sıkı para politikası (7.27 puan reel faiz) · ılımlı iç talep",
  "global_risk": {
-  "brent": 106.040001,
-  "dxy": 102.571999,
+  "brent": 106.459999,
+  "dxy": 102.198997,
   "ust10y": null,
-  "vix": 15.21
+  "vix": 15.27
  },
  "globall": {
   "ABD": {
@@ -29,10 +29,10 @@
  },
  "ic_talep": "ılımlı",
  "issizlik": 7.7,
- "olusturma": "2026-10-13T01:33:48+03:00",
+ "olusturma": "2026-10-13T23:42:09+03:00",
  "para_durusu": "sıkı",
  "piyasa_sinyalleri": {
-  "emtia": 1,
+  "emtia": 0,
   "kur": 0
  },
  "politika_faizi": 37.0,
