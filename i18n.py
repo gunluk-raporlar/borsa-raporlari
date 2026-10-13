@@ -292,6 +292,15 @@ HATA_ESIGI = int(os.environ.get("I18N_HATA_ESIGI", "3"))
 # Tek seferlik zaman asimi YETMEZ: canli kosumda AMD 60 dizeyi sorunsuz cevirdi,
 # sonra tek bir takilma modeli tum kosu boyunca devre disi birakip her seyi atlatti.
 MODEL_ESIGI_ADET = int(os.environ.get("I18N_MODEL_ESIGI", "2"))
+# Bir saglayici bu pencere icinde en fazla kac saniye harcayabilir?
+# Canli kosum 19:11'de AMD 4 model x 75 sn = 225 sn harcayip butun pencereyi
+# yedi; "pencere zaman asimi" ile NVIDIA/OpenRouter2/OrcaRouter/Groq hic denenmedi.
+# Yavas bir ucun hizli ve saglam yedekleri engellemesini bu pay engeller.
+UC_PAYI_SN = float(os.environ.get("I18N_UC_PAYI", "45"))
+# AMD tek basina 75 sn yiyebiliyor; yedeklere sira gelebilmesi icin pencere
+# butcesi birkacin uc payini kapsayacak kadar olmali. 11 uc x 45 sn = 495 sn
+# demeydi; canli kosumda 220 sn AMD tarafindan tek basina tuketildi.
+PENCERE_ASIMI_TAVAN = float(os.environ.get("I18N_PENCERE_TAVAN", "150"))
 
 
 class Cevirmen:
@@ -348,6 +357,7 @@ class Cevirmen:
         # denenmesi kosuyu uzatirdi.
         self._model_esik: dict[str, str] = {}
         self._model_esik_sayi: dict[str, int] = {}
+        self._uc_pay: dict[str, float] = {}   # uc -> bu pencerede basladigi an
         self.atlanan_parca = 0
         self.sure_doldu = False
         self.hicbiri_calismadi = False      # ust uste bircok pencere cevrilemedi -> calisan saglayici yok
@@ -596,7 +606,9 @@ class Cevirmen:
         # NVIDIA'ın 2 dakikalik soguk cevabi (kullanicinin arayuzde dogruladigi gibi)
         # pencere kapisina takilip "pencere zaman asimi" ile atlanirdi.
         PENCERE_ZAMAN_ASIMI = float(os.environ.get(
-            "I18N_PENCERE_ASIMI", str(max(60, self.yavas_timeout + 20, self.orta_timeout + 20))))
+            "I18N_PENCERE_ASIMI",
+            str(min(PENCERE_ASIMI_TAVAN,
+                    max(90, self.yavas_timeout + 20, self.orta_timeout + 20)))))
         dil_hedefi = {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
         for bas in range(0, len(parcalar), PENCERE):
             # sure butcesi: asilirsa kalanlari cevirmeden don (site uretimi asla bloke olmasin)
@@ -619,10 +631,26 @@ class Cevirmen:
             # "takildi" izlenimi olusmaz.
             print(f"[i18n] {dil}: {bas}/{len(parcalar)} dize (atlanan: {self.atlanan_parca})", flush=True)
             pencere_t0 = time.time()
+            self._uc_pay.clear()          # her pencerede uc paylari sifirlanir
             son = None
             son_uc = None   # hangi saglayici cevirdi (gecikme ona gore)
             for ad, url, anahtar, modeller in uclar:
                 if ad in self.devre_disi:
+                    continue
+                # UC BASINA PENCERE PAYI (2026-10-13 canli kosum duzeltmesi).
+                # Kosu 19:11'de su sekilde coktu:
+                #   AMD/DeepSeek-V4-Flash 75 sn -> Vision-Exp 75 sn -> Qwen3.8 75 sn
+                #   = 225 sn, sonra "pencere zaman asimi (220 sn); kalan saglayicilar
+                #     bu pencere icin atlandi".
+                # Yani AMD butun pencereyi yiyince NVIDIA, OpenRouter2, OrcaRouter,
+                # Groq HICBIRESI denenmedi. Yavas uc, hizli ve saglam yedekleri
+                # engelliyordu. Artik her uc pencere icin sinirli sure alir.
+                if ad not in self._uc_pay:
+                    self._uc_pay[ad] = time.time()
+                uc_t0 = self._uc_pay[ad]
+                if UC_PAYI_SN > 0 and time.time() - uc_t0 > UC_PAYI_SN:
+                    print(f"[i18n] '{ad}' pencere payini ({UC_PAYI_SN:.0f} sn) doldurdu; "
+                          f"bu uc bu pencerede bir daha denenmiyor", file=sys.stderr)
                     continue
                 # Bu pencerede cok zaman gectiyse (saglayicilar sirayla zaman asimi
                 # yiyor) kalan saglayicilari denemeden pencereyi birak -> log canli
@@ -632,6 +660,14 @@ class Cevirmen:
                           f"kalan saglayicilar bu pencere icin atlandi", file=sys.stderr)
                     break
                 for model in modeller:
+                    # PENCERE PAYI TEKRAR: model dongusunun basinda olmak ZARUNLU.
+                    # Yalnizca uc basinda bir kez kontrol etmek yetmiyordu: uc
+                    # basindaki kontrol gecmis olur, sonraki modeller sinirsiz
+                    # deneniyordu (canli kosumda AMD 3 modeli arka arkaya denedi).
+                    if UC_PAYI_SN > 0 and time.time() - uc_t0 > UC_PAYI_SN:
+                        print(f"[i18n] '{ad}' pencere payini ({UC_PAYI_SN:.0f} sn) doldurdu; "
+                              f"bu uc bu pencerede bir daha denenmiyor", file=sys.stderr)
+                        break
                     # Yavas uc (NVIDIA) daha cok zaman alir; hizlilere 30 sn yeter.
                     zaman_asimi = (self.yavas_timeout if ad in self.yavas_uc
                                    else self.orta_timeout if ad in self.orta_uc
