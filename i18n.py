@@ -644,9 +644,15 @@ class Cevirmen:
             print(f"[i18n] {dil}: {bas}/{len(parcalar)} dize (atlanan: {self.atlanan_parca})", flush=True)
             pencere_t0 = time.time()
             self._uc_pay.clear()          # her pencerede uc paylari sifirlanir
-            son = None
-            son_uc = None   # hangi saglayici cevirdi (gecikme ona gore)
-            for ad, url, anahtar, modeller in uclar:
+            # ONCE DEEPL2 (2026-10-14): canli olcumde DeepL 526 ms ve 4/4 kalite;
+            # AMD 2-11 sn, NVIDIA 2-97 sn. Once LLM denendigi icin pencere butcesi
+            # (150 sn) cogu zaman DeepL'a sira gelmeden doluyordu — logda
+            # "deepl2 yedeginden cevrildi" yaziyordu ama 60 dk'da sadece 499 dize
+            # cevrilebiliyordu. Simdi DeepL2 en basta denenir (kullanim 220/1M
+            # karakter, neredeyse tamami bos). Ceviremezse LLM zinciri devreye girer.
+            son = self._deepl_once(dilim, dil, dil_hedefi)
+            son_uc = "deepl2" if son else None
+            for ad, url, anahtar, modeller in (() if son else uclar):
                 if ad in self.devre_disi:
                     continue
                 # UC BASINA PENCERE PAYI (2026-10-13 canli kosum duzeltmesi).
@@ -855,6 +861,32 @@ class Cevirmen:
                 if aralik > 0:
                     time.sleep(aralik)
         return cikti
+
+    def _deepl_once(self, dilim: list[str], dil: str, dil_hedefi: str) -> list[str] | None:
+        """Penceredeki dizeleri DeepL ile dener. Basariliysa liste, degilse None.
+
+        2026-10-14: Once LLM zinciri deneniyordu ve pencere butcesi doldugu icin
+        DeepL cogu zaman siraya gelemiyordu. Simdi DeepL ONCE deniyor.
+
+        Anahtar sirasi: DEEPL2 (taze, 1M karakter) -> DEEPL (kotasi tukenmis).
+        Kotasi biten anahtar devre disi birakilir (456) ki her pencerede
+        yeniden denenmesin.
+        """
+        for _ad, _ortam in (("deepl2", "DEEPL2_API_KEY"), ("deepl", "DEEPL_API_KEY")):
+            _k = os.environ.get(_ortam) or os.environ.get(_ortam.replace("_API_KEY", "_KEY"))
+            if not _k or _ad in self.devre_disi:
+                continue
+            try:
+                aday = self._deepl(dilim, dil, hedef=dil_hedefi, anahtar=_k)
+                if aday and len(aday) == len(dilim) and any(aday):
+                    return aday
+            except urllib.error.HTTPError as _h:
+                if _h.code in (456, 403, 401):
+                    self.devre_disi.add(_ad)
+                    print(f"[i18n] {_ad} devre disi (HTTP {_h.code})", file=sys.stderr)
+            except Exception:
+                pass
+        return None
 
     @staticmethod
     def _llm_istek(url, anahtar, model, sistem, dilim, timeout=30, usage_kutusu=None):
