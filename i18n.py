@@ -589,6 +589,23 @@ class Cevirmen:
                 "openai/gpt-oss-120b,openai/gpt-oss-20b,llama-3.3-70b-versatile").split(",")
                 if m.strip()]
             uclar.append((_ad, groq_taban + "/chat/completions", groq_anahtar, groq_modeller))
+        # 7) Cloudflare Workers AI — OpenAI uyumlu, ucretsiz (gunde 10.000 noron).
+        #    Actions'tan erisilebilir (yerel modelin aksine localhost degil), bu
+        #    yuzden tunnel gerekmeden kullanilabilir.
+        #    Not: ajanin onerdigi llama-3.1-8b yerine buyuk modeller secildi:
+        #    DeepSeek-V4-Flash AMD'de 2 sn ile en hizli modeldi, GLM-5.3-Flash ise
+        #    NVIDIA'da 97 sn'ye kadar yavasliyordu — bu yuzden DeepSeek one.
+        cf_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
+        cf_token = os.environ.get("CLOUDFLARE_API_TOKEN")
+        if cf_id and cf_token:
+            cf_url = os.environ.get(
+                "CF_BASE_URL",
+                f"https://api.cloudflare.com/client/v4/accounts/{cf_id}/ai/v1").rstrip("/") + "/chat/completions"
+            cf_modeller = [m.strip() for m in os.environ.get(
+                "CF_MODELS",
+                "@cf/deepseek-ai/deepseek-v4-flash-0731,@cf/zai-org/glm-5.3-flash").split(",")
+                if m.strip()]
+            uclar.append(("Cloudflare", cf_url, cf_token, cf_modeller))
         return uclar
 
     def _llm(self, parcalar: list[str], dil: str) -> list[str]:

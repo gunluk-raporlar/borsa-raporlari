@@ -89,6 +89,35 @@ for _ad, _ortam in (("DEEPL", "DEEPL_API_KEY"), ("DEEPL2", "DEEPL2_API_KEY")):
     except Exception as e:
         print(f"{_ad} ceviri: HATA {str(e)[:70]}")
 
+# Cloudflare Workers AI: ucretsiz, Actions'tan erisilebilir, DeepSeek-V4-Flash var.
+print("\n--- Cloudflare Workers AI ---")
+_cf_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
+_cf_tok = os.environ.get("CLOUDFLARE_API_TOKEN")
+if not (_cf_id and _cf_tok):
+    print("CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_API_TOKEN tanimli degil")
+else:
+    for _m in ["@cf/deepseek-ai/deepseek-v4-flash-0731", "@cf/zai-org/glm-5.3-flash",
+               "@cf/openai/gpt-oss-120b", "@cf/meta/llama-3.1-8b-instruct"]:
+        b = time.time()
+        try:
+            ham = i18n.Cevirmen._llm_istek(
+                f"https://api.cloudflare.com/client/v4/accounts/{_cf_id}/ai/v1/chat/completions",
+                _cf_tok, _m,
+                "You are a professional translator for a Turkish finance website. "
+                "The user sends a JSON array of strings. Translate EVERY item into English. "
+                "Return ONLY a JSON array of the exact same length - no explanations, "
+                "no markdown fences. Every element must be a JSON string.",
+                ORNEK, 120)
+            ms = (time.time() - b) * 1000
+            g = sum(1 for k2, v in zip(ORNEK, ham) if i18n.ceviri_gecerli_mi(k2, v))
+            print(f"{_m}: OK {ms:.0f} ms | gecerli={g}/{len(ORNEK)}")
+            for v in ham:
+                print(f"    {str(v)[:72]!r}")
+        except urllib.error.HTTPError as h:
+            print(f"{_m}: HTTP {h.code} ({(time.time()-b)*1000:.0f} ms)")
+        except Exception as e:
+            print(f"{_m}: HATA {str(e)[:70]}")
+
 print("SONUC Yorumu:")
 print("  gecerli=4  -> saglayici sorunsuz")
 print("  kimlik>0   -> model Turkce donduruyor (kimlik ceviri)")
