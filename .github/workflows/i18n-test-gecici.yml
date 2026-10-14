@@ -40,6 +40,7 @@ jobs:
           GROQ2_API_KEY: ${{ secrets.GROQ2_API_KEY }}
           DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
           DEEPL2_API_KEY: ${{ secrets.DEEPL2_API_KEY }}
+          DEEPL3_API_KEY: ${{ secrets.DEEPL3_API_KEY }}
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OPENCODE_MODELS: "space-bunny-free,ling-3.1-flash-free,cat-jam-free"
         run: |

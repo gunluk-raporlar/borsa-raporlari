@@ -667,7 +667,7 @@ class Cevirmen:
             # "deepl2 yedeginden cevrildi" yaziyordu ama 60 dk'da sadece 499 dize
             # cevrilebiliyordu. Simdi DeepL2 en basta denenir (kullanim 220/1M
             # karakter, neredeyse tamami bos). Ceviremezse LLM zinciri devreye girer.
-            son = self._deepl_dene(dilim, dil, dil_hedefi, ("deepl2",))
+            son = self._deepl_dene(dilim, dil, dil_hedefi, ("deepl3", "deepl2"))
             son_uc = "deepl2" if son else None
             for ad, url, anahtar, modeller in (() if son else uclar):
                 if ad in self.devre_disi:
@@ -880,7 +880,7 @@ class Cevirmen:
         return cikti
 
     def _deepl_dene(self, dilim: list[str], dil: str, dil_hedefi: str,
-                     anahtarlar: tuple = ("deepl2", "deepl")) -> list[str] | None:
+                     anahtarlar: tuple = ("deepl3", "deepl2", "deepl")) -> list[str] | None:
         """Penceredeki dizeleri DeepL ile dener. Basariliysa liste, degilse None.
 
         2026-10-14: Once LLM zinciri deneniyordu ve pencere butcesi doldugu icin
