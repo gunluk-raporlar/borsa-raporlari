@@ -498,6 +498,23 @@ class Cevirmen:
         Hicbiri surekli calismadigi icin devre kesici + hata sayaci zinciri kisa tutar.
         """
         uclar = []
+        # 7) Cloudflare Workers AI — OpenAI uyumlu, ucretsiz (gunde 10.000 noron).
+        #    Actions'tan erisilebilir (yerel modelin aksine localhost degil), bu
+        #    yuzden tunnel gerekmeden kullanilabilir.
+        #    Not: ajanin onerdigi llama-3.1-8b yerine buyuk modeller secildi:
+        #    DeepSeek-V4-Flash AMD'de 2 sn ile en hizli modeldi, GLM-5.3-Flash ise
+        #    NVIDIA'da 97 sn'ye kadar yavasliyordu — bu yuzden DeepSeek one.
+        cf_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
+        cf_token = os.environ.get("CLOUDFLARE_API_TOKEN")
+        if cf_id and cf_token:
+            cf_url = os.environ.get(
+                "CF_BASE_URL",
+                f"https://api.cloudflare.com/client/v4/accounts/{cf_id}/ai/v1").rstrip("/") + "/chat/completions"
+            cf_modeller = [m.strip() for m in os.environ.get(
+                "CF_MODELS",
+                "@cf/deepseek-ai/deepseek-v4-flash-0731,@cf/zai-org/glm-5.3-flash").split(",")
+                if m.strip()]
+            uclar.append(("Cloudflare", cf_url, cf_token, cf_modeller))
         # 1) AMD Radeon Developer Cloud — kullanicinin "bazen calisiyor" dedigi saglayici.
         amd_anahtar = os.environ.get("AMD_API_KEY")
         if amd_anahtar:
@@ -589,23 +606,6 @@ class Cevirmen:
                 "openai/gpt-oss-120b,openai/gpt-oss-20b,llama-3.3-70b-versatile").split(",")
                 if m.strip()]
             uclar.append((_ad, groq_taban + "/chat/completions", groq_anahtar, groq_modeller))
-        # 7) Cloudflare Workers AI — OpenAI uyumlu, ucretsiz (gunde 10.000 noron).
-        #    Actions'tan erisilebilir (yerel modelin aksine localhost degil), bu
-        #    yuzden tunnel gerekmeden kullanilabilir.
-        #    Not: ajanin onerdigi llama-3.1-8b yerine buyuk modeller secildi:
-        #    DeepSeek-V4-Flash AMD'de 2 sn ile en hizli modeldi, GLM-5.3-Flash ise
-        #    NVIDIA'da 97 sn'ye kadar yavasliyordu — bu yuzden DeepSeek one.
-        cf_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
-        cf_token = os.environ.get("CLOUDFLARE_API_TOKEN")
-        if cf_id and cf_token:
-            cf_url = os.environ.get(
-                "CF_BASE_URL",
-                f"https://api.cloudflare.com/client/v4/accounts/{cf_id}/ai/v1").rstrip("/") + "/chat/completions"
-            cf_modeller = [m.strip() for m in os.environ.get(
-                "CF_MODELS",
-                "@cf/deepseek-ai/deepseek-v4-flash-0731,@cf/zai-org/glm-5.3-flash").split(",")
-                if m.strip()]
-            uclar.append(("Cloudflare", cf_url, cf_token, cf_modeller))
         return uclar
 
     def _llm(self, parcalar: list[str], dil: str) -> list[str]:
@@ -667,7 +667,7 @@ class Cevirmen:
             # "deepl2 yedeginden cevrildi" yaziyordu ama 60 dk'da sadece 499 dize
             # cevrilebiliyordu. Simdi DeepL2 en basta denenir (kullanim 220/1M
             # karakter, neredeyse tamami bos). Ceviremezse LLM zinciri devreye girer.
-            son = self._deepl_once(dilim, dil, dil_hedefi)
+            son = self._deepl_dene(dilim, dil, dil_hedefi, ("deepl2",))
             son_uc = "deepl2" if son else None
             for ad, url, anahtar, modeller in (() if son else uclar):
                 if ad in self.devre_disi:
@@ -879,7 +879,8 @@ class Cevirmen:
                     time.sleep(aralik)
         return cikti
 
-    def _deepl_once(self, dilim: list[str], dil: str, dil_hedefi: str) -> list[str] | None:
+    def _deepl_dene(self, dilim: list[str], dil: str, dil_hedefi: str,
+                     anahtarlar: tuple = ("deepl2", "deepl")) -> list[str] | None:
         """Penceredeki dizeleri DeepL ile dener. Basariliysa liste, degilse None.
 
         2026-10-14: Once LLM zinciri deneniyordu ve pencere butcesi doldugu icin
@@ -889,7 +890,8 @@ class Cevirmen:
         Kotasi biten anahtar devre disi birakilir (456) ki her pencerede
         yeniden denenmesin.
         """
-        for _ad, _ortam in (("deepl2", "DEEPL2_API_KEY"), ("deepl", "DEEPL_API_KEY")):
+        for _ad in anahtarlar:
+            _ortam = _ad.upper() + "_API_KEY"
             _k = os.environ.get(_ortam) or os.environ.get(_ortam.replace("_API_KEY", "_KEY"))
             if not _k or _ad in self.devre_disi:
                 continue
