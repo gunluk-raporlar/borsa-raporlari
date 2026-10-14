@@ -2,6 +2,11 @@ name: Cok Dilli Sayfa Guncelleme
 
 # Ceviri ayri bir kosuda yapilir; gunluk rapor kosusu ceviri yuzunden uzamaz/iptal olmaz.
 # AMD: RPM limiti 20/dk -> istekler arasi 3.5 sn. Buyuk model kapasite doluysa yedege devreder.
+#
+# TEŞHİS AYRI DOSYADA (2026-10-13): "hangi saglayici calisiyor / kalite / hiz"
+# sorulari .github/workflows/i18n-teshis.yml icinde. Buradaki `test` input'u ve
+# olcum adimlari kaldirildi: test kosumunda "Cok dilli sayfalari uret" atlaniyordu,
+# yani 10 dakika olcup hicbir sey uretmeyen kosulara giriyorduk.
 
 on:
   schedule:
@@ -16,10 +21,6 @@ on:
           - llm
           - deepl
         default: llm
-      test:
-        description: "Sadece saglayici testi calistir (ceviri yapmaz)"
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -46,67 +47,7 @@ jobs:
         continue-on-error: true
         run: python -m pip install --quiet json-repair
 
-      - name: Saglayici testi (kotasiz)
-        if: ${{ inputs.test }}
-        env:
-          # Z.AI (GLM) â€” kullanicinin kayitli anahtari; ceviride birincil
-          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
-          ZAI_MODEL: "glm-5.3-flash"
-          AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
-          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
-          NVIDIA2_API_KEY: ${{ secrets.NVIDIA2_API_KEY }}
-          NVIDIA3_API_KEY: ${{ secrets.NVIDIA3_API_KEY }}
-          NVIDIA4_API_KEY: ${{ secrets.NVIDIA4_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI2_API_KEY: ${{ secrets.GEMINI2_API_KEY }}
-          GEM_MODELS: "gemini-3.8-flash"
-          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b,z-ai/glm-5.3,z-ai/glm-5.3-flash"
-          AMD_MODEL: "DeepSeek-V4-Flash"
-          AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
-          OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          OPENROUTER2_API_KEY: ${{ secrets.OPENROUTER2_API_KEY }}
-          OR_MODELS: "nvidia/nemotron-3-ultra-550b-a55b:free"
-          ORCAROUTER_API_KEY: ${{ secrets.ORCAROUTER_API_KEY }}
-          ORCAROUTER2_API_KEY: ${{ secrets.ORCAROUTER2_API_KEY }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          GROQ2_API_KEY: ${{ secrets.GROQ2_API_KEY }}
-          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
-          DEEPL2_API_KEY: ${{ secrets.DEEPL2_API_KEY }}
-          ORCA_MODELS: "tencent/hy4-preview-free,deepseek/deepseek-v4-flash-free,z-ai/glm-5.3-flash-free"
-          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
-          OPENCODE_MODELS: "space-bunny-free,ling-3.1-flash-free,cat-jam-free"
-          TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
-        run: python -u i18n.py --saglayici-test
-
-      # 2026-10-13: canli kosum yeni_ceviri=12 / reddedilen_ceviri=224 verdi.
-      # Saglayici "OK" donse bile ceviri kalite kontrolunden gecemiyordu.
-      # Bu adim HER saglayicidan ham cevabi tek tek yazip red sebebini gosterir
-      # (kimlik ceviri mi, bos JSON mu, Turkce sizintisi mi).
-      - name: Ceviri kalitesi teshisi (tek istek/uc)
-        if: ${{ inputs.test }}
-        env:
-          AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
-          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
-          NVIDIA2_API_KEY: ${{ secrets.NVIDIA2_API_KEY }}
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          OPENROUTER2_API_KEY: ${{ secrets.OPENROUTER2_API_KEY }}
-          ORCAROUTER_API_KEY: ${{ secrets.ORCAROUTER_API_KEY }}
-          ORCAROUTER2_API_KEY: ${{ secrets.ORCAROUTER2_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI2_API_KEY: ${{ secrets.GEMINI2_API_KEY }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          GROQ2_API_KEY: ${{ secrets.GROQ2_API_KEY }}
-          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
-          DEEPL2_API_KEY: ${{ secrets.DEEPL2_API_KEY }}
-        run: |
-          python -u i18n_kalite_testi.py
-          echo "::group::NVIDIA model hiz probu (hangi model kac sn suruyor?)"
-          python -u nvidia_hiz_testi.py || echo "::warning::NVIDIA hiz probu tamamlanamadi"
-          echo "::endgroup::"
-
       - name: Cok dilli sayfalari uret
-        if: ${{ !inputs.test }}
         env:
           # 20 istek/dk sinirinin altinda kal (3.5 sn -> ~17/dk)
           I18N_ARALIK: "3.5"
