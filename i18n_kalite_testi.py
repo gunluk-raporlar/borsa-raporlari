@@ -101,10 +101,12 @@ else:
     # DENENENLER: hesapta 23-25 Eylul'de KULLANILMIS modeller (Workers Free
     # planda musait olanlar). deepseek-v4-flash / glm-5.3-flash Free planda
     # YOK: "not available on the Workers Free plan" hatasi donuyor.
-    _MODELLER = ["@cf/meta/llama-3.3-70b-instruct-fp8-fast",
-                 "@cf/meta/llama-4-scout-17b-16e-instruct",
+    # Cloudflare ajaninin Free planda calistigi bildirdigi modeller.
+    # glm-4.7-flash: 100+ dil, 131K baglam. nemotron-3-120b: NVIDIA'nin MoE modeli.
+    _MODELLER = ["@cf/zai-org/glm-4.7-flash",
+                 "@cf/nvidia/nemotron-3-120b-a12b",
                  "@cf/openai/gpt-oss-120b",
-                 "@cf/meta/llama-3.1-8b-instruct"]
+                 "@cf/google/gemma-4-26b-a4b-it"]
     print("\n  -- ULC 1: OpenAI uyumlu (/ai/v1/chat/completions) --")
     for _m in _MODELLER:
         b = time.time()
