@@ -498,23 +498,15 @@ class Cevirmen:
         Hicbiri surekli calismadigi icin devre kesici + hata sayaci zinciri kisa tutar.
         """
         uclar = []
-        # 7) Cloudflare Workers AI — OpenAI uyumlu, ucretsiz (gunde 10.000 noron).
-        #    Actions'tan erisilebilir (yerel modelin aksine localhost degil), bu
-        #    yuzden tunnel gerekmeden kullanilabilir.
-        #    Not: ajanin onerdigi llama-3.1-8b yerine buyuk modeller secildi:
-        #    DeepSeek-V4-Flash AMD'de 2 sn ile en hizli modeldi, GLM-5.3-Flash ise
-        #    NVIDIA'da 97 sn'ye kadar yavasliyordu — bu yuzden DeepSeek one.
-        cf_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
-        cf_token = os.environ.get("CLOUDFLARE_API_TOKEN")
-        if cf_id and cf_token:
-            cf_url = os.environ.get(
-                "CF_BASE_URL",
-                f"https://api.cloudflare.com/client/v4/accounts/{cf_id}/ai/v1").rstrip("/") + "/chat/completions"
-            cf_modeller = [m.strip() for m in os.environ.get(
-                "CF_MODELS",
-                "@cf/deepseek-ai/deepseek-v4-flash-0731,@cf/zai-org/glm-5.3-flash").split(",")
-                if m.strip()]
-            uclar.append(("Cloudflare", cf_url, cf_token, cf_modeller))
+        # Cloudflare Workers AI 2026-10-14'te KALDIRILDI.
+        # Canli test hata govdesi:
+        #   "@cf/deepseek-ai/deepseek-v4-flash-0731 is not available on the
+        #    Workers Free plan"  (ayni mesaj glm-5.3-flash icin de).
+        # Katalog: Free planda Cloudflare-hosted modeller yalnizca 8-30B
+        # 'decision' modelleri; buyukler (claude-opus, gpt-6, llama-3.3-70b)
+        # third-party -> kosullar + ucretli. Ucretsiz VE ceviri kaliteli bir
+        # model yok. AMD (2-11 sn) ve NVIDIA (2.3 sn) zaten limitsiz ve
+        # daha hizli oldugu icin zincirden cikarildi.
         # 1) AMD Radeon Developer Cloud — kullanicinin "bazen calisiyor" dedigi saglayici.
         amd_anahtar = os.environ.get("AMD_API_KEY")
         if amd_anahtar:
