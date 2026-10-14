@@ -1,13 +1,9 @@
 name: I18N Saglayici Yoklamasi
-# Hangi ceviri saglayicisi su an calisiyor? Kac sn suruyor? Ceviri kalite
-# kontrolunden geciyor mu? Bunlarin hepsi BURADA olculur.
-#
-# Neden ayri dosya (2026-10-13): test adimlari i18n.yml icindeyken her test
-# kosumunda 10+ dakika bekleniyor, "Cok dilli sayfalari uret" atlaniyordu.
-# Yani gercek ceviri hic calismiyor, sadece olcum yapiliyordu.
-# Artik: i18n.yml SADECE ceviri yapar; yoklama istege baglidir ve ayri job'da.
+# Hangi ceviri saglayicisi su an calisiyor, ne kadar sure veriyor, gelen ceviri
+# kalite kontrolunden geciyor mu? Tek komut, hepsini olcer.
 #
 # Bu is hicbir dosyaya YAZMAZ, onbellek kullanmaz, siteye dokunmaz.
+# Gercek ceviri i18n.yml'de yapilir.
 on:
   workflow_dispatch:
 permissions: {}
@@ -20,12 +16,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Bozuk JSON kurtarici (istege bagli)
-        continue-on-error: true
-        run: python -m pip install --quiet json-repair
-
-      # HANGI UC YAPILANDIRILMIS + model listeleri + tek istek/uc durumu
-      - name: Saglayici yoklamasi
+      - name: Saglayici, kalite ve hiz olcumu
         env:
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           AMD_MODELS: "DeepSeek-V4-Flash,DeepSeek-V4-Flash-Vision-Exp,Qwen3.8-Flash-Next,GLM-5.3-Flash"
@@ -48,33 +39,13 @@ jobs:
           DEEPL2_API_KEY: ${{ secrets.DEEPL2_API_KEY }}
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OPENCODE_MODELS: "space-bunny-free,ling-3.1-flash-free,cat-jam-free"
-        run: python -u i18n.py --saglayici-test
-
-      # GELEN CEVIRI KULLANILABILIR MI? (kimlik ceviri / bos JSON / Turkce sizintisi)
-      # Canli kosum 13.10: yeni_ceviri=12 / reddedilen_ceviri=224 — API'ler "OK"
-      # donuyordu ama ceviri kullanilamiyordu. Bu adim sebebi ayirt eder.
-      - name: Ceviri kalitesi ve DeepL kotasi
-        env:
-          AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
-          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
-          NVIDIA2_API_KEY: ${{ secrets.NVIDIA2_API_KEY }}
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          OPENROUTER2_API_KEY: ${{ secrets.OPENROUTER2_API_KEY }}
-          ORCAROUTER_API_KEY: ${{ secrets.ORCAROUTER_API_KEY }}
-          ORCAROUTER2_API_KEY: ${{ secrets.ORCAROUTER2_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI2_API_KEY: ${{ secrets.GEMINI2_API_KEY }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          GROQ2_API_KEY: ${{ secrets.GROQ2_API_KEY }}
-          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
-          DEEPL2_API_KEY: ${{ secrets.DEEPL2_API_KEY }}
-        run: python -u i18n_kalite_testi.py
-
-      # "HANGI MODEL KAC SN SURUYOR?" — /models listesini cekip her aday modele
-      # tek istek atar. Kod/gorsel/embedding ve 8B alti (kucuk modeller ceviriyi
-      # uydurur) elenir.
-      - name: NVIDIA model hiz probu
-        env:
-          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
-          NVIDIA2_API_KEY: ${{ secrets.NVIDIA2_API_KEY }}
-        run: python -u nvidia_hiz_testi.py || echo "::warning::NVIDIA hiz probu tamamlanamadi"
+        run: |
+          python -m pip install --quiet json-repair
+          python -u i18n.py --saglayici-test
+          echo ""
+          echo "::group::Ceviri kalitesi + DeepL kotasi"
+          python -u i18n_kalite_testi.py
+          echo "::endgroup::"
+          echo "::group::NVIDIA model hiz probu"
+          python -u nvidia_hiz_testi.py || echo "::warning::tamamlanamadi"
+          echo "::endgroup::"
