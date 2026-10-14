@@ -98,7 +98,12 @@ if not (_cf_id and _cf_tok):
 else:
     # IKI UC DENENIR: yerel REST (/ai/run/<model>) ve OpenAI uyumlu (/ai/v1).
     # 403 -> anahtar yetkisi eksik;  404 -> adres yanlis.
-    _MODELLER = ["@cf/deepseek-ai/deepseek-v4-flash-0731", "@cf/zai-org/glm-5.3-flash",
+    # DENENENLER: hesapta 23-25 Eylul'de KULLANILMIS modeller (Workers Free
+    # planda musait olanlar). deepseek-v4-flash / glm-5.3-flash Free planda
+    # YOK: "not available on the Workers Free plan" hatasi donuyor.
+    _MODELLER = ["@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+                 "@cf/meta/llama-4-scout-17b-16e-instruct",
+                 "@cf/openai/gpt-oss-120b",
                  "@cf/meta/llama-3.1-8b-instruct"]
     print("\n  -- ULC 1: OpenAI uyumlu (/ai/v1/chat/completions) --")
     for _m in _MODELLER:
@@ -126,7 +131,7 @@ else:
     _S = ("You are a professional translator for a Turkish finance website. "
           "The user sends a JSON array of strings. Translate EVERY item into English. "
           "Return ONLY a JSON array of the same length, no markdown fences.")
-    for _m in _MODELLER[:2]:
+    for _m in _MODELLER[:3]:
         _u = (f"https://api.cloudflare.com/client/v4/accounts/{_cf_id}/ai/run/{_m}")
         b = time.time()
         try:
