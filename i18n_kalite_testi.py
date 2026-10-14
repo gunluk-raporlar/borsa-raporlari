@@ -96,8 +96,12 @@ _cf_tok = os.environ.get("CLOUDFLARE_API_TOKEN")
 if not (_cf_id and _cf_tok):
     print("CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_API_TOKEN tanimli degil")
 else:
-    for _m in ["@cf/deepseek-ai/deepseek-v4-flash-0731", "@cf/zai-org/glm-5.3-flash",
-               "@cf/openai/gpt-oss-120b", "@cf/meta/llama-3.1-8b-instruct"]:
+    # IKI UC DENENIR: yerel REST (/ai/run/<model>) ve OpenAI uyumlu (/ai/v1).
+    # 403 -> anahtar yetkisi eksik;  404 -> adres yanlis.
+    _MODELLER = ["@cf/deepseek-ai/deepseek-v4-flash-0731", "@cf/zai-org/glm-5.3-flash",
+                 "@cf/meta/llama-3.1-8b-instruct"]
+    print("\n  -- ULC 1: OpenAI uyumlu (/ai/v1/chat/completions) --")
+    for _m in _MODELLER:
         b = time.time()
         try:
             ham = i18n.Cevirmen._llm_istek(
@@ -117,6 +121,33 @@ else:
             print(f"{_m}: HTTP {h.code} ({(time.time()-b)*1000:.0f} ms)")
         except Exception as e:
             print(f"{_m}: HATA {str(e)[:70]}")
+
+    print("\n  -- ULC 2: yerel REST (/ai/run/<model>) --")
+    _S = ("You are a professional translator for a Turkish finance website. "
+          "The user sends a JSON array of strings. Translate EVERY item into English. "
+          "Return ONLY a JSON array of the same length, no markdown fences.")
+    for _m in _MODELLER[:2]:
+        _u = (f"https://api.cloudflare.com/client/v4/accounts/{_cf_id}/ai/run/{_m}")
+        b = time.time()
+        try:
+            _rq = urllib.request.Request(_u, data=json.dumps({
+                "messages": [{"role": "system", "content": _S},
+                             {"role": "user", "content": json.dumps(ORNEK, ensure_ascii=False)}]
+            }).encode("utf-8"), headers={
+                "Authorization": f"Bearer {_cf_tok}", "Content-Type": "application/json"})
+            with urllib.request.urlopen(_rq, timeout=120) as _y:
+                _d = json.loads(_y.read().decode())
+            _c = _d.get("result", {}).get("response", "")
+            print(f"{_m}: OK {(time.time()-b)*1000:.0f} ms -> {str(_c)[:90]!r}")
+        except urllib.error.HTTPError as _h:
+            _g = ""
+            try:
+                _g = _h.read().decode("utf-8", errors="replace")[:160]
+            except Exception:
+                pass
+            print(f"{_m}: HTTP {_h.code} {(time.time()-b)*1000:.0f} ms :: {_g}")
+        except Exception as _e:
+            print(f"{_m}: HATA {str(_e)[:70]}")
 
 print("SONUC Yorumu:")
 print("  gecerli=4  -> saglayici sorunsuz")
