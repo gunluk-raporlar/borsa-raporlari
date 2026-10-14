@@ -59,7 +59,7 @@ for ev, url, anahtar, modeller in uclar:
 
 # DeepL iki anahtarla: kotasi ve gercek ceviri kalitesi
 print("\n--- DeepL ---")
-for _ad, _ortam in (("DEEPL", "DEEPL_API_KEY"), ("DEEPL2", "DEEPL2_API_KEY")):
+for _ad, _ortam in (("DEEPL", "DEEPL_API_KEY"), ("DEEPL2", "DEEPL2_API_KEY"), ("DEEPL3", "DEEPL3_API_KEY")):
     _k = os.environ.get(_ortam)
     if not _k:
         print(f"{_ad}: {_ortam} tanimli degil")

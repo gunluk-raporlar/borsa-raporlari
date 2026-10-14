@@ -900,6 +900,14 @@ class Cevirmen:
                 if aday and len(aday) == len(dilim) and any(aday):
                     return aday
             except urllib.error.HTTPError as _h:
+                # DeepL hata GOVDESINI yazmak sart: 456 "kota bitti" demek degil,
+                # "bu istek limiti asti" da 456 dondurebiliyor. Govde tam aciklar
+                # (ornegin {"message":{"text":"Character limit exceeded"}}).
+                try:
+                    _govde = _h.read().decode("utf-8", errors="replace")[:300]
+                except Exception:
+                    _govde = ""
+                print(f"[i18n] {_ad} hatasi: HTTP {_h.code} :: {_govde}", file=sys.stderr)
                 if _h.code in (456, 403, 401):
                     self.devre_disi.add(_ad)
                     print(f"[i18n] {_ad} devre disi (HTTP {_h.code})", file=sys.stderr)
