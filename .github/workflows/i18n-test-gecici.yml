@@ -1,6 +1,7 @@
-name: I18N Saglayici Yoklamasi
-# Hangi ceviri saglayicisi su an calisiyor, ne kadar sure veriyor, gelen ceviri
-# kalite kontrolunden geciyor mu? Tek komut, hepsini olcer.
+name: I18N Test (gecici)
+# GECICI DOSYA (2026-10-14): sorun duzelince bu dosya SILINECEK.
+# Amac: "hangi ceviri saglayicisi calisiyor, ne kadar sure veriyor, gelen ceviri
+# kalite kontrolunden geciyor mu?" sorularini TEK komutla olcmek.
 #
 # Bu is hicbir dosyaya YAZMAZ, onbellek kullanmaz, siteye dokunmaz.
 # Gercek ceviri i18n.yml'de yapilir.
@@ -8,7 +9,7 @@ on:
   workflow_dispatch:
 permissions: {}
 jobs:
-  probe:
+  test:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -16,7 +17,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Saglayici, kalite ve hiz olcumu
+      - name: Saglayici, kalite ve hiz testi
         env:
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           AMD_MODELS: "DeepSeek-V4-Flash,DeepSeek-V4-Flash-Vision-Exp,Qwen3.8-Flash-Next,GLM-5.3-Flash"
