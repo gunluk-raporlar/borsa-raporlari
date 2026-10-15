@@ -885,11 +885,14 @@ class Cevirmen:
             # DIKKAT: cevrilemeyen parca icin kaynak metin yerine BOS dondurulur.
             # (Aksi halde cagiran taraf bunu "cevrildi" sanip onbellege yazar ve bir daha denemez.)
             cikti.extend(son if son else [""] * len(dilim))
-            # hiz sinirina karsi ara: Z.AI hizli ve limiti yuksek -> kisa; AMD 20/dk -> uzun
+            # hiz sinirina karsi ara: AMD 20/dk -> uzun; discovery 50 RPM (panel, 15.10)
+            # -> 1.5 sn ~ 40/dk guvenli marj; digerleri genel
             if bas + PENCERE < len(parcalar):
                 if son_uc == "AMD":
                     # AMD 20 istek/dk -> istekler arasi ~3 sn (canli test: 2-7 sn/yanit)
                     aralik = float(os.environ.get("I18N_ARALIK_AMD", "3.5"))
+                elif son_uc in ("Discovery", "TokenPlan"):
+                    aralik = float(os.environ.get("I18N_ARALIK_DISCOVERY", "1.5"))
                 else:
                     aralik = float(os.environ.get("I18N_ARALIK", "1.0"))
                 if aralik > 0:
