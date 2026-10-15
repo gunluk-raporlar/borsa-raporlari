@@ -198,7 +198,7 @@ def _ders_uret(konu, tanim, veri):
             keys = {k: os.environ.get(k, "") for k in ("AMD_API_KEY", "CF_API_KEY", "ALT_API_KEY", "OR_API_KEY")}
             if any(v and v not in DUMMY_ANAHTARLAR for v in keys.values()):
                 try:
-                    metin = bot.llm_call(prompt, sirasi=("DISC", "TOKENPLAN", "AMD", "CF", "YEDEK", "OR"))
+                    metin = bot.llm_call(prompt, sirasi=("DISC", "AMD", "CF", "YEDEK", "OR"))
                 except Exception as e:
                     logger.warning("LLM ders basarisiz: %s", e)
     if not metin or metin.startswith("(LLM"):

@@ -103,11 +103,12 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_MODELS = [m.strip() for m in os.environ.get("GEMINI_MODELS", "gemini-3.8-flash").split(",") if m.strip()]
 
 # intern-ai discovery servisi (2026-10-15, kullanici karari): ceviri hattindaki
-# ayni iki hesap bot'un icerik ureticilerine de baglandi. Ceviri dogrulamasi
+# DISCOVERY hesabi bot'un icerik ureticilerine de baglandi. Ceviri dogrulamasi
 # deepseek-v4-flash-0731'in bu planda sorunsuz calistigini gosterdi; atria-dawn
 # bu planda YOK (404 "not supported by TokenPlan") — listede yok.
+# NOT: tokenplan hesabi bilincli olarak BOT'A BAGLANMADI (kullanici karari —
+# hesap kullanimlarini panelinden takip edip optimizasyonu kendisi yapiyor).
 DISC_API_KEY = os.environ.get("DISCOVERY_API_KEY", "")
-TOKENPLAN_API_KEY = os.environ.get("TOKENPLAN_API_KEY", "")
 DISC_BASE_URL = os.environ.get("DISCOVERY_BASE_URL",
                                "https://discovery-api.intern-ai.org.cn/v1").rstrip("/")
 DISC_MODEL_TERCIH = [m.strip() for m in os.environ.get(
@@ -175,9 +176,8 @@ KARA_LISTE = {
 }
 
 if not (AMD_API_KEY or ALT_API_KEY or CF_API_KEY or OR_API_KEY or NVID_API_KEY
-        or OPENCODE_API_KEY or OLLAMA_API_KEY or GEMINI_API_KEY
-        or DISC_API_KEY or TOKENPLAN_API_KEY):
-    raise SystemExit("AMD/ALT/CF/OR/NVIDIA/OPENCODE/OLLAMA/GEMINI/DISCOVERY/TOKENPLAN anahtarlarindan en az biri ayarlanmali!")
+        or OPENCODE_API_KEY or OLLAMA_API_KEY or GEMINI_API_KEY or DISC_API_KEY):
+    raise SystemExit("AMD/ALT/CF/OR/NVIDIA/OPENCODE/OLLAMA/GEMINI/DISCOVERY anahtarlarindan en az biri ayarlanmali!")
 
 # Varsayilan model: 1B parametrelik MiniCPM5-1B karmasik Turkce promptlarda Ingilizce
 # ic-konusma uretip talimatlari rapora sicrayabilir ve tekrar dongusune girebilir;
@@ -277,21 +277,15 @@ gemini_client = OpenAI(
     max_retries=0,
 ) if GEMINI_API_KEY else None
 
-# intern-ai discovery: iki hesap, ayni adres, ayri etiketler (devre kesici
-# etiket bazli oldugu icin bir hesap cokerse digeri etkilenmez — i18n ile ayni desen).
+# intern-ai discovery: DISCOVERY hesabi tek basina bagli (tokenplan hesabi
+# bilincli olarak bot'a baglanmadi — kullanici hesap kullanimini panelinden
+# izleyip optimizasyonu kendisi yapiyor).
 disc_client = OpenAI(
     api_key=DISC_API_KEY,
     base_url=DISC_BASE_URL,
     timeout=_LLM_TIMEOUT,
     max_retries=0,
 ) if DISC_API_KEY else None
-
-tokenplan_client = OpenAI(
-    api_key=TOKENPLAN_API_KEY,
-    base_url=DISC_BASE_URL,
-    timeout=_LLM_TIMEOUT,
-    max_retries=0,
-) if TOKENPLAN_API_KEY else None
 
 # Takip edilen BIST30 hisseleri (Guncel liste)
 HISSELER = [
@@ -1125,15 +1119,14 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
     # (ust sinir — gercek maliyet uretilen token kadardir, ek bedeli yok).
     max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "24000"))
 
-    # Deneme sirasi: DISCOVERY + TOKENPLAN (bol kotali iki hesap, 15.10 kullanici
-    # karari) -> AMD (ucretsiz ana) -> ZAI (kullanicinin GLM anahtari) ->
-    # NVIDIA -> OpenRouter -> Groq. sirasi ile oncelik degistirilebilir.
-    sirasi = sirasi or ("DISC", "TOKENPLAN", "AMD", "ZAI", "NVID", "OR", "OPENCODE", "OLLAMA", "GEMINI", "YEDEK")
+    # Deneme sirasi: DISCOVERY (bol kotali hesap, 15.10 kullanici karari) ->
+    # AMD (ucretsiz ana) -> ZAI (kullanicinin GLM anahtari) -> NVIDIA ->
+    # OpenRouter -> Groq. sirasi ile oncelik degistirilebilir.
+    sirasi = sirasi or ("DISC", "AMD", "ZAI", "NVID", "OR", "OPENCODE", "OLLAMA", "GEMINI", "YEDEK")
     havuzlar = {
         "AMD": (client, AMD_MODEL_LIST or [AMD_MODEL]),
         "ZAI": (zai_client, ZAI_MODEL_TERCIH),
         "DISC": (disc_client, DISC_MODEL_TERCIH),
-        "TOKENPLAN": (tokenplan_client, DISC_MODEL_TERCIH),
         "NVID": (nvid_client, _havuz_modelleri(nvid_client, NVID_MODELS, NVID_MODEL_TERCIH, "NVIDIA") if nvid_client else NVID_MODELS),
         "YEDEK": (alt_client, _havuz_modelleri(alt_client, ALT_MODELS, GROQ_MODEL_TERCIH, "Groq") if alt_client else ALT_MODELS),
         "OR": (or_client, _havuz_modelleri(or_client, OR_MODELS, OR_MODEL_TERCIH, "OpenRouter",
@@ -1211,7 +1204,7 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
             # intern-ai discovery'de ise tersi: deepseek ailesi "disabled"i kabul
             # eder ve sureyi 30-90 sn'den 3-20 sn'ye indirir (15.10 ceviri kaniti).
             _ek_govde = {"extra_body": {"thinking": {"type": "disabled"}}} \
-                if (etiket in ("DISC", "TOKENPLAN") and DISC_DUSUNME_KAPALI) else {}
+                if (etiket == "DISC" and DISC_DUSUNME_KAPALI) else {}
             resp = saglayici.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
