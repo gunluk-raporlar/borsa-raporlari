@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MGROS — Stock Analysis</title>
+<meta name="description" content="MGROS (Retail) last price, technical signals, 7-day news and past evaluations in the report archive.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/en/hisse/MGROS">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/hisse/MGROS">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/hisse/MGROS">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/hisse/MGROS">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/hisse/MGROS">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/hisse/MGROS">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/MGROS">
+<link rel="icon" href="..//favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="..//favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Daily Reports">
+<meta property="og:title" content="MGROS — Stock Analysis">
+<meta property="og:description" content="MGROS (Retail) last price, technical signals, 7-day news and past evaluations in the report archive.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/en/hisse/MGROS">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Daily Reports cover image">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MGROS — Stock Analysis">
+<meta name="twitter:description" content="MGROS (Retail) last price, technical signals, 7-day news and past evaluations in the report archive.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<meta name="yandex-verification" content="2c8df12d0b97a734">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "MGROS — Stock Analysis", "description": "MGROS (Retail) last price, technical signals, 7-day news and past evaluations in the report archive.", "url": "https://borsa-raporlari.pages.dev/en/hisse/MGROS", "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}}</script>
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="../style.css">
+
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="../index.html">BIST 30 Daily Reports</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Light/dark theme" aria-label="Change theme">🌙</button></div>
+<nav><a href="../index.html">Home Page</a><a href="../raporlar.html">Reports</a><a href="../hisse/index.html" class="active">Stocks</a><a href="../derin-analiz.html">Deep Analysis</a><a href="../makro-analiz.html">Macro Analysis</a><a href="../teknik-analiz.html">Technical Scan</a><a href="../sinyal-karnesi.html">Signal Scorecard</a><a href="../borsapy-analiz.html">Borsapy Signals</a><a href="../haberler.html">News</a><a href="../sirket-haberleri.html">Company News</a><a href="../portfolio.html">Demo Portfolio</a><a href="../haftasonu.html">Weekend</a><a href="../haftasonu-egitimi.html">Market School</a><a href="../takvim.html">📅 Calendar</a><a href="../sozluk.html">Glossary</a><a href="../terimler.html">Terms</a><a href="../muhasebe-terimleri.html">Accounting Terms</a><a href="../robot.html">Trading Robot</a></nav>
+</div></header>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Loading prices…</span></div>
+</div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Prices could not be loaded temporarily; they will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
+
+<div class="ticker-bant" id="ticker-bant2" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Loading market data...</span></div>
+</div>
+<script>
+(function() {
+  var kutu = document.getElementById('ticker-bant2');
+  if (!kutu) return;
+  var kok = kutu.dataset.kok || '';
+  var iz = document.getElementById('ticker-iz2');
+
+  function bicim(g) {
+    var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
+    var rozet = (typeof g.d === 'number')
+      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+        Number(g.d).toFixed(2) + '%</span>'
+      : '';
+    var birim = g.b || g.birim || '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (birim ? ' ' + birim : '') + rozet + '</span>';
+  }
+  function ciz(veri) {
+    var ogeler = (veri.gostergeler || []).map(bicim).join('');
+    if (!ogeler) throw new Error('bos');
+    var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
+               (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Market data could not be loaded temporarily; it will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/piyasa?t=' + Date.now());
+  setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Loading...</span>
+            <span id="istanbul-weather">🌤️ Istanbul Weather...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Select page language">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/hisse/MGROS" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/hisse/MGROS" hreflang="en" lang="en" data-dil="en" class="aktif" aria-current="true">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/hisse/MGROS" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/hisse/MGROS" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/hisse/MGROS" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+</nav>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
+
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Search stock, topic or date..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '../';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\?\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\.|mi|mı|icin)\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Search index could not be loaded.</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+
+
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Play / Pause">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Volume level" title="Sound">
+  <span class="radyo-linkler"><a href="../radyo/index.html">📻 All broadcasts &amp; Podcast page</a> <span class="ayrac">•</span> <a href="../radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">For listening purposes only • Fictional AI servers • For informational purposes, not investment advice.</span>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='../';
+  if(!btn||!ses) return;
+  if(ayar){ ses.volume=(parseInt(ayar.value,10)||80)/100; }
+  var hazir=false;
+  function hazirla(geri){
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){return r.json();}).then(function(d){
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){ ses.src=kok+l[0].dosya; }
+      hazir=true; geri();
+    }).catch(function(){ hazir=true; geri(); });
+  }
+  btn.addEventListener('click',function(){
+    if(ses.paused){ hazirla(function(){ var p=ses.play(); if(p&&p.catch){p.catch(function(){});} }); }
+    else { ses.pause(); }
+  });
+  ses.addEventListener('play',function(){ btn.textContent='❚❚'; btn.setAttribute('aria-label','Duraklat'); });
+  ses.addEventListener('pause',function(){ btn.textContent='▶'; btn.setAttribute('aria-label','Oynat'); });
+  if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
+})();
+</script>
+
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>MGROS <span style="font-size:16px; color:var(--muted)">Retail</span></h1>
+<div class="meta"><span class="badge">STRONG SELL</span>
+<span><strong>484.75 TL</strong></span>
+<span class="neg">- 2.51% (daily)</span>
+<span class='neg' style='font-weight:700'>- 6.3% (since 2025-11-28)</span></div>
+</div>
+<div class="card" style="margin-bottom:16px">
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
+<strong style="font-size:14px">📊 MGROS price chart</strong>
+<span style="color:var(--muted); font-size:12px"><span id="grafik-gun">last 223 days</span> • closing prices • period: <span id="grafik-donem" class="neg" style="font-weight:700">-6.33%</span></span>
+</div>
+<div class="grafik-aralik" id="grafik-aralik"></div>
+<div class="grafik-kutu" id="grafik-kutu">
+<svg viewBox="0 0 640 280" class="chart" id="grafik-svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="223-day closing price chart between 2025-11-28 and 2026-10-15" style="width:100%; height:auto; display:block"><defs><linearGradient id="grafik-glg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b91c1c" stop-opacity=".14"/><stop offset="1" stop-color="#b91c1c" stop-opacity="0"/></lineargradient></defs><line x1="54" y1="227.9" x2="626" y2="227.9" stroke="var(--line)" stroke-width="1" /><text x="47" y="231.4" text-anchor="end" font-size="10.5" fill="var(--muted)">500.00</text><line x1="54" y1="139.9" x2="626" y2="139.9" stroke="var(--line)" stroke-width="1" /><text x="47" y="143.4" text-anchor="end" font-size="10.5" fill="var(--muted)">600.00</text><line x1="54" y1="51.8" x2="626" y2="51.8" stroke="var(--line)" stroke-width="1" /><text x="47" y="55.3" text-anchor="end" font-size="10.5" fill="var(--muted)">700.00</text><text x="70" y="272" text-anchor="middle" font-size="10.5" fill="var(--muted)">28.11</text><text x="198.3" y="272" text-anchor="middle" font-size="10.5" fill="var(--muted)">17.02</text><text x="340.0" y="272" text-anchor="middle" font-size="10.5" fill="var(--muted)">08.05</text><text x="481.7" y="272" text-anchor="middle" font-size="10.5" fill="var(--muted)">31.07</text><text x="610" y="272" text-anchor="middle" font-size="10.5" fill="var(--muted)">15.10</text><line x1="54" y1="212.5" x2="626" y2="212.5" stroke="var(--muted)" stroke-width="1" stroke-dasharray="2 4" /><polygon fill="url(#grafik-glg)" stroke="none" points="54.0,212.5 56.6,205.5 59.2,206.4 61.7,220.4 64.3,217.3 66.9,223.4 69.5,221.3 72.0,213.4 74.6,214.7 77.2,206.8 79.8,202.0 82.3,191.1 84.9,186.3 87.5,195.9 90.1,192.4 92.6,197.6 95.2,204.2 97.8,210.3 100.4,196.8 103.0,210.8 105.5,216.9 108.1,214.7 110.7,212.1 113.3,211.6 115.8,204.2 118.4,187.1 121.0,169.6 123.6,160.0 126.1,153.9 128.7,150.4 131.3,150.8 133.9,136.8 136.5,136.4 139.0,129.0 141.6,100.1 144.2,115.0 146.8,125.0 149.3,125.5 151.9,121.5 154.5,118.5 157.1,113.2 159.6,131.6 162.2,126.8 164.8,121.1 167.4,111.0 169.9,111.0 172.5,96.2 175.1,87.9 177.7,101.8 180.3,97.0 182.8,81.7 185.4,85.7 188.0,78.7 190.6,74.3 193.1,67.7 195.7,60.3 198.3,66.4 200.9,68.2 203.4,85.7 206.0,87.0 208.6,87.0 211.2,87.0 213.7,83.9 216.3,87.0 218.9,103.6 221.5,97.5 224.1,115.4 226.6,125.0 229.2,142.1 231.8,168.8 234.4,163.1 236.9,140.8 239.5,140.8 242.1,136.8 244.7,139.0 247.2,150.8 249.8,146.0 252.4,150.0 255.0,157.4 257.5,147.3 260.1,155.6 262.7,139.5 265.3,143.0 267.9,140.8 270.4,148.2 273.0,141.2 275.6,128.5 278.2,125.5 280.7,142.5 283.3,138.2 285.9,143.4 288.5,119.3 291.0,108.0 293.6,94.4 296.2,107.5 298.8,100.5 301.4,94.0 303.9,91.4 306.5,79.5 309.1,90.9 311.7,88.3 314.2,93.1 316.8,109.7 319.4,113.7 322.0,127.7 324.5,120.7 327.1,107.1 329.7,108.0 332.3,105.3 334.8,70.4 337.4,61.2 340.0,66.4 342.6,73.0 345.2,74.7 347.7,51.8 350.3,30.6 352.9,67.2 355.5,83.0 358.0,64.6 360.6,87.9 363.2,63.7 365.8,69.8 368.3,87.9 370.9,83.5 373.5,72.9 376.1,80.8 378.6,84.8 381.2,85.2 383.8,82.2 386.4,74.7 389.0,80.0 391.5,81.3 394.1,76.0 396.7,52.7 399.3,53.1 401.8,68.5 404.4,53.5 407.0,63.2 409.6,65.4 412.1,54.9 414.7,54.0 417.3,57.1 419.9,61.9 422.5,76.4 425.0,78.6 427.6,87.9 430.2,113.9 432.8,111.2 435.3,105.5 437.9,97.1 440.5,105.1 443.1,117.0 445.6,117.4 448.2,117.0 450.8,132.8 453.4,116.1 455.9,108.6 458.5,96.3 461.1,108.1 463.7,105.5 466.3,113.0 468.8,119.6 471.4,117.8 474.0,109.9 476.6,114.8 479.1,119.6 481.7,117.4 484.3,130.6 486.9,114.3 489.4,112.6 492.0,117.0 494.6,91.9 497.2,88.8 499.7,113.4 502.3,164.5 504.9,182.1 507.5,179.5 510.1,173.3 512.6,168.0 515.2,163.6 517.8,172.9 520.4,163.6 522.9,170.7 525.5,179.0 528.1,176.4 530.7,172.4 533.2,176.8 535.8,198.4 538.4,202.4 541.0,205.9 543.5,213.8 546.1,204.1 548.7,204.1 551.3,203.3 553.9,193.6 556.4,198.9 559.0,190.9 561.6,186.1 564.2,194.0 566.7,216.5 569.3,229.7 571.9,206.3 574.5,205.9 577.0,194.5 579.6,193.6 582.2,195.3 584.8,202.8 587.4,207.2 589.9,199.7 592.5,209.9 595.1,224.0 597.7,227.9 600.2,214.7 602.8,212.5 605.4,218.2 608.0,228.8 610.5,227.0 613.1,225.3 615.7,225.3 618.3,227.0 620.8,230.3 623.4,241.4 626.0,241.4 626.0,254 54,254" /><polyline fill="none" stroke="#b91c1c" stroke-width="2" points="54.0,212.5 56.6,205.5 59.2,206.4 61.7,220.4 64.3,217.3 66.9,223.4 69.5,221.3 72.0,213.4 74.6,214.7 77.2,206.8 79.8,202.0 82.3,191.1 84.9,186.3 87.5,195.9 90.1,192.4 92.6,197.6 95.2,204.2 97.8,210.3 100.4,196.8 103.0,210.8 105.5,216.9 108.1,214.7 110.7,212.1 113.3,211.6 115.8,204.2 118.4,187.1 121.0,169.6 123.6,160.0 126.1,153.9 128.7,150.4 131.3,150.8 133.9,136.8 136.5,136.4 139.0,129.0 141.6,100.1 144.2,115.0 146.8,125.0 149.3,125.5 151.9,121.5 154.5,118.5 157.1,113.2 159.6,131.6 162.2,126.8 164.8,121.1 167.4,111.0 169.9,111.0 172.5,96.2 175.1,87.9 177.7,101.8 180.3,97.0 182.8,81.7 185.4,85.7 188.0,78.7 190.6,74.3 193.1,67.7 195.7,60.3 198.3,66.4 200.9,68.2 203.4,85.7 206.0,87.0 208.6,87.0 211.2,87.0 213.7,83.9 216.3,87.0 218.9,103.6 221.5,97.5 224.1,115.4 226.6,125.0 229.2,142.1 231.8,168.8 234.4,163.1 236.9,140.8 239.5,140.8 242.1,136.8 244.7,139.0 247.2,150.8 249.8,146.0 252.4,150.0 255.0,157.4 257.5,147.3 260.1,155.6 262.7,139.5 265.3,143.0 267.9,140.8 270.4,148.2 273.0,141.2 275.6,128.5 278.2,125.5 280.7,142.5 283.3,138.2 285.9,143.4 288.5,119.3 291.0,108.0 293.6,94.4 296.2,107.5 298.8,100.5 301.4,94.0 303.9,91.4 306.5,79.5 309.1,90.9 311.7,88.3 314.2,93.1 316.8,109.7 319.4,113.7 322.0,127.7 324.5,120.7 327.1,107.1 329.7,108.0 332.3,105.3 334.8,70.4 337.4,61.2 340.0,66.4 342.6,73.0 345.2,74.7 347.7,51.8 350.3,30.6 352.9,67.2 355.5,83.0 358.0,64.6 360.6,87.9 363.2,63.7 365.8,69.8 368.3,87.9 370.9,83.5 373.5,72.9 376.1,80.8 378.6,84.8 381.2,85.2 383.8,82.2 386.4,74.7 389.0,80.0 391.5,81.3 394.1,76.0 396.7,52.7 399.3,53.1 401.8,68.5 404.4,53.5 407.0,63.2 409.6,65.4 412.1,54.9 414.7,54.0 417.3,57.1 419.9,61.9 422.5,76.4 425.0,78.6 427.6,87.9 430.2,113.9 432.8,111.2 435.3,105.5 437.9,97.1 440.5,105.1 443.1,117.0 445.6,117.4 448.2,117.0 450.8,132.8 453.4,116.1 455.9,108.6 458.5,96.3 461.1,108.1 463.7,105.5 466.3,113.0 468.8,119.6 471.4,117.8 474.0,109.9 476.6,114.8 479.1,119.6 481.7,117.4 484.3,130.6 486.9,114.3 489.4,112.6 492.0,117.0 494.6,91.9 497.2,88.8 499.7,113.4 502.3,164.5 504.9,182.1 507.5,179.5 510.1,173.3 512.6,168.0 515.2,163.6 517.8,172.9 520.4,163.6 522.9,170.7 525.5,179.0 528.1,176.4 530.7,172.4 533.2,176.8 535.8,198.4 538.4,202.4 541.0,205.9 543.5,213.8 546.1,204.1 548.7,204.1 551.3,203.3 553.9,193.6 556.4,198.9 559.0,190.9 561.6,186.1 564.2,194.0 566.7,216.5 569.3,229.7 571.9,206.3 574.5,205.9 577.0,194.5 579.6,193.6 582.2,195.3 584.8,202.8 587.4,207.2 589.9,199.7 592.5,209.9 595.1,224.0 597.7,227.9 600.2,214.7 602.8,212.5 605.4,218.2 608.0,228.8 610.5,227.0 613.1,225.3 615.7,225.3 618.3,227.0 620.8,230.3 623.4,241.4 626.0,241.4" /><polyline fill="none" stroke="#d97706" stroke-width="1.6" stroke-dasharray="5 4" points="103.0,206.5 105.5,206.7 108.1,207.1 110.7,207.4 113.3,207.0 115.8,206.3 118.4,204.5 121.0,201.9 123.6,199.3 126.1,196.2 128.7,193.4 131.3,190.8 133.9,188.1 136.5,185.6 139.0,182.3 141.6,177.7 144.2,173.5 146.8,169.6 149.3,165.3 151.9,161.6 154.5,157.0 157.1,151.8 159.6,147.6 162.2,143.4 164.8,138.8 167.4,134.2 169.9,130.4 172.5,126.7 175.1,123.1 177.7,120.5 180.3,117.8 182.8,114.4 185.4,111.8 188.0,108.9 190.6,106.2 193.1,104.6 195.7,101.8 198.3,98.9 200.9,96.0 203.4,94.2 206.0,92.7 208.6,91.4 211.2,89.1 213.7,87.0 216.3,85.3 218.9,84.9 221.5,84.2 224.1,85.2 226.6,87.0 229.2,89.1 231.8,92.6 234.4,96.7 236.9,99.5 239.5,102.6 242.1,105.7 244.7,109.3 247.2,113.8 249.8,117.8 252.4,121.9 255.0,125.4 257.5,128.5 260.1,131.9 262.7,134.5 265.3,137.5 267.9,140.2 270.4,142.4 273.0,144.6 275.6,145.2 278.2,145.3 280.7,145.3 283.3,143.8 285.9,142.8 288.5,141.7 291.0,140.1 293.6,137.9 296.2,136.4 298.8,133.8 301.4,131.2 303.9,128.3 306.5,124.4 309.1,121.6 311.7,118.2 314.2,115.9 316.8,114.2 319.4,112.9 322.0,111.9 324.5,110.8 327.1,109.8 329.7,108.9 332.3,107.0 334.8,103.6 337.4,99.5 340.0,96.9 342.6,95.1 345.2,94.2 347.7,91.4 350.3,87.9 352.9,86.5 355.5,86.1 358.0,85.4 360.6,85.2 363.2,84.0 365.8,82.8 368.3,81.7 370.9,80.2 373.5,77.5 376.1,75.5 378.6,74.4 381.2,73.2 383.8,72.1 386.4,72.3 389.0,73.2 391.5,74.0 394.1,74.1 396.7,73.0 399.3,73.1 401.8,75.0 404.4,74.3 407.0,73.3 409.6,73.4 412.1,71.7 414.7,71.2 417.3,70.6 419.9,69.3 422.5,68.9 425.0,69.2 427.6,69.6 430.2,71.0 432.8,72.3 435.3,73.5 437.9,74.6 440.5,75.9 443.1,77.7 445.6,79.7 448.2,82.9 450.8,86.9 453.4,89.3 455.9,92.1 458.5,93.7 461.1,95.8 463.7,98.4 466.3,101.3 468.8,104.4 471.4,107.2 474.0,108.9 476.6,110.7 479.1,112.3 481.7,112.5 484.3,113.5 486.9,113.9 489.4,114.7 492.0,115.3 494.6,114.0 497.2,112.6 499.7,112.4 502.3,114.0 504.9,117.3 507.5,120.8 510.1,124.7 512.6,127.7 515.2,130.6 517.8,133.6 520.4,135.8 522.9,138.4 525.5,141.9 528.1,145.0 530.7,147.6 533.2,150.6 535.8,154.0 538.4,158.4 541.0,163.0 543.5,167.9 546.1,173.5 548.7,179.3 551.3,183.8 553.9,185.2 556.4,186.0 559.0,186.6 561.6,187.3 564.2,188.6 566.7,191.2 569.3,194.0 571.9,196.2 574.5,197.9 577.0,198.7 579.6,199.6 582.2,200.7 584.8,202.0 587.4,202.5 589.9,202.3 592.5,202.5 595.1,203.0 597.7,204.2 600.2,204.7 602.8,205.2 605.4,206.4 608.0,207.9 610.5,209.7 613.1,211.7 615.7,213.3 618.3,213.8 620.8,213.8 623.4,215.6 626.0,217.3" /><polyline fill="none" stroke="#2563eb" stroke-width="1.6" stroke-dasharray="5 4" points="180.3,167.3 182.8,164.7 185.4,162.3 188.0,159.8 190.6,156.8 193.1,153.8 195.7,150.6 198.3,147.5 200.9,144.6 203.4,142.0 206.0,139.6 208.6,137.3 211.2,135.2 213.7,133.2 216.3,131.0 218.9,129.2 221.5,127.2 224.1,125.4 226.6,123.7 229.2,122.6 231.8,121.8 234.4,120.7 236.9,119.2 239.5,117.8 242.1,116.3 244.7,115.0 247.2,114.3 249.8,113.8 252.4,113.6 255.0,113.7 257.5,113.6 260.1,113.7 262.7,113.8 265.3,113.9 267.9,114.1 270.4,115.1 273.0,115.6 275.6,115.7 278.2,115.7 280.7,116.1 283.3,116.5 285.9,117.1 288.5,116.9 291.0,116.5 293.6,116.0 296.2,115.9 298.8,115.7 301.4,115.6 303.9,115.7 306.5,115.3 309.1,115.1 311.7,115.3 314.2,115.4 316.8,116.0 319.4,116.8 322.0,118.0 324.5,119.2 327.1,120.0 329.7,120.8 332.3,121.2 334.8,120.9 337.4,120.4 340.0,120.0 342.6,119.8 345.2,119.5 347.7,118.5 350.3,117.1 352.9,116.2 355.5,115.3 358.0,113.8 360.6,112.2 363.2,110.2 365.8,108.8 368.3,107.7 370.9,106.6 373.5,105.3 376.1,103.9 378.6,102.7 381.2,101.4 383.8,99.9 386.4,98.4 389.0,96.9 391.5,95.8 394.1,94.4 396.7,92.7 399.3,90.8 401.8,89.3 404.4,87.8 407.0,86.6 409.6,85.0 412.1,83.3 414.7,81.6 417.3,80.3 419.9,79.4 422.5,79.0 425.0,78.5 427.6,78.2 430.2,78.6 432.8,79.0 435.3,79.5 437.9,79.6 440.5,80.0 443.1,80.5 445.6,80.6 448.2,80.7 450.8,80.8 453.4,80.7 455.9,80.7 458.5,80.5 461.1,80.5 463.7,81.2 466.3,82.3 468.8,83.3 471.4,84.2 474.0,84.9 476.6,86.2 479.1,88.0 481.7,89.0 484.3,89.9 486.9,90.9 489.4,91.4 492.0,92.5 494.6,92.9 497.2,92.9 499.7,93.5 502.3,95.4 504.9,97.4 507.5,99.3 510.1,101.1 512.6,102.8 515.2,104.6 517.8,106.4 520.4,108.1 522.9,110.0 525.5,112.5 528.1,114.9 530.7,117.0 533.2,119.5 535.8,122.2 538.4,124.9 541.0,128.0 543.5,131.2 546.1,134.1 548.7,136.9 551.3,139.5 553.9,141.8 556.4,144.0 559.0,145.5 561.6,147.0 564.2,148.8 566.7,151.2 569.3,153.7 571.9,155.5 574.5,157.2 577.0,158.8 579.6,160.0 582.2,161.6 584.8,163.5 587.4,165.7 589.9,167.5 592.5,169.6 595.1,171.8 597.7,174.0 600.2,175.9 602.8,178.0 605.4,180.1 608.0,182.2 610.5,184.4 613.1,186.3 615.7,188.5 618.3,190.8 620.8,193.1 623.4,196.1 626.0,199.1" /><circle cx="623.4" cy="241.4" r="3" fill="#b91c1c" /><text x="570" y="250" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--muted)">Lowest 484.75 TRY · 14.10</text><circle cx="350.3" cy="30.6" r="3" fill="#b91c1c" /><text x="350.3" y="22" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--muted)">Highest 724.00 TRY · 14.05</text><circle cx="626.0" cy="241.4" r="3.5" fill="#b91c1c" /><text x="619.0" y="233.4" text-anchor="end" font-size="11.5" font-weight="700" fill="#b91c1c">484.75 TL</text><line id="grafik-imlec" x1="0" y1="18" x2="0" y2="254" stroke="var(--muted)" stroke-width="1" visibility="hidden" /><circle id="grafik-imlecnokta" r="4" fill="var(--ink)" visibility="hidden" /></svg>
+<div class="grafik-ipucu" id="grafik-ipucu" aria-hidden="true"></div>
+</div>
+<div class="grafik-lejant"><span><i class="lj-duz" style="color:#d97706"></i>SMA20 (512.01 TRY)</span><span><i class="" style="color:#2563eb"></i>SMA50 (532.67 TRY)</span></div>
+<script type="application/json" id="fiyat-serisi">{"kod":"MGROS","t":["2025-11-28","2025-12-01","2025-12-02","2025-12-03","2025-12-04","2025-12-05","2025-12-08","2025-12-09","2025-12-10","2025-12-11","2025-12-12","2025-12-15","2025-12-16","2025-12-17","2025-12-18","2025-12-19","2025-12-22","2025-12-23","2025-12-24","2025-12-25","2025-12-26","2025-12-29","2025-12-30","2025-12-31","2026-01-02","2026-01-05","2026-01-06","2026-01-07","2026-01-08","2026-01-09","2026-01-12","2026-01-13","2026-01-14","2026-01-15","2026-01-16","2026-01-19","2026-01-20","2026-01-21","2026-01-22","2026-01-23","2026-01-26","2026-01-27","2026-01-28","2026-01-29","2026-01-30","2026-02-02","2026-02-03","2026-02-04","2026-02-05","2026-02-06","2026-02-09","2026-02-10","2026-02-11","2026-02-12","2026-02-13","2026-02-16","2026-02-17","2026-02-18","2026-02-19","2026-02-20","2026-02-23","2026-02-24","2026-02-25","2026-02-26","2026-02-27","2026-03-02","2026-03-03","2026-03-04","2026-03-05","2026-03-06","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13","2026-03-16","2026-03-17","2026-03-18","2026-03-19","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-20","2026-04-21","2026-04-22","2026-04-24","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-20","2026-05-21","2026-05-22","2026-05-25","2026-05-26","2026-06-01","2026-06-02","2026-06-03","2026-06-04","2026-06-05","2026-06-08","2026-06-09","2026-06-10","2026-06-11","2026-06-12","2026-06-15","2026-06-16","2026-06-17","2026-06-18","2026-06-19","2026-06-22","2026-06-23","2026-06-24","2026-06-25","2026-06-26","2026-06-29","2026-06-30","2026-07-01","2026-07-02","2026-07-03","2026-07-06","2026-07-07","2026-07-08","2026-07-09","2026-07-10","2026-07-13","2026-07-14","2026-07-16","2026-07-17","2026-07-20","2026-07-21","2026-07-22","2026-07-23","2026-07-24","2026-07-27","2026-07-28","2026-07-29","2026-07-30","2026-07-31","2026-08-03","2026-08-04","2026-08-05","2026-08-06","2026-08-07","2026-08-10","2026-08-11","2026-08-12","2026-08-13","2026-08-14","2026-08-17","2026-08-18","2026-08-19","2026-08-20","2026-08-21","2026-08-24","2026-08-25","2026-08-26","2026-08-27","2026-08-28","2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-06","2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-14","2026-09-15","2026-09-16","2026-09-17","2026-09-18","2026-09-21","2026-09-22","2026-09-23","2026-09-24","2026-09-25","2026-09-28","2026-09-29","2026-09-30","2026-10-01","2026-10-02","2026-10-05","2026-10-06","2026-10-07","2026-10-08","2026-10-09","2026-10-11","2026-10-12","2026-10-13","2026-10-14","2026-10-15"],"f":[517.5011,525.4473,524.4541,508.5615,512.038,505.085,507.5682,516.5078,515.0179,523.9575,529.4205,541.8365,547.2996,536.3735,540.3466,534.3869,526.9373,519.9843,535.3802,519.4877,512.5347,515.0179,517.9977,518.4944,526.9373,546.3063,566.172,577.0981,584.0511,588.0243,587.5276,603.4202,603.9168,612.3597,645.1381,628.2523,616.8295,616.3329,620.8026,624.2791,630.2388,609.3799,614.843,621.2993,632.722,632.722,649.6079,659.0441,643.1516,648.6146,665.9971,661.5273,669.4736,674.44,681.8896,690.3325,683.3795,681.393,661.5273,660.0374,660.0374,660.0374,663.5139,660.0374,641.165,648.118,627.7556,616.8295,597.4604,567.1653,573.6216,598.9504,598.9504,603.4202,600.937,587.5276,592.9907,588.5209,580.078,591.5007,582.0646,600.4403,596.4672,598.9504,590.5074,598.4537,612.8564,616.3329,596.9638,601.9302,595.9705,623.2858,636.1985,651.5945,636.6952,644.6415,652.0911,655.0709,668.4803,655.5676,658.5474,653.0844,634.212,629.7422,613.8497,621.7959,637.1918,636.1985,639.1784,678.9098,689.3392,683.3795,675.9299,673.9434,700.0,724.0,682.5,664.5,685.5,659.0,686.5,679.5,659.0,664.0,676.0,667.0,662.5,662.0,665.5,674.0,668.0,666.5,672.5,699.0,698.5,681.0,698.0,687.0,684.5,696.5,697.5,694.0,688.5,672.0,669.5,659.0,629.5,632.5,639.0,648.5,639.5,626.0,625.5,626.0,608.0,627.0,635.5,649.5,636.0,639.0,630.5,623.0,625.0,634.0,628.5,623.0,625.5,610.5,629.0,631.0,626.0,654.5,658.0,630.0,572.0,552.0,555.0,562.0,568.0,573.0,562.5,573.0,565.0,555.5,558.5,563.0,558.0,533.5,529.0,525.0,516.0,527.0,527.0,528.0,539.0,533.0,542.0,547.5,538.5,513.0,498.0,524.5,525.0,538.0,539.0,537.0,528.5,523.5,532.0,520.5,504.5,500.0,515.0,517.5,511.0,499.0,501.0,503.0,503.0,501.0,497.25,484.75,484.75]}</script>
+<script src="grafik.js?v=1" defer></script>
+<div style="color:var(--muted); font-size:12px">MGROS closing prices (TRY) from 2025-11-28 to today. References: period-start close (dotted), SMA20/SMA50 averages, lowest/highest/last close.</div>
+</div>
+
+<div class="card" style="margin:0 0 18px">
+<h3 style="margin:0 0 6px">🏢 Company Profile</h3>
+<div style="font-weight:700; margin-bottom:4px">Migros Trade</div>
+<div class="meta" style="margin:0 0 8px"><span>Establishment: <strong>19.03,2008 (roots back to 1954 Migros)</strong></span><span>Major shareholder: <strong>Anadolu Group &amp; Fiba</strong></span><span>Paid-up capital: <strong>181,054,000 TL</strong> (2026/6)</span></div>
+<p style="margin:0; font-size:14px">Trade of all kinds of food and consumer goods and operation of shopping centers.</p>
+<div style="margin:10px 0 0; padding-top:10px; border-top:1px solid var(--line)"><div style="color:var(--muted); font-size:12px; margin-bottom:4px">Fundamental analysis summary (manually fed — with provider notes)</div><ul style="margin:0; padding-left:18px; font-size:13px"><li style='margin:5px 0'>Last quarter (2026/6): sales 241.298,039.000 TRY, net profit margin 0.4% (thin).</li><li style='margin:5px 0'>Sales growth: YoY +4.5% (increase).</li><li style='margin:5px 0'>Net profit growth: YoY -44.4% (contraction).</li><li style='margin:5px 0'>Equity growth: YoY +5.3% (increase).</li><li style='margin:5px 0'>Asset turnover 4.5 (TTM sales / total assets) — efficient asset use.</li><li style='margin:5px 0'>Financial debt / equity 41.6% (reasonable leverage); total debt (short+long) / equity 166.2%.</li><li style='margin:5px 0'>Net financial debt 6.477,262.000 TRY (TradingView balance sheet section).</li><li style='margin:5px 0'>Current ratio (current assets / short-term debt) 0.8 — short-term liability pressure.</li><li style='margin:5px 0'>Current ratio (TradingView balance sheet section) 0.8 — short-term liability pressure.</li><li style='margin:5px 0'>Multiples: P/E 15.4 · P/B 1.0 · EV/EBITDA 12.2 · dividend yield 1.6%.</li><li style='margin:5px 0'>Source: İş Yatırım quarterly financial statements + TradingView TTM (06.10,2026); comments generated with fixed threshold rules, not investment advice.</li></ul></div><div style="margin:8px 0 0"><div style="color:var(--muted); font-size:12px; margin-bottom:5px">Brands &amp; affiliates</div><span class="badge" style="margin:0 6px 6px 0; font-size:11.5px">Tansas</span><span class="badge" style="margin:0 6px 6px 0; font-size:11.5px">5M</span></div><div style="margin:8px 0 0; font-size:13.5px">🌐 <a href="https://migros.com.tr" target="_blank" rel="noopener">migros.com.tr</a></div>
+</div>
+
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 4px">📋 Announced Financial Statements<span style="font-weight:400; color:var(--muted); font-size:12.5px">· manually added financial table summary · last pull: 2026-09-23</span></h3>
+<div class="tbl-wrap"><table style="font-size:12.5px"><tr><th>Period</th><th>Sales Revenues (mlr TL)</th><th>Net Profit (mlr TL)</th><th>Profit Margin</th><th>Total Assets (mlr TL)</th><th>Equity (mlr TL)</th><th>Financial Debt (mlr TL)</th><th>Financial Debt / Equity</th></tr><tr><td><strong>2026/6</strong></td><td>241.3 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 4.5% YoY)</span></td><td>1.1 <span style="color:var(--muted); font-weight:400; font-size:11px">(- 44.4% YoY)</span></td><td>0.4%</td><td>250.1</td><td>93.9</td><td>39.0</td><td>41.6%</td></tr><tr><td><strong>2026/3</strong></td><td>109.2 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 6.4% YoY)</span></td><td>1.6 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 19.3% YoY)</span></td><td>1.5%</td><td>229.7</td><td>89.2</td><td>36.5</td><td>41.0%</td></tr><tr><td><strong>2025/12</strong></td><td>486.1 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 26.4% YoY)</span></td><td>8.0 <span style="color:var(--muted); font-weight:400; font-size:11px">(- 7.0% YoY)</span></td><td>1.6%</td><td>246.8</td><td>94.1</td><td>37.4</td><td>39.8%</td></tr><tr><td><strong>2025/9</strong></td><td>294.8 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 7.2% YoY)</span></td><td>5.6 <span style="color:var(--muted); font-weight:400; font-size:11px">(- 23.0% YoY)</span></td><td>1.9%</td><td>195.4</td><td>76.4</td><td>30.9</td><td>40.5%</td></tr><tr><td><strong>2025/6</strong></td><td>231.0 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 41.3% YoY)</span></td><td>1.9 <span style="color:var(--muted); font-weight:400; font-size:11px">(- 27.6% YoY)</span></td><td>0.8%</td><td>178.9</td><td>67.4</td><td>27.6</td><td>40.9%</td></tr><tr><td><strong>2025/3</strong></td><td>102.6 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 41.9% YoY)</span></td><td>1.4 <span style="color:var(--muted); font-weight:400; font-size:11px">(- 22.8% YoY)</span></td><td>1.3%</td><td>162.4</td><td>64.4</td><td>25.4</td><td>39.3%</td></tr><tr><td><strong>2024/12</strong></td><td>384.5</td><td>8.6</td><td>2.2%</td><td>196.4</td><td>75.5</td><td>27.6</td><td>36.6%</td></tr><tr><td><strong>2024/9</strong></td><td>275.0</td><td>7.3</td><td>2.7%</td><td>135.2</td><td>54.4</td><td>18.5</td><td>34.0%</td></tr><tr><td><strong>2024/6</strong></td><td>163.4</td><td>2.7</td><td>1.6%</td><td>118.5</td><td>45.8</td><td>14.5</td><td>31.7%</td></tr><tr><td><strong>2024/3</strong></td><td>72.3</td><td>1.7</td><td>2.4%</td><td>105.5</td><td>42.8</td><td>12.6</td><td>29.5%</td></tr></table></div>
+<p style="margin:8px 0 0; color:var(--muted); font-size:12px">Income statement items (sales revenues and net profit) are cumulative from the beginning of the year; balance sheet items are period-end balances. Source: İş Yatırım financial statements (based on KAP announcements).</p>
+</div>
+<div class="card" style="margin:0 0 18px">
+<h3 style="margin:0 0 8px">🔎 Fundamental Analysis Summary <span style="font-weight:400;color:var(--muted);font-size:12.5px">· automatic</span></h3>
+<ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:5px 0'>Revenue (TTM) 458.43 billion TRY, EBITDA 8.17 billion TRY — EBITDA margin 1.8% (low EBITDA margin).</li><li style='margin:5px 0'>Net profit margin 1.3% (thin net profit margin).</li><li style='margin:5px 0'>EV/EBITDA 11.8 — reasonable EV/EBITDA.</li><li style='margin:5px 0'>Net financial debt 6.48 billion TRY (7% of market value).</li><li style='margin:5px 0'>Current ratio 0.80 — under short-term liability pressure.</li><li style='margin:5px 0'>Dividend yield 1.7%.</li></ul>
+<p style="margin:8px 0 0; color:var(--muted); font-size:11.5px">Rule-based summary: Generated from Is Investment financial statements (TTM) and TradingView fundamental data with fixed thresholds; no LLM, no risk of fabrication. Not investment advice.</p>
+</div>
+<div class="grid-iki">
+<div class="card"><h3 style="margin:0 0 8px">Valuation and Profitability <span style="font-weight:400;color:var(--muted);font-size:12.5px">· single source, last 12 months</span></h3><p style="margin:0 0 8px;font-size:13px">Last 5 trading days return: <strong class="neg">-3.6%</strong></p><table style="font-size:13.5px"><tr><td>Market value</td><td><strong>87.8 billion TRY</strong></td></tr><tr><td>Equity (2026/6)</td><td><strong>93.9 mlr TL</strong></td></tr><tr><td>Net profit (last 12 months)</td><td><strong>7.1 mlr TL</strong></td></tr><tr><td>P/E (last 12 months)</td><td><strong>12.3</strong></td></tr><tr><td>P/B</td><td><strong>0.93</strong></td></tr><tr><td>ROE (last 12 months)</td><td><strong>7.6%</strong></td></tr><tr><td>Financial debt / equity</td><td><strong>42%</strong></td></tr></table><p style="margin:8px 0 0;color:var(--muted);font-size:12px">Source: İş Yatırım financial statements (KAP disclosures) — same source as the balance sheet table.</p><div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)"><div style="font-size:12.5px;color:var(--muted);margin-bottom:6px">EBITDA · TradingView consolidated (TTM)</div><table style="font-size:13.5px"><tr><td>EBITDA (last 12 months)</td><td><strong>8.2 mlr TL</strong></td></tr><tr><td>EBITDA margin</td><td><strong>1.8%</strong></td></tr><tr><td>EV / EBITDA</td><td><strong>11.8</strong></td></tr></table><p style="margin:6px 0 0;color:var(--muted);font-size:11.5px">EBITDA margin is profitability before interest/depreciation/taxes; it should not be confused with net profit margin.</p></div></div>
+<div class="card"><h3 style="margin:0 0 8px">Macro Sensitivity <span style="font-weight:400;color:var(--muted);font-size:12.5px">· Retail sector</span></h3><p style="margin:0 0 8px;font-size:13.5px">Regime: <strong>high inflation + tight monetary policy (7.27 points real interest) · moderate domestic demand</strong></p><table style="font-size:13.5px"><tr><td>Trend</td><td><strong class="pos">positive</strong></td></tr><tr><td>Score</td><td><strong>+1</strong></td></tr><tr><td>Channels</td><td>interest increase, domestic_demand increase</td></tr></table><p style="margin:8px 0 0;color:var(--muted);font-size:12px">Sector sensitivity matrix x current macro regime; detail <a href="../makro-analiz.html">Macroeconomic Evaluation</a>.</p></div>
+</div>
+<div class="grid-iki">
+<div class="card"><h3 style="margin:0 0 8px">Technical Status</h3>
+<table style="font-size:13.5px"><tr><td>General</td><td><strong>STRONG SELL</strong></td></tr><tr><td>Short term (EMA 5-8-13-21)</td><td><strong>SELL</strong></td></tr><tr><td>Medium term (EMA 34-55)</td><td><strong>SELL</strong></td></tr><tr><td>Long term (EMA 89-144)</td><td><strong>SELL</strong></td></tr><tr><td>Wave Trend</td><td><strong>SELL</strong></td></tr><tr><td>Channel position</td><td><strong>52%</strong></td></tr><tr><td>Trend strength (r)</td><td><strong>-0.90</strong></td></tr><tr><td>Score</td><td><strong>0</strong></td></tr></table>
+<p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA sequence + Wave Trend + 60-day regression channel. Details: <a href="../teknik-analiz.html">Technical Scan</a></p></div>
+<div class="card"><h3 style="margin:0 0 8px">Last 7 Days News</h3>
+<ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMi4gFBVV95cUxPT3JJN0hqcmhUOUhiTXI3Y1MyYnI4ajJRc2Z5SFduUnFNVVpQQV8yalpZNE1VUE5YbDA2WTlIbGRfUDJwYmhER3Zhc3R6NnczZklmbVNPTGxtODkzMThyZHVvVkRVSlVVTllKTl9QUWZ3TjJyT3BZNEtwcEZlTndGM2w2c0VyWUN6V0g2d1JNOGtjTXpyTmZSTi15dk9VdXg0ZzJNYVRVOW9kaGZfcmRicjZ0TXQzSnRvaFd0Q0ptb0ptZVdTUGtUUm5FZzFpTG5IVVpweWVjSWhNcjAwSHdwajdR?oc=5' target='_blank' rel='noopener'>What are the deals in Migros buy 1 get 1 free discounts? Is the Migros buy 1 get 1 free campaign still ongoing or has it ended?</a> <span style='color:var(--muted); font-size:12px'>— Habertürk · 15.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMi5wFBVV95cUxPM0VSMWo5ZG9ER2Q5SjlmdURqdWxlRG9FaEV6WUhXRFd1emxTc3FhX3lZaFoxSDI4V0VqaFEzUDNJS0V3UkJrSnRqUkM2cVRDOHNNLTFKa3dVMkNyTWVjSkJCRU5rQVd0UV9yTWt3Q1RPVHJwMGdieFI0Ml9hLUUtVm1mSy16Y2g0RXEtdld0M1RpdDVMYVNSZURFOGpKWW4weWFMWDA1MG5tR3JhS3FlQlY2a3lfY09UWWJvSEh0UnQ2S0E5Sm9hd1RtSng4MURZbGhHWEJ2dVdKTDNPeWhxbG05TmUwdm8?oc=5' target='_blank' rel='noopener'>MİGROS BUY 1 GET 1 FREE CAMPAIGN CALENDAR 10 - 18 OCTOBER 2026 🛒 || When is the Migros buy 1 get 1 free campaign this year, and which products does it apply to? Detergent and kitchen products...</a> <span style='color:var(--muted); font-size:12px'>— Hürriyet · 14.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiugFBVV95cUxOSi1MdDdma1l1V2kzTlJfUGpkMDg3bkNMYTN2Y0pwdXp3X1VEU2ZFaTNYYUN5a2ZoSVB6MWZsQWRoZl9ndEhoMXlIUXVNUFpVN3J3c0dDQXB3OUNOTUktSXhsWV9XamdQOTZEQzNzME5fbC01LUJtSXBQSm1IVkFTMVNRZ1hqc2pFMjhFMC1fLXZUUzc4RXF2RHctRldtSGYtOVJtT1g1QWlmNEtsUDRwSU9aNWZDVWoxX3c?oc=5' target='_blank' rel='noopener'>Migros Buy 1 Get 1 Free Campaign: Which Products Does It Apply To, How Long Will It Last?</a> <span style='color:var(--muted); font-size:12px'>— Onedio · 12.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMixAFBVV95cUxNX1RyZVYyOFFkR0x4VDZHTzF1ZTRMNFp1azdsMXV6UkFObHRqV3B1V25Nbm1IcWZWbjc0Q05OemFGUVM2MVBLSnFRdmpiYkUwM0FXRU4xYUh3Q3U3a3c2YlprNG5DNG41eGwtUDlZOUZHVDFiblllRzdCaTRXbWx6dU5qZUxGLXp1TnRvMHY1RG1zOHZZT2ZkY3ZXWXpJVF95NmEyYVBUcEJ5Wi1QSXJoeTd1YlFRVWZsSFNVaGR4R1FDOXBy?oc=5' target='_blank' rel='noopener'>When is the Migros buy 1 get 1 free campaign? Migros discounted products October 10-18, 2026</a> <span style='color:var(--muted); font-size:12px'>— GZT · 10.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMinwFBVV95cUxQZ0pWYVJkalRNYnFIbWpDLW9oSm50cEQzNEdEbmxWU2lGYXFGc1g0TUxlb0doMUx3dUhzQ1VidFhQSXU4b2xJLWx1Vmp5cGNHTTNmRlV4RkVnMmoyNmt0MThQZ0cwbnh3WGlMWG83MWxfOENlUGR1RnEtaEc2Y0d3Ukx2MThBWDhRRzgtVVIzR2ZWcVBpa1RRek5CMVJrdmM?oc=5' target='_blank' rel='noopener'>Migros One is preparing for a new era in retail with artificial intelligence</a> <span style='color:var(--muted); font-size:12px'>— Webrazzi · Oct 08</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiowFBVV95cUxPWldfR0JLaEw4UVBCZ0Mycm9teGhqQ3NoaGFQYVB3VXRza0NsTXliUDYtTnY4NFJiOXV6SjJLYXNIa2hfQm9JTUVXaHZUNjNDTGYyQzgwcGpHRVphdUN6QU5fak96QlFJN1BEU1oyT19uQzVuaFJNZzNVeGZZR0txWWU3UHJNQmJYY1dqNE1GWVBSWmlXZmE0SU9YTlNNUHN1ZU53?oc=5' target='_blank' rel='noopener'>Migros launched its "Beef Breed Breeding Animal Farm"</a> <span style='color:var(--muted); font-size:12px'>— Anadolu Agency · 08.10</span></li></ul>
+<p style="margin:8px 0 0; font-size:12.5px"><a href="../sirket-haberleri.html#H-MGROS">All company news →</a></p></div>
+</div>
+
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 2px">📝 Evaluations<span style="font-weight:400; color:var(--muted); font-size:12.5px">· prepared manually · last update: 23.09,2026</span></h3>
+<h4 style="margin:12px 0 0; font-size:14.5px">📈 Technical Analysis</h4><p style="margin:6px 0 0; font-size:14px">Migros is trading at 535.50 TL with a 0.65% decline on September 23, 2026. Medium and long-term EMA sequence is in SELL position; Wave Trend is BUY, short-term WAIT — chart is at 1/4 SELL level. Channel position is at 76%, with trend strength (r) -0.90, continuing to seek a reaction within a strong downtrend. The stock is priced 10% above the 60-day low of 486.00 TL and 21% below the 60-day high of 678.00 TL; 60-day return is -20.0%, reflecting weak performance in the sector.</p><h4 style="margin:12px 0 0; font-size:14.5px">🌍 Macroeconomic Evaluation</h4><p style="margin:6px 0 0; font-size:14px">The macro picture for organized food retail is sharp at both ends: inflation falling to 31.5% is trimming nominal revenue growth, but rising financing costs, the main pressure on Migros' net profit, can rapidly erode with interest rate cuts. As the Central Bank of the Republic of Turkey's easing path deepens, declining costs for credit cards and consumer finance also support basket size. Real wage increases and employment outlook are supporting domestic demand; discount channels are challenging pricing discipline through competition. USD/TL's level at 48.83 is balancing import input costs. In an environment where gold gram is at 6.786 TL, interest in defensive stocks with predictable cash flows continues. Main risks: delay in interest rate cuts, rigidity in rental costs, and margin pressure from competition.</p><h4 style="margin:12px 0 0; font-size:14.5px">🧾 Balance Sheet Evaluation</h4><p style="margin:6px 0 0; font-size:14px">Migros increased sales by 4.5% in the first half of 2026; however, in the second quarter, it announced a net loss of 0.5 billion TL against sales of 132.1 billion TL, and first-half profit fell by 44.4%. The main drivers of the quarterly loss were increased net financing costs in a high-interest environment and margin pressure from rent/wage inflation. The company, which generated 496.4 billion TL in revenue and 7.1 billion TL in net profit over the last four quarters, has a market cap of ~96 billion TL; with P/E ~13.4x, P/B ~1.0x, and EV/EBITDA ~6.8x, it's in a reasonable range based on valuation multiples. EV/EBITDA being in single digits shows that the net profit pressure is essentially from financing costs, and operational profitability has been maintained. Financial debt/equity is 41.6%, net debt ~6.5 billion TL is only ~0.4 times EBITDA; the balance sheet is solid and carries high sensitivity to interest rate cuts directly impacting profitability. ROE is 7.6%, low; with potential for recovery from interest rate easing. 2.8% dividend yield is reasonable. In summary, Migros is one of the most leveraged defensive stories in the interest rate cut cycle; while the operational side is solid, net profit is on a recovery path entirely dependent on the normalization of financing costs.</p>
+<p style="margin:10px 0 0; color:var(--muted); font-size:12px">This section is manually updated; for informational purposes only, not investment advice.</p>
+</div>
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 8px">Content related to MGROS</h3>
+<p style="margin:0"><a href="https://borsa-raporlari-web.pages.dev/ara?q=MGROS" target="_blank" rel="noopener">🔍 All report sections containing "MGROS" in semantic search →</a></p>
+<p style="margin:6px 0 0"><a href="../index.html">Daily report archive →</a></p>
+</div>
+</main>
+
+<nav class="altbar" aria-label="Quick menu">
+<a href="../raporlar.html"><span class="i" aria-hidden="true">📊</span>Reports</a>
+<a href="../teknik-analiz.html"><span class="i" aria-hidden="true">📈</span>Technical</a>
+<a href="../hisse/index.html" class="active"><span class="i" aria-hidden="true">🏦</span>Stocks</a>
+<a href="../portfolio.html"><span class="i" aria-hidden="true">💼</span>Portfolio</a>
+<a href="../haberler.html"><span class="i" aria-hidden="true">📰</span>News</a>
+<a href="../takvim.html"><span class="i" aria-hidden="true">📅</span>Calendar</a>
+</nav>
+
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+
+<footer class="footer">The information, comments and recommendations contained herein are for informational purposes only; they do not constitute investment advisory or investment advice. The accuracy of the data cannot be guaranteed and the user is responsible for any decisions that may arise from the content.<br>Data sources: İş Yatırım, RSS news feeds • Analysis: artificial intelligence (multi-agent system)<br><a href="../gizlilik.html" style="color:inherit">Privacy &amp; Data Protection</a></footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+</body></html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRMET — Stock Analysis</title>
+<meta name="description" content="TRMET (Metal & Mining) latest price, technical signals, assessments from the last 7 days of news and report archive.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/en/hisse/TRMET">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/hisse/TRMET">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/hisse/TRMET">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/hisse/TRMET">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/hisse/TRMET">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/hisse/TRMET">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TRMET">
+<link rel="icon" href="..//favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="..//favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Daily Reports">
+<meta property="og:title" content="TRMET — Stock Analysis">
+<meta property="og:description" content="TRMET (Metal & Mining) latest price, technical signals, assessments from the last 7 days of news and report archive.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/en/hisse/TRMET">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Daily Reports cover image">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TRMET — Stock Analysis">
+<meta name="twitter:description" content="TRMET (Metal & Mining) latest price, technical signals, assessments from the last 7 days of news and report archive.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<meta name="yandex-verification" content="2c8df12d0b97a734">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "TRMET — Stock Analysis", "description": "TRMET (Metal & Mining) latest price, technical signals, assessments from the last 7 days of news and report archive.", "url": "https://borsa-raporlari.pages.dev/en/hisse/TRMET", "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}}</script>
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="../style.css">
+
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="../index.html">BIST 30 Daily Reports</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Light/dark theme" aria-label="Change theme">🌙</button></div>
+<nav><a href="../index.html">Home Page</a><a href="../raporlar.html">Reports</a><a href="../hisse/index.html" class="active">Stocks</a><a href="../derin-analiz.html">Deep Analysis</a><a href="../makro-analiz.html">Macro Analysis</a><a href="../teknik-analiz.html">Technical Scan</a><a href="../sinyal-karnesi.html">Signal Scorecard</a><a href="../borsapy-analiz.html">Borsapy Signals</a><a href="../haberler.html">News</a><a href="../sirket-haberleri.html">Company News</a><a href="../portfolio.html">Demo Portfolio</a><a href="../haftasonu.html">Weekend</a><a href="../haftasonu-egitimi.html">Market School</a><a href="../takvim.html">📅 Calendar</a><a href="../sozluk.html">Glossary</a><a href="../terimler.html">Terms</a><a href="../muhasebe-terimleri.html">Accounting Terms</a><a href="../robot.html">Trading Robot</a></nav>
+</div></header>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Loading prices…</span></div>
+</div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Prices could not be loaded temporarily; they will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
+
+<div class="ticker-bant" id="ticker-bant2" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Loading market data...</span></div>
+</div>
+<script>
+(function() {
+  var kutu = document.getElementById('ticker-bant2');
+  if (!kutu) return;
+  var kok = kutu.dataset.kok || '';
+  var iz = document.getElementById('ticker-iz2');
+
+  function bicim(g) {
+    var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
+    var rozet = (typeof g.d === 'number')
+      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+        Number(g.d).toFixed(2) + '%</span>'
+      : '';
+    var birim = g.b || g.birim || '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (birim ? ' ' + birim : '') + rozet + '</span>';
+  }
+  function ciz(veri) {
+    var ogeler = (veri.gostergeler || []).map(bicim).join('');
+    if (!ogeler) throw new Error('bos');
+    var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
+               (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Market data could not be loaded temporarily; it will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/piyasa?t=' + Date.now());
+  setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Loading...</span>
+            <span id="istanbul-weather">🌤️ Istanbul Weather...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Select page language">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/hisse/TRMET" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/hisse/TRMET" hreflang="en" lang="en" data-dil="en" class="aktif" aria-current="true">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/hisse/TRMET" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/hisse/TRMET" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/hisse/TRMET" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+</nav>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
+
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Search stock, topic or date..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '../';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\?\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\.|mi|mı|icin)\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Search index could not be loaded.</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+
+
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Play / Pause">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Volume level" title="Sound">
+  <span class="radyo-linkler"><a href="../radyo/index.html">📻 All broadcasts &amp; Podcast page</a> <span class="ayrac">•</span> <a href="../radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">For listening purposes only • Fictional AI servers • For informational purposes, not investment advice.</span>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='../';
+  if(!btn||!ses) return;
+  if(ayar){ ses.volume=(parseInt(ayar.value,10)||80)/100; }
+  var hazir=false;
+  function hazirla(geri){
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){return r.json();}).then(function(d){
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){ ses.src=kok+l[0].dosya; }
+      hazir=true; geri();
+    }).catch(function(){ hazir=true; geri(); });
+  }
+  btn.addEventListener('click',function(){
+    if(ses.paused){ hazirla(function(){ var p=ses.play(); if(p&&p.catch){p.catch(function(){});} }); }
+    else { ses.pause(); }
+  });
+  ses.addEventListener('play',function(){ btn.textContent='❚❚'; btn.setAttribute('aria-label','Duraklat'); });
+  ses.addEventListener('pause',function(){ btn.textContent='▶'; btn.setAttribute('aria-label','Oynat'); });
+  if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
+})();
+</script>
+
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>TRMET <span style="font-size:16px; color:var(--muted)">Metal &amp; Mining</span></h1>
+<div class="meta"><span class="badge">SELL</span>
+<span><strong>129.30 TL</strong></span>
+<span class="neg">- 4.29% (daily)</span>
+<span class='pos' style='font-weight:700'>+ 27.5% (since 2025-12-10)</span></div>
+</div>
+<div class="card" style="margin-bottom:16px">
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
+<strong style="font-size:14px">📊 TRMET price chart</strong>
+<span style="color:var(--muted); font-size:12px"><span id="grafik-gun">last 213 days</span> • closing prices • period: <span id="grafik-donem" class="pos" style="font-weight:700">+27.51%</span></span>
+</div>
+<div class="grafik-aralik" id="grafik-aralik"></div>
+<div class="grafik-kutu" id="grafik-kutu">
+<svg viewBox="0 0 640 280" class="chart" id="grafik-svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Chart of 213-day closing price between 2025-12-10 and 2026-10-14" style="width:100%; height:auto; display:block"><defs><linearGradient id="grafik-glg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#047857" stop-opacity=".14"/><stop offset="1" stop-color="#047857" stop-opacity="0"/></lineargradient></defs><line x1="54" y1="238.0" x2="626" y2="238.0" stroke="var(--line)" stroke-width="1" /><text x="47" y="241.5" text-anchor="end" font-size="10.5" fill="var(--muted)">100.00</text><line x1="54" y1="177.8" x2="626" y2="177.8" stroke="var(--line)" stroke-width="1" /><text x="47" y="181.3" text-anchor="end" font-size="10.5" fill="var(--muted)">120.00</text><line x1="54" y1="117.5" x2="626" y2="117.5" stroke="var(--line)" stroke-width="1" /><text x="47" y="121.0" text-anchor="end" font-size="10.5" fill="var(--muted)">140.00</text><line x1="54" y1="57.2" x2="626" y2="57.2" stroke="var(--line)" stroke-width="1" /><text x="47" y="60.7" text-anchor="end" font-size="10.5" fill="var(--muted)">160.00</text><text x="70" y="272" text-anchor="middle" font-size="10.5" fill="var(--muted)">10.12</text><text x="197.0" y="272" text-anchor="middle" font-size="10.5" fill="var(--muted)">24.02</text><text x="340.0" y="272" text-anchor="middle" font-size="10.5" fill="var(--muted)">13.05</text><text x="483.0" y="272" text-anchor="middle" font-size="10.5" fill="var(--muted)">03.08</text><text x="610" y="272" text-anchor="middle" font-size="10.5" fill="var(--muted)">14.10</text><line x1="54" y1="233.8" x2="626" y2="233.8" stroke="var(--muted)" stroke-width="1" stroke-dasharray="2 4" /><polygon fill="url(#grafik-glg)" stroke="none" points="54.0,233.8 56.7,226.6 59.4,241.4 62.1,238.0 64.8,239.5 67.5,234.4 70.2,234.7 72.9,226.9 75.6,222.1 78.3,210.3 81.0,213.0 83.7,214.8 86.4,215.1 89.1,227.2 91.8,226.3 94.5,224.8 97.2,213.9 99.9,208.5 102.6,195.8 105.3,190.4 108.0,188.6 110.7,180.5 113.4,185.3 116.1,181.1 118.8,182.0 121.5,179.3 124.2,164.8 126.8,154.5 129.5,154.8 132.2,151.2 134.9,138.0 137.6,129.2 140.3,113.5 143.0,115.0 145.7,109.0 148.4,81.0 151.1,106.9 153.8,141.3 156.5,120.5 159.2,131.6 161.9,148.2 164.6,154.5 167.3,143.1 170.0,132.2 172.7,123.5 175.4,118.7 178.1,117.2 180.8,115.7 183.5,103.9 186.2,82.2 188.9,83.7 191.6,69.2 194.3,42.4 197.0,50.2 199.7,42.1 202.4,37.0 205.1,30.6 207.8,51.7 210.5,84.0 213.2,90.6 215.9,97.9 218.6,97.9 221.3,96.4 224.0,69.5 226.7,84.9 229.4,78.6 232.1,91.2 234.8,102.4 237.5,101.2 240.2,111.4 242.9,104.8 245.6,139.5 248.3,162.7 251.0,148.2 253.7,160.3 256.4,176.8 259.1,184.4 261.8,180.8 264.5,169.0 267.2,160.9 269.8,169.9 272.5,163.6 275.2,166.3 277.9,146.7 280.6,148.8 283.3,132.5 286.0,131.9 288.7,126.5 291.4,120.2 294.1,129.5 296.8,114.4 299.5,120.8 302.2,125.9 304.9,134.6 307.6,142.5 310.3,144.6 313.0,156.3 315.7,174.1 318.4,181.4 321.1,189.8 323.8,188.6 326.5,180.5 329.2,167.5 331.9,168.1 334.6,152.1 337.3,151.5 340.0,158.5 342.7,168.7 345.4,170.5 348.1,181.7 350.8,200.4 353.5,234.1 356.2,210.6 358.9,198.9 361.6,214.2 364.3,202.5 367.0,192.8 369.7,181.1 372.4,179.6 375.1,199.8 377.8,174.7 380.5,196.1 383.2,213.9 385.9,219.7 388.6,218.7 391.3,202.5 394.0,194.9 396.7,186.8 399.4,173.2 402.1,192.8 404.8,189.8 407.5,205.8 410.2,210.3 412.8,212.4 415.5,202.2 418.2,216.3 420.9,204.9 423.6,196.4 426.3,190.4 429.0,185.3 431.7,176.5 434.4,174.7 437.1,187.1 439.8,177.8 442.5,160.3 445.2,178.7 447.9,181.4 450.6,170.8 453.3,178.7 456.0,191.3 458.7,188.3 461.4,172.3 464.1,135.8 466.8,129.2 469.5,136.2 472.2,142.5 474.9,162.7 477.6,153.0 480.3,164.2 483.0,162.4 485.7,159.1 488.4,131.6 491.1,129.8 493.8,119.0 496.5,118.4 499.2,151.2 501.9,153.3 504.6,142.2 507.3,157.9 510.0,153.3 512.7,159.4 515.4,144.3 518.1,140.1 520.8,107.5 523.5,96.4 526.2,120.8 528.9,110.8 531.6,103.3 534.3,97.3 537.0,103.3 539.7,133.4 542.4,124.4 545.1,121.1 547.8,125.6 550.5,122.9 553.2,113.5 555.8,111.4 558.5,121.1 561.2,117.5 563.9,128.0 566.6,141.3 569.3,162.4 572.0,141.6 574.7,146.1 577.4,148.5 580.1,123.8 582.8,109.0 585.5,123.2 588.2,116.3 590.9,127.1 593.6,146.1 596.3,134.6 599.0,155.7 601.7,151.2 604.4,154.5 607.1,149.1 609.8,158.2 612.5,145.2 615.2,125.6 617.9,125.6 620.6,131.3 623.3,132.2 626.0,149.7 626.0,254 54,254" /><polyline fill="none" stroke="#047857" stroke-width="2" points="54.0,233.8 56.7,226.6 59.4,241.4 62.1,238.0 64.8,239.5 67.5,234.4 70.2,234.7 72.9,226.9 75.6,222.1 78.3,210.3 81.0,213.0 83.7,214.8 86.4,215.1 89.1,227.2 91.8,226.3 94.5,224.8 97.2,213.9 99.9,208.5 102.6,195.8 105.3,190.4 108.0,188.6 110.7,180.5 113.4,185.3 116.1,181.1 118.8,182.0 121.5,179.3 124.2,164.8 126.8,154.5 129.5,154.8 132.2,151.2 134.9,138.0 137.6,129.2 140.3,113.5 143.0,115.0 145.7,109.0 148.4,81.0 151.1,106.9 153.8,141.3 156.5,120.5 159.2,131.6 161.9,148.2 164.6,154.5 167.3,143.1 170.0,132.2 172.7,123.5 175.4,118.7 178.1,117.2 180.8,115.7 183.5,103.9 186.2,82.2 188.9,83.7 191.6,69.2 194.3,42.4 197.0,50.2 199.7,42.1 202.4,37.0 205.1,30.6 207.8,51.7 210.5,84.0 213.2,90.6 215.9,97.9 218.6,97.9 221.3,96.4 224.0,69.5 226.7,84.9 229.4,78.6 232.1,91.2 234.8,102.4 237.5,101.2 240.2,111.4 242.9,104.8 245.6,139.5 248.3,162.7 251.0,148.2 253.7,160.3 256.4,176.8 259.1,184.4 261.8,180.8 264.5,169.0 267.2,160.9 269.8,169.9 272.5,163.6 275.2,166.3 277.9,146.7 280.6,148.8 283.3,132.5 286.0,131.9 288.7,126.5 291.4,120.2 294.1,129.5 296.8,114.4 299.5,120.8 302.2,125.9 304.9,134.6 307.6,142.5 310.3,144.6 313.0,156.3 315.7,174.1 318.4,181.4 321.1,189.8 323.8,188.6 326.5,180.5 329.2,167.5 331.9,168.1 334.6,152.1 337.3,151.5 340.0,158.5 342.7,168.7 345.4,170.5 348.1,181.7 350.8,200.4 353.5,234.1 356.2,210.6 358.9,198.9 361.6,214.2 364.3,202.5 367.0,192.8 369.7,181.1 372.4,179.6 375.1,199.8 377.8,174.7 380.5,196.1 383.2,213.9 385.9,219.7 388.6,218.7 391.3,202.5 394.0,194.9 396.7,186.8 399.4,173.2 402.1,192.8 404.8,189.8 407.5,205.8 410.2,210.3 412.8,212.4 415.5,202.2 418.2,216.3 420.9,204.9 423.6,196.4 426.3,190.4 429.0,185.3 431.7,176.5 434.4,174.7 437.1,187.1 439.8,177.8 442.5,160.3 445.2,178.7 447.9,181.4 450.6,170.8 453.3,178.7 456.0,191.3 458.7,188.3 461.4,172.3 464.1,135.8 466.8,129.2 469.5,136.2 472.2,142.5 474.9,162.7 477.6,153.0 480.3,164.2 483.0,162.4 485.7,159.1 488.4,131.6 491.1,129.8 493.8,119.0 496.5,118.4 499.2,151.2 501.9,153.3 504.6,142.2 507.3,157.9 510.0,153.3 512.7,159.4 515.4,144.3 518.1,140.1 520.8,107.5 523.5,96.4 526.2,120.8 528.9,110.8 531.6,103.3 534.3,97.3 537.0,103.3 539.7,133.4 542.4,124.4 545.1,121.1 547.8,125.6 550.5,122.9 553.2,113.5 555.8,111.4 558.5,121.1 561.2,117.5 563.9,128.0 566.6,141.3 569.3,162.4 572.0,141.6 574.7,146.1 577.4,148.5 580.1,123.8 582.8,109.0 585.5,123.2 588.2,116.3 590.9,127.1 593.6,146.1 596.3,134.6 599.0,155.7 601.7,151.2 604.4,154.5 607.1,149.1 609.8,158.2 612.5,145.2 615.2,125.6 617.9,125.6 620.6,131.3 623.3,132.2 626.0,149.7" /><polyline fill="none" stroke="#d97706" stroke-width="1.6" stroke-dasharray="5 4" points="105.3,221.9 108.0,219.6 110.7,217.3 113.4,214.5 116.1,211.7 118.8,208.8 121.5,206.0 124.2,202.5 126.8,198.9 129.5,195.6 132.2,192.6 134.9,188.8 137.6,184.6 140.3,179.5 143.0,173.9 145.7,168.0 148.4,160.8 151.1,155.5 153.8,152.1 156.5,148.3 159.2,145.4 161.9,143.4 164.6,142.1 167.3,140.0 170.0,137.5 172.7,134.6 175.4,131.6 178.1,129.2 180.8,127.3 183.5,124.7 186.2,121.3 188.9,118.5 191.6,115.5 194.3,112.0 197.0,108.7 199.7,105.4 202.4,103.2 205.1,99.4 207.8,94.9 210.5,93.1 213.2,91.0 215.9,88.5 218.6,85.7 221.3,83.4 224.0,80.2 226.7,78.3 229.4,76.3 232.1,75.0 234.8,74.3 237.5,74.2 240.2,75.6 242.9,76.7 245.6,80.2 248.3,86.2 251.0,91.1 253.7,97.0 256.4,104.0 259.1,111.7 261.8,118.2 264.5,122.4 267.2,125.9 269.8,129.5 272.5,132.8 275.2,136.3 277.9,140.2 280.6,143.4 283.3,146.1 286.0,148.1 288.7,149.3 291.4,150.3 294.1,151.2 296.8,151.6 299.5,150.7 302.2,148.9 304.9,148.2 307.6,147.3 310.3,145.7 313.0,144.3 315.7,144.0 318.4,144.6 321.1,146.0 323.8,147.0 326.5,147.8 329.2,147.9 331.9,148.9 334.6,149.1 337.3,150.0 340.0,151.4 342.7,153.5 345.4,156.0 348.1,158.6 350.8,162.9 353.5,168.6 356.2,172.8 358.9,176.0 361.6,179.6 364.3,182.5 367.0,184.3 369.7,184.7 372.4,184.6 375.1,185.1 377.8,184.4 380.5,185.2 383.2,187.5 385.9,190.1 388.6,193.4 391.3,195.9 394.0,197.8 396.7,198.7 399.4,198.8 402.1,199.4 404.8,198.8 407.5,197.4 410.2,197.4 412.8,198.1 415.5,197.5 418.2,198.2 420.9,198.8 423.6,199.5 426.3,200.1 429.0,199.4 431.7,199.5 434.4,198.4 437.1,197.0 439.8,194.9 442.5,192.0 445.2,190.8 447.9,190.2 450.6,189.4 453.3,189.6 456.0,189.6 458.7,189.5 461.4,187.8 464.1,184.1 466.8,179.9 469.5,176.6 472.2,172.9 474.9,170.8 477.6,168.6 480.3,167.3 483.0,166.2 485.7,165.3 488.4,163.2 491.1,160.3 493.8,157.4 496.5,155.3 499.2,153.9 501.9,152.5 504.6,151.1 507.3,150.0 510.0,148.1 512.7,146.7 515.4,145.3 518.1,145.5 520.8,144.4 523.5,142.4 526.2,141.3 528.9,138.7 531.6,136.2 534.3,132.9 537.0,129.9 539.7,128.7 542.4,128.3 545.1,127.9 547.8,128.2 550.5,128.4 553.2,126.5 555.8,124.4 558.5,123.4 561.2,121.4 563.9,120.1 566.6,119.2 569.3,120.1 572.0,120.2 574.7,122.1 577.4,124.7 580.1,124.9 582.8,124.8 585.5,125.8 588.2,126.7 590.9,127.9 593.6,128.5 596.3,129.1 599.0,130.8 601.7,132.1 604.4,133.6 607.1,135.4 609.8,137.8 612.5,139.0 615.2,139.4 617.9,139.3 620.6,138.8 623.3,137.3 626.0,137.7" /><polyline fill="none" stroke="#2563eb" stroke-width="1.6" stroke-dasharray="5 4" points="186.2,171.7 188.9,168.7 191.6,165.5 194.3,161.6 197.0,157.8 199.7,153.9 202.4,149.9 205.1,145.8 207.8,142.3 210.5,139.6 213.2,137.2 215.9,134.9 218.6,132.5 221.3,130.2 224.0,127.0 226.7,124.2 229.4,121.3 232.1,118.8 234.8,116.7 237.5,114.8 240.2,113.2 242.9,111.5 245.6,110.7 248.3,110.3 251.0,109.6 253.7,109.2 256.4,109.1 259.1,109.5 261.8,110.0 264.5,110.3 267.2,110.5 269.8,111.1 272.5,111.8 275.2,112.9 277.9,113.5 280.6,114.3 283.3,115.4 286.0,115.9 288.7,115.6 291.4,115.5 294.1,115.5 296.8,114.8 299.5,114.2 302.2,113.8 304.9,113.9 307.6,114.2 310.3,114.8 313.0,115.5 315.7,116.7 318.4,118.3 321.1,120.4 323.8,122.5 326.5,124.7 329.2,127.2 331.9,129.6 334.6,131.8 337.3,134.1 340.0,136.6 342.7,139.0 345.4,140.7 348.1,142.5 350.8,144.6 353.5,147.3 356.2,149.6 358.9,152.2 361.6,154.8 364.3,157.2 367.0,159.3 369.7,160.9 372.4,162.4 375.1,164.2 377.8,165.6 380.5,166.7 383.2,167.7 385.9,169.2 388.6,170.3 391.3,170.9 394.0,171.1 396.7,171.2 399.4,171.3 402.1,171.9 404.8,172.3 407.5,173.2 410.2,174.0 412.8,175.3 415.5,176.4 418.2,178.1 420.9,179.5 423.6,180.9 426.3,182.4 429.0,183.5 431.7,184.7 434.4,185.8 437.1,187.0 439.8,187.9 442.5,188.2 445.2,188.9 447.9,189.4 450.6,189.3 453.3,189.3 456.0,189.3 458.7,189.3 461.4,189.2 464.1,188.5 466.8,187.7 469.5,187.4 472.2,187.2 474.9,187.3 477.6,187.0 480.3,186.9 483.0,186.5 485.7,185.7 488.4,183.6 491.1,182.0 493.8,180.4 496.5,178.5 499.2,177.5 501.9,176.7 504.6,175.9 507.3,175.5 510.0,174.5 512.7,174.2 515.4,173.2 518.1,171.7 520.8,169.5 523.5,167.0 526.2,165.4 528.9,163.7 531.6,162.0 534.3,160.5 537.0,158.7 539.7,157.6 542.4,156.0 545.1,154.2 547.8,152.5 550.5,150.9 553.2,148.8 555.8,146.9 558.5,145.4 561.2,144.0 563.9,142.8 566.6,142.1 569.3,141.9 572.0,141.0 574.7,140.3 577.4,140.1 580.1,139.0 582.8,137.6 585.5,136.6 588.2,135.4 590.9,134.1 593.6,133.2 596.3,132.5 599.0,132.9 601.7,133.3 604.4,133.7 607.1,133.8 609.8,133.7 612.5,133.6 615.2,132.8 617.9,132.1 620.6,131.5 623.3,131.5 626.0,131.9" /><circle cx="59.4" cy="241.4" r="3" fill="#047857" /><text x="110" y="250" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--muted)">Lowest 98.90 TRY · 12.12</text><circle cx="205.1" cy="30.6" r="3" fill="#047857" /><text x="205.1" y="22" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--muted)">Highest 168.80 TRY · 27.02</text><circle cx="626.0" cy="149.7" r="3.5" fill="#047857" /><text x="619.0" y="141.7" text-anchor="end" font-size="11.5" font-weight="700" fill="#047857">129.30 TL</text><line id="grafik-imlec" x1="0" y1="18" x2="0" y2="254" stroke="var(--muted)" stroke-width="1" visibility="hidden" /><circle id="grafik-imlecnokta" r="4" fill="var(--ink)" visibility="hidden" /></svg>
+<div class="grafik-ipucu" id="grafik-ipucu" aria-hidden="true"></div>
+</div>
+<div class="grafik-lejant"><span><i class="lj-duz" style="color:#d97706"></i>SMA20 (133.30 TRY)</span><span><i class="" style="color:#2563eb"></i>SMA50 (135.21 TRY)</span></div>
+<script type="application/json" id="fiyat-serisi">{"kod":"TRMET","t":["2025-12-10","2025-12-11","2025-12-12","2025-12-15","2025-12-16","2025-12-17","2025-12-18","2025-12-19","2025-12-22","2025-12-23","2025-12-24","2025-12-25","2025-12-26","2025-12-29","2025-12-30","2025-12-31","2026-01-02","2026-01-05","2026-01-06","2026-01-07","2026-01-08","2026-01-09","2026-01-12","2026-01-13","2026-01-14","2026-01-15","2026-01-16","2026-01-19","2026-01-20","2026-01-21","2026-01-22","2026-01-23","2026-01-26","2026-01-27","2026-01-28","2026-01-29","2026-01-30","2026-02-02","2026-02-03","2026-02-04","2026-02-05","2026-02-06","2026-02-09","2026-02-10","2026-02-11","2026-02-12","2026-02-13","2026-02-16","2026-02-17","2026-02-18","2026-02-19","2026-02-20","2026-02-23","2026-02-24","2026-02-25","2026-02-26","2026-02-27","2026-03-02","2026-03-03","2026-03-04","2026-03-05","2026-03-06","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13","2026-03-16","2026-03-17","2026-03-18","2026-03-19","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-20","2026-04-21","2026-04-22","2026-04-24","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-18","2026-05-20","2026-05-21","2026-05-22","2026-05-25","2026-05-26","2026-06-01","2026-06-02","2026-06-03","2026-06-04","2026-06-05","2026-06-08","2026-06-09","2026-06-10","2026-06-11","2026-06-12","2026-06-15","2026-06-16","2026-06-17","2026-06-18","2026-06-19","2026-06-22","2026-06-23","2026-06-24","2026-06-25","2026-06-26","2026-06-29","2026-06-30","2026-07-01","2026-07-02","2026-07-03","2026-07-06","2026-07-07","2026-07-08","2026-07-09","2026-07-10","2026-07-13","2026-07-14","2026-07-16","2026-07-17","2026-07-20","2026-07-21","2026-07-22","2026-07-23","2026-07-24","2026-07-27","2026-07-28","2026-07-29","2026-07-30","2026-07-31","2026-08-03","2026-08-04","2026-08-05","2026-08-06","2026-08-07","2026-08-10","2026-08-11","2026-08-12","2026-08-13","2026-08-14","2026-08-17","2026-08-18","2026-08-19","2026-08-20","2026-08-21","2026-08-24","2026-08-25","2026-08-26","2026-08-27","2026-08-28","2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-14","2026-09-15","2026-09-16","2026-09-17","2026-09-18","2026-09-21","2026-09-22","2026-09-23","2026-09-24","2026-09-25","2026-09-28","2026-09-29","2026-09-30","2026-10-01","2026-10-02","2026-10-05","2026-10-06","2026-10-07","2026-10-08","2026-10-09","2026-10-11","2026-10-12","2026-10-13","2026-10-14"],"f":[101.4,103.8,98.9,100.0,99.5,101.2,101.1,103.7,105.3,109.2,108.3,107.7,107.6,103.6,103.9,104.4,108.0,109.8,114.0,115.8,116.4,119.1,117.5,118.9,118.6,119.5,124.3,127.7,127.6,128.8,133.2,136.1,141.3,140.8,142.8,152.1,143.5,132.1,139.0,135.3,129.8,127.7,131.5,135.1,138.0,139.6,140.1,140.6,144.5,151.7,151.2,156.0,164.9,162.3,165.0,166.7,168.8,161.8,151.1,148.9,146.5,146.5,147.0,155.9,150.8,152.9,148.7,145.0,145.4,142.0,144.2,132.7,125.0,129.8,125.8,120.3,117.8,119.0,122.9,125.6,122.6,124.7,123.8,130.3,129.6,135.0,135.2,137.0,139.1,136.0,141.0,138.9,137.2,134.3,131.7,131.0,127.1,121.2,118.8,116.0,116.4,119.1,123.4,123.2,128.5,128.7,126.4,123.0,122.4,118.7,112.5,101.3,109.1,113.0,107.9,111.8,115.0,118.9,119.4,112.7,121.0,113.9,108.0,106.1,106.4,111.8,114.3,117.0,121.5,115.0,116.0,110.7,109.2,108.5,111.9,107.2,111.0,113.8,115.8,117.5,120.4,121.0,116.9,120.0,125.8,119.7,118.8,122.3,119.7,115.5,116.5,121.8,133.9,136.1,133.8,131.7,125.0,128.2,124.5,125.1,126.2,135.3,135.9,139.5,139.7,128.8,128.1,131.8,126.6,128.1,126.1,131.1,132.5,143.3,147.0,138.9,142.2,144.7,146.7,144.7,134.7,137.7,138.8,137.3,138.2,141.3,142.0,138.8,140.0,136.5,132.1,125.1,132.0,130.5,129.7,137.9,142.8,138.1,140.4,136.8,130.5,134.3,127.3,128.8,127.7,129.5,126.5,130.8,137.3,137.3,135.4,135.1,129.3]}</script>
+<script src="grafik.js?v=1" defer></script>
+<div style="color:var(--muted); font-size:12px">TRMET closing prices (TRY) from 2025-12-10 to today. References: period-start close (dotted), SMA20/SMA50 averages, lowest/highest/latest close.</div>
+</div>
+
+<div class="card" style="margin:0 0 18px">
+<h3 style="margin:0 0 6px">🏢 Company Profile</h3>
+<div style="font-weight:700; margin-bottom:4px">TR Anadolu Metal Madencilik İşletmeleri A.Ş. (formerly: Koza Anadolu Metal)</div>
+<div class="meta" style="margin:0 0 8px"><span>Establishment: <strong>15.01,1986</strong></span><span>Major shareholder: <strong>TR Natural Energy Resources (52.25%)</strong></span><span>Paid-up capital: <strong>333.333,333 TRY (paid-in); registered 388.080,000 TRY</strong> (2026)</span></div>
+<p style="margin:0; font-size:14px">Exploration/operation of copper and other minerals; main mining area Balıkesir-Dursunbey (Konaklı). Its 47.55% subsidiary Türk Altın İşletmeleri trades on BIST as TRALT. Strong net foreign currency position: assets 5.77 billion USD, liabilities 2.40 billion USD (net +3.37 billion USD). 2026 Q2 net profit 556.8 million TRY — significantly below the Matricks survey expectation of 1.31 billion TRY. Current ratio fell from 7.26 to 4.48 (level strong, trend negative); acid-test 3.92; cash covers payments for ~557 days. Source: Midas company data, 06.10,2026.</p>
+<div style="margin:10px 0 0; padding-top:10px; border-top:1px solid var(--line)"><div style="color:var(--muted); font-size:12px; margin-bottom:4px">Fundamental analysis summary (manually fed — with provider notes)</div><ul style="margin:0; padding-left:18px; font-size:13px"><li style='margin:5px 0'>Multiples (Midas, 06.10): P/E 24.02 · P/B 1.67 · PEG 0.20 · EV/Sales 1.23 · EV/EBITDA 3.16 · P/Earnings 6.99</li><li style='margin:5px 0'>Growth 4/5: sales +41.5% (real ~0% after inflation), EBITDA +198%, net profit +6%; fixed asset growth financed with short-term resources (warning)</li><li style='margin:5px 0'>Cash flow: operating cash flow 6.28 billion TL (+28%), free cash flow +616.6M, period-end cash 7.46 billion TL; largest investment 5.93 billion TL in fixed asset purchases</li><li style='margin:5px 0'>Indebtedness: NO net debt (cash exceeds debt by 21.7 billion TL), leverage 0.13 (low); short-term debt share 5.9%→8.7% and increase in financial debt share (warning); interest coverage data missing (warning)</li><li style='margin:5px 0'>Profitability 3.8/5: operating margin 35% (increase), net margin 8% (decrease); return on equity 8% (DuPont: driven by higher leverage and turnover)</li><li style='margin:5px 0'>Efficiency: asset turnover 0.40 · equity turnover 0.87 · working capital turnover 1.23</li></ul></div><div style="margin:8px 0 0"><div style="color:var(--muted); font-size:12px; margin-bottom:5px">Brands &amp; affiliates</div><span class="badge" style="margin:0 6px 6px 0; font-size:11.5px">Türk Altın İşletmeleri (47.55% → BIST: TRALT)</span><span class="badge" style="margin:0 6px 6px 0; font-size:11.5px">TR Anadolu İnşaat (99.04%)</span><span class="badge" style="margin:0 6px 6px 0; font-size:11.5px">Konaklı Metal Madencilik (71.77%)</span><span class="badge" style="margin:0 6px 6px 0; font-size:11.5px">Özdemir Antimuan Madenleri (99.04%)</span></div><div style="margin:8px 0 0; font-size:13.5px">🌐 <a href="https://www.tranadolumetal.com" target="_blank" rel="noopener">www.tranadolumetal.com</a></div>
+<div style="margin:10px 0 0; padding-top:8px; border-top:1px solid var(--line)">
+<div style="color:var(--muted); font-size:12px; margin-bottom:2px">Balance Sheet — 2026/6 period (2026-10-15 data)</div>
+<table style="font-size:12.5px">
+<tr><td>Total Assets</td><td><strong>65.6 billion TL</strong></td><td>Total Debt</td><td><strong>8.8 billion TL</strong></td></tr>
+<tr><td>Current Assets</td><td>25.5 billion TL</td><td>Equity</td><td><strong>56.7 billion TL</strong></td></tr>
+<tr><td>Financial Debt</td><td>194 million TL</td><td>Net Profit</td><td class='pos'><strong>2.5 billion TL</strong></td></tr>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 4px">📋 Announced Financial Statements<span style="font-weight:400; color:var(--muted); font-size:12.5px">· manually added financial statement summary · last pull: 2026-10-08</span></h3>
+<div class="tbl-wrap"><table style="font-size:12.5px"><tr><th>Period</th><th>Sales Revenues (mlr TL)</th><th>Net Profit (mlr TL)</th><th>Profit Margin</th><th>Total Assets (mlr TL)</th><th>Equity (mlr TL)</th><th>Financial Debt (mlr TL)</th><th>Financial Debt / Equity</th></tr><tr><td><strong>2026/6</strong></td><td>14.5 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 41.5% YoY)</span></td><td>2.5 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 6.4% YoY)</span></td><td>16.9%</td><td>65.6</td><td>56.7</td><td>0.2</td><td>0.3%</td></tr><tr><td><strong>2026/3</strong></td><td>9.0 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 55.9% YoY)</span></td><td>1.4 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 120.4% YoY)</span></td><td>15.5%</td><td>62.9</td><td>52.1</td><td>0.1</td><td>0.2%</td></tr><tr><td><strong>2025/12</strong></td><td>20.8 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 72.4% YoY)</span></td><td>4.7 <span style="color:var(--muted); font-weight:400; font-size:11px">(- 315.2% YoY)</span></td><td>22.5%</td><td>60.8</td><td>54.3</td><td>0.1</td><td>0.3%</td></tr><tr><td><strong>2025/9</strong></td><td>14.0 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 32.9% YoY)</span></td><td>4.8 <span style="color:var(--muted); font-weight:400; font-size:11px">(- 309.1% YoY)</span></td><td>34.6%</td><td>50.3</td><td>45.3</td><td>0.1</td><td>0.1%</td></tr><tr><td><strong>2025/6</strong></td><td>10.3 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 40.4% YoY)</span></td><td>2.3 <span style="color:var(--muted); font-weight:400; font-size:11px">(- 430.2% YoY)</span></td><td>22.5%</td><td>43.3</td><td>39.3</td><td>0.0</td><td>0.1%</td></tr><tr><td><strong>2025/3</strong></td><td>5.8 <span style="color:var(--muted); font-weight:400; font-size:11px">(+ 38.4% YoY)</span></td><td>0.6 <span style="color:var(--muted); font-weight:400; font-size:11px">(- 208.0% YoY)</span></td><td>11.0%</td><td>39.9</td><td>35.9</td><td>0.0</td><td>0.1%</td></tr><tr><td><strong>2024/12</strong></td><td>12.1</td><td class="neg">-2.2</td><td>%-18.0</td><td>46.5</td><td>42.2</td><td>0.0</td><td>0.1%</td></tr><tr><td><strong>2024/9</strong></td><td>10.5</td><td class="neg">-2.3</td><td>%-22.0</td><td>35.2</td><td>32.1</td><td>0.0</td><td>0.0%</td></tr><tr><td><strong>2024/6</strong></td><td>7.3</td><td class="neg">-0.7</td><td>%-9.6</td><td>32.1</td><td>28.9</td><td>0.0</td><td>0.0%</td></tr><tr><td><strong>2024/3</strong></td><td>4.2</td><td class="neg">-0.6</td><td>%-14.1</td><td>30.5</td><td>26.9</td><td>0.0</td><td>0.0%</td></tr></table></div>
+<p style="margin:8px 0 0; color:var(--muted); font-size:12px">Income statement items (sales revenues and net profit) are cumulative from the beginning of the year; balance sheet items are period-end balances. Source: İş Yatırım financial statements (based on KAP announcements).</p>
+</div>
+<div class="card" style="margin:0 0 18px">
+<h3 style="margin:0 0 8px">🔎 Fundamental Analysis Summary <span style="font-weight:400;color:var(--muted);font-size:12.5px">· automatic</span></h3>
+<ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:5px 0'>Revenue (TTM) 23.24 billion TRY, EBITDA 8.98 billion TRY — EBITDA margin 38.7% (high EBITDA margin).</li><li style='margin:5px 0'>Net profit margin 9.0% (normal net profit margin).</li><li style='margin:5px 0'>EV/EBITDA 6.4 — reasonable EV/EBITDA.</li><li style='margin:5px 0'>Net financial debt NONE — cash exceeds gross debt by 7.32 billion TRY.</li><li style='margin:5px 0'>Current ratio 4.48 — strong liquidity.</li></ul>
+<p style="margin:8px 0 0; color:var(--muted); font-size:11.5px">Rule-based summary: Generated from Is Investment financial statements (TTM) and TradingView fundamental data with fixed thresholds; no LLM, no risk of fabrication. Not investment advice.</p>
+</div>
+<div class="grid-iki">
+<div class="card"><h3 style="margin:0 0 8px">Valuation and Profitability <span style="font-weight:400;color:var(--muted);font-size:12.5px">· single source, last 12 months</span></h3><p style="margin:0 0 8px;font-size:13px">Last 5 trading days return: <strong class="neg">-1.1%</strong></p><table style="font-size:13.5px"><tr><td>Market value</td><td><strong>50.2 billion TRY</strong></td></tr><tr><td>Equity (2026/6)</td><td><strong>56.7 billion TRY</strong></td></tr><tr><td>Net profit (last 12 months)</td><td><strong>4.8 billion TRY</strong></td></tr><tr><td>P/E (last 12 months)</td><td><strong>10.4</strong></td></tr><tr><td>P/B</td><td><strong>0.88</strong></td></tr><tr><td>ROE (last 12 months)</td><td><strong>8.5%</strong></td></tr><tr><td>Financial debt / equity</td><td><strong>0%</strong></td></tr></table><p style="margin:8px 0 0;color:var(--muted);font-size:12px">Source: İş Yatırım financial statements (KAP disclosures) — same source as the balance sheet table.</p><div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)"><div style="font-size:12.5px;color:var(--muted);margin-bottom:6px">EBITDA · TradingView consolidated (TTM)</div><table style="font-size:13.5px"><tr><td>EBITDA (last 12 months)</td><td><strong>9.0 billion TRY</strong></td></tr><tr><td>EBITDA margin</td><td><strong>38.7%</strong></td></tr><tr><td>EV / EBITDA</td><td><strong>6.4</strong></td></tr></table><p style="margin:6px 0 0;color:var(--muted);font-size:11.5px">EBITDA margin is profitability before interest/depreciation/taxes; it should not be confused with net profit margin.</p></div></div>
+<div class="card"><h3 style="margin:0 0 8px">Macro Sensitivity <span style="font-weight:400;color:var(--muted);font-size:12.5px">· Metal &amp; Mining sector</span></h3><p style="margin:0 0 8px;font-size:13.5px">Regime: <strong>high inflation + tight monetary policy (7.27 points real interest) · moderate domestic demand</strong></p><table style="font-size:13.5px"><tr><td>Trend</td><td><strong class="">neutral</strong></td></tr><tr><td>Score</td><td><strong>+0</strong></td></tr><tr><td>Channels</td><td>interest increase, domestic_demand increase</td></tr></table><p style="margin:8px 0 0;color:var(--muted);font-size:12px">Sector sensitivity matrix x current macro regime; detail <a href="../makro-analiz.html">Macroeconomic Evaluation</a>.</p></div>
+</div>
+<div class="grid-iki">
+<div class="card"><h3 style="margin:0 0 8px">Technical Status</h3>
+<table style="font-size:13.5px"><tr><td>General</td><td><strong>SELL</strong></td></tr><tr><td>Short term (EMA 5-8-13-21)</td><td><strong>BEKLE</strong></td></tr><tr><td>Medium term (EMA 34-55)</td><td><strong>BEKLE</strong></td></tr><tr><td>Long term (EMA 89-144)</td><td><strong>BEKLE</strong></td></tr><tr><td>Wave Trend</td><td><strong>BUY</strong></td></tr><tr><td>Channel position</td><td><strong>26%</strong></td></tr><tr><td>Trend strength (r)</td><td><strong>0.06</strong></td></tr><tr><td>Score</td><td><strong>1</strong></td></tr></table>
+<p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA sequence + Wave Trend + 60-day regression channel. Details: <a href="../teknik-analiz.html">Technical Scan</a></p></div>
+<div class="card"><h3 style="margin:0 0 8px">Last 7 Days News</h3>
+<ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMi0gFBVV95cUxPcXBIUUtjZHFlWDlTZ2VUbjJuQ3l1M2pTZU51YllZeXo3NlRKX0xBVmJxWmt6NWwyRy04OEZNX3pLNWN2QVNtYkxFV29zQ1dzYXJ3TkZvQk40YTdRVS1MRjhKYm0wQ1Bwbm40RXFLSFZjRWlKTXZSUDUxNmRLSFVEbE1BTVVrVzhkVmdkQWZxUXpIVTlKeUdIM01oU2hPXy13LWl2R1haa1ZmSFVQVGx4ZWl2dThUSWZvOHBmT0twZ3hxVDdVcVlKRkw1OVV4eXR2dnc?oc=5' target='_blank' rel='noopener'>KAP *** TR ANADOLU METAL MADENCİLİK İŞLETMELERİ A.Ş. *** TRMET *** Special Disclosure (General)</a> <span style='color:var(--muted); font-size:12px'>— Yeni Şafak · 14.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiigFBVV95cUxQR0FfU2pyWmIySG04MVUyYkNSaDducFBMbVRYLVBUVmVQMVh4UjFLR1p5R05qOGFhc2pGai1GNWtQeG9oZzBkSHFkcnB1UWtvWWdRWjBhZU5nWFl2a0hVbmwxeGFjRU5HeXREd29uUElPVUpCd1pkS2dHVG5oZm9jTDZyMC1xQmdJTWc?oc=5' target='_blank' rel='noopener'>TR Anadolu İnşaat's merger with three companies was registered</a> <span style='color:var(--muted); font-size:12px'>— hibya.com · 14.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiggFBVV95cUxOM21BMTk5ZURQdGJ4NUpoVmdJbVYwX09ISlB4U19qYUs1SDd4dG9uUllqLUlvVENiYjRrUFNFREM2aURkanB2ZVdhU3lwWFhnNVpJUUpGejh1Y2ZyempqM0lxMl85QW0xMm5ESlpsMjF6ZENCU3VxdEVqTXpSRnhXU2lR?oc=5' target='_blank' rel='noopener'>TR Anadolu Metal's subsidiary merged with three companies</a> <span style='color:var(--muted); font-size:12px'>— Paratic Haber · 14.10</span></li></ul>
+<p style="margin:8px 0 0; font-size:12.5px"><a href="../sirket-haberleri.html#H-TRMET">All company news →</a></p></div>
+</div>
+
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 8px">Content related to TRMET</h3>
+<p style="margin:0"><a href="https://borsa-raporlari-web.pages.dev/ara?q=TRMET" target="_blank" rel="noopener">🔍 All report sections containing "TRMET" in semantic search →</a></p>
+<p style="margin:6px 0 0"><a href="../index.html">Daily report archive →</a></p>
+</div>
+</main>
+
+<nav class="altbar" aria-label="Quick menu">
+<a href="../raporlar.html"><span class="i" aria-hidden="true">📊</span>Reports</a>
+<a href="../teknik-analiz.html"><span class="i" aria-hidden="true">📈</span>Technical</a>
+<a href="../hisse/index.html" class="active"><span class="i" aria-hidden="true">🏦</span>Stocks</a>
+<a href="../portfolio.html"><span class="i" aria-hidden="true">💼</span>Portfolio</a>
+<a href="../haberler.html"><span class="i" aria-hidden="true">📰</span>News</a>
+<a href="../takvim.html"><span class="i" aria-hidden="true">📅</span>Calendar</a>
+</nav>
+
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+
+<footer class="footer">The information, comments and recommendations contained herein are for informational purposes only; they do not constitute investment advisory or investment advice. The accuracy of the data cannot be guaranteed and the user is responsible for any decisions that may arise from the content.<br>Data sources: İş Yatırım, RSS news feeds • Analysis: artificial intelligence (multi-agent system)<br><a href="../gizlilik.html" style="color:inherit">Privacy &amp; Data Protection</a></footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+</body></html>
