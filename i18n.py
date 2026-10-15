@@ -355,6 +355,19 @@ def _disc_dusunme_kapat(istek_govdesi: dict, model: str) -> str | None:
     return None
 
 
+# --- 15.10.2026 KULLANICI KARARI: Turkce proper noun ceviri politikasi ---
+# Turkce sirket/marka/kisi adlari HICBIR dile cevrilmez. en/de: Turkce yazimi aynen
+# kalir. ru/zh: Turkce yazim aynen kalir + parantez icinde o dilin okunusu eklenir.
+# DIKKAT: kural bilincli olarak KARAKTER bazli degil ANLAM bazli — "turkce karakter
+# iceren kelime" demek, 'icin/değeri' gibi siradan kelimeleri de kilitlerdi.
+ISIM_KURALI = {
+    "en": "Turkish proper nouns — company names, brands, organizations and people (e.g. Şişecam, Tüpraş, İş Yatırım, Cevdet Yılmaz, Yukarı Adım Kuralı) must stay EXACTLY as written in Turkish: never translate, transliterate or respell them. Ordinary Turkish words that are NOT names must of course still be translated.",
+    "de": "Turkish proper nouns — company names, brands, organizations and people (e.g. Şişecam, Tüpraş, İş Yatırım, Cevdet Yılmaz, Yukarı Adım Kuralı) must stay EXACTLY as written in Turkish: never translate, transliterate or respell them. Ordinary Turkish words that are NOT names must of course still be translated.",
+    "ru": "Turkish proper nouns — company names, brands, organizations and people (e.g. Şişecam, Tüpraş, İş Yatırım, Cevdet Yılmaz, Yukarı Adım Kuralı) must stay EXACTLY as written in Turkish: never translate or respell them. Additionally, right after the FIRST occurrence of each Turkish proper noun in an item, add its Russian pronunciation in parentheses: Şişecam (Шишеджам), Tüpraş (Тюпраш), Cevdet Yılmaz (Джевдет Ылмаз), İş Yatırım (Иш Ятырым). Ordinary Turkish words that are NOT names must of course still be translated.",
+    "zh": "Turkish proper nouns — company names, brands, organizations and people (e.g. Şişecam, Tüpraş, İş Yatırım, Cevdet Yılmaz, Yukarı Adım Kuralı) must stay EXACTLY as written in Turkish: never translate or respell them. Additionally, right after the FIRST occurrence of each Turkish proper noun in an item, add its Chinese phonetic rendering in parentheses: Şişecam (希舍卡姆), Tüpraş (图普拉什), Cevdet Yılmaz (杰夫代特·伊尔马兹), İş Yatırım (伊什·亚特伦). Ordinary Turkish words that are NOT names must of course still be translated.",
+}
+
+
 class Cevirmen:
     """Onbellek + saglayici zinciri (llm -> mock)."""
 
@@ -658,7 +671,8 @@ class Cevirmen:
             "Return ONLY a JSON array of the exact same length — no explanations, no markdown fences. "
             "Every element must be a JSON string: escape any double quote as \\\" and never put a raw line break inside a string. "
             "Keep stock tickers (KCHOL, PETKM, THYAO...), numbers, currency amounts, dates and indicator "
-            "acronyms (RSI, MACD, EMA, ADX, CCI, WT) exactly as they are."
+            "acronyms (RSI, MACD, EMA, ADX, CCI, WT) exactly as they are. "
+            + ISIM_KURALI[dil]
         )
         uclar = self._uclari_kur()
         if not uclar:
