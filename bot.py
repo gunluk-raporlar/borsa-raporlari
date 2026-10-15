@@ -4394,15 +4394,91 @@ def ticker_json_yaz(satirlar, etiket=None):
         json.dump(veri, f, ensure_ascii=False)
 
 
+def _tr_sayi(deger, ondalik=2):
+    """245.5 -> '245,50'; 14842.04 -> '14.842,04' — JS toLocaleString('tr-TR')
+    ile ayni bicim (binlik ayiraci nokta, ondalik virgul)."""
+    s = f"{float(deger):,.{ondalik}f}"
+    return s.replace(",", "@").replace(".", ",").replace("@", ".")
+
+
+_HAVA_ONBELLEK = None
+
+
+def _hava_pisir():
+    """wttr.in'i URETIM ANINDA bir kez ceker ve ayni bicimde HTML'e pisirir.
+
+    Ziyaretci JS'i her sayfa acilisinda yeniledigi icin insanlara CANLI kalir;
+    JS calistirmayan okuyucular (LLM ajanlari, arama motoru tarayicilari)
+    'Yukleniyor...' yerine uretim anindaki gercek degeri gorur (15.10 ajan
+    geri bildirimi: ajanlar hava kutusunu okuyamiyordu). Basarisizsa JS'in
+    kendi genel metnini dondurur — sahte sicaklik uydurmaz."""
+    global _HAVA_ONBELLEK
+    if _HAVA_ONBELLEK is None:
+        try:
+            istek = urllib.request.Request("https://wttr.in/Istanbul?format=j1",
+                                           headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(istek, timeout=10) as y:
+                veri = json.loads(y.read().decode("utf-8"))
+            c = veri["current_condition"][0]
+            aciklama = (c.get("lang_tr") or [{}])[0].get("value") or c["weatherDesc"][0]["value"]
+            _HAVA_ONBELLEK = f"🌤️ İstanbul: {c['temp_C']}°C, {aciklama}"
+        except Exception:
+            _HAVA_ONBELLEK = "🌤️ İstanbul: Parçalı Bulutlu"
+    return _HAVA_ONBELLEK
+
+
+def _ticker_iz_pisir(json_yolu: str, tur: str) -> str:
+    """Serit icerigini JSON'dan URETIM ANINDA HTML'e pisirir (bicim, JS ciz()
+    fonksiyonlariyla birebir). JS basarili yuklemede icerigi tazeler; JS
+    calistirmayan okuyucular (LLM ajanlari) son bilinen veriyi gorur — 'Fiyatlar
+    yükleniyor...' yerine (15.10 ajan geri bildirimi). Hata halinde bos doner,
+    sablon yer tutucusu kalir."""
+    try:
+        veri = json.load(open(json_yolu, encoding="utf-8"))
+    except Exception:
+        return ""
+    try:
+        if tur == "hisse":
+            ogeler = "".join(
+                f'<span class="ticker-oge"><b>{h["h"]}</b> {_tr_sayi(h["f"])} TL '
+                f'<span class="{"pos" if h["d"] >= 0 else "neg"}">'
+                f'{"▲" if h["d"] >= 0 else "▼"} {"+" if h["d"] >= 0 else ""}{h["d"]:.2f}%</span></span>'
+                for h in veri.get("hisseler", []))
+            etiket = veri.get("etiket") or "~15 dk gecikmeli"
+            saat = f'<span class="ticker-oge ticker-saat">{veri.get("guncelleme", "")} · {etiket}</span>'
+        else:
+            ogeler = ""
+            for g in veri.get("gostergeler", []):
+                rozet = ""
+                if isinstance(g.get("d"), (int, float)):
+                    ok = "▲ +" if g["d"] >= 0 else "▼ "
+                    rozet = (f' <span class="{"pos" if g["d"] >= 0 else "neg"}">'
+                             f'{ok}{g["d"]:.2f}%</span>')
+                birim = g.get("b") or g.get("birim") or ""
+                ogeler += (f'<span class="ticker-oge"><b>{g["ad"]}</b> '
+                           f'{_tr_sayi(g["f"], g.get("o", 2))}'
+                           f'{(" " + birim) if birim else ""}{rozet}</span>')
+            etiket = veri.get("etiket") or ""
+            saat = (f'<span class="ticker-oge ticker-saat">{veri.get("guncelleme", "")}'
+                    f'{(" · " + etiket) if etiket else ""}</span>')
+        if not ogeler:
+            return ""
+        return ogeler + saat + ogeler + saat   # sorunsuz dongu icin kopya (JS ile ayni)
+    except Exception:
+        return ""
+
+
 def _kendi_ticker2(kok=""):
     """Ikinci kayan serit: endeksler, altin, doviz ve petrol.
 
     Veri /api/piyasa ucundan (Cloudflare Pages Function -> TradingView) gelir ve
     hisse seridi gibi 5 dk'da bir tazelenir. Uc erisilemezse gunluk bot kosusunun
     yazdigi piyasa-serit.json yedegine duser."""
+    iz = (_ticker_iz_pisir("piyasa-serit.json", "piyasa")
+          or '<span style="color:#94a3b8">Piyasa verileri yükleniyor...</span>')
     return f"""
 <div class="ticker-bant" id="ticker-bant2" data-kok="{kok}" style="margin-bottom:16px">
-  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Piyasa verileri yükleniyor...</span></div>
+  <div class="ticker-iz" id="ticker-iz2">{iz}</div>
 </div>
 <script>
 (function() {{
@@ -4447,9 +4523,11 @@ def _kendi_ticker(kok=""):
     verisini hic vermedigi icin (isim + kirmizi unlem gorunuyordu) kendi
     verimizle (borsapy/TradingView, ~15 dk gecikmeli) CSS marquee kurduk.
     Veri ticker.json'dan okunur; sayfa acikken 5 dk'da bir tazelenir."""
+    iz = (_ticker_iz_pisir("ticker.json", "hisse")
+          or '<span style="color:#94a3b8">Fiyatlar yükleniyor...</span>')
     return f"""
 <div class="ticker-bant" id="ticker-bant" data-kok="{kok}" style="margin-bottom:16px">
-  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Fiyatlar yükleniyor...</span></div>
+  <div class="ticker-iz" id="ticker-iz">{iz}</div>
 </div>
 <script>
 (function() {{
@@ -4670,7 +4748,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     <div class="site-widgets">
         <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
             <span id="current-date-time">⏳ Yükleniyor...</span>
-            <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
+            <span id="istanbul-weather">{_hava_pisir()}</span>
         </div>
 {_ceviri_widget(kok, yol)}
     </div>
