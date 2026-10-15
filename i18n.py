@@ -309,6 +309,47 @@ PENCERE_ASIMI_TAVAN = float(os.environ.get("I18N_PENCERE_TAVAN", "150"))
 BOS_PENCERE_ESIGI = int(os.environ.get("I18N_BOS_PENCERE", "3"))
 BOS_SURE_ESIGI_SN = float(os.environ.get("I18N_BOS_SURE_SN", "90"))
 
+# --- intern-ai discovery: DERIN DUSUNMEYI KAPATMA (2026-10-15, kullanici karari) ---
+# Katalogdaki 5 metin modelinin tamami "derin dusunme / akil yurutme" sinifi; dusunme
+# acikken 20 dizelik parti 30-90 sn surebiliyor ve hizli zaman asimina (30 sn)
+# takiliyor. Kapatma parametresi servisin kamuya kapali dokumanlarinda aciklanmadigi
+# icin standart stiller sirayla denenir; 400'un govdesi "bilinmeyen/extra parametre"
+# anlami tasiyirse o stil surec boyunca bir daha denenmez. Model adindan kaynaklanan
+# 400'ler ("invalid model" vb.) bu mantiga dusmez, normal akisa doner.
+# DISCOVERY_DUSUNME_STIL ile stil zorlanabilir: thinking | enable_thinking |
+# chat_template_kwargs | yok
+_DISC_DUSUNME_STILLERI = (
+    # GLM (z.ai/bigmodel) + Anthropic Messages tarzi (servis Anthropic uyumlulugu duyuruyor)
+    ("thinking", "thinking", {"type": "disabled"}),
+    # Qwen/DashScope tarzi ust-seviye anahtar
+    ("enable_thinking", "enable_thinking", False),
+    # vLLM tarzi sohbet-sablonu anahtari
+    ("chat_template_kwargs", "chat_template_kwargs", {"enable_thinking": False}),
+)
+_DISC_PARAM_RED_IPUCLARI = ("unrecognized", "unknown", "unexpected", "not permitted",
+                            "extra input", "unknown field", "invalid parameter",
+                            "bilinmeyen", "gecersiz parametre")
+_disc_reddedilen_stiller: set[str] = set()   # 400 ile reddedilen stiller (surec geneli)
+_disc_calisan_stil: str | None = None        # dogrulanan stil; sonraki istekler yalnizca onu ekler
+
+
+def _disc_dusunme_kapat(istek_govdesi: dict) -> str | None:
+    """Discovery istegine dusunme-kapama alanini ekler; uygulanan stil adini dondurur."""
+    global _disc_calisan_stil
+    stil = os.environ.get("DISCOVERY_DUSUNME_STIL", "").strip().lower() or None
+    if stil == "yok":
+        return None
+    adaylar = [stil] if stil and stil != "yok" else \
+              [a for a, _, _ in _DISC_DUSUNME_STILLERI if a not in _disc_reddedilen_stiller]
+    if _disc_calisan_stil and (not stil or stil == _disc_calisan_stil):
+        adaylar = [_disc_calisan_stil]
+    for a in adaylar:
+        for ad, alan, deger in _DISC_DUSUNME_STILLERI:
+            if ad == a:
+                istek_govdesi[alan] = deger
+                return ad
+    return None
+
 
 class Cevirmen:
     """Onbellek + saglayici zinciri (llm -> mock)."""
@@ -365,6 +406,9 @@ class Cevirmen:
         self._model_esik: dict[str, str] = {}
         self._model_esik_sayi: dict[str, int] = {}
         self._uc_pay: dict[str, float] = {}   # uc -> bu pencerede basladigi an
+        # ADIL SIRA: tamamen bos gecen pencereden sonra zincir basi kaydirilir;
+        # saglikli pencerede tercih sirasi korunur (0'a doner).
+        self._kaydirma = 0
         self.atlanan_parca = 0
         self.sure_doldu = False
         self.hicbiri_calismadi = False      # ust uste bircok pencere cevrilemedi -> calisan saglayici yok
@@ -654,7 +698,14 @@ class Cevirmen:
             self._uc_pay.clear()          # her pencerede uc paylari sifirlanir
             son = None
             son_uc = None
-            for ad, url, anahtar, modeller in uclar:
+            # ADIL SIRA (2026-10-15): onceki pencere tamamen bos gectiyse zincir bir uc
+            # kaydirilir. Sabit sirada basta yavaslayan uc'ler (45 sn'lik pay) pencere
+            # butcesini yiyip sondaki saglayicilari HER pencerede kisirdan cikariyordu
+            # (log: "pencere zaman asimi (150 sn); kalan saglayicilar bu pencere icin
+            # atlandi"). Kaydirma ile bos pencereler sirayla farkli uclari dener;
+            # basari elde edilince tercih sirasi geri gelir.
+            sira = (uclar[self._kaydirma:] + uclar[:self._kaydirma]) if self._kaydirma else uclar
+            for ad, url, anahtar, modeller in sira:
                 if ad in self.devre_disi:
                     continue
                 # UC BASINA PENCERE PAYI (2026-10-13 canli kosum duzeltmesi).
@@ -816,6 +867,9 @@ class Cevirmen:
             if not son:
                 self.atlanan_parca += len(dilim)
                 self._ust_uste_bos += 1
+                # bos pencere: sonraki pencere zinciri bir uc kaydir (adil sira)
+                if uclar:
+                    self._kaydirma = (self._kaydirma + 1) % len(uclar)
                 # 2 pencere ust uste hicbir saglayicidan sonuc gelmediyse (tumu kota/
                 # zaman asimi/5xx) bosuna beklemeyi birak: kalan sayfalari erken birak.
                 if self._ust_uste_bos >= BOS_PENCERE_ESIGI and (time.time() - self.baslangic) >= BOS_SURE_ESIGI_SN:
@@ -827,6 +881,7 @@ class Cevirmen:
                     break
             else:
                 self._ust_uste_bos = 0
+                self._kaydirma = 0        # basari: tercih sirasi geri gelsin
             # DIKKAT: cevrilemeyen parca icin kaynak metin yerine BOS dondurulur.
             # (Aksi halde cagiran taraf bunu "cevrildi" sanip onbellege yazar ve bir daha denemez.)
             cikti.extend(son if son else [""] * len(dilim))
@@ -856,13 +911,39 @@ class Cevirmen:
         # dusunme (kota icin en ucuzu). Diger modellerde dusunme kapali.
         if "z.ai" in url:
             istek_govdesi["thinking"] = {"type": "low" if model.startswith("glm-5.3") else "disabled"}
-        govde = json.dumps(istek_govdesi).encode("utf-8")
-        istek = urllib.request.Request(url, data=govde, headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {anahtar}",
-        })
-        with urllib.request.urlopen(istek, timeout=timeout) as yanit:
-            veri = json.loads(yanit.read().decode("utf-8"))
+        # intern-ai discovery: derin dusunmeyi kapat (yukaridaki stil zinciri; 400'e
+        # karsi kendini iyilestirir — reddedilen stil bir daha denenmez).
+        global _disc_calisan_stil
+        dusunme_stili = _disc_dusunme_kapat(istek_govdesi) if "intern-ai.org.cn" in url else None
+        while True:
+            govde = json.dumps(istek_govdesi).encode("utf-8")
+            istek = urllib.request.Request(url, data=govde, headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {anahtar}",
+            })
+            try:
+                with urllib.request.urlopen(istek, timeout=timeout) as yanit:
+                    veri = json.loads(yanit.read().decode("utf-8"))
+                if dusunme_stili and _disc_calisan_stil is None:
+                    _disc_calisan_stil = dusunme_stili      # dogrulandi; sonraki istekler yalnizca bunu ekler
+                break
+            except urllib.error.HTTPError as _h:
+                if dusunme_stili and _h.code == 400:
+                    try:
+                        _g = _h.read().decode("utf-8", errors="replace").lower()
+                    except Exception:
+                        _g = ""
+                    if any(k in _g for k in _DISC_PARAM_RED_IPUCLARI):
+                        print(f"[i18n] discovery dusunme-kapama stili reddedildi ({dusunme_stili}); "
+                              f"siradaki stil deneniyor", file=sys.stderr)
+                        _disc_reddedilen_stiller.add(dusunme_stili)
+                        for _ad, _alan, _ in _DISC_DUSUNME_STILLERI:
+                            if _ad == dusunme_stili:
+                                istek_govdesi.pop(_alan, None)
+                        dusunme_stili = _disc_dusunme_kapat(istek_govdesi)
+                        if dusunme_stili:
+                            continue
+                raise
         if usage_kutusu is not None and isinstance(veri.get("usage"), dict):
             usage_kutusu.append(veri["usage"])
         icerik = veri["choices"][0]["message"]["content"].strip()

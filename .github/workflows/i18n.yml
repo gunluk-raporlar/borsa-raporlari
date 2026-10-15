@@ -121,6 +121,15 @@ jobs:
           # 60 sn'lik global deger cevap gelmeden istegi iptal ediyordu. Artik
           # yavas uclar (NVIDIA/NVIDIA2) kendi longer suresine sahip.
           I18N_TIMEOUT: "30"
+          # 15.10.2026 pencere adaleti (kaynak: gece kosusu logu): butce 150->240 —
+          # yavas 2-3 uctan sonra zincirin gerisi de (OpenRouter/OrcaRouter/Gemini/Groq)
+          # ayni pencerede denenmis oluyor; 150 sn'de sondakiler hicbir pencerede
+          # siraya giremiyordu. Kaydirma mekanizmasi (bos pencerede sira +1) ile birlikte.
+          I18N_PENCERE_TAVAN: "240"
+          I18N_PENCERE_ASIMI: "240"
+          # 3->6: gecici zaman asimlari (gece yogunlugu dalgasi) saglayiciyi kosu
+          # boyunca devre disi birakmasin; kalici 4xx/429 hala esikte keser.
+          I18N_HATA_ESIGI: "6"
           I18N_YAVAS_UC: "NVIDIA,NVIDIA2"
           I18N_YAVAS_TIMEOUT: "200"
           I18N_SURE_SINIRI_DK: "60"
