@@ -101,6 +101,24 @@ OLLAMA_MODELS = [m.strip() for m in os.environ.get("OLLAMA_MODELS", "gpt-oss:120
 # ile calisir (llm_call zaten 16000).
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_MODELS = [m.strip() for m in os.environ.get("GEMINI_MODELS", "gemini-3.8-flash").split(",") if m.strip()]
+
+# intern-ai discovery servisi (2026-10-15, kullanici karari): ceviri hattindaki
+# ayni iki hesap bot'un icerik ureticilerine de baglandi. Ceviri dogrulamasi
+# deepseek-v4-flash-0731'in bu planda sorunsuz calistigini gosterdi; atria-dawn
+# bu planda YOK (404 "not supported by TokenPlan") — listede yok.
+DISC_API_KEY = os.environ.get("DISCOVERY_API_KEY", "")
+TOKENPLAN_API_KEY = os.environ.get("TOKENPLAN_API_KEY", "")
+DISC_BASE_URL = os.environ.get("DISCOVERY_BASE_URL",
+                               "https://discovery-api.intern-ai.org.cn/v1").rstrip("/")
+DISC_MODEL_TERCIH = [m.strip() for m in os.environ.get(
+    "DISC_MODELS",
+    "deepseek-v4-flash-0731,deepseek-v4-pro-0813,glm-5.3,minimax-m3").split(",") if m.strip()]
+# Dusunme: ceviri dogrulamasi "thinking:{type:disabled}"in deepseek tarafinda
+# kabul edildigini ve sureyi 30-90 sn'den 3-20 sn'ye indirdigini gosterdi.
+# Havuz cagrilari icin varsayilan KAPALI (DISC_DUSUNME=acik ile geri acilir).
+# Derin/makro analiz dogrudan yollari kalite icin varsayilan (dusunme acik)
+# birakilir — 600 sn butceleri bunu karsilar.
+DISC_DUSUNME_KAPALI = os.environ.get("DISC_DUSUNME", "kapali").strip().lower() != "acik"
 NVID_MODEL_TERCIH = [
     # Sira CANLI test ile dogrulandi (2026-09-25): once hizli+calisan modeller.
     # Kalite politikasi (2026-09): dusuk parametreli modeller (gemma-4-31b,
@@ -157,8 +175,9 @@ KARA_LISTE = {
 }
 
 if not (AMD_API_KEY or ALT_API_KEY or CF_API_KEY or OR_API_KEY or NVID_API_KEY
-        or OPENCODE_API_KEY or OLLAMA_API_KEY or GEMINI_API_KEY):
-    raise SystemExit("AMD/ALT/CF/OR/NVIDIA/OPENCODE/OLLAMA/GEMINI anahtarlarindan en az biri ayarlanmali!")
+        or OPENCODE_API_KEY or OLLAMA_API_KEY or GEMINI_API_KEY
+        or DISC_API_KEY or TOKENPLAN_API_KEY):
+    raise SystemExit("AMD/ALT/CF/OR/NVIDIA/OPENCODE/OLLAMA/GEMINI/DISCOVERY/TOKENPLAN anahtarlarindan en az biri ayarlanmali!")
 
 # Varsayilan model: 1B parametrelik MiniCPM5-1B karmasik Turkce promptlarda Ingilizce
 # ic-konusma uretip talimatlari rapora sicrayabilir ve tekrar dongusune girebilir;
@@ -257,6 +276,22 @@ gemini_client = OpenAI(
     timeout=_LLM_TIMEOUT,
     max_retries=0,
 ) if GEMINI_API_KEY else None
+
+# intern-ai discovery: iki hesap, ayni adres, ayri etiketler (devre kesici
+# etiket bazli oldugu icin bir hesap cokerse digeri etkilenmez — i18n ile ayni desen).
+disc_client = OpenAI(
+    api_key=DISC_API_KEY,
+    base_url=DISC_BASE_URL,
+    timeout=_LLM_TIMEOUT,
+    max_retries=0,
+) if DISC_API_KEY else None
+
+tokenplan_client = OpenAI(
+    api_key=TOKENPLAN_API_KEY,
+    base_url=DISC_BASE_URL,
+    timeout=_LLM_TIMEOUT,
+    max_retries=0,
+) if TOKENPLAN_API_KEY else None
 
 # Takip edilen BIST30 hisseleri (Guncel liste)
 HISSELER = [
@@ -1090,13 +1125,15 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
     # (ust sinir — gercek maliyet uretilen token kadardir, ek bedeli yok).
     max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "24000"))
 
-    # Deneme sirasi: AMD (ucretsiz ana) -> ZAI (kullanicinin GLM anahtari;
-    # ucretsiz ortak sunucular sikistiginda kaliteli/stabil ikinci sans) ->
+    # Deneme sirasi: DISCOVERY + TOKENPLAN (bol kotali iki hesap, 15.10 kullanici
+    # karari) -> AMD (ucretsiz ana) -> ZAI (kullanicinin GLM anahtari) ->
     # NVIDIA -> OpenRouter -> Groq. sirasi ile oncelik degistirilebilir.
-    sirasi = sirasi or ("AMD", "ZAI", "NVID", "OR", "OPENCODE", "OLLAMA", "GEMINI", "YEDEK")
+    sirasi = sirasi or ("DISC", "TOKENPLAN", "AMD", "ZAI", "NVID", "OR", "OPENCODE", "OLLAMA", "GEMINI", "YEDEK")
     havuzlar = {
         "AMD": (client, AMD_MODEL_LIST or [AMD_MODEL]),
         "ZAI": (zai_client, ZAI_MODEL_TERCIH),
+        "DISC": (disc_client, DISC_MODEL_TERCIH),
+        "TOKENPLAN": (tokenplan_client, DISC_MODEL_TERCIH),
         "NVID": (nvid_client, _havuz_modelleri(nvid_client, NVID_MODELS, NVID_MODEL_TERCIH, "NVIDIA") if nvid_client else NVID_MODELS),
         "YEDEK": (alt_client, _havuz_modelleri(alt_client, ALT_MODELS, GROQ_MODEL_TERCIH, "Groq") if alt_client else ALT_MODELS),
         "OR": (or_client, _havuz_modelleri(or_client, OR_MODELS, OR_MODEL_TERCIH, "OpenRouter",
@@ -1171,11 +1208,16 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
             # sinirlamiyoruz (kullanici tercihi: kalite once, "profesör modu").
             # NOT: thinking "disabled" gondermek 400/1210 verir; coding ucu
             # parametresiz cagriyi dusunerek yanitlar.
+            # intern-ai discovery'de ise tersi: deepseek ailesi "disabled"i kabul
+            # eder ve sureyi 30-90 sn'den 3-20 sn'ye indirir (15.10 ceviri kaniti).
+            _ek_govde = {"extra_body": {"thinking": {"type": "disabled"}}} \
+                if (etiket in ("DISC", "TOKENPLAN") and DISC_DUSUNME_KAPALI) else {}
             resp = saglayici.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.3,
                 max_tokens=max_tokens,
+                **_ek_govde,
             )
             # OpenRouter aralikla 200 + bos choices dondurebiliyor (2026-09-30:
             # 3 dk bekleyip TypeError ile yanitin cöpe gitmesine yol acmisti).
@@ -3066,16 +3108,22 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
     uzun ve derinlemesine gunluk analizi uretir; sonunda onerilen hisseler
     tablosu (markdown) icerir. Anahtar SADECE sunucuda kalir, sayfaya
     gomulmez. Anahtar yoksa None doner."""
-    anahtar = os.environ.get("ZAI_API_KEY", "")
+    # 15.10 kullanici karari: discovery servisi (bol kotali iki hesap) oncelikli;
+    # anahtar yoksa eski Z.ai glm-5.3-flash yolu. Dusunme bu yolda bilincli
+    # ACIK kalir (rapor kalitesi once; 600 sn butce zaten dusunmeye gore).
+    anahtar = os.environ.get("DISCOVERY_API_KEY", "") or os.environ.get("ZAI_API_KEY", "")
+    disc_mi = bool(os.environ.get("DISCOVERY_API_KEY", ""))
     if not anahtar:
-        logger.warning("[Derin Analiz] ZAI_API_KEY tanimli degil; sayfa uretilmeyecek.")
+        logger.warning("[Derin Analiz] DISCOVERY/ZAI anahtari tanimli degil; sayfa uretilmeyecek.")
         return None
 
-    model = os.environ.get("ZAI_MODEL") or ZAI_MODEL_TERCIH[0]
+    model = (os.environ.get("DISC_MODEL") or DISC_MODEL_TERCIH[0]) if disc_mi \
+        else (os.environ.get("ZAI_MODEL") or ZAI_MODEL_TERCIH[0])
     # glm-5.3-flash HER ZAMAN dusunur (probe 2026-09-29: "1+1"ye bile 60
     # reasoning token). 10 bolumuk analizde dusunme + icerik 5 dk'yi asiyor
     # ve "Request timed out" ile yutuluyordu; tek deneme 10 dk butce.
-    client = OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/coding/paas/v4/",
+    client = OpenAI(api_key=anahtar,
+                    base_url=DISC_BASE_URL if disc_mi else "https://api.z.ai/api/coding/paas/v4/",
                     timeout=600.0, max_retries=0)
 
     teknik_ozet = "\n".join(
@@ -3279,14 +3327,19 @@ def makro_analiz_yap(yedek_amd=False, snapshot=None):
     kisa = os.environ.get("STORM") == "1"
     if kisa:
         logger.info("[Makro Analiz] STORM modu: oz prompt kullanilacak (uydurma alani daraltiliyor).")
-    anahtar = os.environ.get("ZAI_API_KEY", "")
-    model = os.environ.get("ZAI_MODEL") or ZAI_MODEL_TERCIH[0]
-    glm_istemci = (OpenAI(api_key=anahtar, base_url="https://api.z.ai/api/coding/paas/v4/",
+    # 15.10 kullanici karari: discovery once (bol kotali iki hesap); yoksa eski
+    # Z.ai glm-5.3-flash yolu. Dusunme burada da ACIK (rapor kalitesi).
+    anahtar = os.environ.get("DISCOVERY_API_KEY", "") or os.environ.get("ZAI_API_KEY", "")
+    disc_mi = bool(os.environ.get("DISCOVERY_API_KEY", ""))
+    model = (os.environ.get("DISC_MODEL") or DISC_MODEL_TERCIH[0]) if disc_mi \
+        else (os.environ.get("ZAI_MODEL") or ZAI_MODEL_TERCIH[0])
+    glm_istemci = (OpenAI(api_key=anahtar,
+                          base_url=DISC_BASE_URL if disc_mi else "https://api.z.ai/api/coding/paas/v4/",
                           # Derin analizle ayni gerekce: dusunen model 5 dk'yi
                           # asiyor; tek deneme 10 dk butce (rotasyon devrede).
                           timeout=600.0, max_retries=0) if anahtar else None)
     if not anahtar:
-        logger.warning("[Makro Analiz] ZAI_API_KEY yok; yedek AMD yolu denenecek (yedek_amd=%s).",
+        logger.warning("[Makro Analiz] DISCOVERY/ZAI anahtari yok; yedek AMD yolu denenecek (yedek_amd=%s).",
                        yedek_amd)
 
     # --- Tek kabul edilen kesin veri blogu ---

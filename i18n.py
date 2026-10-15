@@ -556,7 +556,9 @@ class Cevirmen:
             disc_modeller = [m.strip() for m in os.environ.get(
                 "DISCOVERY_MODELS",
                 "deepseek-v4-flash-0731,glm-5.3,minimax-m3,"
-                "deepseek-v4-pro-0813,atria-dawn").split(",") if m.strip()]
+                "deepseek-v4-pro-0813").split(",") if m.strip()]
+            # atria-dawn 15.10'da cikarildi: bu planda 404 "not supported by
+            # TokenPlan" donduruyor; 404 kalici hatadir ve hesabi devre disi birakir.
             disc_modeller = list(dict.fromkeys(disc_modeller))
             uclar.append((_ad, disc_taban + "/chat/completions", disc_anahtar, disc_modeller))
         # Cloudflare Workers AI 2026-10-14'te KALDIRILDI.
