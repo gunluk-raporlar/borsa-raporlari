@@ -1080,10 +1080,10 @@ def ceviri_gecerli_mi(saf: str, cev: str) -> bool:
     v = cev.strip().strip(ALINTI_KARAKTERLERI).strip()
     if not v or v == saf.strip():
         return False
-    v_kelimeler = [w.lower() for w in
-                   re.findall(r"[^\W\d_]+(?:['’\-][^\W\d_]+)*", v, re.UNICODE)]
+    v_kelimeler_ory = re.findall(r"[^\W\d_]+(?:[‘’\-][^\W\d_]+)*", v, re.UNICODE)
+    v_kelimeler = [w.lower() for w in v_kelimeler_ory]
     s_kelimeler = {w.lower() for w in
-                   re.findall(r"[^\W\d_]+(?:['’\-][^\W\d_]+)*", saf)}
+                   re.findall(r"[^\W\d_]+(?:[‘’\-][^\W\d_]+)*", saf)}
     # 1) TURKCE KELIME TESTI: kaynakta koku tasimayan yeni turkce kelime -> red
     for w in set(v_kelimeler):
         if TURKCE_OZEL_RE.search(w) and w not in s_kelimeler:
@@ -1092,10 +1092,15 @@ def ceviri_gecerli_mi(saf: str, cev: str) -> bool:
             if not any(w.startswith(k) or k.startswith(w)
                        for k in s_kelimeler if len(k) >= 3):
                 return False
-    # 2) EKO TESTI: ard arda >= 8 token'i kaynakta birebir bulunan koşu -> red
+    # 2) EKO TESTI: ard arda >= 8 token’i kaynakta birebir bulunan kosu -> red.
+    # Tamami buyuk harf olan token’lar (hisse kodlari: BINBN, BTCIM...) SAYILMAZ:
+    # KAP duyuru satirlarinda 40 kod dogru ceviride de birebir kalir ve 8’lik
+    # kosuyu doldurup haksiz red uretir (15.10 bulgusu).
     kosu = 0
-    for w in v_kelimeler:
-        kosu = kosu + 1 if w in s_kelimeler else 0
+    for w_ory in v_kelimeler_ory:
+        if w_ory.isupper() or not any(c.islower() for c in w_ory):
+            continue
+        kosu = kosu + 1 if w_ory.lower() in s_kelimeler else 0
         if kosu >= 8:
             return False
     return True
