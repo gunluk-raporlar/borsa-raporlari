@@ -766,16 +766,20 @@ class Cevirmen:
                     if self._model_esik.get(ad) == model:
                         continue
                     try:
+                        _t0 = time.time()
                         aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, zaman_asimi)
                         if aday and len(aday) == len(dilim):
                             son = aday
                             son_uc = ad
+                            # BASARILI PENCEREDE KAZANAN UC/MODEL LOGA YAZILIR (2026-10-15):
+                            # basarili istekler sessizdi; hangi saglayicinin canli oldugu
+                            # yalnizca hata aninda anlasiliyordu (kullanicinin istegi).
+                            print(f"[i18n] {ad}/{model}: {len(dilim)} dize cevrildi "
+                                  f"({time.time() - _t0:.1f} sn)", flush=True)
                             # BASARI SAYACI SIFIRLAR. Canli kosum 13.10'da gosterdi:
                             # AMD ilk 60 dizeyi sorunsuz cevirdi, TEK bir zaman asimi
                             # sonrasi model "bu kosuda bir daha denenmez" ile o kosuda
                             # tamamen devre disi kaldi ve geri kalan her sey atlandi.
-                            # Ardisik (consecutive) hata sayacı dogru davranistir:
-                            # calisan bir saglayici sayacini sifirlar.
                             self.hata_sayaci[ad] = 0
                             self._model_esik.pop(ad, None)
                             break
@@ -816,6 +820,7 @@ class Cevirmen:
                                 if aday and len(aday) == len(dilim):
                                     son = aday
                                     son_uc = ad
+                                    print(f"[i18n] {ad}/{model}: {len(dilim)} dize cevrildi (429 sonrasi)", flush=True)
                                     break
                             except Exception:
                                 pass
