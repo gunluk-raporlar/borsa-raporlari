@@ -6,6 +6,7 @@ API cevap veriyor ama neredeyse hepsi reddediliyor. Iki olasilik:
   (b) model bos/bozuk JSON donduruyor
 Bu test ikisini AYIRIR ve gercek metinleri loga basar.
 """
+import glob
 import os
 import sys
 import json
@@ -123,6 +124,82 @@ else:
             print(f"{_m}: HTTP {_h.code} {(time.time()-b)*1000:.0f} ms :: {_g}")
         except Exception as _e:
             print(f"{_m}: HATA {str(_e)[:70]}")
+
+# --- GERCEK SAYFA DIZELERI PROBU (2026-10-15) ---
+# Kalite testinin 4 ornek dizesi tum saglayicilarda GECERLI donerken gercek kosu
+# ~%95 sessiz red yiyor (atlanan artiyor, hata satiri yok). Ornek dizeler temiz
+# secilmisti; burada gercek sayfalardan toplanan BEKLEYEN dizelerle ayni saglayici
+# A/B test edilir (dusunme-kapama acik/kapali) ve red gerekcesi ham ciktiyla gosterilir.
+print("\n--- Gercek sayfa dizeleri probu (Discovery/deepseek-v4-flash-0731, hedef=de) ---")
+try:
+    _aday_sayfalar = (["index.html", "raporlar.html", "derin-analiz.html"]
+                      + sorted(glob.glob("raporlar/*.html"))[:3]
+                      + sorted(glob.glob("hisse/*.html"))[:3])
+    _gercek: list[str] = []
+    for _syf in _aday_sayfalar:
+        if len(_gercek) >= 24 or not os.path.exists(_syf):
+            continue
+        try:
+            _p = i18n.MetinToplayici(dil="de")
+            _p.feed(open(_syf, encoding="utf-8").read())
+            _p.close()
+        except Exception:
+            continue
+        for _kaynak in (x["kaynak"] for x in _p.parcalar):
+            _saf, _onek = i18n.metni_ayikla(_kaynak)
+            if not i18n.cevrilecek_mi(_saf) or _saf in i18n.SOZLUK:
+                continue
+            if i18n.Cevirmen._anahtar("de", _saf) in c.onbellek:
+                continue      # onbellekte: kosuda saglayiciya gitmez, proba da girmesin
+            if len(_saf) < 8:
+                continue
+            _gercek.append(_saf)
+            if len(_gercek) >= 24:
+                break
+    print(f"gercek bekleyen dize toplandi: {len(_gercek)}")
+    _disc_url = (os.environ.get("DISCOVERY_BASE_URL",
+                 "https://discovery-api.intern-ai.org.cn/v1").rstrip("/")
+                 + "/chat/completions")
+    _disc_k = os.environ.get("DISCOVERY_API_KEY")
+    _sistem_de = ("You are a professional translator for a Turkish finance website. "
+                  "The user sends a JSON array of strings. Translate EVERY item into German. "
+                  "Return ONLY a JSON array of the exact same length — no explanations, "
+                  "no markdown fences. Every element must be a JSON string.")
+    if _disc_k and len(_gercek) >= 6:
+        _yarim = len(_gercek) // 2
+        for _etiket, _stil, _grup in (("dusunme-kapama ACIK", None, _gercek[:_yarim]),
+                                      ("dusunme-kapama KAPALI", "yok", _gercek[_yarim:])):
+            i18n._disc_calisan_stil = None
+            i18n._disc_reddedilen_stiller.clear()
+            if _stil:
+                os.environ["DISCOVERY_DUSUNME_STIL"] = _stil
+            else:
+                os.environ.pop("DISCOVERY_DUSUNME_STIL", None)
+            try:
+                _t = time.time()
+                _ham = i18n.Cevirmen._llm_istek_dayanikli(
+                    _disc_url, _disc_k, "deepseek-v4-flash-0731", _sistem_de, _grup, 60)
+                print(f"[{_etiket}] istek OK ({time.time() - _t:.1f} sn, {len(_ham)}/{len(_grup)} dize)")
+                _sayim: dict[str, int] = {}
+                for _s, _c in zip(_grup, _ham):
+                    if not isinstance(_c, str) or not _c.strip():
+                        _d = "BOS"
+                    elif _c.strip() == _s.strip():
+                        _d = "KIMLIK"
+                    elif i18n.TURKCE_OZEL_RE.search(_c) and not any(a in _c for a in i18n.OZEL_ADLAR):
+                        _d = "TURKCE-KARAKTER"
+                    else:
+                        _d = "GECERLI"
+                    _sayim[_d] = _sayim.get(_d, 0) + 1
+                    print(f"    [{_d}] {_s[:46]!r} -> {_c[:64]!r}")
+                print(f"    ozet: {_sayim}")
+            except Exception as _h:
+                print(f"[{_etiket}] istek HATA: {str(_h)[:140]}")
+        os.environ.pop("DISCOVERY_DUSUNME_STIL", None)
+    else:
+        print("DISCOVERY_API_KEY yok veya yeterli dize toplanamadi; gercek-dize probu atlandi")
+except Exception as _probe_h:
+    print(f"gercek-dize probu hata: {_probe_h}")
 
 print("SONUC Yorumu:")
 print("  gecerli=4  -> saglayici sorunsuz")
