@@ -4231,7 +4231,9 @@ _SITE_ARAMA_KUTUSU = """
     var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
                    'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
                    'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
-    s = String(s).toLowerCase();
+    // toLowerCase, 'İ' harfini 'i' + U+0307 (birlesik nokta) YAPAR ve uzunluk
+    // degisir; nokta temizlenmezse 'is yatirim' aramasi 'İş'i bulamaz (15.10 bulgusu).
+    s = String(s).toLowerCase().replace(/\\u0307/g, '');
     return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
   }
 
@@ -4269,11 +4271,11 @@ _SITE_ARAMA_KUTUSU = """
         .slice(0, 6);
 
       var html = '';
-      var nDil = normalize(q);
-      var soruMu = /\\?\\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\\.|mi|mı|icin)\\b/i.test(nDil);
-      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      // Puter tabanli AI asistani 2026-09-21'de kaldirildi; sonuclardaki olu
+      // "BIST AI asistanina sor" baglantisi da 15.10'da cikarildi (kullanicinin
+      // yapay zeka kutusu karari sonrasi — baglanti hicbir islem yapmiyordu).
       if (!sonuc.length) {
-        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Farklı bir terim veya hisse kodu deneyin.</div>';
       } else {
         sonuc.forEach(function(x) {
           var metin = normalize(x.s.t);
@@ -4292,11 +4294,6 @@ _SITE_ARAMA_KUTUSU = """
     });
   };
 
-  window.siteAraAI = function() {
-    var giris = document.getElementById('site-arama-giris');
-    var ai = document.getElementById('ai-input');
-    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-  };
 })();
 </script>
 """
@@ -8381,6 +8378,23 @@ def site_arama_json_yaz(rapor_dosyalari):
             metin = makale_metni(os.path.join(dizin, fn))
             if metin:
                 sayfalar.append({"b": f"{etiket} — {fn[:-5]}", "u": f"{dizin}/{fn}", "t": metin[:3500]})
+    # HISSE DETAY SAYFALARI (2026-10-15): indekste hic yoklardi — kullanici sirket
+    # aradiginda detay sayfasina hicbir zaman ulasamiyordu. Baslik sayfanin
+    # <title>'indan alinir (sirket adi icerir); iletide hisse kodu one alinir.
+    # URL bilincli olarak 'hisse/...' yazilir: os.path.join Windows'ta ters bolu
+    # uretir ve JSON'a boyle sinir (yerel kosta bozuk baglanti, CI'da dogru).
+    for fn in _html_dosyalari("hisse"):
+        yol = "hisse/" + fn
+        metin = makale_metni(yol)
+        if not metin:
+            continue
+        try:
+            _src = open(yol, encoding="utf-8").read()
+        except OSError:
+            _src = ""
+        m_t = re.search(r"<title>([^<]+)</title>", _src)
+        baslik = m_t.group(1).strip() if m_t else f"Hisse Detay — {fn[:-5]}"
+        sayfalar.append({"b": baslik, "u": yol, "t": f"{fn[:-5]} " + metin[:3500]})
     veri = {
         "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M"),
         "sayfalar": sayfalar,

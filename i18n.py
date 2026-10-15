@@ -1933,6 +1933,19 @@ def en_yollarini_ingilizcele(kok: Path) -> int:
             # deger yakalanip donusturuluyor; bicim (bosluklar) korunur.
             yeni = re.sub(r'("u"\s*:\s*")([^"]*)(")',
                           lambda m: m.group(1) + _en_slug_degistir(m.group(2)) + m.group(3), metin)
+            # 15.10: hisse detay sayfalari TR indekse eklendi; en sitesinde hisse/
+            # dizini YOK. Hedef dosyasi en agacinda bulunmayan kayitlar en aramasini
+            # kirik linklerle doldurur — var-olmayanlar dusurulur.
+            if dosya.name == "site-arama.json":
+                try:
+                    _veri = json.loads(yeni)
+                    _eski_adet = len(_veri.get("sayfalar") or [])
+                    _veri["sayfalar"] = [s for s in (_veri.get("sayfalar") or [])
+                                         if (en_kok / (s.get("u") or "")).exists()]
+                    if len(_veri["sayfalar"]) != _eski_adet:
+                        yeni = json.dumps(_veri, ensure_ascii=False)
+                except Exception:
+                    pass  # JSON bozuksa dokunma; mevcut davranis (slug rewrite) yeterli
         elif dosya.suffix == ".xml" and dosya.name == "sitemap.xml" and dosya.parent == kok:
             # kok sitemap: yalnizca hreflang="en" alternatifleri degisir
             yeni = re.sub(r'(<xhtml:link[^>]*hreflang="en"[^>]*>)',
