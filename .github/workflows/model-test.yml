@@ -35,5 +35,6 @@ jobs:
           ORCA_MODELS: "tencent/hy4-preview-free,z-ai/glm-5.3-flash-free,deepseek/deepseek-v4-flash-free"
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OPENCODE_MODELS: "space-bunny-free"
-          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
+          DISCOVERY_API_KEY: ${{ secrets.DISCOVERY_API_KEY }}
+          TOKENPLAN_API_KEY: ${{ secrets.TOKENPLAN_API_KEY }}
         run: python i18n.py --saglayici-test

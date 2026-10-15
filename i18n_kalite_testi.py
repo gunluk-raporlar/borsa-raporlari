@@ -57,38 +57,6 @@ for ev, url, anahtar, modeller in uclar:
         break      # her ucte sadece ilk model
     print()
 
-# DeepL iki anahtarla: kotasi ve gercek ceviri kalitesi
-print("\n--- DeepL ---")
-for _ad, _ortam in (("DEEPL", "DEEPL_API_KEY"), ("DEEPL2", "DEEPL2_API_KEY"), ("DEEPL3", "DEEPL3_API_KEY")):
-    _k = os.environ.get(_ortam)
-    if not _k:
-        print(f"{_ad}: {_ortam} tanimli degil")
-        continue
-    for uc in ("https://api-free.deepl.com", "https://api.deepl.com"):
-        try:
-            rq = urllib.request.Request(uc + "/v2/usage",
-                                        headers={"Authorization": f"DeepL-Auth-Key {_k}"})
-            with urllib.request.urlopen(rq, timeout=20) as y:
-                u = json.loads(y.read().decode("utf-8"))
-            print(f"{_ad} {uc}/v2/usage: OK :: {u}")
-            break
-        except urllib.error.HTTPError as h:
-            print(f"{_ad} {uc}/v2/usage: HTTP {h.code}")
-        except Exception as e:
-            print(f"{_ad} {uc}/v2/usage: {e}")
-    b = time.time()
-    try:
-        cv = i18n.Cevirmen._deepl(ORNEK, "en", anahtar=_k)
-        ms = (time.time() - b) * 1000
-        g = sum(1 for s_, v in zip(ORNEK, cv) if i18n.ceviri_gecerli_mi(s_, v))
-        print(f"{_ad} ceviri: OK ({ms:.0f} ms) gecerli={g}/{len(ORNEK)}")
-        for v in cv:
-            print(f"    {str(v)[:74]!r}")
-    except urllib.error.HTTPError as h:
-        print(f"{_ad} ceviri: HTTP {h.code} ({time.time()-b:.1f} sn)")
-    except Exception as e:
-        print(f"{_ad} ceviri: HATA {str(e)[:70]}")
-
 # Cloudflare Workers AI: ucretsiz, Actions'tan erisilebilir, DeepSeek-V4-Flash var.
 print("\n--- Cloudflare Workers AI ---")
 _cf_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID")

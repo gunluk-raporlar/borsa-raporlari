@@ -2,6 +2,8 @@ name: Cok Dilli Sayfa Guncelleme
 
 # Ceviri ayri bir kosuda yapilir; gunluk rapor kosusu ceviri yuzunden uzamaz/iptal olmaz.
 # AMD: RPM limiti 20/dk -> istekler arasi 3.5 sn. Buyuk model kapasite doluysa yedege devreder.
+# 15.10.2026: DeepL ailesi (DEEPL/2/3) kaldirildi; intern-ai discovery servisi iki hesapla
+# (Discovery + TokenPlan) zincirin basina baglandi — secret'lar DISCOVERY_API_KEY / TOKENPLAN_API_KEY.
 
 on:
   schedule:
@@ -10,11 +12,10 @@ on:
   workflow_dispatch:
     inputs:
       provider:
-        description: "Ceviri saglayici (llm | deepl)"
+        description: "Ceviri saglayici (llm)"
         type: choice
         options:
           - llm
-          - deepl
         default: llm
       test:
         description: "Sadece saglayici testi calistir (ceviri yapmaz)"
@@ -73,9 +74,8 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           GROQ2_API_KEY: ${{ secrets.GROQ2_API_KEY }}
-          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
-          DEEPL2_API_KEY: ${{ secrets.DEEPL2_API_KEY }}
-          DEEPL3_API_KEY: ${{ secrets.DEEPL3_API_KEY }}
+          DISCOVERY_API_KEY: ${{ secrets.DISCOVERY_API_KEY }}
+          TOKENPLAN_API_KEY: ${{ secrets.TOKENPLAN_API_KEY }}
           ORCA_MODELS: "tencent/hy4-preview-free,deepseek/deepseek-v4-flash-free,z-ai/glm-5.3-flash-free"
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OPENCODE_MODELS: "space-bunny-free,ling-3.1-flash-free,cat-jam-free"
@@ -102,9 +102,8 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           GROQ2_API_KEY: ${{ secrets.GROQ2_API_KEY }}
-          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
-          DEEPL2_API_KEY: ${{ secrets.DEEPL2_API_KEY }}
-          DEEPL3_API_KEY: ${{ secrets.DEEPL3_API_KEY }}
+          DISCOVERY_API_KEY: ${{ secrets.DISCOVERY_API_KEY }}
+          TOKENPLAN_API_KEY: ${{ secrets.TOKENPLAN_API_KEY }}
         run: |
           python -u i18n_kalite_testi.py
           echo "::group::NVIDIA model hiz probu (hangi model kac sn suruyor?)"
@@ -150,9 +149,8 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           GROQ2_API_KEY: ${{ secrets.GROQ2_API_KEY }}
-          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
-          DEEPL2_API_KEY: ${{ secrets.DEEPL2_API_KEY }}
-          DEEPL3_API_KEY: ${{ secrets.DEEPL3_API_KEY }}
+          DISCOVERY_API_KEY: ${{ secrets.DISCOVERY_API_KEY }}
+          TOKENPLAN_API_KEY: ${{ secrets.TOKENPLAN_API_KEY }}
           ORCA_MODELS: "tencent/hy4-preview-free,deepseek/deepseek-v4-flash-free,z-ai/glm-5.3-flash-free"
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OPENCODE_MODELS: "space-bunny-free,ling-3.1-flash-free,cat-jam-free"

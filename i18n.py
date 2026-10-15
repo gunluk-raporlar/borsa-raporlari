@@ -21,24 +21,25 @@ KULLANIM
   # 2) Gercek uretim (mevcut LLM anahtarlariyla):
   python i18n.py --diller en,de,ru,zh --provider llm
 
-  # 3) DeepL Free (500.000 karakter/ay):
-  python i18n.py --diller en,de,ru,zh --provider deepl
-
-  # 4) Uretilenleri dogrula (kirik ic baglanti + hreflang simetrisi):
+  # 3) Uretilenleri dogrula (kirik ic baglanti + hreflang simetrisi):
   python i18n.py --diller en,de,ru,zh --dogrula
 
-  # 5) Sitemap'e dil alternatiflerini ekle (opt-in, Turkce kayitlar korunur):
+  # 4) Sitemap'e dil alternatiflerini ekle (opt-in, Turkce kayitlar korunur):
   python i18n.py --diller en,de,ru,zh --sitemap
 
-  # 6) Uretilen dil dizinlerini sil:
+  # 5) Uretilen dil dizinlerini sil:
   python i18n.py --temizle
 
 ANAHTARLAR (env)
 ----------------
-  ZAI_API_KEY / NVIDIA_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY /
+  DISCOVERY_API_KEY / TOKENPLAN_API_KEY -> intern-ai discovery servisi; ayni adres,
+  iki ayri hesap (DISCOVERY_BASE_URL ile override; varsayilan
+  https://discovery-api.intern-ai.org.cn/v1). Zincirin en onunde, sirayla denenir.
+  Varsayilan modeller (yalnizca metin; DISCOVERY_MODELS ile override):
+  deepseek-v4-flash-0731, glm-5.3, minimax-m3, deepseek-v4-pro-0813, atria-dawn
+  NVIDIA_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY /
   ORCAROUTER_API_KEY / OPENCODE_API_KEY  -> --provider llm
   OLLAMA_BASE_URL (opsiyonel, yerel)  -> --provider llm
-  DEEPL_API_KEY                      -> --provider deepl  (free: <key>:fx)
 """
 
 from __future__ import annotations
@@ -57,7 +58,6 @@ import shutil
 import socket
 import sys
 import time
-import urllib.parse
 import urllib.request
 from html.parser import HTMLParser
 from pathlib import Path
@@ -311,13 +311,13 @@ BOS_SURE_ESIGI_SN = float(os.environ.get("I18N_BOS_SURE_SN", "90"))
 
 
 class Cevirmen:
-    """Onbellek + saglayici zinciri (llm -> deepl -> mock)."""
+    """Onbellek + saglayici zinciri (llm -> mock)."""
 
     def __init__(self, provider: str = "mock", onbellek_yolu: str = "i18n-cache.json"):
         self.provider = provider
         # Onbellek yalnizca gercek saglayicilarda kullanilir; mock/off ciktilari
         # gercek onbellege sizmamali (test isaretleri uretime karismasin).
-        self.gecerli_onbellek = provider in ("llm", "deepl")
+        self.gecerli_onbellek = provider in ("llm",)
         self.onbellek_yolu = Path(onbellek_yolu if self.gecerli_onbellek
                                   else f"i18n-cache-{provider}.json")
         self.onbellek = {}
@@ -357,7 +357,7 @@ class Cevirmen:
         self.orta_timeout = float(os.environ.get("I18N_ORTA_TIMEOUT", "75"))
         self.hizli_timeout = float(os.environ.get("I18N_TIMEOUT", "30"))
         self.istek_timeout = self.hizli_timeout
-        self.devre_disi: set[str] = set()      # devre disi saglayici ETIKETLERI (ad; "deepl" de olabilir)
+        self.devre_disi: set[str] = set()      # devre disi saglayici ETIKETLERI (ad; NVIDIA ile NVIDIA2 gibi)
         self.hata_sayaci: dict[str, int] = {}  # gecici hatalar (timeout/429/5xx)
         # Zaman asimi yiyen MODEL -> bu kosuda bir daha denenmez (saglayici basina 1).
         # Canli test: AMD/GLM-5.3-Flash 60 sn sonra dustu, her pencerede tekrar tekrar
@@ -465,22 +465,6 @@ class Cevirmen:
             return [f"[{DILLER[dil]['ad']}] {p}" for p in parcalar]
         if self.provider == "off":
             return list(parcalar)  # gercek passthrough: hicbir sey eklenmez
-        if self.provider == "deepl":
-            try:
-                return self._deepl(parcalar, dil)
-            except urllib.error.HTTPError as h:
-                # 456 = kota bitti / duzeltilemez hata: kosuyu cokertmesin, bos donup devam etsin
-                try:
-                    govde = h.read().decode("utf-8", errors="replace")[:200]
-                except Exception:
-                    govde = ""
-                print(f"[i18n] DeepL hatasi HTTP {h.code} :: {govde}", file=sys.stderr)
-                if h.code in (456, 403, 401, 429):
-                    self.devre_disi.add("deepl")
-                return [""] * len(parcalar)
-            except Exception as h:
-                print(f"[i18n] DeepL hatasi: {h}", file=sys.stderr)
-                return [""] * len(parcalar)
         return self._llm(parcalar, dil)
 
     def _uclari_kur(self) -> list:
@@ -498,6 +482,22 @@ class Cevirmen:
         Hicbiri surekli calismadigi icin devre kesici + hata sayaci zinciri kisa tutar.
         """
         uclar = []
+        # 0) intern-ai discovery servisi — ayni adres, iki ayri hesap (2026-10-15).
+        #    DeepL ailesi (DEEPL/DEEPL2/DEEPL3) ayni gun tamamen kaldirildi; bu iki
+        #    hesap yeni birincil kapasite. Devre kesici `ad` ile ayrilir (NVIDIA/
+        #    NVIDIA2 deseninin aynisi); DISCOVERY_MODELS ile override edilir.
+        disc_taban = os.environ.get("DISCOVERY_BASE_URL",
+                                    "https://discovery-api.intern-ai.org.cn/v1").rstrip("/")
+        for _ad, _ortam in (("Discovery", "DISCOVERY_API_KEY"), ("TokenPlan", "TOKENPLAN_API_KEY")):
+            disc_anahtar = os.environ.get(_ortam)
+            if not disc_anahtar:
+                continue
+            disc_modeller = [m.strip() for m in os.environ.get(
+                "DISCOVERY_MODELS",
+                "deepseek-v4-flash-0731,glm-5.3,minimax-m3,"
+                "deepseek-v4-pro-0813,atria-dawn").split(",") if m.strip()]
+            disc_modeller = list(dict.fromkeys(disc_modeller))
+            uclar.append((_ad, disc_taban + "/chat/completions", disc_anahtar, disc_modeller))
         # Cloudflare Workers AI 2026-10-14'te KALDIRILDI.
         # Canli test hata govdesi:
         #   "@cf/deepseek-ai/deepseek-v4-flash-0731 is not available on the
@@ -615,7 +615,7 @@ class Cevirmen:
         uclar = self._uclari_kur()
         if not uclar:
             raise SystemExit(
-                "[i18n] HATA: --provider llm icin ZAI_API_KEY / NVIDIA_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY / ORCAROUTER_API_KEY / OPENCODE_API_KEY'den en az biri gerekli."
+                "[i18n] HATA: --provider llm icin DISCOVERY / TOKENPLAN / NVIDIA / GEMINI / OPENROUTER / ORCAROUTER / OPENCODE anahtarlarindan en az biri gerekli."
             )
 
         cikti: list[str] = []
@@ -630,7 +630,6 @@ class Cevirmen:
             "I18N_PENCERE_ASIMI",
             str(min(PENCERE_ASIMI_TAVAN,
                     max(90, self.yavas_timeout + 20, self.orta_timeout + 20)))))
-        dil_hedefi = {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
         for bas in range(0, len(parcalar), PENCERE):
             # sure butcesi: asilirsa kalanlari cevirmeden don (site uretimi asla bloke olmasin)
             if time.time() - self.baslangic > self.sure_siniri:
@@ -639,8 +638,8 @@ class Cevirmen:
                 print(f"[i18n] sure butcesi doldu ({self.sure_siniri/60:.0f} dk); kalan {len(parcalar)-bas} parca sonraki kosuya birakildi", file=sys.stderr)
                 break
             # tum LLM uclari devre disi kaldiysa bosuna beklemeyi birak.
-            # `devre_disi` icinde "deepl" gibi LLM olmayan etiketler de olabilir; bu yuzden
-            # kume boyutlari karsilastirilmaz, uc listesinden sayilir.
+            # Kume boyutlari yerine uc listesinden sayilir: gelecekte LLM olmayan
+            # etiketler de devre_disi'ye girebilir.
             olu_uclar = [ad for ad, *_ in uclar if ad in self.devre_disi]
             if uclar and len(olu_uclar) >= len(uclar):
                 self.atlanan_parca += len(parcalar) - bas
@@ -653,15 +652,9 @@ class Cevirmen:
             print(f"[i18n] {dil}: {bas}/{len(parcalar)} dize (atlanan: {self.atlanan_parca})", flush=True)
             pencere_t0 = time.time()
             self._uc_pay.clear()          # her pencerede uc paylari sifirlanir
-            # ONCE DEEPL2 (2026-10-14): canli olcumde DeepL 526 ms ve 4/4 kalite;
-            # AMD 2-11 sn, NVIDIA 2-97 sn. Once LLM denendigi icin pencere butcesi
-            # (150 sn) cogu zaman DeepL'a sira gelmeden doluyordu — logda
-            # "deepl2 yedeginden cevrildi" yaziyordu ama 60 dk'da sadece 499 dize
-            # cevrilebiliyordu. Simdi DeepL2 en basta denenir (kullanim 220/1M
-            # karakter, neredeyse tamami bos). Ceviremezse LLM zinciri devreye girer.
-            son = self._deepl_dene(dilim, dil, dil_hedefi, ("deepl3", "deepl2"))
-            son_uc = "deepl2" if son else None
-            for ad, url, anahtar, modeller in (() if son else uclar):
+            son = None
+            son_uc = None
+            for ad, url, anahtar, modeller in uclar:
                 if ad in self.devre_disi:
                     continue
                 # UC BASINA PENCERE PAYI (2026-10-13 canli kosum duzeltmesi).
@@ -820,29 +813,6 @@ class Cevirmen:
             if son_uc:
                 self._model_esik_sayi.pop(son_uc, None)
                 self._model_esik.pop(son_uc, None)
-            # DeepL YEDEGI (2026-10-13): once kotasi tukenmesi yuzunden kaldirilmis
-            # ti (canli test: character_count=1000000 / limit=1000000, her ceviri 456).
-            # Kullanici yeni DEEPL2 anahtari ekledi -> koca kota ile geri geldi.
-            # LLM zinciri tukendiginde DEGILMeyen, uydurmayan son care. Kotasi biten
-            # anahtar devre disi birakilir (456/403/401) ki her pencerede denenmesin.
-            for _ad, _ortam in (("deepl", "DEEPL_API_KEY"), ("deepl2", "DEEPL2_API_KEY")):
-                _k = os.environ.get(_ortam) or os.environ.get(_ortam.replace("_API_KEY", "_KEY"))
-                if _ad in self.devre_disi or not _k:
-                    continue
-                try:
-                    aday = self._deepl(dilim, dil, hedef=dil_hedefi, anahtar=_k)
-                    if aday and len(aday) == len(dilim) and any(aday):
-                        son = aday
-                        son_uc = _ad
-                        print(f"[i18n] {_ad} yedeginden cevrildi", file=sys.stderr)
-                        break
-                except urllib.error.HTTPError as _h:
-                    print(f"[i18n] {_ad} hatasi: HTTP {_h.code}", file=sys.stderr)
-                    if _h.code in (456, 403, 401):
-                        self.devre_disi.add(_ad)
-                        print(f"[i18n] {_ad} devre disi (HTTP {_h.code})", file=sys.stderr)
-                except Exception as _h:
-                    print(f"[i18n] {_ad} hatasi: {_h}", file=sys.stderr)
             if not son:
                 self.atlanan_parca += len(dilim)
                 self._ust_uste_bos += 1
@@ -870,42 +840,6 @@ class Cevirmen:
                 if aralik > 0:
                     time.sleep(aralik)
         return cikti
-
-    def _deepl_dene(self, dilim: list[str], dil: str, dil_hedefi: str,
-                     anahtarlar: tuple = ("deepl3", "deepl2", "deepl")) -> list[str] | None:
-        """Penceredeki dizeleri DeepL ile dener. Basariliysa liste, degilse None.
-
-        2026-10-14: Once LLM zinciri deneniyordu ve pencere butcesi doldugu icin
-        DeepL cogu zaman siraya gelemiyordu. Simdi DeepL ONCE deniyor.
-
-        Anahtar sirasi: DEEPL2 (taze, 1M karakter) -> DEEPL (kotasi tukenmis).
-        Kotasi biten anahtar devre disi birakilir (456) ki her pencerede
-        yeniden denenmesin.
-        """
-        for _ad in anahtarlar:
-            _ortam = _ad.upper() + "_API_KEY"
-            _k = os.environ.get(_ortam) or os.environ.get(_ortam.replace("_API_KEY", "_KEY"))
-            if not _k or _ad in self.devre_disi:
-                continue
-            try:
-                aday = self._deepl(dilim, dil, hedef=dil_hedefi, anahtar=_k)
-                if aday and len(aday) == len(dilim) and any(aday):
-                    return aday
-            except urllib.error.HTTPError as _h:
-                # DeepL hata GOVDESINI yazmak sart: 456 "kota bitti" demek degil,
-                # "bu istek limiti asti" da 456 dondurebiliyor. Govde tam aciklar
-                # (ornegin {"message":{"text":"Character limit exceeded"}}).
-                try:
-                    _govde = _h.read().decode("utf-8", errors="replace")[:300]
-                except Exception:
-                    _govde = ""
-                print(f"[i18n] {_ad} hatasi: HTTP {_h.code} :: {_govde}", file=sys.stderr)
-                if _h.code in (456, 403, 401):
-                    self.devre_disi.add(_ad)
-                    print(f"[i18n] {_ad} devre disi (HTTP {_h.code})", file=sys.stderr)
-            except Exception:
-                pass
-        return None
 
     @staticmethod
     def _llm_istek(url, anahtar, model, sistem, dilim, timeout=30, usage_kutusu=None):
@@ -993,29 +927,6 @@ class Cevirmen:
             if a and b and len(a) == orta and len(b) == len(dilim) - orta:
                 return list(a) + list(b)
             raise
-
-    @staticmethod
-    def _deepl(parcalar: list[str], dil: str, hedef: str | None = None,
-               anahtar: str | None = None) -> list[str]:
-        # 2026-10-13: anahtar parametre olarak alinabiliyor; iki DeepL anahtari
-        # (DEEPL / DEEPL2) sirayla denenir, kotasi biten devre disi birakilir.
-        anahtar = anahtar or os.environ.get("DEEPL_API_KEY") or os.environ.get("DEEPL_KEY")
-        if not anahtar:
-            raise SystemExit("[i18n] HATA: DeepL icin DEEPL_API_KEY gerekli.")
-        hedef = hedef or {"en": "EN-GB", "de": "DE", "ru": "RU", "zh": "ZH"}[dil]
-        # Free anahtarlar (:fx) -> api-free; Pro anahtarlar -> api.deepl.com
-        # (Pro'ya gecersen DEEPL_BASE_URL=https://api.deepl.com ayarlaman yeterli)
-        taban = os.environ.get("DEEPL_BASE_URL", "https://api-free.deepl.com").rstrip("/")
-        govde = "&".join([f"text={urllib.parse.quote(p)}" for p in parcalar])
-        govde += f"&target_lang={hedef}&source_lang=TR&preserve_formatting=1"
-        istek = urllib.request.Request(taban + "/v2/translate", data=govde.encode("utf-8"), headers={
-            "Authorization": f"DeepL-Auth-Key {anahtar}",
-            "Content-Type": "application/x-www-form-urlencoded",
-        })
-        with urllib.request.urlopen(istek, timeout=float(os.environ.get("I18N_TIMEOUT", "60"))) as yanit:
-            veri = json.loads(yanit.read().decode("utf-8"))
-        return [x.get("text", "") for x in veri.get("translations", [])]
-
 
 def metni_ayikla(metin: str) -> tuple[str, str]:
     """'📅 Takvim' -> ('Takvim', '📅 '): bastaki emoji/isaretleri ayirir."""
@@ -1499,53 +1410,11 @@ def saglayici_test() -> int:
     # (Eskiden NVIDIA ve NVIDIA2 ayni URL'i paylastigi icin ikisi de "NVIDIA" diye
     #  yaziliyordu; hangi anahtarin calistigini ayirt etmek mumkun degildi.)
 
-    # 0) Her saglayicinin GERCEK model listesi (destekliyorsa)
-    deepl_anahtar = os.environ.get("DEEPL_API_KEY") or os.environ.get("DEEPL_KEY")
-    if deepl_anahtar:
-        # Anahtarin hangi plana ait oldugunu teshis et: ucretsiz anahtarlar ':fx' ile biter.
-        k = deepl_anahtar.strip()
-        taban_deepl = os.environ.get("DEEPL_BASE_URL", "https://api-free.deepl.com").rstrip("/")
-        print(f"--- DeepL anahtar teshisi: uzunluk={len(k)} son3='...{k[-3:]}' fx_eki={k.endswith(':fx')} ---")
-        for uc in ("https://api-free.deepl.com", "https://api.deepl.com"):
-            try:
-                istek = urllib.request.Request(uc + "/v2/usage", headers={"Authorization": f"DeepL-Auth-Key {k}"})
-                with urllib.request.urlopen(istek, timeout=30) as y:
-                    u = json.loads(y.read().decode("utf-8"))
-                print(f"    {uc}/v2/usage: OK :: {json.dumps(u, ensure_ascii=False)[:200]}")
-            except urllib.error.HTTPError as h:
-                try:
-                    govde = h.read().decode("utf-8", errors="replace")[:200]
-                except Exception:
-                    govde = ""
-                print(f"    {uc}/v2/usage: HTTP {h.code} :: {govde}")
-            except Exception as h:
-                print(f"    {uc}/v2/usage: {h}")
-        # DeepL'in destekledigi dil kodlarini sor: hedef kodlarimiz (EN-GB/DE/RU/ZH) gecerli mi?
-        for tip in ("target", "source"):
-            try:
-                istek = urllib.request.Request(f"{taban_deepl}/v2/languages?type={tip}",
-                                               headers={"Authorization": f"DeepL-Auth-Key {k}"})
-                with urllib.request.urlopen(istek, timeout=30) as y:
-                    dil_listesi = json.loads(y.read().decode("utf-8"))
-                kodlar = [d.get("language") for d in dil_listesi]
-                print(f"    {tip} diller ({len(kodlar)}): {kodlar[:40]}")
-                if tip == "target":
-                    for kod in ("EN-GB", "DE", "RU", "ZH", "ZH-HANS"):
-                        print(f"        {kod}: {'VAR' if kod in kodlar else 'YOK'}")
-            except Exception as h:
-                print(f"    {tip} diller: alinamadi ({h})")
-        bas = time.time()
-        try:
-            cev = Cevirmen._deepl(["BIST 30 gunluk rapor: destek ve direnc"], "en")
-            print(f"    ceviri testi: OK ({(time.time()-bas)*1000:.0f} ms) -> {str(cev[0])[:60]}")
-        except Exception as h:
-            print(f"    ceviri testi: HATA ({h})")
-
     for ev, url, anahtar, _m in uclar:
         models_url = url.replace("/chat/completions", "/models")
         try:
             liste = _modelleri_al(models_url, anahtar)
-            ilgi = [m for m in liste if any(k in m.lower() for k in ("glm", "deepseek", "qwen", "flash"))]
+            ilgi = [m for m in liste if any(k in m.lower() for k in ("glm", "deepseek", "qwen", "flash", "nemotron", "bunny", "intern", "minimax", "atria", "kimi"))]
             goster = ilgi if ilgi else liste
             print(f"--- {ev}: {len(liste)} model erisilebilir ---")
             for m in goster[:45]:
@@ -2173,7 +2042,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="borsa-raporlari cok dilli katman")
     ap.add_argument("--kok", default=".", help="depo koku (varsayilan: .)")
     ap.add_argument("--diller", default="en,de,ru,zh")
-    ap.add_argument("--provider", default="mock", choices=["mock", "llm", "deepl", "off"])
+    ap.add_argument("--provider", default="mock", choices=["mock", "llm", "off"])
     ap.add_argument("--sayfalar", default="", help="virgulle ayrilmis sayfa listesi (varsayilan: hepsi)")
     ap.add_argument("--sitemap", action="store_true", help="sitemap.xml'e dil alternatiflerini ekle")
     ap.add_argument("--dogrula", action="store_true", help="sadece dogrula, yazma")
@@ -2234,7 +2103,7 @@ def main() -> int:
         raise SystemExit(
             "GUVENLIK: --provider mock/off ile tum site uretimi engellendi. "
             "Yapisal pilot icin --sayfalar ile tek sayfa verin; gercek uretim "
-            "icin --provider llm (veya deepl) kullanin; bilincli overriding icin --zorla."
+            "icin --provider llm kullanin; bilincli overriding icin --zorla."
         )
 
     cevirmen = Cevirmen(provider=args.provider, onbellek_yolu=str(kok / "i18n-cache.json"))
