@@ -326,23 +326,27 @@ _DISC_DUSUNME_STILLERI = (
     # vLLM tarzi sohbet-sablonu anahtari
     ("chat_template_kwargs", "chat_template_kwargs", {"enable_thinking": False}),
 )
-_DISC_PARAM_RED_IPUCLARI = ("unrecognized", "unknown", "unexpected", "not permitted",
-                            "extra input", "unknown field", "invalid parameter",
-                            "bilinmeyen", "gecersiz parametre")
-_disc_reddedilen_stiller: set[str] = set()   # 400 ile reddedilen stiller (surec geneli)
-_disc_calisan_stil: str | None = None        # dogrulanan stil; sonraki istekler yalnizca onu ekler
+_disc_reddedilen_stiller: set[str] = set()   # "stil|model" — 400 veren kombolar (surec geneli)
+_disc_calisan_stil: dict[str, str] = {}      # model -> dogrulanan stil; o model yalnizca onu ekler
 
 
-def _disc_dusunme_kapat(istek_govdesi: dict) -> str | None:
-    """Discovery istegine dusunme-kapama alanini ekler; uygulanan stil adini dondurur."""
-    global _disc_calisan_stil
-    stil = os.environ.get("DISCOVERY_DUSUNME_STIL", "").strip().lower() or None
-    if stil == "yok":
+def _disc_dusunme_kapat(istek_govdesi: dict, model: str) -> str | None:
+    """Discovery istegine dusunme-kapama alanini ekler; uygulanan stil adini dondurur.
+
+    Stil reddi MODEL BAZINA yapilir: glm-5.3 "thinking:{type:disabled}"i 400 (bos
+    govde, z.ai bulgusuyla ayni) ile reddederken deepseek ayni parametreyi kabul
+    ediyor (15.10 canli test: deepseek 4/4 gecerli, glm-5.3 HTTP 400)."""
+    stil_env = os.environ.get("DISCOVERY_DUSUNME_STIL", "").strip().lower() or None
+    if stil_env == "yok":
         return None
-    adaylar = [stil] if stil and stil != "yok" else \
-              [a for a, _, _ in _DISC_DUSUNME_STILLERI if a not in _disc_reddedilen_stiller]
-    if _disc_calisan_stil and (not stil or stil == _disc_calisan_stil):
-        adaylar = [_disc_calisan_stil]
+    if model in _disc_calisan_stil and (not stil_env or stil_env == _disc_calisan_stil[model]):
+        for ad, alan, deger in _DISC_DUSUNME_STILLERI:
+            if ad == _disc_calisan_stil[model]:
+                istek_govdesi[alan] = deger
+                return ad
+        return None
+    adaylar = [stil_env] if stil_env else [a for a, _, _ in _DISC_DUSUNME_STILLERI
+                                           if f"{a}|{model}" not in _disc_reddedilen_stiller]
     for a in adaylar:
         for ad, alan, deger in _DISC_DUSUNME_STILLERI:
             if ad == a:
@@ -920,9 +924,9 @@ class Cevirmen:
         if "z.ai" in url:
             istek_govdesi["thinking"] = {"type": "low" if model.startswith("glm-5.3") else "disabled"}
         # intern-ai discovery: derin dusunmeyi kapat (yukaridaki stil zinciri; 400'e
-        # karsi kendini iyilestirir — reddedilen stil bir daha denenmez).
-        global _disc_calisan_stil
-        dusunme_stili = _disc_dusunme_kapat(istek_govdesi) if "intern-ai.org.cn" in url else None
+        # karsi MODEL bazinda kendini iyilestirir — reddedilen stil bu modelde bir
+        # daha denenmez, diger modeller etkilenmez).
+        dusunme_stili = _disc_dusunme_kapat(istek_govdesi, model) if "intern-ai.org.cn" in url else None
         while True:
             govde = json.dumps(istek_govdesi).encode("utf-8")
             istek = urllib.request.Request(url, data=govde, headers={
@@ -932,25 +936,24 @@ class Cevirmen:
             try:
                 with urllib.request.urlopen(istek, timeout=timeout) as yanit:
                     veri = json.loads(yanit.read().decode("utf-8"))
-                if dusunme_stili and _disc_calisan_stil is None:
-                    _disc_calisan_stil = dusunme_stili      # dogrulandi; sonraki istekler yalnizca bunu ekler
+                if dusunme_stili and model not in _disc_calisan_stil:
+                    _disc_calisan_stil[model] = dusunme_stili      # dogrulandi; bu model artik yalnizca bunu ekler
                 break
             except urllib.error.HTTPError as _h:
                 if dusunme_stili and _h.code == 400:
-                    try:
-                        _g = _h.read().decode("utf-8", errors="replace").lower()
-                    except Exception:
-                        _g = ""
-                    if any(k in _g for k in _DISC_PARAM_RED_IPUCLARI):
-                        print(f"[i18n] discovery dusunme-kapama stili reddedildi ({dusunme_stili}); "
-                              f"siradaki stil deneniyor", file=sys.stderr)
-                        _disc_reddedilen_stiller.add(dusunme_stili)
-                        for _ad, _alan, _ in _DISC_DUSUNME_STILLERI:
-                            if _ad == dusunme_stili:
-                                istek_govdesi.pop(_alan, None)
-                        dusunme_stili = _disc_dusunme_kapat(istek_govdesi)
-                        if dusunme_stili:
-                            continue
+                    # parametrenin o model tarafindan reddedilmesi en olasi sebep
+                    # (glm-5.3 "disabled"i 400/bos govde ile red ediyor — z.ai bulgusu).
+                    # Govde anahtar kelime tasimasa da bu varsayim güvenli: butun
+                    # stiller reddedilirse ciplak istek kullanilir, onceki davranisa doner.
+                    print(f"[i18n] discovery dusunme-kapama stili bu modelde reddedildi "
+                          f"({dusunme_stili}/{model}); siradaki stil deneniyor", file=sys.stderr)
+                    _disc_reddedilen_stiller.add(f"{dusunme_stili}|{model}")
+                    for _ad, _alan, _ in _DISC_DUSUNME_STILLERI:
+                        if _ad == dusunme_stili:
+                            istek_govdesi.pop(_alan, None)
+                    dusunme_stili = _disc_dusunme_kapat(istek_govdesi, model)
+                    if dusunme_stili:
+                        continue
                 raise
         if usage_kutusu is not None and isinstance(veri.get("usage"), dict):
             usage_kutusu.append(veri["usage"])
@@ -1047,15 +1050,40 @@ OZEL_ADLAR = ("İş Yatırım", "Yeni Şafak", "Tüpraş", "Doğuş Otomotiv", "
 
 def ceviri_gecerli_mi(saf: str, cev: str) -> bool:
     """Onbellek/elle/saglayici ciktisinin sahte-ceviri olup olmadigini ayirt eder.
-    Kimlik ceviri (kaynakla birebir ayni) HER uzunlukta gecersizdir: ciktiyi
-    degistirmez, yalnizca saglayicida yeniden denenmesi gerekir."""
+
+    2026-10-15 ONCESI: ciktida tek bir ç/ğ/ı/ş/İ bile varsa RED ediliyordu. Canli
+    veri bunun yanlis-pozitif yangini oldugunu gosterdi (gunluk 1084 red): dogru
+    ceviriler Turkce proper noun tasiyor — "Cevdet Yılmaz", "Yukarı Adım Kuralı",
+    "Şişecam" — model bunlari cevirmeden korur, kaynak dizelerde bu adlar her yerde.
+    YENI KURAL: turkce ozel karakterli kelime, KAYNAKTA gecen bir kelimenin kokunu
+    tasiyorsa (proper noun/türetilmis hali) muaf; kaynakta olmayan yeni turkce kelime
+    varsa ceviri turkce kalmis demektir -> red. Ek olarak ard arda >= 8 token'i tamamen
+    kaynakta olan koşu varsa cikti kaynagin eko'sudur -> red (zehir guardi'nin asil
+    hedefi: onbellege sizan birebir kaynak).
+    Kimlik ceviri (kaynakla birebir ayni) HER uzunlukta gecersizdir."""
     if not isinstance(cev, str):
         return False
     v = cev.strip().strip(ALINTI_KARAKTERLERI).strip()
     if not v or v == saf.strip():
         return False
-    if TURKCE_OZEL_RE.search(v) and not any(ad in v for ad in OZEL_ADLAR):
-        return False
+    v_kelimeler = [w.lower() for w in
+                   re.findall(r"[^\W\d_]+(?:['’\-][^\W\d_]+)*", v, re.UNICODE)]
+    s_kelimeler = {w.lower() for w in
+                   re.findall(r"[^\W\d_]+(?:['’\-][^\W\d_]+)*", saf)}
+    # 1) TURKCE KELIME TESTI: kaynakta koku tasimayan yeni turkce kelime -> red
+    for w in set(v_kelimeler):
+        if TURKCE_OZEL_RE.search(w) and w not in s_kelimeler:
+            if any(ad in v for ad in OZEL_ADLAR):
+                continue        # beyaz liste (Is Yatirim, Tupras...) muafiyeti korunur
+            if not any(w.startswith(k) or k.startswith(w)
+                       for k in s_kelimeler if len(k) >= 3):
+                return False
+    # 2) EKO TESTI: ard arda >= 8 token'i kaynakta birebir bulunan koşu -> red
+    kosu = 0
+    for w in v_kelimeler:
+        kosu = kosu + 1 if w in s_kelimeler else 0
+        if kosu >= 8:
+            return False
     return True
 
 
