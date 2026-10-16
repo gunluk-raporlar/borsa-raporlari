@@ -37,3 +37,28 @@
   Cache-Control: public, max-age=86400
 /llms.txt
   Cache-Control: public, max-age=86400
+
+# Podcast beslemeleri web-dizini sayfasi degildir (GSC 'standart sayfa secilmemis
+# kopya' bildirimi 16.10: 5 dilde birebir ayni RSS dosyalari; XML canonical
+# tasiyamaz). noindex yalnizca dokuman olarak dizine almayi engeller; podcast
+# uygulamalari beslemeyi cekmeye, Google sitemap verisini islemeye devam eder.
+/radyo/podcast.xml
+  X-Robots-Tag: noindex
+/radyo/podcast-raporlar.xml
+  X-Robots-Tag: noindex
+/de/radyo/podcast.xml
+  X-Robots-Tag: noindex
+/de/radyo/podcast-raporlar.xml
+  X-Robots-Tag: noindex
+/en/radio/podcast.xml
+  X-Robots-Tag: noindex
+/en/radio/podcast-reports.xml
+  X-Robots-Tag: noindex
+/ru/radyo/podcast.xml
+  X-Robots-Tag: noindex
+/ru/radyo/podcast-raporlar.xml
+  X-Robots-Tag: noindex
+/zh/radyo/podcast.xml
+  X-Robots-Tag: noindex
+/zh/radyo/podcast-raporlar.xml
+  X-Robots-Tag: noindex

@@ -20,6 +20,24 @@
 /reports/2026-10-02-derin-analiz.html  /derin-analiz/2026-10-02.html  301
 /reports/2026-10-05-derin-analiz.html  /derin-analiz/2026-10-05.html  301
 /reports/2026-10-06-derin-analiz.html  /derin-analiz/2026-10-06.html  301
+# Uzantisiz eski /reports/...-derin-analiz yollari (GSC 404 bildirimi 16.10):
+# yalnizca .html bicimleri kuralliydi; .html'siz bicim 404'a dusuyordu.
+/reports/2026-09-09-derin-analiz  /derin-analiz/2026-09-09.html  301
+/reports/2026-09-16-derin-analiz  /derin-analiz/2026-09-16.html  301
+/reports/2026-09-17-derin-analiz  /derin-analiz/2026-09-17.html  301
+/reports/2026-09-18-derin-analiz  /derin-analiz/2026-09-18.html  301
+/reports/2026-09-21-derin-analiz  /derin-analiz/2026-09-21.html  301
+/reports/2026-09-22-derin-analiz  /derin-analiz/2026-09-22.html  301
+/reports/2026-09-23-derin-analiz  /derin-analiz/2026-09-23.html  301
+/reports/2026-09-24-derin-analiz  /derin-analiz/2026-09-24.html  301
+/reports/2026-09-25-derin-analiz  /derin-analiz/2026-09-25.html  301
+/reports/2026-09-28-derin-analiz  /derin-analiz/2026-09-28.html  301
+/reports/2026-09-29-derin-analiz  /derin-analiz/2026-09-29.html  301
+/reports/2026-09-30-derin-analiz  /derin-analiz/2026-09-30.html  301
+/reports/2026-10-01-derin-analiz  /derin-analiz/2026-10-01.html  301
+/reports/2026-10-02-derin-analiz  /derin-analiz/2026-10-02.html  301
+/reports/2026-10-05-derin-analiz  /derin-analiz/2026-10-05.html  301
+/reports/2026-10-06-derin-analiz  /derin-analiz/2026-10-06.html  301
 /reports/2026-10-07-makro-analiz.html  /makro-analiz/2026-10-07.html  301
 /reports/2026-10-07-makro-analiz  /makro-analiz/2026-10-07.html  301
 /reports/index.html  /raporlar.html  301
@@ -71,6 +89,50 @@
 /en/hisse  /en/stocks  301
 /en/robot.html  /en/trading-robot.html  301
 /en/robot  /en/trading-robot.html  301
+
+# Eski /en/reports/<tarih>-derin-analiz yollari (GSC 404 bildirimi 16.10):
+# /en/raporlar/* kurali bunlari /en/reports/... a tasip 404'a dusuruyordu;
+# dogru hedef deep-analysis agacidir.
+/en/reports/2026-09-09-derin-analiz  /en/deep-analysis/2026-09-09.html  301
+/en/reports/2026-09-09-derin-analiz.html  /en/deep-analysis/2026-09-09.html  301
+/en/reports/2026-09-16-derin-analiz  /en/deep-analysis/2026-09-16.html  301
+/en/reports/2026-09-16-derin-analiz.html  /en/deep-analysis/2026-09-16.html  301
+/en/reports/2026-09-17-derin-analiz  /en/deep-analysis/2026-09-17.html  301
+/en/reports/2026-09-17-derin-analiz.html  /en/deep-analysis/2026-09-17.html  301
+/en/reports/2026-09-18-derin-analiz  /en/deep-analysis/2026-09-18.html  301
+/en/reports/2026-09-18-derin-analiz.html  /en/deep-analysis/2026-09-18.html  301
+/en/reports/2026-09-21-derin-analiz  /en/deep-analysis/2026-09-21.html  301
+/en/reports/2026-09-21-derin-analiz.html  /en/deep-analysis/2026-09-21.html  301
+/en/reports/2026-09-22-derin-analiz  /en/deep-analysis/2026-09-22.html  301
+/en/reports/2026-09-22-derin-analiz.html  /en/deep-analysis/2026-09-22.html  301
+/en/reports/2026-09-23-derin-analiz  /en/deep-analysis/2026-09-23.html  301
+/en/reports/2026-09-23-derin-analiz.html  /en/deep-analysis/2026-09-23.html  301
+/en/reports/2026-09-24-derin-analiz  /en/deep-analysis/2026-09-24.html  301
+/en/reports/2026-09-24-derin-analiz.html  /en/deep-analysis/2026-09-24.html  301
+/en/reports/2026-09-25-derin-analiz  /en/deep-analysis/2026-09-25.html  301
+/en/reports/2026-09-25-derin-analiz.html  /en/deep-analysis/2026-09-25.html  301
+/en/reports/2026-09-28-derin-analiz  /en/deep-analysis/2026-09-28.html  301
+/en/reports/2026-09-28-derin-analiz.html  /en/deep-analysis/2026-09-28.html  301
+/en/reports/2026-09-29-derin-analiz  /en/deep-analysis/2026-09-29.html  301
+/en/reports/2026-09-29-derin-analiz.html  /en/deep-analysis/2026-09-29.html  301
+/en/reports/2026-09-30-derin-analiz  /en/deep-analysis/2026-09-30.html  301
+/en/reports/2026-09-30-derin-analiz.html  /en/deep-analysis/2026-09-30.html  301
+/en/reports/2026-10-01-derin-analiz  /en/deep-analysis/2026-10-01.html  301
+/en/reports/2026-10-01-derin-analiz.html  /en/deep-analysis/2026-10-01.html  301
+/en/reports/2026-10-02-derin-analiz  /en/deep-analysis/2026-10-02.html  301
+/en/reports/2026-10-02-derin-analiz.html  /en/deep-analysis/2026-10-02.html  301
+/en/reports/2026-10-05-derin-analiz  /en/deep-analysis/2026-10-05.html  301
+/en/reports/2026-10-05-derin-analiz.html  /en/deep-analysis/2026-10-05.html  301
+/en/reports/2026-10-06-derin-analiz  /en/deep-analysis/2026-10-06.html  301
+/en/reports/2026-10-06-derin-analiz.html  /en/deep-analysis/2026-10-06.html  301
+
+# Rapor sayfalarinin altbilgisindeki goreceli gizlilik.html baglantisi, sayfa
+# .html'siz guzel URL'den sunulunca /raporlar/gizlilik.html diye taraniyor (GSC 404).
+/raporlar/gizlilik.html  /gizlilik.html  301
+/de/raporlar/gizlilik.html  /de/gizlilik.html  301
+/ru/raporlar/gizlilik.html  /ru/gizlilik.html  301
+/zh/raporlar/gizlilik.html  /zh/gizlilik.html  301
+/en/reports/privacy.html  /en/privacy.html  301
 
 # 10 Ekim 2026 (Cumartesi) derin analizi hatala yayinlandi ve kaldirildi (2026-10-11);
 # icerik Cuma kapanis verisinin tekrariydi — ayni veriyi iceren 9 Ekim raporuna yonlendirilir.
