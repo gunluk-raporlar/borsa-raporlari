@@ -24,6 +24,7 @@ jobs:
           TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
           ZAI_MODELS: "glm-4.5-flash,glm-4.7-flash"
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+          DISCOVERY_API_KEY: ${{ secrets.DISCOVERY_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEM_MODELS: "gemini-3.8-flash"

@@ -55,6 +55,7 @@ jobs:
           ZAI_MODEL: ${{ vars.ZAI_MODEL }}
           # Yedek: GLM alinamazsa AMD DeepSeek-V4-Flash ile uretilir
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+          DISCOVERY_API_KEY: ${{ secrets.DISCOVERY_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           # Son-care rotasyonunun OpenRouter/Groq havuzlari da gercekten
           # calisabilmesi icin bu iki anahtar da verilmeli (2026-09-29:

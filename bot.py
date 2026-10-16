@@ -3101,7 +3101,7 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
     uzun ve derinlemesine gunluk analizi uretir; sonunda onerilen hisseler
     tablosu (markdown) icerir. Anahtar SADECE sunucuda kalir, sayfaya
     gomulmez. Anahtar yoksa None doner."""
-    # 15.10 kullanici karari: discovery servisi (bol kotali iki hesap) oncelikli;
+    # 15.10 kullanici karari: discovery servisi (bol kotali hesap) oncelikli;
     # anahtar yoksa eski Z.ai glm-5.3-flash yolu. Dusunme bu yolda bilincli
     # ACIK kalir (rapor kalitesi once; 600 sn butce zaten dusunmeye gore).
     anahtar = os.environ.get("DISCOVERY_API_KEY", "") or os.environ.get("ZAI_API_KEY", "")
@@ -3320,7 +3320,7 @@ def makro_analiz_yap(yedek_amd=False, snapshot=None):
     kisa = os.environ.get("STORM") == "1"
     if kisa:
         logger.info("[Makro Analiz] STORM modu: oz prompt kullanilacak (uydurma alani daraltiliyor).")
-    # 15.10 kullanici karari: discovery once (bol kotali iki hesap); yoksa eski
+    # 15.10 kullanici karari: discovery once (bol kotali hesap); yoksa eski
     # Z.ai glm-5.3-flash yolu. Dusunme burada da ACIK (rapor kalitesi).
     anahtar = os.environ.get("DISCOVERY_API_KEY", "") or os.environ.get("ZAI_API_KEY", "")
     disc_mi = bool(os.environ.get("DISCOVERY_API_KEY", ""))

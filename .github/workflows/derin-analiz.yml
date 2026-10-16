@@ -66,6 +66,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # Birincil saglayici AMD DeepSeek-V4-Flash; GLM yedek
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+          DISCOVERY_API_KEY: ${{ secrets.DISCOVERY_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           # Son-care rotasyonu icin (2026-09-30: NVID havuzu bos taikarken
           # OR/Groq'a gecilemiyordu)
