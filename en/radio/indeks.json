@@ -1,6 +1,14 @@
 {
- "guncelleme": "15.10 21:57",
+ "guncelleme": "16.10 15:23",
  "bolumler": [
+  {
+   "id": "2026-10-16-ogle",
+   "tarih": "2026-10-16",
+   "bolum": "ogle",
+   "baslik": "2026-10-16 — Öğle Yayını",
+   "dosya": "radyo/2026-10-16-ogle.mp3",
+   "sure_sn": 469
+  },
   {
    "id": "2026-10-15-ogle",
    "tarih": "2026-10-15",
@@ -152,14 +160,6 @@
    "baslik": "2026-10-01 — Öğle Yayını",
    "dosya": "radyo/2026-10-01-ogle.mp3",
    "sure_sn": 421
-  },
-  {
-   "id": "2026-10-01-kapanis",
-   "tarih": "2026-10-01",
-   "bolum": "kapanis",
-   "baslik": "2026-10-01 — Kapanış Yayını",
-   "dosya": "radyo/2026-10-01-kapanis.mp3",
-   "sure_sn": 492
   }
  ]
 }
