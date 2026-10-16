@@ -416,7 +416,6 @@ class Cevirmen:
         self.hizli_timeout = float(os.environ.get("I18N_TIMEOUT", "30"))
         self.istek_timeout = self.hizli_timeout
         self.devre_disi: set[str] = set()      # devre disi saglayici ETIKETLERI (ad; NVIDIA ile NVIDIA2 gibi)
-        self.disc_sira = 0                     # discovery iki hesap arasi round-robin sayaci
         self.hata_sayaci: dict[str, int] = {}  # gecici hatalar (timeout/429/5xx)
         # Zaman asimi yiyen MODEL -> bu kosuda bir daha denenmez (saglayici basina 1).
         # Canli test: AMD/GLM-5.3-Flash 60 sn sonra dustu, her pencerede tekrar tekrar
@@ -550,33 +549,18 @@ class Cevirmen:
         #    NVIDIA2 deseninin aynisi); DISCOVERY_MODELS ile override edilir.
         disc_taban = os.environ.get("DISCOVERY_BASE_URL",
                                     "https://discovery-api.intern-ai.org.cn/v1").rstrip("/")
-        # 15.10 kullanici karari: IKI hesap da ceviride yansin — her cagri
-        # donusunde bastaki hesap degisir (round-robin). Sabit sirada sonraki
-        # hesap yalnizca yedekte kaliyor ve panelde hic yanmiyordu (kullanicinin
-        # panel gozlemi). Devre kesici `ad` bazli: bir hesap cokerse digeri etkilenmez.
-        disc_hesaplar = []
         for _ad, _ortam in (("Discovery", "DISCOVERY_API_KEY"), ("TokenPlan", "TOKENPLAN_API_KEY")):
-            _k = os.environ.get(_ortam)
-            if _k:
-                disc_hesaplar.append((_ad, _k))
-        if disc_hesaplar:
-            disc_url = disc_taban + "/chat/completions"
-            # Liste env'de verilmezse eski varsayilan devrede — bos liste
-            # saglayiciyi sessizce atlatirdi (for döngüsü hiç dönmez) ve iki
-            # hesap da hiç call almazdi; round-robin kağıt üstünde kalirdi.
-            ham = (os.environ.get("DISCOVERY_MODELS")
-                   or os.environ.get("DISCOVERY_MODEL")
-                   or "deepseek-v4-flash-0731,glm-5.3,minimax-m3,deepseek-v4-pro-0813")
-            disc_modeller = [m.strip() for m in ham.split(",") if m.strip()]
-            # atria-dawn listede YOK: o MODEL bu hesaplarda bulunmuyor (servis 404
-            # dondurur) ve 404, kosu boyunca HESABI tamamen devre disi birakirdi.
-            # Bu, tokenplan hesabinin kapatilmasi degildir — yalnizca model listesidir.
+            disc_anahtar = os.environ.get(_ortam)
+            if not disc_anahtar:
+                continue
+            disc_modeller = [m.strip() for m in os.environ.get(
+                "DISCOVERY_MODELS",
+                "deepseek-v4-flash-0731,glm-5.3,minimax-m3,"
+                "deepseek-v4-pro-0813").split(",") if m.strip()]
+            # atria-dawn 15.10'da cikarildi: bu planda 404 "not supported by
+            # TokenPlan" donduruyor; 404 kalici hatadir ve hesabi devre disi birakir.
             disc_modeller = list(dict.fromkeys(disc_modeller))
-            _baslangic = self.disc_sira % len(disc_hesaplar)
-            for _i in range(len(disc_hesaplar)):
-                _ad, _k = disc_hesaplar[(_baslangic + _i) % len(disc_hesaplar)]
-                uclar.append((_ad, disc_url, _k, list(disc_modeller)))
-            self.disc_sira += 1
+            uclar.append((_ad, disc_taban + "/chat/completions", disc_anahtar, disc_modeller))
         # Cloudflare Workers AI 2026-10-14'te KALDIRILDI.
         # Canli test hata govdesi:
         #   "@cf/deepseek-ai/deepseek-v4-flash-0731 is not available on the
