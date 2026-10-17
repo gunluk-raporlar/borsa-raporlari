@@ -94,7 +94,7 @@ def ders_sec(simdi):
     return idx, MUFREDAT[idx]
 
 
-def _guncel_veri_ornekleri():
+def _guncel_veri_ornekleri(konu=""):
     """Derse somut ornek verebilmek icin guncel tarama/portfoy verisinden kisa ozet."""
     parcalar = []
     t_dosya = None
@@ -120,6 +120,23 @@ def _guncel_veri_ornekleri():
                         for s in hareketli) + ".")
         except Exception:
             pass
+    # ders grafigiyle ayni GERCEK seri: LLM de uydurma yerine ayni hisseyi anlatsin
+    try:
+        paket = _gercek_grafik_paketi(None, konu)
+        if paket:
+            seri30 = paket["seri"][-31:]
+            deg = (seri30[-1] / seri30[0] - 1) * 100
+            parcalar.append(f"Ders grafiği örnek hissesi {paket['ad']}: son 30 işlem günü {deg:+.1f}%, "
+                            f"aralık {min(seri30):.2f}-{max(seri30):.2f} TL; bu seriyi örnekle olarak kullan.")
+    except Exception:
+        pass
+    # gercek yillik enflasyon (TUIK) — makro dersleri icin somut rakam
+    try:
+        enf = json.load(open(os.path.join(bot.DATA_DIR, "enflasyon.json"), encoding="utf-8"))
+        if enf.get("oran"):
+            parcalar.append(f"Son açıklanan yıllık enflasyon: %{enf['oran'] * 100:.1f}.")
+    except Exception:
+        pass
     return " ".join(parcalar)
 
 
@@ -133,7 +150,7 @@ Dersi acemi-orta seviye yatırımcıya göre, sıcak ve net bir öğretmen diliy
 ## 1. Nedir? (basit benzetmeyle başla, sonra net tanım)
 ## 2. Neden Önemli? (bu bilgi yatırımcıya ne kazandırır)
 ## 3. Nasıl Okunur / Kullanılır? (adım adım; eğer göstergeyse hangi değer ne anlama gelir)
-## 4. Gerçek Örnek (mümkünse [GÜNCEL VERİ] bölümündeki gerçek rakamları kullan; somut ol)
+## 4. Gerçek Örnek ([GÜNCEL VERİ] bölümündeki gerçek şirket ve rakamlarla anlat; şirket adı ya da rakam UYDURMA — veri yetersizse genel kuralı anlat)
 ## 5. Sık Yapılan Hatalar (2-4 madde)
 ## 6. Mini Test (2-3 soru; cevapları gizli tutma, sorunun altında ver)
 ## 7. Özet (3-5 madde)
@@ -164,6 +181,75 @@ def _ders_hisse_bul(metin, satirlar):
         if m and (en_konum is None or m.start() < en_konum):
             en_iyi, en_konum = kod, m.start()
     return en_iyi
+
+
+def _esit_agirlik_endeks(n=90):
+    """data/fiyat'taki tum kagitlarin gundelik getiri ortalamasindan turetilmis
+    100 bazli endeks serisi (GERCEK veriden turetir; XU100 yayini yok)."""
+    depolar = []
+    if os.path.isdir(bot.FIYAT_DEPO_DIR):
+        for f in os.listdir(bot.FIYAT_DEPO_DIR):
+            if not f.endswith(".json"):
+                continue
+            d = bot.fiyat_deposu_oku(f[:-5])
+            if len(d) >= n // 2:
+                depolar.append([v for _, v in sorted(d.items())])
+    if len(depolar) < 5:
+        return []
+    m = min(len(d) for d in depolar)
+    seriler = [d[-m:] for d in depolar]
+    seviye, out = 100.0, [100.0]
+    for i in range(1, m):
+        getiriler = [s[i] / s[i - 1] - 1 for s in seriler if s[i - 1]]
+        if not getiriler:
+            continue
+        seviye *= (1 + sum(getiriler) / len(getiriler))
+        out.append(seviye)
+    return out
+
+
+def _gercek_grafik_paketi(metin, konu):
+    """Ders grafigi icin GERCEK fiyat paketi: {"ad","seri"[,"ad2","seri2"]}.
+
+    Hisse tercihi: ders metninde gecen kod > konu+tarihten deterministik secim
+    (her hafta ayni konu ayni hisseyle anlatilir). Endeks dersinde tum
+    kagitlardan turetilmis esit agirlikli endeks; korelasyon derslerinde
+    ikinci bir gercek seri de verilir. Veri yoksa None -> sematik gorsel.
+    """
+    kodlar = []
+    try:
+        _, x_satirlar = excel_tablo.veri_yukle()
+        kodlar = [s.get("hisse") for s in x_satirlar if s.get("hisse")]
+    except Exception:
+        kodlar = []
+    if not kodlar and os.path.isdir(bot.FIYAT_DEPO_DIR):
+        kodlar = [f[:-5] for f in os.listdir(bot.FIYAT_DEPO_DIR) if f.endswith(".json")]
+    kodlar = [k for k in kodlar if k and len(bot.fiyat_deposu_oku(k)) >= 40]
+    if not kodlar:
+        return None
+    ad = _ders_hisse_bul(metin, [{"hisse": k} for k in kodlar])
+    if not ad:
+        tohum = sum(ord(c) * (i + 5) for i, c in enumerate(konu + _simdi().strftime("%Y-%m-%d")))
+        ad = kodlar[tohum % len(kodlar)]
+    depo = bot.fiyat_deposu_oku(ad)
+    seri = [v for _, v in sorted(depo.items())][-120:]
+    if len(seri) < 40:
+        return None
+    paket = {"ad": ad, "seri": seri}
+    if konu.startswith(("Pearson", "Altın, dolar")):
+        diger = [k for k in kodlar if k != ad]
+        if diger:
+            tohum2 = sum(ord(c) for c in ad + konu)
+            ad2 = diger[tohum2 % len(diger)]
+            depo2 = bot.fiyat_deposu_oku(ad2)
+            seri2 = [v for _, v in sorted(depo2.items())][-120:]
+            if len(seri2) >= 40:
+                paket["ad2"], paket["seri2"] = ad2, seri2
+    if konu.startswith("Endeksler"):
+        endeks = _esit_agirlik_endeks()
+        if endeks:
+            paket = {"ad": "BIST 30 kağıtları (eşit ağırlıklı, 100 bazlı)", "seri": endeks}
+    return paket
 
 
 def _excel_veri_bolumu(metin=None):
@@ -229,11 +315,14 @@ def main():
         return 0
 
     idx, (konu, kategori, tanim) = ders_sec(simdi)
-    veri = _guncel_veri_ornekleri()
-    gorsel_svg = svg_grafik.gorsel_uret(konu)
-    logger.info("Ders %d/%d: %s (%s)", idx + 1, len(MUFREDAT), konu, kategori)
+    veri = _guncel_veri_ornekleri(konu)
     metin = _ders_uret(konu, tanim, veri)
     metin = bot._tarih_gun_duzelt(metin)
+    # Grafik: GERCEK kapanis serisiyle (ders metninde gecen hisse oncelidir)
+    paket = _gercek_grafik_paketi(metin, konu)
+    gorsel_svg = svg_grafik.gorsel_uret(konu, g=paket)
+    logger.info("Ders %d/%d: %s (%s) | grafik verisi: %s", idx + 1, len(MUFREDAT), konu, kategori,
+                (paket or {}).get("ad", "şematik"))
 
     # Dersin altina: guncel taramanin Excel gorunumlu gerccek veri tablosu
     excel_bolumu = _excel_veri_bolumu(metin)
@@ -251,8 +340,13 @@ def main():
 
     figura = ""
     if gorsel_svg:
+        if paket:
+            fig_alt = (f"Şekil: {konu} — {paket['ad']} gerçek kapanış verisi "
+                       f"(son {len(paket['seri'])} işlem günü)")
+        else:
+            fig_alt = f"Şekil: {konu} — eğitim amaçlı şematik gösterim (gerçek piyasa verisi değildir)"
         figura = (f'<figure style="margin:0 0 18px">{gorsel_svg}'
-                  f'<figcaption style="color:var(--muted);font-size:12px;margin-top:6px">Şekil: {konu} — eğitim amaçlı şematik gösterim (gerçek piyasa verisi değildir)</figcaption></figure>')
+                  f'<figcaption style="color:var(--muted);font-size:12px;margin-top:6px">{fig_alt}</figcaption></figure>')
     icerik = f"""
 <div class="hero">
 <h1>Hafta Sonu Borsa Okulu</h1>

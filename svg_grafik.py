@@ -118,6 +118,28 @@ def _olcek(veriler, pay=0.08):
     return lo - m, hi + m
 
 
+def _guncel(g):
+    """g paketinden GERCEK fiyat serisini dondurur: (ad, seri) ya da (None, None).
+
+    g = {"ad": "THYAO", "seri": [...kapanislar...], "ad2"/"seri2" (korelasyon icin
+    opsiyonel)}. Seri, data/fiyat deposundan gelen gercek kapanislardir;
+    gelenmediyse goren gorsel deterministik sematik seriyle devam eder.
+    """
+    if g and g.get("seri"):
+        try:
+            seri = [float(x) for x in g["seri"] if x and float(x) > 0]
+        except (TypeError, ValueError):
+            return None, None
+        if len(seri) >= 30:
+            return str(g.get("ad") or ""), seri
+    return None, None
+
+
+def _alt_yazi(ad):
+    """Gercek veri geldiyse altyazi, gelmediyse sematik notu."""
+    return (f"{ad} — gerçek kapanış verisi" if ad else "şematik — temsilidir")
+
+
 def _zaman_govde(w, h, seriler, renkler, kalinliklar, bant=None):
     """Ortak zaman serisi cizimi. seriler: liste; bant=(alt,ust,renk,etiket)."""
     x0, y0, x1, y1 = 46, 12, w - 14, h - 26
@@ -154,7 +176,7 @@ def _zaman_govde(w, h, seriler, renkler, kalinliklar, bant=None):
 
 # ---------------- gorunumler ----------------
 
-def mum_gorsel(konu):
+def mum_gorsel(konu, g=None):
     rnd = _seed(konu + "-mum")
     w, h = 560, 300
     x0, y0, x1, y1 = 60, 60, 540, 210
@@ -188,8 +210,10 @@ def mum_gorsel(konu):
     return _sarmal(w, h, govde, "Mum Grafiği Anatomisi")
 
 
-def cizgi_gorsel(konu, seviyeler=None, baslik="Fiyat ve seviyeler", alt_metin=None, egim=0.5):
-    seri = _seri(konu, n=60, oynak=1.15, egim=egim)
+def cizgi_gorsel(konu, seviyeler=None, baslik="Fiyat ve seviyeler", alt_metin=None, egim=0.5, g=None):
+    ad, seri = _guncel(g)
+    if seri is None:
+        seri = _seri(konu, n=60, oynak=1.15, egim=egim)
     govde = _zaman_govde(560, 235, [seri], [RENK["lacivert"]], [2.6])
     if seviyeler:
         yuks = [88, 122, 156]
@@ -198,19 +222,21 @@ def cizgi_gorsel(konu, seviyeler=None, baslik="Fiyat ve seviyeler", alt_metin=No
             govde += (f'<line x1="46" y1="{y}" x2="546" y2="{y}" stroke="{RENK["mavi"]}" stroke-width="1.7" stroke-dasharray="7,4"/>'
                       f'<text x="540" y="{y - 6}" font-family="Segoe UI,Arial" font-size="12" fill="{RENK["mavi"]}" '
                       f'text-anchor="end">{et}</text>')
-    return _sarmal(560, 300, govde, baslik, alt=alt_metin or "şematik — temsilidir")
+    return _sarmal(560, 300, govde, baslik, alt=alt_metin or _alt_yazi(ad))
 
 
 def iki_ma_gorsel(konu, baslik="Hareketli Ortalamalar — hızlı/yavaş kesişimi",
-                  etiketler=("Fiyat", "Hızlı ortalama", "Yavaş ortalama")):
-    seri = _seri(konu, n=70, oynak=1.9, egim=1.2)
+                  etiketler=("Fiyat", "Hızlı ortalama", "Yavaş ortalama"), g=None):
+    ad, seri = _guncel(g)
+    if seri is None:
+        seri = _seri(konu, n=70, oynak=1.9, egim=1.2)
     kisa = _ema(seri, 9)
     uzun = _ema(seri, 21)
     govde = _zaman_govde(560, 235, [seri, kisa, uzun], [RENK["lacivert"], RENK["turuncu"], RENK["mavi"]], [2.2, 2.4, 2.4])
     govde = _lejant_cizgi(govde, 60, 18, etiketler[0], RENK["lacivert"])
     govde = _lejant_cizgi(govde, 170, 18, etiketler[1], RENK["turuncu"])
     govde = _lejant_cizgi(govde, 330, 18, etiketler[2], RENK["mavi"])
-    return _sarmal(560, 300, govde, baslik)
+    return _sarmal(560, 300, govde, baslik, alt=_alt_yazi(ad))
 
 
 def _harita(vals, lo, hi):
@@ -218,8 +244,10 @@ def _harita(vals, lo, hi):
     return [max(0.0, min(100.0, (v - lo) / span * 100.0)) for v in vals]
 
 
-def osilator_gorsel(konu, tip, bant, baslik, renk):
-    seri = _seri(konu, n=80, oynak=1.7, egim=0.25)
+def osilator_gorsel(konu, tip, bant, baslik, renk, g=None):
+    ad, seri = _guncel(g)
+    if seri is None:
+        seri = _seri(konu, n=80, oynak=1.7, egim=0.25)
     if tip == "rsi":
         veri = _rsi(seri)
     elif tip == "stoch":
@@ -236,11 +264,13 @@ def osilator_gorsel(konu, tip, bant, baslik, renk):
     govde = _lejant_cizgi(govde, 60, 18, "Gösterge", renk)
     govde += (f'<text x="200" y="22" font-family="Segoe UI,Arial" font-size="11.5" fill="{RENK["gri"]}">'
               f'Bant dışı aşırı bölge • içeri dönüş sinyal adayı</text>')
-    return _sarmal(560, 300, govde, baslik)
+    return _sarmal(560, 300, govde, baslik, alt=_alt_yazi(ad))
 
 
-def macd_gorsel(konu):
-    seri = _seri(konu, n=90, oynak=1.9, egim=0.5)
+def macd_gorsel(konu, g=None):
+    ad, seri = _guncel(g)
+    if seri is None:
+        seri = _seri(konu, n=90, oynak=1.9, egim=0.5)
     macd, sinyal = _macd(seri)
     # egitim semasi: sifir cizgisi etrafinda salinimi gostermek icin ortala
     ort = sum(macd) / len(macd)
@@ -275,17 +305,14 @@ def macd_gorsel(konu):
     govde = _lejant_cizgi(govde, 46, 320, "MACD", RENK["mavi"])
     govde = _lejant_cizgi(govde, 130, 320, "Sinyal", RENK["turuncu"])
     govde = _lejant_cizgi(govde, 230, 320, "Histogram", RENK["yesil"])
-    return _sarmal(560, 350, govde, "MACD — momentum ve kesişimler")
+    return _sarmal(560, 350, govde, "MACD — momentum ve kesişimler", alt=_alt_yazi(ad))
 
 
-def kanal_gorsel(konu):
-    rnd = _seed(konu + "-kanal")
-    n = 60
-    seri = []
-    v = 100.0
-    for _ in range(n):
-        v = v + 0.55 + rnd.gauss(0, 2.2)
-        seri.append(v)
+def kanal_gorsel(konu, g=None):
+    ad, seri = _guncel(g)
+    if seri is None:
+        seri = _seri(konu, n=60, oynak=1.15, egim=0.5)
+    n = len(seri)
     xo = (n - 1) / 2
     yo = sum(seri) / n
     egim = sum((i - xo) * (s - yo) for i, s in enumerate(seri)) / (sum((i - xo) ** 2 for i in range(n)) or 1)
@@ -307,19 +334,21 @@ def kanal_gorsel(konu):
     govde = _lejant_cizgi(govde, 60, 18, "Fiyat", RENK["lacivert"])
     govde = _lejant_cizgi(govde, 170, 18, "Regresyon (orta)", RENK["teal"])
     govde = _lejant_cizgi(govde, 350, 18, "±2σ bant", "#94a3b8")
-    return _sarmal(560, 300, govde, "Regresyon Kanalı — %0 alt bant, %100 üst bant")
+    return _sarmal(560, 300, govde, "Regresyon Kanalı — %0 alt bant, %100 üst bant", alt=_alt_yazi(ad))
 
 
-def destek_gorsel(konu, baslik="Destek ve Direnç — fiyatın döndüğü bölgeler"):
+def destek_gorsel(konu, baslik="Destek ve Direnç — fiyatın döndüğü bölgeler", g=None):
     """Destek/direnç ders görseli: merkez etrafında salınan fiyat, döndüğü
     yatay bölgeler (destek/direnç) ve üst kırılım adayı — şematik."""
-    rnd = _seed(konu + "-destek")
-    n = 80
-    seri = []
-    v = 100.0
-    for _ in range(n):
-        v += rnd.gauss(0, 2.4) - 0.16 * (v - 100.0)
-        seri.append(v)
+    ad, seri = _guncel(g)
+    if seri is None:
+        rnd = _seed(konu + "-destek")
+        seri = []
+        v = 100.0
+        for _ in range(80):
+            v += rnd.gauss(0, 2.4) - 0.16 * (v - 100.0)
+            seri.append(v)
+    n = len(seri)
     sirali = sorted(seri)
     direnc = sirali[int(n * 0.92)]
     destek = sirali[int(n * 0.08)]
@@ -345,10 +374,47 @@ def destek_gorsel(konu, baslik="Destek ve Direnç — fiyatın döndüğü bölg
     govde = _lejant_cizgi(govde, 60, 18, "Fiyat", RENK["lacivert"])
     govde = _lejant_cizgi(govde, 170, 18, "Direnç bölgesi", RENK["kirmizi"])
     govde = _lejant_cizgi(govde, 320, 18, "Destek bölgesi", RENK["yesil"])
-    return _sarmal(560, 300, govde, "Destek ve Direnç — fiyatın döndüğü bölgeler")
+    return _sarmal(560, 300, govde, (f"{baslik} — {ad}" if ad else baslik), alt=_alt_yazi(ad))
 
 
-def dagilim_gorsel(konu, negatif=False):
+def dagilim_gorsel(konu, negatif=False, g=None):
+    ad, seri = _guncel(g)
+    if ad and isinstance(g, dict) and g.get("seri2"):
+        # GERCEK iki seri: gunluk getiriler saclanimi + gercek Pearson r
+        ad2 = str(g.get("ad2") or "")
+        seri2 = [float(x) for x in g["seri2"]]
+        m = min(len(seri), len(seri2))
+        s1, s2 = seri[-m:], seri2[-m:]
+        r1 = [(s1[i] / s1[i - 1] - 1) * 100 for i in range(1, m) if s1[i - 1]]
+        r2 = [(s2[i] / s2[i - 1] - 1) * 100 for i in range(1, m) if s2[i - 1]]
+        m = min(len(r1), len(r2))
+        r1, r2 = r1[-m:], r2[-m:]
+        xo, yo_ = sum(r1) / m, sum(r2) / m
+        kov = sum((a - xo) * (b - yo_) for a, b in zip(r1, r2)) / m
+        st1 = (sum((a - xo) ** 2 for a in r1) / m) ** 0.5 or 1
+        st2 = (sum((b - yo_) ** 2 for b in r2) / m) ** 0.5 or 1
+        r = max(-1.0, min(1.0, kov / (st1 * st2)))
+        xr = max(abs(a) for a in r1) or 1
+        yr = max(abs(b) for b in r2) or 1
+        govde = ""
+        x0, y0, x1, y1 = 40, 36, 300, 196
+        govde += (f'<rect x="{x0}" y="{y0}" width="{x1 - x0}" height="{y1 - y0}" fill="#f8fafc" '
+                  f'stroke="{RENK["acik"]}" stroke-width="1"/>')
+        for a, b in zip(r1, r2):
+            px = x0 + 10 + (a + xr) / (2 * xr) * (x1 - x0 - 20)
+            py = (y0 + y1) / 2 - (b / yr) * 0.45 * (y1 - y0)
+            govde += f'<circle cx="{px:.1f}" cy="{py:.1f}" r="3.4" fill="{RENK["teal"]}" opacity="0.8"/>'
+        egr = kov / (st1 ** 2)
+        govde += (f'<line x1="{x0 + 10:.0f}" y1="{(y0 + y1) / 2 - (-xr / yr) * egr * 0.45 * (y1 - y0):.1f}" '
+                  f'x2="{x1 - 10:.0f}" y2="{(y0 + y1) / 2 - (xr / yr) * egr * 0.45 * (y1 - y0):.1f}" '
+                  f'stroke="{RENK["mavi"]}" stroke-width="2.6"/>')
+        govde += (f'<text x="{x0}" y="{y1 + 15}" font-family="Segoe UI,Arial" font-size="11" fill="{RENK["gri"]}">{ad} günlük % →</text>')
+        govde += (f'<text x="{x0}" y="{y0 - 6}" font-family="Segoe UI,Arial" font-size="11" fill="{RENK["gri"]}">{ad2} günlük % ↓</text>')
+        govde += (f'<text x="{x0}" y="{y1 + 33}" font-family="Segoe UI,Arial" font-size="13.5" font-weight="600" '
+                  f'fill="{RENK["lacivert"]}">r ≈ {r:+.2f} — {"ters" if r < 0 else "aynı"} yönlü ilişki</text>')
+        govde += (f'<text x="{x0}" y="{y1 + 50}" font-family="Segoe UI,Arial" font-size="11.5" fill="{RENK["gri"]}">'
+                  f'Gerçek kapanış verisiyle hesaplandı (son {m} gün)</text>')
+        return _sarmal(340, 320, govde, f"Korelasyon (r) — {ad} / {ad2}", alt=None)
     rnd = _seed(konu + ("-neg" if negatif else "-poz"))
     govde = ""
     x0, y0, x1, y1 = 40, 36, 300, 196
@@ -381,7 +447,7 @@ def dagilim_gorsel(konu, negatif=False):
     return _sarmal(340, 320, govde, "Korelasyon (r)", alt=None)
 
 
-def hacim_gorsel(konu):
+def hacim_gorsel(konu, g=None):
     rnd = _seed(konu + "-hacim")
     x0, y0, x1, y1 = 46, 45, 546, 200
     govde = ""
@@ -397,7 +463,7 @@ def hacim_gorsel(konu):
     return _sarmal(560, 235, govde, "Hacim")
 
 
-def buyume_gorsel(konu, baslik="Bileşik Getiri — zamanla açılan fark"):
+def buyume_gorsel(konu, baslik="Bileşik Getiri — zamanla açılan fark", g=None):
     x = list(range(120))
     lineer = [100 + 0.8 * i for i in x]
     bilesik = [100 * (1.012 ** i) for i in x]
@@ -407,7 +473,7 @@ def buyume_gorsel(konu, baslik="Bileşik Getiri — zamanla açılan fark"):
     return _sarmal(560, 300, govde, baslik)
 
 
-def pasta_gorsel(konu, dilimler, baslik):
+def pasta_gorsel(konu, dilimler, baslik, g=None):
     cx, cy, r = 140, 120, 90
     toplam = sum(d for _, d in dilimler)
     govde = ""
@@ -433,7 +499,7 @@ def pasta_gorsel(konu, dilimler, baslik):
     return _sarmal(560, 280, govde, baslik)
 
 
-def akis_gorsel(konu, adimlar, baslik):
+def akis_gorsel(konu, adimlar, baslik, g=None):
     govde = ""
     kutu_w, kutu_h = 150, 62
     x = 14
@@ -453,16 +519,18 @@ def akis_gorsel(konu, adimlar, baslik):
     return _sarmal(560, 250, govde, baslik)
 
 
-def trend_cizgisi_gorsel(konu):
+def trend_cizgisi_gorsel(konu, g=None):
     """Trend çizgisi ders görseli: artan dip/tepe dizisi ve diplerden geçen
-    yükselen trend çizgisi — şematik."""
-    rnd = _seed(konu + "-trend")
-    n = 70
-    seri = []
-    v = 100.0
-    for _ in range(n):
-        v = v + 0.5 + rnd.gauss(0, 2.4)
-        seri.append(v)
+    yükselen trend çizgisi — gerçek seri gelirse gerçek kapanışlarla çizer."""
+    ad, seri = _guncel(g)
+    if seri is None:
+        rnd = _seed(konu + "-trend")
+        seri = []
+        v = 100.0
+        for _ in range(70):
+            v = v + 0.5 + rnd.gauss(0, 2.4)
+            seri.append(v)
+    n = len(seri)
     dipler = [i for i in range(1, n - 1) if seri[i] < seri[i - 1] and seri[i] <= seri[i + 1]]
     secili = sorted(sorted(dipler, key=lambda i: seri[i])[:3])
     govde = _zaman_govde(560, 235, [seri], [RENK["lacivert"]], [2.2], bant=None)
@@ -488,59 +556,63 @@ def trend_cizgisi_gorsel(konu):
                       f'fill="{RENK["yesil"]}" stroke="#fff" stroke-width="1.4"/>')
     govde = _lejant_cizgi(govde, 60, 18, "Fiyat", RENK["lacivert"])
     govde = _lejant_cizgi(govde, 170, 18, "Yükselen trend çizgisi", RENK["yesil"])
-    return _sarmal(560, 300, govde, "Trend Çizgisi — diplerden geçen doğru")
+    return _sarmal(560, 300, govde,
+                   (f"Trend Çizgisi — {ad} (gerçek kapanışlar)" if ad else "Trend Çizgisi — diplerden geçen doğru"),
+                   alt=_alt_yazi(ad))
 
 
 # konu -> gorsel
 GORSEL_ESLEME = [
-    ("RSI", lambda k: osilator_gorsel(k, "rsi", (30, 70, "#fef2f2", "70 / 30"), "RSI (14) — momentum göstergesi", RENK["mor"])),
-    ("Stokastik", lambda k: osilator_gorsel(k, "stoch", (20, 80, "#fef2f2", "80 / 20"), "Stokastik %K — hız ve konum", RENK["mor"])),
-    ("CCI", lambda k: osilator_gorsel(k, "cci", (25, 75, "#fef2f2", "+100 / -100"), "CCI (20) — ortalamadan sapma", RENK["mor"])),
-    ("ADX", lambda k: osilator_gorsel(k, "adx", (25, 100, "#ecfdf5", "25 eşiği"), "ADX — trend gücü", RENK["yesil"])),
-    ("Wave Trend", lambda k: osilator_gorsel(k, "wt", (20, 80, "#fef2f2", "+53 / -53"), "Wave Trend (WT1/WT2)", RENK["teal"])),
-    ("MACD", macd_gorsel),
-    ("EMA", iki_ma_gorsel),
+    ("RSI", lambda k, g=None: osilator_gorsel(k, "rsi", (30, 70, "#fef2f2", "70 / 30"), "RSI (14) — momentum göstergesi", RENK["mor"], g=g)),
+    ("Stokastik", lambda k, g=None: osilator_gorsel(k, "stoch", (20, 80, "#fef2f2", "80 / 20"), "Stokastik %K — hız ve konum", RENK["mor"], g=g)),
+    ("CCI", lambda k, g=None: osilator_gorsel(k, "cci", (25, 75, "#fef2f2", "+100 / -100"), "CCI (20) — ortalamadan sapma", RENK["mor"], g=g)),
+    ("ADX", lambda k, g=None: osilator_gorsel(k, "adx", (25, 100, "#ecfdf5", "25 eşiği"), "ADX — trend gücü", RENK["yesil"], g=g)),
+    ("Wave Trend", lambda k, g=None: osilator_gorsel(k, "wt", (20, 80, "#fef2f2", "+53 / -53"), "Wave Trend (WT1/WT2)", RENK["teal"], g=g)),
+    ("MACD", lambda k, g=None: macd_gorsel(k, g=g)),
+    ("EMA", lambda k, g=None: iki_ma_gorsel(k, g=g)),
     ("Mum", mum_gorsel),
-    ("Pearson", lambda k: dagilim_gorsel(k, False)),
-    ("Regresyon", kanal_gorsel),
-    ("Destek", destek_gorsel),
+    ("Pearson", lambda k, g=None: dagilim_gorsel(k, False, g=g)),
+    ("Regresyon", lambda k, g=None: kanal_gorsel(k, g=g)),
+    ("Destek", lambda k, g=None: destek_gorsel(k, g=g)),
     ("Hacim", hacim_gorsel),
     ("Likidite", hacim_gorsel),
     ("Bileşik", buyume_gorsel),
-    ("Çeşitlendirme", lambda k: pasta_gorsel(k, [("Hisse", 40), ("Altın", 15), ("Döviz", 10), ("Mevduat", 15), ("Fon", 10), ("Nakit", 10)], "Çeşitlendirme — varlık dağılımı")),
-    ("Enflasyon", lambda k: pasta_gorsel(k, [("Mevduat", 25), ("Altın", 25), ("Hisse", 30), ("Döviz", 20)], "Enflasyona karşı varlıklar (kavramsal)")),
+    ("Çeşitlendirme", lambda k, g=None: pasta_gorsel(k, [("Hisse", 40), ("Altın", 15), ("Döviz", 10), ("Mevduat", 15), ("Fon", 10), ("Nakit", 10)], "Çeşitlendirme — varlık dağılımı")),
+    ("Enflasyon", lambda k, g=None: pasta_gorsel(k, [("Mevduat", 25), ("Altın", 25), ("Hisse", 30), ("Döviz", 20)], "Enflasyona karşı varlıklar (kavramsal)")),
     # 17.10: tabloda olmayan konulara rastlayan dersler resimsiz kaliyordu
     # (kullanici bildirimi: "Trend çizgisi nasıl çizilir?" resimsiz yayinlandi).
-    ("Trend çizgisi", trend_cizgisi_gorsel),
-    ("Tavan ve taban", lambda k: destek_gorsel(k, "Tavan ve Taban — fiyat sınırları (kavramsal)")),
-    ("Açığa satış", lambda k: cizgi_gorsel(k, baslik="Açığa Satış — önce yüksekten sat, düşüşte geri al", egim=-0.9)),
-    ("Yukarı Adım", lambda k: cizgi_gorsel(k, baslik="Yukarı Adım Kuralı — fiyat yukarı adımlarla ilerler")),
-    ("Endeksler", lambda k: iki_ma_gorsel(k, baslik="Endeksler — kısa vadeli ve uzun vadeli seyir",
+    ("Trend çizgisi", lambda k, g=None: trend_cizgisi_gorsel(k, g=g)),
+    ("Tavan ve taban", lambda k, g=None: destek_gorsel(k, "Tavan ve Taban — fiyat sınırları (kavramsal)", g=g)),
+    ("Açığa satış", lambda k, g=None: cizgi_gorsel(k, baslik="Açığa Satış — önce yüksekten sat, düşüşte geri al", egim=-0.9, g=g)),
+    ("Yukarı Adım", lambda k, g=None: cizgi_gorsel(k, baslik="Yukarı Adım Kuralı — fiyat yukarı adımlarla ilerler", g=g)),
+    ("Endeksler", lambda k, g=None: iki_ma_gorsel(k, baslik="Endeksler — kısa vadeli ve uzun vadeli seyir",
                                           etiketler=("Fiyat", "Kısa dönem", "Uzun dönem"))),
-    ("Stop-loss", lambda k: cizgi_gorsel(k, seviyeler=[("Stop seviyesi", None)], baslik="Stop-Loss — zararı sınırlayan seviye")),
-    ("Faiz", lambda k: iki_ma_gorsel(k, baslik="Faiz ve Hisse — rekabet ilişkisi (kavramsal)",
+    ("Stop-loss", lambda k, g=None: cizgi_gorsel(k, seviyeler=[("Stop seviyesi", None)], baslik="Stop-Loss — zararı sınırlayan seviye", g=g)),
+    ("Faiz", lambda k, g=None: iki_ma_gorsel(k, baslik="Faiz ve Hisse — rekabet ilişkisi (kavramsal)",
                                      etiketler=("Hisse", "Faiz yükseliyor", "Faiz düşüyor"))),
-    ("korelasyon", lambda k: dagilim_gorsel(k, True)),
-    ("Temettü", lambda k: buyume_gorsel(k, "Temettü — yıllar içinde biriken ödeme (kavramsal)")),
-    ("Halka arz", lambda k: cizgi_gorsel(k, baslik="Halka Arz — borsaya giriş günü ve sonrası")),
+    ("korelasyon", lambda k, g=None: dagilim_gorsel(k, True, g=g)),
+    ("Temettü", lambda k, g=None: buyume_gorsel(k, "Temettü — yıllar içinde biriken ödeme (kavramsal)")),
+    ("Halka arz", lambda k, g=None: cizgi_gorsel(k, baslik="Halka Arz — borsaya giriş günü ve sonrası", g=g)),
 ]
 
 
-def gorsel_uret(konu):
+def gorsel_uret(konu, g=None):
     """Konu adindan ders gorseli uretir.
 
-    Esleme buyuk/kucuk harf duyarsizdir ("Portföy çeşitlendirme" ~
-    "Çeşitlendirme" gibi). Tablo kapsamazsa genel fiyat sematigine duser —
-    hicbir ders resimsiz yayinlanmasin (17.10 kurali).
+    g = {"ad": "THYAO", "seri": [...]} biciminde GERCEK fiyat serisi
+    verilebilir; fiyata dayali gorseller (trend, destek, kanal, osilator,
+    MACD, korelasyon...) o zaman gercek kapanislarla cizilir. Esleme
+    buyuk/kucuk harf duyarsizdir; tablo kapsamazsa genel fiyat sematigine
+    duser — hicbir ders resimsiz yayinlanmasin (17.10 kurali).
     """
     k_ = konu.lower()
     for anahtar, uretici in GORSEL_ESLEME:
         if anahtar.lower() in k_:
             try:
-                return uretici(konu)
+                return uretici(konu, g=g)
             except Exception:
                 continue
     try:
-        return cizgi_gorsel(konu)
+        return cizgi_gorsel(konu, g=g)
     except Exception:
         return None
