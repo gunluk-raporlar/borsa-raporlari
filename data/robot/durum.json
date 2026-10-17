@@ -1,17 +1,14 @@
 {
   "baslangic": "2026-09-25",
   "braket_versiyonu": 2,
-  "bugun_alinan": [
-    "GARAN",
-    "YKBNK"
-  ],
+  "bugun_alinan": [],
   "bugun_satilan": [],
-  "bugun_tarih": "2026-10-16",
+  "bugun_tarih": "2026-10-17",
   "gerceklesen_kz": -3028.0159249999942,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 3,
+  "kontrol_sayisi": 1,
   "nakit": 62251.705807612016,
-  "onceki_kapanis_ozkaynak": 96826.43,
+  "onceki_kapanis_ozkaynak": 96787.21,
   "ozkayit": [
     [
       "2026-09-25",
@@ -246,6 +243,7 @@
     "VAKBN": 32.86,
     "YKBNK": 35.7
   },
+  "son_repo_tarihi": "2026-10-17",
   "toplam_kesinti": 359.68,
   "versiyon": 1
 }
