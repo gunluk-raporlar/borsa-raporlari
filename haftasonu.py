@@ -244,12 +244,6 @@ def main():
 </div>
 <article class="report" id="rapor-ses-metin">{gvde}</article>
 <p style="margin-top:18px"><a href="index.html">&larr; Ana sayfaya dön</a></p>"""
-    html = bot._sayfa(
-        f"Hafta Sonu Gündemi - {tarih}", icerik, aktif="haftasonu", yol="haftasonu.html",
-        aciklama="Hafta sonu ekonomi, finans, emlak, ticaret, para/döviz ve jeopolitik haberlerinin yapay zeka ile derlenmiş gündem değerlendirmesi ve yeni hafta ajandası.",
-    )
-    with open("haftasonu.html", "w", encoding="utf-8") as f:
-        f.write(html)
     # Tarihli arsiv sayfasi KOK DIZIN sayfasinin kopyasi degil: kok="../"
     # ile uretilir (CSS/menu linkleri alt klasorde calisir) ve canonical
     # kendi URL'ini gosterir (aksi halde arama motorlari arsivi indekslemez).
@@ -262,6 +256,10 @@ def main():
     )
     with open(os.path.join(arsiv_dir, f"{tarih}.html"), "w", encoding="utf-8") as f:
         f.write(alt_html)
+    # 17.10 kullanici karari: kok haftasonu.html 'guncel bulten' DEGIL, tum
+    # sayilarin kart listesi (hub) — raporlar/derin/makro hub'lariyla ayni
+    # desen. Bot her gun tazeler; hafta sonu yayini de hub'i burada tazeler.
+    bot.build_hub_sayfalari()
     print(f"HAFTA SONU GUNDEMI HAZIR: {tarih} | {sum(len(v) for v in kategoriler.values())} baslik", flush=True)
     return 0
 

@@ -5433,7 +5433,7 @@ def build_hub_sayfalari():
     sayfasi her zaman tarihli arsiv dosyasinda (raporlar/<tarih>...). raporlar.html
     de gunluk raporlarin hub'i — anasayfa ile arsiv artik ayri sayfalar.
     Gunluk bot, derin_analiz.py ve makro_analiz.py her yayindan sonra cagirir;
-    raporlar/ klasorunu taradigindan hangi kosu tetiklerse tetiklesin 3 hub da
+    raporlar/ klasorunu taradigindan hangi kosu tetiklerse tetiklesin hub'lar
     taze kalir.
     """
     tum = sorted((fn for fn in os.listdir("raporlar") if fn.endswith(".html")),
@@ -5441,6 +5441,7 @@ def build_hub_sayfalari():
     gunluk = [fn for fn in tum if re.fullmatch(r"\d{4}-\d{2}-\d{2}\.html", fn)]
     derin = _html_dosyalari("derin-analiz")
     makro = _html_dosyalari("makro-analiz")
+    haftasonu_sayfalar = _html_dosyalari("haftasonu")
 
     hublar = [
         ("raporlar.html", "raporlar", "Günlük Raporlar Arşivi", "Günlük Piyasa Raporları",
@@ -5452,6 +5453,11 @@ def build_hub_sayfalari():
         ("makro-analiz.html", "makro", "Makro Analiz Arşivi", "Makro Analizler",
          "Haftalık makroekonomik değerlendirmelerin tamamı.",
          makro, "Makro analizi aç", "", "makro-analiz/"),
+        # 17.10 kullanici karari: haftasonu gundemi de digerleri gibi kendi
+        # hub'ina kavustu (kok haftasonu.html artik son bulten degil, arsiv listesi).
+        ("haftasonu.html", "haftasonu", "Hafta Sonu Gündem Arşivi", "Hafta Sonu Gündemi",
+         "Hafta sonu haberlerinden üretilen gündem değerlendirmeleri ve yeni hafta ajandalarının tamamı.",
+         haftasonu_sayfalar, "Gündemi aç", "", "haftasonu/"),
     ]
     for yol, aktif, title, h1, aciklama, dosyalar, etiket, suffix, href_on in hublar:
         icerik = f"""
@@ -5497,8 +5503,8 @@ def build_hub_sayfalari():
                        yol="haftasonu-egitimi.html",
                        aciklama="Hafta sonu borsa eğitimi derslerinin tamamı; "
                                 "her Cumartesi/Pazar yeni ders."))
-    logger.info("[Hub] %d gunluk / %d derin / %d makro / %d ders karti yazildi.",
-                len(gunluk), len(derin), len(makro), len(ders_kartlari))
+    logger.info("[Hub] %d gunluk / %d derin / %d makro / %d haftasonu / %d ders karti yazildi.",
+                len(gunluk), len(derin), len(makro), len(haftasonu_sayfalar), len(ders_kartlari))
 
 
 def ana_sayfa_tazele():
