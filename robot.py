@@ -57,6 +57,8 @@ KARA_LISTE = {"DSTKF"}
 KAPITAL0 = 100_000.0        # sanal başlangıç sermayesi (TL)
 POZISYON_ORAN = 0.12        # özkaynağın en fazla %12'si tek hisseye
 MAKS_POZISYON = 8           # aynı anda en fazla 8 farklı hisse
+ALTIN_KOLU_ORAN = 0.5       # ayı modunda boşta nakdin bu payı gram altına alınır (17.10)
+VARLIK_SERI_YOL = os.path.join("data", "robot", "varlik-serisi.json")
 STOP_ORAN = -0.03           # maliyetin %3 altında stop-loss (scalp braketi)
 HEDEF_ORAN = 0.03           # maliyetin %3 üstünde kâr alma (scalp braketi)
 GUNLUK_ZARAR_LIMITI = 0.03  # özkaynak dünkü kapanışa göre %3 düşerse yeni alım durur
@@ -371,10 +373,15 @@ def varlik_seri_yaz():
     for tarih, satir in d.iterrows():
         k = str(tarih)[:10]
         hucre = gunler.setdefault(k, {})
-        for sutun, anahtar in (("GC=F", "gram"), ("USDTRY=X", "usdtry"), ("XU100.IS", "xu100")):
-            deger = satir.get(sutun)
-            if deger == deger and deger and deger > 0:
-                hucre[anahtar] = round(float(deger), 4)
+        ons = satir.get("GC=F")
+        usd = satir.get("USDTRY=X")
+        if ons and ons == ons and ons > 0 and usd and usd == usd and usd > 0:
+            # TL/gram = ons(USD) * USDTRY / 31.1034768 (bot._gram_altin_fiyati ile ayni)
+            hucre["gram"] = round(ons * usd / 31.1034768, 2)
+            hucre["usdtry"] = round(float(usd), 4)
+        xu = satir.get("XU100.IS")
+        if xu and xu == xu and xu > 0:
+            hucre["xu100"] = round(float(xu), 2)
     seriler["son_indirme"] = bugun_s
     os.makedirs(os.path.dirname(yol), exist_ok=True)
     with open(yol, "w", encoding="utf-8") as f:
@@ -410,10 +417,48 @@ def islemleri_oku():
         return []
 
 
+def _son_gram():
+    """varlik-serisi'nden en guncel gram altin fiyatini dondurur: (tarih, fiyat) ya da (None, None)."""
+    try:
+        with open(VARLIK_SERI_YOL, encoding="utf-8") as f:
+            gunler = json.load(f).get("gunler", {})
+        for k in sorted(gunler, reverse=True):
+            g = gunler[k].get("gram")
+            if g:
+                return k, float(g)
+    except Exception:
+        pass
+    return None, None
+
+
+def rejim_oku():
+    """XU100'un son kapanisini 20 gunluk ortalamasiyla kiyaslar:
+    'ayi' (son < SMA20), 'boga' (son >= SMA20) ya da None (seri yok/bayat)."""
+    try:
+        with open(VARLIK_SERI_YOL, encoding="utf-8") as f:
+            gunler = json.load(f).get("gunler", {})
+        xu = [(k, v["xu100"]) for k, v in sorted(gunler.items()) if v.get("xu100")]
+        if len(xu) < 20:
+            return None
+        son_t, son_v = xu[-1]
+        gun_fark = (datetime.now(dt_timezone.utc).date() -
+                    datetime.strptime(son_t, "%Y-%m-%d").date()).days
+        if gun_fark > 4:
+            return None  # seri bayat: rejim karari verilmez
+        sma20 = sum(v for _, v in xu[-20:]) / 20.0
+        return "ayi" if son_v < sma20 else "boga"
+    except Exception:
+        return None
+
+
 def ozkaynak(durum, fiyatlar):
     """Nakit + acik pozisyonlarin piyasa degeri. Fiyati olmayan pozisyon maliyetle degerlenir."""
     toplam = durum["nakit"]
     for h, p in durum["pozisyonlar"].items():
+        if h == "ALTIN":
+            _, gram = _son_gram()
+            toplam += p["lot"] * (gram or p["maliyet"])
+            continue
         toplam += p["lot"] * fiyatlar.get(h, p["maliyet"])
     return toplam
 
@@ -448,6 +493,12 @@ def risk_ve_oms(durum, sinyaller):
     saat = _simdi().strftime("%H:%M")
     notlar = []
     islem_sayisi = 0
+    rejim = rejim_oku()
+    durum["rejim"] = rejim or "belirsiz"
+    if rejim == "ayi":
+        notlar.append("Piyasa rejimi: AYI (XU100 < SMA20) — yeni hisse alımı durduruldu, boşta nakdin bir kısmı altın kolunda.")
+    elif rejim == "boga":
+        notlar.append("Piyasa rejimi: BOĞA (XU100 ≥ SMA20) — hisse tarafı açık; altın kolu varsa nakde döner.")
 
     onceki = float(durum.get("onceki_kapanis_ozkaynak", KAPITAL0))
     duraklatildi = oz < onceki * (1.0 - GUNLUK_ZARAR_LIMITI)
@@ -489,8 +540,33 @@ def risk_ve_oms(durum, sinyaller):
             })
             log.info("[SAT] %s lot=%d fiyat=%.2f K/Z=%+.2f (%s)", h, p["lot"], fiyat, kz, gerekce)
 
+    # --- ALTIN kolu rejim cikisi: boga modu donunce altin nakde cevrilir
+    if "ALTIN" in durum["pozisyonlar"] and rejim == "boga":
+        p = durum["pozisyonlar"]["ALTIN"]
+        _, gram = _son_gram()
+        if gram:
+            brut = gram * p["lot"]
+            kesinti = islem_kesintisi(brut)
+            tutar = brut * (1.0 - KAYMA) - kesinti
+            kz = tutar - p["maliyet"] * p["lot"]
+            durum["nakit"] += tutar
+            durum["toplam_kesinti"] = round(durum.get("toplam_kesinti", 0.0) + kesinti, 2)
+            del durum["pozisyonlar"]["ALTIN"]
+            islem_sayisi += 1
+            durum["gerceklesen_kz"] = durum.get("gerceklesen_kz", 0.0) + kz
+            islem_logla({
+                "tarih": _simdi().strftime("%Y-%m-%d"), "saat": saat, "hisse": "ALTIN",
+                "yon": "SAT", "lot": p["lot"], "fiyat": round(gram, 2),
+                "tutar": round(tutar, 2), "kesinti": round(kesinti, 2),
+                "kz": round(kz, 2), "gerekce": "boğa modu: altın kolu nakde çevrildi",
+                "giris_tarihi": p["giris"], "nakit_sonra": round(durum["nakit"], 2),
+            })
+            log.info("[ALTIN] kolu nakde cevrildi: gram=%.2f K/Z=%+.2f", gram, kz)
+
     # --- ALIMLAR: slot + nakit + boyut + gun ici koruma kurallari
-    if not duraklatildi:
+    if rejim == "ayi":
+        notlar.append("Ayı modu: yeni hisse ALIMLARI bu rejimde denenmez.")
+    elif not duraklatildi:
         adaylar = sorted(
             [(h, s) for h, s in sinyaller.items()
              if s["sinyal"] == "AL" and h not in durum["pozisyonlar"]
@@ -498,7 +574,7 @@ def risk_ve_oms(durum, sinyaller):
             key=lambda x: x[1]["rsi"] if x[1]["rsi"] is not None else 100.0,
         )
         for h, s in adaylar:
-            if len(durum["pozisyonlar"]) >= MAKS_POZISYON:
+            if sum(1 for k in durum["pozisyonlar"] if k != "ALTIN") >= MAKS_POZISYON:
                 notlar.append(f"{h}: AL sinyali vardı ama maks. pozisyon sayısına ({MAKS_POZISYON}) ulaşıldı.")
                 continue
             fiyat = s["son_fiyat"]
@@ -538,6 +614,33 @@ def risk_ve_oms(durum, sinyaller):
                 "nakit_sonra": round(durum["nakit"], 2),
             })
             log.info("[AL] %s lot=%d fiyat=%.2f (~%.0f TL) — %s", h, lot, fiyat, toplam, s["gerekce"])
+
+    # --- ALTIN kolu girisi: ayi modunda bosta nakdin yarisi gram altina alinir
+    if rejim == "ayi" and "ALTIN" not in durum["pozisyonlar"] and not duraklatildi:
+        _, gram = _son_gram()
+        if gram and gram > 0:
+            butce = durum["nakit"] * ALTIN_KOLU_ORAN
+            lot = round(butce / gram, 3)
+            etkin = gram * (1.0 + KAYMA)
+            brut = etkin * lot
+            kesinti = islem_kesintisi(brut)
+            toplam = brut + kesinti
+            if MIN_ISLEM_TL <= toplam <= durum["nakit"]:
+                durum["nakit"] -= toplam
+                durum["pozisyonlar"]["ALTIN"] = {
+                    "giris": _simdi().strftime("%Y-%m-%d"), "lot": lot,
+                    "maliyet": round(brut / lot, 2), "stop": None, "hedef": None,
+                }
+                islem_sayisi += 1
+                islem_logla({
+                    "tarih": _simdi().strftime("%Y-%m-%d"), "saat": saat, "hisse": "ALTIN",
+                    "yon": "AL", "lot": lot, "fiyat": round(gram, 2),
+                    "tutar": round(toplam, 2), "kesinti": round(kesinti, 2),
+                    "kz": None, "gerekce": "ayı modu: boşta nakdin %50'si gram altına alındı (rejim kolu)",
+                    "giris_tarihi": _simdi().strftime("%Y-%m-%d"),
+                    "nakit_sonra": round(durum["nakit"], 2),
+                })
+                log.info("[ALTIN] kolu acildi: %.3f gram @ %.2f (butce %.0f TL)", lot, gram, butce)
 
     return islem_sayisi, notlar
 
@@ -635,7 +738,11 @@ def dashboard_yaz(durum, sinyaller, notlar):
 
     poz_satirlar = ""
     for h, p in sorted(durum["pozisyonlar"].items()):
-        fiyat = fiyatlar.get(h, p["maliyet"])
+        if h == "ALTIN":
+            _, gf = _son_gram()
+            fiyat = gf or p["maliyet"]
+        else:
+            fiyat = fiyatlar.get(h, p["maliyet"])
         deger = p["lot"] * fiyat
         kz = (fiyat - p["maliyet"]) * p["lot"]
         kzy = kz / (p["maliyet"] * p["lot"]) * 100.0
@@ -644,7 +751,8 @@ def dashboard_yaz(durum, sinyaller, notlar):
                          f"<td>{_tr(p['maliyet'])}</td><td>{_tr(fiyat)}</td>"
                          f"<td>{_tr(deger)}</td><td class='{sinif}'>{_tr(kz)}</td>"
                          f"<td class='{sinif}'>{_tr(kzy)}%</td>"
-                         f"<td>{_tr(p['stop'])}</td><td>{_tr(p['hedef'])}</td>"
+                         f"<td>{'rejim' if h == 'ALTIN' else _tr(p['stop'])}</td>"
+                         f"<td>{'rejim' if h == 'ALTIN' else _tr(p['hedef'])}</td>"
                          f"<td>{p['giris']}</td></tr>")
     pozisyon_bolumu = ("<h2 class='section-title'>Açık Pozisyonlar</h2><div class='card' style='padding:8px 24px 16px' id='sec-poz'>"
                        + ("<div style='overflow-x:auto'><table><tr><th>Hisse</th><th>Lot</th><th>Maliyet</th><th>Son</th><th>Değer ₺</th>"
@@ -961,8 +1069,10 @@ _ROBOT_CANLI_JS = """<script>
     if (!cips) cips = "<span style='color:var(--muted)'>açık pozisyon yok — nakit bekleniyor</span>";
     var gun = (d.gunluk_yuzde === null || d.gunluk_yuzde === undefined) ? '' :
       " <span class='" + (d.gunluk_yuzde >= 0 ? 'pos' : 'neg') + "'>(" + (d.gunluk_yuzde >= 0 ? '+' : '') + tr(d.gunluk_yuzde) + "% dünkü kapanışa göre)</span>";
+    var rejimYazi = d.rejim === 'ayi' ? 'AYI — altın kolu aktif' : (d.rejim === 'boga' ? 'BOĞA' : null);
     kutu.innerHTML = "🟢 <b>CANLI</b> · son fiyat " + (d.fiyat_saati || '—') +
-      " · Toplam <b style='font-size:17px'>" + tr(d.toplam) + " ₺</b>" + gun + " · " + cips +
+      " · Toplam <b style='font-size:17px'>" + tr(d.toplam) + " ₺</b>" + gun +
+      (rejimYazi ? " · <b>Rejim: " + rejimYazi + "</b>" : "") + " · " + cips +
       "<div style='color:var(--muted);font-size:11.5px;margin-top:6px'>Fiyatlar ~15 dk gecikmelidir; tüm bölüm 1 dakikada bir tazelenir.</div>";
     kutu.dataset.yuklendi = '1';
   }

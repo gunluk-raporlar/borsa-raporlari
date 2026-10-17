@@ -86,18 +86,25 @@ export async function onRequestGet(context) {
 
   let yanit;
   try {
-    const [durum, islemlerMetin, canli] = await Promise.all([
+    const [durum, islemlerMetin, canli, varlik] = await Promise.all([
       jsonCek(RAW + "/durum.json"),
       metinCek(RAW + "/islemler.jsonl"),
       scannerCek(),
+      jsonCek(RAW + "/varlik-serisi.json"),
     ]);
 
     if (!durum) {
       yanit = jsonYanit({ hata: "robot durumu okunamadi" }, 503);
     } else {
+      // ALTIN kolu fiyatı: varlik-serisi'ndeki son gram kapanışı (TL/gram).
+      const gunler = (varlik && varlik.gunler) || {};
+      const gramGunler = Object.keys(gunler).filter((k) => gunler[k].gram).sort();
+      const gram = gramGunler.length ? gunler[gramGunler[gramGunler.length - 1]].gram : null;
+      const rejim = durum.rejim || (gramGunler.length >= 20 ? null : null);
+
       const pozisyonlar = Object.entries(durum.pozisyonlar || {})
         .map(([h, p]) => {
-          const son = canli[h] || p.maliyet;
+          const son = h === "ALTIN" ? (gram || p.maliyet) : (canli[h] || p.maliyet);
           const kz = (son - p.maliyet) * p.lot;
           const taban = p.maliyet * p.lot;
           return {
@@ -133,6 +140,8 @@ export async function onRequestGet(context) {
         toplam_kesinti: durum.toplam_kesinti || 0,
         pozisyon_sayisi: pozisyonlar.length,
         kontrol_sayisi: durum.kontrol_sayisi || 0,
+        rejim: durum.rejim || null,
+        gram: gram,
         bugun_tarih: durum.bugun_tarih || "",
         kazanma_orani: satislar.length ? Math.round(kazananlar.length / satislar.length * 1000) / 10 : 0,
         pozisyonlar,
