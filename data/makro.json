@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-10-16 21:48",
+ "guncelleme": "2026-10-17 20:54",
  "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + EVDS(5) + Resmi AB/ABD(25)",
  "gostergeler": [
   {
@@ -537,25 +537,25 @@
   {
    "ulke": "ABD",
    "ad": "Sanayi Üretimi (yıllık)",
-   "deger": 1.4,
+   "deger": 2.2,
    "birim": "%",
-   "donem": "2026-09-18",
+   "donem": "2026-10-16",
    "tahmin": null,
-   "onceki": 1.13,
+   "onceki": 1.6,
    "kaynak_baslik": "Industrial Production YoY",
-   "kaynak_periyot": "Aug",
+   "kaynak_periyot": "Sep",
    "frekans": "aylık"
   },
   {
    "ulke": "ABD",
    "ad": "Sanayi Üretimi (aylık)",
-   "deger": 0.2,
+   "deger": 0.7,
    "birim": "%",
-   "donem": "2026-08-18",
-   "tahmin": 0.3,
-   "onceki": 0.3,
+   "donem": "2026-10-16",
+   "tahmin": 0.4,
+   "onceki": 0.1,
    "kaynak_baslik": "Industrial Production MoM",
-   "kaynak_periyot": "Jul",
+   "kaynak_periyot": "Sep",
    "frekans": "aylık"
   },
   {
@@ -761,13 +761,13 @@
   {
    "ulke": "ABD",
    "ad": "Kapasite Kullanım Oranı",
-   "deger": 76.3,
+   "deger": 76.9,
    "birim": "%",
-   "donem": "2026-09-18",
-   "tahmin": 76.4,
-   "onceki": 76.3,
+   "donem": "2026-10-16",
+   "tahmin": 76.5,
+   "onceki": 76.4,
    "kaynak_baslik": "Capacity Utilization",
-   "kaynak_periyot": "Aug",
+   "kaynak_periyot": "Sep",
    "frekans": "aylık"
   },
   {
@@ -812,7 +812,7 @@
    "deger": 3.8,
    "birim": "%",
    "donem": "2026-09-01",
-   "tahmin": 3.6,
+   "tahmin": 3.8,
    "onceki": 3.2,
    "kaynak_baslik": "Eurostat EA21 HICP (yıllık)",
    "kaynak_periyot": "2026-09-01",
@@ -826,7 +826,7 @@
    "deger": 0.6,
    "birim": "%",
    "donem": "2026-09-01",
-   "tahmin": null,
+   "tahmin": 0.6,
    "onceki": 0.4,
    "kaynak_baslik": "Eurostat EA21 HICP (aylık)",
    "kaynak_periyot": "2026-09-01",
@@ -839,10 +839,10 @@
    "ad": "Çekirdek Enflasyon (yıllık)",
    "deger": 2.5,
    "birim": "%",
-   "donem": "2026-10-02",
+   "donem": "2026-10-16",
    "tahmin": 2.5,
    "onceki": 2.4,
-   "kaynak_baslik": "Core Inflation Rate YoY Flash",
+   "kaynak_baslik": "Core Inflation Rate YoY Final",
    "kaynak_periyot": "Sep",
    "frekans": "aylık"
   },
@@ -1013,13 +1013,13 @@
   {
    "ulke": "Euro Bölgesi",
    "ad": "Ticaret Dengesi",
-   "deger": 14.2,
+   "deger": -16.1,
    "birim": "milyar €",
-   "donem": "2026-09-15",
+   "donem": "2026-10-16",
    "tahmin": null,
-   "onceki": 7.2,
+   "onceki": 10.7,
    "kaynak_baslik": "Balance of Trade",
-   "kaynak_periyot": "Jul",
+   "kaynak_periyot": "Aug",
    "frekans": "aylık"
   },
   {
@@ -1060,6 +1060,20 @@
   },
   {
    "ulke": "ABD",
+   "ad": "Politika faizi",
+   "deger": 4.0,
+   "birim": "%",
+   "donem": "2026-10-17",
+   "tahmin": 4.0,
+   "onceki": 4.0,
+   "kaynak_baslik": "FRED Fed fon ust siniri",
+   "kaynak_periyot": "2026-10-17",
+   "frekans": "olay",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
+  },
+  {
+   "ulke": "ABD",
    "ad": "Büyüme (yıllık)",
    "deger": 2.2,
    "birim": "%",
@@ -1073,29 +1087,15 @@
    "teyit": "FRED"
   },
   {
-   "ulke": "ABD",
-   "ad": "Politika faizi",
-   "deger": 4.0,
-   "birim": "%",
-   "donem": "2026-10-16",
-   "tahmin": 4.0,
-   "onceki": 4.0,
-   "kaynak_baslik": "FRED Fed fon ust siniri",
-   "kaynak_periyot": "2026-10-16",
-   "frekans": "olay",
-   "teyit": "FRED",
-   "kaynak_durumu": "FRED resmi verisi"
-  },
-  {
    "ulke": "Euro Bölgesi",
    "ad": "Politika faizi",
    "deger": 2.65,
    "birim": "%",
-   "donem": "2026-10-16",
+   "donem": "2026-10-17",
    "tahmin": 2.65,
    "onceki": 2.65,
    "kaynak_baslik": "ECB MRO ana refinansman faizi",
-   "kaynak_periyot": "2026-10-16",
+   "kaynak_periyot": "2026-10-17",
    "frekans": "olay",
    "teyit": "ECB",
    "kaynak_durumu": "ECB resmi verisi"
