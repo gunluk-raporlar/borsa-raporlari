@@ -188,8 +188,8 @@ def mum_gorsel(konu):
     return _sarmal(w, h, govde, "Mum Grafiği Anatomisi")
 
 
-def cizgi_gorsel(konu, seviyeler=None, baslik="Fiyat ve seviyeler", alt_metin=None):
-    seri = _seri(konu, n=60, oynak=1.15, egim=0.5)
+def cizgi_gorsel(konu, seviyeler=None, baslik="Fiyat ve seviyeler", alt_metin=None, egim=0.5):
+    seri = _seri(konu, n=60, oynak=1.15, egim=egim)
     govde = _zaman_govde(560, 235, [seri], [RENK["lacivert"]], [2.6])
     if seviyeler:
         yuks = [88, 122, 156]
@@ -201,15 +201,16 @@ def cizgi_gorsel(konu, seviyeler=None, baslik="Fiyat ve seviyeler", alt_metin=No
     return _sarmal(560, 300, govde, baslik, alt=alt_metin or "şematik — temsilidir")
 
 
-def iki_ma_gorsel(konu):
+def iki_ma_gorsel(konu, baslik="Hareketli Ortalamalar — hızlı/yavaş kesişimi",
+                  etiketler=("Fiyat", "Hızlı ortalama", "Yavaş ortalama")):
     seri = _seri(konu, n=70, oynak=1.9, egim=1.2)
     kisa = _ema(seri, 9)
     uzun = _ema(seri, 21)
     govde = _zaman_govde(560, 235, [seri, kisa, uzun], [RENK["lacivert"], RENK["turuncu"], RENK["mavi"]], [2.2, 2.4, 2.4])
-    govde = _lejant_cizgi(govde, 60, 18, "Fiyat", RENK["lacivert"])
-    govde = _lejant_cizgi(govde, 170, 18, "Hızlı ortalama", RENK["turuncu"])
-    govde = _lejant_cizgi(govde, 330, 18, "Yavaş ortalama", RENK["mavi"])
-    return _sarmal(560, 300, govde, "Hareketli Ortalamalar — hızlı/yavaş kesişimi")
+    govde = _lejant_cizgi(govde, 60, 18, etiketler[0], RENK["lacivert"])
+    govde = _lejant_cizgi(govde, 170, 18, etiketler[1], RENK["turuncu"])
+    govde = _lejant_cizgi(govde, 330, 18, etiketler[2], RENK["mavi"])
+    return _sarmal(560, 300, govde, baslik)
 
 
 def _harita(vals, lo, hi):
@@ -309,7 +310,7 @@ def kanal_gorsel(konu):
     return _sarmal(560, 300, govde, "Regresyon Kanalı — %0 alt bant, %100 üst bant")
 
 
-def destek_gorsel(konu):
+def destek_gorsel(konu, baslik="Destek ve Direnç — fiyatın döndüğü bölgeler"):
     """Destek/direnç ders görseli: merkez etrafında salınan fiyat, döndüğü
     yatay bölgeler (destek/direnç) ve üst kırılım adayı — şematik."""
     rnd = _seed(konu + "-destek")
@@ -396,14 +397,14 @@ def hacim_gorsel(konu):
     return _sarmal(560, 235, govde, "Hacim")
 
 
-def buyume_gorsel(konu):
+def buyume_gorsel(konu, baslik="Bileşik Getiri — zamanla açılan fark"):
     x = list(range(120))
     lineer = [100 + 0.8 * i for i in x]
     bilesik = [100 * (1.012 ** i) for i in x]
     govde = _zaman_govde(560, 235, [lineer, bilesik], [RENK["gri"], RENK["yesil"]], [2.2, 3])
     govde = _lejant_cizgi(govde, 60, 18, "Doğrusal", RENK["gri"])
     govde = _lejant_cizgi(govde, 170, 18, "Bileşik", RENK["yesil"])
-    return _sarmal(560, 300, govde, "Bileşik Getiri — zamanla açılan fark")
+    return _sarmal(560, 300, govde, baslik)
 
 
 def pasta_gorsel(konu, dilimler, baslik):
@@ -452,6 +453,44 @@ def akis_gorsel(konu, adimlar, baslik):
     return _sarmal(560, 250, govde, baslik)
 
 
+def trend_cizgisi_gorsel(konu):
+    """Trend çizgisi ders görseli: artan dip/tepe dizisi ve diplerden geçen
+    yükselen trend çizgisi — şematik."""
+    rnd = _seed(konu + "-trend")
+    n = 70
+    seri = []
+    v = 100.0
+    for _ in range(n):
+        v = v + 0.5 + rnd.gauss(0, 2.4)
+        seri.append(v)
+    dipler = [i for i in range(1, n - 1) if seri[i] < seri[i - 1] and seri[i] <= seri[i + 1]]
+    secili = sorted(sorted(dipler, key=lambda i: seri[i])[:3])
+    govde = _zaman_govde(560, 235, [seri], [RENK["lacivert"]], [2.2], bant=None)
+    alt_v, ust_v = _olcek([seri])
+    y0, y1 = 12, 209
+    x0, x1 = 46, 546
+
+    def oy(vd):
+        return y1 - (vd - alt_v) / (ust_v - alt_v) * (y1 - y0)
+
+    def px(i):
+        return x0 + (x1 - x0) * i / (n - 1)
+
+    if len(secili) >= 2:
+        i1, i2 = secili[0], secili[-1]
+        eg2 = (seri[i2] - seri[i1]) / ((i2 - i1) or 1)
+        kes = seri[i1] - eg2 * i1
+        govde += (f'<line x1="{px(0):.1f}" y1="{oy(kes):.1f}" x2="{px(n - 1):.1f}" '
+                  f'y2="{oy(kes + eg2 * (n - 1)):.1f}" stroke="{RENK["yesil"]}" '
+                  f'stroke-width="2.6"/>')
+        for i in secili:
+            govde += (f'<circle cx="{px(i):.1f}" cy="{oy(seri[i]):.1f}" r="4.2" '
+                      f'fill="{RENK["yesil"]}" stroke="#fff" stroke-width="1.4"/>')
+    govde = _lejant_cizgi(govde, 60, 18, "Fiyat", RENK["lacivert"])
+    govde = _lejant_cizgi(govde, 170, 18, "Yükselen trend çizgisi", RENK["yesil"])
+    return _sarmal(560, 300, govde, "Trend Çizgisi — diplerden geçen doğru")
+
+
 # konu -> gorsel
 GORSEL_ESLEME = [
     ("RSI", lambda k: osilator_gorsel(k, "rsi", (30, 70, "#fef2f2", "70 / 30"), "RSI (14) — momentum göstergesi", RENK["mor"])),
@@ -470,14 +509,38 @@ GORSEL_ESLEME = [
     ("Bileşik", buyume_gorsel),
     ("Çeşitlendirme", lambda k: pasta_gorsel(k, [("Hisse", 40), ("Altın", 15), ("Döviz", 10), ("Mevduat", 15), ("Fon", 10), ("Nakit", 10)], "Çeşitlendirme — varlık dağılımı")),
     ("Enflasyon", lambda k: pasta_gorsel(k, [("Mevduat", 25), ("Altın", 25), ("Hisse", 30), ("Döviz", 20)], "Enflasyona karşı varlıklar (kavramsal)")),
+    # 17.10: tabloda olmayan konulara rastlayan dersler resimsiz kaliyordu
+    # (kullanici bildirimi: "Trend çizgisi nasıl çizilir?" resimsiz yayinlandi).
+    ("Trend çizgisi", trend_cizgisi_gorsel),
+    ("Tavan ve taban", lambda k: destek_gorsel(k, "Tavan ve Taban — fiyat sınırları (kavramsal)")),
+    ("Açığa satış", lambda k: cizgi_gorsel(k, baslik="Açığa Satış — önce yüksekten sat, düşüşte geri al", egim=-0.9)),
+    ("Yukarı Adım", lambda k: cizgi_gorsel(k, baslik="Yukarı Adım Kuralı — fiyat yukarı adımlarla ilerler")),
+    ("Endeksler", lambda k: iki_ma_gorsel(k, baslik="Endeksler — kısa vadeli ve uzun vadeli seyir",
+                                          etiketler=("Fiyat", "Kısa dönem", "Uzun dönem"))),
+    ("Stop-loss", lambda k: cizgi_gorsel(k, seviyeler=[("Stop seviyesi", None)], baslik="Stop-Loss — zararı sınırlayan seviye")),
+    ("Faiz", lambda k: iki_ma_gorsel(k, baslik="Faiz ve Hisse — rekabet ilişkisi (kavramsal)",
+                                     etiketler=("Hisse", "Faiz yükseliyor", "Faiz düşüyor"))),
+    ("korelasyon", lambda k: dagilim_gorsel(k, True)),
+    ("Temettü", lambda k: buyume_gorsel(k, "Temettü — yıllar içinde biriken ödeme (kavramsal)")),
+    ("Halka arz", lambda k: cizgi_gorsel(k, baslik="Halka Arz — borsaya giriş günü ve sonrası")),
 ]
 
 
 def gorsel_uret(konu):
+    """Konu adindan ders gorseli uretir.
+
+    Esleme buyuk/kucuk harf duyarsizdir ("Portföy çeşitlendirme" ~
+    "Çeşitlendirme" gibi). Tablo kapsamazsa genel fiyat sematigine duser —
+    hicbir ders resimsiz yayinlanmasin (17.10 kurali).
+    """
+    k_ = konu.lower()
     for anahtar, uretici in GORSEL_ESLEME:
-        if anahtar in konu:
+        if anahtar.lower() in k_:
             try:
                 return uretici(konu)
             except Exception:
-                return None
-    return None
+                continue
+    try:
+        return cizgi_gorsel(konu)
+    except Exception:
+        return None
