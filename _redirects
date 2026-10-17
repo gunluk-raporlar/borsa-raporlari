@@ -4,6 +4,24 @@
 /https://borsa-raporlari.pages.dev/*  /:splat  301
 /https:/borsa-raporlari.pages.dev/*   /:splat  301
 /http://borsa-raporlari.pages.dev/*   /:splat  301
+
+# Eski /reports + /raporlar tarihli derin/makro yollari (eski duz yapidan agac
+# yapisina geciste kaliyor). TEK glob kurali tum tarihleri kapsar. DİKKAT:
+# Pages pratikte _redirects'in yalnizca ilk ~100 kuralini isliyor (2026-10-17
+# canli test: kural #99 calisiyor, #101 yok sayiliyor); bu yuzden dosya 100
+# kuralin altinda tutulur, tarihli kurallar per-date yazilmaz.
+/reports/*-derin-analiz.html  /derin-analiz/:splat.html  301
+/reports/*-derin-analiz       /derin-analiz/:splat.html  301
+/reports/*-makro-analiz.html  /makro-analiz/:splat.html  301
+/reports/*-makro-analiz       /makro-analiz/:splat.html  301
+/raporlar/*-derin-analiz.html /derin-analiz/:splat.html  301
+/raporlar/*-derin-analiz      /derin-analiz/:splat.html  301
+/en/reports/*-derin-analiz.html  /en/deep-analysis/:splat.html  301
+/en/reports/*-derin-analiz       /en/deep-analysis/:splat.html  301
+/en/reports/*-makro-analiz.html  /en/macro-analysis/:splat.html  301
+/en/reports/*-makro-analiz       /en/macro-analysis/:splat.html  301
+/en/raporlar/*-derin-analiz.html  /en/deep-analysis/:splat.html  301
+/en/raporlar/*-derin-analiz       /en/deep-analysis/:splat.html  301
 /reports/2026-09-09-derin-analiz.html  /derin-analiz/2026-09-09.html  301
 /reports/2026-09-16-derin-analiz.html  /derin-analiz/2026-09-16.html  301
 /reports/2026-09-17-derin-analiz.html  /derin-analiz/2026-09-17.html  301
