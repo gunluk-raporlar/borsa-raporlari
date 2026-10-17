@@ -5531,36 +5531,22 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     derin_dosyalari = _html_dosyalari("derin-analiz")
     makro_dosyalari = _html_dosyalari("makro-analiz")
 
+    # 17.10 kullanici karari: tum bolumler 4 kart — 3 icerik + 1 HUB karti.
+    # "Daha fazla goster" dugmesi ve gizli grid kaldirildi; 4. kart dogrudan
+    # hub sayfasina yonlendirir (raporlar.html), simetri bozulmaz.
     arsiv_bolumu = ""
     if gundem_dosyalari:
-        GORUNEN_ARŞİV = 3
         kart_liste = [
             f'<a class="rcard" href="raporlar/{fn}"><span class="date">{_tr_tarih(fn[:-5])}</span>'
             f'<span class="sub">Günlük raporu aç &rarr;</span></a>'
-            for fn in gundem_dosyalari
+            for fn in gundem_dosyalari[:3]
         ]
-        gorunen = "".join(kart_liste[:GORUNEN_ARŞİV])
-        ekler = ""
-        if len(kart_liste) > GORUNEN_ARŞİV:
-            kalan = len(kart_liste) - GORUNEN_ARŞİV
-            gizli_kartlar = "".join(kart_liste[GORUNEN_ARŞİV:])
-            # DIKKAT: buton + gizli grid, gorunen grid'in DIŞINDA kardes
-            # element olarak eklenir; grid icine gomülürse iç içe grid
-            # dar bir kolona sıkışıp dikey dizilir.
-            ekler = f"""
-<div style="margin:8px 0 0"><button type="button" onclick="arsivAc(this)" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:7px 16px; font-size:13.5px; font-weight:600; color:#0f172a; cursor:pointer">Daha fazla göster ({kalan} gün)</button></div>
-<div class="grid" id="arsiv-devam" style="display:none; margin-top:10px">{gizli_kartlar}</div>
-<script>
-function arsivAc(btn) {{
-  var devam = document.getElementById('arsiv-devam');
-  var kapali = devam.style.display === 'none';
-  devam.style.display = kapali ? 'grid' : 'none';
-  btn.textContent = kapali ? 'Daha az göster' : 'Daha fazla göster ({kalan} gün)';
-}}
-</script>"""
+        kart_liste.append(
+            '<a class="rcard" href="raporlar.html"><span class="date">Tüm raporlar</span>'
+            '<span class="sub">Arşivdeki tüm günlük raporlar &rarr;</span></a>')
         arsiv_bolumu = f"""
 <h2 class="section-title">Rapor Arşivi</h2>
-<div class="grid">{gorunen}</div>{ekler}"""
+<div class="grid">{"".join(kart_liste)}</div>"""
     else:
         arsiv_bolumu = """
 <h2 class="section-title">Rapor Arşivi</h2>
@@ -5573,11 +5559,15 @@ function arsivAc(btn) {{
     except OSError:
         hs_dosyalar = []
     if hs_dosyalar:
-        son_hs = hs_dosyalar[-1][:-5]
+        hs_kartlar = "".join(
+            f'<a class="rcard" href="haftasonu/{fn}"><span class="date">{_tr_tarih(fn[:-5])}</span>'
+            f'<span class="sub">Hafta sonu gündem değerlendirmesi & yeni hafta ajandası &rarr;</span></a>'
+            for fn in sorted(hs_dosyalar[-3:], reverse=True))
+        hs_kartlar += ('<a class="rcard" href="haftasonu.html"><span class="date">Tüm hafta sonu gündemi</span>'
+                       '<span class="sub">Geçmiş sayıların tamamı &rarr;</span></a>')
         haftasonu_bolumu = f"""
 <h2 class="section-title">Hafta Sonu Gündemi</h2>
-<div class="grid"><a class="rcard" href="haftasonu.html"><span class="date">{_tr_tarih(son_hs)}</span>
-<span class="sub">Hafta sonu haberlerinden gündem değerlendirmesi & yeni hafta ajandası &rarr;</span></a></div>"""
+<div class="grid">{hs_kartlar}</div>"""
 
     # Hafta sonu borsa okulu bolumu: son 4 ders tarih sirali kartlarla.
     # (Eskiden yalnizca en son ders gorunuyordu; digerleri arsivde kayiplasiyordu.)
@@ -5590,12 +5580,13 @@ function arsivAc(btn) {{
         eg_kartlar = "".join(
             f'<a class="rcard" href="haftasonu-egitimi/{fn}"><span class="date">{_tr_tarih(fn[:-5])}</span>'
             f'<span class="sub">{_ders_konusu(fn) or "Yapay zeka eğitmenden günün dersi"} &rarr;</span></a>'
-            for fn in reversed(eg_dosyalar[-4:])
+            for fn in reversed(eg_dosyalar[-3:])
         )
+        eg_kartlar += ('<a class="rcard" href="haftasonu-egitimi.html"><span class="date">Tüm borsa dersleri</span>'
+                       '<span class="sub">Borsa Okulu arşivinin tamamı &rarr;</span></a>')
         egitim_bolumu = f"""
 <h2 class="section-title">Hafta Sonu Borsa Okulu</h2>
-<div class="grid">{eg_kartlar}</div>
-<p style="margin:10px 0 0"><a href="haftasonu-egitimi.html">Borsa Okulu sayfası &rarr;</a></p>"""
+<div class="grid">{eg_kartlar}</div>"""
 
     # Derin analiz bolumu: guncel sayfa + arsivdeki son 3 analiz
     # (Aciklama tarihe referanslidir: "2 Ekim 2026 gununun derin analizi".)
@@ -5609,8 +5600,10 @@ function arsivAc(btn) {{
         derin_eski = "".join(
             f'<a class="rcard" href="derin-analiz/{fn}"><span class="date">{_tr_tarih(fn[:-5])}</span>'
             f'<span class="sub">{_tr_tarih_sade(fn[:-5]) or fn[:-5]} gününün derin analizi &rarr;</span></a>'
-            for fn in derin_dosyalari[1:4]
+            for fn in derin_dosyalari[1:3]
         )
+        derin_eski += ('<a class="rcard" href="derin-analiz.html"><span class="date">Tüm derin analizler</span>'
+                       '<span class="sub">Arşivdeki analizlerin tamamı &rarr;</span></a>')
         derin_bolumu = f"""
 <h2 class="section-title">Derin Analiz</h2>
 <div class="grid"><a class="rcard" href="derin-analiz/{son_derin}"><span class="date">Güncel Derin Analiz — {_tr_tarih(son_derin_t)}</span>
@@ -5623,8 +5616,10 @@ function arsivAc(btn) {{
     makro_eski = "".join(
         f'<a class="rcard" href="makro-analiz/{fn}"><span class="date">{_tr_tarih(fn[:-5])}</span>'
         f'<span class="sub">{_tr_tarih_sade(fn[:-5]) or fn[:-5]} makro analizi &rarr;</span></a>'
-        for fn in makro_dosyalari[1:4]
+        for fn in makro_dosyalari[1:3]
     )
+    makro_eski += ('<a class="rcard" href="makro-analiz.html"><span class="date">Tüm makro analizler</span>'
+                   '<span class="sub">Arşivdeki analizlerin tamamı &rarr;</span></a>')
     if makro_dosyalari:
         son_makro = makro_dosyalari[0]
         son_makro_t = son_makro[:-5]
@@ -5647,8 +5642,7 @@ function arsivAc(btn) {{
         )
         teknik_bolumu = f"""
 <h2 class="section-title">Teknik Taramada Öne Çıkanlar</h2>
-<div class="grid">{kart}</div>
-<p style="margin:10px 0 0"><a href="teknik-analiz.html">Tüm teknik tarama tablosu &rarr;</a></p>"""
+<div class="grid">{kart}</div>"""
 
     portfoy_bolumu = ""
     if p and p.get("history"):
