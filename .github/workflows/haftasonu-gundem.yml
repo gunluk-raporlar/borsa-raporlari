@@ -1,13 +1,11 @@
 name: Hafta Sonu Gundem Ajani
 on:
   schedule:
-    # Cumartesi + Pazar 08:23 Turkiye saati (05:23 UTC). 2026-10-10: eski
-    # tam-saat cronu (06:00 UTC) GitHub yuk dagiliminda SESSIZCE dustu;
-    # tek-saat-disi dakikaya tasindi, duserse yayin-nobetci telafi eder.
-    # 2026-10-11 (Pazar): 05:23 cronu da dustu (hafta sonu icerigi hic
-    # uretilmedi, nobetci pencereleri de dustu). Ikinci, yuk-disi yedek
-    # pencere eklendi; ikisi de dusersenin ihtimalini dusurmek icin.
-    - cron: '23 5 * * 6,0'
+    # Cumartesi + Pazar ~08:02 Turkiye saati (05:02 UTC) — kullanici talebi
+    # (17.10): hafta sonu icerigi de gunluk rapor gibi sabah 8'de yayinlansin.
+    # Tam-saat/dakika-0 cronlari GitHub yuk dagiliminda SESSIZCE dustugu icin
+    # 08:02 secildi; duserse asagidaki yuk-disi yedek pencere telafi eder.
+    - cron: '2 5 * * 6,0'
     - cron: '37 2 * * 6,0'   # 05:37 TSİ yuk-disi yedek pencere
   workflow_dispatch:
     inputs:

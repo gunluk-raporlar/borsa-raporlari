@@ -7,7 +7,9 @@ cagrilir. Akis:
   2. SOHRET: LLM (varsa Z.ai, degilse bot.llm_call zinciri) iki sunucu arasinda
      dogal bir sohbet yazar; LLM erisilemezse veriden sablon sohbet uretilir.
   3. SESLENDIRME: edge-tts (Microsoft tr-TR neural sesler) — Ela = EmelNeural
-     (kadin), Mert = AhmetNeural (erkek). Her replik ayri sentezlenir, ffmpeg ile
+     (kadin), Mert = AhmetNeural (erkek). edge-tts duserse yedek zinciri:
+     Qwen3-TTS-Tiny-TR (ELA=voice-01 kadin, MERT=voice-02 erkek; resmi tarife)
+     -> tek sesli EMA Lightning. Her replik ayri sentezlenir, ffmpeg ile
      kisa sessizliklerle tek MP3'te birlestirilir.
   4. YAYIN: radyo/<tarih>-<bolum>.mp3 yazilir, radyo/indeks.json guncellenir,
      7 gunden eski yayinlar temizlenir (repo sismesin).
@@ -497,14 +499,102 @@ def _ema_seslendir(metin, konusan, cikti_yolu):
     return cikti_yolu
 
 
+_qwen_model = None
+_qwen_prompts = {}
+_qwen_sayac = 0
+
+
+def _qwen_seslendir(metin, konusan, cikti_yolu):
+    """edge-tts yedegi 2: Qwen3-TTS-Tiny-TR — cinsiyetli yedek.
+
+    EMA tek seslidir; edge-tts toplu duserse her iki sunucu ayni sese
+    burunur (17.10 kullanici sikayeti: "elayi da merti de EMA
+    seslendiriyordu"). Qwen3-TTS-Tiny-TR'nin (erkamk/qwen3-tts-tiny-tr,
+    Apache 2.0) Space'inin iki hazir sesi kullanilir: ELA=voice-01 (kadin),
+    MERT=voice-02 (erkek). Resmi tarife (spaces/erkamk/qwen3-tts-tiny-tr-demo
+    /app.py) tts_resmi_probe.py'de kanitlandi: ornekleme AYARLARI zorunlu,
+    model buyuk I/İ gormemis (İ->i, I->i), cumle basina uretim + seed,
+    max_new_tokens = 25 + 2*len. RTF ~0.4x — butun program bu yedekte
+    uretilirse 10 dk yayin ~25-30 dk surer; is akisi timeout'u 60 dk.
+    """
+    global _qwen_model, _qwen_prompts, _qwen_sayac
+    try:
+        import numpy as np
+        import soundfile as sf
+        import torch
+        from qwen_tts import Qwen3TTSModel
+    except ImportError as e:
+        raise RuntimeError(
+            "Qwen3-TTS yedegi kurulu degil (pip install qwen-tts)") from e
+    if _qwen_model is None:
+        logger.info("[Radyo] Qwen3-TTS-Tiny-TR yukleniyor (cinsiyetli yedek)...")
+        _qwen_model = Qwen3TTSModel.from_pretrained(
+            "erkamk/qwen3-tts-tiny-tr", device_map="cpu", dtype=torch.float32)
+        torch.set_num_threads(os.cpu_count() or 2)
+    ses_no = 2 if konusan == "MERT" else 1
+    if ses_no not in _qwen_prompts:
+        import tempfile
+        import urllib.request
+        ref = os.path.join(tempfile.gettempdir(), f"qwen3-ses-{ses_no}.wav")
+        if not os.path.exists(ref):
+            url = ("https://huggingface.co/spaces/erkamk/qwen3-tts-tiny-tr-demo/"
+                   f"resolve/main/voices/voice-0{ses_no}.wav")
+            urllib.request.urlretrieve(url, ref)
+        _qwen_prompts[ses_no] = _qwen_model.create_voice_clone_prompt(
+            ref_audio=ref, x_vector_only_mode=True)
+    ayarlar = dict(temperature=0.7, top_k=50, subtalker_temperature=0.6,
+                   subtalker_top_k=50, subtalker_dosample=True,
+                   repetition_penalty=1.0)
+    cumleler = [c for c in re.split(r"(?<=[.!?])\s+", metin) if c]
+    parcalar = []
+    oran = 24000
+    for cumle in cumleler:
+        parca = cumle.replace("İ", "i").replace("I", "ı")
+        _qwen_sayac += 1
+        torch.manual_seed(7 + _qwen_sayac)
+        wavs, oran = _qwen_model.generate_voice_clone(
+            text=parca, language="Auto", voice_clone_prompt=_qwen_prompts[ses_no],
+            non_streaming_mode=True,
+            max_new_tokens=25 + 2 * len(parca), **ayarlar)
+        parcalar.append(np.asarray(wavs[0], dtype=np.float32))
+        parcalar.append(np.zeros(int(0.2 * oran), dtype=np.float32))
+    if not parcalar:
+        raise RuntimeError("Qwen3 yedegi: cumle ayristirmasi bos döndü")
+    wav_yolu = os.path.splitext(cikti_yolu)[0] + ".wav"
+    sf.write(wav_yolu, np.concatenate(parcalar[:-1]), oran)
+    ffmpeg = _ffmpeg_bul()
+    if not ffmpeg:
+        raise RuntimeError("Qwen3 yedegi icin ffmpeg bulunamadi")
+    r = os.system(f'"{ffmpeg}" -y -loglevel error -i "{wav_yolu}" '
+                  f'-c:a libmp3lame -b:a 48k -ar 24000 "{cikti_yolu}"')
+    if r != 0:
+        raise RuntimeError(f"Qwen3 wav->mp3 donusumu basarisiz ({r})")
+    os.remove(wav_yolu)
+    return cikti_yolu
+
+
+def _yedek_seslendir(metin, konusan, cikti_yolu):
+    """Yedek zinciri: Qwen3 (cinsiyetli iki ses) -> EMA (tek ses).
+
+    Qwen3 kurulu degilse veya HF indirmesi patlarsa tek sesli EMA ile
+    yayin kurtarilir — eski davranis.
+    """
+    try:
+        return _qwen_seslendir(metin, konusan, cikti_yolu)
+    except Exception as e:
+        logger.warning("[Radyo] Qwen3 yedegi basarisiz (%s); EMA'ya geciliyor",
+                       str(e)[:120])
+        return _ema_seslendir(metin, konusan, cikti_yolu)
+
+
 async def _replik_seslendir(replik, konusan, cikti_yolu):
     metin = _tl_konusma_metni(replik)
     metin = bot._konusma_metni_normalize(metin)
     try:
         from edge_tts import Communicate
     except ImportError:
-        logger.warning("[Radyo] edge-tts kurulu degil; EMA yedegi kullaniliyor.")
-        return await asyncio.to_thread(_ema_seslendir, metin, konusan, cikti_yolu)
+        logger.warning("[Radyo] edge-tts kurulu degil; Qwen3/EMA yedegi kullaniliyor.")
+        return await asyncio.to_thread(_yedek_seslendir, metin, konusan, cikti_yolu)
     ses = SESLER.get(konusan, SESLER["ELA"])
     # Radyo karakterleri: ses + hiz + perde farki (tekduzeligi kirar)
     if konusan == "MERT":
@@ -515,11 +605,11 @@ async def _replik_seslendir(replik, konusan, cikti_yolu):
         com = Communicate(metin, ses, rate=rate, pitch=pitch, volume=volume)
         await com.save(cikti_yolu)
     except Exception as e:
-        # Microsoft ucnoktasi gitti/limitlendi: yayini kurtarmak icin yerel
-        # EMA ile devam (2026-10-07). Karakter farki yedekte yalnizca hizdir.
-        logger.warning("[Radyo] edge-tts basarisiz (%s); EMA yedegine geciliyor",
+        # Microsoft ucnoktasi gitti/limitlendi: yayini kurtarmak icin once
+        # cinsiyetli Qwen3 yedegi, o olmazsa tek sesli EMA (2026-10-17).
+        logger.warning("[Radyo] edge-tts basarisiz (%s); Qwen3/EMA yedegine geciliyor",
                        str(e)[:120])
-        return await asyncio.to_thread(_ema_seslendir, metin, konusan, cikti_yolu)
+        return await asyncio.to_thread(_yedek_seslendir, metin, konusan, cikti_yolu)
     return cikti_yolu
 
 

@@ -16,7 +16,7 @@ permissions:
 jobs:
   yayin:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 60
     steps:
       - name: Depoyu indir
         uses: actions/checkout@v4
@@ -26,13 +26,18 @@ jobs:
           python-version: '3.12'
       - name: Kutuphaneleri kur
         run: pip install -r requirements.txt
-      - name: EMA yedegi kur (edge-tts duserse yerel Turkce TTS)
-        # pip'in varsayilan torch'u CUDA paketi (~2 GB); runner GPU'suz,
+      - name: EMA + Qwen3 yedeklerini kur (edge-tts duserse yerel Turkce TTS)
+        # pip'in varsayilon torch'u CUDA paketi (~2 GB); runner GPU'suz,
         # CPU wheel'i yeterli. ema-lightning: HF canberkkkkkk/ema-lightning
         # (2026-10-07 yoklamasi: kurulum ~4 dk, sentez ~10x gercek zamanli).
+        # qwen-tts (17.10): Qwen3-TTS-Tiny-TR cinsiyetli yedek (ELA=voice-01,
+        # MERT=voice-02, resmi tarife — ses-modelleri-notlari.md); torchaudio
+        # PyPI'dan libcudart hatasi verir, CPU dizininden kurmak zorunlu.
+        # qwen kurulumu patlarsa is akisi olmesin: yedek zinciri EMA'ya duser.
         run: |
-          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
           pip install "ema-lightning==1.0.1"
+          pip install "qwen-tts==0.1.1" || echo "[Radyo] qwen-tts kurulamadi; yedek zinciri EMA'ya duser"
       - name: ffmpeg kur
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Yayini uret

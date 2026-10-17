@@ -1,12 +1,11 @@
 name: Borsa Okulu (Hafta Sonu Dersi)
 on:
   schedule:
-    # Cumartesi + Pazar 09:47 Turkiye saati (06:47 UTC) — gundemden ~1,5 saat
-    # sonra (model yuku ayrissin). 2026-10-10: eski cron (07:30 UTC, dakika 30)
-    # GitHub yuk dagiliminda SESSIZCE dustu; tek-saat-disi dakikaya tasindi,
-    # duserse yayin-nobetci telafi eder.
-    # 2026-10-11 (Pazar): 06:47 cronu da dustu; yuk-disi yedek pencere eklendi.
-    - cron: '47 6 * * 6,0'
+    # Cumartesi + Pazar ~08:17 Turkiye saati (05:17 UTC) — kullanici talebi
+    # (17.10): hafta sonu icerigi de sabah 8'de yayinlansin; gundemden 15 dk
+    # sonra (model yuku ayrissin). Tam-saat cronlari SESSIZCE dustugu icin
+    # tek-saat-disi dakika; duserse asagidaki yedek pencere telafi eder.
+    - cron: '17 5 * * 6,0'
     - cron: '11 4 * * 6,0'   # 07:11 TSİ yuk-disi yedek pencere
   workflow_dispatch:
     inputs:
