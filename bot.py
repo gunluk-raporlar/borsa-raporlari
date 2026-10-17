@@ -5266,7 +5266,7 @@ def _portfoy_satirlari(p, limit=None, en_iyi=False):
     if limit:
         satirlar = satirlar[:limit]
     return "".join(
-        f"<tr><td><strong>{h}</strong></td><td>{_ts(p['shares'][h])}</td>"
+        f"<tr><td><a href=\"hisse/{h}\"><strong>{h}</strong></a></td><td>{_ts(p['shares'][h])}</td>"
         f"<td>{_ts(p['initial_prices'].get(h, 0))} TL</td>"
         f"<td>{_ts(son['prices'].get(h, p['initial_prices'].get(h, 0)))} TL</td>"
         f"<td class='{_renk(fark)}'>{_ty(fark)}%</td></tr>"
@@ -5705,21 +5705,6 @@ def build_portfolio_html(p):
 <h1>Deneme Portföyü</h1>
 <p>BIST 30 hisselerine eşit dağıtılmış {_ts0(p['initial_capital'])} TL'lik sanal portföy. Alım-satım yapılmaz, sadece takip edilir;
 hafta içi her sabah bir önceki işlem gününün kapanış fiyatlarıyla otomatik güncellenir.</p>
-</div>
-<div class="card" style="border-left:4px solid #dc2626;padding:12px 16px;margin:0 0 22px">
-<div style="font-weight:700;margin-bottom:6px">🔄 Portföy revizyonu: DSTKF → TRMET (6 Ekim 2026)</div>
-<p style="margin:0 0 8px;color:var(--muted);font-size:13.5px;line-height:1.7">
-BIST'in 1 Ekim 2026 çeyreklik revizyonu DSTKF'i BIST 30/50/100 endekslerinden çıkardı (Yıldız → Ana Pazar)
-ve yerine TR Anadolu Metal'i aldı. Sepetimizdeki 1,44 lot DSTKF (6 Eylül eşit dağıtımından kalma), son kayıtlı
-sepet fiyatıyla (625,00 TL) 900,00 TL karşılığında sepette kapatılıp yerine TRMET 6,95 lot (129,50 TL) yazıldı;
-sepet toplamı değişmedi. DSTKF'in fiyat serisi ±%10 taban/tavan bandıyla bağdaşmayan iki -%27'lik kırılma
-içeriyordu (25 Eylül, 5 Ekim): pay başına nakit ödenen divalans varsa bu zararın bir kısmı gölgedir, işlem
-durdurulup yeni baz fiyattan açılmışsa gerçektir — KAP bildirimi netleşince gerekirse düzeltilir. Gerçekleşen
-zarar (1,44 lot × (625,00 − 2.320,00) ≈ −2.448 ₺) 6 Eylül'den bu yana sepetin toplam getirisine yansıdır.</p>
-<p style="margin:0;color:var(--muted);font-size:13.5px;line-height:1.7">
-<b>DSTKF yayın politikası gereği kara listede kalır</b> (şirket ve bağlı sahiplerinin yatırım bağlantıları
-soruşturma konusu; Tera Holding bağlantılı haberler): sitede hiçbir yerde olumlu değerlendirilmez, teknik
-taramada AL üretilmez, işlem robotu AL adayı olarak almaz. İşlem robotu bu hisseyi hiç almamıştır.</p>
 </div>
 <details class="card" style="margin-bottom:22px">
 <summary style="cursor:pointer; font-weight:700">📐 Metodoloji — bu portföy nasıl hesaplanıyor?</summary>
@@ -7562,6 +7547,8 @@ def sinyal_karnesi_yaz(teknik_satirlar):
             if s.get("genel") != "AL":
                 continue
             kod = s.get("hisse")
+            if kod in KARA_LISTE:
+                continue  # DSTKF (Tera) vakasi: kara listedeki kagit karnede gosterilmez (17.10 kullanici talebi)
             giris = giris_veri.get(kod) or s.get("son")
             cikis = cikis_veri.get(kod)
             if not giris or not cikis:
