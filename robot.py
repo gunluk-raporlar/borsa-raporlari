@@ -327,6 +327,61 @@ def strateji_sinyalleri(seriler):
 
 
 # ---------- 5. MUHASEBE (durum + append-only islem gunlugu) ----------
+def _mevduat_faizi(yedek=0.30):
+    """Son makro gecmis dosyasindaki mevduat faizini yillik oran olarak dondurur
+    (0.30 = %30); dosya/alan yoksa varsayim doner (17.10 repo tahakkuku)."""
+    try:
+        dosyalar = sorted(f for f in os.listdir(os.path.join("data", "makro-gecmis"))
+                          if f.endswith(".json"))
+        if dosyalar:
+            with open(os.path.join("data", "makro-gecmis", dosyalar[-1]), encoding="utf-8") as f:
+                g = json.load(f)
+            for r in g.get("records", []):
+                if r.get("indicator") == "deposit_rate":
+                    v = float(r.get("value") or 0)
+                    if v > 1:
+                        return v / 100.0
+    except Exception:
+        pass
+    return yedek
+
+
+def varlik_seri_yaz():
+    """Altin/dolar/endeks gercek serilerini data/robot/varlik-serisi.json'da
+    biriktirir (17.10: koruma kolu geri testi ve altin/dolar kolu icin ham
+    veri). Gunde bir kez calisir; yfinance kurulu degilse sessizce atlanir."""
+    yol = os.path.join("data", "robot", "varlik-serisi.json")
+    seriler = {}
+    if os.path.exists(yol):
+        try:
+            with open(yol, encoding="utf-8") as f:
+                seriler = json.load(f)
+        except Exception:
+            seriler = {}
+    bugun_s = datetime.now(dt_timezone.utc).strftime("%Y-%m-%d")
+    if seriler.get("son_indirme") == bugun_s:
+        return
+    try:
+        import yfinance as yf
+        d = yf.download(["GC=F", "USDTRY=X", "XU100.IS"], period="3mo", progress=False)["Close"].dropna()
+    except Exception as e:
+        log.warning("[VARLIK] Seri indirme atlandi: %s", str(e)[:120])
+        return
+    gunler = seriler.setdefault("gunler", {})
+    for tarih, satir in d.iterrows():
+        k = str(tarih)[:10]
+        hucre = gunler.setdefault(k, {})
+        for sutun, anahtar in (("GC=F", "gram"), ("USDTRY=X", "usdtry"), ("XU100.IS", "xu100")):
+            deger = satir.get(sutun)
+            if deger == deger and deger and deger > 0:
+                hucre[anahtar] = round(float(deger), 4)
+    seriler["son_indirme"] = bugun_s
+    os.makedirs(os.path.dirname(yol), exist_ok=True)
+    with open(yol, "w", encoding="utf-8") as f:
+        json.dump(seriler, f, ensure_ascii=False, indent=1, sort_keys=True)
+    log.info("[VARLIK] Altin/dolar/endeks serisi guncellendi (%d gun).", len(gunler))
+
+
 def durum_oku():
     try:
         with open(DURUM_YOL, encoding="utf-8") as f:
@@ -642,6 +697,7 @@ def dashboard_yaz(durum, sinyaller, notlar):
                   f"<li><b>Boyut:</b> özkaynağın en fazla %{int(POZISYON_ORAN * 100)}'i tek hisseye, en fazla {MAKS_POZISYON} pozisyon.</li>"
                   f"<li><b>Günlük fren:</b> özkaynak dünkü kapanışa göre %{int(GUNLUK_ZARAR_LIMITI * 100)} düşerse yeni alım o gün durdurulur.</li>"
                   f"<li><b>Maliyetler:</b> komisyon %{KOMISYON_ORAN * 100:.2f} (en az {KOMISYON_MIN:.0f} ₺) + BSMV %15 + yasal ücret ~%{YASAL_UCRET * 100:.3f} + kayma %{KAYMA * 100:.2f}. 12.000 ₺'lik işlemin tur maliyeti ~35–40 ₺ (~%0,3) — scalping'in gerçek bedeli.</li>"
+                  f"<li><b>Boşta nakit:</b> her işlem günü gecelik ters repoda değerlenir — yıllık oran son açıklanan mevduat faizinden alınır; repo kazancı özkayda yansır.</li>"
                   f"<li><b>Vergi:</b> BIST hisse satış kazancında stopaj %0; yıllık beyan sınırını aşan kazanç beyan edilir.</li></ul></div>"
                   f"<div class='card'><div class='pano-baslik'>Performans Özeti</div>"
                   f"<ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'>"
@@ -1082,6 +1138,26 @@ def main():
         durum["bugun_satilan"] = []
         durum["kontrol_sayisi"] = 0
         durum["onceki_kapanis_ozkaynak"] = onceki[1] if onceki else durum.get("kapital0", KAPITAL0)
+        # 17.10 kullanici karari: bosta nakit her yeni islem gununde gecelik
+        # ters repoda degerlenir (araci kurumlarin otomatik ters-repo
+        # uygulamasinin simulasyonu). Yillik oran son aciklanan mevduat
+        # faizinden (data/makro-gecmis) gelir; hafta sonu en cok 4 gun isler.
+        son_repo = durum.get("son_repo_tarihi")
+        try:
+            gun_farki = min(max((datetime.strptime(bugun, "%Y-%m-%d") -
+                                 datetime.strptime(son_repo, "%Y-%m-%d")).days, 0), 4) if son_repo else 0
+        except ValueError:
+            gun_farki = 0
+        if gun_farki > 0:
+            yillik = _mevduat_faizi()
+            gunluk = (1.0 + yillik) ** (1.0 / 365.0) - 1.0
+            kazanc = durum["nakit"] * ((1.0 + gunluk) ** gun_farki - 1.0)
+            if kazanc > 0:
+                durum["nakit"] += kazanc
+                durum["toplam_repo_kazanci"] = round(durum.get("toplam_repo_kazanci", 0.0) + kazanc, 2)
+                log.info("[REPO] Bosta nakit %d gun repo getirisi kazandi: %+.2f TL (yillik %%%.1f).",
+                         gun_farki, kazanc, yillik * 100)
+        durum["son_repo_tarihi"] = bugun
     durum["kontrol_sayisi"] = durum.get("kontrol_sayisi", 0) + 1
 
     # Braket v2: scalp moduna geciste acik pozisyonlarin stop/hedefleri de
@@ -1094,6 +1170,8 @@ def main():
         if durum["pozisyonlar"]:
             log.info("[RISK] %d pozisyon scalp braketlerine tasindi (stop -%d / hedef +%d).",
                      len(durum["pozisyonlar"]), abs(int(STOP_ORAN * 100)), int(HEDEF_ORAN * 100))
+
+    varlik_seri_yaz()
 
     canli = canli_fiyatlar()
     if canli:
