@@ -5076,7 +5076,8 @@ def gunun_verileri_tablosu_html(teknik_satirlar=None):
 def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
                   alt_baslik="BIST 30 &bull; Yapay zeka destekli günlük analiz",
                   kok_yol=None, aciklama=None, ses_url=None, teknik_satirlar=None,
-                  ajanda=None):
+                  ajanda=None, donus_yolu="raporlar.html",
+                  donus_etiket="Tüm raporlara dön"):
     if kok_yol is None:
         kok_yol = f"raporlar/{date_str}.html"
     # Gorunur tarihler Turkce (kullanici karari, 2026-10-06); dosya adlari ve
@@ -5108,7 +5109,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
 {_pano_html(teknik_satirlar, kok)}
 {_ajanda_html(ajanda or [], limit=14, kok=kok)}
 <article class="report" id="rapor-govde">{html_icerik}</article>
-<p style="margin-top:18px"><a href="{kok}raporlar.html">&larr; Tüm raporlara dön</a></p>
+<p style="margin-top:18px"><a href="{kok}{donus_yolu}">&larr; {donus_etiket}</a></p>
 {_sesli_okuma_js()}"""
     ld_ek = json.dumps({
         "@context": "https://schema.org", "@type": "Article",
@@ -7271,7 +7272,7 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None):
 <div class="card" style="margin-top:14px">
 <h3 style="margin:0 0 8px">{kod} konulu içerikler</h3>
 <p style="margin:0"><a href="https://borsa-raporlari-web.pages.dev/ara?q={kod}" target="_blank" rel="noopener">🔍 Semantik aramada "{kod}" geçen tüm rapor bölümleri &rarr;</a></p>
-<p style="margin:6px 0 0"><a href="../index.html">Günlük rapor arşivi &rarr;</a></p>
+<p style="margin:6px 0 0"><a href="../raporlar.html">Günlük rapor arşivi &rarr;</a></p>
 </div>"""
     return _sayfa(
         f"{kod} — Hisse Analizi", icerik, "hisseler", kok="../",

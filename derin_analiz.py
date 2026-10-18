@@ -71,6 +71,7 @@ def main():
         baslik="Derin Analiz",
         alt_baslik="BIST 30 &bull; Yapay zeka destekli derinlemesine analiz",
         kok_yol=f"derin-analiz/{date_str}.html",
+        donus_yolu="derin-analiz.html", donus_etiket="Tüm derin analizlere dön",
         aciklama=("BIST 30'un günlük derinlemesine analizi: sektör değerlendirmesi, EMA ve "
                   "Wave Trend teknik okuma, osilatör-momentum yorumları ve risk senaryoları."),
     )

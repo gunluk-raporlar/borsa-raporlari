@@ -137,6 +137,7 @@ def main():
         baslik="Makroekonomik Değerlendirme",
         alt_baslik="Türkiye ve küresel makro görünüm &bull; Yapay zeka destekli derinlemesine analiz",
         kok_yol=arsiv_yolu,
+        donus_yolu="makro-analiz.html", donus_etiket="Tüm makro analizlere dön",
         aciklama=f"{bot._tr_tarih(date_str)} tarihli haftalik makro analiz raporu.",
     )
     with open(arsiv_yolu, "w", encoding="utf-8") as f:

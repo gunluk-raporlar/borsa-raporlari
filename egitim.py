@@ -356,7 +356,7 @@ def main():
 <p style="margin:22px 0 0; color:var(--muted); font-size:13px"><strong>Gerçek veriyle pratik:</strong> Aşağıdaki tablo bugünün teknik taramasından gelir — bir hücreye tıklayıp ad/formül çubuğunu görebilir, sütun başlıklarına tıklayarak sıralayabilirsin.</p>
 {excel_bolumu}
 {onceki}
-<p style="margin-top:12px"><a href="index.html">&larr; Ana sayfaya dön</a></p>"""
+<p style="margin-top:12px"><a href="../haftasonu-egitimi.html">&larr; Tüm borsa derslerine dön</a></p>"""
     # Tarihli arsiv sayfasi KOK DIZIN sayfasinin kopyasi degil: kok="../"
     # ile uretilir (CSS/menu linkleri alt klasorde calisir) ve canonical
     # kendi URL'ini gosterir (aksi halde arama motorlari arsivi indekslemez).

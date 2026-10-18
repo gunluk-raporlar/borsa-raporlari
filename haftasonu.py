@@ -243,7 +243,7 @@ def main():
 <div class="meta"><span class="badge">{tarih}</span><span>Yapay zeka destekli hafta sonu gündem değerlendirmesi — yeni haftaya hazırlık</span></div>
 </div>
 <article class="report" id="rapor-ses-metin">{gvde}</article>
-<p style="margin-top:18px"><a href="index.html">&larr; Ana sayfaya dön</a></p>"""
+<p style="margin-top:18px"><a href="../haftasonu.html">&larr; Tüm hafta sonu gündemine dön</a></p>"""
     # Tarihli arsiv sayfasi KOK DIZIN sayfasinin kopyasi degil: kok="../"
     # ile uretilir (CSS/menu linkleri alt klasorde calisir) ve canonical
     # kendi URL'ini gosterir (aksi halde arama motorlari arsivi indekslemez).
