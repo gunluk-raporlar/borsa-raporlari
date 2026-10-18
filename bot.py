@@ -8654,7 +8654,90 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
     logger.info("[SEO] sitemap.xml (%d URL) ve robots.txt yazildi", len(url_blokleri))
 
 
+def chrome_tazele():
+    """Eski tarihli sayfalarin ust menusunu guncel 18 maddelige tamamlar (18.10
+    kullanici talebi: her sayfada Ana Sayfa'dan Islem Robotu'na 18 baslik olsun;
+    dil secici eksikse header'in USTUNE eklenir — 'tepeye, baslik kisminin
+    ustune'). Yontem: her agacin index.html'i guncel menusunun DONORU sayilir;
+    diger sayfalarda ilk <nav><a... bloklari bu siraya gore yeniden kurulur
+    (derinlige gore ../ oneki + aktif sayfa sinifi korunur). Menusu zaten
+    donor ile ayni olan ve secicisi bulunan sayfalara dokunulmaz — gunluk
+    kosuda maliyet sabit kalir; menu degisince eski sayfalar sonraki kosuda
+    yakalanir."""
+    nav_re = re.compile(r"<nav><a .*?</nav>", re.S)
+    a_re = re.compile(r'<a href="([^"]+)"[^>]*>([^<]*)</a>')
+    atla_ad = re.compile(r"^(google|yandex|bing|baidu|naver|indexnow|site-?verification|onizleme-)")
+    haric_dizin = {".git", "dist", "__pycache__", "web", "data", "docs",
+                   "ajan-uyumlulugu", "node_modules", "functions"}
+    sayilar = {"nav": 0, "secici": 0}
+    for agac in (".", "en", "de", "ru", "zh"):
+        donor_yol = (agac + "/index.html") if agac != "." else "index.html"
+        try:
+            with open(donor_yol, encoding="utf-8") as f:
+                donor_html = f.read()
+        except OSError:
+            continue
+        dm = nav_re.search(donor_html)
+        if not dm:
+            continue
+        ogeler = a_re.findall(dm.group(0))
+        if len(ogeler) < 15:
+            continue  # donor beklenmedik bicimde kisa; bu agaca dokunma
+        donor_hedefleri = {h for h, _ in ogeler}
+        on_ek_uz = len(agac) + 1 if agac != "." else 0
+        kok_gez = agac if agac != "." else "."
+        for kok, dizinler, dosyalar in os.walk(kok_gez):
+            dizinler[:] = [d for d in dizinler if d not in haric_dizin]
+            for ad in dosyalar:
+                if not ad.endswith(".html") or ad == "404.html" or atla_ad.match(ad):
+                    continue
+                rel = os.path.join(kok, ad).replace("\\", "/")
+                if rel == donor_yol:
+                    continue  # donor kendisi
+                agac_rel = rel[on_ek_uz:] if on_ek_uz else rel
+                try:
+                    with open(rel, encoding="utf-8") as f:
+                        h = f.read()
+                except OSError:
+                    continue
+                nm = nav_re.search(h)
+                if not nm:
+                    continue
+                eski = nm.group(0)
+                on_ek = "../" * agac_rel.count("/")
+                mevcut = {h2[len(on_ek):] for h2, _ in a_re.findall(eski)
+                          if h2.startswith(on_ek)}
+                if donor_hedefleri.issubset(mevcut) and "dil-linkler" in h:
+                    continue  # menu + secici tam; dokunma
+                aktif_m = re.search(r'<a href="([^"]+)" class="active">', eski)
+                aktif_rel = (aktif_m.group(1)[len(on_ek):]
+                             if aktif_m and aktif_m.group(1).startswith(on_ek) else None)
+                parcalar = []
+                for h2, l2 in ogeler:
+                    sinif = ' class="active"' if h2 == aktif_rel else ""
+                    parcalar.append('<a href="' + on_ek + h2 + '"' + sinif + '>' + l2 + '</a>')
+                yeni_nav = "<nav>" + "".join(parcalar) + "</nav>"
+                yeni = h[:nm.start()] + yeni_nav + h[nm.end():]
+                if "dil-linkler" not in yeni and agac == ".":
+                    hm = re.search(r'<header class="topbar">', yeni)
+                    if hm:
+                        eklenecek = _ceviri_widget("", agac_rel) + "\n"
+                        yeni = yeni[:hm.start()] + eklenecek + yeni[hm.start():]
+                        sayilar["secici"] += 1
+                if yeni != h:
+                    try:
+                        with open(rel, "w", encoding="utf-8", newline="\n") as f:
+                            f.write(yeni)
+                        sayilar["nav"] += 1
+                    except OSError:
+                        continue
+    logger.info("[Chrome] %d sayfanin ust menusu tazelendi; %d sayfaya secici eklendi.",
+                sayilar["nav"], sayilar["secici"])
+    return sayilar
+
+
 def og_cover_png_yaz():
+
     """og-cover.svg'nin PNG karsiligini uretir (sosyal aglar og:image olarak
     SVG desteklemez; X/LinkedIn/Facebook icin 1200x630 PNG gerekir).
 
@@ -8876,6 +8959,12 @@ if __name__ == "__main__":
         rapor_podcast_yaz()
     except Exception:
         logger.exception("[Podcast] rapor RSS'i yazilamadi.")
+
+    # Eski tarihli sayfalarin ust menusu/dil secicisi guncel sablona cekilir (18.10)
+    try:
+        chrome_tazele()
+    except Exception:
+        logger.exception("[Chrome] menu tazeleme atlandi; rapor uretimini etkilemez.")
 
     # SEO: arama motorlari dosyalari her kosuda taze lastmod ile yeniden yazilir
     try:
