@@ -8686,12 +8686,15 @@ def chrome_tazele():
         donor_hedefleri = {h for h, _ in ogeler}
         on_ek_uz = len(agac) + 1 if agac != "." else 0
         kok_gez = agac if agac != "." else "."
+        gez_haric = haric_dizin | ({"en", "de", "ru", "zh"} if agac == "." else set())
         for kok, dizinler, dosyalar in os.walk(kok_gez):
-            dizinler[:] = [d for d in dizinler if d not in haric_dizin]
+            dizinler[:] = [d for d in dizinler if d not in gez_haric]
             for ad in dosyalar:
                 if not ad.endswith(".html") or ad == "404.html" or atla_ad.match(ad):
                     continue
                 rel = os.path.join(kok, ad).replace("\\", "/")
+                if rel.startswith("./"):
+                    rel = rel[2:]  # os.walk(".") "./" onekli yol uretebilir
                 if rel == donor_yol:
                     continue  # donor kendisi
                 agac_rel = rel[on_ek_uz:] if on_ek_uz else rel

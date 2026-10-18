@@ -169,7 +169,7 @@ DIL_CFG = {
 
 # Ust menu: (href, tr, en, de, ru, zh) — site menusuyle ayni duzen + Terimler + Muhasebe
 MENU = [
-    ("index.html",           "Ana Sayfa",        "Home",             "Startseite",             "Главная",            "首页"),
+    ("index.html",           "Ana Sayfa",        "Home Page",        "Startseite",             "Главная страница",   "首页"),
     ("raporlar.html",        "Raporlar",         "Reports",          "Berichte",               "Отчёты",             "报告"),
     ("hisse/index.html",     "Hisseler",         "Stocks",           "Aktien",                 "Акции",              "股票"),
     ("derin-analiz.html",    "Derin Analiz",     "Deep Analysis",    "Tiefenanalyse",          "Глубокий анализ",    "深度分析"),
