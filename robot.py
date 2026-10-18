@@ -5,7 +5,7 @@ Kaldırmak için: robot.py, robot.html, data/robot/, .github/workflows/robot.yml
 Başka hiçbir dosyaya bağımlılığı yoktur.
 
 Calisma duzeni:
-  - Piyasa saatlerinde (h.i. 10:00-18:30 TR) her 30 dakikada bir kron kosar.
+  - Piyasa saatlerinde (h.i. 10:00-18:30 TR) her 15 dakikada bir kron kosar.
   - Gostergeler gunun ILK kosusunda cekilen gunluk kapanis serisinden (yerel onbellek)
     hesaplanir; piyasa acikken bugunun barı CANLI fiyattan (TradingView, ~15 dk
     gecikmeli) gecici olarak eklenir ve sinyaller oyle degerlendirilir.
@@ -178,7 +178,7 @@ def veri_cek():
 def gecmis_oku_ya_da_cek():
     """Gunluk kapanis serilerini GUNLUK yerel onbellekten okur; yoksa ceker ve kaydeder.
 
-    Boylece 30 dakikalik kron kosulari kaynagi her seferinde yormaz; gun icindeki
+    Boylece 15 dakikalik kron kosulari kaynagi her seferinde yormaz; gun icindeki
     kosular onbellek + canli fiyatla calisir. Onbellekler son 3 gun tutulur."""
     bugun = _simdi().strftime("%Y-%m-%d")
     os.makedirs(GECMIS_DIR, exist_ok=True)
@@ -703,7 +703,7 @@ def _bugun_bolumu(durum):
     return (f"<h2 class='section-title'>Bugün ({_kisa_zaman(bugun)})</h2>"
             f"<div class='grid' style='gap:10px'>"
             f"<div class='pano-hucre'><div class='pano-etiket'>Fiyat kontrolü</div>"
-            f"<span id='bugun-kontrol'>{kontrol}</span> kez · piyasa saatlerinde 30 dakikada bir · {acik_etiket}</div>"
+            f"<span id='bugun-kontrol'>{kontrol}</span> kez · piyasa saatlerinde 15 dakikada bir · {acik_etiket}</div>"
             f"{hucreler}</div>")
 
 
@@ -818,7 +818,7 @@ def dashboard_yaz(durum, sinyaller, notlar):
     icerik = f"""<div class="hero">
 <h1>İşlem Robotu <span class="badge">simülasyon</span></h1>
 <p>BIST 30 hisseleri üzerinde <b>kağıt-üstünde işlem</b> yapan otomatik robotun canlı defteri.
-Robot <b>piyasa saatlerinde 30 dakikada bir</b> canlı fiyattan (TradingView, ~15 dk gecikmeli) kontrol edilir:
+Robot <b>piyasa saatlerinde 15 dakikada bir</b> canlı fiyattan (TradingView, ~15 dk gecikmeli) kontrol edilir:
 stop-loss ve hedef gün içinde tetiklenebilir, kesişim sinyalleri gün içi fiyattan değerlendirilir ve
 özkaynak eğrisi her kontrolde bir nokta kazanır. <u>Gerçek para kullanılmaz</u>; tüm emirler gerekçesiyle burada yayımlanır.
 <strong>Yatırım tavsiyesi değildir.</strong> Son güncelleme: {now} (İstanbul).</p>
@@ -1164,7 +1164,7 @@ def _iskelet(title, icerik, guncelleme):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
-<meta name="description" content="BIST 30 kağıt-üstünde işlem robotunun canlı defteri: piyasa saatlerinde 30 dakikada bir güncellenen simüle AL/SAT emirleri, açık pozisyonlar, gün içi özkaynak eğrisi ve strateji kuralları. Gerçek para kullanılmaz; yatırım tavsiyesi değildir.">
+<meta name="description" content="BIST 30 kağıt-üstünde işlem robotunun canlı defteri: piyasa saatlerinde 15 dakikada bir güncellenen simüle AL/SAT emirleri, açık pozisyonlar, gün içi özkaynak eğrisi ve strateji kuralları. Gerçek para kullanılmaz; yatırım tavsiyesi değildir.">
 <link rel="canonical" href="https://borsa-raporlari.pages.dev/robot">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="BIST 30 simülasyon işlem robotunun şeffaf defteri: pozisyonlar, işlemler, gün içi özkaynak eğrisi. Yatırım tavsiyesi değildir.">
