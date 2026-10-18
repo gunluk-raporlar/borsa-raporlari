@@ -4463,7 +4463,9 @@ def _ticker_iz_pisir(json_yolu: str, tur: str) -> str:
                     f'{(" · " + etiket) if etiket else ""}</span>')
         if not ogeler:
             return ""
-        return ogeler + saat + ogeler + saat   # sorunsuz dongu icin kopya (JS ile ayni)
+        ikinci_yari = ('<span aria-hidden="true" style="display:inline-block">'
+                       + ogeler + saat + '</span>')
+        return ogeler + saat + ikinci_yari   # sorunsuz dongu icin kopya (ekran okuyucu ikinci yariyi okumaz)
     except Exception:
         return ""
 
@@ -4501,7 +4503,7 @@ def _kendi_ticker2(kok=""):
     if (!ogeler) throw new Error('bos');
     var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
                (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
-    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+    iz.innerHTML = ogeler + saat + '<span aria-hidden="true" style="display:inline-block">' + ogeler + saat + '</span>';  // sorunsuz dongu icin kopya (ekran okuyucuya kapali)
   }}
   function yukle(adres) {{
     fetch(adres, {{ cache: 'no-store' }})
@@ -4543,7 +4545,7 @@ def _kendi_ticker(kok=""):
     }}).join('');
     var etiket = veri.etiket || '~15 dk gecikmeli';
     var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
-    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+    iz.innerHTML = ogeler + saat + '<span aria-hidden="true" style="display:inline-block">' + ogeler + saat + '</span>';  // sorunsuz dongu icin kopya (ekran okuyucuya kapali)
   }}
   function yukle(adres) {{
     fetch(adres, {{ cache: 'no-store' }})
@@ -7543,6 +7545,17 @@ def sinyal_karnesi_yaz(teknik_satirlar):
         cikis_t = sonraki[4]
         cikis_veri = veriler[tarihler.index(cikis_t)]
         giris_veri = veriler[d_idx]
+        # Piyasa bazı: aynı pencerede evrenin (fiyat dosyasındaki tüm hisseler)
+        # eşit ağırlıklı getirisi; sinyalin alpha'sı buna karşı ölçülür (18.10 onay).
+        evren_ciftler = []
+        for _kod, _g in giris_veri.items():
+            _c = cikis_veri.get(_kod)
+            try:
+                if _g and _c:
+                    evren_ciftler.append((float(_c) / float(_g) - 1) * 100)
+            except (TypeError, ValueError):
+                continue
+        evren = sum(evren_ciftler) / len(evren_ciftler) if evren_ciftler else None
         for s in gunun_satirlari:
             if s.get("genel") != "AL":
                 continue
@@ -7553,9 +7566,11 @@ def sinyal_karnesi_yaz(teknik_satirlar):
             cikis = cikis_veri.get(kod)
             if not giris or not cikis:
                 continue
+            getiri = (float(cikis) / float(giris) - 1) * 100
             kayitlar.append({
                 "tarih": d, "hisse": kod, "giris": float(giris), "cikis": float(cikis),
-                "cikis_t": cikis_t, "getiri": (float(cikis) / float(giris) - 1) * 100,
+                "cikis_t": cikis_t, "getiri": getiri, "evren": evren,
+                "fark": (getiri - evren) if evren is not None else None,
             })
     if not kayitlar:
         logger.info("[Karne] backtest icin yeterli gecmis yok; sayfa yazilmadi.")
@@ -7568,6 +7583,28 @@ def sinyal_karnesi_yaz(teknik_satirlar):
     ISLEM_MALIYETI = 0.10
     net_ort = ort - ISLEM_MALIYETI
     net_isabet = sum(1 for k in kayitlar if k["getiri"] - ISLEM_MALIYETI > 0) / len(kayitlar) * 100
+    # Piyasa bazı özeti: evrenle aynı pencerelerde kıyas (alpha) (18.10 onay).
+    evrenli = [k for k in kayitlar if k["evren"] is not None]
+    evren_ort = (sum(k["evren"] for k in evrenli) / len(evrenli)) if evrenli else None
+    alpha_ort = (ort - evren_ort) if evren_ort is not None else None
+    yenen = sum(1 for k in evrenli if k["fark"] > 0)
+    if evren_ort is not None and abs(evren_ort) < 0.005:
+        evren_ort = 0.0  # "-0,00" gorunumunu engelle
+    if alpha_ort is not None and abs(alpha_ort) < 0.005:
+        alpha_ort = 0.0
+    if evren_ort is not None:
+        if abs(alpha_ort) < 0.005:  # sifir alpha: isaretsiz ve notr goster
+            alpha_goster, alpha_sinif = "0,00", ""
+        else:
+            alpha_goster, alpha_sinif = _ty(alpha_ort), _renk(alpha_ort)
+        kiyas_paragraf = (
+            f'<p style="margin:6px 0 0">Aynı sinyal günlerinde eşit ağırlıklı BIST 30 sepeti ortalama '
+            f'<strong class="{_renk(evren_ort)}">{_ty(evren_ort)}%</strong> hareket etti; sinyallerin fazlası '
+            f'(alpha) <strong class="{alpha_sinif}">{alpha_goster} puan</strong> — '
+            f'{len(evrenli)} sinyalin <strong>{yenen}</strong> tanesi evreni yendi.</p>'
+        )
+    else:
+        kiyas_paragraf = ""
     en_iyi = sorted(kayitlar, key=lambda k: k["getiri"], reverse=True)[:3]
     en_kotu = sorted(kayitlar, key=lambda k: k["getiri"])[:3]
 
@@ -7585,10 +7622,19 @@ def sinyal_karnesi_yaz(teknik_satirlar):
             for k in liste
         )
 
+    def _kiyas_hucre(v, kalin=False):
+        if v is None:
+            return '<td style="color:var(--muted)">—</td>'
+        if abs(v) < 0.005:  # sifir: isaretsiz ve notr goster
+            return '<td style="color:var(--muted)">0,00%</td>'
+        stil = " style='font-weight:700'" if kalin else ""
+        return f"<td class='{_renk(v)}'{stil}>{v:+.2f}%</td>"
+
     tablo = "".join(
         f"<tr><td>{k['tarih']}</td><td><strong>{k['hisse']}</strong></td>"
         f"<td>{_ts(k['giris'])} TL</td><td>{_ts(k['cikis'])} TL</td><td>{k['cikis_t']}</td>"
-        f"<td class='{_renk(k['getiri'])}' style='font-weight:700'>{k['getiri']:+.2f}%</td></tr>"
+        f"<td class='{_renk(k['getiri'])}' style='font-weight:700'>{k['getiri']:+.2f}%</td>"
+        f"{_kiyas_hucre(k['evren'])}{_kiyas_hucre(k['fark'], kalin=True)}</tr>"
         for k in sorted(kayitlar, key=lambda k: k["tarih"], reverse=True)[:15]
     )
     icerik = f"""
@@ -7600,6 +7646,7 @@ ortalama <strong class="{_renk(ort)}">{_ty(ort)}%</strong> (brüt), isabet oran�
 Komisyon+BSMV masrafı (~%0,10) sonrası: ortalama <strong class="{_renk(net_ort)}">{_ty(net_ort)}%</strong>,
 isabet <strong>{_ts0(net_isabet)}%</strong> (varsayımsal masraf senaryosu; gerçek oran aracı kuruma göre değişir).
 (Geçmiş performans gelecek getirinin garantisi değildir; yöntem basit tutulmuştur.)</p>
+{kiyas_paragraf}
 <p style="margin:0; color:var(--muted); font-size:12.5px">Son denetim: {_tr_tarih(datetime.now(
     zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%Y-%m-%d"))} {datetime.now(
     zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%H:%M")} TSİ — {len(kayitlar)} AL sinyali
@@ -7612,11 +7659,13 @@ gün içinde değişmemesi "denetlenmedi" anlamına gelmez.</p>
 </div>
 <h2 class="section-title">Son 15 Sinyal</h2>
 <div class="card" style="padding:8px 24px 16px"><div class="tbl-wrap"><table>
-<tr><th>Sinyal Günü</th><th>Hisse</th><th>Giriş</th><th>Çıkış</th><th>Çıkış Günü</th><th>Getiri</th></tr>
+<tr><th>Sinyal Günü</th><th>Hisse</th><th>Giriş</th><th>Çıkış</th><th>Çıkış Günü</th><th>Getiri</th><th>Evren</th><th>Fark</th></tr>
 {tablo}
 </table></div></div>
 <p style="color:var(--muted); font-size:12.5px">Yöntem: genel sinyali "AL" olan her hisse, sinyal günü kapanışından
-5 işlem günü sonraki kapanışa karşı ölçülür. Sinyaller yatırım tavsiyesi değildir.</p>"""
+5 işlem günü sonraki kapanışa karşı ölçülür. <strong>Evren</strong> sütunu aynı tarih aralığında fiyat dosyasındaki
+tüm hisselerin eşit ağırlıklı ortalamasıdır; <strong>Fark</strong> (alpha) sinyal getirisinin evrenden fazlasıdır —
+sinyal evreni yendiyse pozitiftir. Sinyaller yatırım tavsiyesi değildir.</p>"""
     with open("sinyal-karnesi.html", "w", encoding="utf-8") as f:
         f.write(_sayfa("Sinyal Karnesi — AL Sinyalleri Backtest", icerik, "karne",
                        yol="sinyal-karnesi.html"))
