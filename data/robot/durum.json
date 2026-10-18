@@ -3,11 +3,11 @@
   "braket_versiyonu": 2,
   "bugun_alinan": [],
   "bugun_satilan": [],
-  "bugun_tarih": "2026-10-17",
+  "bugun_tarih": "2026-10-18",
   "gerceklesen_kz": -3028.0159249999942,
   "kapital0": 100000.0,
   "kontrol_sayisi": 1,
-  "nakit": 62251.705807612016,
+  "nakit": 62312.88122095484,
   "onceki_kapanis_ozkaynak": 96787.21,
   "ozkayit": [
     [
@@ -243,7 +243,8 @@
     "VAKBN": 32.86,
     "YKBNK": 35.7
   },
-  "son_repo_tarihi": "2026-10-17",
+  "son_repo_tarihi": "2026-10-18",
   "toplam_kesinti": 359.68,
+  "toplam_repo_kazanci": 61.18,
   "versiyon": 1
 }
