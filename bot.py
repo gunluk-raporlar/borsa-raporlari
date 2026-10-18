@@ -8513,7 +8513,7 @@ def site_arama_json_yaz(rapor_dosyalari):
     _ifrs_dil = _ifrs_yukle()
     if _ifrs_dil:
         sayfalar += [
-            {"b": "Accounting Terms Glossary (English)", "u": "en/muhasebe-terimleri.html",
+            {"b": "Accounting Terms Glossary (English)", "u": "en/accounting-terms.html",
              "t": "accounting terms glossary IFRS accounting terminology definition example " +
                   " ".join((v["en"] + " " + (v.get("en2") or v["en_tanim"])) for v in _ifrs_dil)[:18000]},
             {"b": "Buchhaltungslexikon (Deutsch)", "u": "de/muhasebe-terimleri.html",
