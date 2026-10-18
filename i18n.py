@@ -1866,26 +1866,9 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
 # /en/reports.html, /en/deep-analysis.html, /en/macro-analysis/ ... (2026-10-07)
 # Tablo NAV etiketlerinden turetilmistir; UZUNLUGA GORE TERSTEN SIRALI olmali
 # (haftasonu-egitimi, haftasonu'dan once; muhasebe-terimleri, terimler'den once).
-EN_SLUG_ESLEME = [
-    ("muhasebe-terimleri", "accounting-terms"),
-    ("sirket-haberleri", "company-news"),
-    ("haftasonu-egitimi", "market-school"),
-    ("borsapy-analiz", "borsapy-signals"),
-    ("sinyal-karnesi", "signal-scorecard"),
-    ("teknik-analiz", "technical-scan"),
-    ("derin-analiz", "deep-analysis"),
-    ("makro-analiz", "macro-analysis"),
-    ("haftasonu", "weekend"),
-    ("haberler", "news"),
-    ("raporlar", "reports"),
-    ("takvim", "calendar"),
-    ("sozluk", "glossary"),
-    ("terimler", "terms"),
-    ("gizlilik", "privacy"),
-    ("radyo", "radio"),
-    ("hisse", "stocks"),
-    ("robot", "trading-robot"),
-]
+# Slug tablosu tek kaynaktan (dil_yollari.py): bot.py'nin dil secicisi ayni
+# tabloyu kullanir — secici ile sitemap/dosya adlari asla ayrismaz (18.10).
+from dil_yollari import EN_SLUG_ESLEME, slug_degistir
 
 # Slug iceren nitelik degerlerini hizli eleme icin
 _EN_SLUG_BIRLESIK = "|".join(re.escape(e) for e, _ in EN_SLUG_ESLEME)
@@ -1896,10 +1879,16 @@ def _en_slug_degistir(deger: str) -> str:
     """URL degerindeki Turkce slug'lari Ingilizce karsiliklariyla degistirir.
     Guvenlik katmanlari: kelime siniri (borsa-raporlari domain'i, raporlari gibi
     ek almıs sozcukler), Turkce harfle devam (raporlarin), dil oneki (/de/ /ru/
-    /zh/ baglantileri Turkce yapiyi yansitir, dokunulmaz)."""
+    /zh/ baglantileri Turkce yapiyi yansitir, dokunulmaz) ve IDEMPOTANSI — hedef
+    slug eski slug'i iceriyorsa (robot -> trading-robot) zaten eslenmis deger
+    yeniden eslenmez; aksi halde her kosuda bir 'trading-' daha ekleniyordu
+    (en/sitemap.xml'deki trading-trading-robot hatasinin kokeni)."""
     for eski, yeni in EN_SLUG_ESLEME:
-        deger = re.sub(r"(?<![a-z0-9])(?<!/de/)(?<!/ru/)(?<!/zh/)" + re.escape(eski) +
-                       r"(?![a-z0-9çğıöşü])", yeni, deger)
+        on_ek = yeni[:-len(eski)] if yeni.endswith(eski) else ""
+        desen = r"(?<![a-z0-9])(?<!/de/)(?<!/ru/)(?<!/zh/)"
+        if on_ek:
+            desen += "(?<!" + re.escape(on_ek) + ")"
+        deger = re.sub(desen + re.escape(eski) + r"(?![a-z0-9çğıöşü])", yeni, deger)
     return deger
 
 
@@ -2066,9 +2055,12 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
             # (sy uzantisiz URL yolu; GENERASYON_HARIC dosya adi tutar).
             bloklar.append(_url_bloku(f"{SITE_URL}{sy}", attr, []))
             continue
+        # Dil ad eslemesi kaynaktan: en/raporlar degil /en/reports yazilir.
+        # Eski hali her /en/... dil blokunu ve hreflang alternatifini KIRIK
+        # uretiyordu (dosyalar reports.html gibi adliydi) — 18.10 duzeltme.
         alternatifler = [
             f'    <xhtml:link rel="alternate" hreflang="{DILLER[k]["hreflang"]}" '
-            f'href="{SITE_URL}{k + "/" if k != "tr" else ""}{sy}"/>'
+            f'href="{SITE_URL}{k + "/" if k != "tr" else ""}{slug_degistir(sy, k)}"/>'
             for k in ["tr"] + diller
         ]
         alternatifler.append(
@@ -2076,7 +2068,7 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
         )
         bloklar.append(_url_bloku(f"{SITE_URL}{sy}", attr, alternatifler))
         for d in diller:
-            bloklar.append(_url_bloku(f"{SITE_URL}{d}/{sy}", attr, alternatifler))
+            bloklar.append(_url_bloku(f"{SITE_URL}{d}/{slug_degistir(sy, d)}", attr, alternatifler))
             dil_sayisi += 1
     bloklar.extend("  " + b.strip() for b in dis_bloklar)
 

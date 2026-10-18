@@ -23,6 +23,9 @@ import math
 import os
 import time
 import urllib.request
+
+# Dil agaclari arasi slug eslemesi (tek kaynak; bot.py/i18n.py ayni tablo)
+from dil_yollari import slug_degistir
 from datetime import datetime, timedelta, timezone as dt_timezone
 
 try:
@@ -845,7 +848,36 @@ stop-loss ve hedef gün içinde tetiklenebilir, kesişim sinyalleri gün içi fi
 # kopyalar da guncellenmelidir. Kaldirma: bu sablonlar yalnizca robot.html'i
 # etkiler, baska hicbir sayfaya dokunmaz.
 
-_SITE_NAV = """<nav><a href="index.html">Raporlar</a><a href="hisse/index.html">Hisseler</a><a href="derin-analiz.html">Derin Analiz</a><a href="makro-analiz.html">Makro Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="sinyal-karnesi.html">Sinyal Karnesi</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="haberler.html">Haberler</a><a href="sirket-haberleri.html">Şirket Haberleri</a><a href="portfolio.html">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu</a><a href="haftasonu-egitimi.html">Borsa Okulu</a><a href="takvim.html">📅 Takvim</a><a href="sozluk.html">Sözlük</a><a href="terimler.html">Terimler</a><a href="muhasebe-terimleri.html">Muhasebe Terimleri</a><a href="robot.html" class="active">İşlem Robotu</a></nav>"""
+_DIL_BLOK_STIL = (
+    "<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}"
+    ".dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}"
+    ".dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}"
+    ".dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>"
+)
+
+
+def _dil_blok_html():
+    """Dil secici: ad eslemeli (en/trading-robot) ve varlik kontrollu — hedef dosya
+    yoksa dil ana sayfasina duser; 404 baglantisi uretmez (18.10 kullanici talebi)."""
+    parca = [_DIL_BLOK_STIL, '<nav class="dil-linkler" aria-label="Sayfa dili seçin">',
+             '<span aria-hidden="true">🌐</span>']
+    for d, hreflang, ad in (("tr", "tr", "Türkçe"), ("en", "en", "English"),
+                            ("de", "de", "Deutsch"), ("ru", "ru", "Русский"),
+                            ("zh", "zh-Hans", "简体中文")):
+        aktif = ' class="aktif" aria-current="true"' if d == "tr" else ""
+        if d == "tr":
+            yol = ""
+        else:
+            hedef = slug_degistir("robot", d)
+            if not os.path.exists(f"{d}/{hedef}.html"):
+                hedef = ""
+            yol = f"{d}/{hedef}" if hedef else f"{d}/"
+        parca.append(f'<a href="{SITE_URL}{yol}" hreflang="{hreflang}" lang="{hreflang}" data-dil="{d}"{aktif}>{ad}</a>')
+    parca.append("</nav>")
+    return "".join(parca)
+
+
+_SITE_NAV = """<nav><a href="index.html">Ana Sayfa</a><a href="raporlar.html">Raporlar</a><a href="hisse/index.html">Hisseler</a><a href="derin-analiz.html">Derin Analiz</a><a href="makro-analiz.html">Makro Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="sinyal-karnesi.html">Sinyal Karnesi</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="haberler.html">Haberler</a><a href="sirket-haberleri.html">Şirket Haberleri</a><a href="portfolio.html">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu</a><a href="haftasonu-egitimi.html">Borsa Okulu</a><a href="takvim.html">📅 Takvim</a><a href="sozluk.html">Sözlük</a><a href="terimler.html">Terimler</a><a href="muhasebe-terimleri.html">Muhasebe Terimleri</a><a href="robot.html" class="active">İşlem Robotu</a></nav>""" + _dil_blok_html()
 
 _SITE_ALTBAR = """<nav class="altbar" aria-label="Hızlı menü">
 <a href="index.html"><span class="i" aria-hidden="true">📊</span>Raporlar</a>

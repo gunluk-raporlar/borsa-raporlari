@@ -42,6 +42,8 @@ import os
 import re
 import sys
 
+from dil_yollari import slug_degistir
+
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -167,9 +169,11 @@ DIL_CFG = {
 
 # Ust menu: (href, tr, en, de, ru, zh) — site menusuyle ayni duzen + Terimler + Muhasebe
 MENU = [
-    ("index.html",           "Raporlar",         "Reports",          "Berichte",               "Отчёты",             "报告"),
+    ("index.html",           "Ana Sayfa",        "Home",             "Startseite",             "Главная",            "首页"),
+    ("raporlar.html",        "Raporlar",         "Reports",          "Berichte",               "Отчёты",             "报告"),
     ("hisse/index.html",     "Hisseler",         "Stocks",           "Aktien",                 "Акции",              "股票"),
     ("derin-analiz.html",    "Derin Analiz",     "Deep Analysis",    "Tiefenanalyse",          "Глубокий анализ",    "深度分析"),
+    ("makro-analiz.html",    "Makro Analiz",     "Macro Analysis",   "Makroanalyse",           "Макроанализ",        "宏观分析"),
     ("teknik-analiz.html",   "Teknik Tarama",    "Technical Scan",   "Technischer Scan",       "Технический анализ", "技术扫描"),
     ("sinyal-karnesi.html",  "Sinyal Karnesi",   "Signal Scorecard", "Signal-Bilanz",          "Сводка сигналов",    "信号记分卡"),
     ("borsapy-analiz.html",  "Borsapy Sinyal",   "Borsapy Signals",  "Borsapy-Signale",        "Сигналы Borsapy",    "Borsapy 信号"),
@@ -474,11 +478,20 @@ function temaDegistir() {
 """
 
 
+ROBOT_AD = {"tr": "İşlem Robotu", "en": "Trading Robot", "de": "Handelsroboter",
+            "ru": "Торговый робот", "zh": "交易机器人"}
+
+
 def nav_html(dil):
+    """18 maddelik tam nav (bot.py nav'i ile ayni küme); href'ler dil agacina
+    gore eslenir (en/reports.html gibi) — i18n gecisinden bagimsiz dogru (18.10)."""
     idx = MENU_IDX[dil]
-    parca = ['<a href="%s">%s</a>' % (href, esc(adlar[idx])) for href, *adlar in MENU]
+    parca = ['<a href="%s">%s</a>' % (slug_degistir(href, dil), esc(adlar[idx]))
+             for href, *adlar in MENU]
     parca.append('<a href="%s.html" class="active">%s</a>'
-                 % (SAYFA, esc(DIL_CFG[dil]["nav_muhasebe"])))
+                 % (slug_degistir(SAYFA, dil), esc(DIL_CFG[dil]["nav_muhasebe"])))
+    parca.append('<a href="%s.html">%s</a>'
+                 % (slug_degistir("robot", dil), esc(ROBOT_AD[dil])))
     return "".join(parca)
 
 
@@ -486,7 +499,7 @@ def dil_blok(dil):
     parca = [DIL_STIL, '<nav class="dil-linkler" aria-label="%s">' % esc(DIL_CFG[dil]["dil_aria"]),
              '<span aria-hidden="true">🌐</span>']
     for d in DILLER:
-        yol = ("/%s" % SAYFA) if d == "tr" else ("/%s/%s" % (d, SAYFA))
+        yol = ("/%s" % SAYFA) if d == "tr" else ("/%s/%s" % (d, slug_degistir(SAYFA, d)))
         aktif = ' class="aktif" aria-current="true"' if d == dil else ""
         parca.append('<a href="%s%s" hreflang="%s" lang="%s" data-dil="%s"%s>%s</a>'
                      % (SITE_URL, yol, DIL_HREFLANG[d], DIL_HREFLANG[d], d, aktif,

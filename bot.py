@@ -18,6 +18,8 @@ import logging
 
 # Yayin oncesi sirket adi / makro sayi denetimi (bkz. dogrulama.py)
 import dogrulama
+# Dil agaclari arasi slug eslemesi (tek kaynak; i18n.py ayni tabloyu kullanir)
+from dil_yollari import slug_degistir
 import editor
 import makro_veri
 import makro_katalog
@@ -4194,12 +4196,20 @@ _DIL_STIL = (
 
 
 def _dil_yolu(yol, dil):
-    """Ayni sayfanin ilgili dil surumunun adresi (site .html'siz canonical kullaniyor)."""
+    """Ayni sayfanin ilgili dil surumunun adresi (site .html'siz canonical kullaniyor).
+    Dil agacinda adlar degisiyorsa (en/reports gibi) esleme uygulanir; hedef dosya
+    yoksa dil ana sayfasina duser — secici hicbir zaman 404'e baglanti uretmez
+    (18.10 kullanici talebi: /en/muhasebe-terimleri 404'i ve benzerleri)."""
     p = (yol or "").lstrip("/")
     if p.endswith("index.html"):
         p = p[: -len("index.html")]
     elif p.endswith(".html"):
         p = p[:-5]
+    if dil:
+        p = slug_degistir(p, dil)
+        hedef_dosya = f"{dil}/{p}.html" if p else f"{dil}/index.html"
+        if not os.path.exists(hedef_dosya):
+            return f"{SITE_URL}{dil}/"
     return f"{SITE_URL}{dil + '/' if dil else ''}{p}"
 
 
