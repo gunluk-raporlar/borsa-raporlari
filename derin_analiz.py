@@ -91,6 +91,14 @@ def main():
         bot.indexnow_ping(["derin-analiz.html", "raporlar.html", "index.html"])
     except Exception:
         logger.exception("IndexNow ping atlanamadi (sorun degil).")
+    # 2026-10-19 GIZLI kalite-yargıcı (arka plan): rubrik puanı kalite/ altına
+    # yazılır (gitignore + private ops deposu; build.sh kopya setinde yok —
+    # siteye/repoya çıkmaz). Defter kaydından SONRA koşulur; fail-open.
+    try:
+        import kalite_yargic
+        kalite_yargic.degerlendir("derin", date_str, analiz)
+    except Exception:
+        logger.exception("[Kalite] yargıcı koşamadı; üretime/siteye etkisi yok.")
     print(f"DERIN ANALIZ SAYFA URETILDI: {date_str} | {len(analiz)} karakter", flush=True)
 
 

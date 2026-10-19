@@ -79,6 +79,9 @@ jobs:
           BAIDU_SITE_DOGRULAMA: ${{ secrets.BAIDU_SITE_DOGRULAMA }}
           YANDEX_SITE_DOGRULAMA: ${{ secrets.YANDEX_SITE_DOGRULAMA }}
           ZAI_MODEL: ${{ vars.ZAI_MODEL }}
+          # Gizli kalite-yargıcı (kalite_yargic.py) geçmişini private ops
+          # deposundan çeker/iter; token yoksa tekil modda çalışır.
+          OPS_REPO_TOKEN: ${{ secrets.OPS_REPO_TOKEN }}
         if: steps.kapisi.outputs.uretim != 'false'
         run: python -u derin_analiz.py
       - name: Degisiklikleri yayinla
