@@ -5,17 +5,17 @@
   "sure_sn": 13.9,
   "son_guncelleme": "2026-10-19T11:12:10+03:00"
  },
- "guncelleme": "2026-10-19T11:12:10+03:00",
+ "guncelleme": "2026-10-20T07:45:59+03:00",
  "llm": {
   "adet": 8,
-  "ortalama_sn": 185.523,
-  "p95_sn": 95.169,
-  "maks_sn": 1103.795,
+  "ortalama_sn": 159.119,
+  "p95_sn": 377.191,
+  "maks_sn": 465.679,
   "basari_orani": 1.0,
-  "son_guncelleme": "2026-10-19T07:49:11+03:00"
+  "son_guncelleme": "2026-10-20T07:45:59+03:00"
  },
  "dogrulama": {
-  "isim": 0,
+  "isim": 1,
   "enflasyon": 0,
   "toplam_metin": 1,
   "endeks": 0,
@@ -23,6 +23,6 @@
   "faiz": 0,
   "makro": 0,
   "piyasa": 0,
-  "son_guncelleme": "2026-10-19T07:49:11+03:00"
+  "son_guncelleme": "2026-10-20T07:45:59+03:00"
  }
 }
