@@ -59,13 +59,15 @@ jobs:
           NVIDIA3_API_KEY: ${{ secrets.NVIDIA3_API_KEY }}
           NVIDIA4_API_KEY: ${{ secrets.NVIDIA4_API_KEY }}
           # 2026-10-21: Gemini uclari i18n.py'den cikarildi; env satirlari kaldirildi.
-          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3.5-super-vl,nvidia/nemotron-3-super-120b-a12b,z-ai/glm-5.3,z-ai/glm-5.3-flash"
+          # 2026-10-21: yavas z-ai/glm modelleri cikarildi (36-97 sn, pencere
+          # payini yiyordu); yalnizca hizli nemotron ailesi.
+          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3.5-super-vl,nvidia/nemotron-3-super-120b-a12b"
           AMD_MODEL: "DeepSeek-V4-Flash"
           AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENROUTER2_API_KEY: ${{ secrets.OPENROUTER2_API_KEY }}
-          OR_MODELS: "nvidia/nemotron-3-ultra-550b-a55b:free"
+          OR_MODELS: "nvidia/nemotron-3-ultra-550b-a55b:free,nvidia/nemotron-3.5-super-vl:free"
           ORCAROUTER_API_KEY: ${{ secrets.ORCAROUTER_API_KEY }}
           ORCAROUTER2_API_KEY: ${{ secrets.ORCAROUTER2_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -139,13 +141,15 @@ jobs:
           NVIDIA3_API_KEY: ${{ secrets.NVIDIA3_API_KEY }}
           NVIDIA4_API_KEY: ${{ secrets.NVIDIA4_API_KEY }}
           # 2026-10-21: Gemini uclari i18n.py'den cikarildi; env satirlari kaldirildi.
-          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3.5-super-vl,nvidia/nemotron-3-super-120b-a12b,z-ai/glm-5.3,z-ai/glm-5.3-flash"
+          # 2026-10-21: yavas z-ai/glm modelleri cikarildi (36-97 sn, pencere
+          # payini yiyordu); yalnizca hizli nemotron ailesi.
+          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3.5-super-vl,nvidia/nemotron-3-super-120b-a12b"
           AMD_MODEL: "DeepSeek-V4-Flash"
           AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENROUTER2_API_KEY: ${{ secrets.OPENROUTER2_API_KEY }}
-          OR_MODELS: "nvidia/nemotron-3-ultra-550b-a55b:free"
+          OR_MODELS: "nvidia/nemotron-3-ultra-550b-a55b:free,nvidia/nemotron-3.5-super-vl:free"
           ORCAROUTER_API_KEY: ${{ secrets.ORCAROUTER_API_KEY }}
           ORCAROUTER2_API_KEY: ${{ secrets.ORCAROUTER2_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}

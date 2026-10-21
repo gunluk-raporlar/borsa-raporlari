@@ -457,7 +457,11 @@ class Cevirmen:
         denemek istekleri arka arkaya yigiyor, AMD kuyruga aliyor ve sonraki istekler
         de zaman asimina tasiyordu. Bekleme, saglayicinin kendi RPM sinirindan turetilir.
         """
-        rpm = {"AMD": float(os.environ.get("AMD_RPM", "20"))}.get(ad, 0.0)
+        # NVIDIA (2026-10-21): NIM ucretsiz katmani anahtar basina ~40 RPM;
+        # basarisiz denemeden sonra 1.5 sn bekleyip yeniden dener.
+        rpm = {"AMD": float(os.environ.get("AMD_RPM", "20")),
+               "NVIDIA": float(os.environ.get("NVIDIA_RPM", "40")),
+               "NVIDIA2": float(os.environ.get("NVIDIA_RPM", "40"))}.get(ad, 0.0)
         if rpm <= 0:
             return
         sn = (60.0 / rpm) * katsayi
@@ -549,45 +553,40 @@ class Cevirmen:
           devre disi olurdu. Anahtar benzersiz `ad` etiketidir.
         - `url`: gercek uc (rapor/teshis icin).
 
-        SIRALAMA (2026-10-13 kullanici karari): Z.AI cikarildi (haftalik kota 17 Ekim'de
-        sifirlanana kadar "Limit Exhausted" veriyordu). Onun yerine hizli/konusulan
-        saglayicilar one: AMD -> NVIDIA -> NVIDIA2 -> OpenRouter -> OrcaRouter.
-        Hicbiri surekli calismadigi icin devre kesici + hata sayaci zinciri kisa tutar.
-
-        2026-10-21 kullanici karari: Gemini uclari cikarildi; NVIDIA anahtarlari
-        zincirin SONUNA tasindi. Zincirdeki son aktif uc yavas uc (NVIDIA ailesi)
-        ise ve pencerede henuz sonuc yoksa "son pencere" modu devreye girer:
-        45 sn'lik pay kirpilmasi ve pencere butcesi uygulanmaz, tam yavas
-        timeout ile denenir (devre kesici + hata esigi yine gecerli).
+        SIRALAMA (2026-10-21 gece kullanici karari — 39663928877 kosusunun dersi):
+        NVIDIA ailesi ZINCIRIN BASINA alindi. Onceki duzende (11191aae4) NVIDIA
+        yalnizca "son pencere"de izinliydi; AMD timeout'a digince hicbir tasiyici
+        kalmiyor, NVIDIA'ya siraya gelmeden kosu cokuyordu. OpenRouter ise zincirin
+        onunde gunluk 50 ucretsiz istekligini erkenden yakiyordu. Yeni duzen:
+        NVIDIA(+NVIDIA2) -> AMD -> OrcaRouter -> Groq -> intern-ai -> OpenRouter(SON).
+        NVIDIA istekleri RPM korumasi + parti araligiyla sinirlidir (I18N_ARALIK_NVIDIA);
+        OpenRouter gunluk ~50 ucretsiz istek kaldirabildiginden bilincli olarak SON
+        care konumundadir. Devre kesici + hata esigi aynen gecerlidir; zincirdeki son
+        aktif uc yavas uc (NVIDIA ailesi) ise "son pencere" modu yine calisir.
         """
         uclar = []
-        # 0) intern-ai discovery servisi — ayni adres, iki ayri hesap (2026-10-15).
-        #    DeepL ailesi (DEEPL/DEEPL2/DEEPL3) ayni gun tamamen kaldirildi; bu iki
-        #    hesap yeni birincil kapasite. Devre kesici `ad` ile ayrilir (NVIDIA/
-        #    NVIDIA2 deseninin aynisi); DISCOVERY_MODELS ile override edilir.
-        disc_taban = os.environ.get("DISCOVERY_BASE_URL",
-                                    "https://discovery-api.intern-ai.org.cn/v1").rstrip("/")
-        for _ad, _ortam in (("Discovery", "DISCOVERY_API_KEY"), ("TokenPlan", "TOKENPLAN_API_KEY")):
-            disc_anahtar = os.environ.get(_ortam)
-            if not disc_anahtar:
+        # 0) NVIDIA NIM (build.nvidia.com) — ZINCIRIN BASI (2026-10-21 gece karari).
+        #    Anahtarlar ayni host'u gosterdiginden devre kesici `ad` ile ayrilir; boylece
+        #    biri kotalaninca digeri hizla devreye girer. istek temposu _rpm_bekle +
+        #    I18N_ARALIK_NVIDIA ile sinirlanir (NIM ucretsiz katman ~40 RPM/anahtar).
+        nvid_taban = os.environ.get("NVID_BASE_URL", "https://integrate.api.nvidia.com/v1").rstrip("/")
+        # NVIDIA SIRASI: nemotron ailesi — hizli olcumler (2026-10-13 test kosumu):
+        # ultra 2.3-3.1 sn, super 2.4-3.3 sn. z-ai/glm modelleri 36-97 sn surdugunden
+        # ve pencere payini yediginden listeden cikarildi (2026-10-21).
+        nvid_varsayilan = ("nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3.5-super-vl,"
+                           "nvidia/nemotron-3-super-120b-a12b")
+        for _ad, _ortam in (("NVIDIA", "NVIDIA_API_KEY"), ("NVIDIA2", "NVIDIA2_API_KEY"),
+                           ("NVIDIA3", "NVIDIA3_API_KEY"), ("NVIDIA4", "NVIDIA4_API_KEY")):
+            nvid_anahtar = os.environ.get(_ortam)
+            if not nvid_anahtar and _ad == "NVIDIA":
+                nvid_anahtar = os.environ.get("NIM_API_KEY")      # eski adlandirma
+            if not nvid_anahtar:
                 continue
-            disc_modeller = [m.strip() for m in os.environ.get(
-                "DISCOVERY_MODELS",
-                "deepseek-v4-flash-0731,glm-5.3,minimax-m3,"
-                "deepseek-v4-pro-0813").split(",") if m.strip()]
-            # atria-dawn 15.10'da cikarildi: bu planda 404 "not supported by
-            # TokenPlan" donduruyor; 404 kalici hatadir ve hesabi devre disi birakir.
-            disc_modeller = list(dict.fromkeys(disc_modeller))
-            uclar.append((_ad, disc_taban + "/chat/completions", disc_anahtar, disc_modeller))
-        # Cloudflare Workers AI 2026-10-14'te KALDIRILDI.
-        # Canli test hata govdesi:
-        #   "@cf/deepseek-ai/deepseek-v4-flash-0731 is not available on the
-        #    Workers Free plan"  (ayni mesaj glm-5.3-flash icin de).
-        # Katalog: Free planda Cloudflare-hosted modeller yalnizca 8-30B
-        # 'decision' modelleri; buyukler (claude-opus, gpt-6, llama-3.3-70b)
-        # third-party -> kosullar + ucretli. Ucretsiz VE ceviri kaliteli bir
-        # model yok. AMD (2-11 sn) ve NVIDIA (2.3 sn) zaten limitsiz ve
-        # daha hizli oldugu icin zincirden cikarildi.
+            nvid_modeller = [m.strip() for m in
+                             (os.environ.get("NVID_MODELS") or os.environ.get("NVIDIA_MODELS")
+                              or nvid_varsayilan).split(",") if m.strip()]
+            nvid_modeller = list(dict.fromkeys(nvid_modeller))
+            uclar.append((_ad, nvid_taban + "/chat/completions", nvid_anahtar, nvid_modeller))
         # 1) AMD Radeon Developer Cloud — kullanicinin "bazen calisiyor" dedigi saglayici.
         amd_anahtar = os.environ.get("AMD_API_KEY")
         if amd_anahtar:
@@ -603,21 +602,7 @@ class Cevirmen:
             modeller = list(dict.fromkeys(modeller))
             uclar.append(("AMD", "https://developer.amd.com.cn/radeon/api/v1/chat/completions",
                           amd_anahtar, modeller))
-        # 2) OpenRouter — Nemotron 3 Ultra ucretsiz surumu. IKI anahtar, ayri devre kesici kutusu.
-        or_taban = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/")
-        for _ad, _ortam in (("OpenRouter", "OPENROUTER_API_KEY"),
-                            ("OpenRouter2", "OPENROUTER2_API_KEY")):
-            or_anahtar = os.environ.get(_ortam)
-            if not or_anahtar and _ad == "OpenRouter":
-                or_anahtar = os.environ.get("OR_API_KEY")
-            if not or_anahtar:
-                continue
-            or_modeller = [m.strip() for m in
-                           os.environ.get("OR_MODELS", os.environ.get("OR_MODEL",
-                                                                    "nvidia/nemotron-3-ultra-550b-a55b:free")).split(",")
-                           if m.strip()]
-            uclar.append((_ad, or_taban + "/chat/completions", or_anahtar, or_modeller))
-        # 3) OrcaRouter — ucretsiz katman (deepseek/deepseek-v4-flash-free, tencent/hy4-preview-free)
+        # 2) OrcaRouter — ucretsiz katman (deepseek/deepseek-v4-flash-free, tencent/hy4-preview-free)
         #    Not: OrcaRouter OpenAI uyumlu; -free ekli modeller kotasi ayri ve ucretsiz.
         orca_taban = os.environ.get("ORCA_BASE_URL", "https://api.orcarouter.ai/v1").rstrip("/")
         for _ad, _ortam in (("OrcaRouter", "ORCAROUTER_API_KEY"),
@@ -630,7 +615,7 @@ class Cevirmen:
                                             "deepseek/deepseek-v4-flash-free,tencent/hy4-preview-free").split(",")
                              if m.strip()]
             uclar.append((_ad, orca_taban + "/chat/completions", orca_anahtar, orca_modeller))
-        # 4) Groq — KART GEREKTIRMEYEN deneme katmani (Developer Plan).
+        # 3) Groq — KART GEREKTIRMEYEN deneme katmani (Developer Plan).
         #    DIKKAT: Groq'ta OpenRouter gibi ":free" ekli model YOKTUR; her model
         #    normal fiyatlidir. Ekledigin GROQ2 ayni sinirli kotayi paylasir.
         #    Bos bir kutu olmamasi icin varsayilan model gercek bir Groq modelidir.
@@ -647,30 +632,43 @@ class Cevirmen:
                 "openai/gpt-oss-120b,openai/gpt-oss-20b,llama-3.3-70b-versatile").split(",")
                 if m.strip()]
             uclar.append((_ad, groq_taban + "/chat/completions", groq_anahtar, groq_modeller))
-        # 5) NVIDIA NIM (build.nvidia.com) — DORT ayri anahtar, ZINCIRIN SONU.
-        #    2026-10-21 kullanici karari: "nvidia anahtarlari son pencerede calissin".
-        #    Anahtarlar ayni host'u gosterdiginden devre kesici `ad` ile ayrilir; boylece
-        #    biri kotalaninca digeri hizla devreye girer. Son pencere modu _llm icinde:
-        #    son aktif uc NVIDIA ailesiyse 45 sn'lik pay kirpilmasi uygulanmaz.
-        nvid_taban = os.environ.get("NVID_BASE_URL", "https://integrate.api.nvidia.com/v1").rstrip("/")
-        # NVIDIA SIRASI (2026-10-13 kullanici karari): Nemotron 3 Ultra one.
-        # Canli olcum (test kosumu 20:13): nemotron-3-ultra 2.3-3.1 sn, nemotron-3-super
-        # 2.4-3.3 sn, glm-5.3 4.3-10.6 sn, glm-5.3-flash 36-97 sn. glm-5.3-flash hem
-        # yavas hem yogun -> sona.
-        nvid_varsayilan = ("nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b,"
-                           "z-ai/glm-5.3,z-ai/glm-5.3-flash")
-        for _ad, _ortam in (("NVIDIA", "NVIDIA_API_KEY"), ("NVIDIA2", "NVIDIA2_API_KEY"),
-                           ("NVIDIA3", "NVIDIA3_API_KEY"), ("NVIDIA4", "NVIDIA4_API_KEY")):
-            nvid_anahtar = os.environ.get(_ortam)
-            if not nvid_anahtar and _ad == "NVIDIA":
-                nvid_anahtar = os.environ.get("NIM_API_KEY")      # eski adlandirma
-            if not nvid_anahtar:
+        # 4) intern-ai (TokenPlan + Discovery) — ARTIK ZINCIRIN SONUNA YAKIN.
+        #    20-21 Ekim'de discovery hesabi 429 "quota exceeded" verdi; oncelik
+        #    konumundayken her pencereyi bos harciyordu. Kotası yenilenirse
+        #    devre kesici kendiliginden acar; ama zincir artik NVIDIA'yla baslar.
+        disc_taban = os.environ.get("DISCOVERY_BASE_URL",
+                                    "https://discovery-api.intern-ai.org.cn/v1").rstrip("/")
+        for _ad, _ortam in (("TokenPlan", "TOKENPLAN_API_KEY"), ("Discovery", "DISCOVERY_API_KEY")):
+            disc_anahtar = os.environ.get(_ortam)
+            if not disc_anahtar:
                 continue
-            nvid_modeller = [m.strip() for m in
-                             (os.environ.get("NVID_MODELS") or os.environ.get("NVIDIA_MODELS")
-                              or nvid_varsayilan).split(",") if m.strip()]
-            nvid_modeller = list(dict.fromkeys(nvid_modeller))
-            uclar.append((_ad, nvid_taban + "/chat/completions", nvid_anahtar, nvid_modeller))
+            disc_modeller = [m.strip() for m in os.environ.get(
+                "DISCOVERY_MODELS",
+                "deepseek-v4-flash-0731,glm-5.3,minimax-m3,"
+                "deepseek-v4-pro-0813").split(",") if m.strip()]
+            # atria-dawn 15.10'da cikarildi: bu planda 404 "not supported by
+            # TokenPlan" donduruyor; 404 kalici hatadir ve hesabi devre disi birakir.
+            disc_modeller = list(dict.fromkeys(disc_modeller))
+            uclar.append((_ad, disc_taban + "/chat/completions", disc_anahtar, disc_modeller))
+        # 5) OpenRouter — Nemotron ucretsiz modelleri, ZINCIRIN SONU.
+        #    Gunluk ~50 ucretsiz istek/anahtar; zincirin onundayken bu hak erkenden
+        #    biterdi (39663928877: OR 429 free-models-per-day). Son care olarak
+        #    korunur; iki nemotron modeli de denenir.
+        or_taban = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/")
+        for _ad, _ortam in (("OpenRouter", "OPENROUTER_API_KEY"),
+                            ("OpenRouter2", "OPENROUTER2_API_KEY")):
+            or_anahtar = os.environ.get(_ortam)
+            if not or_anahtar and _ad == "OpenRouter":
+                or_anahtar = os.environ.get("OR_API_KEY")
+            if not or_anahtar:
+                continue
+            or_modeller = [m.strip() for m in
+                           os.environ.get("OR_MODELS", os.environ.get("OR_MODEL",
+                                                                    "nvidia/nemotron-3-ultra-550b-a55b:free,nvidia/nemotron-3.5-super-vl:free")).split(",")
+                           if m.strip()]
+            uclar.append((_ad, or_taban + "/chat/completions", or_anahtar, or_modeller))
+        # Cloudflare Workers AI 2026-10-14'te KALDIRILDI (Free planda buyuk modeller
+        # yok); Gemini uclari 2026-10-21'de cikarildi.
         return uclar
 
     def _llm(self, parcalar: list[str], dil: str) -> list[str]:
@@ -935,6 +933,9 @@ class Cevirmen:
                 if son_uc == "AMD":
                     # AMD 20 istek/dk -> istekler arasi ~3 sn (canli test: 2-7 sn/yanit)
                     aralik = float(os.environ.get("I18N_ARALIK_AMD", "3.5"))
+                elif son_uc in ("NVIDIA", "NVIDIA2"):
+                    # NVIDIA ~40 RPM/anahtar (ucretsiz katman) -> 1.5 sn guvenli marj
+                    aralik = float(os.environ.get("I18N_ARALIK_NVIDIA", "1.5"))
                 elif son_uc in ("Discovery", "TokenPlan"):
                     aralik = float(os.environ.get("I18N_ARALIK_DISCOVERY", "1.5"))
                 else:
