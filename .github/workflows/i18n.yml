@@ -61,7 +61,9 @@ jobs:
           # 2026-10-21: Gemini uclari i18n.py'den cikarildi; env satirlari kaldirildi.
           # 2026-10-21: yavas z-ai/glm modelleri cikarildi (36-97 sn, pencere
           # payini yiyordu); yalnizca hizli nemotron ailesi.
-          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3.5-super-vl,nvidia/nemotron-3-super-120b-a12b"
+          # DIKKAT: kisa takma ad (nemotron-3.5-super-vl) NIM'de 404 verir;
+          # TAM kimlik kullanilir (2026-10-21).
+          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3.5-super-vl-120b-a12b,nvidia/nemotron-3-super-120b-a12b"
           AMD_MODEL: "DeepSeek-V4-Flash"
           AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -143,7 +145,9 @@ jobs:
           # 2026-10-21: Gemini uclari i18n.py'den cikarildi; env satirlari kaldirildi.
           # 2026-10-21: yavas z-ai/glm modelleri cikarildi (36-97 sn, pencere
           # payini yiyordu); yalnizca hizli nemotron ailesi.
-          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3.5-super-vl,nvidia/nemotron-3-super-120b-a12b"
+          # DIKKAT: kisa takma ad (nemotron-3.5-super-vl) NIM'de 404 verir;
+          # TAM kimlik kullanilir (2026-10-21).
+          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3.5-super-vl-120b-a12b,nvidia/nemotron-3-super-120b-a12b"
           AMD_MODEL: "DeepSeek-V4-Flash"
           AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}

@@ -434,6 +434,10 @@ class Cevirmen:
         # denenmesi kosuyu uzatirdi.
         self._model_esik: dict[str, str] = {}
         self._model_esik_sayi: dict[str, int] = {}
+        # 404 veren MODELLER (ad/model) — bu kosuda bir daha denenmez ama UC
+        # yasamaya devam eder (2026-10-21: yanlis model kimligi, ultra calisirken
+        # butun NVIDIA ucunu devre disi birakmışti).
+        self._bozuk_modeller: set[str] = set()
         self._uc_pay: dict[str, float] = {}   # uc -> bu pencerede basladigi an
         # ADIL SIRA: tamamen bos gecen pencereden sonra zincir basi kaydirilir;
         # saglikli pencerede tercih sirasi korunur (0'a doner).
@@ -573,7 +577,8 @@ class Cevirmen:
         # NVIDIA SIRASI: nemotron ailesi — hizli olcumler (2026-10-13 test kosumu):
         # ultra 2.3-3.1 sn, super 2.4-3.3 sn. z-ai/glm modelleri 36-97 sn surdugunden
         # ve pencere payini yediginden listeden cikarildi (2026-10-21).
-        nvid_varsayilan = ("nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3.5-super-vl,"
+        nvid_varsayilan = ("nvidia/nemotron-3-ultra-550b-a55b,"
+                           "nvidia/nemotron-3.5-super-vl-120b-a12b,"   # TAM kimlik; kisa takma ad NIM'de 404
                            "nvidia/nemotron-3-super-120b-a12b")
         for _ad, _ortam in (("NVIDIA", "NVIDIA_API_KEY"), ("NVIDIA2", "NVIDIA2_API_KEY"),
                            ("NVIDIA3", "NVIDIA3_API_KEY"), ("NVIDIA4", "NVIDIA4_API_KEY")):
@@ -768,6 +773,9 @@ class Cevirmen:
                           f"kalan saglayicilar bu pencere icin atlandi", file=sys.stderr)
                     break
                 for model in modeller:
+                    # Bu kosuda 404 ile cikarilmis modeli tekrar deneme (uc yasar).
+                    if f"{ad}/{model}" in self._bozuk_modeller:
+                        continue
                     # PENCERE PAYI TEKRAR: model dongusunun basinda olmak ZARUNLU.
                     # Yalnizca uc basinda bir kez kontrol etmek yetmiyordu: uc
                     # basindaki kontrol gecmis olur, sonraki modeller sinirsiz
@@ -828,7 +836,17 @@ class Cevirmen:
                         except Exception:
                             govde_hata = ""
                         print(f"[i18n] LLM hatasi ({ad}/{model}): HTTP {kod} :: {govde_hata}", file=sys.stderr)
-                        if kod in (401, 402, 403, 404):      # kalici: anahtar/kota/yetki
+                        if kod == 404:
+                            # 404 = BU MODEL bu saglayicida yok (NIM'de yanlis kimlik
+                            # "404 page not found" doner). Ucu oldurme, modeli bu
+                            # kosu icin listeden cik (2026-10-21 duzeltmesi: yanlis
+                            # takma ad, calisan ultra'yu da beraber goturuyordu).
+                            self._bozuk_modeller.add(f"{ad}/{model}")
+                            print(f"[i18n] model bu kosuda cikarildi (HTTP 404): {ad}/{model}; "
+                                  f"uc calismaya devam eder", file=sys.stderr)
+                            son = None
+                            continue
+                        if kod in (401, 402, 403):           # kalici: anahtar/kota/yetki — UC duzeyinde
                             self.devre_disi.add(ad)
                             print(f"[i18n] saglayici devre disi: {ad} (HTTP {kod})", file=sys.stderr)
                             break
