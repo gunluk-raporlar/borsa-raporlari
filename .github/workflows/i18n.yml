@@ -58,10 +58,8 @@ jobs:
           NVIDIA2_API_KEY: ${{ secrets.NVIDIA2_API_KEY }}
           NVIDIA3_API_KEY: ${{ secrets.NVIDIA3_API_KEY }}
           NVIDIA4_API_KEY: ${{ secrets.NVIDIA4_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI2_API_KEY: ${{ secrets.GEMINI2_API_KEY }}
-          GEM_MODELS: "gemini-3.8-flash"
-          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b,z-ai/glm-5.3,z-ai/glm-5.3-flash"
+          # 2026-10-21: Gemini uclari i18n.py'den cikarildi; env satirlari kaldirildi.
+          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3.5-super-vl,nvidia/nemotron-3-super-120b-a12b,z-ai/glm-5.3,z-ai/glm-5.3-flash"
           AMD_MODEL: "DeepSeek-V4-Flash"
           AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -96,8 +94,6 @@ jobs:
           OPENROUTER2_API_KEY: ${{ secrets.OPENROUTER2_API_KEY }}
           ORCAROUTER_API_KEY: ${{ secrets.ORCAROUTER_API_KEY }}
           ORCAROUTER2_API_KEY: ${{ secrets.ORCAROUTER2_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI2_API_KEY: ${{ secrets.GEMINI2_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -130,7 +126,7 @@ jobs:
           # 3->6: gecici zaman asimlari (gece yogunlugu dalgasi) saglayiciyi kosu
           # boyunca devre disi birakmasin; kalici 4xx/429 hala esikte keser.
           I18N_HATA_ESIGI: "6"
-          I18N_YAVAS_UC: "NVIDIA,NVIDIA2"
+          I18N_YAVAS_UC: "NVIDIA,NVIDIA2,NVIDIA3,NVIDIA4"
           I18N_YAVAS_TIMEOUT: "200"
           I18N_SURE_SINIRI_DK: "60"
           # Sira: DeepSeek (birincil, daha guclu) -> Qwen (yedek). Kapasite doluysa 20 sn icinde devreder.
@@ -142,10 +138,8 @@ jobs:
           NVIDIA2_API_KEY: ${{ secrets.NVIDIA2_API_KEY }}
           NVIDIA3_API_KEY: ${{ secrets.NVIDIA3_API_KEY }}
           NVIDIA4_API_KEY: ${{ secrets.NVIDIA4_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI2_API_KEY: ${{ secrets.GEMINI2_API_KEY }}
-          GEM_MODELS: "gemini-3.8-flash"
-          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3-super-120b-a12b,z-ai/glm-5.3,z-ai/glm-5.3-flash"
+          # 2026-10-21: Gemini uclari i18n.py'den cikarildi; env satirlari kaldirildi.
+          NVIDIA_MODELS: "nvidia/nemotron-3-ultra-550b-a55b,nvidia/nemotron-3.5-super-vl,nvidia/nemotron-3-super-120b-a12b,z-ai/glm-5.3,z-ai/glm-5.3-flash"
           AMD_MODEL: "DeepSeek-V4-Flash"
           AMD_FALLBACK_MODELS: "Qwen3.8-Flash-Next"
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}

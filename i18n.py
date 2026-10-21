@@ -37,7 +37,7 @@ ANAHTARLAR (env)
   https://discovery-api.intern-ai.org.cn/v1). Zincirin en onunde, sirayla denenir.
   Varsayilan modeller (yalnizca metin; DISCOVERY_MODELS ile override):
   deepseek-v4-flash-0731, glm-5.3, minimax-m3, deepseek-v4-pro-0813, atria-dawn
-  NVIDIA_API_KEY / GEMINI_API_KEY / OPENROUTER_API_KEY /
+  NVIDIA_API_KEY / OPENROUTER_API_KEY /
   ORCAROUTER_API_KEY / OPENCODE_API_KEY  -> --provider llm
   OLLAMA_BASE_URL (opsiyonel, yerel)  -> --provider llm
 """
@@ -553,6 +553,12 @@ class Cevirmen:
         sifirlanana kadar "Limit Exhausted" veriyordu). Onun yerine hizli/konusulan
         saglayicilar one: AMD -> NVIDIA -> NVIDIA2 -> OpenRouter -> OrcaRouter.
         Hicbiri surekli calismadigi icin devre kesici + hata sayaci zinciri kisa tutar.
+
+        2026-10-21 kullanici karari: Gemini uclari cikarildi; NVIDIA anahtarlari
+        zincirin SONUNA tasindi. Zincirdeki son aktif uc yavas uc (NVIDIA ailesi)
+        ise ve pencerede henuz sonuc yoksa "son pencere" modu devreye girer:
+        45 sn'lik pay kirpilmasi ve pencere butcesi uygulanmaz, tam yavas
+        timeout ile denenir (devre kesici + hata esigi yine gecerli).
         """
         uclar = []
         # 0) intern-ai discovery servisi — ayni adres, iki ayri hesap (2026-10-15).
@@ -597,9 +603,55 @@ class Cevirmen:
             modeller = list(dict.fromkeys(modeller))
             uclar.append(("AMD", "https://developer.amd.com.cn/radeon/api/v1/chat/completions",
                           amd_anahtar, modeller))
-        # 2) NVIDIA NIM (build.nvidia.com) — IKI ayri anahtarla ayri uc tanimli.
-        #    Ikisi de ayni host'i gosterdiginden devre kesici `ad` ile ayrilir; boylece
-        #    biri kotalaninca digeri hizla devreye girer.
+        # 2) OpenRouter — Nemotron 3 Ultra ucretsiz surumu. IKI anahtar, ayri devre kesici kutusu.
+        or_taban = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/")
+        for _ad, _ortam in (("OpenRouter", "OPENROUTER_API_KEY"),
+                            ("OpenRouter2", "OPENROUTER2_API_KEY")):
+            or_anahtar = os.environ.get(_ortam)
+            if not or_anahtar and _ad == "OpenRouter":
+                or_anahtar = os.environ.get("OR_API_KEY")
+            if not or_anahtar:
+                continue
+            or_modeller = [m.strip() for m in
+                           os.environ.get("OR_MODELS", os.environ.get("OR_MODEL",
+                                                                    "nvidia/nemotron-3-ultra-550b-a55b:free")).split(",")
+                           if m.strip()]
+            uclar.append((_ad, or_taban + "/chat/completions", or_anahtar, or_modeller))
+        # 3) OrcaRouter — ucretsiz katman (deepseek/deepseek-v4-flash-free, tencent/hy4-preview-free)
+        #    Not: OrcaRouter OpenAI uyumlu; -free ekli modeller kotasi ayri ve ucretsiz.
+        orca_taban = os.environ.get("ORCA_BASE_URL", "https://api.orcarouter.ai/v1").rstrip("/")
+        for _ad, _ortam in (("OrcaRouter", "ORCAROUTER_API_KEY"),
+                            ("OrcaRouter2", "ORCAROUTER2_API_KEY")):
+            orca_anahtar = os.environ.get(_ortam)
+            if not orca_anahtar:
+                continue
+            orca_modeller = [m.strip() for m in
+                             os.environ.get("ORCA_MODELS",
+                                            "deepseek/deepseek-v4-flash-free,tencent/hy4-preview-free").split(",")
+                             if m.strip()]
+            uclar.append((_ad, orca_taban + "/chat/completions", orca_anahtar, orca_modeller))
+        # 4) Groq — KART GEREKTIRMEYEN deneme katmani (Developer Plan).
+        #    DIKKAT: Groq'ta OpenRouter gibi ":free" ekli model YOKTUR; her model
+        #    normal fiyatlidir. Ekledigin GROQ2 ayni sinirli kotayi paylasir.
+        #    Bos bir kutu olmamasi icin varsayilan model gercek bir Groq modelidir.
+        groq_taban = os.environ.get("GROQ_BASE_URL", "https://api.groq.com/openai/v1").rstrip("/")
+        for _ad, _ortam in (("Groq", "GROQ_API_KEY"), ("Groq2", "GROQ2_API_KEY")):
+            groq_anahtar = os.environ.get(_ortam)
+            if not groq_anahtar and _ad == "Groq":
+                groq_anahtar = os.environ.get("ALT_API_KEY")     # bot.py'nin eski adi
+            if not groq_anahtar:
+                continue
+            # On ek ONEMLI: Groq tam model adi ister ("gpt-oss-120b" -> 404).
+            groq_modeller = [m.strip() for m in os.environ.get(
+                "GROQ_MODELS",
+                "openai/gpt-oss-120b,openai/gpt-oss-20b,llama-3.3-70b-versatile").split(",")
+                if m.strip()]
+            uclar.append((_ad, groq_taban + "/chat/completions", groq_anahtar, groq_modeller))
+        # 5) NVIDIA NIM (build.nvidia.com) — DORT ayri anahtar, ZINCIRIN SONU.
+        #    2026-10-21 kullanici karari: "nvidia anahtarlari son pencerede calissin".
+        #    Anahtarlar ayni host'u gosterdiginden devre kesici `ad` ile ayrilir; boylece
+        #    biri kotalaninca digeri hizla devreye girer. Son pencere modu _llm icinde:
+        #    son aktif uc NVIDIA ailesiyse 45 sn'lik pay kirpilmasi uygulanmaz.
         nvid_taban = os.environ.get("NVID_BASE_URL", "https://integrate.api.nvidia.com/v1").rstrip("/")
         # NVIDIA SIRASI (2026-10-13 kullanici karari): Nemotron 3 Ultra one.
         # Canli olcum (test kosumu 20:13): nemotron-3-ultra 2.3-3.1 sn, nemotron-3-super
@@ -619,60 +671,6 @@ class Cevirmen:
                               or nvid_varsayilan).split(",") if m.strip()]
             nvid_modeller = list(dict.fromkeys(nvid_modeller))
             uclar.append((_ad, nvid_taban + "/chat/completions", nvid_anahtar, nvid_modeller))
-        # 3) OpenRouter — Nemotron 3 Ultra ucretsiz surumu. IKI anahtar, ayri devre kesici kutusu.
-        or_taban = os.environ.get("OR_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/")
-        for _ad, _ortam in (("OpenRouter", "OPENROUTER_API_KEY"),
-                            ("OpenRouter2", "OPENROUTER2_API_KEY")):
-            or_anahtar = os.environ.get(_ortam)
-            if not or_anahtar and _ad == "OpenRouter":
-                or_anahtar = os.environ.get("OR_API_KEY")
-            if not or_anahtar:
-                continue
-            or_modeller = [m.strip() for m in
-                           os.environ.get("OR_MODELS", os.environ.get("OR_MODEL",
-                                                                    "nvidia/nemotron-3-ultra-550b-a55b:free")).split(",")
-                           if m.strip()]
-            uclar.append((_ad, or_taban + "/chat/completions", or_anahtar, or_modeller))
-        # 4) OrcaRouter — ucretsiz katman (deepseek/deepseek-v4-flash-free, tencent/hy4-preview-free)
-        #    Not: OrcaRouter OpenAI uyumlu; -free ekli modeller kotasi ayri ve ucretsiz.
-        orca_taban = os.environ.get("ORCA_BASE_URL", "https://api.orcarouter.ai/v1").rstrip("/")
-        for _ad, _ortam in (("OrcaRouter", "ORCAROUTER_API_KEY"),
-                            ("OrcaRouter2", "ORCAROUTER2_API_KEY")):
-            orca_anahtar = os.environ.get(_ortam)
-            if not orca_anahtar:
-                continue
-            orca_modeller = [m.strip() for m in
-                             os.environ.get("ORCA_MODELS",
-                                            "deepseek/deepseek-v4-flash-free,tencent/hy4-preview-free").split(",")
-                             if m.strip()]
-            uclar.append((_ad, orca_taban + "/chat/completions", orca_anahtar, orca_modeller))
-        # 5) Google Gemini — OpenAI uyumlu uc. Gunlük kota PROJE bazli oldugu icin ikinci
-        #    anahtar (GEMINI2_API_KEY) gercekten ek kota kazandirir; free havuzlarin aksine.
-        gem_taban = os.environ.get("GEM_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai").rstrip("/")
-        for _ad, _ortam in (("Gemini", "GEMINI_API_KEY"), ("Gemini2", "GEMINI2_API_KEY")):
-            gem_anahtar = os.environ.get(_ortam)
-            if not gem_anahtar:
-                continue
-            gem_modeller = [m.strip() for m in os.environ.get(
-                "GEM_MODELS", "gemini-3.8-flash").split(",") if m.strip()]
-            uclar.append((_ad, gem_taban + "/chat/completions", gem_anahtar, gem_modeller))
-        # 6) Groq — KART GEREKTIRMEYEN deneme katmani (Developer Plan).
-        #    DIKKAT: Groq'ta OpenRouter gibi ":free" ekli model YOKTUR; her model
-        #    normal fiyatlidir. Ekledigin GROQ2 ayni sinirli kotayi paylasir.
-        #    Bos bir kutu olmamasi icin varsayilan model gercek bir Groq modelidir.
-        groq_taban = os.environ.get("GROQ_BASE_URL", "https://api.groq.com/openai/v1").rstrip("/")
-        for _ad, _ortam in (("Groq", "GROQ_API_KEY"), ("Groq2", "GROQ2_API_KEY")):
-            groq_anahtar = os.environ.get(_ortam)
-            if not groq_anahtar and _ad == "Groq":
-                groq_anahtar = os.environ.get("ALT_API_KEY")     # bot.py'nin eski adi
-            if not groq_anahtar:
-                continue
-            # On ek ONEMLI: Groq tam model adi ister ("gpt-oss-120b" -> 404).
-            groq_modeller = [m.strip() for m in os.environ.get(
-                "GROQ_MODELS",
-                "openai/gpt-oss-120b,openai/gpt-oss-20b,llama-3.3-70b-versatile").split(",")
-                if m.strip()]
-            uclar.append((_ad, groq_taban + "/chat/completions", groq_anahtar, groq_modeller))
         return uclar
 
     def _llm(self, parcalar: list[str], dil: str) -> list[str]:
@@ -691,7 +689,7 @@ class Cevirmen:
         uclar = self._uclari_kur()
         if not uclar:
             raise SystemExit(
-                "[i18n] HATA: --provider llm icin DISCOVERY / TOKENPLAN / NVIDIA / GEMINI / OPENROUTER / ORCAROUTER / OPENCODE anahtarlarindan en az biri gerekli."
+                "[i18n] HATA: --provider llm icin DISCOVERY / TOKENPLAN / OPENROUTER / ORCAROUTER / OPENCODE anahtarlarindan en az biri gerekli."
             )
 
         cikti: list[str] = []
@@ -737,9 +735,18 @@ class Cevirmen:
             # atlandi"). Kaydirma ile bos pencereler sirayla farkli uclari dener;
             # basari elde edilince tercih sirasi geri gelir.
             sira = (uclar[self._kaydirma:] + uclar[:self._kaydirma]) if self._kaydirma else uclar
+            # SON PENCERE (2026-10-21 kullanici karari): "nvidia anahtarlari son
+            # pencerede calissin". Canli log 21.10: NVIDIA/NVIDIA2 45 sn'lik paya
+            # takilip ceviremedi; kosuyu tek basina Gemini tasidi (ayni gun cikarildi).
+            # Zincirdeki SON AKTIF uc yavas uc (NVIDIA ailesi) ise: pay kirpilmasi ve
+            # pencere butcesi denetimi o uc icin uygulanmaz, tam yavas timeout ile
+            # denenir. Devre kesici + hata esigi (HATA_ESIGI) yine gecerlidir.
+            aktif_uclar = [a for a in sira if a[0] not in self.devre_disi]
+            son_aday = aktif_uclar[-1][0] if aktif_uclar else None
             for ad, url, anahtar, modeller in sira:
                 if ad in self.devre_disi:
                     continue
+                son_pencere = (ad == son_aday and ad in self.yavas_uc and son is None)
                 # UC BASINA PENCERE PAYI (2026-10-13 canli kosum duzeltmesi).
                 # Kosu 19:11'de su sekilde coktu:
                 #   AMD/DeepSeek-V4-Flash 75 sn -> Vision-Exp 75 sn -> Qwen3.8 75 sn
@@ -751,14 +758,14 @@ class Cevirmen:
                 if ad not in self._uc_pay:
                     self._uc_pay[ad] = time.time()
                 uc_t0 = self._uc_pay[ad]
-                if UC_PAYI_SN > 0 and time.time() - uc_t0 > UC_PAYI_SN:
+                if not son_pencere and UC_PAYI_SN > 0 and time.time() - uc_t0 > UC_PAYI_SN:
                     print(f"[i18n] '{ad}' pencere payini ({UC_PAYI_SN:.0f} sn) doldurdu; "
                           f"bu uc bu pencerede bir daha denenmiyor", file=sys.stderr)
                     continue
                 # Bu pencerede cok zaman gectiyse (saglayicilar sirayla zaman asimi
                 # yiyor) kalan saglayicilari denemeden pencereyi birak -> log canli
                 # akmaya devam eder, "takildi" izlenimi olusmaz.
-                if time.time() - pencere_t0 > PENCERE_ZAMAN_ASIMI:
+                if not son_pencere and time.time() - pencere_t0 > PENCERE_ZAMAN_ASIMI:
                     print(f"[i18n] pencere zaman asimi ({PENCERE_ZAMAN_ASIMI:.0f} sn); "
                           f"kalan saglayicilar bu pencere icin atlandi", file=sys.stderr)
                     break
@@ -767,7 +774,7 @@ class Cevirmen:
                     # Yalnizca uc basinda bir kez kontrol etmek yetmiyordu: uc
                     # basindaki kontrol gecmis olur, sonraki modeller sinirsiz
                     # deneniyordu (canli kosumda AMD 3 modeli arka arkaya denedi).
-                    if UC_PAYI_SN > 0 and time.time() - uc_t0 > UC_PAYI_SN:
+                    if not son_pencere and UC_PAYI_SN > 0 and time.time() - uc_t0 > UC_PAYI_SN:
                         print(f"[i18n] '{ad}' pencere payini ({UC_PAYI_SN:.0f} sn) doldurdu; "
                               f"bu uc bu pencerede bir daha denenmiyor", file=sys.stderr)
                         break
@@ -784,7 +791,7 @@ class Cevirmen:
                     # AMD + NVIDIA tarafindan tuketiliyor ve 1.9 sn'de cevap veren
                     # OpenRouter2'YE HIC SIRA GELMIYORDU. Artik istek, kalan paya
                     # gore kirpilir: hicbir uc pencereyi tek basina yiyemez.
-                    if UC_PAYI_SN > 0:
+                    if UC_PAYI_SN > 0 and not son_pencere:
                         kalan_pay = UC_PAYI_SN - (time.time() - uc_t0)
                         if kalan_pay <= 5:
                             break

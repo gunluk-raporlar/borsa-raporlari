@@ -132,6 +132,9 @@ NVID_MODEL_TERCIH = [
     # kota paylasimi harcanmaz.
     "glm-5.3",                        # OK, 4.7 sn (alt dize eslesmesi glm-5.3-flash'i da yakalar — istenen)
     "nemotron-3-ultra-550b-a55b",     # ~550B MoE  (OK, 0.9 sn)
+    # 2026-10-21 kullanici istegi; NIM'deki tam kimlik nvidia/nemotron-3.5-super-vl-120b-a12b
+    # — alt dize eslesmesiyle yakalanir (VL ama metin istegi de kabul eder).
+    "nemotron-3.5-super-vl",
     "nemotron-3-super-120b-a12b",     # 120B MoE   (OK, 7.5 sn)
     "kimi-k3",
     "kimi-k2.6",
@@ -146,13 +149,19 @@ CF_MODEL_TERCIH = ["llama-3.3-70b-instruct-fp8-fast", "llama-4-scout", "llama-3.
 OR_MODEL_TERCIH = [
     "glm-5.2",                      # Z.ai GLM-5.2 (ucretsiz) — 2026-09-29: glm ailesi once
     "nemotron-3-ultra-550b-a55b",   # ~550B MoE (en buyuk ucretsiz)
+    "nemotron-3.5-super-vl",        # 2026-10-21 kullanici istegi (nvidia/nemotron-3.5-super-vl:free)
     "nemotron-3-super-120b-a12b",   # ~120B MoE
     "nemotron-3.5-lightning",       # 1M baglam
     "nex-n2.5-pro",
+    # 2026-10-21 kullanici istegiyle GERI eklendi (thinkingmachines/inkling:free).
+    # ":free" suzgesi inkling-small'i dusurur. 2 Ekim'de 403 (agentic harness)
+    # verip cikarilmisti; 403 tekrarlarsa bu satir yine cikarilir.
+    "inkling",
 ]  # 2026-09: gemma-4-31b/26b, qwen3.8-27b, ling-3.0-flash-fin, inkling-small cikarildi (uydurma).
-   # 2026-10-02: "inkling" cikarildi — OpenRouter modeli "agentic harness" kisitina
+   # 2026-10-02: "inkling" cikarilmisti — OpenRouter modeli "agentic harness" kisitina
    # aldi; ham API cagrisina 403 donuyor ("only available on agentic harnesses"),
-   # her rotasyon sonunda son deneme hakki bosa gidiyordu.
+   # her rotasyon sonunda son deneme hakki bosa gidiyordu. (21 Ekim'de kullanici
+   # istegiyle geri eklendi.)
 
 # Z.ai (GLM) model tercih sirasi — bot.py'deki tum Z.ai cagrilari bunu kullanir.
 # YALNIZCA glm-5.3-flash: kullanici karari (2026-09) — buyuk glm-5.3, ZCode'la
