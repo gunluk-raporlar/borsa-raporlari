@@ -5,7 +5,11 @@ Kaldırmak için: robot.py, robot.html, data/robot/, .github/workflows/robot.yml
 Başka hiçbir dosyaya bağımlılığı yoktur.
 
 Calisma duzeni:
-  - Piyasa saatlerinde (h.i. 10:00-18:30 TR) her 15 dakikada bir kron kosar.
+  - Kron hafta ici 10:00-18:45 TSİ arasinda (plus 19:15 kapanis ozeti) her 15 dakikada bir kosar.
+  - SAAT KURALI (22.10.2026 kullanici karari): emirler yalnizca BIST sürekli işlem
+    oturumunda yürütülür — hafta içi 10:00-18:00 TSİ, resmi tatiller hariç
+    (islem_saati_mi). Seans dışı koşular (GitHub gecikmesi, elle tetikleme,
+    tatil günleri) hiçbir emir açmaz; sinyaller sonraki seansı bekler.
   - Gostergeler gunun ILK kosusunda cekilen gunluk kapanis serisinden (yerel onbellek)
     hesaplanir; piyasa acikken bugunun barı CANLI fiyattan (TradingView, ~15 dk
     gecikmeli) gecici olarak eklenir ve sinyaller oyle degerlendirilir.
@@ -26,6 +30,8 @@ import urllib.request
 
 # Dil agaclari arasi slug eslemesi (tek kaynak; bot.py/i18n.py ayni tablo)
 from dil_yollari import slug_degistir
+# BIST resmi tatil takvimi (2025-2028; disinda tatil sayilmaz -> fail-safe acik davranis)
+from resmi_tatil import tatil_mi
 from datetime import datetime, timedelta, timezone as dt_timezone
 
 try:
@@ -89,12 +95,25 @@ def _simdi():
 
 
 def piyasa_acik_mi(simdi=None):
-    """BIST sürekli işlem oturumu kabaca 10:00-18:00 TR; tampon için 09:45-18:35."""
+    """BIST sürekli işlem oturumu kabaca 10:00-18:00 TR; takip tamponu için 09:45-18:35.
+    Hafta sonu VE resmi tatil günlerinde kapalıdır (canlı takip de yapılmaz)."""
     s = simdi or _simdi()
-    if s.weekday() >= 5:
+    if s.weekday() >= 5 or tatil_mi(s.strftime("%Y-%m-%d")):
         return False
     dk = s.hour * 60 + s.minute
     return 9 * 60 + 45 <= dk <= 18 * 60 + 35
+
+
+def islem_saati_mi(simdi=None):
+    """Emir kuralı (22.10.2026 kullanıcı kararı): simüle emirler YALNIZCA BIST
+    sürekli işlem oturumunda yürütülür — hafta içi 10:00-18:00 TSİ, resmi tatil
+    hariç. piyasa_acik_mi'den farkı: tampon yoktur; açılış arzı, kapanış seansı
+    ve seans dışı koşularda (GitHub gecikmesi, elle tetikleme) emir açılmaz."""
+    s = simdi or _simdi()
+    if s.weekday() >= 5 or tatil_mi(s.strftime("%Y-%m-%d")):
+        return False
+    dk = s.hour * 60 + s.minute
+    return 10 * 60 <= dk < 18 * 60
 
 
 # ---------- 1. VERI KATMANI ----------
@@ -486,11 +505,18 @@ def ozkayit_guncelle(durum, sinyaller):
 def risk_ve_oms(durum, sinyaller):
     """Bu kontrolda sinyalleri risk kurallarindan gecirip simule emirlere cevirir.
 
+    - SAAT KURALI: emirler yalnizca BIST sürekli işlem oturumunda yürütülür
+      (islem_saati_mi: hafta içi 10:00-18:00 TSİ, resmi tatil hariç). Seans
+      dışında çağrılırsa hiçbir mutasyon yapmaz, yalnızca kural notu döner.
     - Stop-loss / hedef / kesisim-asagisi cikislari CANLI fiyattan tetiklenir.
     - AL sinyali gun icinde de isleme donusebilir (gecici bar ile).
     - Ayni hisse ayni gun satusa tekrar alinmaz (bugun_satilan listesi).
     - Dunku kapanisa gore gunluk %3 zarar varsa yeni alimlar durur.
     Donus: (emir_sayisi, notlar)."""
+    if not islem_saati_mi():
+        return 0, ["Piyasa kapalı (saat kuralı): emirler yalnızca BIST işlem oturumunda "
+                   "yürütülür — hafta içi 10:00–18:00 TSİ, resmi tatil hariç. Sinyaller "
+                   "sonraki seansı bekler; fiyattan bağımsız olarak seans dışında işlem açılmaz."]
     fiyatlar = {h: s["son_fiyat"] for h, s in sinyaller.items()}
     oz = ozkaynak(durum, fiyatlar)
     saat = _simdi().strftime("%H:%M")
@@ -807,6 +833,7 @@ def dashboard_yaz(durum, sinyaller, notlar):
                   f"ya da <b>%{int(HEDEF_ORAN * 100)}</b> yukarısına çıkar (hedef).</li>"
                   f"<li><b>Boyut:</b> özkaynağın en fazla %{int(POZISYON_ORAN * 100)}'i tek hisseye, en fazla {MAKS_POZISYON} pozisyon.</li>"
                   f"<li><b>Günlük fren:</b> özkaynak dünkü kapanışa göre %{int(GUNLUK_ZARAR_LIMITI * 100)} düşerse yeni alım o gün durdurulur.</li>"
+                  f"<li><b>Saat kuralı:</b> emirler yalnızca BIST işlem oturumunda yürütülür — hafta içi 10:00–18:00 TSİ; resmi tatillerde ve seans dışında (elle tetikleme dahil) işlem açılmaz, sinyaller sonraki seansı bekler.</li>"
                   f"<li><b>Maliyetler:</b> komisyon %{KOMISYON_ORAN * 100:.2f} (en az {KOMISYON_MIN:.0f} ₺) + BSMV %15 + yasal ücret ~%{YASAL_UCRET * 100:.3f} + kayma %{KAYMA * 100:.2f}. 12.000 ₺'lik işlemin tur maliyeti ~35–40 ₺ (~%0,3) — scalping'in gerçek bedeli.</li>"
                   f"<li><b>Boşta nakit:</b> her işlem günü gecelik ters repoda değerlenir — yıllık oran son açıklanan mevduat faizinden alınır; repo kazancı özkayda yansır.</li>"
                   f"<li><b>Vergi:</b> BIST hisse satış kazancında stopaj %0; yıllık beyan sınırını aşan kazanç beyan edilir.</li></ul></div>"
