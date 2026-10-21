@@ -2,23 +2,17 @@
   "baslangic": "2026-09-25",
   "braket_versiyonu": 2,
   "bugun_alinan": [],
-  "bugun_satilan": [
-    "TAVHL"
-  ],
-  "bugun_tarih": "2026-10-20",
+  "bugun_satilan": [],
+  "bugun_tarih": "2026-10-21",
   "gerceklesen_kz": -2531.969774999994,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 4,
-  "nakit": 43183.49468807253,
-  "onceki_kapanis_ozkaynak": 97416.23,
+  "kontrol_sayisi": 1,
+  "nakit": 43225.93156755813,
+  "onceki_kapanis_ozkaynak": 97875.02,
   "ozkayit": [
     [
       "2026-09-25",
       100000.0
-    ],
-    [
-      "2026-10-06T16:55",
-      98046.28
     ],
     [
       "2026-10-07T17:04",
@@ -67,6 +61,10 @@
     [
       "2026-10-20T20:23",
       97875.02
+    ],
+    [
+      "2026-10-21T15:44",
+      97864.42
     ]
   ],
   "pozisyonlar": {
@@ -93,41 +91,41 @@
     }
   },
   "rejim": "ayi",
-  "son_bar_tarihi": "2026-10-19",
+  "son_bar_tarihi": "2026-10-21",
   "son_fiyatlar": {
-    "AEFES": 17.69,
-    "AKBNK": 68.3,
-    "ASELS": 342.75,
-    "ASTOR": 165.9,
-    "BIMAS": 385.5,
-    "EKGYO": 19.03,
-    "ENKAI": 77.9,
-    "EREGL": 37.18,
-    "FROTO": 68.45,
-    "GARAN": 134.6,
-    "GUBRF": 373.25,
-    "ISCTR": 13.08,
-    "KCHOL": 208.4,
-    "KRDMD": 42.8,
-    "MGROS": 465.25,
-    "PETKM": 19.6,
-    "PGSUS": 132.0,
-    "SAHOL": 89.2,
-    "SASA": 1.74,
-    "SISE": 36.24,
-    "TAVHL": 286.25,
-    "TCELL": 97.65,
-    "THYAO": 273.5,
-    "TOASO": 237.7,
-    "TRALT": 41.72,
-    "TRMET": 122.6,
-    "TTKOM": 51.2,
-    "TUPRS": 362.0,
-    "VAKBN": 33.2,
-    "YKBNK": 36.66
+    "AEFES": 16.95,
+    "AKBNK": 67.8,
+    "ASELS": 348.0,
+    "ASTOR": 157.5,
+    "BIMAS": 387.0,
+    "EKGYO": 18.57,
+    "ENKAI": 75.55,
+    "EREGL": 36.28,
+    "FROTO": 67.25,
+    "GARAN": 133.3,
+    "GUBRF": 357.25,
+    "ISCTR": 13.0,
+    "KCHOL": 204.5,
+    "KRDMD": 41.96,
+    "MGROS": 457.25,
+    "PETKM": 19.52,
+    "PGSUS": 129.9,
+    "SAHOL": 89.1,
+    "SASA": 1.68,
+    "SISE": 35.5,
+    "TAVHL": 284.25,
+    "TCELL": 95.45,
+    "THYAO": 268.25,
+    "TOASO": 232.9,
+    "TRALT": 40.58,
+    "TRMET": 119.0,
+    "TTKOM": 49.96,
+    "TUPRS": 358.25,
+    "VAKBN": 32.92,
+    "YKBNK": 36.46
   },
-  "son_repo_tarihi": "2026-10-20",
+  "son_repo_tarihi": "2026-10-21",
   "toplam_kesinti": 373.58,
-  "toplam_repo_kazanci": 153.03,
+  "toplam_repo_kazanci": 195.47,
   "versiyon": 1
 }
