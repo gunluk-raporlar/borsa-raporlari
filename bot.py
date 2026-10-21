@@ -69,6 +69,7 @@ OR_MODELS = [m.strip() for m in os.environ.get("OR_MODELS", "").split(",") if m.
 # Dorduncu saglayici: NVIDIA NIM (build.nvidia.com) — bircok model ucretsiz
 # kredili; OpenAI uyumlu. Anahtar: https://build.nvidia.com/settings/api-keys
 NVID_API_KEY = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NIM_API_KEY", "")
+NVID2_API_KEY = os.environ.get("NVIDIA2_API_KEY", "")
 NVID_BASE_URL = os.environ.get("NVID_BASE_URL", "https://integrate.api.nvidia.com/v1")
 NVID_MODELS = [m.strip() for m in os.environ.get("NVID_MODELS", "").split(",") if m.strip()]
 
@@ -80,12 +81,13 @@ ZAI_API_KEY = os.environ.get("ZAI_API_KEY", "")
 # 2026-09'dan beri secrets'ta duruyordu ama hictir baglanmamisti (2026-10-02
 # yoklama: anahtar gecerli). Ucretsiz katman cogunlukla yalnizca OpenCode
 # uygulamasinin icinden kullanilabilir ("FreeTierError: can only be used
-# from within OpenCode"); ham API'den TEK calisan ucretsiz model
-# space-bunny-free (canli test: OK, 2.6 sn). Not: CF bot korumasi
-# python-urllib UA'sini 1010 ile banliyor; istemci opencode/1.0 UA
-# gondermeli. Ucretli modeller bakiye harcadigindan havuzda YOK.
+# from within OpenCode"). Not: CF bot korumasi python-urllib UA'sini 1010 ile
+# banliyor; istemci opencode/1.0 UA gondermeli. Ucretli modeller bakiye
+# harcadigindan havuzda YOK. 2026-10-21: space-bunny-free 410 Gone ile
+# KALDIRILDI (API'nin onerdigi yerine gecildi); minimax-m3.1-flash-free ham
+# API'den dogrulanmadi — 403/410 donerse zincir siradaki saglayiciya gecer.
 OPENCODE_API_KEY = os.environ.get("OPENCODE_API_KEY", "")
-OPENCODE_MODELS = [m.strip() for m in os.environ.get("OPENCODE_MODELS", "space-bunny-free").split(",") if m.strip()]
+OPENCODE_MODELS = [m.strip() for m in os.environ.get("OPENCODE_MODELS", "minimax-m3.1-flash-free").split(",") if m.strip()]
 
 # Yedinci saglayici: Ollama Cloud (ollama.com/v1, OpenAI-uyumlu) — anahtar
 # 2026-09'dan beri secrets'ta duruyordu; 2026-10-02 canli yoklamada ucretsiz
@@ -256,6 +258,15 @@ nvid_client = OpenAI(
     timeout=_LLM_TIMEOUT,
     max_retries=0,
 ) if NVID_API_KEY else None
+
+# Ikinci NVIDIA anahtari (2026-10-21): i18n hattindakiyle ayni NIM ucunda
+# ikinci kota; derin analiz zinciri "NVID2" etiketiyle one aliyor.
+nvid2_client = OpenAI(
+    api_key=NVID2_API_KEY,
+    base_url=NVID_BASE_URL,
+    timeout=_LLM_TIMEOUT,
+    max_retries=0,
+) if NVID2_API_KEY else None
 
 zai_client = OpenAI(
     api_key=ZAI_API_KEY,
@@ -1139,6 +1150,7 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
         "ZAI": (zai_client, ZAI_MODEL_TERCIH),
         "DISC": (disc_client, DISC_MODEL_TERCIH),
         "NVID": (nvid_client, _havuz_modelleri(nvid_client, NVID_MODELS, NVID_MODEL_TERCIH, "NVIDIA") if nvid_client else NVID_MODELS),
+        "NVID2": (nvid2_client, _havuz_modelleri(nvid2_client, NVID_MODELS, NVID_MODEL_TERCIH, "NVIDIA2") if nvid2_client else NVID_MODELS),
         "YEDEK": (alt_client, _havuz_modelleri(alt_client, ALT_MODELS, GROQ_MODEL_TERCIH, "Groq") if alt_client else ALT_MODELS),
         "OR": (or_client, _havuz_modelleri(or_client, OR_MODELS, OR_MODEL_TERCIH, "OpenRouter",
                                            suzgec=lambda m: m.endswith(":free") and "small" not in m) if or_client else OR_MODELS),
@@ -3219,10 +3231,11 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
 {rapor_state.get('final_report', '')[:6000]}"""
 
     son_hata = None
-    # 1) AMD ana saglayici (DeepSeek-V4-Flash) + havuz fallback'leri; rate-limit
-    #    durumunda llm_call icindeki saglayici/model rotasyonu + Z.ai yedegi devrede.
+    # 1) Havuz cagrisi: derin_analiz.py enjeksiyonlu zincir (NVID->NVID2->ZAI->
+    #    AMD->...->OR); sirasi verilmeden cagrilan diger akislar bot'un
+    #    varsayilan sirasini kullanir.
     try:
-        logger.info("[Derin Analiz] AMD cagrisi (llm_call)")
+        logger.info("[Derin Analiz] havuz cagrisi (llm_call)")
         icerik = llm_call(prompt, dogrulama=lambda m: _derin_eksik_mi(m) is None)
         # llm_call denemeler tukendiginde fallback metni doner; bunu "icerik"
         # sanip sayfaya yazmamak icin basarisizlik sayip GLM yedegine dus.

@@ -63,9 +63,6 @@ jobs:
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
           AMD_MODEL: "DeepSeek-V4-Flash"
-          # Gizli kalite-yargıcı (kalite_yargic.py) geçmişini private ops
-          # deposundan çeker/iter; token yoksa tekil modda çalışır.
-          OPS_REPO_TOKEN: ${{ secrets.OPS_REPO_TOKEN }}
           GOOGLE_SITE_DOGRULAMA: ${{ secrets.GOOGLE_SITE_DOGRULAMA }}
           BING_SITE_DOGRULAMA: ${{ secrets.BING_SITE_DOGRULAMA }}
           BAIDU_SITE_DOGRULAMA: ${{ secrets.BAIDU_SITE_DOGRULAMA }}

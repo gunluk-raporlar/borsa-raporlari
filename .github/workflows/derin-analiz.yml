@@ -64,10 +64,12 @@ jobs:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          # Birincil saglayici AMD DeepSeek-V4-Flash; GLM yedek
+          # Birincil saglayici NVIDIA (iki anahtar); GLM/AMD yedek.
+          # DISCOVERY_API_KEY 2026-10-21'te derin analizden cikarildi
+          # (kota 429'lari zincirin ilk denemesini bosa yiyordu).
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
-          DISCOVERY_API_KEY: ${{ secrets.DISCOVERY_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          NVIDIA2_API_KEY: ${{ secrets.NVIDIA2_API_KEY }}
           # Son-care rotasyonu icin (2026-09-30: NVID havuzu bos taikarken
           # OR/Groq'a gecilemiyordu)
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -79,9 +81,6 @@ jobs:
           BAIDU_SITE_DOGRULAMA: ${{ secrets.BAIDU_SITE_DOGRULAMA }}
           YANDEX_SITE_DOGRULAMA: ${{ secrets.YANDEX_SITE_DOGRULAMA }}
           ZAI_MODEL: ${{ vars.ZAI_MODEL }}
-          # Gizli kalite-yargıcı (kalite_yargic.py) geçmişini private ops
-          # deposundan çeker/iter; token yoksa tekil modda çalışır.
-          OPS_REPO_TOKEN: ${{ secrets.OPS_REPO_TOKEN }}
         if: steps.kapisi.outputs.uretim != 'false'
         run: python -u derin_analiz.py
       - name: Degisiklikleri yayinla

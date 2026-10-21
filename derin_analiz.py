@@ -9,6 +9,22 @@ import os
 
 os.environ.setdefault("AMD_API_KEY", "derin-analiz")
 
+# --- DERIN ANALIZE OZEL SAGLAYICI AYARLARI (2026-10-21 kullanici kararlari) ---
+# Bot.py'ye dokunmadan, import oncesi env ile etkin kilinir (bot bu env'leri
+# import aninda okur). Yalnizca bu betigin kosularini etkiler.
+# Discovery (DISC) derin analizden TAMAMEN CIKARILDI: kota 429'lari zincirin
+# ilk denemesini her kosuda bosa yiyordu. Anahtar env'den dusurulur — bot DISC
+# istemcisini hic kurmaz, derin_analiz_yap'in dogrudan yolu da Z.ai'a duser.
+os.environ.pop("DISCOVERY_API_KEY", None)
+# NVIDIA havuzu yalnizca kullanici secimi iki model: 3 ultra ONCE (13.10'daki
+# "ultra once" karar precedansiyla), sonra 3.5 super vl. glm-5.3 /
+# nemotron-3-super-120b / kimi-k3/k2.6 "calismiyor" — cikarildi.
+os.environ["NVID_MODELS"] = (
+    "nvidia/nemotron-3-ultra-550b-a55b,"        # build.nvidia.com katalog kimligi
+    "nvidia/nemotron-3.5-super-vl-120b-a12b,"   # 120b tam kimlik
+    "nvidia/nemotron-3.5-super-vl"              # yedek kimlik (yanlis olan 404 ile atlanir)
+)
+
 import json
 import logging
 import sys
@@ -16,6 +32,25 @@ from datetime import datetime
 import zoneinfo
 
 import bot
+
+# --- DERIN ANALIZ SIRASI (2026-10-21 kullanici kararlari) ---
+# Agirlikli NVIDIA: NVID (1. anahtar) + NVID2 (2. anahtar, bot.py'ye
+# eklendi) ONE — calisan modeller bunlar; sonra ZAI (yenilenen anahtar),
+# AMD ve ucretsiz arka saglayicilar. OR (OpenRouter) EN SONA: gunluk
+# ucretsiz istek limiti (~50) gunduz doluyor, son care. DISC yok. OR model
+# listesi (nemotron ailesi + inkling:free) bot.py OR_MODEL_TERCIH'te.
+# max_deneme 9: 9 kuyrugun tamami siraya girebilsin. Enjeksiyon yalnizca bu
+# betigin llm_call cagrilari icin gecerli; diger akislar bot'un varsayilan
+# sirasini korur.
+_orijinal_llm_call = bot.llm_call
+
+def _derin_llm_call(prompt, **kwargs):
+    kwargs.setdefault("sirasi", ("NVID", "NVID2", "ZAI", "AMD", "OPENCODE",
+                                 "OLLAMA", "GEMINI", "YEDEK", "OR"))
+    kwargs.setdefault("max_deneme", 9)
+    return _orijinal_llm_call(prompt, **kwargs)
+
+bot.llm_call = _derin_llm_call
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 logger = logging.getLogger("derin-analiz")
@@ -91,14 +126,6 @@ def main():
         bot.indexnow_ping(["derin-analiz.html", "raporlar.html", "index.html"])
     except Exception:
         logger.exception("IndexNow ping atlanamadi (sorun degil).")
-    # 2026-10-19 GIZLI kalite-yargıcı (arka plan): rubrik puanı kalite/ altına
-    # yazılır (gitignore + private ops deposu; build.sh kopya setinde yok —
-    # siteye/repoya çıkmaz). Defter kaydından SONRA koşulur; fail-open.
-    try:
-        import kalite_yargic
-        kalite_yargic.degerlendir("derin", date_str, analiz)
-    except Exception:
-        logger.exception("[Kalite] yargıcı koşamadı; üretime/siteye etkisi yok.")
     print(f"DERIN ANALIZ SAYFA URETILDI: {date_str} | {len(analiz)} karakter", flush=True)
 
 

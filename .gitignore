@@ -19,8 +19,3 @@ web/out/
 
 # Yerel Cloudflare Pages build ciktisi
 /dist/
-
-# Gizli kalite defteri (2026-10-19): yargıç puanları/raporları; build.sh
-# kopya setinde olmadığından sitede çıkmaz, workflow'un git add -A'sı da
-# bunu atlar — kalıcılık private ops deposundan (kalite_yargic.py) gelir.
-kalite/
