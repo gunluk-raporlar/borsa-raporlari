@@ -1102,6 +1102,36 @@ OZEL_ADLAR = ("İş Yatırım", "Yeni Şafak", "Tüpraş", "Doğuş Otomotiv", "
               "Şimşek", "Türkiye Varlık Fonu")
 
 
+# Kimlik-istisnasi kaynak kalibi: yalnizca ASCII-Latin harf/rakam + teknik isaretler.
+KIMLIK_KAYNAK_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 .,%()&/+\-–—:%·•]*$")
+# Yapisal isaret: icinde rakam ya da teknik ayirac tasiyan kaynaklar (tarih-dosya
+# adlari, gosterge adlari, "Stoch %K" gibi) Turkce cumle degildir.
+KIMLIK_YAPISAL_RE = re.compile(r"[\d()./%:–—-]")
+# Yapisal isaret tasimayan ama aynen kalmasi dogru tek-kelimelik yabanci adlar.
+KIMLIK_ISTISNA = {"english", "deutsch", "stop", "chart", "trend"}
+
+
+def _kimlik_ceviri_gecerli_mi(saf: str) -> bool:
+    """Kaynak kendisi Turkce olmayan kisa teknik/yabanci dizede kimlik ceviri gecerli mi?
+
+    Kural (2026-10-21): ASCII-Latin disinda hicbir harf yok (Turkce ozel karakter
+    YOK), uzunluk <= 64, ve ya (a) icinde rakam/teknik isaret var, ya (b) tek
+    kelime ve bilinen istisna listesinde. Turkce cumleler bu kaliba giremez
+    (uzunluk + Turkce karakter + kural yapisi); bu yuzden zehir-guardi'nin
+    asil hedefi olan tembel eko'yu korumaya devam eder.
+    """
+    s = (saf or "").strip()
+    if not s or len(s) > 64:
+        return False
+    if not KIMLIK_KAYNAK_RE.match(s):
+        return False
+    if TURKCE_OZEL_RE.search(s):
+        return False
+    if KIMLIK_YAPISAL_RE.search(s):
+        return True
+    return len(s.split()) == 1 and s.lower() in KIMLIK_ISTISNA
+
+
 def ceviri_gecerli_mi(saf: str, cev: str) -> bool:
     """Onbellek/elle/saglayici ciktisinin sahte-ceviri olup olmadigini ayirt eder.
 
@@ -1114,12 +1144,20 @@ def ceviri_gecerli_mi(saf: str, cev: str) -> bool:
     varsa ceviri turkce kalmis demektir -> red. Ek olarak ard arda >= 8 token'i tamamen
     kaynakta olan koşu varsa cikti kaynagin eko'sudur -> red (zehir guardi'nin asil
     hedefi: onbellege sizan birebir kaynak).
-    Kimlik ceviri (kaynakla birebir ayni) HER uzunlukta gecersizdir."""
+    Kimlik ceviri (kaynakla birebir ayni): 2026-10-21'e kadar HER kosulda gecersizdi.
+    Ama kaynagin kendisi Turkce olmayan kisa teknik/yabanci dizeyse kimlik GECERLI
+    ceviridir ("English", "CCI (Commodity Channel Index)", "Stoch %K",
+    "2026-09-09-derin-analiz") — yoksa bu segmentler her kosuda yeniden cevrilip
+    reddediliyor, onbellege yazilamiyor ve kuyruktan HIC dusmuyordu (tam-site
+    yoklamasi: 7.387 segment×dil bu capta; kullanicinin elle teslimi de bu yuzden
+    her kosuda yeniden deniyordu). Istisna _kimlik_ceviri_gecerli_mi'de."""
     if not isinstance(cev, str):
         return False
     v = cev.strip().strip(ALINTI_KARAKTERLERI).strip()
-    if not v or v == saf.strip():
+    if not v:
         return False
+    if v == saf.strip():
+        return _kimlik_ceviri_gecerli_mi(saf)
     v_kelimeler_ory = re.findall(r"[^\W\d_]+(?:[‘’\-][^\W\d_]+)*", v, re.UNICODE)
     v_kelimeler = [w.lower() for w in v_kelimeler_ory]
     s_kelimeler = {w.lower() for w in
