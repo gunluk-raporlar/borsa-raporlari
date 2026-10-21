@@ -23,7 +23,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # 2026-10-21: Node 20 Nisan 2026'da EOL oldu (yama almıyor); GitHub
+          # Actions koşucuları da Node20'yi 23.09.2026'da tamamen kaldırdı.
+          # Node 24 = mevcut LTS + GitHub'ın yeni koşucu çalışma zamanı.
+          node-version: '24'
           cache: npm
           cache-dependency-path: web/package-lock.json
 
