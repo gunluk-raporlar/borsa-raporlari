@@ -24,7 +24,6 @@ Katmanlar: VERI -> STRATEJI -> RISK -> OMS -> MUHASEBE -> DASHBOARD (asagida ayr
 import json
 import logging
 import math
-import hashlib
 import os
 import time
 import urllib.request
@@ -886,7 +885,9 @@ _DIL_BLOK_STIL = (
 
 def _dil_blok_html():
     """Dil secici: ad eslemeli (en/trading-robot) ve varlik kontrollu — hedef dosya
-    yoksa dil ana sayfasina duser; 404 baglantisi uretmez (18.10 kullanici talebi)."""
+    yoksa dil ana sayfasina duser; 404 baglantisi uretmez (18.10 kullanici talebi).
+    TR baglantisi BU SAYFAYI gosterir (22.10 kullanici bildirimi: diger dilden
+    Turkce'ye gecis ana sayfaya atiyordu)."""
     parca = [_DIL_BLOK_STIL, '<nav class="dil-linkler" aria-label="Sayfa dili seçin">',
              '<span aria-hidden="true">🌐</span>']
     for d, hreflang, ad in (("tr", "tr", "Türkçe"), ("en", "en", "English"),
@@ -894,7 +895,7 @@ def _dil_blok_html():
                             ("zh", "zh-Hans", "简体中文")):
         aktif = ' class="aktif" aria-current="true"' if d == "tr" else ""
         if d == "tr":
-            yol = ""
+            yol = "robot"
         else:
             hedef = slug_degistir("robot", d)
             if not os.path.exists(f"{d}/{hedef}.html"):
