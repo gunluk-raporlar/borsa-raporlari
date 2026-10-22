@@ -11,6 +11,8 @@ a { color:var(--accent); }
 .topbar .brand { color:#fff; text-decoration:none; font-weight:700; font-size:18px; }
 .topbar nav a { color:#cbd5e1; text-decoration:none; margin-left:20px; font-size:14px; }
 .topbar nav a:hover, .topbar nav a.active { color:#fff; }
+/* 2026-10-22 (kullanici karari): iki yan bosluk esit — simetrik kaydirma cubugu payi. */
+html { scrollbar-gutter: stable both-edges; }
 /* 2026-10-22 (kullanici karari): menu soldan baslar; ilk oge markayla tam hizada
    (varsayilan 20px margin-left ilk ogreye uygulanmaz). */
 .topbar nav a:first-child { margin-left:0; }

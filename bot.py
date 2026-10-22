@@ -4006,6 +4006,11 @@ a { color:var(--accent); }
 .topbar .brand { color:#fff; text-decoration:none; font-weight:700; font-size:18px; }
 .topbar nav a { color:#cbd5e1; text-decoration:none; margin-left:20px; font-size:14px; }
 .topbar nav a:hover, .topbar nav a.active { color:#fff; }
+/* 2026-10-22 (kullanici karari): iki yan bosluk ESIT olsun — kaydirma cubugu
+   sagda ~17px kapladigi icin icerik soldan kayiyordu (olcum: sol 412 / sag 428).
+   scrollbar-gutter iki tarafa da simetrik pay ayirir; tum ortalanmis icerik
+   (.wrap, .topbar .inner, kartlar) bu hizaya oturur. */
+html { scrollbar-gutter: stable both-edges; }
 /* 2026-10-22 (kullanici karari): menu soldan baslar; ilk oge markayla tam hizada. */
 .topbar nav a:first-child { margin-left:0; }
 .wrap { max-width:1080px; margin:0 auto; padding:32px 20px 48px; }
