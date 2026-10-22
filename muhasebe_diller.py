@@ -296,10 +296,9 @@ def slug(s):
 
 
 def css_surumu():
-    try:
-        return hashlib.sha1(open("style.css", "rb").read()).hexdigest()[:8]
-    except OSError:
-        return "0"
+    # TEK KAYNAK site_css.py — bot.py/robot.py ile ayni sabitten hash.
+    from site_css import CSS_SURUM
+    return CSS_SURUM
 
 
 DIL_STIL = ("<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;"

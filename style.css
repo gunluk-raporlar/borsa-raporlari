@@ -11,7 +11,10 @@ a { color:var(--accent); }
 .topbar .brand { color:#fff; text-decoration:none; font-weight:700; font-size:18px; }
 .topbar nav a { color:#cbd5e1; text-decoration:none; font-size:14px; }
 .topbar nav a:hover, .topbar nav a.active { color:#fff; }
-/* 2026-10-22 (kullanici karari): iki yan bosluk esit — simetrik kaydirma cubugu payi. */
+/* 2026-10-22 (kullanici karari): iki yan bosluk ESIT olsun — kaydirma cubugu
+   sagda ~17px kapladigi icin icerik soldan kayiyordu (olcum: sol 412 / sag 428).
+   scrollbar-gutter iki tarafa da simetrik pay ayirir; tum ortalanmis icerik
+   (.wrap, .topbar .inner, kartlar) bu hizaya oturur. */
 html { scrollbar-gutter: stable both-edges; }
 /* 2026-10-22 (kullanici karari): menu soldan baslar; ogeler normal boslukla
    yan yana akar, dolan satir yeniden SOL KENARDAN baslar — satirlar araya
@@ -139,6 +142,7 @@ body { overflow-x: hidden; }
 @media (max-width: 640px) {
   .topbar .inner { padding: 10px 12px; }
   .topbar nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
+  .topbar nav a { white-space: normal; }
   .topbar nav a { margin-left: 0; font-size: 13px; padding: 4px 0; }
 }
 

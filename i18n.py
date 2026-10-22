@@ -109,6 +109,11 @@ SOZLUK = {
     "Hafta Sonu": {"en": "Weekend", "de": "Wochenende", "ru": "Выходные", "zh": "周末"},
     "Borsa Okulu": {"en": "Market School", "de": "Börsenschule", "ru": "Школа рынка", "zh": "股市学堂"},
     "Takvim": {"en": "Calendar", "de": "Kalender", "ru": "Календарь", "zh": "日历"},
+    # KALICI KATMAN (2026-10-22 kullanici karari): menu/altbar etiketleri dahil
+    # degismeyecek UI kelimeleri burada yasir — LLM/önbellegi beklemez, degismez.
+    "Ana Sayfa": {"en": "Home Page", "de": "Startseite", "ru": "Главная страница", "zh": "首页"},
+    "📅 Takvim": {"en": "📅 Calendar", "de": "📅 Kalender", "ru": "📅 Календарь", "zh": "📅 日历"},
+    "Robot": {"en": "Robot", "de": "Robot", "ru": "Робот", "zh": "机器人"},
     "Sözlük": {"en": "Glossary", "de": "Glossar", "ru": "Глоссарий", "zh": "词典"},
     "Terimler": {"en": "Terms", "de": "Begriffe", "ru": "Термины", "zh": "术语"},
     "Muhasebe": {"en": "Accounting", "de": "Rechnungswesen", "ru": "Бухучёт", "zh": "会计"},

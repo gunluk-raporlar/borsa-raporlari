@@ -111,6 +111,22 @@ _SLUG_ESLEME = {
     "zh": ZH_SLUG_ESLEME,
 }
 
+# "UZUNLUGA GORE TERSTEN SIRALI" sarti sozde degil, koda bagli (2026-10-22
+# architect onerisi): uzun eski once islenir, kisa eski icine giremez.
+for _tablo in (EN_SLUG_ESLEME, DE_SLUG_ESLEME, RU_SLUG_ESLEME, ZH_SLUG_ESLEME):
+    _tablo.sort(key=lambda cift: len(cift[0]), reverse=True)
+
+# KALICI KATMAN (2026-10-22 kullanici karari): tablolardaki hedef slug'lar
+# (trading-robot, torgovyy-robot, handelsroboter...) yerlesmistir; HICBIR dil
+# gecisi, baska bir dilin yerlestirdigi slug'in eski parcasina bir daha
+# dokunamaz. Boylece zincirleme gecis (orn. once en sonra de) "trading-
+# handelsroboter" tarzi bozuk adres uretmez — kalici adlar degismez.
+_ON_EKLER = {}
+for _tablo in _SLUG_ESLEME.values():
+    for _eski, _yeni in _tablo:
+        if _yeni.endswith(_eski):
+            _ON_EKLER.setdefault(_eski, set()).add(_yeni[:-len(_eski)])
+
 SLUG_DILLER = tuple(_SLUG_ESLEME)
 
 # Hizli eleme desenleri (i18n dosya taramasi "bu dosyada esleme var mi?" icin)
@@ -125,19 +141,19 @@ def slug_degistir(deger, dil):
 
     Guvenlik katmanlari: kelime siniri (borsa-raporlari domain'i, 'raporlari' gibi
     ek almış sozcukler), Turkce harfle devam, dil oneki — BASKA bir dil agacina
-    giden yol (/en/ /de/ /ru/ /zh/, kendisi haric) dokunulmaz — ve IDEMPOTANSI —
-    hedef slug eski slug'i iceriyorsa (robot -> trading-robot) zaten eslenmis
-    deger yeniden eslenmez (en/sitemap.xml'deki trading-trading-robot hatasinin
-    kokeni buydu)."""
+    giden yol (/en/ /de/ /ru/ /zh/, kendisi haric) dokunulmaz — IDEMPOTANSI —
+    hedef slug eski slug'i iceriyorsa zaten eslenmis deger yeniden eslenmez —
+    ve KALICI KATMAN: herhangi bir dilin hedefi eski slug'la bitiyorsa o onek
+    TUM gecislerde korumadir (trading-robot / torgovyy-robot ... baska dilde
+    robot'a eslenmez)."""
     tablo = _SLUG_ESLEME.get(dil)
     if not tablo or not deger:
         return deger
     # baska dil onekleri altindaki slug'lara dokunma (kendi onekimiz serbest)
     koruma = "".join(f"(?<!/{x}/)" for x in SLUG_DILLER if x != dil)
     for eski, yeni in tablo:
-        on_ek = yeni[:-len(eski)] if yeni.endswith(eski) else ""
         desen = r"(?<![a-z0-9])" + koruma
-        if on_ek:
+        for on_ek in sorted(_ON_EKLER.get(eski, ())):
             desen += "(?<!" + re.escape(on_ek) + ")"
         deger = re.sub(desen + re.escape(eski) + r"(?![a-z0-9çğıöşü])", yeni, deger)
     return deger
