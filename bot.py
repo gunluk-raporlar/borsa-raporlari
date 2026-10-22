@@ -4005,6 +4005,9 @@ a { color:var(--accent); }
 .topbar .brand { color:#fff; text-decoration:none; font-weight:700; font-size:18px; }
 .topbar nav a { color:#cbd5e1; text-decoration:none; margin-left:20px; font-size:14px; }
 .topbar nav a:hover, .topbar nav a.active { color:#fff; }
+/* 2026-10-22: uzun dil etiketlerinde (Rechnungslegungsbegriffe vb.) menu birkac
+   satira kiriliyor; kirilan satirlar sola yigilmasin diye satirlar ortalanir. */
+.topbar nav { text-align:center; }
 .wrap { max-width:1080px; margin:0 auto; padding:32px 20px 48px; }
 .hero { margin-bottom:26px; }
 .hero h1 { margin:0 0 6px; font-size:27px; }

@@ -904,7 +904,9 @@ def _dil_blok_html():
     return "".join(parca)
 
 
-_SITE_NAV = """<nav><a href="index.html">Ana Sayfa</a><a href="raporlar.html">Raporlar</a><a href="hisse/index.html">Hisseler</a><a href="derin-analiz.html">Derin Analiz</a><a href="makro-analiz.html">Makro Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="sinyal-karnesi.html">Sinyal Karnesi</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="haberler.html">Haberler</a><a href="sirket-haberleri.html">Şirket Haberleri</a><a href="portfolio.html">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu</a><a href="haftasonu-egitimi.html">Borsa Okulu</a><a href="takvim.html">📅 Takvim</a><a href="sozluk.html">Sözlük</a><a href="terimler.html">Terimler</a><a href="muhasebe-terimleri.html">Muhasebe Terimleri</a><a href="robot.html" class="active">İşlem Robotu</a></nav>""" + _dil_blok_html()
+_SITE_NAV = """<nav><a href="index.html">Ana Sayfa</a><a href="raporlar.html">Raporlar</a><a href="hisse/index.html">Hisseler</a><a href="derin-analiz.html">Derin Analiz</a><a href="makro-analiz.html">Makro Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="sinyal-karnesi.html">Sinyal Karnesi</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="haberler.html">Haberler</a><a href="sirket-haberleri.html">Şirket Haberleri</a><a href="portfolio.html">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu</a><a href="haftasonu-egitimi.html">Borsa Okulu</a><a href="takvim.html">📅 Takvim</a><a href="sozluk.html">Sözlük</a><a href="terimler.html">Terimler</a><a href="muhasebe-terimleri.html">Muhasebe Terimleri</a><a href="robot.html" class="active">İşlem Robotu</a></nav>"""
+# 2026-10-22: dil secici menunun arkasina DEGIL, asagidaki site-widgets satirina
+# tasinir — tum diger sayfalardaki gibi saat/hava solunda, secici sagda durur.
 
 _SITE_ALTBAR = """<nav class="altbar" aria-label="Hızlı menü">
 <a href="index.html"><span class="i" aria-hidden="true">📊</span>Raporlar</a>
@@ -922,6 +924,7 @@ _SITE_SAAT = """    <!-- Üst Widget Alanı (Canlı Saat ve İstanbul Hava Durum
             <span id="current-date-time">⏳ Yükleniyor...</span>
             <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
         </div>
+""" + _dil_blok_html() + """
     </div>
 <script>
     function updateClock() {
