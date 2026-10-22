@@ -13,8 +13,12 @@ a { color:var(--accent); }
 .topbar nav a:hover, .topbar nav a.active { color:#fff; }
 /* 2026-10-22 (kullanici karari): iki yan bosluk esit — simetrik kaydirma cubugu payi. */
 html { scrollbar-gutter: stable both-edges; }
-/* 2026-10-22 (kullanici karari): menu soldan baslar; ilk oge markayla tam hizada
-   (varsayilan 20px margin-left ilk ogreye uygulanmaz). */
+/* 2026-10-22 (kullanici karari): menu soldan baslar, sag kenara KADAR UZAR —
+   her satir iki kenar arasini doldurur (bos sag alan kalmez); ogeler parca
+   parca kirilmaz (emoji/kelime ortasindan satir atlamaz). */
+.topbar nav { display:flex; flex-wrap:wrap; justify-content:space-between;
+              align-items:center; row-gap:4px; }
+.topbar nav a { white-space:nowrap; }
 .topbar nav a:first-child { margin-left:0; }
 .wrap { max-width:1080px; margin:0 auto; padding:32px 20px 48px; }
 .hero { margin-bottom:26px; }

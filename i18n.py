@@ -109,7 +109,7 @@ SOZLUK = {
     "Hafta Sonu": {"en": "Weekend", "de": "Wochenende", "ru": "Выходные", "zh": "周末"},
     "Borsa Okulu": {"en": "Market School", "de": "Börsenschule", "ru": "Школа рынка", "zh": "股市学堂"},
     "Takvim": {"en": "Calendar", "de": "Kalender", "ru": "Календарь", "zh": "日历"},
-    "Sözlük": {"en": "Glossary", "de": "Glossar", "ru": "Глоссарий", "zh": "术语表"},
+    "Sözlük": {"en": "Glossary", "de": "Glossar", "ru": "Глоссарий", "zh": "词典"},
     "Terimler": {"en": "Terms", "de": "Begriffe", "ru": "Термины", "zh": "术语"},
     "Muhasebe": {"en": "Accounting", "de": "Rechnungswesen", "ru": "Бухучёт", "zh": "会计"},
     "Muhasebe Terimleri": {"en": "Accounting Terms", "de": "Rechnungslegungsbegriffe",

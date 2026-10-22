@@ -4011,7 +4011,12 @@ a { color:var(--accent); }
    scrollbar-gutter iki tarafa da simetrik pay ayirir; tum ortalanmis icerik
    (.wrap, .topbar .inner, kartlar) bu hizaya oturur. */
 html { scrollbar-gutter: stable both-edges; }
-/* 2026-10-22 (kullanici karari): menu soldan baslar; ilk oge markayla tam hizada. */
+/* 2026-10-22 (kullanici karari): menu soldan baslar, sag kenara KADAR UZAR —
+   her satir iki kenar arasini doldurur (bos sag alan kalmez); ogeler parca
+   parca kirilmaz (emoji/kelime ortasindan satir atlamaz). */
+.topbar nav { display:flex; flex-wrap:wrap; justify-content:space-between;
+              align-items:center; row-gap:4px; }
+.topbar nav a { white-space:nowrap; }
 .topbar nav a:first-child { margin-left:0; }
 .wrap { max-width:1080px; margin:0 auto; padding:32px 20px 48px; }
 .hero { margin-bottom:26px; }
@@ -4134,6 +4139,7 @@ body { overflow-x: hidden; }
 @media (max-width: 640px) {
   .topbar .inner { padding: 10px 12px; }
   .topbar nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
+  .topbar nav a { white-space: normal; }
   .topbar nav a { margin-left: 0; font-size: 13px; padding: 4px 0; }
 }
 
