@@ -27,9 +27,9 @@
 /reports  /raporlar.html  301
 /raporlar/  /raporlar.html  301
 /reports/*  /raporlar/:splat  301
-/de/reports/*  /de/raporlar/:splat  301
-/ru/reports/*  /ru/raporlar/:splat  301
-/zh/reports/*  /zh/raporlar/:splat  301
+/de/reports/*  /de/berichte/:splat  301
+/ru/reports/*  /ru/otchety/:splat  301
+/zh/reports/*  /zh/baogao/:splat  301
 /en/raporlar.html  /en/reports.html  301
 /en/raporlar/  /en/reports.html  301
 /en/raporlar  /en/reports.html  301
@@ -76,9 +76,9 @@
 # Rapor sayfalarinin altbilgisindeki goreceli gizlilik.html baglantisi, sayfa
 # .html'siz guzel URL'den sunulunca /raporlar/gizlilik.html diye taraniyor (GSC 404).
 /raporlar/gizlilik.html  /gizlilik.html  301
-/de/raporlar/gizlilik.html  /de/gizlilik.html  301
-/ru/raporlar/gizlilik.html  /ru/gizlilik.html  301
-/zh/raporlar/gizlilik.html  /zh/gizlilik.html  301
+/de/berichte/gizlilik.html  /de/datenschutz.html  301
+/ru/otchety/gizlilik.html  /ru/konfidencialnost.html  301
+/zh/baogao/gizlilik.html  /zh/yinsi.html  301
 /en/reports/privacy.html  /en/privacy.html  301
 
 # 10 Ekim 2026 (Cumartesi) derin analizi hatala yayinlandi ve kaldirildi (2026-10-11);

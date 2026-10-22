@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSTKF — 股票分析</title>
+<meta name="description" content="DSTKF (金融 (其他)) 最新价格、技术信号、7天新闻和报告档案中的过往评估。">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/zh/gupiao/DSTKF">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/hisse/DSTKF">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/gupiao/DSTKF">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/hisse/DSTKF">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/hisse/DSTKF">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/hisse/DSTKF">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/DSTKF">
+<link rel="icon" href="..//favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="..//favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 每日报告">
+<meta property="og:title" content="DSTKF — 股票分析">
+<meta property="og:description" content="DSTKF (金融 (其他)) 最新价格、技术信号、7天新闻和报告档案中的过往评估。">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/zh/gupiao/DSTKF">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 日报封面图片">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DSTKF — 股票分析">
+<meta name="twitter:description" content="DSTKF (金融 (其他)) 最新价格、技术信号、7天新闻和报告档案中的过往评估。">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<meta name="yandex-verification" content="2c8df12d0b97a734">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "DSTKF — 股票分析", "description": "DSTKF (金融 (其他)) 最新价格、技术信号、7天新闻和报告档案中的过往评估。", "url": "https://borsa-raporlari.pages.dev/zh/gupiao/DSTKF", "inLanguage": "zh", "isPartOf": {"@type": "WebSite", "name": "BIST 30 每日报告", "url": "https://borsa-raporlari.pages.dev/zh/"}}</script>
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="../style.css">
+
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="../index.html">BIST 30 每日报告</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="浅色/深色主题" aria-label="切换主题">🌙</button></div>
+<nav><a href="../index.html">首页</a><a href="../baogao.html">报告</a><a href="../gupiao/index.html" class="active">股票</a><a href="../shendu-fenxi.html">深度分析</a><a href="../hongguan-fenxi.html">宏观分析</a><a href="../jishu-saomiao.html">技术扫描</a><a href="../xinhao-jifenka.html">信号记分卡</a><a href="../borsapy-xinhao.html">Borsapy 信号</a><a href="../xinwen.html">新闻</a><a href="../gongsi-xinwen.html">公司新闻</a><a href="../portfolio.html">模拟投资组合</a><a href="../zhoumo.html">周末</a><a href="../gushi-xuetang.html">股市学堂</a><a href="../rili.html">📅 日历</a><a href="../cidian.html">术语表</a><a href="../shuyu.html">术语</a><a href="../kuaiji-shuyu.html">会计术语</a><a href="../jiaoyi-jiqiren.html">交易机器人</a></nav>
+</div></header>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">正在加载价格…</span></div>
+</div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">价格暂时无法加载，稍后将自动重试。</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
+
+<div class="ticker-bant" id="ticker-bant2" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">市场数据加载中...</span></div>
+</div>
+<script>
+(function() {
+  var kutu = document.getElementById('ticker-bant2');
+  if (!kutu) return;
+  var kok = kutu.dataset.kok || '';
+  var iz = document.getElementById('ticker-iz2');
+
+  function bicim(g) {
+    var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
+    var rozet = (typeof g.d === 'number')
+      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+        Number(g.d).toFixed(2) + '%</span>'
+      : '';
+    var birim = g.b || g.birim || '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (birim ? ' ' + birim : '') + rozet + '</span>';
+  }
+  function ciz(veri) {
+    var ogeler = (veri.gostergeler || []).map(bicim).join('');
+    if (!ogeler) throw new Error('bos');
+    var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
+               (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">市场数据暂时无法加载，稍后将自动重试。</span>';
+      });
+  }
+  yukle('/api/piyasa?t=' + Date.now());
+  setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ 加载中...</span>
+            <span id="istanbul-weather">🌤️ 伊斯坦布尔天气...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="选择页面语言">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/hisse/DSTKF" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/hisse/DSTKF" hreflang="en" lang="en" data-dil="en">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/hisse/DSTKF" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/hisse/DSTKF" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/gupiao/DSTKF" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh" class="aktif" aria-current="true">简体中文</a>
+</nav>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
+
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="搜索股票、主题或日期…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">搜索</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '../';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\?\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\.|mi|mı|icin)\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">无法加载搜索索引。</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+
+
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="播放 / 暂停">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="音量" title="声音">
+  <span class="radyo-linkler"><a href="../guangbo/index.html">📻 全部节目与播客页面</a> <span class="ayrac">•</span> <a href="../guangbo/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">仅供收听 • 虚构的人工智能主播 • 仅供参考，不构成投资建议。</span>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='../';
+  if(!btn||!ses) return;
+  if(ayar){ ses.volume=(parseInt(ayar.value,10)||80)/100; }
+  var hazir=false;
+  function hazirla(geri){
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){return r.json();}).then(function(d){
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){ ses.src=kok+l[0].dosya; }
+      hazir=true; geri();
+    }).catch(function(){ hazir=true; geri(); });
+  }
+  btn.addEventListener('click',function(){
+    if(ses.paused){ hazirla(function(){ var p=ses.play(); if(p&&p.catch){p.catch(function(){});} }); }
+    else { ses.pause(); }
+  });
+  ses.addEventListener('play',function(){ btn.textContent='❚❚'; btn.setAttribute('aria-label','Duraklat'); });
+  ses.addEventListener('pause',function(){ btn.textContent='▶'; btn.setAttribute('aria-label','Oynat'); });
+  if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
+})();
+</script>
+
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>DSTKF <span style="font-size:16px; color:var(--muted)">金融（其他）</span></h1>
+<div class="meta"><span class="badge">强力卖出</span>
+<span><strong>562.50 TL</strong></span>
+<span class="neg">-10.00% (günlük)</span>
+<span class='neg' style='font-weight:700'>-73.1% (2026-09-06'ten beri)</span></div>
+</div>
+<div class="card" style="margin-bottom:16px">
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
+<strong style="font-size:14px">📊 DSTKF 价格图表</strong>
+<span style="color:var(--muted); font-size:12px">过去15天 • 收盘价</span>
+</div>
+<svg viewBox="0 0 520 90" class="chart" role="img" aria-label="DSTKF fiyat grafiği (son 15 gün)" style="max-width:520px"> <polyline fill="none" stroke="#b91c1c" stroke-width="2.5" points="0.0,16.2 37.1,13.4 74.3,10.6 111.4,10.2 148.6,12.6 185.7,8.0 222.9,11.1 260.0,29.6 297.1,37.6 334.3,44.7 371.4,62.0 408.6,62.0 445.7,70.9 482.9,81.2 520.0,84.0" /></svg>
+<div style="color:var(--muted); font-size:12px">自 2026-09-06 至今 DSTKF 收盘价（TL）。并非对比图表。</div>
+</div>
+
+<div class="card" style="margin:0 0 18px">
+<h3 style="margin:0 0 6px">🏢 公司简介</h3>
+<div style="font-weight:700; margin-bottom:4px">Destek Finans Faktoring</div>
+<div class="meta" style="margin:0 0 8px"><span>成立时间：<strong>18.07,1996</strong></span><span>主要股东：<strong>Destek Holding (73.8%)</strong></span><span>实收资本：<strong>333,333,000 TL</strong> (2026/6)</span></div>
+<p style="margin:0; font-size:14px">金融保理。</p>
+
+</div>
+
+<div class="grid-iki">
+<div class="card"><h3 style="margin:0 0 8px">估值和盈利能力</h3><p style="margin:0;color:var(--muted);font-size:13px">未找到资产负债表数据。</p></div>
+<div class="card"><h3 style="margin:0 0 8px">宏观敏感性<span style="font-weight:400;color:var(--muted);font-size:12.5px">· 金融（其他）行业</span></h3><p style="margin:0 0 8px;font-size:13.5px">制度：<strong>yüksek enflasyon + sıkı para politikası (7.27 puan reel faiz) · ılımlı iç talep</strong></p><table style="font-size:13.5px"><tr><td>趋势</td><td><strong class="">中性</strong></td></tr><tr><td>分数</td><td><strong>+0</strong></td></tr><tr><td>渠道</td><td>利率上升，内需上升</td></tr></table><p style="margin:8px 0 0;color:var(--muted);font-size:12px">行业敏感性矩阵 x 当前宏观制度；详情<a href="../hongguan-fenxi.html">宏观经济评估</a>.</p></div>
+</div>
+<div class="grid-iki">
+<div class="card"><h3 style="margin:0 0 8px">技术状况</h3>
+<table style="font-size:13.5px"><tr><td>概览</td><td><strong>强力卖出</strong></td></tr><tr><td>短期趋势（EMA 5-8-13-21）</td><td><strong>卖出</strong></td></tr><tr><td>中期趋势（EMA 34-55）</td><td><strong>卖出</strong></td></tr><tr><td>长期趋势（EMA 89-144）</td><td><strong>BEKLE</strong></td></tr><tr><td>Wave Trend</td><td><strong>卖出</strong></td></tr><tr><td>通道位置</td><td><strong>2%</strong></td></tr><tr><td>趋势强度 (r)</td><td><strong>-0.46</strong></td></tr><tr><td>评分</td><td><strong>0</strong></td></tr></table>
+<p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA 排列 + Wave Trend + 60 日回归通道。详情： <a href="../jishu-saomiao.html">技术扫描</a></p></div>
+<div class="card"><h3 style="margin:0 0 8px">近 7 天新闻</h3>
+<ul style="margin:0; padding-left:18px; font-size:13.5px"><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMi2gFBVV95cUxOYTVaMUQ4bnducmxWcEVfUWtUbG9rMGthWWRBcFh0UFhfNjA1VU1aNVRWYVkzeDdJZVJtMzRmX0JQcHJ3TnE5dTJhRGtPQmNzRmRuM1lRd0J1bm1rdG85d3RkTzhyWDN5Qzh3bmo5Vlhta3J1VDV2RWZLU1pDZlFMLTN0MFc0R0VWUU5zRHZtZzVnbEZVQnpkT2N0OU4zNlYtODVpckVoQTFVSExvazVqRlV3aVptckZhdTFBUWNmdlgxUExObnplRl9aZXYydDlCZjZhY0dtTmJwUQ?oc=5' target='_blank' rel='noopener'>TMSF将使用Destek Finans Faktoring公司99.99%股份相关的合伙人权利</a> <span style='color:var(--muted); font-size:12px'>— aa.com.tr · 01.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiaEFVX3lxTFBnaFRscGh5YTFVd0ZRM0pfdE5tN2VudElwa3o1cEJKZEJwY21wRW1oXzhmcHZ1VHQtX1EtcEtkMWtRdGtiVFJCREpuUzU0UVdneWgxem5OMnVxa1doVUtkalZGTXNETXVS?oc=5' target='_blank' rel='noopener'>Destek Finans Faktoring'de istifa</a> <span style='color:var(--muted); font-size:12px'>— hibya.com · 01.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMirAFBVV95cUxOOXZiZGljYTVGcDhJMEJqWVYwOGpGQ1Z6aXprV1VGSzBtX0I0d2JlSmF6b3QyTENsZmVQa041OS1NZTZPdThSUEttWHlwM3doR0Q1TkhrUVJ3cGdMZWc3U2dpWDh2dXNKaERad3hEMkczanZxa01RRVZ2d1pfbHlTUXhCTEdGTnRPTnEyaFBLdnZZbUdiT3NZMmxGUXlVNDItTThKTEZ0eXN6RmRt?oc=5' target='_blank' rel='noopener'>DSTKF、PASEU和KTLEV被从指数中移除：投资基金面临什么？</a> <span style='color:var(--muted); font-size:12px'>— Economy Headlines · 01.10</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMiwwFBVV95cUxNOW9yMmhWXzhwRzFfR0NEa2NOS0xXVzdDZ1FfMVZsSkJ2QVViWUVjTXhGVzREM25LdkFEZHhfTV9rLVNMT3RtTUdjd1dUQTIwVE1qMjhFQXRfTmhBT1dfaWRCNURRb1FicWJMOUttWUkxYUE5Z3ZmdWZjZ0hLSnd2UWowZWZzU19LMDViRWVESjVRTE5iMm94N0pOemRMWV9IZU1uc2ZxOFhLX0dZbnd1Z3hkSG8zOG1OREI4WDg2SVAtZHM?oc=5' target='_blank' rel='noopener'>KAP *** DESTEK FİNANS FAKTORİNG A.Ş. *** DTBMK,DSTKF *** Özel Durum Açıklaması (Genel)</a> <span style='color:var(--muted); font-size:12px'>— Yeni Şafak · 30.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMirgFBVV95cUxOWnlKem82cHJmN2g2YmVIM014ZWZjcElJbHFRQVdRQXNuVzEyMWowMk5tRFFvV3BOeEhGR2t1VDNTSkJFdzlHM0dJWnAxaWtnRVJwcEdqalhlSGxwS0xaX0c4Ty1tS2ZMV0QtOXpPQXBPTDVxcFNuQ2Ytb1k3akRPM05fZk5MWWhZOHhXQ0JsWTZhWVJFYkY3aUNkUHZXaGtFYVJ0LUR0bFFOTHNVTFE?oc=5' target='_blank' rel='noopener'>KAP *** DESTEK FİNANS FAKTORİNG A.Ş. *** DSTKF *** Kredi Derecelendirmesi</a> <span style='color:var(--muted); font-size:12px'>— GZT · 29.09</span></li><li style='margin:6px 0'><a href='https://news.google.com/rss/articles/CBMivAFBVV95cUxQWHZ4Y1E4OXB3WTI2YUxwci1mLXI5SnRzWmhQbk4yN3JPdFZLUkc2aV82SlZYMjJHRkFEVVdHbVkydFd6Y0t5WlFRYlpkanNLa2p6QXdvQkFzMWdkSXVKSFJCclY1ZV9sNjMzanRYUHdjVWdPRjhuNWV1M2hPb0xQREhvV1ktek1FZUhWRWx5bDlVck82MG5BUnJnWHFndEwtZmllM2hSRU9EaWMwamREdVpwdzdPdjUwSjYwUQ?oc=5' target='_blank' rel='noopener'>[ 即时新闻] Destek Finans Faktoring, (TR) AA-信用评级被暂停</a> <span style='color:var(--muted); font-size:12px'>— Investing.com 土耳其 · 29.09</span></li></ul>
+<p style="margin:8px 0 0; font-size:12.5px"><a href="../gongsi-xinwen.html#H-DSTKF">全部公司新闻 →</a></p></div>
+</div>
+
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 2px">📝 评估 <span style="font-weight:400; color:var(--muted); font-size:12.5px">· 手工编制 · 最后更新：2026.09.23</span></h3>
+<h4 style="margin:12px 0 0; font-size:14.5px">📈 技术分析</h4><p style="margin:6px 0 0; font-size:14px">Destek Finans Faktoring在2026年9月23日内下跌9.95%，跌至1.448.00 TL。短期和中期EMA排列及Wave Trend处于卖出位置；图表处于0/4 强烈卖出水平。60日回报率指向-60.03%的异常剧烈下跌；趋势强度(r)为-0.51，负动能持续。该股票较60日高点3.965.00 TL下跌63%，较1.222.00 TL的低点区域上涨18%；SPK调查和交易禁令决定造成的不确定性主导了定价。</p><h4 style="margin:12px 0 0; font-size:14.5px">🌍 宏观经济评估</h4><p style="margin:6px 0 0; font-size:14px">保理行业是一个受紧缩货币政策造成的信贷空白滋养的领域；土耳其央行的高利率立场支持中小企业转向非银行融资。通胀率降至31.5%及可能的降息将降低该行业的融资成本，但也可能压缩利润率。然而，就DSTKF而言，宏观因素处于次要地位：由于SPK调查、犯罪指控和对主要股东的保全措施，该股票完全以行政/法律风险定价。60天内超过60%的价值下跌反映了这一风险溢价。在此类时期，市场评估的是制裁过程的结果和上市公司结构的可持续性，而非公司的经营表现。调查的结束和不确定性的消除是该股票唯一的明确催化剂；在那之前，波动性和下行风险将继续保持高位。</p><h4 style="margin:12px 0 0; font-size:14.5px">🧾 资产负债表评估</h4><p style="margin:6px 0 0; font-size:14px">由于我们档案中尚未有Destek Finans Faktoring 2026/6季度的详细财务报表数据，目前无法进行健康的乘数分析（P/E、P/B、P/FCF）。根据保理行业的结构，公司的盈利能力高度敏感地依赖于净息差、信贷投资组合的质量和融资成本的变化。高利率环境名义上支持保理收入，但也增加了逾期应收账款比率上升的风险；降息周期可能压低利润率，但可能改善交易量和信贷质量。行业内使用高杠杆是常态，但这种结构增加了对宏观冲击的脆弱性。与公司相关的当前主要风险标题不在财务报表方面，而在法律/监管方面：SPK的犯罪指控、主要股东Onur Kumova被拘留以及实施的交易禁令，大幅提高了公司治理风险溢价。在此类过程中，价格与内在价值之间的联系减弱，流动性条件恶化。当财务报表添加到我们的档案中时，将在此部分发布基于P/E、P/B和资本充足率的全面评估。在当前的不确定性环境下，与其对该股票进行估值，不如跟踪法律进程是更可取的方法。</p>
+<p style="margin:10px 0 0; color:var(--muted); font-size:12px">本部分手工更新；仅供参考，不构成投资建议。</p>
+</div>
+<div class="card" style="margin-top:14px">
+<h3 style="margin:0 0 8px">DSTKF 相关文章</h3>
+<p style="margin:0"><a href="https://borsa-raporlari-web.pages.dev/ara?q=DSTKF" target="_blank" rel="noopener">🔍 语义搜索中所有包含“DSTKF”的报告章节 →</a></p>
+<p style="margin:6px 0 0"><a href="../baogao.html">每日报告归档 →</a></p>
+</div>
+</main>
+
+<nav class="altbar" aria-label="快捷菜单">
+<a href="../index.html"><span class="i" aria-hidden="true">📊</span>报告</a>
+<a href="../jishu-saomiao.html"><span class="i" aria-hidden="true">📈</span>技术</a>
+<a href="../gupiao/index.html" class="active"><span class="i" aria-hidden="true">🏦</span>股票</a>
+<a href="../portfolio.html"><span class="i" aria-hidden="true">💼</span>投资组合</a>
+<a href="../xinwen.html"><span class="i" aria-hidden="true">📰</span>新闻</a>
+<a href="../rili.html"><span class="i" aria-hidden="true">📅</span>日历</a>
+</nav>
+
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+
+<footer class="footer">此处所含的信息、评论和建议仅供参考；不属于投资顾问服务，不构成投资建议。无法保证数据的准确性，因内容而产生的任何决定，责任均由用户自行承担。<br>数据来源：İş Yatırım、RSS 新闻源 • 分析：人工智能（多智能体系统）<br><a href="../yinsi.html" style="color:inherit">隐私与数据保护</a></footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+</body></html>
