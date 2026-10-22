@@ -1,6 +1,6 @@
 {
- "guncelleme": "2026-10-21 22:24",
- "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + EVDS(5) + Resmi AB/ABD(16)",
+ "guncelleme": "2026-10-22 22:13",
+ "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + EVDS(5) + Resmi AB/ABD(25)",
  "gostergeler": [
   {
    "ulke": "Türkiye",
@@ -153,13 +153,13 @@
   {
    "ulke": "Türkiye",
    "ad": "İş Güveni",
-   "deger": 102.0,
+   "deger": 99.8,
    "birim": "puan",
-   "donem": "2026-09-21",
+   "donem": "2026-10-21",
    "tahmin": null,
-   "onceki": 102.8,
+   "onceki": 102.0,
    "kaynak_baslik": "Business Confidence",
-   "kaynak_periyot": "Sep",
+   "kaynak_periyot": "Oct",
    "frekans": "aylık"
   },
   {
@@ -297,13 +297,13 @@
   {
    "ulke": "Türkiye",
    "ad": "Kapasite Kullanım Oranı",
-   "deger": 74.2,
+   "deger": 74.5,
    "birim": "%",
-   "donem": "2026-09-21",
+   "donem": "2026-10-21",
    "tahmin": null,
-   "onceki": 73.5,
+   "onceki": 74.2,
    "kaynak_baslik": "Capacity Utilization",
-   "kaynak_periyot": "Sep",
+   "kaynak_periyot": "Oct",
    "frekans": "aylık"
   },
   {
@@ -353,48 +353,56 @@
    "ad": "PCE Enflasyon (yıllık)",
    "deger": 3.4,
    "birim": "%",
-   "donem": "2026-09-30",
+   "donem": "2026-08-01",
    "tahmin": 3.7,
    "onceki": 3.4,
-   "kaynak_baslik": "PCE Price Index YoY",
-   "kaynak_periyot": "Aug",
-   "frekans": "aylık"
+   "kaynak_baslik": "FRED PCE fiyat endeksi (yıllık)",
+   "kaynak_periyot": "2026-08-01",
+   "frekans": "aylık",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
   },
   {
    "ulke": "ABD",
    "ad": "PCE Enflasyon (aylık)",
    "deger": 0.3,
    "birim": "%",
-   "donem": "2026-09-30",
+   "donem": "2026-08-01",
    "tahmin": 0.4,
    "onceki": 0.1,
-   "kaynak_baslik": "PCE Price Index MoM",
-   "kaynak_periyot": "Aug",
-   "frekans": "aylık"
+   "kaynak_baslik": "FRED PCE fiyat endeksi (aylık)",
+   "kaynak_periyot": "2026-08-01",
+   "frekans": "aylık",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
   },
   {
    "ulke": "ABD",
    "ad": "Çekirdek PCE (yıllık)",
    "deger": 3.0,
    "birim": "%",
-   "donem": "2026-09-30",
+   "donem": "2026-08-01",
    "tahmin": 3.3,
    "onceki": 3.0,
-   "kaynak_baslik": "Core PCE Price Index YoY",
-   "kaynak_periyot": "Aug",
-   "frekans": "aylık"
+   "kaynak_baslik": "FRED çekirdek PCE (yıllık)",
+   "kaynak_periyot": "2026-08-01",
+   "frekans": "aylık",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
   },
   {
    "ulke": "ABD",
    "ad": "Çekirdek PCE (aylık)",
    "deger": 0.2,
    "birim": "%",
-   "donem": "2026-09-30",
+   "donem": "2026-08-01",
    "tahmin": 0.3,
    "onceki": 0.1,
-   "kaynak_baslik": "Core PCE Price Index MoM",
-   "kaynak_periyot": "Aug",
-   "frekans": "aylık"
+   "kaynak_baslik": "FRED çekirdek PCE (aylık)",
+   "kaynak_periyot": "2026-08-01",
+   "frekans": "aylık",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
   },
   {
    "ulke": "ABD",
@@ -615,12 +623,14 @@
    "ad": "Büyüme (çeyreklik)",
    "deger": 2.2,
    "birim": "%",
-   "donem": "2026-09-30",
+   "donem": "2026-06-30",
    "tahmin": 1.5,
    "onceki": 2.5,
-   "kaynak_baslik": "GDP Growth Rate QoQ Final",
-   "kaynak_periyot": "Q2",
-   "frekans": "üç aylık"
+   "kaynak_baslik": "FRED reel GSYH (çeyreklik, yıllıklandırılmış)",
+   "kaynak_periyot": "2026-06-30",
+   "frekans": "üç aylık",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
   },
   {
    "ulke": "ABD",
@@ -687,26 +697,30 @@
   {
    "ulke": "ABD",
    "ad": "İlk İşsizlik Başvurusu",
-   "deger": 199.0,
+   "deger": 194.0,
    "birim": "bin kişi",
-   "donem": "2026-10-15",
+   "donem": "2026-10-17",
    "tahmin": 200.0,
-   "onceki": 198.0,
-   "kaynak_baslik": "Initial Jobless Claims",
-   "kaynak_periyot": "Oct/10",
-   "frekans": "haftalık"
+   "onceki": 200.0,
+   "kaynak_baslik": "FRED haftalık ilk işsizlik başvurusu (SA)",
+   "kaynak_periyot": "2026-10-17",
+   "frekans": "haftalık",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
   },
   {
    "ulke": "ABD",
    "ad": "Devam Eden İşsizlik Başvurusu",
-   "deger": 1710.0,
+   "deger": 1728.0,
    "birim": "bin kişi",
-   "donem": "2026-10-15",
+   "donem": "2026-10-10",
    "tahmin": 1710.0,
-   "onceki": 1714.0,
-   "kaynak_baslik": "Continuing Jobless Claims",
-   "kaynak_periyot": "Oct/03",
-   "frekans": "haftalık"
+   "onceki": 1703.0,
+   "kaynak_baslik": "FRED haftalık devam eden başvurular (SA)",
+   "kaynak_periyot": "2026-10-10",
+   "frekans": "haftalık",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
   },
   {
    "ulke": "ABD",
@@ -1049,14 +1063,14 @@
    "ad": "Politika faizi",
    "deger": 4.0,
    "birim": "%",
-   "donem": "2026-10-20",
+   "donem": "2026-10-22",
    "tahmin": 4.0,
    "onceki": 4.0,
    "kaynak_baslik": "FRED Fed fon ust siniri",
-   "kaynak_periyot": "2026-10-20",
+   "kaynak_periyot": "2026-10-22",
    "frekans": "olay",
    "teyit": "FRED",
-   "kaynak_durumu": "son gözlem korundu"
+   "kaynak_durumu": "FRED resmi verisi"
   },
   {
    "ulke": "ABD",
@@ -1064,7 +1078,7 @@
    "deger": 2.2,
    "birim": "%",
    "donem": "2026-06-30",
-   "kaynak_durumu": "son gözlem korundu",
+   "kaynak_durumu": "FRED resmi verisi",
    "tahmin": null,
    "onceki": 2.6,
    "kaynak_baslik": "FRED reel GSYH (yıllık)",
@@ -1077,11 +1091,11 @@
    "ad": "Politika faizi",
    "deger": 2.65,
    "birim": "%",
-   "donem": "2026-10-21",
+   "donem": "2026-10-22",
    "tahmin": 2.65,
    "onceki": 2.65,
    "kaynak_baslik": "ECB MRO ana refinansman faizi",
-   "kaynak_periyot": "2026-10-21",
+   "kaynak_periyot": "2026-10-22",
    "frekans": "olay",
    "teyit": "ECB",
    "kaynak_durumu": "ECB resmi verisi"
@@ -1089,7 +1103,7 @@
   {
    "ulke": "Türkiye",
    "ad": "Mevduat Faizi",
-   "deger": 43.12,
+   "deger": 43.04,
    "birim": "%",
    "donem": "2026-10-01",
    "frekans": "aylık",
@@ -1125,7 +1139,7 @@
   {
    "ulke": "Türkiye",
    "ad": "M3 Para Arzı (yıllık)",
-   "deger": 26.5787,
+   "deger": 28.646,
    "birim": "%",
    "donem": "2026-10-01",
    "frekans": "aylık",
