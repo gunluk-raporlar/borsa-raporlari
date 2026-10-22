@@ -280,7 +280,7 @@
       var yuzdeGoster = !mini;
       var baslik = h.h + " · " + sayi(h.f, " TL") + " · " + yuzde(h.d) + " (önceki kapanışa göre)";
       html +=
-        '<a class="isi-kare" href="' + h.h + '.html" style="left:' + k.x.toFixed(1) + "px;top:" + k.y.toFixed(1) +
+        '<a class="isi-kare" href="' + h.h + '" style="left:' + k.x.toFixed(1) + "px;top:" + k.y.toFixed(1) +
         "px;width:" + k.w.toFixed(1) + "px;height:" + k.h.toFixed(1) + "px;background:" + r.bg + ";color:" + r.fg +
         (mini ? ";font-size:10.5px" : "") + '" title="' + baslik.replace(/"/g, "&quot;") + '">' +
         '<span class="isi-kod">' + h.h + "</span>" +

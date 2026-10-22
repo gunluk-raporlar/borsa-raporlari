@@ -67,6 +67,16 @@
 /en/gizlilik  /en/privacy.html  301
 /en/radyo/*  /en/radio/:splat  301
 /en/radyo  /en/radio  301
+# 6 Ekim 2026 BIST30 revizyonunda DSTKF cikarildi (96bc07f2b); bayat sayfalari
+# silindi (2026-10-22 kullanici karari). Eski arsiv sayfalarindaki DSTKF
+# baglantilari, hisse sayfasi yerine agacin liste sayfasina tasinir.
+# Dikkat: /en/hisse/* glob'u ALTTA oldugu icin bu kurallar ONUN USTUNDE kalmali.
+/hisse/DSTKF  /hisse  301
+/de/hisse/DSTKF  /de/aktien  301
+/ru/hisse/DSTKF  /ru/aktsii  301
+/zh/hisse/DSTKF  /zh/gupiao  301
+/en/hisse/DSTKF  /en/stocks  301
+/en/hisse/DSTKF.html  /en/stocks  301
 /en/hisse/*  /en/stocks/:splat  301
 /en/hisse  /en/stocks  301
 /en/robot.html  /en/trading-robot.html  301

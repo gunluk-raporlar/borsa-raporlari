@@ -37,5 +37,11 @@ jobs:
           git config user.name "borsa-bot"
           git config user.email "borsa-bot@users.noreply.github.com"
           git pull --rebase -X theirs origin main
-          git commit --allow-empty -m "Site yayini"
+          # Ic baglanti guzel-URL temizligi (2026-10-22, GSC 'Yonlendirmeli
+          # sayfa'): deploy kok dizininden yapildigi icin her yayindan once
+          # repo agaci temizlenir; degisen sayfalar yayin commit'ine girer.
+          # Fail-open: betik basarisizsa yayin eskisi gibi devam eder.
+          python3 baglanti_guzellestir.py . || echo "UYARI: baglanti temizligi atlandi"
+          git add -A
+          git commit --allow-empty -m "Site yayini (ic baglanti guzel-URL temizligi dahil)"
           git push origin main

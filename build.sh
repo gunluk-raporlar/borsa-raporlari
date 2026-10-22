@@ -28,4 +28,10 @@ for l in en de ru zh; do
   if [ -f "dist/style.css" ] && [ -d "dist/$l" ]; then cp dist/style.css "dist/$l/style.css"; fi
 done
 
+# Ic baglanti guzel-URL temizligi (2026-10-22, GSC 'Yonlendirmeli sayfa'):
+# dist kopyasindaki tum goreli .html hrefler uzantisiz adrese tasinir; dil
+# agaclarinda eski TR-slug'lar yerlesik adlara eslenir. Fail-open: python
+# yoksa/basarisizsa build eskisi gibi devam eder.
+python3 baglanti_guzellestir.py dist || echo "UYARI: baglanti temizligi atlandi, dist .html linkli yayinlandi"
+
 echo "dist hazir: $(find dist -type f | wc -l) dosya"
