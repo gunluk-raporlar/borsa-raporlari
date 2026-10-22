@@ -34,4 +34,21 @@ done
 # yoksa/basarisizsa build eskisi gibi devam eder.
 python3 baglanti_guzellestir.py dist || echo "UYARI: baglanti temizligi atlandi, dist .html linkli yayinlandi"
 
+# --- Yayina girmeyecek kaynak/veri dosyalari kaldirilir (2026-10-22 gizlilik) ---
+# Cloudflare Pages build'i GECICI bir klon uzerinde calisir; bu silme yalnizca
+# bu build'in yuklenecek agacini etkiler, depoya ve yerel kopyaya dokunmaz.
+# Cikis dizini kok ("/") oldugu icin kok agaci da temizlenir; bir gun cikis
+# dist'e alinirsa bu blok etkisizlesir ama zarar vermez. IndexNow anahtar
+# dosyasi (ba8235...txt) ve arama motoru dogrulama dosyalari BILINCLI KALIR.
+# functions/ KALIR: dil agaclarinin 301 middleware'i orada.
+rm -f dist/i18n-cache.json dist/i18n-elle.json dist/elle_*.json \
+      dist/joblog.txt dist/requirements.txt dist/README.md 2>/dev/null || true
+for l in en de ru zh; do
+  find "dist/$l" -maxdepth 1 -name 'elle_*.json' -delete 2>/dev/null || true
+  find "$l" -maxdepth 1 -name 'elle_*.json' -delete 2>/dev/null || true
+done
+rm -rf data pipeline web docs logs ajan-uyumlulugu .github __pycache__ kalite
+rm -f *.py *.bak *.patch *.zip joblog.txt README.md requirements.txt \
+      i18n-cache.json i18n-elle.json elle_*.json 2>/dev/null || true
+
 echo "dist hazir: $(find dist -type f | wc -l) dosya"
