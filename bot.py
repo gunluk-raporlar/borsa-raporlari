@@ -4011,11 +4011,10 @@ a { color:var(--accent); }
    scrollbar-gutter iki tarafa da simetrik pay ayirir; tum ortalanmis icerik
    (.wrap, .topbar .inner, kartlar) bu hizaya oturur. */
 html { scrollbar-gutter: stable both-edges; }
-/* 2026-10-22 (kullanici karari): menu soldan baslar, sag kenara KADAR UZAR —
-   her satir iki kenar arasini doldurur (bos sag alan kalmez); ogeler parca
-   parca kirilmaz (emoji/kelime ortasindan satir atlamaz). */
-.topbar nav { display:flex; flex-wrap:wrap; justify-content:space-between;
-              align-items:center; gap:4px 20px; }
+/* 2026-10-22 (kullanici karari): menu soldan baslar; ogeler normal boslukla
+   yan yana akar, dolan satir yeniden SOL KENARDAN baslar — satirlar araya
+   buyuk bosluklar birakilarak yayilmaz; ogeler parca parca kirilmaz. */
+.topbar nav { display:flex; flex-wrap:wrap; align-items:center; gap:4px 20px; }
 .topbar nav a { white-space:nowrap; }
 .wrap { max-width:1080px; margin:0 auto; padding:32px 20px 48px; }
 .hero { margin-bottom:26px; }
