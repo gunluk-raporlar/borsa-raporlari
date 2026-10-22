@@ -85,7 +85,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/borsapy-analiz"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/borsapy-analiz</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/borsapy-signale</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
@@ -97,7 +97,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/borsapy-analiz"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/borsapy-analiz</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/borsapy-signaly</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
@@ -109,7 +109,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/borsapy-analiz"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/borsapy-analiz</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/borsapy-xinhao</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
@@ -145,7 +145,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -157,7 +157,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -169,7 +169,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -205,7 +205,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-09-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-09-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -217,7 +217,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-09-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-09-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -229,7 +229,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-09-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-09-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -265,7 +265,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-09-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-09-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -277,7 +277,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-09-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-09-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -289,7 +289,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-09-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-09-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -325,7 +325,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-17"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-09-17</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-09-17</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -337,7 +337,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-17"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-09-17</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-09-17</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -349,7 +349,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-17"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-09-17</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-09-17</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -385,7 +385,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-18"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-09-18</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-09-18</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -397,7 +397,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-18"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-09-18</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-09-18</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -409,7 +409,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-18"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-09-18</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-09-18</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -445,7 +445,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-09-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-09-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -457,7 +457,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-09-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-09-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -469,7 +469,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-09-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-09-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -505,7 +505,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-22"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-09-22</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-09-22</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -517,7 +517,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-22"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-09-22</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-09-22</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -529,7 +529,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-22"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-09-22</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-09-22</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -565,7 +565,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-23"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-09-23</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-09-23</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -577,7 +577,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-23"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-09-23</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-09-23</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -589,7 +589,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-23"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-09-23</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-09-23</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -625,7 +625,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-24"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-09-24</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-09-24</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -637,7 +637,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-24"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-09-24</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-09-24</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -649,7 +649,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-24"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-09-24</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-09-24</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -685,7 +685,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-25"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-09-25</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-09-25</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -697,7 +697,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-25"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-09-25</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-09-25</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -709,7 +709,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-25"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-09-25</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-09-25</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -745,7 +745,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-28"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-09-28</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-09-28</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -757,7 +757,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-28"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-09-28</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-09-28</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -769,7 +769,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-28"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-09-28</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-09-28</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -805,7 +805,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-29"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-09-29</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-09-29</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -817,7 +817,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-29"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-09-29</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-09-29</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -829,7 +829,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-29"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-09-29</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-09-29</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -865,7 +865,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-30"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-09-30</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-09-30</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -877,7 +877,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-30"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-09-30</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-09-30</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -889,7 +889,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-09-30"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-09-30</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-09-30</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -925,7 +925,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-01"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-01</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-01</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -937,7 +937,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-01"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-01</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-01</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -949,7 +949,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-01"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-01</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-01</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -985,7 +985,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-02"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-02</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-02</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -997,7 +997,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-02"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-02</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-02</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1009,7 +1009,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-02"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-02</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-02</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1045,7 +1045,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-05"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-05</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-05</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1057,7 +1057,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-05"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-05</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-05</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1069,7 +1069,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-05"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-05</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-05</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1105,7 +1105,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-06"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-06</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-06</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1117,7 +1117,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-06"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-06</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-06</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1129,7 +1129,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-06"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-06</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-06</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1165,7 +1165,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-07"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-07</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-07</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1177,7 +1177,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-07"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-07</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-07</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1189,7 +1189,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-07"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-07</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-07</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1225,7 +1225,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-08"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-08</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-08</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1237,7 +1237,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-08"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-08</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-08</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1249,7 +1249,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-08"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-08</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-08</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1285,7 +1285,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1297,7 +1297,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1309,7 +1309,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1345,7 +1345,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-12</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1357,7 +1357,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-12</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1369,7 +1369,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-12</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1405,7 +1405,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-13"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-13</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-13</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1417,7 +1417,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-13"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-13</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-13</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1429,7 +1429,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-13"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-13</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-13</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1465,7 +1465,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-14"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-14</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-14</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1477,7 +1477,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-14"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-14</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-14</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1489,7 +1489,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-14"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-14</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-14</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1525,7 +1525,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-15"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-15</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-15</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1537,7 +1537,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-15"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-15</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-15</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1549,7 +1549,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-15"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-15</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-15</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1585,7 +1585,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1597,7 +1597,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1609,7 +1609,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1645,7 +1645,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-19</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1657,7 +1657,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-19</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1669,7 +1669,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-19</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1705,7 +1705,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-20"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-20</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-20</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1717,7 +1717,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-20"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-20</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-20</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1729,7 +1729,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-20"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-20</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-20</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1765,7 +1765,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1777,7 +1777,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1789,7 +1789,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -1825,7 +1825,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-22"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/derin-analiz/2026-10-22</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-22</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -1837,7 +1837,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-22"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/derin-analiz/2026-10-22</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-22</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -1849,7 +1849,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-22"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/derin-analiz/2026-10-22</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-22</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -1885,7 +1885,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/gizlilik"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/gizlilik</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/datenschutz</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -1897,7 +1897,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/gizlilik"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/gizlilik</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/konfidencialnost</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -1909,7 +1909,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/gizlilik"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/gizlilik</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/yinsi</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -1945,7 +1945,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haberler"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haberler</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/nachrichten</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
@@ -1957,7 +1957,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haberler"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haberler</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/novosti</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
@@ -1969,7 +1969,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haberler"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haberler</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/xinwen</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
@@ -2005,7 +2005,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/wochenende</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -2017,7 +2017,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/vykhodnye</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -2029,7 +2029,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/zhoumo</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -2065,7 +2065,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu-egitimi</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/boersenschule</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -2077,7 +2077,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/shkola-rinka</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -2089,7 +2089,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gushi-xuetang</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -2125,7 +2125,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-09-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/boersenschule/2026-09-12</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2137,7 +2137,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-09-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/shkola-rinka/2026-09-12</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2149,7 +2149,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-09-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gushi-xuetang/2026-09-12</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2185,7 +2185,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-13"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-09-13</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/boersenschule/2026-09-13</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2197,7 +2197,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-13"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-09-13</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/shkola-rinka/2026-09-13</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2209,7 +2209,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-13"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-09-13</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gushi-xuetang/2026-09-13</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2245,7 +2245,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-09-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/boersenschule/2026-09-19</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2257,7 +2257,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-09-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/shkola-rinka/2026-09-19</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2269,7 +2269,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-09-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gushi-xuetang/2026-09-19</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2305,7 +2305,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-20"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-09-20</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/boersenschule/2026-09-20</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2317,7 +2317,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-20"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-09-20</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/shkola-rinka/2026-09-20</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2329,7 +2329,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-20"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-09-20</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gushi-xuetang/2026-09-20</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2365,7 +2365,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-26"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-09-26</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/boersenschule/2026-09-26</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2377,7 +2377,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-26"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-09-26</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/shkola-rinka/2026-09-26</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2389,7 +2389,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-26"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-09-26</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gushi-xuetang/2026-09-26</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2425,7 +2425,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-27"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-09-27</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/boersenschule/2026-09-27</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2437,7 +2437,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-27"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-09-27</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/shkola-rinka/2026-09-27</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2449,7 +2449,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-09-27"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-09-27</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gushi-xuetang/2026-09-27</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2485,7 +2485,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-03"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-10-03</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/boersenschule/2026-10-03</loc>
     <lastmod>2026-10-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2497,7 +2497,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-03"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-10-03</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/shkola-rinka/2026-10-03</loc>
     <lastmod>2026-10-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2509,7 +2509,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-03"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-10-03</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gushi-xuetang/2026-10-03</loc>
     <lastmod>2026-10-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2545,7 +2545,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-04"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-10-04</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/boersenschule/2026-10-04</loc>
     <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2557,7 +2557,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-04"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-10-04</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/shkola-rinka/2026-10-04</loc>
     <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2569,7 +2569,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-04"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-10-04</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gushi-xuetang/2026-10-04</loc>
     <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2605,7 +2605,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-10"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-10-10</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/boersenschule/2026-10-10</loc>
     <lastmod>2026-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2617,7 +2617,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-10"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-10-10</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/shkola-rinka/2026-10-10</loc>
     <lastmod>2026-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2629,7 +2629,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-10"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-10-10</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gushi-xuetang/2026-10-10</loc>
     <lastmod>2026-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2665,7 +2665,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-11"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-10-11</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/boersenschule/2026-10-11</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2677,7 +2677,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-11"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-10-11</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/shkola-rinka/2026-10-11</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2689,7 +2689,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-11"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-10-11</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gushi-xuetang/2026-10-11</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2725,7 +2725,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-17"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-10-17</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/boersenschule/2026-10-17</loc>
     <lastmod>2026-10-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2737,7 +2737,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-17"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-10-17</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/shkola-rinka/2026-10-17</loc>
     <lastmod>2026-10-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2749,7 +2749,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-17"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-10-17</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gushi-xuetang/2026-10-17</loc>
     <lastmod>2026-10-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2785,7 +2785,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-18"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu-egitimi/2026-10-18</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/boersenschule/2026-10-18</loc>
     <lastmod>2026-10-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2797,7 +2797,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-18"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu-egitimi/2026-10-18</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/shkola-rinka/2026-10-18</loc>
     <lastmod>2026-10-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2809,7 +2809,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu-egitimi/2026-10-18"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu-egitimi/2026-10-18</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gushi-xuetang/2026-10-18</loc>
     <lastmod>2026-10-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2845,7 +2845,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu/2026-09-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/wochenende/2026-09-12</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2857,7 +2857,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu/2026-09-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/vykhodnye/2026-09-12</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2869,7 +2869,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu/2026-09-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/zhoumo/2026-09-12</loc>
     <lastmod>2026-09-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2905,7 +2905,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-13"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu/2026-09-13</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/wochenende/2026-09-13</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2917,7 +2917,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-13"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu/2026-09-13</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/vykhodnye/2026-09-13</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2929,7 +2929,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-13"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu/2026-09-13</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/zhoumo/2026-09-13</loc>
     <lastmod>2026-09-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2965,7 +2965,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu/2026-09-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/wochenende/2026-09-19</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2977,7 +2977,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu/2026-09-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/vykhodnye/2026-09-19</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -2989,7 +2989,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu/2026-09-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/zhoumo/2026-09-19</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3025,7 +3025,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-20"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu/2026-09-20</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/wochenende/2026-09-20</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3037,7 +3037,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-20"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu/2026-09-20</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/vykhodnye/2026-09-20</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3049,7 +3049,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-20"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu/2026-09-20</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/zhoumo/2026-09-20</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3085,7 +3085,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-26"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu/2026-09-26</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/wochenende/2026-09-26</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3097,7 +3097,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-26"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu/2026-09-26</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/vykhodnye/2026-09-26</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3109,7 +3109,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-26"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu/2026-09-26</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/zhoumo/2026-09-26</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3145,7 +3145,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-27"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu/2026-09-27</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/wochenende/2026-09-27</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3157,7 +3157,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-27"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu/2026-09-27</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/vykhodnye/2026-09-27</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3169,7 +3169,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-09-27"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu/2026-09-27</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/zhoumo/2026-09-27</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3205,7 +3205,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-03"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu/2026-10-03</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/wochenende/2026-10-03</loc>
     <lastmod>2026-10-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3217,7 +3217,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-03"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu/2026-10-03</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/vykhodnye/2026-10-03</loc>
     <lastmod>2026-10-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3229,7 +3229,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-03"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu/2026-10-03</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/zhoumo/2026-10-03</loc>
     <lastmod>2026-10-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3265,7 +3265,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-04"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu/2026-10-04</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/wochenende/2026-10-04</loc>
     <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3277,7 +3277,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-04"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu/2026-10-04</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/vykhodnye/2026-10-04</loc>
     <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3289,7 +3289,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-04"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu/2026-10-04</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/zhoumo/2026-10-04</loc>
     <lastmod>2026-10-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3325,7 +3325,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-10"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu/2026-10-10</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/wochenende/2026-10-10</loc>
     <lastmod>2026-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3337,7 +3337,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-10"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu/2026-10-10</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/vykhodnye/2026-10-10</loc>
     <lastmod>2026-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3349,7 +3349,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-10"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu/2026-10-10</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/zhoumo/2026-10-10</loc>
     <lastmod>2026-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3385,7 +3385,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-11"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu/2026-10-11</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/wochenende/2026-10-11</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3397,7 +3397,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-11"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu/2026-10-11</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/vykhodnye/2026-10-11</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3409,7 +3409,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-11"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu/2026-10-11</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/zhoumo/2026-10-11</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3445,7 +3445,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-17"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu/2026-10-17</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/wochenende/2026-10-17</loc>
     <lastmod>2026-10-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3457,7 +3457,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-17"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu/2026-10-17</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/vykhodnye/2026-10-17</loc>
     <lastmod>2026-10-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3469,7 +3469,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-17"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu/2026-10-17</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/zhoumo/2026-10-17</loc>
     <lastmod>2026-10-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3505,7 +3505,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-18"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/haftasonu/2026-10-18</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/wochenende/2026-10-18</loc>
     <lastmod>2026-10-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3517,7 +3517,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-18"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/haftasonu/2026-10-18</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/vykhodnye/2026-10-18</loc>
     <lastmod>2026-10-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3529,7 +3529,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-18"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/haftasonu/2026-10-18</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/zhoumo/2026-10-18</loc>
     <lastmod>2026-10-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -3565,7 +3565,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -3577,7 +3577,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -3589,7 +3589,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -3625,7 +3625,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/AEFES"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/AEFES</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/AEFES</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3637,7 +3637,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/AEFES"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/AEFES</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/AEFES</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3649,7 +3649,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/AEFES"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/AEFES</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/AEFES</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3685,7 +3685,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/AKBNK"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/AKBNK</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/AKBNK</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3697,7 +3697,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/AKBNK"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/AKBNK</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/AKBNK</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3709,7 +3709,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/AKBNK"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/AKBNK</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/AKBNK</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3745,7 +3745,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/ASELS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/ASELS</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/ASELS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3757,7 +3757,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/ASELS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/ASELS</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/ASELS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3769,7 +3769,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/ASELS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/ASELS</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/ASELS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3805,7 +3805,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/ASTOR"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/ASTOR</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/ASTOR</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3817,7 +3817,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/ASTOR"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/ASTOR</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/ASTOR</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3829,7 +3829,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/ASTOR"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/ASTOR</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/ASTOR</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3865,7 +3865,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/BIMAS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/BIMAS</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/BIMAS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3877,7 +3877,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/BIMAS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/BIMAS</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/BIMAS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3889,7 +3889,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/BIMAS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/BIMAS</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/BIMAS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3925,7 +3925,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/EKGYO"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/EKGYO</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/EKGYO</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3937,7 +3937,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/EKGYO"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/EKGYO</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/EKGYO</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3949,7 +3949,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/EKGYO"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/EKGYO</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/EKGYO</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3985,7 +3985,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/ENKAI"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/ENKAI</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/ENKAI</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -3997,7 +3997,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/ENKAI"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/ENKAI</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/ENKAI</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4009,7 +4009,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/ENKAI"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/ENKAI</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/ENKAI</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4045,7 +4045,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/EREGL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/EREGL</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/EREGL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4057,7 +4057,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/EREGL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/EREGL</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/EREGL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4069,7 +4069,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/EREGL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/EREGL</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/EREGL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4105,7 +4105,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/FROTO"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/FROTO</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/FROTO</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4117,7 +4117,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/FROTO"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/FROTO</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/FROTO</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4129,7 +4129,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/FROTO"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/FROTO</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/FROTO</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4165,7 +4165,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/GARAN"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/GARAN</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/GARAN</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4177,7 +4177,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/GARAN"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/GARAN</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/GARAN</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4189,7 +4189,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/GARAN"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/GARAN</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/GARAN</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4225,7 +4225,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/GUBRF"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/GUBRF</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/GUBRF</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4237,7 +4237,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/GUBRF"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/GUBRF</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/GUBRF</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4249,7 +4249,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/GUBRF"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/GUBRF</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/GUBRF</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4285,7 +4285,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/ISCTR"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/ISCTR</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/ISCTR</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4297,7 +4297,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/ISCTR"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/ISCTR</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/ISCTR</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4309,7 +4309,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/ISCTR"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/ISCTR</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/ISCTR</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4345,7 +4345,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/KCHOL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/KCHOL</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/KCHOL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4357,7 +4357,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/KCHOL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/KCHOL</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/KCHOL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4369,7 +4369,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/KCHOL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/KCHOL</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/KCHOL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4405,7 +4405,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/KRDMD"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/KRDMD</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/KRDMD</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4417,7 +4417,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/KRDMD"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/KRDMD</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/KRDMD</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4429,7 +4429,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/KRDMD"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/KRDMD</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/KRDMD</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4465,7 +4465,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/MGROS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/MGROS</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/MGROS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4477,7 +4477,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/MGROS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/MGROS</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/MGROS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4489,7 +4489,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/MGROS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/MGROS</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/MGROS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4525,7 +4525,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/PETKM"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/PETKM</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/PETKM</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4537,7 +4537,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/PETKM"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/PETKM</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/PETKM</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4549,7 +4549,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/PETKM"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/PETKM</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/PETKM</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4585,7 +4585,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/PGSUS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/PGSUS</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/PGSUS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4597,7 +4597,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/PGSUS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/PGSUS</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/PGSUS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4609,7 +4609,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/PGSUS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/PGSUS</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/PGSUS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4645,7 +4645,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/SAHOL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/SAHOL</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/SAHOL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4657,7 +4657,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/SAHOL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/SAHOL</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/SAHOL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4669,7 +4669,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/SAHOL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/SAHOL</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/SAHOL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4705,7 +4705,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/SASA"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/SASA</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/SASA</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4717,7 +4717,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/SASA"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/SASA</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/SASA</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4729,7 +4729,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/SASA"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/SASA</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/SASA</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4765,7 +4765,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/SISE"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/SISE</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/SISE</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4777,7 +4777,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/SISE"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/SISE</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/SISE</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4789,7 +4789,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/SISE"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/SISE</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/SISE</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4825,7 +4825,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TAVHL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/TAVHL</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/TAVHL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4837,7 +4837,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TAVHL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/TAVHL</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/TAVHL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4849,7 +4849,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TAVHL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/TAVHL</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/TAVHL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4885,7 +4885,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TCELL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/TCELL</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/TCELL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4897,7 +4897,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TCELL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/TCELL</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/TCELL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4909,7 +4909,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TCELL"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/TCELL</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/TCELL</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4945,7 +4945,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/THYAO"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/THYAO</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/THYAO</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4957,7 +4957,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/THYAO"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/THYAO</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/THYAO</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -4969,7 +4969,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/THYAO"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/THYAO</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/THYAO</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5005,7 +5005,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TOASO"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/TOASO</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/TOASO</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5017,7 +5017,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TOASO"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/TOASO</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/TOASO</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5029,7 +5029,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TOASO"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/TOASO</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/TOASO</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5065,7 +5065,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TRALT"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/TRALT</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/TRALT</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5077,7 +5077,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TRALT"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/TRALT</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/TRALT</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5089,7 +5089,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TRALT"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/TRALT</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/TRALT</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5125,7 +5125,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TRMET"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/TRMET</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/TRMET</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5137,7 +5137,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TRMET"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/TRMET</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/TRMET</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5149,7 +5149,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TRMET"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/TRMET</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/TRMET</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5185,7 +5185,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TTKOM"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/TTKOM</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/TTKOM</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5197,7 +5197,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TTKOM"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/TTKOM</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/TTKOM</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5209,7 +5209,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TTKOM"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/TTKOM</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/TTKOM</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5245,7 +5245,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TUPRS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/TUPRS</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/TUPRS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5257,7 +5257,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TUPRS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/TUPRS</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/TUPRS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5269,7 +5269,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/TUPRS"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/TUPRS</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/TUPRS</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5305,7 +5305,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/VAKBN"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/VAKBN</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/VAKBN</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5317,7 +5317,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/VAKBN"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/VAKBN</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/VAKBN</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5329,7 +5329,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/VAKBN"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/VAKBN</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/VAKBN</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5365,7 +5365,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/YKBNK"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/hisse/YKBNK</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/aktien/YKBNK</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5377,7 +5377,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/YKBNK"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/hisse/YKBNK</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/aktsii/YKBNK</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5389,7 +5389,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/hisse/YKBNK"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/hisse/YKBNK</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gupiao/YKBNK</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -5425,7 +5425,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/makro-analiz</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/makroanalyse</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -5437,7 +5437,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/makro-analiz</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/makroanaliz</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -5449,7 +5449,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/makro-analiz</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/hongguan-fenxi</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -5485,7 +5485,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-09-23"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/makro-analiz/2026-09-23</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/makroanalyse/2026-09-23</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5497,7 +5497,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-09-23"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/makro-analiz/2026-09-23</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/makroanaliz/2026-09-23</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5509,7 +5509,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-09-23"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/makro-analiz/2026-09-23</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/hongguan-fenxi/2026-09-23</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5545,7 +5545,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-09-25"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/makro-analiz/2026-09-25</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/makroanalyse/2026-09-25</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5557,7 +5557,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-09-25"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/makro-analiz/2026-09-25</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/makroanaliz/2026-09-25</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5569,7 +5569,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-09-25"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/makro-analiz/2026-09-25</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/hongguan-fenxi/2026-09-25</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5605,7 +5605,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-09-29"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/makro-analiz/2026-09-29</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/makroanalyse/2026-09-29</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5617,7 +5617,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-09-29"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/makro-analiz/2026-09-29</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/makroanaliz/2026-09-29</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5629,7 +5629,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-09-29"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/makro-analiz/2026-09-29</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/hongguan-fenxi/2026-09-29</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5665,7 +5665,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-07"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/makro-analiz/2026-10-07</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/makroanalyse/2026-10-07</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5677,7 +5677,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-07"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/makro-analiz/2026-10-07</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/makroanaliz/2026-10-07</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5689,7 +5689,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-07"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/makro-analiz/2026-10-07</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/hongguan-fenxi/2026-10-07</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5725,7 +5725,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/makro-analiz/2026-10-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/makroanalyse/2026-10-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5737,7 +5737,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/makro-analiz/2026-10-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/makroanaliz/2026-10-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5749,7 +5749,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/makro-analiz/2026-10-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/hongguan-fenxi/2026-10-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5785,7 +5785,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/makro-analiz/2026-10-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/makroanalyse/2026-10-12</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5797,7 +5797,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/makro-analiz/2026-10-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/makroanaliz/2026-10-12</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5809,7 +5809,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/makro-analiz/2026-10-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/hongguan-fenxi/2026-10-12</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5845,7 +5845,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-14"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/makro-analiz/2026-10-14</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/makroanalyse/2026-10-14</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5857,7 +5857,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-14"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/makro-analiz/2026-10-14</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/makroanaliz/2026-10-14</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5869,7 +5869,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-14"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/makro-analiz/2026-10-14</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/hongguan-fenxi/2026-10-14</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5905,7 +5905,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/makro-analiz/2026-10-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/makroanalyse/2026-10-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5917,7 +5917,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/makro-analiz/2026-10-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/makroanaliz/2026-10-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5929,7 +5929,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/makro-analiz/2026-10-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/hongguan-fenxi/2026-10-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5965,7 +5965,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/makro-analiz/2026-10-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/makroanalyse/2026-10-19</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5977,7 +5977,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/makro-analiz/2026-10-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/makroanaliz/2026-10-19</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5989,7 +5989,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/makro-analiz/2026-10-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/hongguan-fenxi/2026-10-19</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6025,7 +6025,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/makro-analiz/2026-10-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/makroanalyse/2026-10-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6037,7 +6037,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/makro-analiz/2026-10-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/makroanaliz/2026-10-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6049,7 +6049,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-10-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/makro-analiz/2026-10-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/hongguan-fenxi/2026-10-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6085,7 +6085,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/muhasebe-terimleri"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/muhasebe-terimleri</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/rechnungslegungsbegriffe</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -6097,7 +6097,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/muhasebe-terimleri"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/muhasebe-terimleri</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/bukhgalterskie-terminy</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -6109,7 +6109,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/muhasebe-terimleri"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/muhasebe-terimleri</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/kuaiji-shuyu</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -6205,7 +6205,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/radyo/"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/radyo/</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/radio/</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -6217,7 +6217,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/radyo/"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/radyo/</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/radio/</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -6229,7 +6229,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/radyo/"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/radyo/</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/guangbo/</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -6265,7 +6265,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -6277,7 +6277,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -6289,7 +6289,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -6325,7 +6325,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-05"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-05</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-05</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6337,7 +6337,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-05"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-05</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-05</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6349,7 +6349,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-05"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-05</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-05</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6385,7 +6385,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-06"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-06</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-06</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6397,7 +6397,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-06"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-06</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-06</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6409,7 +6409,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-06"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-06</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-06</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6445,7 +6445,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-07"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-07</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-07</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6457,7 +6457,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-07"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-07</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-07</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6469,7 +6469,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-07"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-07</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-07</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6505,7 +6505,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-08"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-08</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-08</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6517,7 +6517,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-08"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-08</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-08</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6529,7 +6529,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-08"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-08</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-08</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6565,7 +6565,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6577,7 +6577,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6589,7 +6589,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6625,7 +6625,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-10"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-10</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-10</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6637,7 +6637,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-10"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-10</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-10</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6649,7 +6649,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-10"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-10</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-10</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6685,7 +6685,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-11"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-11</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-11</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6697,7 +6697,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-11"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-11</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-11</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6709,7 +6709,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-11"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-11</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-11</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6745,7 +6745,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-14"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-14</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-14</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6757,7 +6757,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-14"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-14</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-14</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6769,7 +6769,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-14"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-14</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-14</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6805,7 +6805,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-15"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-15</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-15</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6817,7 +6817,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-15"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-15</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-15</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6829,7 +6829,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-15"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-15</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-15</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6865,7 +6865,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6877,7 +6877,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6889,7 +6889,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6925,7 +6925,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-17"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-17</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-17</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6937,7 +6937,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-17"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-17</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-17</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6949,7 +6949,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-17"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-17</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-17</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6985,7 +6985,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-18"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-18</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-18</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -6997,7 +6997,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-18"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-18</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-18</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7009,7 +7009,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-18"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-18</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-18</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7045,7 +7045,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7057,7 +7057,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7069,7 +7069,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7105,7 +7105,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-22"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-22</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-22</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7117,7 +7117,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-22"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-22</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-22</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7129,7 +7129,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-22"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-22</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-22</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7165,7 +7165,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-23"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-23</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-23</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7177,7 +7177,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-23"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-23</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-23</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7189,7 +7189,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-23"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-23</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-23</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7225,7 +7225,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-24"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-24</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-24</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7237,7 +7237,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-24"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-24</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-24</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7249,7 +7249,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-24"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-24</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-24</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7285,7 +7285,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-25"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-25</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-25</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7297,7 +7297,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-25"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-25</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-25</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7309,7 +7309,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-25"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-25</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-25</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7345,7 +7345,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-28"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-28</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-28</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7357,7 +7357,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-28"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-28</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-28</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7369,7 +7369,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-28"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-28</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-28</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7405,7 +7405,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-29"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-29</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-29</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7417,7 +7417,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-29"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-29</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-29</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7429,7 +7429,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-29"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-29</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-29</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7465,7 +7465,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-30"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-09-30</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-09-30</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7477,7 +7477,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-30"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-09-30</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-09-30</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7489,7 +7489,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-09-30"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-09-30</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-09-30</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7525,7 +7525,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-01"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-01</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-01</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7537,7 +7537,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-01"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-01</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-01</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7549,7 +7549,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-01"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-01</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-01</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7585,7 +7585,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-02"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-02</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-02</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7597,7 +7597,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-02"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-02</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-02</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7609,7 +7609,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-02"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-02</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-02</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7645,7 +7645,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-05"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-05</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-05</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7657,7 +7657,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-05"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-05</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-05</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7669,7 +7669,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-05"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-05</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-05</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7705,7 +7705,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-06"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-06</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-06</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7717,7 +7717,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-06"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-06</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-06</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7729,7 +7729,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-06"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-06</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-06</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7765,7 +7765,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-07"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-07</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-07</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7777,7 +7777,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-07"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-07</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-07</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7789,7 +7789,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-07"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-07</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-07</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7825,7 +7825,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-08"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-08</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-08</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7837,7 +7837,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-08"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-08</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-08</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7849,7 +7849,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-08"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-08</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-08</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7885,7 +7885,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7897,7 +7897,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7909,7 +7909,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-09"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-09</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-09</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7945,7 +7945,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-12</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7957,7 +7957,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-12</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -7969,7 +7969,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-12"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-12</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-12</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8005,7 +8005,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-13"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-13</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-13</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8017,7 +8017,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-13"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-13</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-13</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8029,7 +8029,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-13"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-13</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-13</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8065,7 +8065,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-14"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-14</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-14</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8077,7 +8077,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-14"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-14</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-14</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8089,7 +8089,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-14"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-14</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-14</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8125,7 +8125,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-15"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-15</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-15</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8137,7 +8137,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-15"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-15</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-15</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8149,7 +8149,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-15"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-15</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-15</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8185,7 +8185,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8197,7 +8197,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8209,7 +8209,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-16"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-16</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-16</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8245,7 +8245,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-19</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8257,7 +8257,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-19</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8269,7 +8269,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-19"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-19</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-19</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8305,7 +8305,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-20"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-20</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-20</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8317,7 +8317,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-20"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-20</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-20</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8329,7 +8329,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-20"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-20</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-20</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8365,7 +8365,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8377,7 +8377,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8389,7 +8389,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-21"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-21</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-21</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8425,7 +8425,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-22"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/raporlar/2026-10-22</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-10-22</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8437,7 +8437,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-22"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/raporlar/2026-10-22</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/otchety/2026-10-22</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8449,7 +8449,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-10-22"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/raporlar/2026-10-22</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/baogao/2026-10-22</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -8485,7 +8485,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/robot"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/robot</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/handelsroboter</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -8497,7 +8497,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/robot"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/robot</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/torgovyy-robot</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -8509,7 +8509,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/robot"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/robot</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/jiaoyi-jiqiren</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -8545,7 +8545,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/sinyal-karnesi"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/sinyal-karnesi</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/signal-bilanz</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -8557,7 +8557,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/sinyal-karnesi"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/sinyal-karnesi</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/svodka-signalov</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -8569,7 +8569,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/sinyal-karnesi"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/sinyal-karnesi</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/xinhao-jifenka</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -8605,7 +8605,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/sirket-haberleri"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/sirket-haberleri</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/unternehmensnachrichten</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -8617,7 +8617,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/sirket-haberleri"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/sirket-haberleri</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/korporativnye-novosti</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -8629,7 +8629,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/sirket-haberleri"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/sirket-haberleri</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/gongsi-xinwen</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -8665,7 +8665,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/sozluk"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/sozluk</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/glossar</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -8677,7 +8677,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/sozluk"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/sozluk</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/glossariy</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -8689,7 +8689,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/sozluk"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/sozluk</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/cidian</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -8725,7 +8725,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/takvim"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/takvim</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/kalender</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -8737,7 +8737,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/takvim"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/takvim</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/kalendar</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -8749,7 +8749,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/takvim"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/takvim</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/rili</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -8785,7 +8785,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/teknik-analiz"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/teknik-analiz</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/technischer-scan</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
@@ -8797,7 +8797,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/teknik-analiz"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/teknik-analiz</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/tekhnicheskiy-analiz</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
@@ -8809,7 +8809,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/teknik-analiz"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/teknik-analiz</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/jishu-saomiao</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
@@ -8845,7 +8845,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/terimler"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/de/terimler</loc>
+    <loc>https://borsa-raporlari.pages.dev/de/begriffe</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -8857,7 +8857,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/terimler"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/ru/terimler</loc>
+    <loc>https://borsa-raporlari.pages.dev/ru/terminy</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -8869,7 +8869,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/terimler"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/zh/terimler</loc>
+    <loc>https://borsa-raporlari.pages.dev/zh/shuyu</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
