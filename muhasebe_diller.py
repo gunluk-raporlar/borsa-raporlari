@@ -37,6 +37,7 @@ Kullanim:
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import os
 import re
@@ -294,6 +295,13 @@ def slug(s):
     return s.strip("-")[:60] or "terim"
 
 
+def css_surumu():
+    try:
+        return hashlib.sha1(open("style.css", "rb").read()).hexdigest()[:8]
+    except OSError:
+        return "0"
+
+
 DIL_STIL = ("<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;"
             "flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;"
             "border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);"
@@ -369,7 +377,7 @@ ISKELET = """<!DOCTYPE html>
 <meta name="twitter:image" content="@@SITE@@/og-cover.png">
 <script type="application/ld+json">@@JSONLD@@</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=@@CSSV@@">
 <style>@@CSS@@</style>
 </head>
 <body>
@@ -604,6 +612,7 @@ def sayfa_uret(dil, terimler):
         "@@CSS@@": SAYFA_CSS, "@@BRAND@@": esc(cfg["brand"]),
         "@@TEMA_TITLE@@": esc(cfg["tema_title"]), "@@TEMA_ARIA@@": esc(cfg["tema_aria"]),
         "@@NAV@@": nav_html(dil), "@@DILBLOK@@": dil_blok(dil),
+        "@@CSSV@@": css_surumu(),
         "@@H1@@": esc(cfg["h1"]), "@@LEDE@@": esc(cfg["lede"]),
         "@@TERIM_LABEL@@": esc(cfg["terim_birim"]),
         "@@BOLUM_LABEL@@": esc(cfg["bolum_birim"]),

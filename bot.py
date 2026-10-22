@@ -2,6 +2,7 @@ import os
 import json
 import math
 import time
+import hashlib
 import html
 import socket
 import re
@@ -4195,6 +4196,10 @@ html.dark .ticker-bant, html.dark .topbar { background:#0b1220; border-bottom:1p
 """
 
 
+# Stil dosyasi surumu: CSS degistince link ?v= degisir, tarayici/kenar
+# onbellegi bayat kopya servis edemez (2026-10-22 /style.xml tarzi bayatlik).
+_CSS_SURUM = hashlib.sha1(BASE_CSS.encode("utf-8")).hexdigest()[:8]
+
 # ---------- GLM TABANLI SAYFA CEVRISI (Google Translate yerine) ----------
 # Siteyi ve raporlari ureten yapay zeka (Z.ai GLM) ayni zamanda sayfayi
 # cevirir: Puter.js uzerinden calisir, hicbir hesap/anahtar gerekmez,
@@ -4767,7 +4772,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 {_dogrulama_etiketleri()}<script type="application/ld+json">{ld_json}</script>{ld_ek_html}
 <script>(function(){{try{{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){{document.documentElement.classList.add('dark');}}}}catch(e){{}}}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="stylesheet" href="{kok}style.css">
+<link rel="stylesheet" href="{kok}style.css?v={_CSS_SURUM}">
 {_chart_js_script(grafik)}
 </head>
 <body>
