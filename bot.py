@@ -3769,12 +3769,20 @@ HISSE_ADLARI = {
 }
 
 
+# Sesli okunusu yazilisindan farkli olan kelimeler (kullanici karari 23.10:
+# "TCELL'i Türksel diye okusun"). Yayin HTML'i ve LLM istemleri resmi adi
+# kullanmaya devam eder; yalnizca _konusma_metni_normalize bu sozlugu uygular.
+_TTS_OKUNUS = {"TCELL": "Türksel", "Turkcell": "Türksel"}
+
+
 def _konusma_metni_normalize(metin):
     """Sesli okuma öncesi kısaltma ve ticker'ları doğal söylenişe çevirir:
     'BIST' -> 'Borsa İstanbul', 'TUPRS' -> 'Tüpraş' vb. (kelime sınırlı)."""
     metin = re.sub(r"\bBIST\b", "Borsa İstanbul", metin)
     for kod, ad in HISSE_ADLARI.items():
-        metin = re.sub(r"\b" + re.escape(kod) + r"\b", ad, metin)
+        metin = re.sub(r"\b" + re.escape(kod) + r"\b", _TTS_OKUNUS.get(kod, ad), metin)
+    for kelime, okunus in _TTS_OKUNUS.items():
+        metin = re.sub(r"\b" + re.escape(kelime) + r"\b", okunus, metin)
     return metin
 
 
@@ -3940,7 +3948,9 @@ def _ses_metni_hazirla(html):
     metin = re.sub(r"<style.*?</style>", " ", metin, flags=re.S)
     metin = re.sub(r"<h2[^>]*>", " \n\n ", metin)
     metin = re.sub(r"<[^>]+>", " ", metin)
-    metin = metin.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">").replace("&bull;", ", ")
+    metin = (metin.replace("&amp;", "&").replace("&lt;", "<")
+                  .replace("&gt;", ">").replace("&bull;", ", ")
+                  .replace("&middot;", ", "))
     # Bolum sonlarini cumle sonuna cevir (ses motoru orada nefes alsin)
     metin = metin.replace("\n\n", ". ")
     metin = re.sub(r"\s+", " ", metin).strip()

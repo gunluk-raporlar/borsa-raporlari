@@ -28,7 +28,8 @@ flowchart TD
         robot["robot.py<br/>kâğıt-üstü işlem robotu sayfası"]
         derin["derin_analiz.py<br/>derin analiz sayfası"]
         makro["makro_*.py<br/>makro veri / rejim / snapshot / katalog"]
-        radyo["radyo.py<br/>BIST Radyo podcast (TTS + ffmpeg)"]
+        radyo["radyo.py<br/>BIST Radyo podcast<br/>(ses: ema_tts.py + ffmpeg)"]
+        ema_tts["ema_tts.py<br/>EMA Lightning tek ses motoru<br/>(+ metin_uyarla metin katmanı)"]
         i18n["i18n.py<br/>çok dilli katman"]
     end
 
@@ -56,6 +57,10 @@ flowchart TD
     makrow --> makro
     derinw --> derin
     radyow --> radyo
+
+    bot -- "sesli bülten (raporlar/TARIH.mp3)" --> ema_tts
+    radyo -- "Ela replikleri" --> ema_tts
+    ema_tts -- "MP3 (ffmpeg)" --> trhtml
 
     bot <--> d
     robot <--> d
@@ -105,7 +110,14 @@ flowchart TD
   aynı çizimi tarayıcıda yeniden üretir: aralık düğmeleri (1A/3A/6A/1Y/Tümü), SMA20/50,
   hover ipucu, `documentElement.lang`'a göre etiketler. İki tarafın sabitleri
   (640×280, kenar boşlukları, SMA renkleri, kesikli çizgi desenleri) eşleşmek
-  zorundadır — bir tarafı değiştirirsen diğerini de değiştir.
+  zorundadır — bir tarafı değiştirirsen diğerini de değiştir. Sesli bülten alt
+  sistemi (`rapor_sesi_uret` → `_ses_metni_hazirla`): tabloları atlayan
+  HTML→konuşma metni; `_konusma_metni_normalize` ticker'ları şirket adına çevirir,
+  `_TTS_OKUNUS` sözlüğü yazılıştan farklı okunuşlu adları (TCELL → "Türksel",
+  23.10 kararı) YALNIZCA ses metninde uygular — yayın HTML'i ve LLM istemleri resmi
+  adı korur; ardından `editor.tts_telaffuz` sayı/kod açılımları. Ses EMA Lightning
+  (`ema_tts.py`) ile `raporlar/<tarih>.mp3`; EMA atarsa Edge-TTS yedeği —
+  başarısızlık rapor üretimini asla etkilemez.
 - **egitim.py** — hafta sonu borsa okulu: Cmt/Paz ders üretir,
   `haftasonu-egitimi.html` + `haftasonu-egitimi/<tarih>.html` yazar; müfredat
   deterministik, içerik LLM.
@@ -129,8 +141,19 @@ flowchart TD
 - **makro_*.py** — makro katman: `makro_veri/katalog` (veri + tanımlar),
   `makro_rejim` (kural tabanlı rejim etiketi, `data/makro-rejim/`),
   `makro_snapshot` (akşam göstergeleri), `makro_analiz` sayfası üretimi.
-- **radyo.py** — BIST Radyo: iki kurgusal sunuculu piyasa sohbeti; edge-tts +
-  ffmpeg ile MP3, `radyo/<tarih>-<bölüm>.mp3` + indeks günceller.
+- **radyo.py** — BIST Radyo: iki kurgusal sunuculu piyasa sohbeti; Ela'nın sesi
+  EMA Lightning (`ema_tts.py`) ile MP3, `radyo/<tarih>-<bölüm>.mp3` +
+  `indeks.json` günceller. Yedek zinciri (yayını kurtarmak için) edge-tts →
+  Qwen3 → EMA; MERT için EMA hiçbir koşulda kullanılmaz (EMA tek sesli kadın,
+  23.10 kararı). Parçalar ffmpeg concat ile birleştirilir.
+- **ema_tts.py** — ses üretiminin tek kaynağı: EMA Lightning (yerel, 8.6M
+  parametre) sarmalayıcısı + `metin_uyarla` metin ön yüzü. `metin_uyarla` EMA'nın
+  normalizer-tr "fallback" politikasını telafi eder: okunamayan simgeleri kaldırır
+  (parantez, eğik çizgi, ·/$/€, kesmeler) ve tümü büyük harf sinyal sözcüklerini
+  küçültür (GÜÇLÜ AL/SAT, NÖTR…; RSI, ABD gibi gerçek kısaltmalar bilerek
+  korunur). bot.py rapor sesli bülteni ve radyo.py Ela replikleri `seslendir`
+  üzerinden geçer; metin düzeltmesi böylece tek noktadan uygulanır
+  (2026-10-23 itibarıyla).
 - **build.sh** — Cloudflare Pages build adımı: yalnızca site dosyalarını (HTML,
   CSS, json, görsel, dil klasörleri) `dist/`'e kopyalar; kaynak kod ve `data/`
   yayımlanmaz (`.assetsignore` ile ikinci katman).
