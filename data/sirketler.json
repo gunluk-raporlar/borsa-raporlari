@@ -25,7 +25,9 @@
    "Cari oran (TradingView bilanso kesiti) 1,0 — dengeli likidite.",
    "Çarpanlar: F/K 11,4 · PD/DD 0,9 · EV/FAVÖK 6,2 · temettü verimi %1,9.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
-  ]
+  ],
+  "xu030_agirlik": 1.15,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "AKBNK": {
   "unvan": "Akbank",
@@ -51,7 +53,9 @@
    "Çarpanlar: F/K 5,4 · PD/DD 1,1 · temettü verimi %3,2.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "Ticari bankacılık faaliyetleri."
+  "faaliyet_eski": "Ticari bankacılık faaliyetleri.",
+  "xu030_agirlik": 6.41,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "ASELS": {
   "unvan": "Aselsan",
@@ -76,7 +80,9 @@
    "Çarpanlar: F/K 45,4 · PD/DD 5,5 · EV/FAVÖK 30,9 · temettü verimi %0,1.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "Kara, hava, deniz ve uzay uygulamaları için elektrik-elektronik, yazılım ve sistemlerin Ar-Ge, mühendislik, üretim ve satışı: haberleşme, radar, hava savunma, elektro-optik."
+  "faaliyet_eski": "Kara, hava, deniz ve uzay uygulamaları için elektrik-elektronik, yazılım ve sistemlerin Ar-Ge, mühendislik, üretim ve satışı: haberleşme, radar, hava savunma, elektro-optik.",
+  "xu030_agirlik": 15.0,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "ASTOR": {
   "unvan": "Astor Enerji",
@@ -103,7 +109,9 @@
    "Çarpanlar: F/K 18,7 · PD/DD 4,3 · EV/FAVÖK 14,3 · temettü verimi %1,1.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "Transformatör imalat ve satışı."
+  "faaliyet_eski": "Transformatör imalat ve satışı.",
+  "xu030_agirlik": 2.29,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "BIMAS": {
   "unvan": "Bim Birleşik Mağazalar",
@@ -127,7 +135,9 @@
    "Cari oran (TradingView bilanso kesiti) 1,0 — dengeli likidite.",
    "Çarpanlar: F/K 17,9 · PD/DD 2,4 · EV/FAVÖK 10,2 · temettü verimi %1,7.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
-  ]
+  ],
+  "xu030_agirlik": 11.39,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "EKGYO": {
   "unvan": "Emlak Konut Gayrimenkul Yatırım Ortaklığı",
@@ -151,7 +161,9 @@
    "Cari oran (TradingView bilanso kesiti) 2,1 — güçlü likidite.",
    "Çarpanlar: PD/DD 0,5 · EV/FAVÖK 5,6 · temettü verimi %3,0.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
-  ]
+  ],
+  "xu030_agirlik": 1.23,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "ENKAI": {
   "unvan": "Enka İnşaat ve Sanayi",
@@ -177,7 +189,9 @@
    "Cari oran (TradingView bilanso kesiti) 2,9 — güçlü likidite.",
    "Çarpanlar: F/K 12,6 · PD/DD 1,2 · EV/FAVÖK 9,8 · temettü verimi %4,8.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
-  ]
+  ],
+  "xu030_agirlik": 2.01,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "EREGL": {
   "unvan": "Ereğli Demir Çelik (Erdemir)",
@@ -204,7 +218,9 @@
    "Cari oran (TradingView bilanso kesiti) 1,8 — dengeli likidite.",
    "Çarpanlar: F/K 32,3 · PD/DD 0,8 · EV/FAVÖK 12,3 · temettü verimi %1,5.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
-  ]
+  ],
+  "xu030_agirlik": 3.97,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "FROTO": {
   "unvan": "Ford Otosan",
@@ -231,7 +247,9 @@
    "Cari oran (TradingView bilanso kesiti) 1,3 — dengeli likidite.",
    "Çarpanlar: F/K 8,8 · PD/DD 1,5 · EV/FAVÖK 7,9 · temettü verimi %13,0.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
-  ]
+  ],
+  "xu030_agirlik": 1.54,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "GARAN": {
   "unvan": "Garanti BBVA",
@@ -257,7 +275,9 @@
    "Çarpanlar: F/K 4,5 · PD/DD 1,1 · temettü verimi %4,0.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "Ticari bankacılık."
+  "faaliyet_eski": "Ticari bankacılık.",
+  "xu030_agirlik": 2.78,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "GUBRF": {
   "unvan": "Gübre Fabrikaları (Gübretaş)",
@@ -282,7 +302,9 @@
    "Çarpanlar: F/K 18,1 · PD/DD 3,5 · EV/FAVÖK 10,0.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "Kimyevi gübre üretim ve satışı."
+  "faaliyet_eski": "Kimyevi gübre üretim ve satışı.",
+  "xu030_agirlik": 0.82,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "ISCTR": {
   "unvan": "Türkiye İş Bankası (C grubu)",
@@ -308,7 +330,9 @@
    "Cari oran (TradingView bilanso kesiti) 0,3 — kısa vadeli yükümlülük baskısı.",
    "Çarpanlar: F/K 4,7 · PD/DD 0,7 · temettü verimi %4,2.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
-  ]
+  ],
+  "xu030_agirlik": 3.53,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "KCHOL": {
   "unvan": "Koç Holding",
@@ -342,7 +366,9 @@
    "Cari oran (TradingView bilanso kesiti) 0,9 — kısa vadeli yükümlülük baskısı.",
    "Çarpanlar: F/K 15,3 · PD/DD 0,7 · EV/FAVÖK 6,8 · temettü verimi %3,2.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
-  ]
+  ],
+  "xu030_agirlik": 4.12,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "KRDMD": {
   "unvan": "Kardemir (D)",
@@ -367,7 +393,9 @@
    "Çarpanlar: F/K 11,0 · PD/DD 0,5 · EV/FAVÖK 5,9.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "Her çeşit ham demir ve çelik mamullerinin, kok ve kok yan ürünlerinin imali ve satışı; Karabük."
+  "faaliyet_eski": "Her çeşit ham demir ve çelik mamullerinin, kok ve kok yan ürünlerinin imali ve satışı; Karabük.",
+  "xu030_agirlik": 1.0,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "MGROS": {
   "unvan": "Migros Ticaret",
@@ -395,7 +423,9 @@
    "Çarpanlar: F/K 15,4 · PD/DD 1,0 · EV/FAVÖK 12,2 · temettü verimi %1,6.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "Her türlü gıda ve tüketim maddeleri ticareti ve alışveriş merkezleri işletmeciliği."
+  "faaliyet_eski": "Her türlü gıda ve tüketim maddeleri ticareti ve alışveriş merkezleri işletmeciliği.",
+  "xu030_agirlik": 1.49,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "PETKM": {
   "unvan": "Petkim Petrokimya",
@@ -419,7 +449,9 @@
    "Cari oran (TradingView bilanso kesiti) 0,6 — kısa vadeli yükümlülük baskısı.",
    "Çarpanlar: PD/DD 0,7 · EV/FAVÖK 895,6.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
-  ]
+  ],
+  "xu030_agirlik": 0.81,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "PGSUS": {
   "unvan": "Pegasus Hava Taşımacılığı",
@@ -443,7 +475,9 @@
    "Cari oran (TradingView bilanso kesiti) 0,8 — kısa vadeli yükümlülük baskısı.",
    "Çarpanlar: PD/DD 0,6 · EV/FAVÖK 8,7.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
-  ]
+  ],
+  "xu030_agirlik": 1.0,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "SAHOL": {
   "unvan": "Sabancı Holding",
@@ -473,7 +507,9 @@
    "Cari oran (TradingView bilanso kesiti) 0,6 — kısa vadeli yükümlülük baskısı.",
    "Çarpanlar: F/K 9,3 · PD/DD 0,4 · temettü verimi %1,6.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
-  ]
+  ],
+  "xu030_agirlik": 3.49,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "SASA": {
   "unvan": "Sasa Polyester Sanayi",
@@ -497,7 +533,9 @@
    "Cari oran (TradingView bilanso kesiti) 0,6 — kısa vadeli yükümlülük baskısı.",
    "Çarpanlar: PD/DD 0,5 · EV/FAVÖK 19,8.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
-  ]
+  ],
+  "xu030_agirlik": 1.38,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "SISE": {
   "unvan": "Şişecam",
@@ -527,7 +565,9 @@
    "Çarpanlar: F/K 9,6 · PD/DD 0,4 · EV/FAVÖK 17,0 · temettü verimi %1,5.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "Düz cam, cam ev eşyası, cam ambalaj ile soda ve krom kimyasalları; 8 bağlı ortak ve 17 iştirakle çok ülkede üretim."
+  "faaliyet_eski": "Düz cam, cam ev eşyası, cam ambalaj ile soda ve krom kimyasalları; 8 bağlı ortak ve 17 iştirakle çok ülkede üretim.",
+  "xu030_agirlik": 1.9,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "TAVHL": {
   "unvan": "TAV Holding",
@@ -555,7 +595,9 @@
    "Çarpanlar: F/K 19,1 · PD/DD 1,2 · EV/FAVÖK 6,7 · temettü verimi %1,3.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "Havalimanı işletmeciliği (Yap-İşlet-Devret ve işletmeci model); iştirakleriyle yer hizmetleri, gümrüksüz mağazacılık ve yeme-içme."
+  "faaliyet_eski": "Havalimanı işletmeciliği (Yap-İşlet-Devret ve işletmeci model); iştirakleriyle yer hizmetleri, gümrüksüz mağazacılık ve yeme-içme.",
+  "xu030_agirlik": 1.73,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "TCELL": {
   "unvan": "Turkcell",
@@ -584,7 +626,9 @@
    "Cari oran (TradingView bilanso kesiti) 1,5 — dengeli likidite.",
    "Çarpanlar: F/K 11,4 · PD/DD 0,7 · EV/FAVÖK 2,7 · temettü verimi %4,0.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
-  ]
+  ],
+  "xu030_agirlik": 2.89,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "THYAO": {
   "unvan": "Türk Hava Yolları",
@@ -612,7 +656,9 @@
    "Çarpanlar: F/K 3,6 · PD/DD 0,4 · EV/FAVÖK 7,1.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "Bayrak taşıyıcı havayolu; ~200 uçaklık filoyla 217 rota, Star Alliance üyesi."
+  "faaliyet_eski": "Bayrak taşıyıcı havayolu; ~200 uçaklık filoyla 217 rota, Star Alliance üyesi.",
+  "xu030_agirlik": 6.66,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "TOASO": {
   "unvan": "Tofaş Türk Otomobil Fabrikası",
@@ -640,7 +686,9 @@
    "Çarpanlar: F/K 10,6 · PD/DD 2,1 · EV/FAVÖK 13,2 · temettü verimi %7,6.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "Motorlu araç montajı; motor, yedek parça ve aksesuar imalatı (Fiat, Jeep)."
+  "faaliyet_eski": "Motorlu araç montajı; motor, yedek parça ve aksesuar imalatı (Fiat, Jeep).",
+  "xu030_agirlik": 1.0,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "TRALT": {
   "unvan": "Türk Altın İşletmeleri",
@@ -664,7 +712,9 @@
    "Cari oran (TradingView bilanso kesiti) 4,7 — güçlü likidite.",
    "Çarpanlar: F/K 28,1 · PD/DD 2,6 · EV/FAVÖK 12,9 · temettü verimi %1,1.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
-  ]
+  ],
+  "xu030_agirlik": 1.25,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "TTKOM": {
   "unvan": "Türk Telekom",
@@ -693,7 +743,9 @@
    "Çarpanlar: F/K 6,6 · PD/DD 0,7 · EV/FAVÖK 2,7.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "Her tür telekomünikasyon hizmeti; katma değerli hizmetler ve telekom altyapı projeleri."
+  "faaliyet_eski": "Her tür telekomünikasyon hizmeti; katma değerli hizmetler ve telekom altyapı projeleri.",
+  "xu030_agirlik": 0.78,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "TUPRS": {
   "unvan": "Tüpraş (Türkiye Petrol Rafinerileri)",
@@ -721,7 +773,9 @@
    "Çarpanlar: F/K 10,6 · PD/DD 1,6 · EV/FAVÖK 5,5 · temettü verimi %4,4.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "28,1 milyon ton yıllık rafinaj kapasitesi; %79,98 DİTAŞ ve %40 Opet iştirakleriyle Türkiye'nin lider sanayi kuruluşu."
+  "faaliyet_eski": "28,1 milyon ton yıllık rafinaj kapasitesi; %79,98 DİTAŞ ve %40 Opet iştirakleriyle Türkiye'nin lider sanayi kuruluşu.",
+  "xu030_agirlik": 12.75,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "VAKBN": {
   "unvan": "VakıfBank",
@@ -747,7 +801,9 @@
    "Çarpanlar: F/K 4,4 · PD/DD 0,9.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "Ticari bankacılık."
+  "faaliyet_eski": "Ticari bankacılık.",
+  "xu030_agirlik": 0.67,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "YKBNK": {
   "unvan": "Yapı Kredi Bankası",
@@ -773,7 +829,9 @@
    "Çarpanlar: F/K 5,5 · PD/DD 1,1.",
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
-  "faaliyet_eski": "Kurumsal, bireysel, uluslararası ve yatırım bankacılığı."
+  "faaliyet_eski": "Kurumsal, bireysel, uluslararası ve yatırım bankacılığı.",
+  "xu030_agirlik": 4.28,
+  "xu030_donem": "Fintables, 24.10.2026"
  },
  "TRMET": {
   "unvan": "TR Anadolu Metal Madencilik İşletmeleri A.Ş. (eski adı: Koza Anadolu Metal)",
@@ -797,6 +855,8 @@
    "Borçluluk: net borç YOK (nakit borçtan 21,7 milyar TL fazla), kaldıraç 0,13 (düşük); kısa vadeli borç payı %5,9→%8,7 ve finansal borç payı artışı (uyarı); faiz karşılama verisi eksik (uyarı)",
    "Karlılık 3,8/5: faaliyet marjı %35 (artış), net marj %8 (azalış); özkaynak kârlılığı %8 (DuPont: kaldıraç ve devir hızı artışıyla)",
    "Verimlilik: aktif devir hızı 0,40 · özkaynak devir hızı 0,87 · işletme sermayesi devir hızı 1,23"
-  ]
+  ],
+  "xu030_agirlik": 0.66,
+  "xu030_donem": "Fintables, 24.10.2026"
  }
 }

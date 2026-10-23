@@ -6475,6 +6475,10 @@ def _sirket_profili_html(kod):
     if p.get("sermaye"):
         donem = f' ({p["sermaye_donem"]})' if p.get("sermaye_donem") else ""
         meta.append(f'<span>Ödenmiş sermaye: <strong>{p["sermaye"]}</strong>{donem}</span>')
+    if p.get("xu030_agirlik"):
+        agirlik = f'{p["xu030_agirlik"]:.2f}'.replace(".", ",")
+        kaynak = f' ({p["xu030_donem"]})' if p.get("xu030_donem") else ""
+        meta.append(f'<span>XU030 ağırlığı: <strong>%{agirlik}</strong>{kaynak}</span>')
     web_html = ""
     if p.get("web"):
         web_html = (f'<div style="margin:8px 0 0; font-size:13.5px">🌐 '
