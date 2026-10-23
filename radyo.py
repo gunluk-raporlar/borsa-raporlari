@@ -6,10 +6,11 @@ cagrilir. Akis:
   1. GUNUN VERISI: data/news, data/teknik (son tarama), portfolio.json, data/prices
   2. SOHRET: LLM (varsa Z.ai, degilse bot.llm_call zinciri) iki sunucu arasinda
      dogal bir sohbet yazar; LLM erisilemezse veriden sablon sohbet uretilir.
-  3. SESLENDIRME: edge-tts (Microsoft tr-TR neural sesler) — Ela = EmelNeural
-     (kadin), Mert = AhmetNeural (erkek). edge-tts duserse yedek zinciri:
-     Qwen3-TTS-Tiny-TR (ELA=voice-01 kadin, MERT=voice-02 erkek; resmi tarife)
-     -> tek sesli EMA Lightning. Her replik ayri sentezlenir, ffmpeg ile
+  3. SESLENDIRME: Ela = EMA Lightning (yerel, tek ses; 23.10 kullanici karari:
+     "kadının sesi EMA olsun"). Mert = edge-tts AhmetNeural (erkek); Mert'in
+     edge'i duserse yedek zinciri Qwen3-TTS-Tiny-TR (MERT=voice-02; resmi
+     tarife) -> EMA. Ela'da EMA atarsa ayni zincir edge-tts EmelNeural ile
+     devam eder. Her replik ayri sentezlenir, ffmpeg ile
      kisa sessizliklerle tek MP3'te birlestirilir.
   4. YAYIN: radyo/<tarih>-<bolum>.mp3 yazilir, radyo/indeks.json guncellenir,
      7 gunden eski yayinlar temizlenir (repo sismesin).
@@ -590,6 +591,15 @@ def _yedek_seslendir(metin, konusan, cikti_yolu):
 async def _replik_seslendir(replik, konusan, cikti_yolu):
     metin = _tl_konusma_metni(replik)
     metin = bot._konusma_metni_normalize(metin)
+    # 23.10 kullanici karari: Ela'nin sesi EMA Lightning (yerel motor) —
+    # edge-tts EmelNeural degil. EMA kurulamazsa/atarlarsa asagidaki eski
+    # zincir (edge-tts -> Qwen3 -> EMA) yayini kurtarir.
+    if konusan == "ELA":
+        try:
+            return await asyncio.to_thread(_ema_seslendir, metin, konusan, cikti_yolu)
+        except Exception as e:
+            logger.warning("[Radyo] EMA (Ela) basarisiz (%s); eski zincire donuluyor",
+                           str(e)[:120])
     try:
         from edge_tts import Communicate
     except ImportError:

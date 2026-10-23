@@ -8207,12 +8207,12 @@ def podcast_rss_yaz():
             f"<description>BIST Radyo — kurgusal yapay zeka sunucularla borsa bülteni.</description>"
             f"<itunes:duration>{max(1, round(b.get('sure_sn', 60) / 60))}</itunes:duration></item>"
         )
-    # xml-stylesheet PI: tarayicida dogrudan acilinca ham XML agaci yerine
-    # podcast.xsl ile bicimlendirilmis sayfa gorunur; podcast uygulamalari PI'yi yok sayar.
-    # itunes:image + image: uygulama icinde kanal kapagi gorunsun.
+    # 23.10: xml-stylesheet PI KALDIRILDI — Chrome XSLT'yi kaldiriyor ve
+    # XML acilinca kirmizi uyari basiyordu; tarayici artik ham XML agaci
+    # gosterir, podcast uygulamalarini etkilemez. itunes:image + image:
+    # uygulama icinde kanal kapagi gorunsun.
     xml = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
-        '<?xml-stylesheet type="text/xsl" href="podcast.xsl"?>\n'
         '<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"><channel>\n'
         f"<title>BIST Radyo — Yapay Zeka Borsa Bülteni</title>\n<link>{SITE_URL}</link>\n"
         "<language>tr</language>\n"
@@ -8265,11 +8265,10 @@ def rapor_podcast_yaz():
             f"<description>{tarih} tarihli {tur.lower()} — yapay zeka sesiyle rapor okumasi. Yatirim tavsiyesi degildir.</description>"
             f"</item>"
         )
-    # xml-stylesheet PI: podcast.xsl iki akista da calisir (geniktir, kanal
-    # basligi/ogeleri stil icinde sabit degil, XML'den okunur).
+    # 23.10: xml-stylesheet PI kaldirildi (Chrome XSLT'yi kaldiriyor; bkz.
+    # radyo podcast.xml'deki ayni duzeltme).
     xml = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
-        '<?xml-stylesheet type="text/xsl" href="podcast.xsl"?>\n'
         '<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"><channel>\n'
         f"<title>BIST Günlük Rapor — Sesli Bülten</title>\n<link>{SITE_URL}</link>\n"
         "<language>tr</language>\n"
