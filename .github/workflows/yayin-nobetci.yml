@@ -97,9 +97,11 @@ jobs:
                 # (iki dosya ust-uste dusmemesi icin OR mantigi: herhangi biri eksikse yayin calisir)
                 EKSIK_YAYIN=0
                 for PUB_DOSYA in "haftasonu/${TODAY}.html" "haftasonu-egitimi/${TODAY}.html"; do
-                  # once git'te var mi?
-                  HTTP=$(gh api "repos/${REPO}/contents/${PUB_DOSYA}?ref=main" --jq .message 2>/dev/null || echo "NOT_FOUND")
-                  if [ "$HTTP" = "Not Found" ] || [ "$HTTP" = "NOT_FOUND" ]; then
+                  # once git'te var mi? CIKIS KODUYLA denetlenir: gh api 404
+                  # govdesini stdout'a bastigi icin eski "Not Found" mesaj
+                  # karsilastirmasi hic yakalamiyor, nobetci "mevcut" sanip
+                  # ureticiyi tetiklemiyordu (2026-10-23 derin analizi kacti).
+                  if ! gh api "repos/${REPO}/contents/${PUB_DOSYA}?ref=main" --jq .git_url >/dev/null 2>&1; then
                     echo "EKSIK (git): ${PUB_DOSYA} — henuz commit edilmemis"
                     EKSIK_YAYIN=1
                     continue
@@ -119,9 +121,10 @@ jobs:
               *) echo "Bilinmeyen hedef: $HEDEF"; continue ;;
             esac
 
-            # Hafta ici hedefleri: git icerigi kontrolu (hizli, deploy gecikmesinden bagimsiz)
-            HTTP=$(gh api "repos/${REPO}/contents/${DOSYA}?ref=main" --jq .message 2>/dev/null || echo "NOT_FOUND")
-            if [ "$HTTP" = "Not Found" ] || [ "$HTTP" = "NOT_FOUND" ]; then
+            # Hafta ici hedefleri: git icerigi kontrolu (hizli, deploy gecikmesinden
+            # bagimsiz). CIKIS KODUYLA denetlenir — gh api 404 govdesini stdout'a
+            # bastigi icin eski mesaj karsilastirmasi hic yakalamiyordu (2026-10-23).
+            if ! gh api "repos/${REPO}/contents/${DOSYA}?ref=main" --jq .git_url >/dev/null 2>&1; then
               echo "EKSIK (git): ${DOSYA} — henuz commit edilmemis"
               EKSIK="$EKSIK $HEDEF"
               continue
