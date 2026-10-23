@@ -169,7 +169,7 @@
  },
  "ENKAI": {
   "unvan": "Enka İnşaat ve Sanayi",
-  "kurulus": "1957 (tescil 27.02.1958)",
+  "kurulus": "1957",
   "grup": "Koç Holding (ana ortak)",
   "faaliyet": "Türkiye'de ve yurt dışında endüstriyel ve sosyal binalar, otoyol inşaatları ile doğalgaz termik santralleri; müşterek ortaklıklar ve iştirakler yoluyla hizmet.",
   "sermaye": "6.021.689.000 TL",
@@ -194,7 +194,7 @@
   ],
   "xu030_agirlik": 2.01,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "Şirket resmi anlatımı; kullanıcı onayı 24.10.2026"
+  "kurulus_kaynak": "Enka resmi şirket künyesi: \"Tescil veya Kuruluş Tarihi: 1957\" (kullanıcı kanıtı, enka.com)"
  },
  "EREGL": {
   "unvan": "Ereğli Demir Çelik (Erdemir)",
