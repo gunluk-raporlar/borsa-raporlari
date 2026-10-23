@@ -3955,17 +3955,27 @@ def _ses_metni_hazirla(html):
 
 
 def rapor_sesi_uret(html, date_str):
-    """Raporu Edge-TTS ile raporlar/{tarih}.mp3 olarak okur. Basarisizlik
-    rapor uretimini ASLA etkilemez (False doner)."""
+    """Raporu raporlar/{tarih}.mp3 olarak okur: EMA Lightning (yerel motor;
+    23.10 kullanici karari "raporlari okuyan da EMA olsun"), atarsa Edge-TTS
+    (TTS_SESI). Basarisizlik rapor uretimini ASLA etkilemez (False doner)."""
+    metin = _ses_metni_hazirla(html)
+    if len(metin) < 200:
+        logger.info("[TTS] metin cok kisa; ses uretilmedi.")
+        return False
+    try:
+        import ema_tts
+        ema_tts.seslendir(metin, f"raporlar/{date_str}.mp3", hiz=1.0)
+        logger.info("[TTS] raporlar/%s.mp3 uretildi (EMA Lightning, %d kr)",
+                    date_str, len(metin))
+        return True
+    except Exception as e:
+        logger.warning("[TTS] EMA basarisiz (%s); Edge-TTS yedegine geciliyor",
+                       str(e)[:120])
     try:
         import asyncio
         import edge_tts
     except ImportError:
         logger.warning("[TTS] edge-tts kurulu degil; ses uretilmedi.")
-        return False
-    metin = _ses_metni_hazirla(html)
-    if len(metin) < 200:
-        logger.info("[TTS] metin cok kisa; ses uretilmedi.")
         return False
 
     async def _uret():

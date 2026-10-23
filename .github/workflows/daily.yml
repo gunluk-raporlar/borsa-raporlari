@@ -35,6 +35,15 @@ jobs:
           python-version: '3.12'
       - name: Kutuphaneleri kur
         run: pip install -r requirements.txt
+      # EMA Lightning kur (23.10 kullanici karari: rapor sesli bulteni EMA
+      # sesiyle okunur; bot.rapor_sesi_uret EMA'yi birincil, Edge-TTS'i yedek
+      # kullanir). pip'in varsayilan torch'u CUDA paketi (~2 GB); runner
+      # GPU'suz, CPU wheel'i yeterli. Kurulum patlarsa akis olmesin:
+      # rapor_sesi_uret Edge-TTS yedegine duser.
+      - name: EMA Lightning kur (rapor sesli bulteni)
+        run: |
+          pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+          pip install "ema-lightning==1.0.1" || echo "[TTS] ema-lightning kurulamadi; Edge-TTS yedegi kullanilir"
       # Tazelik kapisi (2026-10-09): gecikmis GitHub cron'lari ayni gunun
       # raporunu IKINCI kez uretip eziyordu (8 Ekim: derin analiz 2 kez
       # uretildi). Bugunun dosyasi varsa uretim atlanir; force=true ile

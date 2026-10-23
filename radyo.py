@@ -459,45 +459,12 @@ def _ffmpeg_bul():
         return None
 
 
-_ema_model = None
-
-
 def _ema_seslendir(metin, konusan, cikti_yolu):
-    """edge-tts yedegi: EMA Lightning (yerel, offline Turkce TTS).
-
-    Microsoft'un gayriresmi uc noktasi gittiginde yayin devam etsin diye
-    eklendi (2026-10-07; HF canberkkkkkk/ema-lightning, Apache 2.0,
-    8.6M parametre — runner'da ~10x gercek zamanli, yoklama: ema_probe.py).
-    Tek seslidir; konusan farki hiz ile verilir (ELA 1.0, MERT 0.94).
-    Kurulum yalnizca radyo is akisinda yapilir (torch CPU + ema-lightning);
-    burada ImportError'une karsi sessizce tekrar yukseltilir.
-    """
-    global _ema_model
-    try:
-        from ema_lightning import EMA
-    except ImportError as e:
-        raise RuntimeError(
-            "edge-tts basarisiz ve EMA yedegi kurulu degil "
-            "(pip install ema-lightning)") from e
-    if _ema_model is None:
-        logger.info("[Radyo] EMA Lightning yukleniyor (yedek motor)...")
-        _ema_model = EMA()
+    """EMA Lightning — TEK KAYNAK ema_tts.py (motor + kurulum notu orada).
+    Konusan farki hiz ile verilir (ELA 1.0, MERT 0.94)."""
     hiz = 0.94 if konusan == "MERT" else 1.0
-    wav_yolu = os.path.splitext(cikti_yolu)[0] + ".wav"
-    try:
-        _ema_model.say(metin, path=wav_yolu, speed=hiz)
-    except TypeError:
-        # paket surumu speed parametresini desteklemiyorsa hizsiz devam
-        _ema_model.say(metin, path=wav_yolu)
-    ffmpeg = _ffmpeg_bul()
-    if not ffmpeg:
-        raise RuntimeError("EMA yedegi icin ffmpeg bulunamadi")
-    r = os.system(f'"{ffmpeg}" -y -loglevel error -i "{wav_yolu}" '
-                  f'-c:a libmp3lame -b:a 48k -ar 24000 "{cikti_yolu}"')
-    if r != 0:
-        raise RuntimeError(f"EMA wav->mp3 donusumu basarisiz ({r})")
-    os.remove(wav_yolu)
-    return cikti_yolu
+    import ema_tts
+    return ema_tts.seslendir(metin, cikti_yolu, hiz=hiz)
 
 
 _qwen_model = None
