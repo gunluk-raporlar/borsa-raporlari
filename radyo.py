@@ -6,11 +6,12 @@ cagrilir. Akis:
   1. GUNUN VERISI: data/news, data/teknik (son tarama), portfolio.json, data/prices
   2. SOHRET: LLM (varsa Z.ai, degilse bot.llm_call zinciri) iki sunucu arasinda
      dogal bir sohbet yazar; LLM erisilemezse veriden sablon sohbet uretilir.
-  3. SESLENDIRME: Ela = EMA Lightning (yerel, tek ses; 23.10 kullanici karari:
-     "kadının sesi EMA olsun"). Mert = edge-tts AhmetNeural (erkek); Mert'in
-     edge'i duserse yedek zinciri Qwen3-TTS-Tiny-TR (MERT=voice-02; resmi
-     tarife) -> EMA. Ela'da EMA atarsa ayni zincir edge-tts EmelNeural ile
-     devam eder. Her replik ayri sentezlenir, ffmpeg ile
+  3. SESLENDIRME: Ela = EMA Lightning (yerel, TEK SESLI KADIN; 23.10 kullanici
+     karari: "kadının sesi EMA olsun"). Mert = edge-tts AhmetNeural (erkek);
+     duserse Qwen3-TTS-Tiny-TR voice-02 (erkek). EMA erkek icin HICBIR
+     kosulda kullanilmaz — son care de degil (23.10, baglayici). Ela'da EMA
+     atarsa edge-tts EmelNeural -> Qwen3 voice-01 ile devam eder. Her replik
+     ayri sentezlenir, ffmpeg ile
      kisa sessizliklerle tek MP3'te birlestirilir.
   4. YAYIN: radyo/<tarih>-<bolum>.mp3 yazilir, radyo/indeks.json guncellenir,
      7 gunden eski yayinlar temizlenir (repo sismesin).
@@ -542,14 +543,21 @@ def _qwen_seslendir(metin, konusan, cikti_yolu):
 
 
 def _yedek_seslendir(metin, konusan, cikti_yolu):
-    """Yedek zinciri: Qwen3 (cinsiyetli iki ses) -> EMA (tek ses).
+    """Yedek zinciri: Qwen3 (cinsiyetli iki ses) -> [YALNIZ Ela] EMA.
 
-    Qwen3 kurulu degilse veya HF indirmesi patlarsa tek sesli EMA ile
-    yayin kurtarilir — eski davranis.
+    23.10 kullanici karari (baglayici): EMA TEK SESLI KADINDIR; MERT icin
+    HICBIR kosulda kullanilmaz — son care diye de yok. Mert'in edge-tts ve
+    Qwen3'u birden duserse replik basarisiz olur; erkek replik kadina
+    okunmaz.
     """
     try:
         return _qwen_seslendir(metin, konusan, cikti_yolu)
     except Exception as e:
+        if konusan == "MERT":
+            logger.error("[Radyo] MERT: edge-tts ve Qwen3 de basarisiz (%s); "
+                         "EMA erkek icin kullanilmaz (23.10), replik basarisiz.",
+                         str(e)[:120])
+            raise
         logger.warning("[Radyo] Qwen3 yedegi basarisiz (%s); EMA'ya geciliyor",
                        str(e)[:120])
         return _ema_seslendir(metin, konusan, cikti_yolu)
