@@ -31,7 +31,7 @@
  },
  "AKBNK": {
   "unvan": "Akbank",
-  "kurulus": "27.12.1947",
+  "kurulus": "30.01.1948",
   "grup": "Sabancı Holding",
   "faaliyet": "Kurumsal, ticari, KOBİ, bireysel, özel ve uluslararası bankacılık ile ödeme sistemleri; sigorta acenteliği de yürütür. Kaynak: Midas şirket kartları, 24.10.2026.",
   "sermaye": "5.200.000.000 TL",
@@ -55,7 +55,8 @@
   ],
   "faaliyet_eski": "Ticari bankacılık faaliyetleri.",
   "xu030_agirlik": 6.41,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "kurulus_kaynak": "Akbank resmi sitesi: \"Akbank, 30 Ocak 1948'de, Adana'da özel sermayeli bir ticaret bankası olarak kurulmuştur\" (akbank.com/bankamiz/hakkimizda)"
  },
  "ASELS": {
   "unvan": "Aselsan",
@@ -141,7 +142,7 @@
  },
  "EKGYO": {
   "unvan": "Emlak Konut Gayrimenkul Yatırım Ortaklığı",
-  "kurulus": "06.03.1991",
+  "kurulus": "1953 (GYO tescili 06.03.1991)",
   "grup": "Türkiye Varlık Fonu",
   "faaliyet": "Gayrimenkul ve gayrimenkule dayalı sermaye piyasası araçlarından portföy oluşturmak ve yönetmek.",
   "sermaye": "3.800.000.000 TL",
@@ -163,7 +164,8 @@
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
   "xu030_agirlik": 1.23,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "kurulus_kaynak": "Şirket resmi sitesi Hakkımızda: \"Emlak Konut GYO, 1953 yılında ... hayat buldu\" (kullanıcı kanıtı)"
  },
  "ENKAI": {
   "unvan": "Enka İnşaat ve Sanayi",
@@ -283,7 +285,7 @@
  },
  "GUBRF": {
   "unvan": "Gübre Fabrikaları (Gübretaş)",
-  "kurulus": "25.12.1952",
+  "kurulus": "06.11.1952",
   "grup": "Halka açık",
   "faaliyet": "Kimyevi gübre üretim ve satışı (Türkiye'nin ilk kimyevi gübre fabrikası): katı, damla sulama-yaprak, yavaş salınımlı ve organik gübreler; ~2.700 satış noktası. Kaynak: Midas şirket kartları, 24.10.2026.",
   "sermaye": "334.000.000 TL",
@@ -306,11 +308,12 @@
   ],
   "faaliyet_eski": "Kimyevi gübre üretim ve satışı.",
   "xu030_agirlik": 0.82,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "kurulus_kaynak": "GÜBRETAŞ resmi tarihçe: \"6 Kasım 1952 tarihinde ... Bakanlar Kurulu kararıyla\" (gubretas.com.tr/tr/tarihce) — eski değer 25.12.1952 hatalıydı"
  },
  "ISCTR": {
   "unvan": "Türkiye İş Bankası (C grubu)",
-  "kurulus": "29.12.1999 (C grubu payı; banka 1924)",
+  "kurulus": "26.08.1924 (C grubu payların tescili 29.12.1999)",
   "grup": "İş Bankası Mensupları Emekli Sandığı (TÜRİB)",
   "faaliyet": "Bankacılık; Türkiye'nin ilk ulusal bankası, sigorta ve yatırım iştirakleriyle geniş grup.",
   "sermaye": "24.999.970.000 TL",
@@ -334,11 +337,12 @@
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
   "xu030_agirlik": 3.53,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "kurulus_kaynak": "tr.wikipedia: \"1924'te Mustafa Kemal Atatürk'ün emriyle kurulan ... cumhuriyet döneminin ilk ulusal bankası\""
  },
  "KCHOL": {
   "unvan": "Koç Holding",
-  "kurulus": "06.12.1963",
+  "kurulus": "1926 (Koç Holding A.Ş. 06.12.1963)",
   "grup": "Koç ailesi",
   "faaliyet": "Türkiye'nin en büyük sanayi ve hizmet grubu; enerji, dayanıklı tüketim, otomotiv, finans ve turizm başlıklarında işletmeler.",
   "sermaye": "2.536.000.000 TL",
@@ -370,11 +374,12 @@
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
   "xu030_agirlik": 4.12,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "kurulus_kaynak": "Koç Holding tarihçe: \"1926'dan Bugüne ... 31 Mayıs 1926'da Koçzade Ahmet Vehbi adıyla Ankara Ticaret Odası'na kaydettirir\" (koc.com.tr/hakkinda/tarihce)"
  },
  "KRDMD": {
   "unvan": "Kardemir (D)",
-  "kurulus": "20.02.1995",
+  "kurulus": "03.04.1937 (Kardemir A.Ş. 20.02.1995)",
   "grup": "Halka açık",
   "faaliyet": "Her çeşit ham demir ve çelik mamullerinin, kok ve kok yan ürünlerinin imali ve satışı (endüstriyel çelik, maden direği, profil, inşaat demiri); Karabük. Kaynak: Midas şirket kartları, 24.10.2026.",
   "sermaye": "780.226.002 TL",
@@ -397,11 +402,12 @@
   ],
   "faaliyet_eski": "Her çeşit ham demir ve çelik mamullerinin, kok ve kok yan ürünlerinin imali ve satışı; Karabük.",
   "xu030_agirlik": 1.0,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "kurulus_kaynak": "tr.wikipedia: \"temelleri 3 Nisan 1937'de Mustafa Kemal Atatürk'ün talimatı ile ... atılmıştır\""
  },
  "MGROS": {
   "unvan": "Migros Ticaret",
-  "kurulus": "19.03.2008 (kökleri 1954 Migros)",
+  "kurulus": "1954 (Migros Ticaret A.Ş. tescili 19.03.2008)",
   "grup": "Anadolu Grubu & Fiba",
   "faaliyet": "Her türlü gıda ve tüketim maddeleri ticareti ve alışveriş merkezleri işletmeciliği; Türkiye'nin 81 ilinde hizmet. Kaynak: Midas şirket kartları, 24.10.2026.",
   "sermaye": "181.054.000 TL",
@@ -427,11 +433,12 @@
   ],
   "faaliyet_eski": "Her türlü gıda ve tüketim maddeleri ticareti ve alışveriş merkezleri işletmeciliği.",
   "xu030_agirlik": 1.49,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "kurulus_kaynak": "tr.wikipedia: \"Migros'un temelleri 1954 yılında İstanbul Belediyesi'nin aldığı kararla ... atıldı\""
  },
  "PETKM": {
   "unvan": "Petkim Petrokimya",
-  "kurulus": "25.08.1986",
+  "kurulus": "1965 (A.Ş. tescili 25.08.1986)",
   "grup": "SOCAR Türkiye",
   "faaliyet": "Türkiye'nin tek entegre petrokimya tesisi; 50'den fazla ürünle inşaat, tarım, otomotiv, ambalaj, tekstil gibi sektörlerin girdisini üretir.",
   "sermaye": "2.534.400.000 TL",
@@ -453,7 +460,8 @@
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
   "xu030_agirlik": 0.81,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "kurulus_kaynak": "tr.wikipedia: \"Türkiye Petrolleri tarafından 1965 yılında İzmir'de kurulan\""
  },
  "PGSUS": {
   "unvan": "Pegasus Hava Taşımacılığı",
@@ -541,7 +549,7 @@
  },
  "SISE": {
   "unvan": "Şişecam",
-  "kurulus": "1935 (İş Bankası tarafından kuruldu; A.Ş. yapılanması 25.04.1973)",
+  "kurulus": "1935",
   "grup": "Türkiye Varlık Fonu",
   "faaliyet": "Düz cam, cam ev eşyası, cam ambalaj ile soda ve krom kimyasalları; 14 ülkede üretim, 150'yi aşkın ülkeye satış; düzcam ve cam ambalajda dünyanın en büyük 5 üreticisinden. Kaynak: Midas şirket kartları, 24.10.2026.",
   "sermaye": "3.063.200.000 TL",
@@ -570,7 +578,7 @@
   "faaliyet_eski": "Düz cam, cam ev eşyası, cam ambalaj ile soda ve krom kimyasalları; 8 bağlı ortak ve 17 iştirakle çok ülkede üretim.",
   "xu030_agirlik": 1.9,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "Şirket resmi anlatımı; kullanıcı onayı 24.10.2026"
+  "kurulus_kaynak": "Şirket resmi tarihçesi: 1935'te 'Türkiye Şişe ve Cam Fabrikaları Anonim Sosyetesi' adıyla resmen tescil (kullanıcı kanıtı + şirket sitesi)"
  },
  "TAVHL": {
   "unvan": "TAV Holding",
@@ -811,7 +819,7 @@
  },
  "YKBNK": {
   "unvan": "Yapı Kredi Bankası",
-  "kurulus": "07.07.1944",
+  "kurulus": "09.09.1944",
   "grup": "Koç Holding & UniCredit",
   "faaliyet": "Kurumsal, bireysel, uluslararası ve yatırım bankacılığı; Hollanda, İsviçre, Azerbaycan ve Bahreyn'de şubeleri var. Kaynak: Midas şirket kartları, 24.10.2026.",
   "sermaye": "8.447.000.000 TL",
@@ -835,7 +843,8 @@
   ],
   "faaliyet_eski": "Kurumsal, bireysel, uluslararası ve yatırım bankacılığı.",
   "xu030_agirlik": 4.28,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "kurulus_kaynak": "tr.wikipedia: \"9 Eylül 1944 tarihinde İstanbul'da Kazım Taşkent tarafından kurulan\" — eski değer 07.07.1944 iki kaynaktan farklıydı"
  },
  "TRMET": {
   "unvan": "TR Anadolu Metal Madencilik İşletmeleri A.Ş. (eski adı: Koza Anadolu Metal)",
