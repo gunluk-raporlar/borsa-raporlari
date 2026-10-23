@@ -114,6 +114,16 @@ SOZLUK = {
     "Ana Sayfa": {"en": "Home Page", "de": "Startseite", "ru": "Главная страница", "zh": "首页"},
     "📅 Takvim": {"en": "📅 Calendar", "de": "📅 Kalender", "ru": "📅 Календарь", "zh": "📅 日历"},
     "Robot": {"en": "Robot", "de": "Robot", "ru": "Робот", "zh": "机器人"},
+    # Bing SEO kalite kurallari (23.10 kullanici bildirimi): ana sayfa aciklamasi
+    # en/de/ru'da 160 karakteri asiydi — yeni TR kaynagina gore boylanmis degerler
+    # burada sabitlenir (LLM'e birakilmaz). Baslik zh duzeltmesi asagida
+    # mevcut "BIST 30 Günlük Raporlar" girişlerinde yapilir (tek anahtar kurali).
+    "BIST 30'un yapay zeka destekli günlük raporları, teknik tarama ve osilatör sinyalleri, model portföy önerileri ve 100.000 TL'lik sanal portföyün takibi.": {
+        "en": "AI-powered daily reports for BIST 30: technical screening and oscillator signals, model portfolio picks, and tracking of a 100,000 TL virtual portfolio.",
+        "de": "KI-gestützte Tagesberichte zum BIST 30: technische Scans, Oszillatorsignale, Portfoliomodelle und Verfolgung eines virtuellen 100.000-TL-Testportfolios.",
+        "ru": "Ежедневные отчёты по BIST 30 на основе ИИ: технический скрининг, сигналы осцилляторов, модельные портфели и виртуальный портфель 100 000 TL.",
+        "zh": "BIST 30的AI辅助每日报告、技术扫描和振荡器信号、模型投资组合建议以及100.000 TL虚拟投资组合的跟踪。",
+    },
     "Sözlük": {"en": "Glossary", "de": "Glossar", "ru": "Глоссарий", "zh": "词典"},
     "Terimler": {"en": "Terms", "de": "Begriffe", "ru": "Термины", "zh": "术语"},
     "Muhasebe": {"en": "Accounting", "de": "Rechnungswesen", "ru": "Бухучёт", "zh": "会计"},
@@ -220,7 +230,8 @@ SOZLUK = {
         "en": "BIST 30 Daily Reports",
         "de": "BIST 30 Tagesberichte",
         "ru": "Ежедневные отчёты BIST 30",
-        "zh": "BIST 30 每日报告",
+        # 23.10 Bing "başlık çok kısa" bayrağı: 12 kr -> 18 kr (kalıcı katman)
+        "zh": "BIST 30 每日股市报告与分析",
     },
     "Tema değiştir": {"en": "Change theme", "de": "Design wechseln", "ru": "Сменить тему", "zh": "切换主题"},
     "Açık/Koyu tema": {"en": "Light/dark theme", "de": "Helles/dunkles Design", "ru": "Светлая/тёмная тема", "zh": "浅色/深色主题"},
@@ -248,7 +259,6 @@ SOZLUK = {
     "Günlük %": {"en": "Daily %", "de": "Täglich %", "ru": "За день %", "zh": "日涨跌 %"},
     "60 Gün %": {"en": "60-Day %", "de": "60 Tage %", "ru": "60 дней %", "zh": "60 日 %"},
     "Sayfa dili seçin": {"en": "Select page language", "de": "Seitensprache wählen", "ru": "Выбрать язык страницы", "zh": "选择页面语言"},
-    "BIST 30 Günlük Raporlar": {"en": "BIST 30 Daily Reports", "de": "BIST 30 Tagesberichte", "ru": "Ежедневные отчёты BIST 30", "zh": "BIST 30 每日报告"},
     # --- hukuki uyari (elle sabitlenir; makineye birakilmaz) ---
     "Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir.": {
         "en": "The information, comments and suggestions here are for informational purposes only; they do not constitute investment advisory services or investment advice.",

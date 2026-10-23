@@ -5522,7 +5522,7 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
 {portfoy_bolumu}"""
     return _sayfa(
         "BIST 30 Günlük Raporlar", icerik, "anasayfa", yol="",
-        aciklama="BIST 30'un yapay zeka destekli günlük raporları, teknik tarama ve osilatör sinyalleri, model portföy önerileri ve 100.000 TL'lik sanal deneme portföyünün takibi.",
+        aciklama="BIST 30'un yapay zeka destekli günlük raporları, teknik tarama ve osilatör sinyalleri, model portföy önerileri ve 100.000 TL'lik sanal portföyün takibi.",
         grafik=True,
     )
 
