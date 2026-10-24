@@ -41,6 +41,7 @@ _EKSTRA_KATEGORILER = {
     ],
     "Para & Döviz": [
         ("GoogleNews-Doviz", "https://news.google.com/rss/search?q=d%C3%B6viz%20kur%20piyasas%C4%B1%20TL&hl=tr&gl=TR&ceid=TR:tr"),
+        ("GoogleNews-Altin", "https://news.google.com/rss/search?q=alt%C4%B1n%20ons%20dolar%20kur&hl=tr&gl=TR&ceid=TR:tr"),
         ("Doviz.com", "https://www.doviz.com/news/rss"),
         ("Investing TR Forex", "https://tr.investing.com/rss/forex.rss"),
         ("Paranin Yonu", "https://www.paraninyonu.com.tr/rss.xml"),
@@ -49,19 +50,32 @@ _EKSTRA_KATEGORILER = {
     ],
     "Ticaret & Dış Ticaret": [
         ("GoogleNews-Ticaret", "https://news.google.com/rss/search?q=ihracat%20ithalat%20ticaret&hl=tr&gl=TR&ceid=TR:tr"),
+        ("GoogleNews-Gumruk", "https://news.google.com/rss/search?q=g%C3%BCmr%C3%BCk%20d%C4%B1%C5%9F%20ticaret%20ticaret%20sava%C5%9F%C4%B1&hl=tr&gl=TR&ceid=TR:tr"),
+        ("GoogleNews-GlobalTicaret", "https://news.google.com/rss/search?q=global%20trade%20tariffs%20exports&hl=en&gl=US&ceid=US:en"),
+        ("Dunya", "https://www.dunya.com/rss"),
     ],
     "Jeopolitik": [
         ("GoogleNews-Jeopolitik", "https://news.google.com/rss/search?q=jeopolitik%20riskler%20petrol&hl=tr&gl=TR&ceid=TR:tr"),
+        ("GoogleNews-Ortadogu", "https://news.google.com/rss/search?q=Ortado%C4%9Fu%20jeopolitik%20petrol&hl=tr&gl=TR&ceid=TR:tr"),
         ("AA Guncel", "https://www.aa.com.tr/tr/rss/default?cat=guncel"),
         ("DW Turkce", "https://rss.dw.com/rdf/rss-tur-all"),
         ("Hurriyet Dunya", "https://www.hurriyet.com.tr/rss/dunya"),
         ("Sabah Dunya", "https://www.sabah.com.tr/rss/dunya.xml"),
+        ("NTV Dunya", "https://www.ntv.com.tr/dunya.rss"),
+        ("BBC World", "https://feeds.bbci.co.uk/news/world/rss.xml"),
     ],
     "Küresel Ekonomi": [
         ("BBC Business", "https://feeds.bbci.co.uk/news/business/rss.xml"),
+        ("CNBC Business", "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114"),
+        ("MarketWatch", "https://feeds.content.dowjones.io/public/rss/mw_topstories"),
         ("GoogleNews-Dunya", "https://news.google.com/rss/search?q=world%20economy%20markets&hl=en&gl=US&ceid=US:en"),
+        ("GoogleNews-GlobalMarkets", "https://news.google.com/rss/search?q=global%20markets%20fed%20economy&hl=en&gl=US&ceid=US:en"),
     ],
 }
+# Emlak kategorisine ikinci GoogleNews akisi (konut/inşaat/kira) — 2026-10-24.
+_EKSTRA_KATEGORILER.setdefault("Emlak", []).append(
+    ("GoogleNews-Konut", "https://news.google.com/rss/search?q=konut%20fiyatlar%C4%B1%20in%C5%9Faat%20kira&hl=tr&gl=TR&ceid=TR:tr"),
+)
 
 _EXTRA_FILTRE = ["spor", "futbol", "magazin", "dizi", "yemek tarifi", "hava durumu",
                  "survivor", "masterchef", "milli piyango", "sayısal loto",
@@ -112,7 +126,7 @@ def haberleri_topla():
             try:
                 f = __import__("feedparser").parse(url)
                 alinan = 0
-                for e in f.entries[:40]:
+                for e in f.entries[:50]:
                     if not _guncel_mi(e):
                         continue
                     b = temiz(e.title)
@@ -124,12 +138,12 @@ def haberleri_topla():
                     gorulen.add(anahtar)
                     liste.append(f"[{ad}] {b}")
                     alinan += 1
-                    if alinan >= 6:
+                    if alinan >= 9:
                         break
             except Exception:
                 continue
             time.sleep(0.2)
-        sonuc[kategori] = liste[:18]
+        sonuc[kategori] = liste[:26]
 
     klasor = os.path.join(bot.DATA_DIR, "weekend")
     os.makedirs(klasor, exist_ok=True)
@@ -146,14 +160,16 @@ _PROMPT = """Sen bir ekonomi gündemi editörü yapay zekasısın. Aşağıda HA
 Kurallar:
 - Rapor Türkçe; "## " ile başlayan markdown başlıkları kullan.
 - Yapı (aynı sırayla):
-## 1. Hafta Sonu Gündem Özeti  (3-5 maddelik genel tablo: bu hafta sonu öne çıkan temalar ne, haftaya nasıl giriyoruz)
+## 1. Hafta Sonu Özeti ve Genel Değerlendirme  (5-8 maddelik genel tablo: hafta sonunun öne çıkan temaları, küresel risk iştahı, piyasalar hangi tabloyla yeni haftaya giriyor)
 ## 2. Ekonomi & Finans (Türkiye)
 ## 3. Para & Döviz
-## 4. Emlak
-## 5. Ticaret & Dış Ticaret
-## 6. Jeopolitik & Küresel Ekonomi
-## 7. Yeni Hafta Ajandası  (önümüzdeki hafta hangi başlıklar/gelişmeler izlenecek — madde madde)
-- Her bölümde haberleri madde olarak değil, KISA YORUMLU anlat (2-4 cümle/bölüm); gerektiğinde başlıktaki kaynağı parantez içinde an ("[BBC Business]" gibi). Uzun liste kopyalama.
+## 4. Ticaret & Dış Ticaret
+## 5. Emlak
+## 6. Jeopolitik
+## 7. Küresel Ekonomi & Piyasalar
+## 8. Yeni Hafta Ajandası  (önümüzdeki hafta hangi başlıklar/gelişmeler izlenecek — madde madde)
+- Her bölümü 5-8 cümleyle anlat; bölümde o haftanın 3-6 haber temasına mutlaka atıf yap. Başlıkları tek tek kopyalama; birbirine bağla, ne anlama geldiğini ve piyasalar için neden önemli olduğunu yaz.
+- Gerektiğinde başlıktaki kaynağı parantez içinde an ("[BBC Business]" gibi).
 - Bir kategoride kayda değer haber yoksa "Bu hafta sonu ... alanında kayda değer bir gelişme öne çıkmadı." yaz.
 - YALNIZCA verilen başlıklardan hareket et; dışarıdan veri/rakam ekleme, uydurma. Rakam geçiyorsa başlıktaki haliyle yaz.
 - Tarih, yayıncı, "Analist:", kurum/unvan kimlik satırı YAZMA. Haftanın gün adını yazma.
@@ -169,7 +185,7 @@ def _gundem_uret(kategoriler):
     blok = ""
     for kat, liste in kategoriler.items():
         blok += f"\n### {kat}\n" + ("\n".join("- " + b for b in liste) if liste else "(haber yok)")
-    prompt = _PROMPT.format(haberler=blok[:9000])
+    prompt = _PROMPT.format(haberler=blok[:18000])
     metin = None
     if not os.environ.get("SKIP_LLM") == "1":
         if os.environ.get("ZAI_API_KEY") and os.environ["ZAI_API_KEY"] not in DUMMY_ANAHTARLAR:
@@ -189,19 +205,19 @@ def _gundem_uret(kategoriler):
         bolumler = [
             ("Ekonomi & Finans (Türkiye)", "Ekonomi & Finans (Türkiye)"),
             ("Para & Döviz", "Para & Döviz"),
-            ("Emlak", "Emlak"),
             ("Ticaret & Dış Ticaret", "Ticaret & Dış Ticaret"),
+            ("Emlak", "Emlak"),
             ("Jeopolitik", "Jeopolitik"),
-            ("Küresel Ekonomi", "Küresel Ekonomi"),
+            ("Küresel Ekonomi", "Küresel Ekonomi & Piyasalar"),
         ]
-        satirlar = ["## 1. Hafta Sonu Gündem Özeti",
+        satirlar = ["## 1. Hafta Sonu Özeti ve Genel Değerlendirme",
                     "Aşağıda hafta sonu boyunca öne çıkan başlıklar, kaynaklarıyla birlikte özetleniyor."]
         num = 2
         for anahtar, baslik in bolumler:
             liste = kategoriler.get(anahtar) or []
             satirlar.append(f"## {num}. {baslik}")
             if liste:
-                satirlar.extend("- " + b for b in liste[:8])
+                satirlar.extend("- " + b for b in liste[:10])
             else:
                 satirlar.append("Bu hafta sonu bu alanda kayda değer bir gelişme öne çıkmadı.")
             num += 1
