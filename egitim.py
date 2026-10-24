@@ -3,7 +3,7 @@
 
 Her Cumartesi ve Pazar bir ders islenir (hafta ici ASLA calismaz):
 - MUFREDAT: onceden tanimli konu listesinden hafta/dogun sayisina gore sirayla secilir
-  (deterministik -> ayni konu tekrar etmez, 26 konu = 13 haftalik donem).
+  (deterministik -> ayni konu tekrar etmez; 2026-10-24'te 44 konu = 22 haftalik donem).
 - ICERIK: buyuk LLM (Z.ai GLM, yoksa sablon) konuyu ogretir: nedir, neden onemli,
   nasil okunur, gercek BIST verisiyle ornek, sik hatalar, mini test, ozet.
 - KAYNAK: guncel data/teknik ve fiyat verisinden somut ornek rakamlar prompta verilir.
@@ -63,6 +63,27 @@ MUFREDAT = [
     ("Temettü nedir?", "Şirket", "Kâr dağıtımı; temettü verimi ve 'ex-tarih' mantığı."),
     ("Halka arz nedir?", "Şirket", "Şirketin borsaya açılması; talep toplama, tavan serisi ve riskler."),
     ("Likidite nedir?", "Piyasa Mekanizması", "Bir varlığı fiyatı bozmadan alıp satabilme kolaylığı; işlem hacmiyle ilişkisi."),
+    # ---- 2026-10-24 genisletme: Fintables Akademi / SPK SPL konu cervevesi
+    # (konu haritasi fikir duzeyinde alindi; icerik ozgun yazilir). Mevcut
+    # 26 konunun sirasi korunur (ders_sec deterministik), yeniler sona eklenir.
+    ("Bilanço nasıl okunur?", "Finansal Tablolar", "Aktif-pasif dengesi; varlıklar, borçlar ve özkaynak; şirket ne kadar sağlam ayakta duruyor?"),
+    ("Gelir tablosu: kâr nasıl oluşur?", "Finansal Tablolar", "Brüt kâr, faaliyet kârı, net kâr basamakları; kârın nereden geldiği (kâr kalitesi)."),
+    ("Nakit akım tablosu", "Finansal Tablolar", "İşletme-yatırım-finansman akımları; net kâr ile nakdin neden aynı şey olmadığı."),
+    ("F/K çarpanı (P/E)", "Temel Analiz", "Fiyatın hisse başına kâra oranı; yüksek/düşük F/K ne anlatır, ne zaman yanıltır?"),
+    ("PD/DD çarpanı (P/B)", "Temel Analiz", "Fiyatın özkaynağa oranı; banka ve sigorta şirketlerinde neden ana ölçüt?"),
+    ("ÇFK ve EV/ÇFK", "Temel Analiz", "Kâr yerine nakit üretimi üzerinden değerleme; borçlu şirketlerde daha adil kıyas."),
+    ("ROE ve ROA", "Temel Analiz", "Özkaynak ve varlık kârlılığı; sermayenin verimliliği, çok yüksek ROE'nin tuzak tarafı."),
+    ("Borçluluk oranları", "Temel Analiz", "Net borç/ÇFK, borç/özkaynak; finansman maliyeti ve kur riski şirket kârına nasıl yansır?"),
+    ("Değerleme: çarpan yöntemi", "Temel Analiz", "Sektör kıyaslamasıyla adil fiyat arama; çarpan tuzakları ve sektörel farklılıklar."),
+    ("Sermaye artırımı nedir?", "Piyasa Mekanizması", "Bedava/bedelli artırım ve rüçhan hakkı; seyreltme mantığı, hisseye etkisi."),
+    ("Emir türleri ve işlem saatleri", "Piyasa Mekanizması", "Piyasa/limit/stop emir farkı; seans yapısı, kolektif işlem penceresi."),
+    ("TÜFE ve PPI nasıl okunur?", "Makro", "Tüketici ve üretici enflasyonu; beklentiyle açıklama farkının piyasaya etkisi."),
+    ("TCMB kararları nasıl yorumlanır?", "Makro", "Politika faizi, faiz koridoru, rezervler; karar metnindeki ton değişimi."),
+    ("Cari açık ve dış borç", "Makro", "Dış dengeler; cari açığın finansmanı, TL ve hisse piyasasına yansıması."),
+    ("Büyüme ve işsizlik verileri", "Makro", "Konjonktür göstergeleri; hangi veri hangi piyasayı ne kadar etkiler?"),
+    ("Sharpe oranı ve risk-getiri", "Portföy", "Birim riske düşen fazladan getiri; strateji kıyaslamasında neyi anlatır, neyi anlatmaz."),
+    ("Kademeli alım (DCA)", "Portföy", "Tek seferde almak mı, zamanda yaymak mı; ortalama maliyet mantığı."),
+    ("Davranışsal hatalar: panik ve FOMO", "Portföy", "Kayıptan kaçınma, sürü psikolojisi; kuralın insana üstünlüğü."),
 ]
 
 DUMMY_ANAHTARLAR = {"", "teknik-tarama", "derin-analiz", "radyo", "migrate-rebuild",
@@ -145,15 +166,16 @@ _PROMPT = """Sen, "BIST 30 Günlük Raporlar" sitesinin Hafta Sonu Borsa Okulu e
 KONU: {konu}
 KONU TANIMI: {tanim}
 
-Dersi acemi-orta seviye yatırımcıya göre, sıcak ve net bir öğretmen diliyle anlat. Yapı (markdown, "## " başlıklarla):
+Dersi acemi-orta seviye yatırımcıya göre, sıcak ama profesyonel bir öğretmen diliyle, dolu dolu anlat; toplam ~900-1400 kelime. Yapı (markdown, "## " başlıklarla):
 ## Bugünün Dersi: {konu}
-## 1. Nedir? (basit benzetmeyle başla, sonra net tanım)
-## 2. Neden Önemli? (bu bilgi yatırımcıya ne kazandırır)
-## 3. Nasıl Okunur / Kullanılır? (adım adım; eğer göstergeyse hangi değer ne anlama gelir)
-## 4. Gerçek Örnek ([GÜNCEL VERİ] bölümündeki gerçek şirket ve rakamlarla anlat; şirket adı ya da rakam UYDURMA — veri yetersizse genel kuralı anlat)
-## 5. Sık Yapılan Hatalar (2-4 madde)
+## 1. Nedir? (basit benzetmeyle başla, sonra net ve tam tanım; 150-250 kelime)
+## 2. Neden Önemli? (bu bilgi yatırımcıya ne kazandırır, hangi kararları değiştirir)
+## 3. Nasıl Okunur / Kullanılır? (adım adım; formülü varsa düz metinle göster — örn. "F/K = Fiyat / Hisse Başına Kâr" — ve her bileşenin nereden okunduğunu söyle)
+## 4. Gerçek Örnek ([GÜNCEL VERİ] bölümündeki gerçek şirket ve rakamlarla ADIM ADIM hesap göster: önce formülü yaz, sonra sayıları yerine koy, sonucu yorumla; şirket adı ya da rakam UYDURMA — veri yetersizse genel kuralı anlat)
+## 5. Sık Yapılan Hatalar (2-4 madde; her hata için "neden yanlış" cümlesi de ekle)
 ## 6. Mini Test (2-3 soru; cevapları gizli tutma, sorunun altında ver)
 ## 7. Özet (3-5 madde)
+## 8. Derinleşme (bu konudan sonra öğrenmesi gereken 2-3 kavram; sitedeki Teknik Tarama veya Hisse sayfalarından hangisiyle pratik yapılabilir)
 
 Kurallar:
 - YALNIZCA genel geçer eğitim bilgisi + [GÜNCEL VERİ] bölümündeki veriyi kullan; dışarıdan rakam/veri uydurma.
@@ -271,7 +293,7 @@ def _excel_veri_bolumu(metin=None):
         return ""
 
 
-def _ders_uret(konu, tanim, veri):
+def _ders_uret(konu, tanim, veri, kategori=""):
     prompt = _PROMPT.format(konu=konu, tanim=tanim, veri=veri or "(guncel veri alinamadi)")
     metin = None
     if not os.environ.get("SKIP_LLM") == "1":
@@ -289,10 +311,11 @@ def _ders_uret(konu, tanim, veri):
                     logger.warning("LLM ders basarisiz: %s", e)
     if not metin or metin.startswith("(LLM"):
         logger.warning("LLM kullanilamadi; sablon ders uretilecek.")
+        kat = f" ({kategori} alanında yer alır)" if kategori else ""
         return (
             f"## Bugünün Dersi: {konu}\n\n"
             f"**Özet:** {tanim}\n\n"
-            "## 1. Nedir?\nBu konu teknik analizde sıkça kullanılan temel kavramlardan biridir; "
+            f"## 1. Nedir?\nBu konu, piyasa dilinin temel yapı taşlarından biridir{kat}; "
             "aşağıdaki açıklama otomatik şablonla hazırlanmıştır (LLM erişilemedi).\n\n"
             "## 2. Neden Önemli?\nPiyasa dilini anlamak, yorumları ve göstergeleri doğru okumayı sağlar.\n\n"
             "## 3. Nasıl Okunur?\nDetaylı anlatım için bir sonraki hafta sonu dersini takip edin; "
@@ -302,6 +325,7 @@ def _ders_uret(konu, tanim, veri):
             "## 5. Sık Yapılan Hatalar\n- Göstergeyi tek başına sinyal sanmak.\n- Zaman dilimi belirtmeden yorum yapmak.\n\n"
             "## 6. Mini Test\n1) Bu kavram neyi ölçer?\n2) Hangi veriyle birlikte kullanılmalı?\n\n"
             "## 7. Özet\n- Kavramı tanımlayın, ardından göstergelerle doğrulayın.\n\n"
+            "## 8. Derinleşme\n- Konuyu sitedeki Teknik Tarama ve Hisse sayfalarındaki canlı verilerle tekrar edin.\n\n"
             "_Bu ders eğitim amaçlıdır, yatırım tavsiyesi değildir._"
         )
     return bot.rapor_son_islem(metin)
@@ -316,7 +340,7 @@ def main():
 
     idx, (konu, kategori, tanim) = ders_sec(simdi)
     veri = _guncel_veri_ornekleri(konu)
-    metin = _ders_uret(konu, tanim, veri)
+    metin = _ders_uret(konu, tanim, veri, kategori)
     metin = bot._tarih_gun_duzelt(metin)
     # Grafik: GERCEK kapanis serisiyle (ders metninde gecen hisse oncelidir)
     paket = _gercek_grafik_paketi(metin, konu)
