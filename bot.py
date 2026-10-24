@@ -6490,6 +6490,25 @@ def _sirket_profili_html(kod):
         marka_html = (f'<div style="margin:8px 0 0"><div style="color:var(--muted); font-size:12px; '
                       f'margin-bottom:5px">Markalar &amp; iştirakler</div>{rozetler}</div>')
     unvan = f'<div style="font-weight:700; margin-bottom:4px">{p.get("unvan", "")}</div>' if p.get("unvan") else ""
+    ortaklar = p.get("ortaklar") or []
+    ortak_html = ""
+    if ortaklar:
+        ogeler = ""
+        for o in ortaklar:
+            oy_notu = ""
+            if str(o.get("oy", "")) and str(o.get("oy")) != str(o.get("oran")):
+                oy_notu = f" <span style='color:var(--muted)'>(oy %{html.escape(str(o['oy']))})</span>"
+            ogeler += (f"<li style='margin:4px 0'>{html.escape(str(o['ad']))} — "
+                       f"<strong>%{html.escape(str(o['oran']))}</strong>{oy_notu}</li>")
+        kaynak_html = ""
+        if p.get("ortaklar_kaynak"):
+            kaynak_html = (f'<div style="color:var(--muted); font-size:11px; margin-top:4px">'
+                           f'{html.escape(str(p["ortaklar_kaynak"]))}</div>')
+        ortak_html = (f'<div style="margin:8px 0 0; padding-top:8px; border-top:1px solid var(--line)">'
+                      f'<div style="color:var(--muted); font-size:12px; margin-bottom:4px">Ortaklık yapısı '
+                      f'(sermayede doğrudan pay sahipleri)</div>'
+                      f'<ul style="margin:0; padding-left:18px; font-size:13px">{ogeler}</ul>'
+                      f'{kaynak_html}</div>')
     temel_html = ""
     if p.get("temel"):
         ogeler = "".join(f"<li style='margin:5px 0'>{html.escape(satir)}</li>" for satir in p["temel"])
@@ -6503,7 +6522,7 @@ def _sirket_profili_html(kod):
 {unvan}
 <div class="meta" style="margin:0 0 8px">{''.join(meta)}</div>
 <p style="margin:0; font-size:14px">{p.get('faaliyet', '')}</p>
-{temel_html}{marka_html}{web_html}{_bilanco_ozeti(kod)}
+{ortak_html}{temel_html}{marka_html}{web_html}{_bilanco_ozeti(kod)}
 </div>"""
 
 
@@ -7112,7 +7131,7 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None):
 <div class="grid-iki">
 <div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
 <table style="font-size:13.5px">{teknik_ogeler}</table>
-<p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a></p></div>
+<p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a> &middot; <a href="../hisse/">Hisse merkezi</a></p></div>
 <div class="card"><h3 style="margin:0 0 8px">Son 7 Gün Haberleri</h3>
 <ul style="margin:0; padding-left:18px; font-size:13.5px">{haber_ogeleri}</ul>
 <p style="margin:8px 0 0; font-size:12.5px"><a href="../sirket-haberleri.html#H-{kod}">Tüm şirket haberleri &rarr;</a></p></div>
@@ -7122,6 +7141,7 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None):
 <h3 style="margin:0 0 8px">{kod} konulu içerikler</h3>
 <p style="margin:0"><a href="https://borsa-raporlari-web.pages.dev/ara?q={kod}" target="_blank" rel="noopener">🔍 Semantik aramada "{kod}" geçen tüm rapor bölümleri &rarr;</a></p>
 <p style="margin:6px 0 0"><a href="../raporlar.html">Günlük rapor arşivi &rarr;</a></p>
+<p style="margin:6px 0 0"><a href="../hisse/">📊 BIST 30 hisse merkezi — tüm hisseler, teknik sinyaller ve grafikler &rarr;</a></p>
 </div>"""
     return _sayfa(
         f"{kod} — Hisse Analizi", icerik, "hisseler", kok="../",

@@ -28,7 +28,20 @@
   ],
   "xu030_agirlik": 1.15,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "Birincil: Ticaret sicil künyesi \"Tescil Tarihi: 02/02/1966\", İstanbul 91324-36346 (kullanıcı MERSIS ekran görüntüsü). İkincil: tr.wikipedia infobox \"Kuruluş: 2 Şubat 1966\" -> dipnotu şirketin kendi finansal tablosu (s.3). Şirket tarihçesi \"1969: ilk Efes Pilsen üretimi\" — kuruluş değil ilk üretim yılı; parantezde gösteriliyor."
+  "kurulus_kaynak": "Birincil: Ticaret sicil künyesi \"Tescil Tarihi: 02/02/1966\", İstanbul 91324-36346 (kullanıcı MERSIS ekran görüntüsü). İkincil: tr.wikipedia infobox \"Kuruluş: 2 Şubat 1966\" -> dipnotu şirketin kendi finansal tablosu (s.3). Şirket tarihçesi \"1969: ilk Efes Pilsen üretimi\" — kuruluş değil ilk üretim yılı; parantezde gösteriliyor.",
+  "ortaklar": [
+   {
+    "ad": "AG ANADOLU GRUBU HOLDİNG ANONİM ŞİRKETİ",
+    "oran": "43,05",
+    "oy": "43,05"
+   },
+   {
+    "ad": "AB INBEV HARMONY LİMİTED",
+    "oran": "24,00",
+    "oy": "24,00"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "AKBNK": {
   "unvan": "Akbank",
@@ -57,7 +70,20 @@
   "faaliyet_eski": "Ticari bankacılık faaliyetleri.",
   "xu030_agirlik": 6.41,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "Akbank resmi sitesi: \"Akbank, 30 Ocak 1948'de, Adana'da özel sermayeli bir ticaret bankası olarak kurulmuştur\" (akbank.com/bankamiz/hakkimizda)"
+  "kurulus_kaynak": "Akbank resmi sitesi: \"Akbank, 30 Ocak 1948'de, Adana'da özel sermayeli bir ticaret bankası olarak kurulmuştur\" (akbank.com/bankamiz/hakkimizda)",
+  "ortaklar": [
+   {
+    "ad": "HACI ÖMER SABANCI HOLDİNG ANONİM ŞİRKETİ",
+    "oran": "40,75",
+    "oy": "40,75"
+   },
+   {
+    "ad": "ZİRAAT PORTFÖY BIST LİKİT BANKA ENDEKSİ HİSSE SENEDİ YOĞUN BORSA YATIRIM FONU",
+    "oran": "3,42",
+    "oy": "3,42"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "ASELS": {
   "unvan": "Aselsan",
@@ -84,12 +110,20 @@
   ],
   "faaliyet_eski": "Kara, hava, deniz ve uzay uygulamaları için elektrik-elektronik, yazılım ve sistemlerin Ar-Ge, mühendislik, üretim ve satışı: haberleşme, radar, hava savunma, elektro-optik.",
   "xu030_agirlik": 15.0,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "TÜRK SİLAHLI KUVVETLERİNİ GÜÇLENDİRME VAKFI",
+    "oran": "74,20",
+    "oy": "74,20"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "ASTOR": {
   "unvan": "Astor Enerji",
   "kurulus": "29.07.1983",
-  "grup": "Aile ortaklığı (Astor)",
+  "grup": "Geçgel ailesi (Feridun Geçgel %37,25 + Enver Geçgel %20,00)",
   "faaliyet": "Güç ve dağıtım transformatörleri ile orta gerilim anahtarlama ürünleri ve kompakt trafo merkezleri üretimi; ürünler 90'dan fazla ülkeye ihraç ediliyor (Ankara-Sincan OSB tesisleri). Kaynak: Midas şirket kartları, 24.10.2026.",
   "sermaye": "998.000.000 TL",
   "sermaye_donem": "2026/6",
@@ -113,12 +147,26 @@
   ],
   "faaliyet_eski": "Transformatör imalat ve satışı.",
   "xu030_agirlik": 2.29,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "FERİDUN GEÇGEL",
+    "oran": "37,25",
+    "oy": "62,68"
+   },
+   {
+    "ad": "ENVER GEÇGEL",
+    "oran": "20,00",
+    "oy": "11,90"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "BIMAS": {
   "unvan": "Bim Birleşik Mağazalar",
   "kurulus": "31.05.1995",
-  "grup": "Halka açık",
+  "grup": "Merkez Bereket Gıda (%15,41)",
   "faaliyet": "Her türlü gıda ve tüketim maddeleri ticareti ve alışveriş merkezleri işletmeciliği; Mısır ve Fas operasyonları da var.",
   "sermaye": "1.200.000.000 TL",
   "sermaye_donem": "2026/6",
@@ -139,12 +187,46 @@
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
   "xu030_agirlik": 11.39,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "MERKEZ BEREKET GIDA SANAYİ VE TİCARET ANONİM ŞİRKETİ",
+    "oran": "15,41",
+    "oy": "15,41"
+   },
+   {
+    "ad": "NASPAK GIDA SANAYİ VE TİCARET ANONİM ŞİRKETİ",
+    "oran": "12,25",
+    "oy": "12,25"
+   },
+   {
+    "ad": "GREEN CAPITAL RESOURCE FUND",
+    "oran": "4,86",
+    "oy": "4,86"
+   },
+   {
+    "ad": "SKYPEN LIMITED",
+    "oran": "4,25",
+    "oy": "4,25"
+   },
+   {
+    "ad": "GROSVENOR CAPITAL FUND",
+    "oran": "3,44",
+    "oy": "3,44"
+   },
+   {
+    "ad": "EATON CAPITAL FUND",
+    "oran": "3,44",
+    "oy": "3,44"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "EKGYO": {
   "unvan": "Emlak Konut Gayrimenkul Yatırım Ortaklığı",
   "kurulus": "1953 (GYO tescili 06.03.1991)",
-  "grup": "Türkiye Varlık Fonu",
+  "grup": "TOKİ (%49,34)",
   "faaliyet": "Gayrimenkul ve gayrimenkule dayalı sermaye piyasası araçlarından portföy oluşturmak ve yönetmek.",
   "sermaye": "3.800.000.000 TL",
   "sermaye_donem": "2026/6",
@@ -166,12 +248,21 @@
   ],
   "xu030_agirlik": 1.23,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "Şirket resmi sitesi Hakkımızda: \"Emlak Konut GYO, 1953 yılında ... hayat buldu\" (kullanıcı kanıtı)"
+  "kurulus_kaynak": "Şirket resmi sitesi Hakkımızda: \"Emlak Konut GYO, 1953 yılında ... hayat buldu\" (kullanıcı kanıtı)",
+  "ortaklar": [
+   {
+    "ad": "T.C.ÇEVRE VE ŞEHİRCİLİK BAKANLIĞI TOPLU KONUT İDARESİ BAŞKANLIĞI",
+    "oran": "49,34",
+    "oy": "49,34"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "ENKAI": {
   "unvan": "Enka İnşaat ve Sanayi",
   "kurulus": "1957",
-  "grup": "Koç Holding (ana ortak)",
+  "grup": "Tara Holding (%49,80; kurucu Şarık Tara ailesi)",
   "faaliyet": "Türkiye'de ve yurt dışında endüstriyel ve sosyal binalar, otoyol inşaatları ile doğalgaz termik santralleri; müşterek ortaklıklar ve iştirakler yoluyla hizmet.",
   "sermaye": "6.021.689.000 TL",
   "sermaye_donem": "2026/6",
@@ -195,12 +286,51 @@
   ],
   "xu030_agirlik": 2.01,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "Enka resmi şirket künyesi: \"Tescil veya Kuruluş Tarihi: 1957\" (kullanıcı kanıtı, enka.com)"
+  "kurulus_kaynak": "Enka resmi şirket künyesi: \"Tescil veya Kuruluş Tarihi: 1957\" (kullanıcı kanıtı, enka.com)",
+  "ortaklar": [
+   {
+    "ad": "TARA HOLDİNG ANONİM ŞİRKETİ",
+    "oran": "49,80",
+    "oy": "49,80"
+   },
+   {
+    "ad": "VİLDAN GÜLÇELİK",
+    "oran": "7,99",
+    "oy": "7,99"
+   },
+   {
+    "ad": "SEVDA GÜLÇELİK",
+    "oran": "6,43",
+    "oy": "6,43"
+   },
+   {
+    "ad": "ENKA SPOR EĞİTİM VESOSYAL YARDIM VAKFI",
+    "oran": "5,87",
+    "oy": "5,87"
+   },
+   {
+    "ad": "ALİ GÜLÇELİK",
+    "oran": "4,50",
+    "oy": "4,50"
+   },
+   {
+    "ad": "MİKADO GAYRİMENKUL YATIRIM TİCARET ANONİM ŞİRKETİ",
+    "oran": "4,37",
+    "oy": "4,37"
+   },
+   {
+    "ad": "BİLGİ GÜLÇELİK",
+    "oran": "4,31",
+    "oy": "4,31"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "EREGL": {
   "unvan": "Ereğli Demir Çelik (Erdemir)",
   "kurulus": "11.05.1960",
-  "grup": "OYAK",
+  "grup": "Ataer Holding (%49,54)",
   "faaliyet": "Yassı demir çelik imalat ve satışı; İskenderun Demir Çelik (İSDemir) iştirakiyle Türkiye'nin en büyük çelik üreticisi.",
   "sermaye": "7.000.000.000 TL",
   "sermaye_donem": "2026/6",
@@ -224,12 +354,31 @@
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
   "xu030_agirlik": 3.97,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "ATAER HOLDİNG A.Ş.",
+    "oran": "49,54",
+    "oy": "49,54"
+   },
+   {
+    "ad": "OYAK PORTFÖY ÜÇÜNCÜ SERBEST (TL) FON",
+    "oran": "4,04",
+    "oy": "4,04"
+   },
+   {
+    "ad": "EREĞLİ DEMİR VE ÇELİK FABRİKALARI T A Ş",
+    "oran": "3,97",
+    "oy": "3,97"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "FROTO": {
   "unvan": "Ford Otosan",
   "kurulus": "07.07.1959",
-  "grup": "Koç Holding & Ford (eşit ortaklar)",
+  "grup": "Ford (%41,04) & Koç Holding (%39,32)",
   "faaliyet": "Kamyon, minibüs, kamyonet ve binek otomobil imalat-montajı, parça üretimi, satış ve ithalat-ihracat (Transit, Ranger ve motorlar).",
   "sermaye": "3.509.100.000 TL",
   "sermaye_donem": "2026/6",
@@ -253,7 +402,21 @@
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
   "xu030_agirlik": 1.54,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "FORD DEUTSCHLAND ENGINEERING GMBH",
+    "oran": "41,04",
+    "oy": "41,04"
+   },
+   {
+    "ad": "KOÇ HOLDİNG ANONİM ŞİRKETİ",
+    "oran": "39,32",
+    "oy": "39,32"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "GARAN": {
   "unvan": "Garanti BBVA",
@@ -282,12 +445,20 @@
   "faaliyet_eski": "Ticari bankacılık.",
   "xu030_agirlik": 2.78,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "Şirket resmi anlatımı; kullanıcı onayı 24.10.2026"
+  "kurulus_kaynak": "Şirket resmi anlatımı; kullanıcı onayı 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "BANCO BILBAO VIZCAYA ARGENTARIA",
+    "oran": "85,97",
+    "oy": "85,97"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "GUBRF": {
   "unvan": "Gübre Fabrikaları (Gübretaş)",
   "kurulus": "06.11.1952",
-  "grup": "Halka açık",
+  "grup": "Tarım Kredi Kooperatifleri Merkez Birliği (%78,73)",
   "faaliyet": "Kimyevi gübre üretim ve satışı (Türkiye'nin ilk kimyevi gübre fabrikası): katı, damla sulama-yaprak, yavaş salınımlı ve organik gübreler; ~2.700 satış noktası. Kaynak: Midas şirket kartları, 24.10.2026.",
   "sermaye": "334.000.000 TL",
   "sermaye_donem": "2026/3",
@@ -310,7 +481,16 @@
   "faaliyet_eski": "Kimyevi gübre üretim ve satışı.",
   "xu030_agirlik": 0.82,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "GÜBRETAŞ resmi tarihçe: \"6 Kasım 1952 tarihinde ... Bakanlar Kurulu kararıyla\" (gubretas.com.tr/tr/tarihce) — eski değer 25.12.1952 hatalıydı"
+  "kurulus_kaynak": "GÜBRETAŞ resmi tarihçe: \"6 Kasım 1952 tarihinde ... Bakanlar Kurulu kararıyla\" (gubretas.com.tr/tr/tarihce) — eski değer 25.12.1952 hatalıydı",
+  "ortaklar": [
+   {
+    "ad": "TARIM KREDİ KOOP. MERKEZ BİRLİĞİ GENEL MÜDÜRLÜĞÜ",
+    "oran": "78,73",
+    "oy": "78,73"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "ISCTR": {
   "unvan": "Türkiye İş Bankası (C grubu)",
@@ -339,7 +519,25 @@
   ],
   "xu030_agirlik": 3.53,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "tr.wikipedia: \"1924'te Mustafa Kemal Atatürk'ün emriyle kurulan ... cumhuriyet döneminin ilk ulusal bankası\""
+  "kurulus_kaynak": "tr.wikipedia: \"1924'te Mustafa Kemal Atatürk'ün emriyle kurulan ... cumhuriyet döneminin ilk ulusal bankası\"",
+  "ortaklar": [
+   {
+    "ad": "T.İŞ BANKASI A.Ş.MENS.MUNZ.SOS.GÜV.VE YAR.SAN.VAKFI",
+    "oran": "38,66",
+    "oy": "38,66"
+   },
+   {
+    "ad": "CUMHURİYET HALK PARTİSİ GENEL BAŞKANLIĞI",
+    "oran": "28,09",
+    "oy": "28,09"
+   },
+   {
+    "ad": "ZİRAAT PORTFÖY BIST LİKİT BANKA ENDEKSİ HİSSE SENEDİ YOĞUN BORSA YATIRIM FONU",
+    "oran": "3,45",
+    "oy": "3,45"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "KCHOL": {
   "unvan": "Koç Holding",
@@ -376,7 +574,35 @@
   ],
   "xu030_agirlik": 4.12,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "Koç Holding tarihçe: \"1926'dan Bugüne ... 31 Mayıs 1926'da Koçzade Ahmet Vehbi adıyla Ankara Ticaret Odası'na kaydettirir\" (koc.com.tr/hakkinda/tarihce)"
+  "kurulus_kaynak": "Koç Holding tarihçe: \"1926'dan Bugüne ... 31 Mayıs 1926'da Koçzade Ahmet Vehbi adıyla Ankara Ticaret Odası'na kaydettirir\" (koc.com.tr/hakkinda/tarihce)",
+  "ortaklar": [
+   {
+    "ad": "FAMİLY DANIŞMANLIK GAYRİMENKUL VE TİCARET ANONİM ŞİRKETİ",
+    "oran": "43,75",
+    "oy": "55,62"
+   },
+   {
+    "ad": "VEHBİ KOÇ VAKFI",
+    "oran": "7,29",
+    "oy": "5,75"
+   },
+   {
+    "ad": "SEMAHAT SEVİM ARSEL",
+    "oran": "6,15",
+    "oy": "4,85"
+   },
+   {
+    "ad": "İPEK KIRAÇ",
+    "oran": "4,60",
+    "oy": "3,63"
+   },
+   {
+    "ad": "MUSTAFA RAHMİ KOÇ",
+    "oran": "3,03",
+    "oy": "2,39"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "KRDMD": {
   "unvan": "Kardemir (D)",
@@ -404,12 +630,40 @@
   "faaliyet_eski": "Her çeşit ham demir ve çelik mamullerinin, kok ve kok yan ürünlerinin imali ve satışı; Karabük.",
   "xu030_agirlik": 1.0,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "tr.wikipedia: \"temelleri 3 Nisan 1937'de Mustafa Kemal Atatürk'ün talimatı ile ... atılmıştır\""
+  "kurulus_kaynak": "tr.wikipedia: \"temelleri 3 Nisan 1937'de Mustafa Kemal Atatürk'ün talimatı ile ... atılmıştır\"",
+  "ortaklar": [
+   {
+    "ad": "GOLDMAN SACHS INTERNATIONAL",
+    "oran": "4,42",
+    "oy": "4,42"
+   },
+   {
+    "ad": "TÜRKİYE VARLIK FONU",
+    "oran": "4,41",
+    "oy": "4,41"
+   },
+   {
+    "ad": "ÇAĞ ÇELİK DEMİR VE ÇELİK ENDÜSTRİ ANONİM ŞİRKETİ",
+    "oran": "3,75",
+    "oy": "3,75"
+   },
+   {
+    "ad": "MERRILL LYNCH INTERNATIONAL",
+    "oran": "3,48",
+    "oy": "3,48"
+   },
+   {
+    "ad": "TÜRKİYE HAYAT VE EMEKLİLİK A.Ş. OKS KATILIM STANDART EMEKLİLİK YATIRIM FONU",
+    "oran": "3,47",
+    "oy": "3,47"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "MGROS": {
   "unvan": "Migros Ticaret",
   "kurulus": "1954 (Migros Ticaret A.Ş. tescili 19.03.2008)",
-  "grup": "Anadolu Grubu & Fiba",
+  "grup": "Anadolu Grubu & Fiba (MH Perakendecilik %49,18)",
   "faaliyet": "Her türlü gıda ve tüketim maddeleri ticareti ve alışveriş merkezleri işletmeciliği; Türkiye'nin 81 ilinde hizmet. Kaynak: Midas şirket kartları, 24.10.2026.",
   "sermaye": "181.054.000 TL",
   "sermaye_donem": "2026/6",
@@ -435,7 +689,21 @@
   "faaliyet_eski": "Her türlü gıda ve tüketim maddeleri ticareti ve alışveriş merkezleri işletmeciliği.",
   "xu030_agirlik": 1.49,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "tr.wikipedia: \"Migros'un temelleri 1954 yılında İstanbul Belediyesi'nin aldığı kararla ... atıldı\""
+  "kurulus_kaynak": "tr.wikipedia: \"Migros'un temelleri 1954 yılında İstanbul Belediyesi'nin aldığı kararla ... atıldı\"",
+  "ortaklar": [
+   {
+    "ad": "MH PERAKENDECİLİK VETİCARET ANONİM ŞİRKETİ",
+    "oran": "49,18",
+    "oy": "49,18"
+   },
+   {
+    "ad": "MERRILL LYNCH INTERNATIONAL",
+    "oran": "4,15",
+    "oy": "4,15"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "PETKM": {
   "unvan": "Petkim Petrokimya",
@@ -462,7 +730,20 @@
   ],
   "xu030_agirlik": 0.81,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "tr.wikipedia: \"Türkiye Petrolleri tarafından 1965 yılında İzmir'de kurulan\""
+  "kurulus_kaynak": "tr.wikipedia: \"Türkiye Petrolleri tarafından 1965 yılında İzmir'de kurulan\"",
+  "ortaklar": [
+   {
+    "ad": "SOCAR TURKEY ENERJİ A.Ş.",
+    "oran": "51,00",
+    "oy": "51,00"
+   },
+   {
+    "ad": "CEM OKULLU",
+    "oran": "3,59",
+    "oy": "3,59"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "PGSUS": {
   "unvan": "Pegasus Hava Taşımacılığı",
@@ -488,7 +769,15 @@
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
   "xu030_agirlik": 1.0,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "ESAS HOLDİNG A.Ş.",
+    "oran": "52,81",
+    "oy": "52,81"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "SAHOL": {
   "unvan": "Sabancı Holding",
@@ -520,12 +809,40 @@
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
   "xu030_agirlik": 3.49,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "SAKIP SABANCI HOLDİNG ANONİM ŞİRKETİ",
+    "oran": "13,90",
+    "oy": "13,90"
+   },
+   {
+    "ad": "SERRA SABANCI",
+    "oran": "7,02",
+    "oy": "7,02"
+   },
+   {
+    "ad": "ÇİĞDEM SABANCI BİLEN",
+    "oran": "6,84",
+    "oy": "6,84"
+   },
+   {
+    "ad": "SUZAN SABANCI SABANCI",
+    "oran": "6,84",
+    "oy": "6,84"
+   },
+   {
+    "ad": "NAZMİYE SEVDA SABANCI",
+    "oran": "3,38",
+    "oy": "3,38"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "SASA": {
   "unvan": "Sasa Polyester Sanayi",
   "kurulus": "08.11.1966",
-  "grup": "Erdemoğlu Holding (%54)",
+  "grup": "Erdemoğlu Holding (%53,16)",
   "faaliyet": "Polyester elyaf, iplik ve polyester bazlı polimerler, ara ürünler ve özellikli ürünlerin üretimi ve pazarlaması.",
   "sermaye": "47.040.879.000 TL",
   "sermaye_donem": "2026/6",
@@ -546,12 +863,21 @@
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
   "xu030_agirlik": 1.38,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "ERDEMOĞLU HOLDİNG A.Ş.",
+    "oran": "53,16",
+    "oy": "53,16"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "SISE": {
   "unvan": "Şişecam",
   "kurulus": "1935",
-  "grup": "Türkiye Varlık Fonu",
+  "grup": "Türkiye İş Bankası (%52,58)",
   "faaliyet": "Düz cam, cam ev eşyası, cam ambalaj ile soda ve krom kimyasalları; 14 ülkede üretim, 150'yi aşkın ülkeye satış; düzcam ve cam ambalajda dünyanın en büyük 5 üreticisinden. Kaynak: Midas şirket kartları, 24.10.2026.",
   "sermaye": "3.063.200.000 TL",
   "sermaye_donem": "2026/6",
@@ -579,12 +905,26 @@
   "faaliyet_eski": "Düz cam, cam ev eşyası, cam ambalaj ile soda ve krom kimyasalları; 8 bağlı ortak ve 17 iştirakle çok ülkede üretim.",
   "xu030_agirlik": 1.9,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "Şirket resmi tarihçesi: 1935'te 'Türkiye Şişe ve Cam Fabrikaları Anonim Sosyetesi' adıyla resmen tescil (kullanıcı kanıtı + şirket sitesi)"
+  "kurulus_kaynak": "Şirket resmi tarihçesi: 1935'te 'Türkiye Şişe ve Cam Fabrikaları Anonim Sosyetesi' adıyla resmen tescil (kullanıcı kanıtı + şirket sitesi)",
+  "ortaklar": [
+   {
+    "ad": "TÜRKİYE İŞ BANKASI A.Ş.",
+    "oran": "52,58",
+    "oy": "52,58"
+   },
+   {
+    "ad": "EFES HOLDİNG A.Ş.",
+    "oran": "7,02",
+    "oy": "7,02"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "TAVHL": {
   "unvan": "TAV Holding",
   "kurulus": "07.11.1997",
-  "grup": "Türkiye Varlık Fonu & Groupe ADP",
+  "grup": "Groupe ADP (%46,12)",
   "faaliyet": "Havalimanı işletmeciliği (Yap-İşlet-Devret ve işletmeci model); 8 ülkede 15 havalimanı; iştirakleriyle yer hizmetleri, gümrüksüz mağazacılık ve yeme-içme. Kaynak: Midas şirket kartları, 24.10.2026.",
   "sermaye": "363.300.000 TL",
   "sermaye_donem": "2026/6",
@@ -609,12 +949,26 @@
   ],
   "faaliyet_eski": "Havalimanı işletmeciliği (Yap-İşlet-Devret ve işletmeci model); iştirakleriyle yer hizmetleri, gümrüksüz mağazacılık ve yeme-içme.",
   "xu030_agirlik": 1.73,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "AEROPORTS DE PARIS SA",
+    "oran": "46,12",
+    "oy": "46,12"
+   },
+   {
+    "ad": "TEPE İNŞAAT SANAYİ ANONİM ŞİRKETİ",
+    "oran": "4,02",
+    "oy": "4,02"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "TCELL": {
   "unvan": "Turkcell",
   "kurulus": "05.10.1993",
-  "grup": "Türkiye Varlık Fonu",
+  "grup": "Türkiye Varlık Fonu (%26,20; TVF Bilgi Teknolojileri üzerinden)",
   "faaliyet": "Mobil telekomünikasyon; Kıbrıs Telekom, Astelit ve Fintur iştirakleriyle KKTC, Ukrayna ve Orta Asya'da da hizmet.",
   "sermaye": "2.200.000.000 TL",
   "sermaye_donem": "2026/6",
@@ -640,12 +994,31 @@
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
   "xu030_agirlik": 2.89,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "TVF BİLGİ TEKNOLOJİLERİ İLETİŞİM HİZMETLERİ YATIRIM SANAYİ VE TİCARET ANONİM ŞİRKETİ",
+    "oran": "26,20",
+    "oy": "57,83"
+   },
+   {
+    "ad": "IMTIS HOLDINGS S.A.R.L.",
+    "oran": "19,80",
+    "oy": "11,31"
+   },
+   {
+    "ad": "CITIBANK N.A.",
+    "oran": "14,66",
+    "oy": "8,38"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "THYAO": {
   "unvan": "Türk Hava Yolları",
   "kurulus": "20.05.1933 (A.Ş. dönüşümü 29.02.1956)",
-  "grup": "Türkiye Varlık Fonu (%49)",
+  "grup": "Türkiye Varlık Fonu (%49,12)",
   "faaliyet": "Bayrak taşıyıcı havayolu; 428 uçaklık filoyla 120'den fazla ülkeye uçuyor, Star Alliance üyesi. Kaynak: Midas şirket kartları, 24.10.2026.",
   "sermaye": "1.380.000.000 TL",
   "sermaye_donem": "2026/6",
@@ -671,7 +1044,16 @@
   "faaliyet_eski": "Bayrak taşıyıcı havayolu; ~200 uçaklık filoyla 217 rota, Star Alliance üyesi.",
   "xu030_agirlik": 6.66,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "Şirket resmi anlatımı; kullanıcı onayı 24.10.2026"
+  "kurulus_kaynak": "Şirket resmi anlatımı; kullanıcı onayı 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "TÜRKİYE VARLIK FONU",
+    "oran": "49,12",
+    "oy": "49,12"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "TOASO": {
   "unvan": "Tofaş Türk Otomobil Fabrikası",
@@ -701,12 +1083,25 @@
   ],
   "faaliyet_eski": "Motorlu araç montajı; motor, yedek parça ve aksesuar imalatı (Fiat, Jeep).",
   "xu030_agirlik": 1.0,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "STELLANTİS EUROPE SPA",
+    "oran": "37,86",
+    "oy": "37,86"
+   },
+   {
+    "ad": "KOÇ HOLDİNG ANONİM ŞİRKETİ",
+    "oran": "37,62",
+    "oy": "37,62"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "TRALT": {
   "unvan": "Türk Altın İşletmeleri",
   "kurulus": "29.08.1989",
-  "grup": "Halka açık",
+  "grup": "TR Anadolu İnşaat (%48,01)",
   "faaliyet": "Türkiye çapında altın madeni keşfi ve işletmesi.",
   "sermaye": "3.202.500.000 TL",
   "sermaye_donem": "2026/6",
@@ -727,7 +1122,31 @@
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
   "xu030_agirlik": 1.25,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "TR ANADOLU İNŞAAT VE TİCARET ANONİM ŞİRKETİ",
+    "oran": "48,01",
+    "oy": "48,01"
+   },
+   {
+    "ad": "TÜRK ALTIN HOLDİNG ANONİM ŞİRKETİ",
+    "oran": "21,99",
+    "oy": "21,99"
+   },
+   {
+    "ad": "TÜRK ALTIN İŞLETMELERİ ANONİM ŞİRKETİ",
+    "oran": "4,81",
+    "oy": "4,81"
+   },
+   {
+    "ad": "MERRILL LYNCH INTERNATIONAL",
+    "oran": "3,29",
+    "oy": "3,29"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "TTKOM": {
   "unvan": "Türk Telekom",
@@ -758,12 +1177,25 @@
   ],
   "faaliyet_eski": "Her tür telekomünikasyon hizmeti; katma değerli hizmetler ve telekom altyapı projeleri.",
   "xu030_agirlik": 0.78,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "TÜRKİYE VARLIK FONU",
+    "oran": "61,68",
+    "oy": "61,68"
+   },
+   {
+    "ad": "T.C. HAZİNE VE MALİYE BAKANLIĞI",
+    "oran": "25,00",
+    "oy": "25,00"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "TUPRS": {
   "unvan": "Tüpraş (Türkiye Petrol Rafinerileri)",
   "kurulus": "18.11.1983",
-  "grup": "Koç Holding",
+  "grup": "Enerji Yatırımları (%46,40; Koç Holding iştiraki)",
   "faaliyet": "İzmir, İzmit, Kırıkkale ve Batman'daki dört rafineriyle 28,1 milyon ton yıllık rafinaj kapasitesi; %79,98 DİTAŞ ve %40 Opet iştirakleriyle Türkiye'nin lider sanayi kuruluşu. Kaynak: Midas şirket kartları, 24.10.2026.",
   "sermaye": "1.926.796.000 TL",
   "sermaye_donem": "2026/6",
@@ -788,7 +1220,21 @@
   ],
   "faaliyet_eski": "28,1 milyon ton yıllık rafinaj kapasitesi; %79,98 DİTAŞ ve %40 Opet iştirakleriyle Türkiye'nin lider sanayi kuruluşu.",
   "xu030_agirlik": 12.75,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "ENERJİ YATIRIMLARI AŞ",
+    "oran": "46,40",
+    "oy": "46,40"
+   },
+   {
+    "ad": "KOÇ HOLDİNG ANONİM ŞİRKETİ",
+    "oran": "3,70",
+    "oy": "3,70"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "VAKBN": {
   "unvan": "VakıfBank",
@@ -816,12 +1262,30 @@
   ],
   "faaliyet_eski": "Ticari bankacılık.",
   "xu030_agirlik": 0.67,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "TÜRKİYE VARLIK FONU",
+    "oran": "73,26",
+    "oy": "73,26"
+   },
+   {
+    "ad": "T.C. HAZİNE VE MALİYE BAKANLIĞI",
+    "oran": "14,75",
+    "oy": "14,75"
+   },
+   {
+    "ad": "TÜRKİYE VAKIFLAR BANKASI T.A.O MEMUR VE HİZMETLİLERİ EMEKLİ VE SAĞLIK YARDIM SANDIĞI VAKFI",
+    "oran": "4,31",
+    "oy": "4,31"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "YKBNK": {
   "unvan": "Yapı Kredi Bankası",
   "kurulus": "09.09.1944",
-  "grup": "Koç Holding & UniCredit",
+  "grup": "Koç Holding (Koç Finansal Hizmetler %40,95 + Koç Holding %20,22)",
   "faaliyet": "Kurumsal, bireysel, uluslararası ve yatırım bankacılığı; Hollanda, İsviçre, Azerbaycan ve Bahreyn'de şubeleri var. Kaynak: Midas şirket kartları, 24.10.2026.",
   "sermaye": "8.447.000.000 TL",
   "sermaye_donem": "2026/6",
@@ -845,7 +1309,26 @@
   "faaliyet_eski": "Kurumsal, bireysel, uluslararası ve yatırım bankacılığı.",
   "xu030_agirlik": 4.28,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "tr.wikipedia: \"9 Eylül 1944 tarihinde İstanbul'da Kazım Taşkent tarafından kurulan\" — eski değer 07.07.1944 iki kaynaktan farklıydı"
+  "kurulus_kaynak": "tr.wikipedia: \"9 Eylül 1944 tarihinde İstanbul'da Kazım Taşkent tarafından kurulan\" — eski değer 07.07.1944 iki kaynaktan farklıydı",
+  "ortaklar": [
+   {
+    "ad": "KOÇ FİNANSAL HİZMETLER AŞ",
+    "oran": "40,95",
+    "oy": "40,95"
+   },
+   {
+    "ad": "KOÇ HOLDİNG ANONİM ŞİRKETİ",
+    "oran": "20,22",
+    "oy": "20,22"
+   },
+   {
+    "ad": "ZİRAAT PORTFÖY BIST LİKİT BANKA ENDEKSİ HİSSE SENEDİ YOĞUN BORSA YATIRIM FONU",
+    "oran": "4,14",
+    "oy": "4,14"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  },
  "TRMET": {
   "unvan": "TR Anadolu Metal Madencilik İşletmeleri A.Ş. (eski adı: Koza Anadolu Metal)",
@@ -871,6 +1354,24 @@
    "Verimlilik: aktif devir hızı 0,40 · özkaynak devir hızı 0,87 · işletme sermayesi devir hızı 1,23"
   ],
   "xu030_agirlik": 0.66,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "ortaklar": [
+   {
+    "ad": "TR DOĞAL ENERJİ KAYNAKLARI ARAŞTIRMA VE ÜRETİM ANONİM ŞİRKETİ",
+    "oran": "52,25",
+    "oy": "52,25"
+   },
+   {
+    "ad": "TÜRK ALTIN İŞLETMELERİ ANONİM ŞİRKETİ",
+    "oran": "4,02",
+    "oy": "4,02"
+   },
+   {
+    "ad": "MEHMET İLKER SOYLU",
+    "oran": "3,04",
+    "oy": "3,04"
+   }
+  ],
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
  }
 }
