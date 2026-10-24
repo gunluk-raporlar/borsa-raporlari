@@ -7086,7 +7086,33 @@ def _interaktif_fiyat_grafigi(kod, seri):
              tarihler[0], kod)
 
 
-def build_hisse_html(kod, satir, haberler, sirket_haberleri=None):
+def _kap_uyarlari_yukle():
+    """data/kap/kap-akisi.json -> {KOD: [uyar, ...]}. Dosya yoksa bos sozluk;
+    KAP bildirim akisi ayri bir toplama adiminda tazelenir (Fintables akisi)."""
+    try:
+        with open("data/kap/kap-akisi.json", encoding="utf-8") as f:
+            return json.load(f).get("hisseler", {})
+    except Exception:
+        return {}
+
+
+def _kap_uyarlari_karti(kod, uyarlari):
+    if not uyarlari:
+        return ""
+    ogeler = "".join(
+        f"<li style='margin:5px 0'><span style='color:var(--muted); font-size:12px'>{html.escape(u['tarih'])}</span>"
+        f" &mdash; {html.escape(u['baslik'])} "
+        f"<a href='{html.escape(u['url'], quote=True)}' target='_blank' rel='noopener' style='font-size:12px'>&rarr;</a></li>"
+        for u in uyarlari[:8])
+    return (f"<div class='card' style='margin-top:14px'>"
+            f"<h3 style='margin:0 0 8px'>&#128203; KAP Bildirimleri</h3>"
+            f"<ul style='margin:0; padding-left:18px; font-size:13.5px'>{ogeler}</ul>"
+            f"<p style='margin:8px 0 0; font-size:12.5px'>Tüm akış: "
+            f"<a href='https://fintables.com/sirketler/{kod}/akis' target='_blank' rel='noopener'>Fintables şirket akışı &rarr;</a>"
+            f" &middot; <a href='https://www.kap.org.tr/' target='_blank' rel='noopener'>KAP &rarr;</a></p></div>")
+
+
+def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=None):
     seri = _hisse_fiyat_seri(kod)
     grafik_karti = _interaktif_fiyat_grafigi(kod, seri)
     degisim = None
@@ -7146,6 +7172,7 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None):
 <ul style="margin:0; padding-left:18px; font-size:13.5px">{haber_ogeleri}</ul>
 <p style="margin:8px 0 0; font-size:12.5px"><a href="../sirket-haberleri.html#H-{kod}">Tüm şirket haberleri &rarr;</a></p></div>
 </div>
+{_kap_uyarlari_karti(kod, [u for u in (kap_uyarlari or []) if u.get('kaynak') == 'KAP'])}
 {hisse_analiz.degerlendirmeler_html(kod)}
 <div class="card" style="margin-top:14px">
 <h3 style="margin:0 0 8px">{kod} konulu içerikler</h3>
@@ -7366,13 +7393,15 @@ def hisse_sayfalari_yaz(teknik_satirlar):
     except Exception:
         pass
     sirket_haber_map = _sirket_haberleri_yukle()
+    kap_veri = _kap_uyarlari_yukle()
     for s in teknik_satirlar:
         kod = s["hisse"]
         haberler = [h for h in haber_toplu if kod.lower() in h.lower()
                     and not _spor_haberi_mi(h)]
         with open(os.path.join("hisse", f"{kod}.html"), "w", encoding="utf-8") as f:
             f.write(build_hisse_html(kod, s, haberler,
-                                     sirket_haberleri=sirket_haber_map.get(kod, [])))
+                                     sirket_haberleri=sirket_haber_map.get(kod, []),
+                                     kap_uyarlari=kap_veri.get(kod, [])))
     # Yaz-sonrasi oz-denetim: grafik imzasi + gomulu serinin gecerliligi.
     for s in teknik_satirlar:
         kod = s["hisse"]
