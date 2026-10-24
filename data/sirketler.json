@@ -1,7 +1,7 @@
 {
  "AEFES": {
   "unvan": "Anadolu Efes",
-  "kurulus": "02.02.1966",
+  "kurulus": "1969",
   "grup": "Anadolu Grubu",
   "faaliyet": "Türkiye, Rusya, Ukrayna, Kazakistan, Moldova ve Gürcistan'da bira-malt faaliyeti; Avrupa'nın 5., dünyanın 10. büyük bira üreticisi. Coca-Cola İçecek'in %50,3 ortağıdır.",
   "sermaye": "5.921.052.000 TL",
@@ -27,7 +27,8 @@
    "Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM (06.10.2026); yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir."
   ],
   "xu030_agirlik": 1.15,
-  "xu030_donem": "Fintables, 24.10.2026"
+  "xu030_donem": "Fintables, 24.10.2026",
+  "kurulus_kaynak": "Anadolu Efes resmi sitesi: \"1969'da iki girişimcinin hayaliyle bu topraklarda başlayan yolculuğumuz\" (kullanıcı kanıtı) — şirket anlatımı 1969'u esas alıyor; eski değer 02.02.1966 (tescil)"
  },
  "AKBNK": {
   "unvan": "Akbank",
