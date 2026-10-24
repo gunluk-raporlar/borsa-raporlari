@@ -1,0 +1,126 @@
+{
+ "kaynak": "kap.org.tr/tr/api/member/filter (anahtarsiz, canli)",
+ "tarih": "24.10.2026",
+ "sirketler": {
+  "AEFES": {
+   "mkkMemberOid": "4028e4a140e95bea0140ed2fde10009d",
+   "unvan": "ANADOLU EFES BİRACILIK VE MALT SANAYİİ A.Ş."
+  },
+  "AKBNK": {
+   "mkkMemberOid": "4028e4a240e8d1830140e905edcd0006",
+   "unvan": "AKBANK T.A.Ş."
+  },
+  "ASELS": {
+   "mkkMemberOid": "4028e4a1413b7ef401413bc2251e0047",
+   "unvan": "ASELSAN ELEKTRONİK SANAYİ VE TİCARET A.Ş."
+  },
+  "ASTOR": {
+   "mkkMemberOid": "8acae2c562329bd10164405fe6c17996",
+   "unvan": "ASTOR ENERJİ A.Ş."
+  },
+  "BIMAS": {
+   "mkkMemberOid": "4028e4a140e95be70140ee1b7b030119",
+   "unvan": "BİM BİRLEŞİK MAĞAZALAR A.Ş."
+  },
+  "EKGYO": {
+   "mkkMemberOid": "4028e4a2422d9a780142513cda5b232e",
+   "unvan": "EMLAK KONUT GAYRİMENKUL YATIRIM ORTAKLIĞI A.Ş."
+  },
+  "ENKAI": {
+   "mkkMemberOid": "4028e4a240e95dc90140ed3883fe0093",
+   "unvan": "ENKA İNŞAAT VE SANAYİ A.Ş."
+  },
+  "EREGL": {
+   "mkkMemberOid": "4028e4a240e95dc90140ede4c12a0133",
+   "unvan": "EREĞLİ DEMİR VE ÇELİK FABRİKALARI T.A.Ş."
+  },
+  "FROTO": {
+   "mkkMemberOid": "4028e4a140f2ed71014106890fae0138",
+   "unvan": "FORD OTOMOTİV SANAYİ A.Ş."
+  },
+  "GARAN": {
+   "mkkMemberOid": "4028e4a240f2ef4c01413a53aa850684",
+   "unvan": "GARANTİ BBVA OPERASYONEL KİRALAMA HİZMETLERİ A.Ş."
+  },
+  "GUBRF": {
+   "mkkMemberOid": "4028e4a241733d4a01417989f3760a4d",
+   "unvan": "GÜBRE FABRİKALARI T.A.Ş."
+  },
+  "ISCTR": {
+   "mkkMemberOid": "4028e4a140f2ed7201411682b0cb05c6",
+   "unvan": "TÜRKİYE İŞ BANKASI A.Ş."
+  },
+  "KCHOL": {
+   "mkkMemberOid": "4028e4a140f2ed710140f2f4d6c70039",
+   "unvan": "KOÇ HOLDİNG A.Ş."
+  },
+  "KRDMD": {
+   "mkkMemberOid": "4028e4a140f2ed7201412ace3ada0707",
+   "unvan": "KARDEMİR KARABÜK DEMİR ÇELİK SANAYİ VE TİCARET A.Ş."
+  },
+  "MGROS": {
+   "mkkMemberOid": "4028e4a141462df2014150162e1c3424",
+   "unvan": "MİGROS TİCARET A.Ş."
+  },
+  "PETKM": {
+   "mkkMemberOid": "4028e4a240f2ef470141165c566a03e4",
+   "unvan": "PETKİM PETROKİMYA HOLDİNG A.Ş."
+  },
+  "PGSUS": {
+   "mkkMemberOid": "4028e4a2422d9a78014232e751bc22a4",
+   "unvan": "PEGASUS HAVA TAŞIMACILIĞI A.Ş."
+  },
+  "SAHOL": {
+   "mkkMemberOid": "4028e4a240ee37a90140ee50087e000b",
+   "unvan": "HACI ÖMER SABANCI HOLDİNG A.Ş."
+  },
+  "SASA": {
+   "mkkMemberOid": "4028e4a240ee866c0140f20abd9500cc",
+   "unvan": "SASA POLYESTER SANAYİ A.Ş."
+  },
+  "SISE": {
+   "mkkMemberOid": "4028e4a140f2ed710140f385d5690102",
+   "unvan": "TÜRKİYE ŞİŞE VE CAM FABRİKALARI A.Ş."
+  },
+  "TAVHL": {
+   "mkkMemberOid": "4028e4a140f2ed720140f31195ef010e",
+   "unvan": "TAV HAVALİMANLARI HOLDİNG A.Ş."
+  },
+  "TCELL": {
+   "mkkMemberOid": "4028e4a1486ec80a0148c55510d71d31",
+   "unvan": "TURKCELL İLETİŞİM HİZMETLERİ A.Ş."
+  },
+  "THYAO": {
+   "mkkMemberOid": "4028e4a140f2ed720140f376bebb01a7",
+   "unvan": "TÜRK HAVA YOLLARI A.O."
+  },
+  "TOASO": {
+   "mkkMemberOid": "4028e4a140f2ed710140f328bed700a5",
+   "unvan": "TOFAŞ TÜRK OTOMOBİL FABRİKASI A.Ş."
+  },
+  "TRALT": {
+   "mkkMemberOid": "4028e4a2422d9a6e0142bd91d3687a69",
+   "unvan": "TÜRK ALTIN İŞLETMELERİ A.Ş."
+  },
+  "TRMET": {
+   "mkkMemberOid": "4028e4a2422d9a6e0142bd921d307a6d",
+   "unvan": "TR ANADOLU METAL MADENCİLİK İŞLETMELERİ A.Ş."
+  },
+  "TTKOM": {
+   "mkkMemberOid": "4028e4a241e538ab0141ea9c96912c8b",
+   "unvan": "TÜRK TELEKOMÜNİKASYON A.Ş."
+  },
+  "TUPRS": {
+   "mkkMemberOid": "4028e4a140f2ed720140f37f139c01bc",
+   "unvan": "TÜPRAŞ-TÜRKİYE PETROL RAFİNERİLERİ A.Ş."
+  },
+  "VAKBN": {
+   "mkkMemberOid": "4028e4a1415f4d9b01415fe3340f36e4",
+   "unvan": "TÜRKİYE VAKIFLAR BANKASI T.A.O."
+  },
+  "YKBNK": {
+   "mkkMemberOid": "4028e4a240f2ef4c01412ae6d6630538",
+   "unvan": "YAPI VE KREDİ BANKASI A.Ş."
+  }
+ }
+}
