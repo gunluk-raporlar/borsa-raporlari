@@ -1,7 +1,7 @@
 {
  "AEFES": {
   "unvan": "Anadolu Efes",
-  "kurulus": "1969",
+  "kurulus": "02.02.1966 (ilk Efes Pilsen üretimi 1969)",
   "grup": "Anadolu Grubu",
   "faaliyet": "Türkiye, Rusya, Ukrayna, Kazakistan, Moldova ve Gürcistan'da bira-malt faaliyeti; Avrupa'nın 5., dünyanın 10. büyük bira üreticisi. Coca-Cola İçecek'in %50,3 ortağıdır.",
   "sermaye": "5.921.052.000 TL",
@@ -28,7 +28,7 @@
   ],
   "xu030_agirlik": 1.15,
   "xu030_donem": "Fintables, 24.10.2026",
-  "kurulus_kaynak": "Anadolu Efes resmi sitesi: \"1969'da iki girişimcinin hayaliyle bu topraklarda başlayan yolculuğumuz\" (kullanıcı kanıtı) — şirket anlatımı 1969'u esas alıyor; eski değer 02.02.1966 (tescil)"
+  "kurulus_kaynak": "Wikipedia infobox: \"Kuruluş: 2 Şubat 1966\" + Anadolu Efes resmi tarihçesi: \"1969: İlk bira üretimi Efes Pilsen markası altında iki fabrikada başladı\" (kullanıcı ekran görüntüleri) — 1969 kuruluş değil ilk üretim yılı; tescil 1966"
  },
  "AKBNK": {
   "unvan": "Akbank",
