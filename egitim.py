@@ -3,7 +3,9 @@
 
 Her Cumartesi ve Pazar bir ders islenir (hafta ici ASLA calismaz):
 - MUFREDAT: onceden tanimli konu listesinden hafta/dogun sayisina gore sirayla secilir
-  (deterministik -> ayni konu tekrar etmez; 2026-10-24'te 44 konu = 22 haftalik donem).
+  (deterministik -> ayni konu tekrar etmez; 2026-10-24'te 56 konu = 28 haftalik donem).
+  Icerik politikasi (kullanici karari): turev/vadeli/kaldiracli islem konulari
+  mufredata girmez.
 - ICERIK: buyuk LLM (Z.ai GLM, yoksa sablon) konuyu ogretir: nedir, neden onemli,
   nasil okunur, gercek BIST verisiyle ornek, sik hatalar, mini test, ozet.
 - KAYNAK: guncel data/teknik ve fiyat verisinden somut ornek rakamlar prompta verilir.
@@ -84,6 +86,21 @@ MUFREDAT = [
     ("Sharpe oranı ve risk-getiri", "Portföy", "Birim riske düşen fazladan getiri; strateji kıyaslamasında neyi anlatır, neyi anlatmaz."),
     ("Kademeli alım (DCA)", "Portföy", "Tek seferde almak mı, zamanda yaymak mı; ortalama maliyet mantığı."),
     ("Davranışsal hatalar: panik ve FOMO", "Portföy", "Kayıptan kaçınma, sürü psikolojisi; kuralın insana üstünlüğü."),
+    # ---- 2026-10-24 SPL paralel blok (kullanıcı kararı): eksik SPL dersleri
+    # temel duzeyde eklenir; TUREV/VADELI/KALDIRAC konulari MUFREDATA GIREMEZ
+    # (kullanici: "borsanin kumar olan tarafi olmasin" — kalici icerik politikasi).
+    ("Sermaye Piyasası Kanunu ve SPK", "Mevzuat", "Piyasayı kim düzenler, yatırımcı hangi haklara ve korumalara sahiptir; kanunun temel mantığı."),
+    ("Piyasa manipülasyonu ve izinsiz işlem", "Mevzuat", "Manipülatif kalıplar nasıl görünür, yatırımcı buna karşı nasıl korunur; şüpheli hareketi nereye bildirilir."),
+    ("Bilgi yükümlülüğü ve KAP", "Mevzuat", "Şirketin kamuya hangi bilgiyi ne zaman açıklaması zorunlu; KAP bildirimlerinin yatırımcı için yeri."),
+    ("Yatırımcıyı kim korur: SPK, MKK, TMSF", "Mevzuat", "Kayıt, denetim ve koruma şemsiyesi; aracı kurum batarsa yatırımcıya ne olur?"),
+    ("Tahvil ve bono nedir?", "SP Araçları", "Borçlanma araçları: kupon, vade, ihraççı riski; hisseyle yan yana koyunca ne anlatır?"),
+    ("Tahvil fiyatı ve faiz ilişkisi", "SP Araçları", "Faiz artınca tahvil neden düşer; basit/efektif getiri farkı, vade uzunluğunun etkisi."),
+    ("Yatırım fonu ve ETF", "SP Araçları", "Havuz mantığı; endeks fonu ile aktif yönetim farkı; gider oranının uzun vadeye etkisi."),
+    ("Anonim şirket: ortakların hakları", "Ticaret Hukuku", "Genel kurul, yönetim kurulu; oy, rüçhan ve bilgi hakkı; hissedar şirketi nasıl etkiler?"),
+    ("MKK ve takas süreci", "Piyasa Mekanizması", "Emirden hesaba: takas, saklama, kaydi sistem; işlem tarihi ile hesap geçişi arasındaki akış."),
+    ("Hisse kazançlarının vergilendirilmesi", "Vergi", "Temettü stopajı, BIST pay senedi kazanç istisnası, fon/tahvil getirisinde vergi; net getiriyi kim belirler?"),
+    ("Paranın zaman değeri", "Temel Analiz", "Bugünkü ve gelecekteki değer; iskonto mantığı, hisse değerlemesinin matematiği."),
+    ("CAPM ve beta", "Temel Analiz", "Sistematik risk, risk primi, beklenen getiri formülü; beta yüksek hisse ne demek?"),
 ]
 
 DUMMY_ANAHTARLAR = {"", "teknik-tarama", "derin-analiz", "radyo", "migrate-rebuild",
