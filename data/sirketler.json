@@ -41,7 +41,18 @@
     "oy": "24,00"
    }
   ],
-  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "9,57",
+  "pddd": "0,76",
+  "piyasa_degeri": "₺96.039.473.658,60",
+  "halka_aciklik": "32,26%",
+  "net_kar": "₺10.036.270.000,00",
+  "volatilite": "6,45%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "CAN ÇAKA",
+  "calisan": "15318",
+  "halka_arz": "24.07.2000",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "AKBNK": {
   "unvan": "Akbank",
@@ -83,7 +94,18 @@
     "oy": "3,42"
    }
   ],
-  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "4,93",
+  "pddd": "1,01",
+  "piyasa_degeri": "₺329.420.000.000,00",
+  "halka_aciklik": "52,97%",
+  "net_kar": "₺66.774.000.000,00",
+  "volatilite": "7,28%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "Cenk Kaan Gür",
+  "calisan": "12223",
+  "halka_arz": "26.07.1990",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "ASELS": {
   "unvan": "Aselsan",
@@ -118,7 +140,18 @@
     "oy": "74,20"
    }
   ],
-  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "37,37",
+  "pddd": "5,02",
+  "piyasa_degeri": "₺1.541.280.000.000,00",
+  "halka_aciklik": "25,77%",
+  "net_kar": "₺41.246.014.000,00",
+  "volatilite": "5,40%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "Ahmet Akyol",
+  "calisan": "17024",
+  "halka_arz": "01.08.1990",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "ASTOR": {
   "unvan": "Astor Enerji",
@@ -161,7 +194,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "12,71",
+  "pddd": "3,25",
+  "piyasa_degeri": "₺142.314.800.000,00",
+  "halka_aciklik": "42,56%",
+  "net_kar": "₺11.201.140.609,00",
+  "volatilite": "7,47%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "Hakan Ünsal",
+  "calisan": "2828",
+  "halka_arz": "17.01.2023",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "BIMAS": {
   "unvan": "Bim Birleşik Mağazalar",
@@ -221,7 +265,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "15,16",
+  "pddd": "2,22",
+  "piyasa_degeri": "₺447.600.000.000,00",
+  "halka_aciklik": "67,51%",
+  "net_kar": "₺29.528.641.000,00",
+  "volatilite": "2,78%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "HALUK DORTLUOĞLU",
+  "calisan": "106520",
+  "halka_arz": "08.07.2005",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "EKGYO": {
   "unvan": "Emlak Konut Gayrimenkul Yatırım Ortaklığı",
@@ -257,7 +312,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "0,00",
+  "pddd": "0,42",
+  "piyasa_degeri": "₺64.676.000.000,00",
+  "halka_aciklik": "48,09%",
+  "net_kar": "₺-3.037.304.000,00",
+  "volatilite": "7,72%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "YASİR YILMAZ",
+  "calisan": "468",
+  "halka_arz": "24.11.2010",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "ENKAI": {
   "unvan": "Enka İnşaat ve Sanayi",
@@ -325,7 +391,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "11,44",
+  "pddd": "1,09",
+  "piyasa_degeri": "₺447.000.000.000,00",
+  "halka_aciklik": "8,12%",
+  "net_kar": "₺39.063.422.000,00",
+  "volatilite": "4,83%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "AGAH MEHMET TARA",
+  "calisan": "24587",
+  "halka_arz": ". .",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "EREGL": {
   "unvan": "Ereğli Demir Çelik (Erdemir)",
@@ -373,7 +450,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "23,86",
+  "pddd": "0,66",
+  "piyasa_degeri": "₺221.200.000.000,00",
+  "halka_aciklik": "45,71%",
+  "net_kar": "₺9.271.136.000,00",
+  "volatilite": "9,74%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "Şaban Yazıcı",
+  "calisan": "12772",
+  "halka_arz": "13.01.1986",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "FROTO": {
   "unvan": "Ford Otosan",
@@ -416,7 +504,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "6,88",
+  "pddd": "1,27",
+  "piyasa_degeri": "₺228.266.955.000,00",
+  "halka_aciklik": "17,48%",
+  "net_kar": "₺33.200.368.000,00",
+  "volatilite": "6,69%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "GÜVEN ÖZYURT",
+  "calisan": "24786",
+  "halka_arz": "13.01.1986",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "GARAN": {
   "unvan": "Garanti BBVA",
@@ -453,7 +552,18 @@
     "oy": "85,97"
    }
   ],
-  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "4,40",
+  "pddd": "1,09",
+  "piyasa_degeri": "₺531.300.000.000,00",
+  "halka_aciklik": "13,96%",
+  "net_kar": "₺120.699.000.000,00",
+  "volatilite": "6,77%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "Mahmut Akten",
+  "calisan": "23376",
+  "halka_arz": "06.06.1990",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "GUBRF": {
   "unvan": "Gübre Fabrikaları (Gübretaş)",
@@ -490,7 +600,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "12,53",
+  "pddd": "2,53",
+  "piyasa_degeri": "₺99.699.000.000,00",
+  "halka_aciklik": "20,27%",
+  "net_kar": "₺7.957.461.378,00",
+  "volatilite": "0,00%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "AYTAÇ ONKUN",
+  "calisan": "1939",
+  "halka_arz": "06.01.1986",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "ISCTR": {
   "unvan": "Türkiye İş Bankası (C grubu)",
@@ -537,7 +658,18 @@
     "oy": "3,45"
    }
   ],
-  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "4,50",
+  "pddd": "0,67",
+  "piyasa_degeri": "₺304.249.634.900,00",
+  "halka_aciklik": "29,29%",
+  "net_kar": "₺67.664.000.000,00",
+  "volatilite": "7,09%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "HAKAN ARAN",
+  "calisan": "20719",
+  "halka_arz": "08.01.1986",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "KCHOL": {
   "unvan": "Koç Holding",
@@ -602,7 +734,18 @@
     "oy": "2,39"
    }
   ],
-  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "13,19",
+  "pddd": "0,63",
+  "piyasa_degeri": "₺500.839.864.875,00",
+  "halka_aciklik": "26,18%",
+  "net_kar": "₺37.977.000.000,00",
+  "volatilite": "4,95%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "LEVENT ÇAKIROĞLU",
+  "calisan": "120219",
+  "halka_arz": "10.01.1986",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "KRDMD": {
   "unvan": "Kardemir (D)",
@@ -658,7 +801,18 @@
     "oy": "3,47"
    }
   ],
-  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "6,95",
+  "pddd": "0,28",
+  "piyasa_degeri": "₺30.116.723.663,27",
+  "halka_aciklik": "91,75%",
+  "net_kar": "₺4.333.710.985,00",
+  "volatilite": "6,57%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "Dr. Dursun Ali YAŞACAN",
+  "calisan": "4438",
+  "halka_arz": "01.06.1998",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "MGROS": {
   "unvan": "Migros Ticaret",
@@ -703,7 +857,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "11,35",
+  "pddd": "0,84",
+  "piyasa_degeri": "₺78.124.901.539,50",
+  "halka_aciklik": "49,09%",
+  "net_kar": "₺6.881.159.000,00",
+  "volatilite": "4,99%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "ÖMER ÖZGÜR TORT",
+  "calisan": "55872",
+  "halka_arz": "27.02.1991",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "PETKM": {
   "unvan": "Petkim Petrokimya",
@@ -743,7 +908,18 @@
     "oy": "3,59"
    }
   ],
-  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "0,00",
+  "pddd": "0,61",
+  "piyasa_degeri": "₺45.771.264.000,00",
+  "halka_aciklik": "47,33%",
+  "net_kar": "₺-3.271.836.000,00",
+  "volatilite": "6,61%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "Kanan Mirzayev",
+  "calisan": "2334",
+  "halka_arz": "09.07.1990",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "PGSUS": {
   "unvan": "Pegasus Hava Taşımacılığı",
@@ -777,7 +953,18 @@
     "oy": "52,81"
    }
   ],
-  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "0,00",
+  "pddd": "0,55",
+  "piyasa_degeri": "₺62.350.000.000,00",
+  "halka_aciklik": "46,24%",
+  "net_kar": "₺-1.299.453.000,00",
+  "volatilite": "5,54%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "GÜLİZ ÖZTÜRK",
+  "calisan": "9863",
+  "halka_arz": "19.04.2013",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "SAHOL": {
   "unvan": "Sabancı Holding",
@@ -837,7 +1024,18 @@
     "oy": "3,38"
    }
   ],
-  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "8,80",
+  "pddd": "0,44",
+  "piyasa_degeri": "₺182.732.709.318,66",
+  "halka_aciklik": "51,13%",
+  "net_kar": "₺20.770.343.000,00",
+  "volatilite": "6,05%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "KIVANÇ ZAİMLER",
+  "calisan": "58567",
+  "halka_arz": "02.07.1997",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "SASA": {
   "unvan": "Sasa Polyester Sanayi",
@@ -872,7 +1070,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "0,00",
+  "pddd": "0,44",
+  "piyasa_degeri": "₺84.003.089.834,03",
+  "halka_aciklik": "45,15%",
+  "net_kar": "₺-13.723.880.000,00",
+  "volatilite": "9,76%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "MUSTAFA KEMAL ÖZ",
+  "calisan": "3608",
+  "halka_arz": "01.11.1996",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "SISE": {
   "unvan": "Şişecam",
@@ -919,7 +1128,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "8,84",
+  "pddd": "0,38",
+  "piyasa_degeri": "₺103.781.692.223,04",
+  "halka_aciklik": "44,89%",
+  "net_kar": "₺11.737.630.000,00",
+  "volatilite": "5,40%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "Mustafa Görkem Elverici",
+  "calisan": "22995",
+  "halka_arz": "13.01.1986",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "TAVHL": {
   "unvan": "TAV Holding",
@@ -963,7 +1183,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "11,45",
+  "pddd": "1,00",
+  "piyasa_degeri": "₺96.269.531.250,00",
+  "halka_aciklik": "49,11%",
+  "net_kar": "₺8.406.653.000,00",
+  "volatilite": "4,78%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "VEHBİ SERKAN KAPTAN",
+  "calisan": "21506",
+  "halka_arz": "16.02.2007",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "TCELL": {
   "unvan": "Turkcell",
@@ -1013,7 +1244,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "9,41",
+  "pddd": "0,64",
+  "piyasa_degeri": "₺198.220.000.000,00",
+  "halka_aciklik": "37,83%",
+  "net_kar": "₺21.059.301.000,00",
+  "volatilite": "7,02%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "Ali Taha Koç",
+  "calisan": "2148",
+  "halka_arz": "03.07.2000",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "THYAO": {
   "unvan": "Türk Hava Yolları",
@@ -1053,7 +1295,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "3,18",
+  "pddd": "0,35",
+  "piyasa_degeri": "₺356.040.000.000,00",
+  "halka_aciklik": "49,09%",
+  "net_kar": "₺112.059.000.000,00",
+  "volatilite": "4,71%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "AHMET OLMUŞTUR",
+  "calisan": "65678",
+  "halka_arz": "20.12.1990",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "TOASO": {
   "unvan": "Tofaş Türk Otomobil Fabrikası",
@@ -1096,7 +1349,18 @@
     "oy": "37,62"
    }
   ],
-  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "7,94",
+  "pddd": "1,69",
+  "piyasa_degeri": "₺111.300.000.000,00",
+  "halka_aciklik": "24,09%",
+  "net_kar": "₺14.011.341.000,00",
+  "volatilite": "5,23%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "Cengiz EROLDU",
+  "calisan": "4603",
+  "halka_arz": "01.07.1991",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "TRALT": {
   "unvan": "Türk Altın İşletmeleri",
@@ -1146,7 +1410,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "21,11",
+  "pddd": "2,17",
+  "piyasa_degeri": "₺115.097.850.000,00",
+  "halka_aciklik": "24,70%",
+  "net_kar": "₺5.453.534.000,00",
+  "volatilite": "6,80%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "MAHMUT ÇELİK",
+  "calisan": "2122",
+  "halka_arz": "05.02.2010",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "TTKOM": {
   "unvan": "Türk Telekom",
@@ -1190,7 +1465,18 @@
     "oy": "25,00"
    }
   ],
-  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "5,27",
+  "pddd": "0,61",
+  "piyasa_degeri": "₺161.140.000.000,00",
+  "halka_aciklik": "12,98%",
+  "net_kar": "₺30.585.703.000,00",
+  "volatilite": "7,77%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "ÜMÜT ÖNAL",
+  "calisan": "8218",
+  "halka_arz": "09.05.2008",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "TUPRS": {
   "unvan": "Tüpraş (Türkiye Petrol Rafinerileri)",
@@ -1234,7 +1520,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "9,56",
+  "pddd": "1,52",
+  "piyasa_degeri": "₺695.091.511.978,50",
+  "halka_aciklik": "49,02%",
+  "net_kar": "₺72.741.357.000,00",
+  "volatilite": "4,47%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "İBRAHİM YELMENOĞLU",
+  "calisan": "6378",
+  "halka_arz": "30.05.1991",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "VAKBN": {
   "unvan": "VakıfBank",
@@ -1280,7 +1577,18 @@
     "oy": "4,31"
    }
   ],
-  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "4,25",
+  "pddd": "0,84",
+  "piyasa_degeri": "₺298.072.600.967,49",
+  "halka_aciklik": "5,66%",
+  "net_kar": "₺70.095.000.000,00",
+  "volatilite": "8,09%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "Osman Arslan",
+  "calisan": "19147",
+  "halka_arz": ". .",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "YKBNK": {
   "unvan": "Yapı Kredi Bankası",
@@ -1328,7 +1636,18 @@
    }
   ],
   "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
-  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "grup_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "5,29",
+  "pddd": "1,02",
+  "piyasa_degeri": "₺292.943.738.529,12",
+  "halka_aciklik": "38,54%",
+  "net_kar": "₺55.352.000.000,00",
+  "volatilite": "7,02%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "Gökhan Erün",
+  "calisan": "14645",
+  "halka_arz": "28.05.1987",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  },
  "TRMET": {
   "unvan": "TR Anadolu Metal Madencilik İşletmeleri A.Ş. (eski adı: Koza Anadolu Metal)",
@@ -1372,6 +1691,17 @@
     "oy": "3,04"
    }
   ],
-  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026"
+  "ortaklar_kaynak": "Fintables ortaklık yapısı (KAP doğrudan sahiplik), 24.10.2026",
+  "fk": "17,77",
+  "pddd": "1,33",
+  "piyasa_degeri": "₺40.011.048.000,00",
+  "halka_aciklik": "40,77%",
+  "net_kar": "₺2.252.167.000,00",
+  "volatilite": "7,34%",
+  "finansal_kaynak": "Midas hisse ve finansal bilgileri, 24.10.2026",
+  "ceo": "MAHMUT ÇELİK",
+  "calisan": "2687",
+  "halka_arz": "05.02.2003",
+  "kunye_kaynak": "Midas şirket künyesi, 24.10.2026"
  }
 }

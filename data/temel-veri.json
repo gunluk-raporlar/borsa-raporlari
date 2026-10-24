@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-10-24 02:07",
+ "guncelleme": "2026-10-24 03:52",
  "kaynak": "TradingView (konsolide, TTM)",
  "hisseler": {
   "AEFES": {
@@ -17,7 +17,7 @@
    "gross_profit_ttm": 106260006000,
    "debt_to_equity_fq": 0.845088304977777,
    "current_ratio_fq": 1.029923211675,
-   "dividends_yield": 2.086662569145667,
+   "dividends_yield": 2.093094944512947,
    "ebitda_marj": 17.610619008463456,
    "net_borc": 65655268000
   },
@@ -36,7 +36,7 @@
    "gross_profit_ttm": null,
    "debt_to_equity_fq": 3.14695874685528,
    "current_ratio_fq": 0.265725919847755,
-   "dividends_yield": 3.4083591331269356
+   "dividends_yield": 3.475611681136543
   },
   "ASELS": {
    "close": 338,
@@ -53,7 +53,7 @@
    "gross_profit_ttm": 66306886000,
    "debt_to_equity_fq": 0.23893946181206002,
    "current_ratio_fq": 1.47195537743666,
-   "dividends_yield": 0.12642453806356246,
+   "dividends_yield": 0.1265180473372781,
    "ebitda_marj": 26.794143738134952,
    "net_borc": 33824364000
   },
@@ -72,7 +72,7 @@
    "gross_profit_ttm": 14893126468,
    "debt_to_equity_fq": 0.135672657637592,
    "current_ratio_fq": 2.00872803549851,
-   "dividends_yield": 1.4607666666666665,
+   "dividends_yield": 1.5365708274894812,
    "ebitda_marj": 33.50267741686809,
    "net_borc": 4863023705
   },
@@ -91,7 +91,7 @@
    "gross_profit_ttm": 131920204000,
    "debt_to_equity_fq": 0.311263761240324,
    "current_ratio_fq": 1.03191661773849,
-   "dividends_yield": 1.8970189701897018,
+   "dividends_yield": 1.876675603217158,
    "ebitda_marj": 6.2493637922691985,
    "net_borc": 58348152000
   },
@@ -110,7 +110,7 @@
    "gross_profit_ttm": 27314918000,
    "debt_to_equity_fq": 0.623364085778004,
    "current_ratio_fq": 2.09967976079037,
-   "dividends_yield": 3.3802816901408446,
+   "dividends_yield": 3.525264394829612,
    "ebitda_marj": 22.13640136518747,
    "net_borc": 55932751000
   },
@@ -129,7 +129,7 @@
    "gross_profit_ttm": 37249021000,
    "debt_to_equity_fq": 0.0184643960253715,
    "current_ratio_fq": 2.93358689928376,
-   "dividends_yield": 5.5555510204081635,
+   "dividends_yield": 5.480979865771812,
    "ebitda_marj": 19.011321475561136,
    "net_borc": -42541920000
   },
@@ -148,7 +148,7 @@
    "gross_profit_ttm": 23684994000,
    "debt_to_equity_fq": 0.483554988994733,
    "current_ratio_fq": 1.62859916040937,
-   "dividends_yield": 1.566951566951567,
+   "dividends_yield": 1.740506329113924,
    "ebitda_marj": 10.822051649240546,
    "net_borc": 50786774000
   },
@@ -167,7 +167,7 @@
    "gross_profit_ttm": 62744915000,
    "debt_to_equity_fq": 0.937682156323145,
    "current_ratio_fq": 1.28342764262051,
-   "dividends_yield": 14.560480841472575,
+   "dividends_yield": 14.896233666410453,
    "ebitda_marj": 5.530598439826502,
    "net_borc": 111981980000
   },
@@ -186,7 +186,7 @@
    "gross_profit_ttm": null,
    "debt_to_equity_fq": 1.36052759735256,
    "current_ratio_fq": 0.480405161438656,
-   "dividends_yield": 4.098747081712062
+   "dividends_yield": 4.163549407114624
   },
   "GUBRF": {
    "close": 298.5,
@@ -203,7 +203,7 @@
    "gross_profit_ttm": 16002104606,
    "debt_to_equity_fq": 0.247370620181031,
    "current_ratio_fq": 1.62740493030561,
-   "dividends_yield": 1.3547571644042233,
+   "dividends_yield": 1.5045293132328308,
    "ebitda_marj": 21.93145819424853,
    "net_borc": -5306600205
   },
@@ -222,7 +222,7 @@
    "gross_profit_ttm": null,
    "debt_to_equity_fq": 3.18825226574458,
    "current_ratio_fq": 0.306599366668719,
-   "dividends_yield": 4.343969404186796
+   "dividends_yield": 4.433204601479048
   },
   "KCHOL": {
    "close": 197.5,
@@ -239,7 +239,7 @@
    "gross_profit_ttm": 549862000000,
    "debt_to_equity_fq": 2.2013905447498803,
    "current_ratio_fq": 0.904867661988414,
-   "dividends_yield": 3.482916879143294,
+   "dividends_yield": 3.458227848101266,
    "ebitda_marj": 8.08073201039274,
    "net_borc": 792748000000
   },
@@ -277,7 +277,7 @@
    "gross_profit_ttm": 89388561000,
    "debt_to_equity_fq": 0.420036799021333,
    "current_ratio_fq": 0.799338157561741,
-   "dividends_yield": 1.8494279228149828,
+   "dividends_yield": 1.888002317497103,
    "ebitda_marj": 1.7820667720192556,
    "net_borc": 6477262000
   },
@@ -334,7 +334,7 @@
    "gross_profit_ttm": null,
    "debt_to_equity_fq": 2.59882126322087,
    "current_ratio_fq": 0.618603619434823,
-   "dividends_yield": 1.6145745288406625
+   "dividends_yield": 1.6247816091954022
   },
   "SASA": {
    "close": 1.6,
@@ -370,7 +370,7 @@
    "gross_profit_ttm": 60042226000,
    "debt_to_equity_fq": 0.635513535218829,
    "current_ratio_fq": 1.81000990183936,
-   "dividends_yield": 1.724231220657277,
+   "dividends_yield": 1.7344096812278629,
    "ebitda_marj": 7.169541875531491,
    "net_borc": 150024148000
   },
@@ -389,7 +389,7 @@
    "gross_profit_ttm": 38414696000,
    "debt_to_equity_fq": 1.32828109793111,
    "current_ratio_fq": 1.2563322488876,
-   "dividends_yield": 1.352052434456929,
+   "dividends_yield": 1.362256603773585,
    "ebitda_marj": 31.678886571904446,
    "net_borc": 97855461000
   },
@@ -408,7 +408,7 @@
    "gross_profit_ttm": 73609727000,
    "debt_to_equity_fq": 0.685062640807194,
    "current_ratio_fq": 1.49090395018201,
-   "dividends_yield": 4.287245444801715,
+   "dividends_yield": 4.439511653718092,
    "ebitda_marj": 43.29462537361765,
    "net_borc": 122793156000
   },
@@ -446,7 +446,7 @@
    "gross_profit_ttm": 25791609000,
    "debt_to_equity_fq": 1.0703353955424901,
    "current_ratio_fq": 1.50327341692292,
-   "dividends_yield": 8.940545373267769,
+   "dividends_yield": 8.984725965858042,
    "ebitda_marj": 3.3601942605001307,
    "net_borc": 59356234000
   },
@@ -465,7 +465,7 @@
    "gross_profit_ttm": 12498418000,
    "debt_to_equity_fq": 0.0015445488561076602,
    "current_ratio_fq": 4.72199767825716,
-   "dividends_yield": 1.3706140350877194,
+   "dividends_yield": 1.391207568169171,
    "ebitda_marj": 40.91478694803373,
    "net_borc": -5519959000
   },
@@ -522,7 +522,7 @@
    "gross_profit_ttm": 129676836000,
    "debt_to_equity_fq": 0.146361143653266,
    "current_ratio_fq": 1.3507139291722,
-   "dividends_yield": 4.862143364088006,
+   "dividends_yield": 4.747581427581427,
    "ebitda_marj": 10.362909094552904,
    "net_borc": -129079896000.0
   },

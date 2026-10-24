@@ -6479,6 +6479,16 @@ def _sirket_profili_html(kod):
         agirlik = f'{p["xu030_agirlik"]:.2f}'.replace(".", ",")
         kaynak = f' ({p["xu030_donem"]})' if p.get("xu030_donem") else ""
         meta.append(f'<span>XU030 ağırlığı: <strong>%{agirlik}</strong>{kaynak}</span>')
+    if p.get("halka_aciklik"):
+        meta.append(f'<span>Halka açıklık: <strong>{p["halka_aciklik"]}</strong></span>')
+    if p.get("ceo"):
+        meta.append(f'<span>CEO: <strong>{p["ceo"]}</strong></span>')
+    if p.get("calisan"):
+        try:
+            calisan_fmt = f'{int(str(p["calisan"]).replace(".", "").replace(",", "")):,}'.replace(",", ".")
+        except ValueError:
+            calisan_fmt = str(p["calisan"])
+        meta.append(f'<span>Çalışan: <strong>{calisan_fmt}</strong></span>')
     web_html = ""
     if p.get("web"):
         web_html = (f'<div style="margin:8px 0 0; font-size:13.5px">🌐 '
