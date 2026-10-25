@@ -1998,6 +1998,9 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
             kaynak = kok / rel
             ham = kaynak.read_text(encoding="utf-8", errors="replace")
             yeni = sayfayi_cevir(ham, dil, cevirmen, diller, rel)
+            # ceviri onbellekinden donen bozuk tarih bicimi kendini onarir
+            # (25.10: '25.04,1946' kalintisi onbellek girdilerinden geliyordu)
+            yeni = re.sub(r"(\d{1,2})\.(\d{1,2}),(\d{4})", r"\1.\2.\3", yeni)
             # hreflang yer tutuculari: her sayfanin kendi yoluna gore doldurulur
             for kod in DILLER:
                 yeni = yeni.replace("@@URL_" + kod + "@@",
