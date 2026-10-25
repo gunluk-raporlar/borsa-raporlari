@@ -35,46 +35,46 @@ DUMMY_ANAHTARLAR = {"", "teknik-tarama", "derin-analiz", "radyo", "migrate-rebui
 # uzerine hafta sonuna ozel tema + kuresel akislar eklenir.
 _EKSTRA_KATEGORILER = {
     "Emlak": [
-        ("GoogleNews-Emlak", "https://news.google.com/rss/search?q=emlak%20konut%20piyasas%C4%B1&hl=tr&gl=TR&ceid=TR:tr"),
-        ("Sozcu Emlak", "https://www.sozcu.com.tr/feeds-rss-category-emlak"),
-        ("Isindetayi Gayrimenkul", "https://www.isindetayi.com/rss/gayrimenkul"),
+        ("Google Haberler · Emlak", "https://news.google.com/rss/search?q=emlak%20konut%20piyasas%C4%B1&hl=tr&gl=TR&ceid=TR:tr"),
+        ("Sözcü Emlak", "https://www.sozcu.com.tr/feeds-rss-category-emlak"),
+        ("İşin Detayı Gayrimenkul", "https://www.isindetayi.com/rss/gayrimenkul"),
     ],
     "Para & Döviz": [
-        ("GoogleNews-Doviz", "https://news.google.com/rss/search?q=d%C3%B6viz%20kur%20piyasas%C4%B1%20TL&hl=tr&gl=TR&ceid=TR:tr"),
-        ("GoogleNews-Altin", "https://news.google.com/rss/search?q=alt%C4%B1n%20ons%20dolar%20kur&hl=tr&gl=TR&ceid=TR:tr"),
+        ("Google Haberler · Döviz", "https://news.google.com/rss/search?q=d%C3%B6viz%20kur%20piyasas%C4%B1%20TL&hl=tr&gl=TR&ceid=TR:tr"),
+        ("Google Haberler · Altın", "https://news.google.com/rss/search?q=alt%C4%B1n%20ons%20dolar%20kur&hl=tr&gl=TR&ceid=TR:tr"),
         ("Doviz.com", "https://www.doviz.com/news/rss"),
         ("Investing TR Forex", "https://tr.investing.com/rss/forex.rss"),
-        ("Paranin Yonu", "https://www.paraninyonu.com.tr/rss.xml"),
-        ("Sozcu Emtia", "https://www.sozcu.com.tr/feeds-rss-category-emtia"),
+        ("Paranın Yönü", "https://www.paraninyonu.com.tr/rss.xml"),
+        ("Sözcü Emtia", "https://www.sozcu.com.tr/feeds-rss-category-emtia"),
         ("Investing TR Emtia", "https://tr.investing.com/rss/commodities.rss"),
     ],
     "Ticaret & Dış Ticaret": [
-        ("GoogleNews-Ticaret", "https://news.google.com/rss/search?q=ihracat%20ithalat%20ticaret&hl=tr&gl=TR&ceid=TR:tr"),
-        ("GoogleNews-Gumruk", "https://news.google.com/rss/search?q=g%C3%BCmr%C3%BCk%20d%C4%B1%C5%9F%20ticaret%20ticaret%20sava%C5%9F%C4%B1&hl=tr&gl=TR&ceid=TR:tr"),
-        ("GoogleNews-GlobalTicaret", "https://news.google.com/rss/search?q=global%20trade%20tariffs%20exports&hl=en&gl=US&ceid=US:en"),
-        ("Dunya", "https://www.dunya.com/rss"),
+        ("Google Haberler · Ticaret", "https://news.google.com/rss/search?q=ihracat%20ithalat%20ticaret&hl=tr&gl=TR&ceid=TR:tr"),
+        ("Google Haberler · Gümrük", "https://news.google.com/rss/search?q=g%C3%BCmr%C3%BCk%20d%C4%B1%C5%9F%20ticaret%20ticaret%20sava%C5%9F%C4%B1&hl=tr&gl=TR&ceid=TR:tr"),
+        ("Google Haberler · Küresel Ticaret", "https://news.google.com/rss/search?q=global%20trade%20tariffs%20exports&hl=en&gl=US&ceid=US:en"),
+        ("Dünya", "https://www.dunya.com/rss"),
     ],
     "Jeopolitik": [
-        ("GoogleNews-Jeopolitik", "https://news.google.com/rss/search?q=jeopolitik%20riskler%20petrol&hl=tr&gl=TR&ceid=TR:tr"),
-        ("GoogleNews-Ortadogu", "https://news.google.com/rss/search?q=Ortado%C4%9Fu%20jeopolitik%20petrol&hl=tr&gl=TR&ceid=TR:tr"),
-        ("AA Guncel", "https://www.aa.com.tr/tr/rss/default?cat=guncel"),
-        ("DW Turkce", "https://rss.dw.com/rdf/rss-tur-all"),
-        ("Hurriyet Dunya", "https://www.hurriyet.com.tr/rss/dunya"),
-        ("Sabah Dunya", "https://www.sabah.com.tr/rss/dunya.xml"),
-        ("NTV Dunya", "https://www.ntv.com.tr/dunya.rss"),
+        ("Google Haberler · Jeopolitik", "https://news.google.com/rss/search?q=jeopolitik%20riskler%20petrol&hl=tr&gl=TR&ceid=TR:tr"),
+        ("Google Haberler · Ortadoğu", "https://news.google.com/rss/search?q=Ortado%C4%9Fu%20jeopolitik%20petrol&hl=tr&gl=TR&ceid=TR:tr"),
+        ("AA Güncel", "https://www.aa.com.tr/tr/rss/default?cat=guncel"),
+        ("DW Türkçe", "https://rss.dw.com/rdf/rss-tur-all"),
+        ("Hürriyet Dünya", "https://www.hurriyet.com.tr/rss/dunya"),
+        ("Sabah Dünya", "https://www.sabah.com.tr/rss/dunya.xml"),
+        ("NTV Dünya", "https://www.ntv.com.tr/dunya.rss"),
         ("BBC World", "https://feeds.bbci.co.uk/news/world/rss.xml"),
     ],
     "Küresel Ekonomi": [
         ("BBC Business", "https://feeds.bbci.co.uk/news/business/rss.xml"),
         ("CNBC Business", "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114"),
         ("MarketWatch", "https://feeds.content.dowjones.io/public/rss/mw_topstories"),
-        ("GoogleNews-Dunya", "https://news.google.com/rss/search?q=world%20economy%20markets&hl=en&gl=US&ceid=US:en"),
-        ("GoogleNews-GlobalMarkets", "https://news.google.com/rss/search?q=global%20markets%20fed%20economy&hl=en&gl=US&ceid=US:en"),
+        ("Google Haberler · Dünya (EN)", "https://news.google.com/rss/search?q=world%20economy%20markets&hl=en&gl=US&ceid=US:en"),
+        ("Google Haberler · Küresel Piyasalar", "https://news.google.com/rss/search?q=global%20markets%20fed%20economy&hl=en&gl=US&ceid=US:en"),
     ],
 }
 # Emlak kategorisine ikinci GoogleNews akisi (konut/inşaat/kira) — 2026-10-24.
 _EKSTRA_KATEGORILER.setdefault("Emlak", []).append(
-    ("GoogleNews-Konut", "https://news.google.com/rss/search?q=konut%20fiyatlar%C4%B1%20in%C5%9Faat%20kira&hl=tr&gl=TR&ceid=TR:tr"),
+    ("Google Haberler · Konut", "https://news.google.com/rss/search?q=konut%20fiyatlar%C4%B1%20in%C5%9Faat%20kira&hl=tr&gl=TR&ceid=TR:tr"),
 )
 
 _EXTRA_FILTRE = ["spor", "futbol", "magazin", "dizi", "yemek tarifi", "hava durumu",

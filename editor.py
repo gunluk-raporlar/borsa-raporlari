@@ -70,6 +70,9 @@ YAZIM = {
     "fiskalsal": "mali", "liraizasyon": "liralaşma",
     "emta": "emtia", "Emta": "Emtia",
     "sağılayıcı": "sağlayıcı", "bilanso": "bilanço",
+    "ylık": "yıllık", "stoç": "stok", "Stoç": "Stok",
+    "hissedede": "hissede", "ödüsüz": "risksiz",
+    "dib yapma": "dip yapma",
 }
 
 # Noktalama temizliginde sayi-ondalik virgulu bozmamak icin: virgul/nokta
@@ -100,6 +103,15 @@ _VB_KISA = re.compile(r"\bvb(?=[\s.,;:!?)]|$)")
 # yanlis yere dusen '%' sayinin sonuna tasinir (dogrulama desenlerini bozmaz).
 _YUZDE_KAYMA1 = re.compile(r"(\d),(\d)%(\d)(?!\d)")
 _YUZDE_KAYMA2 = re.compile(r"(\d),%(?=\d)")
+# 25.10 denetim: LLM ara sira baska alfabeden sozcuk birakiyor (Korece
+# '심리적 지원', '경쟁'). Turkce raporda bu alfabeler meşru degildir; koşu
+# sessizce SOKULUR ve kayda gecer (ceviri hattinda KULLANILMAZ — o hatta
+# Cince/Rusca meşrudur).
+_YABANCI_YAZI_RE = re.compile(
+    r"[\uac00-\ud7af\u3130-\u318f"   # Hangul
+    r"\u4e00-\u9fff\u3040-\u30ff"    # CJK + Kana
+    r"\u0900-\u097f\u0600-\u06ff\u0590-\u05ff"  # Devanagari, Arapça, İbranice
+    r"]+")
 
 # --- Kodlama/karakter sagligi (Gemini incelemesi sonrasi ekleme) ---
 # Bozuk kodlama kalintilari (mojibake): "güìlendiği", "\fcsteyse" gibi —
@@ -171,6 +183,12 @@ def imla(metin: str) -> tuple:
     if onarim != temiz:
         duzeltmeler.append(("yüzde-biçimi", "kaymis '%' konumlandirildi", 1))
         temiz = onarim
+    # yabanci yazi kaliintisi: baska alfabeden run'lar silinir, artan cift
+    # bosluklar toplanir (Korece '경쟁' vakasi — 25.10 denetim)
+    temiz, n = _YABANCI_YAZI_RE.subn(" ", temiz)
+    if n:
+        temiz = re.sub(r" {2,}", " ", temiz)
+        duzeltmeler.append(("yabancı-yazı", "baska alfabeden kalinti silindi", n))
 
     # kodlama sagligi: gorunmez karakterler silinir, NBSP normal bosluk olur,
     # curly tirnaklar duzlesir (gorunum degismeden metin standartlasir)

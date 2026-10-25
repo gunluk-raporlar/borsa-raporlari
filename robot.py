@@ -332,10 +332,10 @@ def strateji_sinyalleri(seriler):
                 sinyal, gerekce = "BEKLE", "dizilim AL yonunde ama: " + ", ".join(neden)
             else:
                 sinyal = "AL"
-                gerekce = f"SMA10 > SMA30 dizilimi · RSI {rsi:.0f} · fiyat SMA100 uzerinde"
+                gerekce = f"SMA10 > SMA30 dizilimi · RSI {rsi:.0f} · fiyat SMA100 üzerinde"
         elif asagi_kesti:
             sinyal = "SAT"
-            gerekce = "SMA10, SMA30'un asagi kesti"
+            gerekce = "SMA10, SMA30'u aşağı kesti"
         sinyaller[h] = {
             "sinyal": sinyal, "gerekce": gerekce,
             "son_fiyat": f[-1], "tarih": tarihler[-1],

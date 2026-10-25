@@ -1,51 +1,51 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Signal-Scorecard — Backtest der KAUF-Signale</title>
-<meta name="description" content="KI-gestützte tägliche BIST 30 Analysen: technische Scans, Oszillator-Signale, Modellportfolio und virtuelles Portfoliotracking.">
-<link rel="canonical" href="https://borsa-raporlari.pages.dev/de/signal-bilanz">
-<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/sinyal-karnesi">
-<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/svodka-signalov">
-<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/signal-scorecard">
-<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/xinhao-jifenka">
-<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/signal-bilanz">
-<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/sinyal-karnesi">
-<link rel="icon" href="/favicon-120.png" type="image/png" sizes="120x120">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="BIST 30 Tagesberichte">
-<meta property="og:title" content="Signal-Scorecard — Backtest der KAUF-Signale">
-<meta property="og:description" content="KI-gestützte tägliche BIST 30 Analysen: technische Scans, Oszillator-Signale, Modellportfolio und virtuelles Portfoliotracking.">
-<meta property="og:url" content="https://borsa-raporlari.pages.dev/de/signal-bilanz">
-<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="BIST 30 Tagesberichts Titelbild">
-<meta property="og:locale" content="de_DE">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Signal-Scorecard — Backtest der KAUF-Signale">
-<meta name="twitter:description" content="KI-gestützte tägliche BIST 30 Analysen: technische Scans, Oszillator-Signale, Modellportfolio und virtuelles Portfoliotracking.">
-<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
-<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
-<meta name="yandex-verification" content="2c8df12d0b97a734">
+
+
+
+
+
+Signal-Scorecard — Backtest der KAUF-Signale
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Signal-Scorecard — Backtest der KAUF-Signale", "description": "KI-gestützte tägliche BIST 30 Analysen: technische Scans, Oszillator-Signale, Modellportfolio und virtuelles Portfoliotracking.", "url": "https://borsa-raporlari.pages.dev/de/signal-bilanz", "inLanguage": "de", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Tagesberichte", "url": "https://borsa-raporlari.pages.dev/de/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="stylesheet" href="style.css?v=6bc658f2">
 
-</head>
-<body>
-<header class="topbar"><div class="inner">
-<div class="brand-row"><a class="brand" href="./">BIST 30 Tagesberichte</a>
-<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Helles/dunkles Design" aria-label="Design wechseln">🌙</button></div>
-<nav><a href="./">Startseite</a><a href="berichte">Berichte</a><a href="aktien/">Aktien</a><a href="tiefenanalyse">Tiefenanalyse</a><a href="makroanalyse">Makroanalyse</a><a href="technischer-scan">Technischer Scan</a><a href="signal-bilanz" class="active">Signal-Bilanz</a><a href="borsapy-signale">Borsapy-Signale</a><a href="nachrichten">Nachrichten</a><a href="unternehmensnachrichten">Unternehmensnachrichten</a><a href="portfolio">Demo-Portfolio</a><a href="wochenende">Wochenende</a><a href="boersenschule">Börsenschule</a><a href="kalender">📅 Kalender</a><a href="glossar">Glossar</a><a href="begriffe">Begriffe</a><a href="rechnungslegungsbegriffe">Rechnungslegungsbegriffe</a><a href="handelsroboter">Handelsroboter</a></nav>
-</div></header>
 
-<div class="ticker-bant" id="ticker-bant" data-kok="" style="margin-bottom:16px">
-  <div class="ticker-iz" id="ticker-iz"><span class="ticker-oge"><b>TUPRS</b> 352.50 TL <span class="pos">▲ +0.07%</span></span><span class="ticker-oge"><b>VAKBN</b> 30.02 TL <span class="neg">▼ -3.60%</span></span><span class="ticker-oge"><b>ISCTR</b> 12.07 TL <span class="neg">▼ -2.82%</span></span><span class="ticker-oge"><b>YKBNK</b> 34.84 TL <span class="neg">▼ -1.36%</span></span><span class="ticker-oge"><b>BIMAS</b> 370.00 TL <span class="pos">▲ +0.27%</span></span><span class="ticker-oge"><b>PETKM</b> 17.79 TL <span class="neg">▼ -2.79%</span></span><span class="ticker-oge"><b>EKGYO</b> 17.16 TL <span class="neg">▼ -3.32%</span></span><span class="ticker-oge"><b>KCHOL</b> 193.00 TL <span class="neg">▼ -1.58%</span></span><span class="ticker-oge"><b>GARAN</b> 124.60 TL <span class="neg">▼ -3.04%</span></span><span class="ticker-oge"><b>KRDMD</b> 38.04 TL <span class="neg">▼ -4.61%</span></span><span class="ticker-oge"><b>AKBNK</b> 62.75 TL <span class="neg">▼ -2.86%</span></span><span class="ticker-oge"><b>TAVHL</b> 258.50 TL <span class="neg">▼ -3.18%</span></span><span class="ticker-oge"><b>SAHOL</b> 85.30 TL <span class="neg">▼ -2.57%</span></span><span class="ticker-oge"><b>TOASO</b> 218.30 TL <span class="neg">▼ -2.41%</span></span><span class="ticker-oge"><b>TRMET</b> 101.40 TL <span class="neg">▼ -4.52%</span></span><span class="ticker-oge"><b>TTKOM</b> 45.58 TL <span class="neg">▼ -3.80%</span></span><span class="ticker-oge"><b>ASELS</b> 325.75 TL <span class="neg">▼ -3.70%</span></span><span class="ticker-oge"><b>GUBRF</b> 298.50 TL <span class="neg">▼ -9.95%</span></span><span class="ticker-oge"><b>ENKAI</b> 72.35 TL <span class="neg">▼ -1.56%</span></span><span class="ticker-oge"><b>EREGL</b> 31.70 TL <span class="neg">▼ -9.69%</span></span><span class="ticker-oge"><b>SISE</b> 33.32 TL <span class="neg">▼ -2.23%</span></span><span class="ticker-oge"><b>TRALT</b> 34.88 TL <span class="neg">▼ -4.39%</span></span><span class="ticker-oge"><b>SASA</b> 1.59 TL <span class="neg">▼ -3.05%</span></span><span class="ticker-oge"><b>AEFES</b> 15.86 TL <span class="neg">▼ -2.52%</span></span><span class="ticker-oge"><b>FROTO</b> 64.90 TL <span class="neg">▼ -2.48%</span></span><span class="ticker-oge"><b>TCELL</b> 88.00 TL <span class="neg">▼ -5.68%</span></span><span class="ticker-oge"><b>PGSUS</b> 122.10 TL <span class="neg">▼ -3.40%</span></span><span class="ticker-oge"><b>THYAO</b> 252.50 TL <span class="neg">▼ -2.51%</span></span><span class="ticker-oge"><b>MGROS</b> 433.50 TL <span class="neg">▼ -1.59%</span></span><span class="ticker-oge"><b>ASTOR</b> 142.50 TL <span class="neg">▼ -5.00%</span></span><span class="ticker-oge ticker-saat">23.10 13:04 · ~15 Min. verzögert</span><span aria-hidden="true" style="display:inline-block"><span class="ticker-oge"><b>TUPRS</b> 352.50 TL <span class="pos">▲ +0.07%</span></span><span class="ticker-oge"><b>VAKBN</b> 30.02 TL <span class="neg">▼ -3.60%</span></span><span class="ticker-oge"><b>ISCTR</b> 12.07 TL <span class="neg">▼ -2.82%</span></span><span class="ticker-oge"><b>YKBNK</b> 34.84 TL <span class="neg">▼ -1.36%</span></span><span class="ticker-oge"><b>BIMAS</b> 370.00 TL <span class="pos">▲ +0.27%</span></span><span class="ticker-oge"><b>PETKM</b> 17.79 TL <span class="neg">▼ -2.79%</span></span><span class="ticker-oge"><b>EKGYO</b> 17.16 TL <span class="neg">▼ -3.32%</span></span><span class="ticker-oge"><b>KCHOL</b> 193.00 TL <span class="neg">▼ -1.58%</span></span><span class="ticker-oge"><b>GARAN</b> 124.60 TL <span class="neg">▼ -3.04%</span></span><span class="ticker-oge"><b>KRDMD</b> 38.04 TL <span class="neg">▼ -4.61%</span></span><span class="ticker-oge"><b>AKBNK</b> 62.75 TL <span class="neg">▼ -2.86%</span></span><span class="ticker-oge"><b>TAVHL</b> 258.50 TL <span class="neg">▼ -3.18%</span></span><span class="ticker-oge"><b>SAHOL</b> 85.30 TL <span class="neg">▼ -2.57%</span></span><span class="ticker-oge"><b>TOASO</b> 218.30 TL <span class="neg">▼ -2.41%</span></span><span class="ticker-oge"><b>TRMET</b> 101.40 TL <span class="neg">▼ -4.52%</span></span><span class="ticker-oge"><b>TTKOM</b> 45.58 TL <span class="neg">▼ -3.80%</span></span><span class="ticker-oge"><b>ASELS</b> 325.75 TL <span class="neg">▼ -3.70%</span></span><span class="ticker-oge"><b>GUBRF</b> 298.50 TL <span class="neg">▼ -9.95%</span></span><span class="ticker-oge"><b>ENKAI</b> 72.35 TL <span class="neg">▼ -1.56%</span></span><span class="ticker-oge"><b>EREGL</b> 31.70 TL <span class="neg">▼ -9.69%</span></span><span class="ticker-oge"><b>SISE</b> 33.32 TL <span class="neg">▼ -2.23%</span></span><span class="ticker-oge"><b>TRALT</b> 34.88 TL <span class="neg">▼ -4.39%</span></span><span class="ticker-oge"><b>SASA</b> 1.59 TL <span class="neg">▼ -3.05%</span></span><span class="ticker-oge"><b>AEFES</b> 15.86 TL <span class="neg">▼ -2.52%</span></span><span class="ticker-oge"><b>FROTO</b> 64.90 TL <span class="neg">▼ -2.48%</span></span><span class="ticker-oge"><b>TCELL</b> 88.00 TL <span class="neg">▼ -5.68%</span></span><span class="ticker-oge"><b>PGSUS</b> 122.10 TL <span class="neg">▼ -3.40%</span></span><span class="ticker-oge"><b>THYAO</b> 252.50 TL <span class="neg">▼ -2.51%</span></span><span class="ticker-oge"><b>MGROS</b> 433.50 TL <span class="neg">▼ -1.59%</span></span><span class="ticker-oge"><b>ASTOR</b> 142.50 TL <span class="neg">▼ -5.00%</span></span><span class="ticker-oge ticker-saat">23.10 13:04 · ~15 Min. verzögert</span></span></div>
-</div>
+
+
+
+
+BIST 30 Tagesberichte
+🌙
+StartseiteBerichteAktienTiefenanalyseMakroanalyseTechnischer ScanSignal-BilanzBorsapy-SignaleNachrichtenUnternehmensnachrichtenDemo-PortfolioWochenendeBörsenschule📅 KalenderGlossarBegriffeRechnungslegungsbegriffeHandelsroboter
+
+
+
+  TUPRS 352.50 TL ▲ +0.07%VAKBN 30.02 TL ▼ -3.60%ISCTR 12.07 TL ▼ -2.82%YKBNK 34.84 TL ▼ -1.36%BIMAS 370.00 TL ▲ +0.27%PETKM 17.79 TL ▼ -2.79%EKGYO 17.16 TL ▼ -3.32%KCHOL 193.00 TL ▼ -1.58%GARAN 124.60 TL ▼ -3.04%KRDMD 38.04 TL ▼ -4.61%AKBNK 62.75 TL ▼ -2.86%TAVHL 258.50 TL ▼ -3.18%SAHOL 85.30 TL ▼ -2.57%TOASO 218.30 TL ▼ -2.41%TRMET 101.40 TL ▼ -4.52%TTKOM 45.58 TL ▼ -3.80%ASELS 325.75 TL ▼ -3.70%GUBRF 298.50 TL ▼ -9.95%ENKAI 72.35 TL ▼ -1.56%EREGL 31.70 TL ▼ -9.69%SISE 33.32 TL ▼ -2.23%TRALT 34.88 TL ▼ -4.39%SASA 1.59 TL ▼ -3.05%AEFES 15.86 TL ▼ -2.52%FROTO 64.90 TL ▼ -2.48%TCELL 88.00 TL ▼ -5.68%PGSUS 122.10 TL ▼ -3.40%THYAO 252.50 TL ▼ -2.51%MGROS 433.50 TL ▼ -1.59%ASTOR 142.50 TL ▼ -5.00%23.10 13:04 · ~15 Min. verzögertTUPRS 352.50 TL ▲ +0.07%VAKBN 30.02 TL ▼ -3.60%ISCTR 12.07 TL ▼ -2.82%YKBNK 34.84 TL ▼ -1.36%BIMAS 370.00 TL ▲ +0.27%PETKM 17.79 TL ▼ -2.79%EKGYO 17.16 TL ▼ -3.32%KCHOL 193.00 TL ▼ -1.58%GARAN 124.60 TL ▼ -3.04%KRDMD 38.04 TL ▼ -4.61%AKBNK 62.75 TL ▼ -2.86%TAVHL 258.50 TL ▼ -3.18%SAHOL 85.30 TL ▼ -2.57%TOASO 218.30 TL ▼ -2.41%TRMET 101.40 TL ▼ -4.52%TTKOM 45.58 TL ▼ -3.80%ASELS 325.75 TL ▼ -3.70%GUBRF 298.50 TL ▼ -9.95%ENKAI 72.35 TL ▼ -1.56%EREGL 31.70 TL ▼ -9.69%SISE 33.32 TL ▼ -2.23%TRALT 34.88 TL ▼ -4.39%SASA 1.59 TL ▼ -3.05%AEFES 15.86 TL ▼ -2.52%FROTO 64.90 TL ▼ -2.48%TCELL 88.00 TL ▼ -5.68%PGSUS 122.10 TL ▼ -3.40%THYAO 252.50 TL ▼ -2.51%MGROS 433.50 TL ▼ -1.59%ASTOR 142.50 TL ▼ -5.00%23.10 13:04 · ~15 Min. verzögert
+
 <script>
 (function() {
   var kok = document.getElementById('ticker-bant').dataset.kok || '';
@@ -77,9 +77,9 @@
 })();  // IIFE: tanimlandigi anda calistir
 </script>
 
-<div class="ticker-bant" id="ticker-bant2" data-kok="" style="margin-bottom:16px">
-  <div class="ticker-iz" id="ticker-iz2"><span class="ticker-oge"><b>BIST 30 (TL)</b> 13,658.96 <span class="neg">▼ -2.51%</span></span><span class="ticker-oge"><b>BIST 100 (TL)</b> 10,938.36 <span class="neg">▼ -2.51%</span></span><span class="ticker-oge"><b>Gramm Gold</b> 6,456.81 TL</span><span class="ticker-oge"><b>Dollar</b> 49.7368 TL <span class="pos">▲ +0.23%</span></span><span class="ticker-oge"><b>BIST 30 ($)</b> 274.62 $ <span class="neg">▼ -2.74%</span></span><span class="ticker-oge ticker-saat">23.10 13:04 · Tagesende / verzögert</span><span aria-hidden="true" style="display:inline-block"><span class="ticker-oge"><b>BIST 30 (TL)</b> 13,658.96 <span class="neg">▼ -2.51%</span></span><span class="ticker-oge"><b>BIST 100 (TL)</b> 10,938.36 <span class="neg">▼ -2.51%</span></span><span class="ticker-oge"><b>Gramm Gold</b> 6,456.81 TL</span><span class="ticker-oge"><b>Dollar</b> 49.7368 TL <span class="pos">▲ +0.23%</span></span><span class="ticker-oge"><b>BIST 30 ($)</b> 274.62 $ <span class="neg">▼ -2.74%</span></span><span class="ticker-oge ticker-saat">23.10 13:04 · Tagesende / verzögert</span></span></div>
-</div>
+
+  BIST 30 (TL) 13,658.96 ▼ -2.51%BIST 100 (TL) 10,938.36 ▼ -2.51%Gramm Gold 6,456.81 TLDollar 49.7368 TL ▲ +0.23%BIST 30 ($) 274.62 $ ▼ -2.74%23.10 13:04 · Tagesende / verzögertBIST 30 (TL) 13,658.96 ▼ -2.51%BIST 100 (TL) 10,938.36 ▼ -2.51%Gramm Gold 6,456.81 TLDollar 49.7368 TL ▲ +0.23%BIST 30 ($) 274.62 $ ▼ -2.74%23.10 13:04 · Tagesende / verzögert
+
 <script>
 (function() {
   var kutu = document.getElementById('ticker-bant2');
@@ -117,34 +117,34 @@
 })();
 </script>
 
-<main class="wrap">
-    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
-    <div class="site-widgets">
-        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <span id="current-date-time">⏳ Laden...</span>
-            <span id="istanbul-weather">🌤️ Istanbul: Teilweise bewölkt</span>
-        </div>
+
+    
+    
+        
+            ⏳ Laden...
+            🌤️ Istanbul: Teilweise bewölkt
+        
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
-<nav class="dil-linkler" aria-label="Seitensprache wählen">
-<span aria-hidden="true">🌐</span>
-<a href="https://borsa-raporlari.pages.dev/sinyal-karnesi" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
-<a href="https://borsa-raporlari.pages.dev/en/signal-scorecard" hreflang="en" lang="en" data-dil="en">English</a>
-<a href="https://borsa-raporlari.pages.dev/de/signal-bilanz" hreflang="de" lang="de" data-dil="de" class="aktif" aria-current="true">Deutsch</a>
-<a href="https://borsa-raporlari.pages.dev/ru/svodka-signalov" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
-<a href="https://borsa-raporlari.pages.dev/zh/xinhao-jifenka" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
-</nav>
-    </div>
 
-    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
-    <div class="interactive-box">
+🌐
+Türkçe
+English
+Deutsch
+Русский
+简体中文
 
-<div class="arama-kutusu">
-    <div style="display: flex; gap: 8px;">
-        <input type="text" id="site-arama-giris" placeholder="Aktie, Thema oder Datum suchen..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
-        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Suchen</button>
-    </div>
-    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
-</div>
+    
+
+    
+    
+
+
+    
+        
+        Suchen
+    
+    
+
 <script>
 (function() {
   var KOK = '';
@@ -221,13 +221,13 @@
 </script>
 
 
-<div class="radyo-mini">
-  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Wiedergabe / Pause">▶</button>
-  <audio id="radyo-ses" preload="none"></audio>
-  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Lautstärke" title="Audio">
-  <span class="radyo-linkler"><a href="radio/">📻 Alle Sendungen &amp; Podcast-Seite</a> <span class="ayrac">•</span> <a href="radio/podcast.xml">RSS</a></span>
-  <span class="radyo-uyari">Nur zum Hören • Fiktive KI-Server • Zu Informationszwecken, keine Anlageberatung.</span>
-</div>
+
+  ▶
+  
+  
+  📻 Alle Sendungen &amp; Podcast-Seite • RSS
+  Nur zum Hören • Fiktive KI-Server • Zu Informationszwecken, keine Anlageberatung.
+
 <script>
 (function(){
   var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
@@ -253,46 +253,46 @@
 })();
 </script>
 
-    </div>
-
-    <!-- Asıl Sayfa İçeriği -->
     
-<div class="hero">
-<h1>Signal-Bilanz</h1>
-<p>Was der technische Scan liefert <strong>KAUFEN</strong> wir testen die Signale nach 5 Handelstagen gegen den Preis.
-Hätten wir beim Schluss des Signaltags gekauft und beim Schluss des 5. Handelstags verkauft, wäre das Ergebnis: 50 Signale,
-Durchschnitt<strong class="neg">-4.22%</strong> ( brutto), Trefferquote <strong>20%</strong>.
- Nach Kommission+BSMV-Kosten (~0.10%): durchschnittlich <strong class="neg">-4.32%</strong>,
- Treffer <strong>20%</strong> ( hypothetisches Kostenszenario; der tatsächliche Satz variiert je nach Broker).
-(Vergangene Performance ist keine Garantie für zukünftige Renditen; die Methode wurde einfach gehalten.)</p>
-<p style="margin:6px 0 0">An denselben Signaltagen bewegte sich das gleichgewichtete BIST-30-Paket im Durchschnitt <strong class="neg">-3.77%</strong> ; der Überschuss der Signale (Alpha) <strong class="neg">- 0.45 Punkte</strong> — 50 sinyalin<strong>26</strong> besiegten den Universumsdurchschnitt.</p>
-<p style="margin:0; color:var(--muted); font-size:12.5px">Son denetim: 23 Ekim 2026, Cuma 13:04 TSİ — 50 AL sinyali
-yeniden test edildi. Tablo yalnızca yeni bir sinyal 5 işlem gününü doldurduğunda değişir;
-gün içinde değişmemesi "denetlenmedi" anlamına gelmez.</p>
-</div>
-<div class="grid">
-<div class="card"><h3 style="margin:0 0 8px">🏆 Top 3</h3><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>KRDMD</strong><span class='pos' style='font-weight:700; white-space:nowrap'>+6.68%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 21.09.2026</div></div><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>TUPRS</strong><span class='pos' style='font-weight:700; white-space:nowrap'>+5.45%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 08.09.2026</div></div><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>SISE</strong><span class='pos' style='font-weight:700; white-space:nowrap'>+4.46%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 08.09.2026</div></div></div>
-<div class="card"><h3 style="margin:0 0 8px">📉 Die 3 schlechtesten</h3><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>SASA</strong><span class='neg' style='font-weight:700; white-space:nowrap'>-21.43%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 15.09.2026</div></div><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>GUBRF</strong><span class='neg' style='font-weight:700; white-space:nowrap'>-18.95%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 10.09.2026</div></div><div style='margin:8px 0'><div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'><strong>SISE</strong><span class='neg' style='font-weight:700; white-space:nowrap'>-14.80%</span></div><div style='color:var(--muted); font-size:12px'>Signal: 10.09.2026</div></div></div>
-</div>
-<h2 class="section-title">Letzte 15 Signale</h2>
-<div class="card" style="padding:8px 24px 16px"><div class="tbl-wrap"><table>
-<tr><th>Signal-Tag</th><th>Aktie</th><th>Einstieg</th><th>Ausstieg</th><th>Ausstiegstag</th><th>Rendite</th><th>Universum</th><th>Differenz</th></tr>
-<tr><td>2026-10-15</td><td><strong>TUPRS</strong></td><td>391.00 TL</td><td>359.25 TL</td><td>2026-10-22</td><td class='neg' style='font-weight:700'>-8.12%</td><td class='neg'>-4.60%</td><td class='neg' style='font-weight:700'>-3.52%</td></tr><tr><td>2026-10-15</td><td><strong>VAKBN</strong></td><td>34.24 TL</td><td>32.30 TL</td><td>2026-10-22</td><td class='neg' style='font-weight:700'>-5.67%</td><td class='neg'>-4.60%</td><td class='neg' style='font-weight:700'>-1.06%</td></tr><tr><td>2026-10-14</td><td><strong>TUPRS</strong></td><td>385.75 TL</td><td>362.00 TL</td><td>2026-10-21</td><td class='neg' style='font-weight:700'>-6.16%</td><td class='neg'>-3.53%</td><td class='neg' style='font-weight:700'>-2.62%</td></tr><tr><td>2026-10-13</td><td><strong>TUPRS</strong></td><td>384.75 TL</td><td>356.75 TL</td><td>2026-10-20</td><td class='neg' style='font-weight:700'>-7.28%</td><td class='neg'>-5.57%</td><td class='neg' style='font-weight:700'>-1.70%</td></tr><tr><td>2026-10-13</td><td><strong>BIMAS</strong></td><td>396.50 TL</td><td>371.00 TL</td><td>2026-10-20</td><td class='neg' style='font-weight:700'>-6.43%</td><td class='neg'>-5.57%</td><td class='neg' style='font-weight:700'>-0.86%</td></tr><tr><td>2026-10-13</td><td><strong>TRMET</strong></td><td>135.40 TL</td><td>118.70 TL</td><td>2026-10-20</td><td class='neg' style='font-weight:700'>-12.33%</td><td class='neg'>-5.57%</td><td class='neg' style='font-weight:700'>-6.76%</td></tr><tr><td>2026-10-12</td><td><strong>TUPRS</strong></td><td>386.25 TL</td><td>375.50 TL</td><td>2026-10-19</td><td class='neg' style='font-weight:700'>-2.78%</td><td class='neg'>-4.87%</td><td class='pos' style='font-weight:700'>+2.09%</td></tr><tr><td>2026-10-12</td><td><strong>TRMET</strong></td><td>137.30 TL</td><td>120.00 TL</td><td>2026-10-19</td><td class='neg' style='font-weight:700'>-12.60%</td><td class='neg'>-4.87%</td><td class='neg' style='font-weight:700'>-7.73%</td></tr><tr><td>2026-10-11</td><td><strong>TUPRS</strong></td><td>386.25 TL</td><td>384.50 TL</td><td>2026-10-16</td><td class='neg' style='font-weight:700'>-0.45%</td><td class='neg'>-2.03%</td><td class='pos' style='font-weight:700'>+1.58%</td></tr><tr><td>2026-10-11</td><td><strong>TRMET</strong></td><td>137.30 TL</td><td>127.90 TL</td><td>2026-10-16</td><td class='neg' style='font-weight:700'>-6.85%</td><td class='neg'>-2.03%</td><td class='neg' style='font-weight:700'>-4.82%</td></tr><tr><td>2026-10-09</td><td><strong>TUPRS</strong></td><td>392.25 TL</td><td>391.00 TL</td><td>2026-10-15</td><td class='neg' style='font-weight:700'>-0.32%</td><td class='neg'>-0.99%</td><td class='pos' style='font-weight:700'>+0.67%</td></tr><tr><td>2026-10-08</td><td><strong>TUPRS</strong></td><td>392.25 TL</td><td>385.75 TL</td><td>2026-10-14</td><td class='neg' style='font-weight:700'>-1.66%</td><td class='pos'>+1.72%</td><td class='neg' style='font-weight:700'>-3.38%</td></tr><tr><td>2026-10-08</td><td><strong>VAKBN</strong></td><td>33.66 TL</td><td>34.40 TL</td><td>2026-10-14</td><td class='pos' style='font-weight:700'>+2.20%</td><td class='pos'>+1.72%</td><td class='pos' style='font-weight:700'>+0.48%</td></tr><tr><td>2026-10-07</td><td><strong>VAKBN</strong></td><td>33.72 TL</td><td>34.44 TL</td><td>2026-10-13</td><td class='pos' style='font-weight:700'>+2.14%</td><td class='neg'>-1.37%</td><td class='pos' style='font-weight:700'>+3.50%</td></tr><tr><td>2026-10-06</td><td><strong>VAKBN</strong></td><td>33.72 TL</td><td>33.90 TL</td><td>2026-10-12</td><td class='pos' style='font-weight:700'>+0.53%</td><td class='neg'>-0.75%</td><td class='pos' style='font-weight:700'>+1.28%</td></tr>
-</table></div></div>
-<p style="color:var(--muted); font-size:12.5px">Methode: Jede Aktie mit dem allgemeinen Signal "KAUF" wird vom Schlusskurs am Signaltag
-bis zum Schlusskurs 5 Handelstage später gemessen. <strong>Universum</strong> Spalte ist der gleichgewichtete Durchschnitt aller Aktien in der Preisdatendatei
-im selben Datumsbereich; <strong>Differenz</strong> ( Alpha) ist der Überschuss der Signalrendite gegenüber dem Universum —
-positiv, wenn das Signal das Universum schlug. Signale sind keine Anlageberatung.</p>
-</main>
 
-<nav class="altbar" aria-label="Schnellmenü">
-<a href="berichte"><span class="i" aria-hidden="true">📊</span>Berichte</a>
-<a href="technischer-scan"><span class="i" aria-hidden="true">📈</span>Technik</a>
-<a href="aktien/"><span class="i" aria-hidden="true">🏦</span>Aktien</a>
-<a href="portfolio"><span class="i" aria-hidden="true">💼</span>Portfolio</a>
-<a href="nachrichten"><span class="i" aria-hidden="true">📰</span>Nachrichten</a>
-<a href="kalender"><span class="i" aria-hidden="true">📅</span>Kalender</a>
-</nav>
+    
+    
+
+Signal-Bilanz
+Was der technische Scan liefert KAUFEN wir testen die Signale nach 5 Handelstagen gegen den Preis.
+Hätten wir beim Schluss des Signaltags gekauft und beim Schluss des 5. Handelstags verkauft, wäre das Ergebnis: 50 Signale,
+Durchschnitt-4.22% ( brutto), Trefferquote 20%.
+ Nach Kommission+BSMV-Kosten (~0.10%): durchschnittlich -4.32%,
+ Treffer 20% ( hypothetisches Kostenszenario; der tatsächliche Satz variiert je nach Broker).
+(Vergangene Performance ist keine Garantie für zukünftige Renditen; die Methode wurde einfach gehalten.)
+An denselben Signaltagen bewegte sich das gleichgewichtete BIST-30-Paket im Durchschnitt -3.77% ; der Überschuss der Signale (Alpha) - 0.45 Punkte — 50 sinyalin26 besiegten den Universumsdurchschnitt.
+Son denetim: 23 Ekim 2026, Cuma 13:04 TSİ — 50 AL sinyali
+yeniden test edildi. Tablo yalnızca yeni bir sinyal 5 işlem gününü doldurduğunda değişir;
+gün içinde değişmemesi "denetlenmedi" anlamına gelmez.
+
+
+🏆 Top 3KRDMD+6.68%Signal: 21.09.2026TUPRS+5.45%Signal: 08.09.2026SISE+4.46%Signal: 08.09.2026
+📉 Die 3 schlechtestenSASA-21.43%Signal: 15.09.2026GUBRF-18.95%Signal: 10.09.2026SISE-14.80%Signal: 10.09.2026
+
+Letzte 15 Signale
+
+Signal-TagAktieEinstiegAusstiegAusstiegstagRenditeUniversumDifferenz
+2026-10-15TUPRS391.00 TL359.25 TL2026-10-22-8.12%-4.60%-3.52%2026-10-15VAKBN34.24 TL32.30 TL2026-10-22-5.67%-4.60%-1.06%2026-10-14TUPRS385.75 TL362.00 TL2026-10-21-6.16%-3.53%-2.62%2026-10-13TUPRS384.75 TL356.75 TL2026-10-20-7.28%-5.57%-1.70%2026-10-13BIMAS396.50 TL371.00 TL2026-10-20-6.43%-5.57%-0.86%2026-10-13TRMET135.40 TL118.70 TL2026-10-20-12.33%-5.57%-6.76%2026-10-12TUPRS386.25 TL375.50 TL2026-10-19-2.78%-4.87%+2.09%2026-10-12TRMET137.30 TL120.00 TL2026-10-19-12.60%-4.87%-7.73%2026-10-11TUPRS386.25 TL384.50 TL2026-10-16-0.45%-2.03%+1.58%2026-10-11TRMET137.30 TL127.90 TL2026-10-16-6.85%-2.03%-4.82%2026-10-09TUPRS392.25 TL391.00 TL2026-10-15-0.32%-0.99%+0.67%2026-10-08TUPRS392.25 TL385.75 TL2026-10-14-1.66%+1.72%-3.38%2026-10-08VAKBN33.66 TL34.40 TL2026-10-14+2.20%+1.72%+0.48%2026-10-07VAKBN33.72 TL34.44 TL2026-10-13+2.14%-1.37%+3.50%2026-10-06VAKBN33.72 TL33.90 TL2026-10-12+0.53%-0.75%+1.28%
+
+Methode: Jede Aktie mit dem allgemeinen Signal "KAUF" wird vom Schlusskurs am Signaltag
+bis zum Schlusskurs 5 Handelstage später gemessen. Universum Spalte ist der gleichgewichtete Durchschnitt aller Aktien in der Preisdatendatei
+im selben Datumsbereich; Differenz ( Alpha) ist der Überschuss der Signalrendite gegenüber dem Universum —
+positiv, wenn das Signal das Universum schlug. Signale sind keine Anlageberatung.
+
+
+
+📊Berichte
+📈Technik
+🏦Aktien
+💼Portfolio
+📰Nachrichten
+📅Kalender
+
 
 <script>
 function temaDegistir() {
@@ -309,9 +309,9 @@ function temaDegistir() {
 })();
 </script>
 
-<footer class="footer">Die hier enthaltenen Informationen, Kommentare und Empfehlungen dienen zu Informationszwecken; sie stellen keine Anlageberatung dar und sind keine Anlageempfehlungen. Die Genauigkeit der Daten kann nicht garantiert werden, und die Verantwortung für jede Art von Entscheidung, die aus dem Inhalt entstehen könnte, liegt beim Nutzer.<br>Datenquellen: İş Yatırım, RSS-Nachrichtenströme • Analyse: künstliche Intelligenz (Multi-Agenten-System)<br><a href="datenschutz" style="color:inherit">Datenschutz</a></footer>
+Die hier enthaltenen Informationen, Kommentare und Empfehlungen dienen zu Informationszwecken; sie stellen keine Anlageberatung dar und sind keine Anlageempfehlungen. Die Genauigkeit der Daten kann nicht garantiert werden, und die Verantwortung für jede Art von Entscheidung, die aus dem Inhalt entstehen könnte, liegt beim Nutzer.Datenquellen: İş Yatırım, RSS-Nachrichtenströme • Analyse: künstliche Intelligenz (Multi-Agenten-System)Datenschutz
 
-<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+
 <script>
     function updateClock() {
         const now = new Date();
@@ -333,4 +333,3 @@ function temaDegistir() {
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
         });
 </script>
-</body></html>

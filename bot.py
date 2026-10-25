@@ -350,8 +350,8 @@ def load_recent(category, gun=30):
 # bu havuzu kullanir; kaynak cesitliligi arttikca konular da cesitlenir.
 HABER_KAYNAKLARI = {
     "BloombergHT": "https://www.bloomberght.com/rss",
-    "CNN Turk": "https://www.cnnturk.com/feed/rss/ekonomi/news",
-    "Haberturk": "https://www.haberturk.com/rss",
+    "CNN Türk": "https://www.cnnturk.com/feed/rss/ekonomi/news",
+    "HaberTürk": "https://www.haberturk.com/rss",
     "Ekonomim-Piyasa": "https://www.ekonomim.net/rss/piyasa-10",
     "Ekonomim-Ekonomi": "https://www.ekonomim.net/rss/ekonomi-5",
     "Ekonomim-Sirket": "https://www.ekonomim.net/rss/sirket-12",
@@ -359,22 +359,22 @@ HABER_KAYNAKLARI = {
     "NTV Ekonomi": "https://www.ntv.com.tr/ekonomi.rss",
     "TRT Haber Ekonomi": "https://www.trthaber.com/ekonomi_articles.rss",
     "AA Ekonomi": "https://www.aa.com.tr/tr/rss/default?cat=ekonomi",
-    "Sozcu Ekonomi": "https://www.sozcu.com.tr/rss/ekonomi.xml",
-    "Dunya": "https://www.dunya.com/rss",
+    "Sözcü Ekonomi": "https://www.sozcu.com.tr/rss/ekonomi.xml",
+    "Dünya": "https://www.dunya.com/rss",
     "Ekonomist": "https://www.ekonomist.com.tr/rss",
     # ---- 2026-09 genisletme-2: kullanici onerileri + RSS rehberi taramasindan ----
     "Sabah Ekonomi": "https://www.sabah.com.tr/rss/ekonomi.xml",
-    "Hurriyet Ekonomi": "https://www.hurriyet.com.tr/rss/ekonomi",
+    "Hürriyet Ekonomi": "https://www.hurriyet.com.tr/rss/ekonomi",
     "CNBC-e": "https://www.cnbce.com/rss",
     "Doviz.com": "https://www.doviz.com/news/rss",
     "NTV Para": "https://www.ntv.com.tr/ntvpara.rss",
-    "Sozcu Borsa": "https://www.sozcu.com.tr/feeds-rss-category-borsa",
+    "Sözcü Borsa": "https://www.sozcu.com.tr/feeds-rss-category-borsa",
     "Forbes TR": "https://www.forbes.com.tr/rss",
     "Capital": "https://www.capital.com.tr/rss/all",
     "Mynet Finans": "https://www.mynet.com/rss/publisher-finans.rss",
     "Foreks": "https://www.foreks.com/rss/",
     "Investing TR Piyasa": "https://tr.investing.com/rss/market_overview.rss",
-    "Paranin Yonu": "https://www.paraninyonu.com.tr/rss.xml",
+    "Paranın Yönü": "https://www.paraninyonu.com.tr/rss.xml",
 }
 
 # Finansla ilgisiz haber basliklarini elemek icin filtre
@@ -413,7 +413,7 @@ logger = logging.getLogger("bot")
 
 # Genel akis veren kaynaklar (magazin/spor/loto tasiyor): bu kaynaklarda baslik
 # finans sozluguyle eslesmiyorsa alinmaz.
-GENEL_AKIS_KAYNAKLARI = {"Haberturk", "Dunya", "Capital", "Forbes TR", "Ekonomist"}
+GENEL_AKIS_KAYNAKLARI = {"HaberTürk", "Dünya", "Capital", "Forbes TR", "Ekonomist"}
 FINANS_ANAHTARLARI = [
     "borsa", "hisse", "endeks", "faiz", "enflasyon", "dolar", "kur", "tl", "bütçe",
     "cari", "ihracat", "ithalat", "kap ", "bilanço", "kâr", "zarar", "banka", "kredi",
@@ -2337,6 +2337,9 @@ PROFESYONEL_YAZIM_KURALLARI = (
     "sozcuk kurma; bilinen Turkce karsiligi kullan.\n"
     "  - Yuzde bicimi: yuzdeleri daima ondalik ayiraci virgul ve '%' basta olacak bicimde yaz "
     "('%0,38'); '%0,3%8' gibi kaymis '%' konumlari ve noktali ondalik ('0.38') yasak.\n"
+    "  - Sayi disiplini: metindeki her sayi ve birim (milyar/milyon, %, baz puan) yalnizca sana "
+    "verilen pano/tablo verisinden gelir; veride olmayan sayi, aralik, tarih veya senaryo olasiligi "
+    "UYDURMA; ayni olgu icin iki farkli deger yazma (metin-pano celiskisi yayin engelidir).\n"
     "  - Portfoy yonetimi perspektifi: onerileri getiri-risk dengesi ve pozisyon etkisiyle gerekcelendir; "
     "yalnizca yon degil, oneri hangi somut kosulda gecersizlesir de yaz."
 )
@@ -5161,7 +5164,12 @@ def _portfoy_risk(p):
     varyans = (sum((x - ort) ** 2 for x in gunluk) / (len(gunluk) - 1)
                if len(gunluk) > 1 else 0.0)
     vol = (varyans ** 0.5) * (252 ** 0.5) * 100
-    gun_sayisi = len(toplamlar) - 1
+    # 'Islem gunu' sayimi yalnizca hafta ici satirlardan olur; Pazar satirlari
+    # (2026-09-06 baslangic, 2026-10-11) sayimi bir gun fazla gosteriyordu
+    # (25.10 denetim bulgusu: 36 yerine 35).
+    islem_gunleri = [g for g in hist
+                     if datetime.strptime(str(g["date"]), "%Y-%m-%d").weekday() < 5]
+    gun_sayisi = max(1, len(islem_gunleri) - 1)
     yillik = (((toplamlar[-1] / toplamlar[0]) ** (252.0 / gun_sayisi) - 1) * 100
               if gun_sayisi > 0 and toplamlar[0] > 0 else 0.0)
     baslangic = p.get("initial_prices") or {}
