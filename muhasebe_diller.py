@@ -74,7 +74,6 @@ DIL_CFG = {
         "tema_title": "Light/dark theme", "tema_aria": "Change theme",
         "dil_aria": "Select page language", "harf_aria": "Jump to letter section",
         "yok": "No term matched your search.",
-        "kaynak": "Term list source: muhasebenews.com accounting dictionary (1691 terms).",
         "nav_terimler": "Terms", "nav_muhasebe": "Accounting Terms",
         "footer": ("The information, comments and recommendations contained herein are for "
                    "informational purposes only; they do not constitute investment advisory or "
@@ -82,7 +81,7 @@ DIL_CFG = {
                    "user is responsible for any decisions that may arise from the content.<br>"
                    "Data sources: İş Yatırım, RSS news feeds &bull; Analysis: artificial "
                    "intelligence (multi-agent system)<br>"
-                   "<a href=\"gizlilik.html\" style=\"color:inherit\">Privacy &amp; Data "
+                   "<a href=\"https://borsa-raporlari.pages.dev/gizlilik.html\" style=\"color:inherit\">Privacy &amp; Data "
                    "Protection</a>"),
         "lower": "en",
     },
@@ -103,7 +102,6 @@ DIL_CFG = {
         "tema_title": "Helles/dunkles Design", "tema_aria": "Design wechseln",
         "dil_aria": "Seitensprache wählen", "harf_aria": "Zum Buchstabenabschnitt springen",
         "yok": "Kein Begriff entspricht Ihrer Suche.",
-        "kaynak": "Quelle der Begriffsliste: muhasebenews.com (1691 Begriffe).",
         "nav_terimler": "Begriffe", "nav_muhasebe": "Rechnungslegungsbegriffe",
         "footer": ("Die hier enthaltenen Informationen, Kommentare und Empfehlungen dienen zu "
                    "Informationszwecken; sie stellen keine Anlageberatung dar und sind keine "
@@ -112,7 +110,7 @@ DIL_CFG = {
                    "entstehen könnte, liegt beim Nutzer.<br>Datenquellen: İş Yatırım, "
                    "RSS-Nachrichtenströme &bull; Analyse: künstliche Intelligenz "
                    "(Multi-Agenten-System)<br>"
-                   "<a href=\"gizlilik.html\" style=\"color:inherit\">Datenschutz</a>"),
+                   "<a href=\"https://borsa-raporlari.pages.dev/gizlilik.html\" style=\"color:inherit\">Datenschutz</a>"),
         "lower": "de",
     },
     "ru": {
@@ -132,7 +130,6 @@ DIL_CFG = {
         "tema_title": "Светлая/тёмная тема", "tema_aria": "Сменить тему",
         "dil_aria": "Выбрать язык страницы", "harf_aria": "Перейти к разделу алфавита",
         "yok": "По вашему запросу терминов не найдено.",
-        "kaynak": "Источник списка терминов: muhasebenews.com (1691 термин).",
         "nav_terimler": "Термины", "nav_muhasebe": "Бухгалтерские термины",
         "footer": ("Приведённые здесь информация, комментарии и рекомендации носят "
                    "информационный характер; они не являются инвестиционным консультированием "
@@ -141,7 +138,7 @@ DIL_CFG = {
                    "содержания, лежит на пользователе.<br>Источники данных: İş Yatırım, "
                    "RSS-ленты новостей &bull; Анализ: искусственный интеллект (мультиагентная "
                    "система)<br>"
-                   "<a href=\"gizlilik.html\" style=\"color:inherit\">Конфиденциальность</a>"),
+                   "<a href=\"https://borsa-raporlari.pages.dev/gizlilik.html\" style=\"color:inherit\">Конфиденциальность</a>"),
         "lower": "ru",
     },
     "zh": {
@@ -157,12 +154,11 @@ DIL_CFG = {
         "tema_title": "浅色/深色主题", "tema_aria": "切换主题",
         "dil_aria": "选择页面语言", "harf_aria": "跳转到字母分组",
         "yok": "没有找到与您的搜索匹配的术语。",
-        "kaynak": "术语来源：muhasebenews.com（1691 条术语）。",
         "nav_terimler": "术语", "nav_muhasebe": "会计术语",
         "footer": ("此处所含的信息、评论和建议仅供参考；不属于投资顾问服务，不构成投资建议。无法保证数据的准确性，"
                    "因内容而产生的任何决定，责任均由用户自行承担。<br>数据来源：İş Yatırım、RSS 新闻源 "
                    "&bull; 分析：人工智能（多智能体系统）<br>"
-                   "<a href=\"gizlilik.html\" style=\"color:inherit\">隐私与数据保护</a>"),
+                   "<a href=\"https://borsa-raporlari.pages.dev/gizlilik.html\" style=\"color:inherit\">隐私与数据保护</a>"),
         "lower": "zh",
     },
 }
@@ -405,7 +401,6 @@ ISKELET = """<!DOCTYPE html>
 <span id="sayac"></span>
 </div>
 @@HARF@@
-<div class="sozluk-ozet">@@KAYNAK@@</div>
 <div id="liste">
 @@LISTE@@
 </div>
@@ -616,7 +611,7 @@ def sayfa_uret(dil, terimler):
         "@@BOLUM_LABEL@@": esc(cfg["bolum_birim"]),
         "@@SAYI@@": str(len(terimler)), "@@BOLUM_SAYI@@": str(bolum_sayi),
         "@@ARA_PH@@": esc(cfg["ara_ph"]), "@@HARF@@": harfbar,
-        "@@KAYNAK@@": esc(cfg["kaynak"]), "@@LISTE@@": liste,
+        "@@LISTE@@": liste,
         "@@YOK@@": esc(cfg["yok"]), "@@FOOTER@@": cfg["footer"],
         "@@LOWER@@": cfg["lower"], "@@TERIM_BIRIM@@": cfg["terim_birim"],
         "@@KORUMA@@": KORUMA_JS,

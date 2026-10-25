@@ -1770,7 +1770,7 @@ def medya_kumesi(kok: Path) -> set[str]:
         if rel.parts[0] in DIL_DIZINLERI or rel.parts[0] in (".git", "web", "node_modules"):
             continue
         if dosya.suffix.lower() in CEVRILMEYEN_MEDYA:
-            kume.add(str(rel))
+            kume.add(rel.as_posix())
     return kume
 
 
@@ -1786,7 +1786,9 @@ def baglantilari_onar(html: str, rel: Path, agac: set[str], medya: set[str] | No
 
     def coz(hedef: str) -> str:
         y = os.path.normpath(os.path.join(os.path.dirname(str(rel)), hedef))
-        return str(Path(y))
+        # as_posix: Windows'ta ters bolu agac kumesiyle eslesmez (idempotans
+        # kontrolleri iki isletim sisteminde de ayni calissin)
+        return Path(y).as_posix()
 
     def onar(m):
         nitelik, hedef = m.group(1), m.group(3)
@@ -1805,6 +1807,15 @@ def baglantilari_onar(html: str, rel: Path, agac: set[str], medya: set[str] | No
         if coz(saf) in medya:
             sayac["medya"] += 1
             return f'{nitelik}="{SITE_URL}{coz(saf).replace(chr(92), "/")}{sorgu}"'
+        # Medya tam yol eslesmezse dosya adiyla dene: ceviri rapor sayfasindaki
+        # '../berichte/X.mp3' agac-ici yol TR medya yolundan (raporlar/X.mp3)
+        # farkli cozulur; medya adlari benzersiz oldugundan ad eslestirmesi yeterli.
+        ad = saf.rsplit("/", 1)[-1]
+        aday_m = next((m for m in medya
+                       if m == ad or m.endswith("/" + ad) or m.endswith("\\" + ad)), None)
+        if aday_m:
+            sayac["medya"] += 1
+            return f'{nitelik}="{SITE_URL}{aday_m.replace(chr(92), "/")}{sorgu}"'
         # TR gövdeden gelen göreli bağlantı dil agacının yerelleşmiş dizin
         # adına uymayabilir (../hisse/X → en agacında stocks/, de'de aktien/…);
         # 25.10 denetimi 4 dilde ~3.480 kırık hisse bağlantısı saydı. Aday
