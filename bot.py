@@ -7233,6 +7233,23 @@ def _spor_haberi_mi(baslik):
     return bool(_SPOR_HABER_DESENI.search(baslik or ""))
 
 
+# Sirket adi gecse bile sirketle ILGISIZ yasam/gundem haberleri (25.10
+# kullanici bildirimi): olum haberi, cekilis sonuclari, voleybol ligi ve
+# futbolcu gundemi, is ilani kalibi, magazin.
+_ALAKASIZ_HABER_DESENI = re.compile(
+    r"\b(vefat\w*|cenaze\w*|merhum\w*|ba[şs] sa[ğg]l[ıi]ğ[ıi]|"
+    r"[çc]ekili[şs] sonu[çc]\w*|talihli\w*|"
+    r"sultanlar lig\w*|arda g[üu]ler\w*|yi[ğg]itcan\w*|saybir\w*|"
+    r"spor [öo]d[üu]l[üu]|kabin memuru al[ıi]m[ıi]|ba[şs]vuru [şs]artlar\w*|"
+    r"magazin\w*|d[üu][ğg][üu]n\w*|n[ıi]kah\w*)",
+    re.I)
+
+
+def _alakasiz_haberi_mi(baslik):
+    """Sirket adi gecse bile sirketle ilgisiz yasam/gundem haberi mi?"""
+    return bool(_ALAKASIZ_HABER_DESENI.search(baslik or ""))
+
+
 
 # Hisse kodlarinin gundelik kisaltmalari: basliklarda sirket adi yerine kisaltma
 # kullanilabiliyor (or. 'THY ilk 5e girdi'). Tumu KUCUK harfle yazilir; kapi
@@ -7314,7 +7331,7 @@ def _sirket_haberleri_cek(profiller):
                 baslik = (e.title or "").strip()
                 if not baslik or _HABER_GURULTU.search(baslik):
                     continue
-                if _spor_haberi_mi(baslik):
+                if _spor_haberi_mi(baslik) or _alakasiz_haberi_mi(baslik):
                     continue
                 if not _sirket_adi_geciyor_mu(baslik, p, kod):
                     continue
@@ -7349,9 +7366,18 @@ def _sirket_haberleri_yukle():
     except Exception:
         return {}
     harita = {}
+    # Ayni haber birkac sirketin anahtar kelimesine birden uyanabiliyor
+    # (or. 'Yapı Kredi ASELS ve BIMAS aldı' — 25.10 kullanici bildirimi):
+    # haber yalnizca EN YENI eslesen sirkete konur, diger kartlardan dusurulur.
+    gorulen = set()
     for k in sorted(kayitlar, key=lambda x: x.get("ts", 0), reverse=True):
-        if _spor_haberi_mi(k.get("baslik", "")):
+        baslik = k.get("baslik", "")
+        if _spor_haberi_mi(baslik) or _alakasiz_haberi_mi(baslik):
             continue
+        anahtar = re.sub(r"\W+", "", baslik.lower())[:60]
+        if not anahtar or anahtar in gorulen:
+            continue
+        gorulen.add(anahtar)
         harita.setdefault(k["kod"], []).append(k)
     return harita
 

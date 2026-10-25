@@ -1341,16 +1341,49 @@ DIL_ADLARI = (
 )
 
 
-def dil_switcher_html(rel: Path, aktif: str) -> str:
+_TERS_SLUG = None  # tembel: _SLUG_ESLEME import'u bu modulun sonunda yapiliyor
+
+
+def _tr_yolu(rel: Path) -> str:
+    """Cevirilmis dosya yolunun TR karsiligini turetir
+    (en/stocks/GARAN.html -> hisse/GARAN; de/index.html -> '').
+    25.10 bulgusu: eski kod ceviri yolunu dogrudan slug_degistir'e veriyordu;
+    '/en/' oneki baska dilde korunmayan onek oldugundan '/en/en/stocks',
+    '/de/en/stocks' gibi 404 adresler uretiliyordu (dil degistirici ana
+    sayfaya dusuyor hissi)."""
+    global _TERS_SLUG
+    if _TERS_SLUG is None:
+        _TERS_SLUG = {d: {yeni: eski for eski, yeni in t}
+                      for d, t in _SLUG_ESLEME.items()}
+    parcalar = list(rel.parts)
+    geri = _TERS_SLUG.get(parcalar[0], {}) if parcalar else {}
+    yollar = []
+    for p in parcalar[1:]:
+        if p.endswith(".html"):
+            p = p[:-5]
+        yollar.append(geri.get(p, p))
+    if yollar and yollar[-1] == "index":
+        yollar = yollar[:-1]
+    return "/".join(yollar)
+
+
+def dil_switcher_html(rel: Path, aktif: str, kok: Path = Path(".")) -> str:
     """Dil degistirici blogu: ayni sayfanin her dildeki surumune gercek baglanti.
-    Baglantilar dil agacina GORE yerellestirilir (2026-10-22: en/reports deseni
-    artik de/ru/zh icin de gecerli — ham TR yolu yazmak bayat link uretiyordu)."""
-    y0 = seo_yol(rel)
+    Baglantilar TR karsiligindan turetilir ve hedef dosya agacta yoksa dil
+    ana sayfasina duser — secici hicbir zaman 404 uretmez."""
+    y0 = _tr_yolu(rel)
     parcalar = [DIL_STIL, '<nav class="dil-linkler" aria-label="Sayfa dili seçin">',
                 '<span aria-hidden="true">🌐</span>']
     for kod, hl, ad in DIL_ADLARI:
-        y = y0 if kod == "tr" else slug_degistir(y0, kod)
-        url = f"{SITE_URL}{kod + '/' if kod != 'tr' else ''}{y}"
+        if kod == "tr":
+            url = SITE_URL + y0
+        else:
+            p = slug_degistir(y0, kod)
+            hedef = (kok / f"{kod}/{p}.html") if p else (kok / f"{kod}/index.html")
+            if hedef.exists():
+                url = f"{SITE_URL}{kod}/{p}"
+            else:
+                url = f"{SITE_URL}{kod}/"
         a = ' class="aktif" aria-current="true"' if kod == aktif else ""
         parcalar.append(f'<a href="{url}" hreflang="{hl}" lang="{hl}" data-dil="{kod}"{a}>{ad}</a>')
     parcalar.append("</nav>")
