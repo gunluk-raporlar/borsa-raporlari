@@ -1,35 +1,35 @@
-
-
-
-
-
-交易机器人（模拟）
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交易机器人（模拟）</title>
+<meta name="description" content="BIST 30 纸面交易机器人的实时账本：在市场时段每15分钟更新一次的模拟买入/卖出订单、未平仓头寸、日内权益曲线和策略规则。不使用真实资金；不构成投资建议。">
+<link rel="icon" href="/favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/zh/jiaoyi-jiqiren">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/robot">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/jiaoyi-jiqiren">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/torgovyy-robot">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/trading-robot">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/handelsroboter">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/robot">
+<meta property="og:title" content="交易机器人（模拟）">
+<meta property="og:description" content="BIST 30模拟交易机器人的透明账本：持仓，交易，日内净资产曲线。不是投资建议。">
+<meta property="og:type" content="website">
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="stylesheet" href="style.css?v=6bc658f2">
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="./">BIST 30 每日股市报告与分析</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="浅色/深色主题" aria-label="切换主题">🌙</button></div>
+<nav><a href="./">首页</a><a href="baogao">报告</a><a href="gupiao/">股票</a><a href="shendu-fenxi">深度分析</a><a href="hongguan-fenxi">宏观分析</a><a href="jishu-saomiao">技术扫描</a><a href="xinhao-jifenka">信号记分卡</a><a href="borsapy-xinhao">Borsapy 信号</a><a href="xinwen">新闻</a><a href="gongsi-xinwen">公司新闻</a><a href="portfolio">模拟投资组合</a><a href="zhoumo">周末</a><a href="gushi-xuetang">股市学堂</a><a href="rili">📅 日历</a><a href="cidian">词典</a><a href="shuyu">术语</a><a href="kuaiji-shuyu">会计术语</a><a href="jiaoyi-jiqiren" class="active">交易机器人</a></nav>
+</div></header>
 
-
-
-
-BIST 30 每日股市报告与分析
-🌙
-首页报告股票深度分析宏观分析技术扫描信号记分卡Borsapy 信号新闻公司新闻模拟投资组合周末股市学堂📅 日历词典术语会计术语交易机器人
-
-
-
-  正在加载价格…
-
+<div class="ticker-bant" id="ticker-bant" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">正在加载价格…</span></div>
+</div>
 <script>
 (function() {
   function ciz(veri) {
@@ -60,9 +60,9 @@ BIST 30 每日股市报告与分析
 })();
 </script>
 
-
-  市场数据加载中...
-
+<div class="ticker-bant" id="ticker-bant2" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">市场数据加载中...</span></div>
+</div>
 <script>
 (function() {
   var iz = document.getElementById('ticker-iz2');
@@ -96,16 +96,16 @@ BIST 30 每日股市报告与分析
   setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
 })();
 </script>
-
-🟡 正在连接…
-    
-    
-        
-            ⏳ 加载中...
-            🌤️ 伊斯坦布尔天气...
-        
-<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>🌐TürkçeEnglishDeutschРусский简体中文
-    
+<main class="wrap">
+<div id="robot-canli" class="card" style="padding:12px 18px;margin:0 0 18px;font-size:14px"><span style="color:var(--muted)">🟡 正在连接…</span></div>
+    <!-- Üst Widget Alanı (Canlı Saat ve İstanbul Hava Durumu) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ 加载中...</span>
+            <span id="istanbul-weather">🌤️ 伊斯坦布尔天气...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style><nav class="dil-linkler" aria-label="选择页面语言"><span aria-hidden="true">🌐</span><a href="https://borsa-raporlari.pages.dev/robot" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a><a href="https://borsa-raporlari.pages.dev/en/trading-robot" hreflang="en" lang="en" data-dil="en">English</a><a href="https://borsa-raporlari.pages.dev/de/handelsroboter" hreflang="de" lang="de" data-dil="de">Deutsch</a><a href="https://borsa-raporlari.pages.dev/ru/torgovyy-robot" hreflang="ru" lang="ru" data-dil="ru">Русский</a><a href="https://borsa-raporlari.pages.dev/zh/jiaoyi-jiqiren" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh" class="aktif" aria-current="true">简体中文</a></nav>
+    </div>
 <script>
     function updateClock() {
         const now = new Date();
@@ -127,15 +127,15 @@ BIST 30 每日股市报告与分析
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
         });
 </script>
+<div class="interactive-box">
 
-
-
-    
-        
-        搜索
-    
-    
-
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="搜索股票、主题或日期…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">搜索</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
 <script>
 (function() {
   var INDEKS = null;
@@ -205,45 +205,45 @@ BIST 30 每日股市报告与分析
 })();
 </script>
 
-
-
-交易机器人 模拟
-BIST 30股票上纸上交易 ——执行这些操作的自动机器人的实时账本。
-机器人在市场时段每15分钟一次 从实时价格 (TradingView, ~15分钟延迟) 检查：
+</div>
+<div class="hero">
+<h1>交易机器人 <span class="badge">模拟</span></h1>
+<p>BIST 30股票上<b>纸上交易</b> ——执行这些操作的自动机器人的实时账本。
+机器人<b>在市场时段每15分钟一次</b> 从实时价格 (TradingView, ~15分钟延迟) 检查：
 止损和目标可能在日内触发，交叉信号从日内价格评估，
-净资产曲线每次检查都会获得一个点。不使用真实资金; 所有订单及其理由都在此发布。
-不构成投资建议。 Son güncelleme: 23.10.2026 22:58 (İstanbul).
-
-总价值95,366.27 ₺总收益率-4.63%现金65,025.04 ₺未平仓头寸1 / 8已实现盈亏-4,031.53 ₺胜率25%已付扣款400.93 ₺
-Bugün (23.10.2026)价格控制4 次 · 在市场时段每15分钟一次 · 🔴 市场已关闭 — 最后收盘数据卖出 · GARAN · 88 lot · 122.80 ₺ · 15:17stop-loss: 127.77 seviyesi canlı fiyatta delindi (%-3 kural)卖出 · YKBNK · 325 lot · 33.68 ₺ · 15:17stop-loss: 34.69 seviyesi canlı fiyatta delindi (%-3 kural)
-权益曲线— 每次价格控制时一个点
-
-
-
-25.09.2026
-23.10 15:17
-95,366.27 TL
-100.000.00 TL（初始资金）
-
-持仓股票手数成本最新价值 ₺盈亏 ₺盈亏 %止损目标入场ALTIN4,6966,644.646,461.0830,341.23-862.00-2.76%机制机制2026-10-19
-最近交易时间股票方向手数价格金额 ₺扣款盈亏 ₺理由2026-10-23 15:17YKBNK卖出32533.6810,926.8413.69-695.29stop-loss: 34.69 seviyesi canlı fiyatta delindi (%-3 kural)2026-10-23 15:17GARAN卖出88122.8010,787.3413.66-804.27stop-loss: 127.77 seviyesi canlı fiyatta delindi (%-3 kural)2026-10-20 20:23TAVHL卖出42286.2512,002.5913.90496.05目标价：282.18水平已在实时价格中实现（+3%规则）2026-10-19 17:13ALTIN买入4,6966,641.3231,223.8220.59—熊市模式：闲置现金的50%已买入克黄金（机制分支）2026-10-16 19:34YKBNK买入32535.7011,622.1213.82—SMA10 &gt; SMA30 排列 · RSI 53 · 价格在SMA100之上2026-10-16 15:04GARAN买入88131.5011,591.6113.82—SMA10 &gt; SMA30 排列 · RSI 52 · 价格在SMA100之上2026-10-09 16:59TAVHL买入42273.5011,506.5413.80—SMA10 &gt; SMA30 排列 · RSI 53 · 价格在SMA100之上2026-10-08 22:57TAVHL卖出42275.7511,561.8913.8244.84SMA10 下穿 SMA302026-10-08 17:13TAVHL买入42273.7511,517.0513.80—SMA10 &gt; SMA30 排列 · RSI 53 · 价格在SMA100之上2026-10-07 17:04TAVHL卖出42272.2511,414.9913.79-291.19SMA10 下穿 SMA302026-10-07 17:04KRDMD卖出26842.7011,424.0913.79-366.22SMA10 下穿 SMA302026-10-07 17:04BIMAS卖出28395.5011,054.7513.71-416.76SMA10 下穿 SMA302026-10-06 16:55TAVHL买入42278.2511,706.1813.84—SMA10 &gt; SMA30 排列 · RSI 57 · 价格高于 SMA1002026-10-05 10:17KRDMD买入26843.9211,790.3113.86—SMA10 &gt; SMA30 排列 · RSI 47 · 价格高于 SMA1002026-10-05 10:17VAKBN卖出34733.9811,771.3013.8622.99SMA10 下穿 SMA302026-10-02 11:42BIMAS买入28409.0011,471.5213.79—SMA10 &gt; SMA30 排列 · RSI 45 · 价格在SMA100之上2026-10-02 10:10VAKBN买入34733.8011,748.3113.85—SMA10 &gt; SMA30 排列 · RSI 52 · 价格在SMA100之上2026-10-01 18:29BIMAS卖出28408.0011,404.5113.78-396.46stop-loss：408.82 价位已在实时价格被跌破（-3% 规则）2026-10-01 15:33VAKBN卖出36234.4212,439.8213.99451.68"目标价格：34.11 水平在当前价格中达到（+3% 规则）"2026-10-01 11:29KRDMD卖出26642.8611,381.2813.78-438.24stop-loss：43.10 价位已在实时价格被跌破（-3% 规则）2026-10-01 11:10TUPRS卖出31371.7511,504.6913.80-395.88stop-loss：372.37 价位已在实时价格被跌破（-3% 规则）2026-10-01 10:14KRDMD买入26644.3611,819.5213.86—SMA10 &gt; SMA30 排列 · RSI 48 · 价格在SMA100之上2026-09-30 16:54TAVHL卖出44262.2511,519.4213.81-391.41stop-loss：262.58 价位已在实时价格被跌破（-3% 规则）2026-09-30 11:11TUPRS买入31383.2511,900.5713.88—SMA10 &gt; SMA30 排列 · RSI 45 · 价格在SMA100之上2026-09-29 16:31TUPRS卖出30384.2511,507.9313.81-430.20stop-loss：386.00 价位已在实时价格被跌破（-3% 规则）
-Sinyal Panosu (son kontrol: 2026-10-22)买入 · GARAN · 126.50 ₺ · alım adayıSMA10 &gt; SMA30 排列 · RSI 53 · 价格在SMA100之上
-策略规则买入： SMA10在SMA30之上排列 + RSI14在45–75区间内 + 价格在SMA100之上（不等待新交叉；如有排列则入场）。卖出: 价格跌破 SMA10/SMA30，或跌破成本价 3% （止损），或升破它 3% 升破它（目标）。规模: 单只股票不超过权益的 12%，最多 8 个持仓。每日止损: 若权益较昨日收盘下跌 3%，当日停止新买入。Saat kuralı: emirler yalnızca BIST işlem oturumunda yürütülür — hafta içi 10:00–18:00 TSİ; resmi tatillerde ve seans dışında (elle tetikleme dahil) işlem açılmaz, sinyaller sonraki seansı bekler.成本: 佣金 0.04% (最低10 ₺) + BSMV 15% + 法律费用 ~0,020% + 滑点 0.05%. 12.000 ₺交易的交易成本约35–40 ₺ (~0.3%) — 剥头皮的真实成本。闲置现金： İş Yatırım (伊什投资) · BIST 100: 10,845.00 · Değişim: 0.62% · Hacim: 74.2B TL · Güncelleme: 17.10.2026 14:31 (İstanbul 伊斯坦布尔) · Veri: İş Yatırım (伊什投资) (EOD) + TradingView (gün içi, ~15 dk gecikmeli) · Komisyon ve kayma payı varsayımsaldır. · Son güncelleme: 17.10.2026 14:31 (İstanbul 伊斯坦布尔) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir.税费: BIST股票出售收益中预扣税 0%; 超过年度申报限额的收益需申报。表现摘要开始: 2026-09-25 · 100.000.00 ₺Toplam işlem: 33 (16 SAT / 17 AL)Kazanan SAT oranı: 25%Gerçekleşen K/Z: -4,031.53 ₺ · Ödenen kesinti: 400.93 ₺Açık pozisyon K/Z (gerçekleşmemiş): -602.20 ₺
-Bu sayfa bağımsız bir simülasyondur: hiçbir gerçek emir gönderilmez, hiçbir gerçek para risk edilmez.
+净资产曲线每次检查都会获得一个点。<u>不使用真实资金</u>; 所有订单及其理由都在此发布。
+<strong>不构成投资建议。</strong> Son güncelleme: 23.10.2026 22:58 (İstanbul).</p>
+</div>
+<div class='grid' style='grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0'><div class='stat' id='kpi-toplam' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>总价值</div><div style='font-size:21px;font-weight:700' class=''>95,366.27 ₺</div></div><div class='stat' id='kpi-getiri' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>总收益率</div><div style='font-size:21px;font-weight:700' class='neg'>-4.63%</div></div><div class='stat' id='kpi-nakit' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>现金</div><div style='font-size:21px;font-weight:700' class=''>65,025.04 ₺</div></div><div class='stat' id='kpi-poz' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>未平仓头寸</div><div style='font-size:21px;font-weight:700' class=''>1 / 8</div></div><div class='stat' id='kpi-kz' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>已实现盈亏</div><div style='font-size:21px;font-weight:700' class='neg'>-4,031.53 ₺</div></div><div class='stat' id='kpi-oran' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>胜率</div><div style='font-size:21px;font-weight:700' class=''>25%</div></div><div class='stat' id='kpi-kesinti' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>已付扣款</div><div style='font-size:21px;font-weight:700' class='neg'>400.93 ₺</div></div></div>
+<h2 class='section-title'>Bugün (23.10.2026)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'>价格控制</div><span id='bugun-kontrol'>4</span> 次 · 在市场时段每15分钟一次 · 🔴 市场已关闭 — 最后收盘数据</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>卖出</span> · GARAN · 88 lot · 122.80 ₺ · 15:17</div>stop-loss: 127.77 seviyesi canlı fiyatta delindi (%-3 kural)</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>卖出</span> · YKBNK · 325 lot · 33.68 ₺ · 15:17</div>stop-loss: 34.69 seviyesi canlı fiyatta delindi (%-3 kural)</div></div>
+<h2 class="section-title">权益曲线<span style="font-size:13px;color:var(--muted);font-weight:400">— 每次价格控制时一个点</span></h2>
+<div class="card" id='sec-egri'><svg viewBox="0 0 720 160" style="width:100%;height:auto" role="img" aria-label="权益曲线">
+<polyline points="14.0,14.0,706.0,146.0" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+<polyline points="14.0,14.0 67.2,100.8 120.5,105.9 173.7,105.0 226.9,104.4 280.2,109.7 333.4,105.5 386.6,87.6 439.8,94.3 493.1,74.5 546.3,74.8 599.5,100.7 652.8,108.6 706.0,146.0" fill="none" stroke="#b91c1c" stroke-width="2.5" stroke-linejoin="round"/>
+<text x="14" y="158" font-size="10" fill="#64748b">25.09.2026</text>
+<text x="706" y="158" font-size="10" fill="#64748b" text-anchor="end">23.10 15:17</text>
+<text x="706" y="16" font-size="11" fill="#b91c1c" text-anchor="end">95,366.27 TL</text>
+<text x="14" y="16" font-size="11" fill="#64748b">100.000.00 TL（初始资金）</text>
+</svg></div>
+<h2 class='section-title'>持仓</h2><div class='card' style='padding:8px 24px 16px' id='sec-poz'><div style='overflow-x:auto'><table><tr><th>股票</th><th>手数</th><th>成本</th><th>最新</th><th>价值 ₺</th><th>盈亏 ₺</th><th>盈亏 %</th><th>止损</th><th>目标</th><th>入场</th></tr><tr><td><b>ALTIN</b></td><td>4,696</td><td>6,644.64</td><td>6,461.08</td><td>30,341.23</td><td class='neg'>-862.00</td><td class='neg'>-2.76%</td><td>机制</td><td>机制</td><td>2026-10-19</td></tr></table></div></div>
+<h2 class='section-title'>最近交易</h2><div class='card' style='padding:8px 24px 16px' id='sec-islem'><div style='overflow-x:auto'><table><tr><th>时间</th><th>股票</th><th>方向</th><th>手数</th><th>价格</th><th>金额 ₺</th><th>扣款</th><th>盈亏 ₺</th><th>理由</th></tr><tr><td>2026-10-23 15:17</td><td><b>YKBNK</b></td><td class='neg'>卖出</td><td>325</td><td>33.68</td><td>10,926.84</td><td>13.69</td><td class='neg'>-695.29</td><td style='max-width:340px'>stop-loss: 34.69 seviyesi canlı fiyatta delindi (%-3 kural)</td></tr><tr><td>2026-10-23 15:17</td><td><b>GARAN</b></td><td class='neg'>卖出</td><td>88</td><td>122.80</td><td>10,787.34</td><td>13.66</td><td class='neg'>-804.27</td><td style='max-width:340px'>stop-loss: 127.77 seviyesi canlı fiyatta delindi (%-3 kural)</td></tr><tr><td>2026-10-20 20:23</td><td><b>TAVHL</b></td><td class='neg'>卖出</td><td>42</td><td>286.25</td><td>12,002.59</td><td>13.90</td><td class='pos'>496.05</td><td style='max-width:340px'>目标价：282.18水平已在实时价格中实现（+3%规则）</td></tr><tr><td>2026-10-19 17:13</td><td><b>ALTIN</b></td><td class='pos'>买入</td><td>4,696</td><td>6,641.32</td><td>31,223.82</td><td>20.59</td><td>—</td><td style='max-width:340px'>熊市模式：闲置现金的50%已买入克黄金（机制分支）</td></tr><tr><td>2026-10-16 19:34</td><td><b>YKBNK</b></td><td class='pos'>买入</td><td>325</td><td>35.70</td><td>11,622.12</td><td>13.82</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 排列 · RSI 53 · 价格在SMA100之上</td></tr><tr><td>2026-10-16 15:04</td><td><b>GARAN</b></td><td class='pos'>买入</td><td>88</td><td>131.50</td><td>11,591.61</td><td>13.82</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 排列 · RSI 52 · 价格在SMA100之上</td></tr><tr><td>2026-10-09 16:59</td><td><b>TAVHL</b></td><td class='pos'>买入</td><td>42</td><td>273.50</td><td>11,506.54</td><td>13.80</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 排列 · RSI 53 · 价格在SMA100之上</td></tr><tr><td>2026-10-08 22:57</td><td><b>TAVHL</b></td><td class='neg'>卖出</td><td>42</td><td>275.75</td><td>11,561.89</td><td>13.82</td><td class='pos'>44.84</td><td style='max-width:340px'>SMA10 下穿 SMA30</td></tr><tr><td>2026-10-08 17:13</td><td><b>TAVHL</b></td><td class='pos'>买入</td><td>42</td><td>273.75</td><td>11,517.05</td><td>13.80</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 排列 · RSI 53 · 价格在SMA100之上</td></tr><tr><td>2026-10-07 17:04</td><td><b>TAVHL</b></td><td class='neg'>卖出</td><td>42</td><td>272.25</td><td>11,414.99</td><td>13.79</td><td class='neg'>-291.19</td><td style='max-width:340px'>SMA10 下穿 SMA30</td></tr><tr><td>2026-10-07 17:04</td><td><b>KRDMD</b></td><td class='neg'>卖出</td><td>268</td><td>42.70</td><td>11,424.09</td><td>13.79</td><td class='neg'>-366.22</td><td style='max-width:340px'>SMA10 下穿 SMA30</td></tr><tr><td>2026-10-07 17:04</td><td><b>BIMAS</b></td><td class='neg'>卖出</td><td>28</td><td>395.50</td><td>11,054.75</td><td>13.71</td><td class='neg'>-416.76</td><td style='max-width:340px'>SMA10 下穿 SMA30</td></tr><tr><td>2026-10-06 16:55</td><td><b>TAVHL</b></td><td class='pos'>买入</td><td>42</td><td>278.25</td><td>11,706.18</td><td>13.84</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 排列 · RSI 57 · 价格高于 SMA100</td></tr><tr><td>2026-10-05 10:17</td><td><b>KRDMD</b></td><td class='pos'>买入</td><td>268</td><td>43.92</td><td>11,790.31</td><td>13.86</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 排列 · RSI 47 · 价格高于 SMA100</td></tr><tr><td>2026-10-05 10:17</td><td><b>VAKBN</b></td><td class='neg'>卖出</td><td>347</td><td>33.98</td><td>11,771.30</td><td>13.86</td><td class='pos'>22.99</td><td style='max-width:340px'>SMA10 下穿 SMA30</td></tr><tr><td>2026-10-02 11:42</td><td><b>BIMAS</b></td><td class='pos'>买入</td><td>28</td><td>409.00</td><td>11,471.52</td><td>13.79</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 排列 · RSI 45 · 价格在SMA100之上</td></tr><tr><td>2026-10-02 10:10</td><td><b>VAKBN</b></td><td class='pos'>买入</td><td>347</td><td>33.80</td><td>11,748.31</td><td>13.85</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 排列 · RSI 52 · 价格在SMA100之上</td></tr><tr><td>2026-10-01 18:29</td><td><b>BIMAS</b></td><td class='neg'>卖出</td><td>28</td><td>408.00</td><td>11,404.51</td><td>13.78</td><td class='neg'>-396.46</td><td style='max-width:340px'>stop-loss：408.82 价位已在实时价格被跌破（-3% 规则）</td></tr><tr><td>2026-10-01 15:33</td><td><b>VAKBN</b></td><td class='neg'>卖出</td><td>362</td><td>34.42</td><td>12,439.82</td><td>13.99</td><td class='pos'>451.68</td><td style='max-width:340px'>"目标价格：34.11 水平在当前价格中达到（+3% 规则）"</td></tr><tr><td>2026-10-01 11:29</td><td><b>KRDMD</b></td><td class='neg'>卖出</td><td>266</td><td>42.86</td><td>11,381.28</td><td>13.78</td><td class='neg'>-438.24</td><td style='max-width:340px'>stop-loss：43.10 价位已在实时价格被跌破（-3% 规则）</td></tr><tr><td>2026-10-01 11:10</td><td><b>TUPRS</b></td><td class='neg'>卖出</td><td>31</td><td>371.75</td><td>11,504.69</td><td>13.80</td><td class='neg'>-395.88</td><td style='max-width:340px'>stop-loss：372.37 价位已在实时价格被跌破（-3% 规则）</td></tr><tr><td>2026-10-01 10:14</td><td><b>KRDMD</b></td><td class='pos'>买入</td><td>266</td><td>44.36</td><td>11,819.52</td><td>13.86</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 排列 · RSI 48 · 价格在SMA100之上</td></tr><tr><td>2026-09-30 16:54</td><td><b>TAVHL</b></td><td class='neg'>卖出</td><td>44</td><td>262.25</td><td>11,519.42</td><td>13.81</td><td class='neg'>-391.41</td><td style='max-width:340px'>stop-loss：262.58 价位已在实时价格被跌破（-3% 规则）</td></tr><tr><td>2026-09-30 11:11</td><td><b>TUPRS</b></td><td class='pos'>买入</td><td>31</td><td>383.25</td><td>11,900.57</td><td>13.88</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 排列 · RSI 45 · 价格在SMA100之上</td></tr><tr><td>2026-09-29 16:31</td><td><b>TUPRS</b></td><td class='neg'>卖出</td><td>30</td><td>384.25</td><td>11,507.93</td><td>13.81</td><td class='neg'>-430.20</td><td style='max-width:340px'>stop-loss：386.00 价位已在实时价格被跌破（-3% 规则）</td></tr></table></div></div>
+<h2 class='section-title'>Sinyal Panosu (son kontrol: 2026-10-22)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>买入</span> · GARAN · 126.50 ₺ · alım adayı</div>SMA10 &gt; SMA30 排列 · RSI 53 · 价格在SMA100之上</div></div>
+<div class='grid-iki'><div class='card'><div class='pano-baslik'>策略规则</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li><b>买入：</b> SMA10在SMA30之上排列 + RSI14在45–75区间内 + 价格在SMA100之上（不等待新交叉；如有排列则入场）。</li><li><b>卖出:</b> 价格跌破 SMA10/SMA30，或跌破成本价 <b>3%</b> （止损），或升破它 <b>3%</b> 升破它（目标）。</li><li><b>规模:</b> 单只股票不超过权益的 12%，最多 8 个持仓。</li><li><b>每日止损:</b> 若权益较昨日收盘下跌 3%，当日停止新买入。</li><li><b>Saat kuralı:</b> emirler yalnızca BIST işlem oturumunda yürütülür — hafta içi 10:00–18:00 TSİ; resmi tatillerde ve seans dışında (elle tetikleme dahil) işlem açılmaz, sinyaller sonraki seansı bekler.</li><li><b>成本:</b> 佣金 0.04% (最低10 ₺) + BSMV 15% + 法律费用 ~0,020% + 滑点 0.05%. 12.000 ₺交易的交易成本约35–40 ₺ (~0.3%) — 剥头皮的真实成本。</li><li><b>闲置现金：</b> İş Yatırım (伊什投资) · BIST 100: 10,845.00 · Değişim: 0.62% · Hacim: 74.2B TL · Güncelleme: 17.10.2026 14:31 (İstanbul 伊斯坦布尔) · Veri: İş Yatırım (伊什投资) (EOD) + TradingView (gün içi, ~15 dk gecikmeli) · Komisyon ve kayma payı varsayımsaldır. · Son güncelleme: 17.10.2026 14:31 (İstanbul 伊斯坦布尔) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir.</li><li><b>税费:</b> BIST股票出售收益中预扣税 0%; 超过年度申报限额的收益需申报。</li></ul></div><div class='card'><div class='pano-baslik'>表现摘要</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li>开始: 2026-09-25 · 100.000.00 ₺</li><li>Toplam işlem: 33 (16 SAT / 17 AL)</li><li>Kazanan SAT oranı: 25%</li><li>Gerçekleşen K/Z: -4,031.53 ₺ · Ödenen kesinti: 400.93 ₺</li><li>Açık pozisyon K/Z (gerçekleşmemiş): -602.20 ₺</li></ul></div></div>
+<p style="color:var(--muted);font-size:12px;margin:26px 0 4px">Bu sayfa bağımsız bir simülasyondur: hiçbir gerçek emir gönderilmez, hiçbir gerçek para risk edilmez.
 Veri: İş Yatırım (EOD) + TradingView (gün içi, ~15 dk gecikmeli) · Komisyon ve kayma payı varsayımsaldır.
-Son güncelleme: 23.10.2026 22:58 (İstanbul) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir.
-
-
-📊报告
-📈技术
-🏦股票
-💼投资组合
-🤖机器人
-📰新闻
-📅日历
-
-此处提供的信息、评论和建议仅供参考；不属于投资咨询范畴，非投资建议。
-模拟结果不代表过往业绩是未来收益的指标。数据来源：投资证券，RSS新闻流•分析：人工智能（多智能体系统）隐私与数据保护
+Son güncelleme: 23.10.2026 22:58 (İstanbul) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir.</p>
+</main>
+<nav class="altbar" aria-label="快捷菜单">
+<a href="./"><span class="i" aria-hidden="true">📊</span>报告</a>
+<a href="jishu-saomiao"><span class="i" aria-hidden="true">📈</span>技术</a>
+<a href="gupiao/"><span class="i" aria-hidden="true">🏦</span>股票</a>
+<a href="portfolio"><span class="i" aria-hidden="true">💼</span>投资组合</a>
+<a href="jiaoyi-jiqiren" class="active"><span class="i" aria-hidden="true">🤖</span>机器人</a>
+<a href="xinwen"><span class="i" aria-hidden="true">📰</span>新闻</a>
+<a href="rili"><span class="i" aria-hidden="true">📅</span>日历</a>
+</nav>
+<footer class="footer">此处提供的信息、评论和建议仅供参考；不属于投资咨询范畴，非投资建议。
+模拟结果不代表过往业绩是未来收益的指标。数据来源：投资证券，RSS新闻流•分析：人工智能（多智能体系统）<br><a href="yinsi" style="color:inherit">隐私与数据保护</a></footer>
 <script>
 function temaDegistir() {
   var kok = document.documentElement;
@@ -374,3 +374,4 @@ function temaDegistir() {
   setInterval(yenile, 60000);
 })();
 </script>
+</body></html>

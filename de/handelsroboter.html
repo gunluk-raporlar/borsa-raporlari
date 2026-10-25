@@ -1,35 +1,35 @@
-
-
-
-
-
-Handelsroboter (Simulation)
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Handelsroboter (Simulation)</title>
+<meta name="description" content="Live-Buch des BIST-30-Papierhandelsroboters: simulierte KAUF-/VERKAUFS-Aufträge, offene Positionen, Intraday-Eigenkapitalkurve und Strategieregeln, die während der Marktzeiten alle 15 Minuten aktualisiert werden. Es wird kein echtes Geld verwendet; dies ist keine Anlageberatung.">
+<link rel="icon" href="/favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/de/handelsroboter">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/robot">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/jiaoyi-jiqiren">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/torgovyy-robot">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/trading-robot">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/handelsroboter">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/robot">
+<meta property="og:title" content="Handelsroboter (Simulation)">
+<meta property="og:description" content="&quot;Transparentes Buch für den BIST 30 Simulations-Handelsroboter: Positionen, Geschäfte, intratägliche Eigenkapitalkurve. Keine Anlageberatung.&quot;">
+<meta property="og:type" content="website">
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="stylesheet" href="style.css?v=6bc658f2">
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="./">BIST 30 Tagesberichte</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Helles/dunkles Design" aria-label="Design wechseln">🌙</button></div>
+<nav><a href="./">Startseite</a><a href="berichte">Berichte</a><a href="aktien/">Aktien</a><a href="tiefenanalyse">Tiefenanalyse</a><a href="makroanalyse">Makroanalyse</a><a href="technischer-scan">Technischer Scan</a><a href="signal-bilanz">Signal-Bilanz</a><a href="borsapy-signale">Borsapy-Signale</a><a href="nachrichten">Nachrichten</a><a href="unternehmensnachrichten">Unternehmensnachrichten</a><a href="portfolio">Demo-Portfolio</a><a href="wochenende">Wochenende</a><a href="boersenschule">Börsenschule</a><a href="kalender">📅 Kalender</a><a href="glossar">Glossar</a><a href="begriffe">Begriffe</a><a href="rechnungslegungsbegriffe">Rechnungslegungsbegriffe</a><a href="handelsroboter" class="active">Handelsroboter</a></nav>
+</div></header>
 
-
-
-
-BIST 30 Tagesberichte
-🌙
-StartseiteBerichteAktienTiefenanalyseMakroanalyseTechnischer ScanSignal-BilanzBorsapy-SignaleNachrichtenUnternehmensnachrichtenDemo-PortfolioWochenendeBörsenschule📅 KalenderGlossarBegriffeRechnungslegungsbegriffeHandelsroboter
-
-
-
-  Preise werden geladen…
-
+<div class="ticker-bant" id="ticker-bant" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Preise werden geladen…</span></div>
+</div>
 <script>
 (function() {
   function ciz(veri) {
@@ -60,9 +60,9 @@ StartseiteBerichteAktienTiefenanalyseMakroanalyseTechnischer ScanSignal-BilanzBo
 })();
 </script>
 
-
-  Marktdaten werden geladen...
-
+<div class="ticker-bant" id="ticker-bant2" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Marktdaten werden geladen...</span></div>
+</div>
 <script>
 (function() {
   var iz = document.getElementById('ticker-iz2');
@@ -96,16 +96,16 @@ StartseiteBerichteAktienTiefenanalyseMakroanalyseTechnischer ScanSignal-BilanzBo
   setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
 })();
 </script>
-
-🟡 Verbindung wird hergestellt…
-    
-    
-        
-            ⏳ Laden...
-            🌤️ Istanbul Wetter...
-        
-<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>🌐TürkçeEnglishDeutschРусский简体中文
-    
+<main class="wrap">
+<div id="robot-canli" class="card" style="padding:12px 18px;margin:0 0 18px;font-size:14px"><span style="color:var(--muted)">🟡 Verbindung wird hergestellt…</span></div>
+    <!-- Üst Widget Alanı (Canlı Saat ve İstanbul Hava Durumu) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Laden...</span>
+            <span id="istanbul-weather">🌤️ Istanbul Wetter...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style><nav class="dil-linkler" aria-label="Seitensprache wählen"><span aria-hidden="true">🌐</span><a href="https://borsa-raporlari.pages.dev/robot" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a><a href="https://borsa-raporlari.pages.dev/en/trading-robot" hreflang="en" lang="en" data-dil="en">English</a><a href="https://borsa-raporlari.pages.dev/de/handelsroboter" hreflang="de" lang="de" data-dil="de" class="aktif" aria-current="true">Deutsch</a><a href="https://borsa-raporlari.pages.dev/ru/torgovyy-robot" hreflang="ru" lang="ru" data-dil="ru">Русский</a><a href="https://borsa-raporlari.pages.dev/zh/jiaoyi-jiqiren" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a></nav>
+    </div>
 <script>
     function updateClock() {
         const now = new Date();
@@ -127,15 +127,15 @@ StartseiteBerichteAktienTiefenanalyseMakroanalyseTechnischer ScanSignal-BilanzBo
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
         });
 </script>
+<div class="interactive-box">
 
-
-
-    
-        
-        Suchen
-    
-    
-
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Aktie, Thema oder Datum suchen..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Suchen</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
 <script>
 (function() {
   var INDEKS = null;
@@ -205,45 +205,45 @@ StartseiteBerichteAktienTiefenanalyseMakroanalyseTechnischer ScanSignal-BilanzBo
 })();
 </script>
 
-
-
-Handelsroboter Simulation
-"auf BIST 30 Aktien ""Papierhandel"  — das Live-Buch des automatischen Roboters, der genau das tut.
-Der Roboter während der Marktzeiten alle 15 Minuten wird zum Live-Preis (TradingView, ~15 Min. Verzögerung) geprüft:
+</div>
+<div class="hero">
+<h1>Handelsroboter <span class="badge">Simulation</span></h1>
+<p>"auf BIST 30 Aktien "<b>"Papierhandel"</b>  — das Live-Buch des automatischen Roboters, der genau das tut.
+Der Roboter <b>während der Marktzeiten alle 15 Minuten</b> wird zum Live-Preis (TradingView, ~15 Min. Verzögerung) geprüft:
 Stop-Loss und Ziel können innerhalb des Tages ausgelöst werden, Kreuzungssignale werden anhand des Tagespreises bewertet und
-die Eigenkapitalkurve gewinnt bei jeder Prüfung einen Punkt.Es wird kein echtes Geld verwendet; werden alle Order hier mit ihrer Begründung veröffentlicht.
-Keine Anlageberatung. Son güncelleme: 23.10.2026 22:58 (İstanbul).
-
-Gesamtwert95,366.27 ₺Gesamtrendite-4.63%Bargeld65,025.04 ₺Offene Position1 / 8Realisierter G/V-4,031.53 ₺Trefferquote25%Abgeführte Abzüge400.93 ₺
-Heute (23.10.2026)Preiskontrolle4 Mal · während der Marktzeiten alle 15 Minuten · 🔴 Markt geschlossen — letzte SchlusskursdatenVERKAUFEN · GARAN · 88 lot · 122.80 ₺ · 15:17stop-loss: 127.77 seviyesi canlı fiyatta delindi (%-3 kural)VERKAUFEN · YKBNK · 325 lot · 33.68 ₺ · 15:17stop-loss: 34.69 seviyesi canlı fiyatta delindi (%-3 kural)
-Eigenkapitalkurve— ein Punkt pro Preiskontrolle
-
-
-
-25.09.2026
-23.10 15:17
-95,366.27 TL
-100,000.00 TL (Start)
-
-Offene PositionenAktieLosKostenLetzteWert ₺G/V ₺G/V %StopZielEinstiegALTIN4,6966,644.646,461.0830,341.23-862.00-2.76%RegimeRegime2026-10-19
-Letzte TradesZeitAktieRichtungLosPreisBetrag ₺AbzügeG/V ₺Grund2026-10-23 15:17YKBNKVERKAUFEN32533.6810,926.8413.69-695.29stop-loss: 34.69 seviyesi canlı fiyatta delindi (%-3 kural)2026-10-23 15:17GARANVERKAUFEN88122.8010,787.3413.66-804.27stop-loss: 127.77 seviyesi canlı fiyatta delindi (%-3 kural)2026-10-20 20:23TAVHLVERKAUFEN42286.2512,002.5913.90496.05Zielkurs: Niveau 282.18 wurde im Live-Kurs erreicht (+3%-Regel)2026-10-19 17:13ALTINKAUFEN4,6966,641.3231,223.8220.59—Bärenmodus: 50 % des freien Bargelds in Gramm-Gold umgeschichtet (Regime-Hebel)2026-10-16 19:34YKBNKKAUFEN32535.7011,622.1213.82—SMA10 &gt; SMA30 Formation · RSI 53 · Preis über SMA1002026-10-16 15:04GARANKAUFEN88131.5011,591.6113.82—SMA10 &gt; SMA30 Formation · RSI 52 · Preis über SMA1002026-10-09 16:59TAVHLKAUFEN42273.5011,506.5413.80—SMA10 &gt; SMA30 Formation · RSI 53 · Preis über SMA1002026-10-08 22:57TAVHLVERKAUFEN42275.7511,561.8913.8244.84SMA10, hat SMA30' unten gekreuzt2026-10-08 17:13TAVHLKAUFEN42273.7511,517.0513.80—SMA10 &gt; SMA30 Formation · RSI 53 · Preis über SMA1002026-10-07 17:04TAVHLVERKAUFEN42272.2511,414.9913.79-291.19SMA10, hat SMA30' unten gekreuzt2026-10-07 17:04KRDMDVERKAUFEN26842.7011,424.0913.79-366.22SMA10, hat SMA30' unten gekreuzt2026-10-07 17:04BIMASVERKAUFEN28395.5011,054.7513.71-416.76SMA10, hat SMA30' unten gekreuzt2026-10-06 16:55TAVHLKAUFEN42278.2511,706.1813.84—SMA10 &gt; SMA30-Anordnung · RSI 57 · Kurs über SMA1002026-10-05 10:17KRDMDKAUFEN26843.9211,790.3113.86—SMA10 &gt; SMA30-Anordnung · RSI 47 · Kurs über SMA1002026-10-05 10:17VAKBNVERKAUFEN34733.9811,771.3013.8622.99SMA10, hat SMA30' unten gekreuzt2026-10-02 11:42BIMASKAUFEN28409.0011,471.5213.79—SMA10 &gt; SMA30 Formation · RSI 45 · Preis über SMA1002026-10-02 10:10VAKBNKAUFEN34733.8011,748.3113.85—SMA10 &gt; SMA30 Formation · RSI 52 · Preis über SMA1002026-10-01 18:29BIMASVERKAUFEN28408.0011,404.5113.78-396.46stop-loss: das Niveau 408.82 wurde beim Live-Preis durchbrochen (die -3-%-Regel)2026-10-01 15:33VAKBNVERKAUFEN36234.4212,439.8213.99451.68Zielkurs: 34.11 Niveau im Live-Kurs erreicht (+3% Regel)2026-10-01 11:29KRDMDVERKAUFEN26642.8611,381.2813.78-438.24stop-loss: das Niveau 43.10 wurde beim Live-Preis durchbrochen (die -3-%-Regel)2026-10-01 11:10TUPRSVERKAUFEN31371.7511,504.6913.80-395.88stop-loss: das Niveau 372.37 wurde beim Live-Preis durchbrochen (die -3-%-Regel)2026-10-01 10:14KRDMDKAUFEN26644.3611,819.5213.86—SMA10 &gt; SMA30 Formation · RSI 48 · Preis über SMA1002026-09-30 16:54TAVHLVERKAUFEN44262.2511,519.4213.81-391.41stop-loss: das Niveau 262.58 wurde beim Live-Preis durchbrochen (die -3-%-Regel)2026-09-30 11:11TUPRSKAUFEN31383.2511,900.5713.88—SMA10 &gt; SMA30 Formation · RSI 45 · Preis über SMA1002026-09-29 16:31TUPRSVERKAUFEN30384.2511,507.9313.81-430.20stop-loss: das Niveau 386.00 wurde beim Live-Preis durchbrochen (die -3-%-Regel)
-Signal-Dashboard (letzte Prüfung: 2026-10-22)KAUFEN · GARAN · 126.50 ₺ · alım adayıSMA10 &gt; SMA30 Formation · RSI 53 · Preis über SMA100
-StrategieregelnKAUFEN: SMA10 liegt über SMA30 + RSI14 im Bereich 45-75 + Preis über SMA100 (kein neuer Kreuzpunkt erwartet; Handel bei vorhandenem Setup)VERKAUFEN: Der Kurs kreuzt SMA10 bzw. SMA30 nach unten, oder fällt 3% unter den Einstandskurs fällt (Stop), oder 3% darüber steigt (Ziel).Größe: maximal 12 % des Eigenkapitals pro Aktie, höchstens 8 Positionen.Tägliche Bremse: fällt das Eigenkapital um 3 % unter den Schlusskurs des Vortages, werden neue Käufe an diesem Tag ausgesetzt.Zeitregel: Orders werden nur in der BIST-Handelssession ausgeführt — werktags 10:00–18:00 TSİ; an offiziellen Feiertagen und außerhalb der Sitzung (einschließlich manueller Auslösung) werden keine Trades eröffnet, Signale warten auf die nächste Sitzung.Kosten: Provision 0.04% (mindestens 10 ₺) + BSMV 15% + gesetzliche Gebühr ~0,020% + Slippage 0.05%. Gesamtkosten für 12,000 ₺ Transaktion ~35–40 ₺ (~0.3%) — die wahre Kosten des Scalpings.Freie Barmittel: wird an jedem Handelstag im Übernacht-Reverse-Repo bewertet — der Jahreszins wird vom zuletzt veröffentlichten Einlagenzins übernommen; die Repo-Rendite fließt in das Eigenkapital ein.Steuern: Keine Abgeltungsteuer auf BIST Aktienerträge; Einkünfte über dem jährlichen Freibetrag müssen deklariert werden.LeistungsübersichtStart: 2026-09-25 · 100,000.00 ₺Toplam işlem: 33 (16 SAT / 17 AL)Kazanan SAT oranı: 25%Gerçekleşen K/Z: -4,031.53 ₺ · Ödenen kesinti: 400.93 ₺Açık pozisyon K/Z (gerçekleşmemiş): -602.20 ₺
-Bu sayfa bağımsız bir simülasyondur: hiçbir gerçek emir gönderilmez, hiçbir gerçek para risk edilmez.
+die Eigenkapitalkurve gewinnt bei jeder Prüfung einen Punkt.<u>Es wird kein echtes Geld verwendet</u>; werden alle Order hier mit ihrer Begründung veröffentlicht.
+<strong>Keine Anlageberatung.</strong> Son güncelleme: 23.10.2026 22:58 (İstanbul).</p>
+</div>
+<div class='grid' style='grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0'><div class='stat' id='kpi-toplam' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Gesamtwert</div><div style='font-size:21px;font-weight:700' class=''>95,366.27 ₺</div></div><div class='stat' id='kpi-getiri' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Gesamtrendite</div><div style='font-size:21px;font-weight:700' class='neg'>-4.63%</div></div><div class='stat' id='kpi-nakit' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Bargeld</div><div style='font-size:21px;font-weight:700' class=''>65,025.04 ₺</div></div><div class='stat' id='kpi-poz' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Offene Position</div><div style='font-size:21px;font-weight:700' class=''>1 / 8</div></div><div class='stat' id='kpi-kz' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Realisierter G/V</div><div style='font-size:21px;font-weight:700' class='neg'>-4,031.53 ₺</div></div><div class='stat' id='kpi-oran' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Trefferquote</div><div style='font-size:21px;font-weight:700' class=''>25%</div></div><div class='stat' id='kpi-kesinti' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Abgeführte Abzüge</div><div style='font-size:21px;font-weight:700' class='neg'>400.93 ₺</div></div></div>
+<h2 class='section-title'>Heute (23.10.2026)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'>Preiskontrolle</div><span id='bugun-kontrol'>4</span> Mal · während der Marktzeiten alle 15 Minuten · 🔴 Markt geschlossen — letzte Schlusskursdaten</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>VERKAUFEN</span> · GARAN · 88 lot · 122.80 ₺ · 15:17</div>stop-loss: 127.77 seviyesi canlı fiyatta delindi (%-3 kural)</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>VERKAUFEN</span> · YKBNK · 325 lot · 33.68 ₺ · 15:17</div>stop-loss: 34.69 seviyesi canlı fiyatta delindi (%-3 kural)</div></div>
+<h2 class="section-title">Eigenkapitalkurve<span style="font-size:13px;color:var(--muted);font-weight:400">— ein Punkt pro Preiskontrolle</span></h2>
+<div class="card" id='sec-egri'><svg viewBox="0 0 720 160" style="width:100%;height:auto" role="img" aria-label="Eigenkapitalkurve">
+<polyline points="14.0,14.0,706.0,146.0" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+<polyline points="14.0,14.0 67.2,100.8 120.5,105.9 173.7,105.0 226.9,104.4 280.2,109.7 333.4,105.5 386.6,87.6 439.8,94.3 493.1,74.5 546.3,74.8 599.5,100.7 652.8,108.6 706.0,146.0" fill="none" stroke="#b91c1c" stroke-width="2.5" stroke-linejoin="round"/>
+<text x="14" y="158" font-size="10" fill="#64748b">25.09.2026</text>
+<text x="706" y="158" font-size="10" fill="#64748b" text-anchor="end">23.10 15:17</text>
+<text x="706" y="16" font-size="11" fill="#b91c1c" text-anchor="end">95,366.27 TL</text>
+<text x="14" y="16" font-size="11" fill="#64748b">100,000.00 TL (Start)</text>
+</svg></div>
+<h2 class='section-title'>Offene Positionen</h2><div class='card' style='padding:8px 24px 16px' id='sec-poz'><div style='overflow-x:auto'><table><tr><th>Aktie</th><th>Los</th><th>Kosten</th><th>Letzte</th><th>Wert ₺</th><th>G/V ₺</th><th>G/V %</th><th>Stop</th><th>Ziel</th><th>Einstieg</th></tr><tr><td><b>ALTIN</b></td><td>4,696</td><td>6,644.64</td><td>6,461.08</td><td>30,341.23</td><td class='neg'>-862.00</td><td class='neg'>-2.76%</td><td>Regime</td><td>Regime</td><td>2026-10-19</td></tr></table></div></div>
+<h2 class='section-title'>Letzte Trades</h2><div class='card' style='padding:8px 24px 16px' id='sec-islem'><div style='overflow-x:auto'><table><tr><th>Zeit</th><th>Aktie</th><th>Richtung</th><th>Los</th><th>Preis</th><th>Betrag ₺</th><th>Abzüge</th><th>G/V ₺</th><th>Grund</th></tr><tr><td>2026-10-23 15:17</td><td><b>YKBNK</b></td><td class='neg'>VERKAUFEN</td><td>325</td><td>33.68</td><td>10,926.84</td><td>13.69</td><td class='neg'>-695.29</td><td style='max-width:340px'>stop-loss: 34.69 seviyesi canlı fiyatta delindi (%-3 kural)</td></tr><tr><td>2026-10-23 15:17</td><td><b>GARAN</b></td><td class='neg'>VERKAUFEN</td><td>88</td><td>122.80</td><td>10,787.34</td><td>13.66</td><td class='neg'>-804.27</td><td style='max-width:340px'>stop-loss: 127.77 seviyesi canlı fiyatta delindi (%-3 kural)</td></tr><tr><td>2026-10-20 20:23</td><td><b>TAVHL</b></td><td class='neg'>VERKAUFEN</td><td>42</td><td>286.25</td><td>12,002.59</td><td>13.90</td><td class='pos'>496.05</td><td style='max-width:340px'>Zielkurs: Niveau 282.18 wurde im Live-Kurs erreicht (+3%-Regel)</td></tr><tr><td>2026-10-19 17:13</td><td><b>ALTIN</b></td><td class='pos'>KAUFEN</td><td>4,696</td><td>6,641.32</td><td>31,223.82</td><td>20.59</td><td>—</td><td style='max-width:340px'>Bärenmodus: 50 % des freien Bargelds in Gramm-Gold umgeschichtet (Regime-Hebel)</td></tr><tr><td>2026-10-16 19:34</td><td><b>YKBNK</b></td><td class='pos'>KAUFEN</td><td>325</td><td>35.70</td><td>11,622.12</td><td>13.82</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 Formation · RSI 53 · Preis über SMA100</td></tr><tr><td>2026-10-16 15:04</td><td><b>GARAN</b></td><td class='pos'>KAUFEN</td><td>88</td><td>131.50</td><td>11,591.61</td><td>13.82</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 Formation · RSI 52 · Preis über SMA100</td></tr><tr><td>2026-10-09 16:59</td><td><b>TAVHL</b></td><td class='pos'>KAUFEN</td><td>42</td><td>273.50</td><td>11,506.54</td><td>13.80</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 Formation · RSI 53 · Preis über SMA100</td></tr><tr><td>2026-10-08 22:57</td><td><b>TAVHL</b></td><td class='neg'>VERKAUFEN</td><td>42</td><td>275.75</td><td>11,561.89</td><td>13.82</td><td class='pos'>44.84</td><td style='max-width:340px'>SMA10, hat SMA30' unten gekreuzt</td></tr><tr><td>2026-10-08 17:13</td><td><b>TAVHL</b></td><td class='pos'>KAUFEN</td><td>42</td><td>273.75</td><td>11,517.05</td><td>13.80</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 Formation · RSI 53 · Preis über SMA100</td></tr><tr><td>2026-10-07 17:04</td><td><b>TAVHL</b></td><td class='neg'>VERKAUFEN</td><td>42</td><td>272.25</td><td>11,414.99</td><td>13.79</td><td class='neg'>-291.19</td><td style='max-width:340px'>SMA10, hat SMA30' unten gekreuzt</td></tr><tr><td>2026-10-07 17:04</td><td><b>KRDMD</b></td><td class='neg'>VERKAUFEN</td><td>268</td><td>42.70</td><td>11,424.09</td><td>13.79</td><td class='neg'>-366.22</td><td style='max-width:340px'>SMA10, hat SMA30' unten gekreuzt</td></tr><tr><td>2026-10-07 17:04</td><td><b>BIMAS</b></td><td class='neg'>VERKAUFEN</td><td>28</td><td>395.50</td><td>11,054.75</td><td>13.71</td><td class='neg'>-416.76</td><td style='max-width:340px'>SMA10, hat SMA30' unten gekreuzt</td></tr><tr><td>2026-10-06 16:55</td><td><b>TAVHL</b></td><td class='pos'>KAUFEN</td><td>42</td><td>278.25</td><td>11,706.18</td><td>13.84</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30-Anordnung · RSI 57 · Kurs über SMA100</td></tr><tr><td>2026-10-05 10:17</td><td><b>KRDMD</b></td><td class='pos'>KAUFEN</td><td>268</td><td>43.92</td><td>11,790.31</td><td>13.86</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30-Anordnung · RSI 47 · Kurs über SMA100</td></tr><tr><td>2026-10-05 10:17</td><td><b>VAKBN</b></td><td class='neg'>VERKAUFEN</td><td>347</td><td>33.98</td><td>11,771.30</td><td>13.86</td><td class='pos'>22.99</td><td style='max-width:340px'>SMA10, hat SMA30' unten gekreuzt</td></tr><tr><td>2026-10-02 11:42</td><td><b>BIMAS</b></td><td class='pos'>KAUFEN</td><td>28</td><td>409.00</td><td>11,471.52</td><td>13.79</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 Formation · RSI 45 · Preis über SMA100</td></tr><tr><td>2026-10-02 10:10</td><td><b>VAKBN</b></td><td class='pos'>KAUFEN</td><td>347</td><td>33.80</td><td>11,748.31</td><td>13.85</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 Formation · RSI 52 · Preis über SMA100</td></tr><tr><td>2026-10-01 18:29</td><td><b>BIMAS</b></td><td class='neg'>VERKAUFEN</td><td>28</td><td>408.00</td><td>11,404.51</td><td>13.78</td><td class='neg'>-396.46</td><td style='max-width:340px'>stop-loss: das Niveau 408.82 wurde beim Live-Preis durchbrochen (die -3-%-Regel)</td></tr><tr><td>2026-10-01 15:33</td><td><b>VAKBN</b></td><td class='neg'>VERKAUFEN</td><td>362</td><td>34.42</td><td>12,439.82</td><td>13.99</td><td class='pos'>451.68</td><td style='max-width:340px'>Zielkurs: 34.11 Niveau im Live-Kurs erreicht (+3% Regel)</td></tr><tr><td>2026-10-01 11:29</td><td><b>KRDMD</b></td><td class='neg'>VERKAUFEN</td><td>266</td><td>42.86</td><td>11,381.28</td><td>13.78</td><td class='neg'>-438.24</td><td style='max-width:340px'>stop-loss: das Niveau 43.10 wurde beim Live-Preis durchbrochen (die -3-%-Regel)</td></tr><tr><td>2026-10-01 11:10</td><td><b>TUPRS</b></td><td class='neg'>VERKAUFEN</td><td>31</td><td>371.75</td><td>11,504.69</td><td>13.80</td><td class='neg'>-395.88</td><td style='max-width:340px'>stop-loss: das Niveau 372.37 wurde beim Live-Preis durchbrochen (die -3-%-Regel)</td></tr><tr><td>2026-10-01 10:14</td><td><b>KRDMD</b></td><td class='pos'>KAUFEN</td><td>266</td><td>44.36</td><td>11,819.52</td><td>13.86</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 Formation · RSI 48 · Preis über SMA100</td></tr><tr><td>2026-09-30 16:54</td><td><b>TAVHL</b></td><td class='neg'>VERKAUFEN</td><td>44</td><td>262.25</td><td>11,519.42</td><td>13.81</td><td class='neg'>-391.41</td><td style='max-width:340px'>stop-loss: das Niveau 262.58 wurde beim Live-Preis durchbrochen (die -3-%-Regel)</td></tr><tr><td>2026-09-30 11:11</td><td><b>TUPRS</b></td><td class='pos'>KAUFEN</td><td>31</td><td>383.25</td><td>11,900.57</td><td>13.88</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 Formation · RSI 45 · Preis über SMA100</td></tr><tr><td>2026-09-29 16:31</td><td><b>TUPRS</b></td><td class='neg'>VERKAUFEN</td><td>30</td><td>384.25</td><td>11,507.93</td><td>13.81</td><td class='neg'>-430.20</td><td style='max-width:340px'>stop-loss: das Niveau 386.00 wurde beim Live-Preis durchbrochen (die -3-%-Regel)</td></tr></table></div></div>
+<h2 class='section-title'>Signal-Dashboard (letzte Prüfung: 2026-10-22)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>KAUFEN</span> · GARAN · 126.50 ₺ · alım adayı</div>SMA10 &gt; SMA30 Formation · RSI 53 · Preis über SMA100</div></div>
+<div class='grid-iki'><div class='card'><div class='pano-baslik'>Strategieregeln</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li><b>KAUFEN:</b> SMA10 liegt über SMA30 + RSI14 im Bereich 45-75 + Preis über SMA100 (kein neuer Kreuzpunkt erwartet; Handel bei vorhandenem Setup)</li><li><b>VERKAUFEN:</b> Der Kurs kreuzt SMA10 bzw. SMA30 nach unten, oder fällt <b>3%</b> unter den Einstandskurs fällt (Stop), oder <b>3%</b> darüber steigt (Ziel).</li><li><b>Größe:</b> maximal 12 % des Eigenkapitals pro Aktie, höchstens 8 Positionen.</li><li><b>Tägliche Bremse:</b> fällt das Eigenkapital um 3 % unter den Schlusskurs des Vortages, werden neue Käufe an diesem Tag ausgesetzt.</li><li><b>Zeitregel:</b> Orders werden nur in der BIST-Handelssession ausgeführt — werktags 10:00–18:00 TSİ; an offiziellen Feiertagen und außerhalb der Sitzung (einschließlich manueller Auslösung) werden keine Trades eröffnet, Signale warten auf die nächste Sitzung.</li><li><b>Kosten:</b> Provision 0.04% (mindestens 10 ₺) + BSMV 15% + gesetzliche Gebühr ~0,020% + Slippage 0.05%. Gesamtkosten für 12,000 ₺ Transaktion ~35–40 ₺ (~0.3%) — die wahre Kosten des Scalpings.</li><li><b>Freie Barmittel:</b> wird an jedem Handelstag im Übernacht-Reverse-Repo bewertet — der Jahreszins wird vom zuletzt veröffentlichten Einlagenzins übernommen; die Repo-Rendite fließt in das Eigenkapital ein.</li><li><b>Steuern:</b> Keine Abgeltungsteuer auf BIST Aktienerträge; Einkünfte über dem jährlichen Freibetrag müssen deklariert werden.</li></ul></div><div class='card'><div class='pano-baslik'>Leistungsübersicht</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li>Start: 2026-09-25 · 100,000.00 ₺</li><li>Toplam işlem: 33 (16 SAT / 17 AL)</li><li>Kazanan SAT oranı: 25%</li><li>Gerçekleşen K/Z: -4,031.53 ₺ · Ödenen kesinti: 400.93 ₺</li><li>Açık pozisyon K/Z (gerçekleşmemiş): -602.20 ₺</li></ul></div></div>
+<p style="color:var(--muted);font-size:12px;margin:26px 0 4px">Bu sayfa bağımsız bir simülasyondur: hiçbir gerçek emir gönderilmez, hiçbir gerçek para risk edilmez.
 Veri: İş Yatırım (EOD) + TradingView (gün içi, ~15 dk gecikmeli) · Komisyon ve kayma payı varsayımsaldır.
-Son güncelleme: 23.10.2026 22:58 (İstanbul) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir.
-
-
-📊Berichte
-📈Technik
-🏦Aktien
-💼Portfolio
-🤖Robot
-📰Nachrichten
-📅Kalender
-
-Die hier enthaltenen Informationen, Kommentare und Empfehlungen dienen nur zu Informationszwecken; sie stellen keine Anlageberatung dar und sind keine Anlageempfehlungen.
-Simulationsergebnisse sind keine Indikatoren für die zukünftige Rendite auf Grundlage der bisherigen Performance. Datenquellen: İş Yatırım, RSS-Nachrichtenströme • Analyse: künstliche Intelligenz (Multiagentensystem)Datenschutz
+Son güncelleme: 23.10.2026 22:58 (İstanbul) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir.</p>
+</main>
+<nav class="altbar" aria-label="Schnellmenü">
+<a href="./"><span class="i" aria-hidden="true">📊</span>Berichte</a>
+<a href="technischer-scan"><span class="i" aria-hidden="true">📈</span>Technik</a>
+<a href="aktien/"><span class="i" aria-hidden="true">🏦</span>Aktien</a>
+<a href="portfolio"><span class="i" aria-hidden="true">💼</span>Portfolio</a>
+<a href="handelsroboter" class="active"><span class="i" aria-hidden="true">🤖</span>Robot</a>
+<a href="nachrichten"><span class="i" aria-hidden="true">📰</span>Nachrichten</a>
+<a href="kalender"><span class="i" aria-hidden="true">📅</span>Kalender</a>
+</nav>
+<footer class="footer">Die hier enthaltenen Informationen, Kommentare und Empfehlungen dienen nur zu Informationszwecken; sie stellen keine Anlageberatung dar und sind keine Anlageempfehlungen.
+Simulationsergebnisse sind keine Indikatoren für die zukünftige Rendite auf Grundlage der bisherigen Performance. Datenquellen: İş Yatırım, RSS-Nachrichtenströme • Analyse: künstliche Intelligenz (Multiagentensystem)<br><a href="datenschutz" style="color:inherit">Datenschutz</a></footer>
 <script>
 function temaDegistir() {
   var kok = document.documentElement;
@@ -374,3 +374,4 @@ function temaDegistir() {
   setInterval(yenile, 60000);
 })();
 </script>
+</body></html>

@@ -1,51 +1,51 @@
-
-
-
-
-
-模拟投资组合
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模拟投资组合</title>
+<meta name="description" content="100.000 TL资本均等分配到BIST 30股票的虚拟投资组合：每日价值跟踪，股票表现与黄金/美元/存款对比。">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/zh/portfolio">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/portfolio">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/portfolio">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/portfolio">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/portfolio">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/portfolio">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/portfolio">
+<link rel="icon" href="/favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 每日股市报告与分析">
+<meta property="og:title" content="模拟投资组合">
+<meta property="og:description" content="100.000 TL资本均等分配到BIST 30股票的虚拟投资组合：每日价值跟踪，股票表现与黄金/美元/存款对比。">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/zh/portfolio">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 日报封面图片">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="模拟投资组合">
+<meta name="twitter:description" content="100.000 TL资本均等分配到BIST 30股票的虚拟投资组合：每日价值跟踪，股票表现与黄金/美元/存款对比。">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<meta name="yandex-verification" content="2c8df12d0b97a734">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "模拟投资组合", "description": "100.000 TL资本均等分配到BIST 30股票的虚拟投资组合：每日价值跟踪，股票表现与黄金/美元/存款对比。", "url": "https://borsa-raporlari.pages.dev/zh/portfolio", "inLanguage": "zh", "isPartOf": {"@type": "WebSite", "name": "BIST 30 每日报告", "url": "https://borsa-raporlari.pages.dev/zh/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
-
-
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="style.css?v=6bc658f2">
 <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="./">BIST 30 每日股市报告与分析</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="浅色/深色主题" aria-label="切换主题">🌙</button></div>
+<nav><a href="./">首页</a><a href="baogao">报告</a><a href="gupiao/">股票</a><a href="shendu-fenxi">深度分析</a><a href="hongguan-fenxi">宏观分析</a><a href="jishu-saomiao">技术扫描</a><a href="xinhao-jifenka">信号记分卡</a><a href="borsapy-xinhao">Borsapy 信号</a><a href="xinwen">新闻</a><a href="gongsi-xinwen">公司新闻</a><a href="portfolio" class="active">模拟投资组合</a><a href="zhoumo">周末</a><a href="gushi-xuetang">股市学堂</a><a href="rili">📅 日历</a><a href="cidian">词典</a><a href="shuyu">术语</a><a href="kuaiji-shuyu">会计术语</a><a href="jiaoyi-jiqiren">交易机器人</a></nav>
+</div></header>
 
-
-
-BIST 30 每日股市报告与分析
-🌙
-首页报告股票深度分析宏观分析技术扫描信号记分卡Borsapy 信号新闻公司新闻模拟投资组合周末股市学堂📅 日历词典术语会计术语交易机器人
-
-
-
-  TUPRS 352.50 TL ▲ +0.07%VAKBN 30.02 TL ▼ -3.60%ISCTR 12.07 TL ▼ -2.82%YKBNK 34.84 TL ▼ -1.36%BIMAS 370.00 TL ▲ +0.27%PETKM 17.79 TL ▼ -2.79%EKGYO 17.16 TL ▼ -3.32%KCHOL 193.00 TL ▼ -1.58%GARAN 124.60 TL ▼ -3.04%KRDMD 38.04 TL ▼ -4.61%AKBNK 62.75 TL ▼ -2.86%TAVHL 258.50 TL ▼ -3.18%SAHOL 85.30 TL ▼ -2.57%TOASO 218.30 TL ▼ -2.41%TRMET 101.40 TL ▼ -4.52%TTKOM 45.58 TL ▼ -3.80%ASELS 325.75 TL ▼ -3.70%GUBRF 298.50 TL ▼ -9.95%ENKAI 72.35 TL ▼ -1.56%EREGL 31.70 TL ▼ -9.69%SISE 33.32 TL ▼ -2.23%TRALT 34.88 TL ▼ -4.39%SASA 1.59 TL ▼ -3.05%AEFES 15.86 TL ▼ -2.52%FROTO 64.90 TL ▼ -2.48%TCELL 88.00 TL ▼ -5.68%PGSUS 122.10 TL ▼ -3.40%THYAO 252.50 TL ▼ -2.51%MGROS 433.50 TL ▼ -1.59%ASTOR 142.50 TL ▼ -5.00%23.10 13:04 · ~15 分钟 延迟TUPRS 352.50 TL ▲ +0.07%VAKBN 30.02 TL ▼ -3.60%ISCTR 12.07 TL ▼ -2.82%YKBNK 34.84 TL ▼ -1.36%BIMAS 370.00 TL ▲ +0.27%PETKM 17.79 TL ▼ -2.79%EKGYO 17.16 TL ▼ -3.32%KCHOL 193.00 TL ▼ -1.58%GARAN 124.60 TL ▼ -3.04%KRDMD 38.04 TL ▼ -4.61%AKBNK 62.75 TL ▼ -2.86%TAVHL 258.50 TL ▼ -3.18%SAHOL 85.30 TL ▼ -2.57%TOASO 218.30 TL ▼ -2.41%TRMET 101.40 TL ▼ -4.52%TTKOM 45.58 TL ▼ -3.80%ASELS 325.75 TL ▼ -3.70%GUBRF 298.50 TL ▼ -9.95%ENKAI 72.35 TL ▼ -1.56%EREGL 31.70 TL ▼ -9.69%SISE 33.32 TL ▼ -2.23%TRALT 34.88 TL ▼ -4.39%SASA 1.59 TL ▼ -3.05%AEFES 15.86 TL ▼ -2.52%FROTO 64.90 TL ▼ -2.48%TCELL 88.00 TL ▼ -5.68%PGSUS 122.10 TL ▼ -3.40%THYAO 252.50 TL ▼ -2.51%MGROS 433.50 TL ▼ -1.59%ASTOR 142.50 TL ▼ -5.00%23.10 13:04 · ~15 分钟 延迟
-
+<div class="ticker-bant" id="ticker-bant" data-kok="" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span class="ticker-oge"><b>TUPRS</b> 352.50 TL <span class="pos">▲ +0.07%</span></span><span class="ticker-oge"><b>VAKBN</b> 30.02 TL <span class="neg">▼ -3.60%</span></span><span class="ticker-oge"><b>ISCTR</b> 12.07 TL <span class="neg">▼ -2.82%</span></span><span class="ticker-oge"><b>YKBNK</b> 34.84 TL <span class="neg">▼ -1.36%</span></span><span class="ticker-oge"><b>BIMAS</b> 370.00 TL <span class="pos">▲ +0.27%</span></span><span class="ticker-oge"><b>PETKM</b> 17.79 TL <span class="neg">▼ -2.79%</span></span><span class="ticker-oge"><b>EKGYO</b> 17.16 TL <span class="neg">▼ -3.32%</span></span><span class="ticker-oge"><b>KCHOL</b> 193.00 TL <span class="neg">▼ -1.58%</span></span><span class="ticker-oge"><b>GARAN</b> 124.60 TL <span class="neg">▼ -3.04%</span></span><span class="ticker-oge"><b>KRDMD</b> 38.04 TL <span class="neg">▼ -4.61%</span></span><span class="ticker-oge"><b>AKBNK</b> 62.75 TL <span class="neg">▼ -2.86%</span></span><span class="ticker-oge"><b>TAVHL</b> 258.50 TL <span class="neg">▼ -3.18%</span></span><span class="ticker-oge"><b>SAHOL</b> 85.30 TL <span class="neg">▼ -2.57%</span></span><span class="ticker-oge"><b>TOASO</b> 218.30 TL <span class="neg">▼ -2.41%</span></span><span class="ticker-oge"><b>TRMET</b> 101.40 TL <span class="neg">▼ -4.52%</span></span><span class="ticker-oge"><b>TTKOM</b> 45.58 TL <span class="neg">▼ -3.80%</span></span><span class="ticker-oge"><b>ASELS</b> 325.75 TL <span class="neg">▼ -3.70%</span></span><span class="ticker-oge"><b>GUBRF</b> 298.50 TL <span class="neg">▼ -9.95%</span></span><span class="ticker-oge"><b>ENKAI</b> 72.35 TL <span class="neg">▼ -1.56%</span></span><span class="ticker-oge"><b>EREGL</b> 31.70 TL <span class="neg">▼ -9.69%</span></span><span class="ticker-oge"><b>SISE</b> 33.32 TL <span class="neg">▼ -2.23%</span></span><span class="ticker-oge"><b>TRALT</b> 34.88 TL <span class="neg">▼ -4.39%</span></span><span class="ticker-oge"><b>SASA</b> 1.59 TL <span class="neg">▼ -3.05%</span></span><span class="ticker-oge"><b>AEFES</b> 15.86 TL <span class="neg">▼ -2.52%</span></span><span class="ticker-oge"><b>FROTO</b> 64.90 TL <span class="neg">▼ -2.48%</span></span><span class="ticker-oge"><b>TCELL</b> 88.00 TL <span class="neg">▼ -5.68%</span></span><span class="ticker-oge"><b>PGSUS</b> 122.10 TL <span class="neg">▼ -3.40%</span></span><span class="ticker-oge"><b>THYAO</b> 252.50 TL <span class="neg">▼ -2.51%</span></span><span class="ticker-oge"><b>MGROS</b> 433.50 TL <span class="neg">▼ -1.59%</span></span><span class="ticker-oge"><b>ASTOR</b> 142.50 TL <span class="neg">▼ -5.00%</span></span><span class="ticker-oge ticker-saat">23.10 13:04 · ~15 分钟 延迟</span><span aria-hidden="true" style="display:inline-block"><span class="ticker-oge"><b>TUPRS</b> 352.50 TL <span class="pos">▲ +0.07%</span></span><span class="ticker-oge"><b>VAKBN</b> 30.02 TL <span class="neg">▼ -3.60%</span></span><span class="ticker-oge"><b>ISCTR</b> 12.07 TL <span class="neg">▼ -2.82%</span></span><span class="ticker-oge"><b>YKBNK</b> 34.84 TL <span class="neg">▼ -1.36%</span></span><span class="ticker-oge"><b>BIMAS</b> 370.00 TL <span class="pos">▲ +0.27%</span></span><span class="ticker-oge"><b>PETKM</b> 17.79 TL <span class="neg">▼ -2.79%</span></span><span class="ticker-oge"><b>EKGYO</b> 17.16 TL <span class="neg">▼ -3.32%</span></span><span class="ticker-oge"><b>KCHOL</b> 193.00 TL <span class="neg">▼ -1.58%</span></span><span class="ticker-oge"><b>GARAN</b> 124.60 TL <span class="neg">▼ -3.04%</span></span><span class="ticker-oge"><b>KRDMD</b> 38.04 TL <span class="neg">▼ -4.61%</span></span><span class="ticker-oge"><b>AKBNK</b> 62.75 TL <span class="neg">▼ -2.86%</span></span><span class="ticker-oge"><b>TAVHL</b> 258.50 TL <span class="neg">▼ -3.18%</span></span><span class="ticker-oge"><b>SAHOL</b> 85.30 TL <span class="neg">▼ -2.57%</span></span><span class="ticker-oge"><b>TOASO</b> 218.30 TL <span class="neg">▼ -2.41%</span></span><span class="ticker-oge"><b>TRMET</b> 101.40 TL <span class="neg">▼ -4.52%</span></span><span class="ticker-oge"><b>TTKOM</b> 45.58 TL <span class="neg">▼ -3.80%</span></span><span class="ticker-oge"><b>ASELS</b> 325.75 TL <span class="neg">▼ -3.70%</span></span><span class="ticker-oge"><b>GUBRF</b> 298.50 TL <span class="neg">▼ -9.95%</span></span><span class="ticker-oge"><b>ENKAI</b> 72.35 TL <span class="neg">▼ -1.56%</span></span><span class="ticker-oge"><b>EREGL</b> 31.70 TL <span class="neg">▼ -9.69%</span></span><span class="ticker-oge"><b>SISE</b> 33.32 TL <span class="neg">▼ -2.23%</span></span><span class="ticker-oge"><b>TRALT</b> 34.88 TL <span class="neg">▼ -4.39%</span></span><span class="ticker-oge"><b>SASA</b> 1.59 TL <span class="neg">▼ -3.05%</span></span><span class="ticker-oge"><b>AEFES</b> 15.86 TL <span class="neg">▼ -2.52%</span></span><span class="ticker-oge"><b>FROTO</b> 64.90 TL <span class="neg">▼ -2.48%</span></span><span class="ticker-oge"><b>TCELL</b> 88.00 TL <span class="neg">▼ -5.68%</span></span><span class="ticker-oge"><b>PGSUS</b> 122.10 TL <span class="neg">▼ -3.40%</span></span><span class="ticker-oge"><b>THYAO</b> 252.50 TL <span class="neg">▼ -2.51%</span></span><span class="ticker-oge"><b>MGROS</b> 433.50 TL <span class="neg">▼ -1.59%</span></span><span class="ticker-oge"><b>ASTOR</b> 142.50 TL <span class="neg">▼ -5.00%</span></span><span class="ticker-oge ticker-saat">23.10 13:04 · ~15 分钟 延迟</span></span></div>
+</div>
 <script>
 (function() {
   var kok = document.getElementById('ticker-bant').dataset.kok || '';
@@ -77,9 +77,9 @@ BIST 30 每日股市报告与分析
 })();  // IIFE: tanimlandigi anda calistir
 </script>
 
-
-  BIST 30 (土耳其里拉) 14,463.64 ▼ -1.45%BIST 100 (土耳其里拉) 11,577.12 ▼ -1.87%克金 6,548.14 TL美元 49.6194 TL ▲ +0.07%BIST 30 (美元) 291.49 $ ▼ -1.52%22.10 07:49 · 日终 / 延迟BIST 30 (土耳其里拉) 14,463.64 ▼ -1.45%BIST 100 (土耳其里拉) 11,577.12 ▼ -1.87%克金 6,548.14 TL美元 49.6194 TL ▲ +0.07%BIST 30 (美元) 291.49 $ ▼ -1.52%22.10 07:49 · 日终 / 延迟
-
+<div class="ticker-bant" id="ticker-bant2" data-kok="" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span class="ticker-oge"><b>BIST 30 (土耳其里拉)</b> 14,463.64 <span class="neg">▼ -1.45%</span></span><span class="ticker-oge"><b>BIST 100 (土耳其里拉)</b> 11,577.12 <span class="neg">▼ -1.87%</span></span><span class="ticker-oge"><b>克金</b> 6,548.14 TL</span><span class="ticker-oge"><b>美元</b> 49.6194 TL <span class="pos">▲ +0.07%</span></span><span class="ticker-oge"><b>BIST 30 (美元)</b> 291.49 $ <span class="neg">▼ -1.52%</span></span><span class="ticker-oge ticker-saat">22.10 07:49 · 日终 / 延迟</span><span aria-hidden="true" style="display:inline-block"><span class="ticker-oge"><b>BIST 30 (土耳其里拉)</b> 14,463.64 <span class="neg">▼ -1.45%</span></span><span class="ticker-oge"><b>BIST 100 (土耳其里拉)</b> 11,577.12 <span class="neg">▼ -1.87%</span></span><span class="ticker-oge"><b>克金</b> 6,548.14 TL</span><span class="ticker-oge"><b>美元</b> 49.6194 TL <span class="pos">▲ +0.07%</span></span><span class="ticker-oge"><b>BIST 30 (美元)</b> 291.49 $ <span class="neg">▼ -1.52%</span></span><span class="ticker-oge ticker-saat">22.10 07:49 · 日终 / 延迟</span></span></div>
+</div>
 <script>
 (function() {
   var kutu = document.getElementById('ticker-bant2');
@@ -117,34 +117,34 @@ BIST 30 每日股市报告与分析
 })();
 </script>
 
-
-    
-    
-        
-            ⏳ 加载中...
-            🌤️ 伊斯坦布尔: 局部多云
-        
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ 加载中...</span>
+            <span id="istanbul-weather">🌤️ 伊斯坦布尔: 局部多云</span>
+        </div>
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="选择页面语言">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/portfolio" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/portfolio" hreflang="en" lang="en" data-dil="en">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/portfolio" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/portfolio" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/portfolio" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh" class="aktif" aria-current="true">简体中文</a>
+</nav>
+    </div>
 
-🌐
-Türkçe
-English
-Deutsch
-Русский
-简体中文
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
 
-    
-
-    
-    
-
-
-    
-        
-        搜索
-    
-    
-
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="搜索股票、主题或日期…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">搜索</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
 <script>
 (function() {
   var KOK = '';
@@ -221,13 +221,13 @@ Deutsch
 </script>
 
 
-
-  ▶
-  
-  
-  📻 全部节目与播客页面 • RSS
-  仅供收听 • 虚构的人工智能主播 • 仅供参考，不构成投资建议。
-
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="播放 / 暂停">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="音量" title="声音">
+  <span class="radyo-linkler"><a href="guangbo/">📻 全部节目与播客页面</a> <span class="ayrac">•</span> <a href="guangbo/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">仅供收听 • 虚构的人工智能主播 • 仅供参考，不构成投资建议。</span>
+</div>
 <script>
 (function(){
   var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
@@ -253,43 +253,43 @@ Deutsch
 })();
 </script>
 
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
     
+<div class="hero">
+<h1>模拟投资组合</h1>
+<p>BIST 30股票等分配的100.000 TL虚拟投资组合。不进行买卖，仅用于跟踪；
+工作日每天早上会根据前一交易日的收盘价自动更新。</p>
+</div>
+<details class="card" style="margin-bottom:22px">
+<summary style="cursor:pointer; font-weight:700">📐 方法论 —— 这个投资组合是如何计算的？</summary>
+<div style="margin-top:10px; font-size:14px; display:grid; gap:6px">
+<p style="margin:0">• 2026-09-06 当日 100,000 TL 投入 BIST 30 股票 <strong>平均分配</strong>; 数量为小数，实际操作中需要取整为整手。</p>
+<p style="margin:0">• 每个工作日早晨 <strong>以上一交易日的收盘价</strong> 更新；节假日数值不变，不进行任何买卖。</p>
+<p style="margin:0">• <strong>股息、送股和拆股目前未计入</strong>; 在这些事件发生的日子可能出现收益偏离。</p>
+<p style="margin:0">• 对比曲线（黄金、美元、存款、BIST 100、BIST 30、通胀）统一归一化到 100,000 TL 基准；通胀值为来自 TradingView 经济日历的最新 TÜİK 年度读数，并按期间日期反映在图表上。</p>
+<p style="margin:0">• 总收益不是各只股票涨跌幅的平均值，而是投资组合总价值的变化。信号记分卡页面中的净收益情景采用约 0.10% 佣金+BSMV 的假设。</p>
+<p style="margin:0; color:var(--muted)">这是一个虚拟测试投资组合；不是投资建议。过往表现并不保证未来结果。</p>
+</div>
+</details>
 
-    
-    
-
-模拟投资组合
-BIST 30股票等分配的100.000 TL虚拟投资组合。不进行买卖，仅用于跟踪；
-工作日每天早上会根据前一交易日的收盘价自动更新。
-
-
-📐 方法论 —— 这个投资组合是如何计算的？
-
-• 2026-09-06 当日 100,000 TL 投入 BIST 30 股票 平均分配; 数量为小数，实际操作中需要取整为整手。
-• 每个工作日早晨 以上一交易日的收盘价 更新；节假日数值不变，不进行任何买卖。
-• 股息、送股和拆股目前未计入; 在这些事件发生的日子可能出现收益偏离。
-• 对比曲线（黄金、美元、存款、BIST 100、BIST 30、通胀）统一归一化到 100,000 TL 基准；通胀值为来自 TradingView 经济日历的最新 TÜİK 年度读数，并按期间日期反映在图表上。
-• 总收益不是各只股票涨跌幅的平均值，而是投资组合总价值的变化。信号记分卡页面中的净收益情景采用约 0.10% 佣金+BSMV 的假设。
-这是一个虚拟测试投资组合；不是投资建议。过往表现并不保证未来结果。
-
-
-
-
-当前价值85,254 TL
-日变化-3.25%
-总收益率-14.75%
-开始2026-09-06
-最大跌幅-20.29%波动率(年)26.7%年化收益率-67.29%短期 — 应谨慎解读赢家 / 输家0 / 3036 işlem günü
-
-市场比较( 相同100,000 TL基准;最后一列为投资组合差异)比较收益率投资组合差异此投资组合-14.75%—BIST 30(同期)-18.56%+3.81 puanBIST 100(同期)-22.91%+8.16 puan黄金（同期）-6.00%-8.75 puan美元（同期）+3.11%-17.86 puan存款（利息）（同期）+5.96%-20.71 puan
-回报本身不是成功的指标：投资组合在同一时期与BIST 30/100和黄金/美元进行比较。如果正回报低于指数，则相对较弱。
-
-
-
-
-
-↔ 可左右拖动图表
-
+<div class="stats">
+<div class="stat"><div class="label">当前价值</div><div class="value">85,254 TL</div></div>
+<div class="stat"><div class="label">日变化</div><div class="value neg">-3.25%</div></div>
+<div class="stat"><div class="label">总收益率</div><div class="value neg">-14.75%</div></div>
+<div class="stat"><div class="label">开始</div><div class="value" style="font-size:16px">2026-09-06</div></div>
+<div class="stat"><div class="label">最大跌幅</div><div class="value neg">-20.29%</div></div><div class="stat"><div class="label">波动率(年)</div><div class="value">26.7%</div></div><div class="stat"><div class="label">年化收益率</div><div class="value neg">-67.29%</div><div style="font-size:11px;color:var(--muted)">短期 — 应谨慎解读</div></div><div class="stat"><div class="label">赢家 / 输家</div><div class="value">0 / 30</div><div style="font-size:11px;color:var(--muted)">36 işlem günü</div></div>
+</div>
+<h3 class="section-title">市场比较<span style="font-size:12px;color:var(--muted);font-weight:400">( 相同100,000 TL基准;最后一列为投资组合差异)</span></h3><div class="card" style="padding:8px 24px 16px"><div class="tbl-wrap"><table><tr><th>比较</th><th>收益率</th><th>投资组合差异</th></tr><tr><td><strong>此投资组合</strong></td><td class='neg'>-14.75%</td><td>—</td></tr><tr><td>BIST 30(同期)</td><td class='neg'>-18.56%</td><td class='pos'>+3.81 puan</td></tr><tr><td>BIST 100(同期)</td><td class='neg'>-22.91%</td><td class='pos'>+8.16 puan</td></tr><tr><td>黄金（同期）</td><td class='neg'>-6.00%</td><td class='neg'>-8.75 puan</td></tr><tr><td>美元（同期）</td><td class='pos'>+3.11%</td><td class='neg'>-17.86 puan</td></tr><tr><td>存款（利息）（同期）</td><td class='pos'>+5.96%</td><td class='neg'>-20.71 puan</td></tr></table></div></div>
+<p style="color:var(--muted); font-size:12px; margin:0 0 18px">回报本身不是成功的指标：投资组合在同一时期与BIST 30/100和黄金/美元进行比较。如果正回报低于指数，则相对较弱。</p>
+<div class="card" style="margin-bottom:22px">
+<div class="pgrafik-sarmal">
+<div style="position:relative; height:340px; min-width:640px;">
+<canvas id="portfoy-grafik-614945"></canvas>
+</div>
+<p class="pgrafik-ipucu">↔ 可左右拖动图表</p>
+</div>
 <style>
 .pgrafik-sarmal{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .pgrafik-ipucu{display:none;margin:6px 0 0;color:var(--muted);font-size:12px;text-align:center}
@@ -345,32 +345,32 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 });
 </script>
-
-股票表现（首次买入 vs 最新价格）
-
-
-股票数量买入价最新价收益率AEFES180.6718.45 TL16.88 TL-8.51%AKBNK46.3971.85 TL64.60 TL-10.09%ASELS8.59388.25 TL345.75 TL-10.95%ASTOR11.30295.00 TL156.60 TL-46.92%BIMAS8.02415.75 TL369.00 TL-11.24%EKGYO171.4719.44 TL17.75 TL-8.69%ENKAI38.2087.25 TL73.50 TL-15.76%EREGL89.6137.20 TL35.10 TL-5.65%FROTO43.1877.20 TL66.55 TL-13.80%GARAN25.37131.40 TL128.50 TL-2.21%GUBRF6.96478.75 TL331.50 TL-30.76%ISCTR256.2113.01 TL12.42 TL-4.53%KCHOL15.50215.10 TL196.10 TL-8.83%KRDMD76.5943.52 TL39.88 TL-8.36%MGROS6.33527.00 TL440.50 TL-16.41%PETKM166.1720.06 TL18.30 TL-8.77%PGSUS22.42148.70 TL126.40 TL-15.00%SAHOL36.0092.60 TL87.55 TL-5.45%SASA1,455.602.29 TL1.64 TL-28.38%SISE85.3039.08 TL34.08 TL-12.79%TAVHL12.43268.25 TL267.00 TL-0.47%TCELL33.9698.15 TL93.30 TL-4.94%THYAO11.26296.00 TL259.00 TL-12.50%TOASO12.15274.25 TL223.70 TL-18.43%TRALT65.6250.80 TL36.48 TL-28.19%TTKOM64.2351.90 TL47.38 TL-8.71%TUPRS8.58388.50 TL352.25 TL-9.33%VAKBN99.1533.62 TL31.14 TL-7.38%YKBNK92.8535.90 TL35.32 TL-1.62%TRMET6.95129.50 TL106.20 TL-17.99%
-
-
-每日历史
-
-
-日期*总价值总计 %日涨跌 %2026-10-2385,254.23 TL-14.75%-3.25%2026-10-2288,117.19 TL-11.88%-2.30%2026-10-2190,191.92 TL-9.81%+2.89%2026-10-2087,659.66 TL-12.34%-1.57%2026-10-1989,058.19 TL-10.94%-2.75%2026-10-1691,578.26 TL-8.42%-0.91%2026-10-1592,418.02 TL-7.58%-0.82%2026-10-1493,178.46 TL-6.82%+0.77%2026-10-1392,462.46 TL-7.54%-0.83%2026-10-1293,233.89 TL-6.77%+0.00%2026-10-1193,233.89 TL-6.77%-0.13%2026-10-0993,355.82 TL-6.64%-0.20%2026-10-0893,538.75 TL-6.46%-0.64%2026-10-0794,137.52 TL-5.86%+0.01%2026-10-0694,126.59 TL-5.87%+0.60%2026-10-0593,560.91 TL-6.44%-1.40%2026-10-0294,893.52 TL-5.11%-0.54%2026-10-0195,407.00 TL-4.59%-0.24%2026-09-3095,636.60 TL-4.36%-1.04%2026-09-2996,644.68 TL-3.36%-1.68%2026-09-2898,296.74 TL-1.70%-1.18%2026-09-2599,466.24 TL-0.53%-1.32%2026-09-24100,798.02 TL+0.80%+0.90%2026-09-2399,903.84 TL-0.10%-0.57%2026-09-22100,479.68 TL+0.48%+1.59%2026-09-2198,907.56 TL-1.09%-0.98%2026-09-1899,889.37 TL-0.11%+2.43%2026-09-1797,523.70 TL-2.48%-4.68%2026-09-16102,312.18 TL+2.31%-2.80%2026-09-15105,257.55 TL+5.26%-1.58%2026-09-14106,949.37 TL+6.95%+1.55%2026-09-11105,320.34 TL+5.32%-0.38%2026-09-10105,721.90 TL+5.72%+0.56%2026-09-09105,135.98 TL+5.14%+2.72%2026-09-08102,352.27 TL+2.35%+2.34%2026-09-07100,013.04 TL+0.01%+0.00%2026-09-06100,013.04 TL+0.01%+0.01%
-
-
-投资组合每个工作日早晨自动按前一交易日的收盘价更新；周末和节假日数值不变。实时价格请看上方价格条。收益率以初始等额分配的 100.000 TL 的当前价值计算；并非表中个股百分比的简单平均。对比曲线（黄金/美元/存款/指数/通胀）同样以 100.000 TL 为基准归一化。收益期间以投资组合起始日期为准（而非年初）；由于第一天也按收盘价估值，首条记录可能略偏离 100.000.00 TL（例如 100.013 TL）。
+</div>
+<h2 class="section-title">股票表现（首次买入 vs 最新价格）</h2>
+<div class="card" style="padding:8px 24px 16px">
+<div class="tbl-wrap">
+<table><tr><th>股票</th><th>数量</th><th>买入价</th><th>最新价</th><th>收益率</th></tr><tr><td><a href="gupiao/AEFES"><strong>AEFES</strong></a></td><td>180.67</td><td>18.45 TL</td><td>16.88 TL</td><td class='neg'>-8.51%</td></tr><tr><td><a href="gupiao/AKBNK"><strong>AKBNK</strong></a></td><td>46.39</td><td>71.85 TL</td><td>64.60 TL</td><td class='neg'>-10.09%</td></tr><tr><td><a href="gupiao/ASELS"><strong>ASELS</strong></a></td><td>8.59</td><td>388.25 TL</td><td>345.75 TL</td><td class='neg'>-10.95%</td></tr><tr><td><a href="gupiao/ASTOR"><strong>ASTOR</strong></a></td><td>11.30</td><td>295.00 TL</td><td>156.60 TL</td><td class='neg'>-46.92%</td></tr><tr><td><a href="gupiao/BIMAS"><strong>BIMAS</strong></a></td><td>8.02</td><td>415.75 TL</td><td>369.00 TL</td><td class='neg'>-11.24%</td></tr><tr><td><a href="gupiao/EKGYO"><strong>EKGYO</strong></a></td><td>171.47</td><td>19.44 TL</td><td>17.75 TL</td><td class='neg'>-8.69%</td></tr><tr><td><a href="gupiao/ENKAI"><strong>ENKAI</strong></a></td><td>38.20</td><td>87.25 TL</td><td>73.50 TL</td><td class='neg'>-15.76%</td></tr><tr><td><a href="gupiao/EREGL"><strong>EREGL</strong></a></td><td>89.61</td><td>37.20 TL</td><td>35.10 TL</td><td class='neg'>-5.65%</td></tr><tr><td><a href="gupiao/FROTO"><strong>FROTO</strong></a></td><td>43.18</td><td>77.20 TL</td><td>66.55 TL</td><td class='neg'>-13.80%</td></tr><tr><td><a href="gupiao/GARAN"><strong>GARAN</strong></a></td><td>25.37</td><td>131.40 TL</td><td>128.50 TL</td><td class='neg'>-2.21%</td></tr><tr><td><a href="gupiao/GUBRF"><strong>GUBRF</strong></a></td><td>6.96</td><td>478.75 TL</td><td>331.50 TL</td><td class='neg'>-30.76%</td></tr><tr><td><a href="gupiao/ISCTR"><strong>ISCTR</strong></a></td><td>256.21</td><td>13.01 TL</td><td>12.42 TL</td><td class='neg'>-4.53%</td></tr><tr><td><a href="gupiao/KCHOL"><strong>KCHOL</strong></a></td><td>15.50</td><td>215.10 TL</td><td>196.10 TL</td><td class='neg'>-8.83%</td></tr><tr><td><a href="gupiao/KRDMD"><strong>KRDMD</strong></a></td><td>76.59</td><td>43.52 TL</td><td>39.88 TL</td><td class='neg'>-8.36%</td></tr><tr><td><a href="gupiao/MGROS"><strong>MGROS</strong></a></td><td>6.33</td><td>527.00 TL</td><td>440.50 TL</td><td class='neg'>-16.41%</td></tr><tr><td><a href="gupiao/PETKM"><strong>PETKM</strong></a></td><td>166.17</td><td>20.06 TL</td><td>18.30 TL</td><td class='neg'>-8.77%</td></tr><tr><td><a href="gupiao/PGSUS"><strong>PGSUS</strong></a></td><td>22.42</td><td>148.70 TL</td><td>126.40 TL</td><td class='neg'>-15.00%</td></tr><tr><td><a href="gupiao/SAHOL"><strong>SAHOL</strong></a></td><td>36.00</td><td>92.60 TL</td><td>87.55 TL</td><td class='neg'>-5.45%</td></tr><tr><td><a href="gupiao/SASA"><strong>SASA</strong></a></td><td>1,455.60</td><td>2.29 TL</td><td>1.64 TL</td><td class='neg'>-28.38%</td></tr><tr><td><a href="gupiao/SISE"><strong>SISE</strong></a></td><td>85.30</td><td>39.08 TL</td><td>34.08 TL</td><td class='neg'>-12.79%</td></tr><tr><td><a href="gupiao/TAVHL"><strong>TAVHL</strong></a></td><td>12.43</td><td>268.25 TL</td><td>267.00 TL</td><td class='neg'>-0.47%</td></tr><tr><td><a href="gupiao/TCELL"><strong>TCELL</strong></a></td><td>33.96</td><td>98.15 TL</td><td>93.30 TL</td><td class='neg'>-4.94%</td></tr><tr><td><a href="gupiao/THYAO"><strong>THYAO</strong></a></td><td>11.26</td><td>296.00 TL</td><td>259.00 TL</td><td class='neg'>-12.50%</td></tr><tr><td><a href="gupiao/TOASO"><strong>TOASO</strong></a></td><td>12.15</td><td>274.25 TL</td><td>223.70 TL</td><td class='neg'>-18.43%</td></tr><tr><td><a href="gupiao/TRALT"><strong>TRALT</strong></a></td><td>65.62</td><td>50.80 TL</td><td>36.48 TL</td><td class='neg'>-28.19%</td></tr><tr><td><a href="gupiao/TTKOM"><strong>TTKOM</strong></a></td><td>64.23</td><td>51.90 TL</td><td>47.38 TL</td><td class='neg'>-8.71%</td></tr><tr><td><a href="gupiao/TUPRS"><strong>TUPRS</strong></a></td><td>8.58</td><td>388.50 TL</td><td>352.25 TL</td><td class='neg'>-9.33%</td></tr><tr><td><a href="gupiao/VAKBN"><strong>VAKBN</strong></a></td><td>99.15</td><td>33.62 TL</td><td>31.14 TL</td><td class='neg'>-7.38%</td></tr><tr><td><a href="gupiao/YKBNK"><strong>YKBNK</strong></a></td><td>92.85</td><td>35.90 TL</td><td>35.32 TL</td><td class='neg'>-1.62%</td></tr><tr><td><a href="gupiao/TRMET"><strong>TRMET</strong></a></td><td>6.95</td><td>129.50 TL</td><td>106.20 TL</td><td class='neg'>-17.99%</td></tr></table>
+</div>
+</div>
+<h2 class="section-title">每日历史</h2>
+<div class="card" style="padding:8px 24px 16px">
+<div class="tbl-wrap">
+<table><tr><th>日期*</th><th>总价值</th><th>总计 %</th><th>日涨跌 %</th></tr><tr><td>2026-10-23</td><td>85,254.23 TL</td><td class='neg'>-14.75%</td><td class='neg'>-3.25%</td></tr><tr><td>2026-10-22</td><td>88,117.19 TL</td><td class='neg'>-11.88%</td><td class='neg'>-2.30%</td></tr><tr><td>2026-10-21</td><td>90,191.92 TL</td><td class='neg'>-9.81%</td><td class='pos'>+2.89%</td></tr><tr><td>2026-10-20</td><td>87,659.66 TL</td><td class='neg'>-12.34%</td><td class='neg'>-1.57%</td></tr><tr><td>2026-10-19</td><td>89,058.19 TL</td><td class='neg'>-10.94%</td><td class='neg'>-2.75%</td></tr><tr><td>2026-10-16</td><td>91,578.26 TL</td><td class='neg'>-8.42%</td><td class='neg'>-0.91%</td></tr><tr><td>2026-10-15</td><td>92,418.02 TL</td><td class='neg'>-7.58%</td><td class='neg'>-0.82%</td></tr><tr><td>2026-10-14</td><td>93,178.46 TL</td><td class='neg'>-6.82%</td><td class='pos'>+0.77%</td></tr><tr><td>2026-10-13</td><td>92,462.46 TL</td><td class='neg'>-7.54%</td><td class='neg'>-0.83%</td></tr><tr><td>2026-10-12</td><td>93,233.89 TL</td><td class='neg'>-6.77%</td><td class='pos'>+0.00%</td></tr><tr><td>2026-10-11</td><td>93,233.89 TL</td><td class='neg'>-6.77%</td><td class='neg'>-0.13%</td></tr><tr><td>2026-10-09</td><td>93,355.82 TL</td><td class='neg'>-6.64%</td><td class='neg'>-0.20%</td></tr><tr><td>2026-10-08</td><td>93,538.75 TL</td><td class='neg'>-6.46%</td><td class='neg'>-0.64%</td></tr><tr><td>2026-10-07</td><td>94,137.52 TL</td><td class='neg'>-5.86%</td><td class='pos'>+0.01%</td></tr><tr><td>2026-10-06</td><td>94,126.59 TL</td><td class='neg'>-5.87%</td><td class='pos'>+0.60%</td></tr><tr><td>2026-10-05</td><td>93,560.91 TL</td><td class='neg'>-6.44%</td><td class='neg'>-1.40%</td></tr><tr><td>2026-10-02</td><td>94,893.52 TL</td><td class='neg'>-5.11%</td><td class='neg'>-0.54%</td></tr><tr><td>2026-10-01</td><td>95,407.00 TL</td><td class='neg'>-4.59%</td><td class='neg'>-0.24%</td></tr><tr><td>2026-09-30</td><td>95,636.60 TL</td><td class='neg'>-4.36%</td><td class='neg'>-1.04%</td></tr><tr><td>2026-09-29</td><td>96,644.68 TL</td><td class='neg'>-3.36%</td><td class='neg'>-1.68%</td></tr><tr><td>2026-09-28</td><td>98,296.74 TL</td><td class='neg'>-1.70%</td><td class='neg'>-1.18%</td></tr><tr><td>2026-09-25</td><td>99,466.24 TL</td><td class='neg'>-0.53%</td><td class='neg'>-1.32%</td></tr><tr><td>2026-09-24</td><td>100,798.02 TL</td><td class='pos'>+0.80%</td><td class='pos'>+0.90%</td></tr><tr><td>2026-09-23</td><td>99,903.84 TL</td><td class='neg'>-0.10%</td><td class='neg'>-0.57%</td></tr><tr><td>2026-09-22</td><td>100,479.68 TL</td><td class='pos'>+0.48%</td><td class='pos'>+1.59%</td></tr><tr><td>2026-09-21</td><td>98,907.56 TL</td><td class='neg'>-1.09%</td><td class='neg'>-0.98%</td></tr><tr><td>2026-09-18</td><td>99,889.37 TL</td><td class='neg'>-0.11%</td><td class='pos'>+2.43%</td></tr><tr><td>2026-09-17</td><td>97,523.70 TL</td><td class='neg'>-2.48%</td><td class='neg'>-4.68%</td></tr><tr><td>2026-09-16</td><td>102,312.18 TL</td><td class='pos'>+2.31%</td><td class='neg'>-2.80%</td></tr><tr><td>2026-09-15</td><td>105,257.55 TL</td><td class='pos'>+5.26%</td><td class='neg'>-1.58%</td></tr><tr><td>2026-09-14</td><td>106,949.37 TL</td><td class='pos'>+6.95%</td><td class='pos'>+1.55%</td></tr><tr><td>2026-09-11</td><td>105,320.34 TL</td><td class='pos'>+5.32%</td><td class='neg'>-0.38%</td></tr><tr><td>2026-09-10</td><td>105,721.90 TL</td><td class='pos'>+5.72%</td><td class='pos'>+0.56%</td></tr><tr><td>2026-09-09</td><td>105,135.98 TL</td><td class='pos'>+5.14%</td><td class='pos'>+2.72%</td></tr><tr><td>2026-09-08</td><td>102,352.27 TL</td><td class='pos'>+2.35%</td><td class='pos'>+2.34%</td></tr><tr><td>2026-09-07</td><td>100,013.04 TL</td><td class='pos'>+0.01%</td><td class='pos'>+0.00%</td></tr><tr><td>2026-09-06</td><td>100,013.04 TL</td><td class='pos'>+0.01%</td><td class='pos'>+0.01%</td></tr></table>
+</div>
+</div>
+<p style="margin:10px 0 0; color:var(--muted); font-size:12.5px">投资组合每个工作日早晨自动按前一交易日的收盘价更新；周末和节假日数值不变。实时价格请看上方价格条。收益率以初始等额分配的 100.000 TL 的当前价值计算；并非表中个股百分比的简单平均。对比曲线（黄金/美元/存款/指数/通胀）同样以 100.000 TL 为基准归一化。收益期间以投资组合起始日期为准（而非年初）；由于第一天也按收盘价估值，首条记录可能略偏离 100.000.00 TL（例如 100.013 TL）。<br>
 * 日期列显示投资组合更新的日期；价格属于前一个交易日的收盘价。
-周末和节假日期间价值不变。
+周末和节假日期间价值不变。</p>
+</main>
 
-
-
-📊报告
-📈技术
-🏦股票
-💼投资组合
-📰新闻
-📅日历
-
+<nav class="altbar" aria-label="快捷菜单">
+<a href="baogao"><span class="i" aria-hidden="true">📊</span>报告</a>
+<a href="jishu-saomiao"><span class="i" aria-hidden="true">📈</span>技术</a>
+<a href="gupiao/"><span class="i" aria-hidden="true">🏦</span>股票</a>
+<a href="portfolio" class="active"><span class="i" aria-hidden="true">💼</span>投资组合</a>
+<a href="xinwen"><span class="i" aria-hidden="true">📰</span>新闻</a>
+<a href="rili"><span class="i" aria-hidden="true">📅</span>日历</a>
+</nav>
 
 <script>
 function temaDegistir() {
@@ -387,9 +387,9 @@ function temaDegistir() {
 })();
 </script>
 
-此处所含的信息、评论和建议仅供参考；不属于投资顾问服务，不构成投资建议。无法保证数据的准确性，因内容而产生的任何决定，责任均由用户自行承担。数据来源：İş Yatırım、RSS 新闻源 • 分析：人工智能（多智能体系统）隐私与数据保护
+<footer class="footer">此处所含的信息、评论和建议仅供参考；不属于投资顾问服务，不构成投资建议。无法保证数据的准确性，因内容而产生的任何决定，责任均由用户自行承担。<br>数据来源：İş Yatırım、RSS 新闻源 • 分析：人工智能（多智能体系统）<br><a href="yinsi" style="color:inherit">隐私与数据保护</a></footer>
 
-
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
 <script>
     function updateClock() {
         const now = new Date();
@@ -411,3 +411,4 @@ function temaDegistir() {
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
         });
 </script>
+</body></html>

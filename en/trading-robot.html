@@ -1,35 +1,35 @@
-
-
-
-
-
-Trading Robot (Simulation)
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trading Robot (Simulation)</title>
+<meta name="description" content="Live ledger of the BIST 30 paper-trading bot: simulated BUY/SELL orders updated every 15 minutes during market hours, open positions, intraday equity curve, and strategy rules. No real money is used; not investment advice.">
+<link rel="icon" href="/favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/en/trading-robot">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/robot">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/jiaoyi-jiqiren">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/torgovyy-robot">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/trading-robot">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/handelsroboter">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/robot">
+<meta property="og:title" content="Trading Robot (Simulation)">
+<meta property="og:description" content="Transparent ledger of the BIST 30 simulated trading robot: positions, trades, intraday equity curve. Not investment advice.">
+<meta property="og:type" content="website">
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="stylesheet" href="style.css?v=6bc658f2">
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="./">BIST 30 Daily Reports</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Light/dark theme" aria-label="Change theme">🌙</button></div>
+<nav><a href="./">Home Page</a><a href="reports">Reports</a><a href="stocks/">Stocks</a><a href="deep-analysis">Deep Analysis</a><a href="macro-analysis">Macro Analysis</a><a href="technical-scan">Technical Scan</a><a href="signal-scorecard">Signal Scorecard</a><a href="borsapy-signals">Borsapy Signals</a><a href="news">News</a><a href="company-news">Company News</a><a href="portfolio">Demo Portfolio</a><a href="weekend">Weekend</a><a href="market-school">Market School</a><a href="calendar">📅 Calendar</a><a href="glossary">Glossary</a><a href="terms">Terms</a><a href="accounting-terms">Accounting Terms</a><a href="trading-robot" class="active">Trading Robot</a></nav>
+</div></header>
 
-
-
-
-BIST 30 Daily Reports
-🌙
-Home PageReportsStocksDeep AnalysisMacro AnalysisTechnical ScanSignal ScorecardBorsapy SignalsNewsCompany NewsDemo PortfolioWeekendMarket School📅 CalendarGlossaryTermsAccounting TermsTrading Robot
-
-
-
-  Loading prices…
-
+<div class="ticker-bant" id="ticker-bant" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Loading prices…</span></div>
+</div>
 <script>
 (function() {
   function ciz(veri) {
@@ -60,9 +60,9 @@ Home PageReportsStocksDeep AnalysisMacro AnalysisTechnical ScanSignal ScorecardB
 })();
 </script>
 
-
-  Loading market data...
-
+<div class="ticker-bant" id="ticker-bant2" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Loading market data...</span></div>
+</div>
 <script>
 (function() {
   var iz = document.getElementById('ticker-iz2');
@@ -96,16 +96,16 @@ Home PageReportsStocksDeep AnalysisMacro AnalysisTechnical ScanSignal ScorecardB
   setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
 })();
 </script>
-
-🟡 Connecting live…
-    
-    
-        
-            ⏳ Loading...
-            🌤️ Istanbul Weather...
-        
-<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>🌐TürkçeEnglishDeutschРусский简体中文
-    
+<main class="wrap">
+<div id="robot-canli" class="card" style="padding:12px 18px;margin:0 0 18px;font-size:14px"><span style="color:var(--muted)">🟡 Connecting live…</span></div>
+    <!-- Üst Widget Alanı (Canlı Saat ve İstanbul Hava Durumu) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Loading...</span>
+            <span id="istanbul-weather">🌤️ Istanbul Weather...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style><nav class="dil-linkler" aria-label="Select page language"><span aria-hidden="true">🌐</span><a href="https://borsa-raporlari.pages.dev/robot" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a><a href="https://borsa-raporlari.pages.dev/en/trading-robot" hreflang="en" lang="en" data-dil="en" class="aktif" aria-current="true">English</a><a href="https://borsa-raporlari.pages.dev/de/handelsroboter" hreflang="de" lang="de" data-dil="de">Deutsch</a><a href="https://borsa-raporlari.pages.dev/ru/torgovyy-robot" hreflang="ru" lang="ru" data-dil="ru">Русский</a><a href="https://borsa-raporlari.pages.dev/zh/jiaoyi-jiqiren" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a></nav>
+    </div>
 <script>
     function updateClock() {
         const now = new Date();
@@ -127,15 +127,15 @@ Home PageReportsStocksDeep AnalysisMacro AnalysisTechnical ScanSignal ScorecardB
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
         });
 </script>
+<div class="interactive-box">
 
-
-
-    
-        
-        Search
-    
-    
-
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Search stock, topic or date..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
 <script>
 (function() {
   var INDEKS = null;
@@ -205,45 +205,45 @@ Home PageReportsStocksDeep AnalysisMacro AnalysisTechnical ScanSignal ScorecardB
 })();
 </script>
 
-
-
-Trading Robot simulation
-On BIST 30 stocks paper trading live ledger of the automatic robot that does this.
-The robot every 15 minutes during market hours checked against the live price (TradingView, ~15 min delayed):
+</div>
+<div class="hero">
+<h1>Trading Robot <span class="badge">simulation</span></h1>
+<p>On BIST 30 stocks <b>paper trading</b> live ledger of the automatic robot that does this.
+The robot <b>every 15 minutes during market hours</b> checked against the live price (TradingView, ~15 min delayed):
 stop-loss and target can trigger intraday, crossover signals are evaluated on intraday prices and
-the equity curve gains one point on each check. No real money is used; all orders are published here with their rationale.
-Not investment advice. Son güncelleme: 23.10.2026 22:58 (İstanbul).
-
-Total Value95,366.27 ₺Total return-4.63%Cash65,025.04 ₺Open Position1 / 8Realized P/L-4,031.53 ₺Win Rate25%Deduction withheld400.93 ₺
-Bugün (23.10.2026)Price check4 times · every 15 minutes during market hours · 🔴 market closed — last close dataSELL · GARAN · 88 lot · 122.80 ₺ · 15:17stop-loss: 127.77 seviyesi canlı fiyatta delindi (%-3 kural)SELL · YKBNK · 325 lot · 33.68 ₺ · 15:17stop-loss: 34.69 seviyesi canlı fiyatta delindi (%-3 kural)
-Equity Curve— one point with each price check
-
-
-
-25.09.2026
-23.10 15:17
-95,366.27 TL
-100.000.00 TL (initial)
-
-Open PositionsStockLotCostLastValue ₺P/L ₺P/L %StopTargetEntryALTIN4,6966,644.646,461.0830,341.23-862.00-2.76%regimeregime2026-10-19
-Recent TradesTimeStockDirectionLotPriceAmount ₺DeductionP/L ₺Reason2026-10-23 15:17YKBNKSELL32533.6810,926.8413.69-695.29stop-loss: 34.69 seviyesi canlı fiyatta delindi (%-3 kural)2026-10-23 15:17GARANSELL88122.8010,787.3413.66-804.27stop-loss: 127.77 seviyesi canlı fiyatta delindi (%-3 kural)2026-10-20 20:23TAVHLSELL42286.2512,002.5913.90496.05Target price: 282.18 level reached at live price (+3% rule)2026-10-19 17:13ALTINBUY4,6966,641.3231,223.8220.59—Bear mode: 50% of idle cash bought in gram gold (regime lever)2026-10-16 19:34YKBNKBUY32535.7011,622.1213.82—SMA10 &gt; SMA30 sequence · RSI 53 · price above SMA1002026-10-16 15:04GARANBUY88131.5011,591.6113.82—SMA10 &gt; SMA30 sequence · RSI 52 · price above SMA1002026-10-09 16:59TAVHLBUY42273.5011,506.5413.80—SMA10 &gt; SMA30 sequence · RSI 53 · price above SMA1002026-10-08 22:57TAVHLSELL42275.7511,561.8913.8244.84SMA10 crossed below SMA302026-10-08 17:13TAVHLBUY42273.7511,517.0513.80—SMA10 &gt; SMA30 sequence · RSI 53 · price above SMA1002026-10-07 17:04TAVHLSELL42272.2511,414.9913.79-291.19SMA10 crossed below SMA302026-10-07 17:04KRDMDSELL26842.7011,424.0913.79-366.22SMA10 crossed below SMA302026-10-07 17:04BIMASSELL28395.5011,054.7513.71-416.76SMA10 crossed below SMA302026-10-06 16:55TAVHLBUY42278.2511,706.1813.84—SMA10 &gt; SMA30 alignment · RSI 57 · price above SMA1002026-10-05 10:17KRDMDBUY26843.9211,790.3113.86—SMA10 &gt; SMA30 alignment · RSI 47 · price above SMA1002026-10-05 10:17VAKBNSELL34733.9811,771.3013.8622.99SMA10 crossed below SMA302026-10-02 11:42BIMASBUY28409.0011,471.5213.79—SMA10 &gt; SMA30 sequence · RSI 45 · price above SMA1002026-10-02 10:10VAKBNBUY34733.8011,748.3113.85—SMA10 &gt; SMA30 sequence · RSI 52 · price above SMA1002026-10-01 18:29BIMASSELL28408.0011,404.5113.78-396.46stop-loss: the 408.82 level was breached at the live price (the -3% rule)2026-10-01 15:33VAKBNSELL36234.4212,439.8213.99451.68target price: 34.11 level reached at live price (+3% rule)2026-10-01 11:29KRDMDSELL26642.8611,381.2813.78-438.24stop-loss: the 43.10 level was breached at the live price (the -3% rule)2026-10-01 11:10TUPRSSELL31371.7511,504.6913.80-395.88stop-loss: the 372.37 level was breached at the live price (the -3% rule)2026-10-01 10:14KRDMDBUY26644.3611,819.5213.86—SMA10 &gt; SMA30 sequence · RSI 48 · price above SMA1002026-09-30 16:54TAVHLSELL44262.2511,519.4213.81-391.41stop-loss: the 262.58 level was breached at the live price (the -3% rule)2026-09-30 11:11TUPRSBUY31383.2511,900.5713.88—SMA10 &gt; SMA30 sequence · RSI 45 · price above SMA1002026-09-29 16:31TUPRSSELL30384.2511,507.9313.81-430.20stop-loss: the 386.00 level was breached at the live price (the -3% rule)
-Sinyal Panosu (son kontrol: 2026-10-22)BUY · GARAN · 126.50 ₺ · alım adayıSMA10 &gt; SMA30 sequence · RSI 53 · price above SMA100
-Strategy RulesBUY: SMA10 is positioned above SMA30 + RSI14 is in the 45–75 band + price is above SMA100 (no fresh crossover expected; entry if pattern exists).SELL: The price crosses below SMA10/SMA30, or falls 3% falls below it (stop), or 3% rises above it (target).Size: at most 12% of equity in a single stock, max 8 positions.Daily brake: if equity falls 3% below yesterday's close, new buys are paused for the day.Saat kuralı: emirler yalnızca BIST işlem oturumunda yürütülür — hafta içi 10:00–18:00 TSİ; resmi tatillerde ve seans dışında (elle tetikleme dahil) işlem açılmaz, sinyaller sonraki seansı bekler.Costs: commission 0.04% (minimum 10 ₺) + BSMV 15% + legal fee ~0,020% + slippage 0.05%. Total cost for a 12.000 ₺ transaction is ~35–40 ₺ (~0.3%) — the real cost of scalping.Idle cash: valued at overnight reverse repo on each trading day — the annual rate is taken from the latest announced deposit interest; repo earnings are reflected in equity.Tax:  withholding tax is 0% on BIST stock sales; gains exceeding the annual declaration threshold must be declared.Performance SummaryStart: 2026-09-25 · 100.000.00 ₺Toplam işlem: 33 (16 SAT / 17 AL)Kazanan SAT oranı: 25%Gerçekleşen K/Z: -4,031.53 ₺ · Ödenen kesinti: 400.93 ₺Açık pozisyon K/Z (gerçekleşmemiş): -602.20 ₺
-Bu sayfa bağımsız bir simülasyondur: hiçbir gerçek emir gönderilmez, hiçbir gerçek para risk edilmez.
+the equity curve gains one point on each check. <u>No real money is used</u>; all orders are published here with their rationale.
+<strong>Not investment advice.</strong> Son güncelleme: 23.10.2026 22:58 (İstanbul).</p>
+</div>
+<div class='grid' style='grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0'><div class='stat' id='kpi-toplam' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Total Value</div><div style='font-size:21px;font-weight:700' class=''>95,366.27 ₺</div></div><div class='stat' id='kpi-getiri' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Total return</div><div style='font-size:21px;font-weight:700' class='neg'>-4.63%</div></div><div class='stat' id='kpi-nakit' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Cash</div><div style='font-size:21px;font-weight:700' class=''>65,025.04 ₺</div></div><div class='stat' id='kpi-poz' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Open Position</div><div style='font-size:21px;font-weight:700' class=''>1 / 8</div></div><div class='stat' id='kpi-kz' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Realized P/L</div><div style='font-size:21px;font-weight:700' class='neg'>-4,031.53 ₺</div></div><div class='stat' id='kpi-oran' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Win Rate</div><div style='font-size:21px;font-weight:700' class=''>25%</div></div><div class='stat' id='kpi-kesinti' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Deduction withheld</div><div style='font-size:21px;font-weight:700' class='neg'>400.93 ₺</div></div></div>
+<h2 class='section-title'>Bugün (23.10.2026)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'>Price check</div><span id='bugun-kontrol'>4</span> times · every 15 minutes during market hours · 🔴 market closed — last close data</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>SELL</span> · GARAN · 88 lot · 122.80 ₺ · 15:17</div>stop-loss: 127.77 seviyesi canlı fiyatta delindi (%-3 kural)</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>SELL</span> · YKBNK · 325 lot · 33.68 ₺ · 15:17</div>stop-loss: 34.69 seviyesi canlı fiyatta delindi (%-3 kural)</div></div>
+<h2 class="section-title">Equity Curve<span style="font-size:13px;color:var(--muted);font-weight:400">— one point with each price check</span></h2>
+<div class="card" id='sec-egri'><svg viewBox="0 0 720 160" style="width:100%;height:auto" role="img" aria-label="Equity curve">
+<polyline points="14.0,14.0,706.0,146.0" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+<polyline points="14.0,14.0 67.2,100.8 120.5,105.9 173.7,105.0 226.9,104.4 280.2,109.7 333.4,105.5 386.6,87.6 439.8,94.3 493.1,74.5 546.3,74.8 599.5,100.7 652.8,108.6 706.0,146.0" fill="none" stroke="#b91c1c" stroke-width="2.5" stroke-linejoin="round"/>
+<text x="14" y="158" font-size="10" fill="#64748b">25.09.2026</text>
+<text x="706" y="158" font-size="10" fill="#64748b" text-anchor="end">23.10 15:17</text>
+<text x="706" y="16" font-size="11" fill="#b91c1c" text-anchor="end">95,366.27 TL</text>
+<text x="14" y="16" font-size="11" fill="#64748b">100.000.00 TL (initial)</text>
+</svg></div>
+<h2 class='section-title'>Open Positions</h2><div class='card' style='padding:8px 24px 16px' id='sec-poz'><div style='overflow-x:auto'><table><tr><th>Stock</th><th>Lot</th><th>Cost</th><th>Last</th><th>Value ₺</th><th>P/L ₺</th><th>P/L %</th><th>Stop</th><th>Target</th><th>Entry</th></tr><tr><td><b>ALTIN</b></td><td>4,696</td><td>6,644.64</td><td>6,461.08</td><td>30,341.23</td><td class='neg'>-862.00</td><td class='neg'>-2.76%</td><td>regime</td><td>regime</td><td>2026-10-19</td></tr></table></div></div>
+<h2 class='section-title'>Recent Trades</h2><div class='card' style='padding:8px 24px 16px' id='sec-islem'><div style='overflow-x:auto'><table><tr><th>Time</th><th>Stock</th><th>Direction</th><th>Lot</th><th>Price</th><th>Amount ₺</th><th>Deduction</th><th>P/L ₺</th><th>Reason</th></tr><tr><td>2026-10-23 15:17</td><td><b>YKBNK</b></td><td class='neg'>SELL</td><td>325</td><td>33.68</td><td>10,926.84</td><td>13.69</td><td class='neg'>-695.29</td><td style='max-width:340px'>stop-loss: 34.69 seviyesi canlı fiyatta delindi (%-3 kural)</td></tr><tr><td>2026-10-23 15:17</td><td><b>GARAN</b></td><td class='neg'>SELL</td><td>88</td><td>122.80</td><td>10,787.34</td><td>13.66</td><td class='neg'>-804.27</td><td style='max-width:340px'>stop-loss: 127.77 seviyesi canlı fiyatta delindi (%-3 kural)</td></tr><tr><td>2026-10-20 20:23</td><td><b>TAVHL</b></td><td class='neg'>SELL</td><td>42</td><td>286.25</td><td>12,002.59</td><td>13.90</td><td class='pos'>496.05</td><td style='max-width:340px'>Target price: 282.18 level reached at live price (+3% rule)</td></tr><tr><td>2026-10-19 17:13</td><td><b>ALTIN</b></td><td class='pos'>BUY</td><td>4,696</td><td>6,641.32</td><td>31,223.82</td><td>20.59</td><td>—</td><td style='max-width:340px'>Bear mode: 50% of idle cash bought in gram gold (regime lever)</td></tr><tr><td>2026-10-16 19:34</td><td><b>YKBNK</b></td><td class='pos'>BUY</td><td>325</td><td>35.70</td><td>11,622.12</td><td>13.82</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 sequence · RSI 53 · price above SMA100</td></tr><tr><td>2026-10-16 15:04</td><td><b>GARAN</b></td><td class='pos'>BUY</td><td>88</td><td>131.50</td><td>11,591.61</td><td>13.82</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 sequence · RSI 52 · price above SMA100</td></tr><tr><td>2026-10-09 16:59</td><td><b>TAVHL</b></td><td class='pos'>BUY</td><td>42</td><td>273.50</td><td>11,506.54</td><td>13.80</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 sequence · RSI 53 · price above SMA100</td></tr><tr><td>2026-10-08 22:57</td><td><b>TAVHL</b></td><td class='neg'>SELL</td><td>42</td><td>275.75</td><td>11,561.89</td><td>13.82</td><td class='pos'>44.84</td><td style='max-width:340px'>SMA10 crossed below SMA30</td></tr><tr><td>2026-10-08 17:13</td><td><b>TAVHL</b></td><td class='pos'>BUY</td><td>42</td><td>273.75</td><td>11,517.05</td><td>13.80</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 sequence · RSI 53 · price above SMA100</td></tr><tr><td>2026-10-07 17:04</td><td><b>TAVHL</b></td><td class='neg'>SELL</td><td>42</td><td>272.25</td><td>11,414.99</td><td>13.79</td><td class='neg'>-291.19</td><td style='max-width:340px'>SMA10 crossed below SMA30</td></tr><tr><td>2026-10-07 17:04</td><td><b>KRDMD</b></td><td class='neg'>SELL</td><td>268</td><td>42.70</td><td>11,424.09</td><td>13.79</td><td class='neg'>-366.22</td><td style='max-width:340px'>SMA10 crossed below SMA30</td></tr><tr><td>2026-10-07 17:04</td><td><b>BIMAS</b></td><td class='neg'>SELL</td><td>28</td><td>395.50</td><td>11,054.75</td><td>13.71</td><td class='neg'>-416.76</td><td style='max-width:340px'>SMA10 crossed below SMA30</td></tr><tr><td>2026-10-06 16:55</td><td><b>TAVHL</b></td><td class='pos'>BUY</td><td>42</td><td>278.25</td><td>11,706.18</td><td>13.84</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 alignment · RSI 57 · price above SMA100</td></tr><tr><td>2026-10-05 10:17</td><td><b>KRDMD</b></td><td class='pos'>BUY</td><td>268</td><td>43.92</td><td>11,790.31</td><td>13.86</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 alignment · RSI 47 · price above SMA100</td></tr><tr><td>2026-10-05 10:17</td><td><b>VAKBN</b></td><td class='neg'>SELL</td><td>347</td><td>33.98</td><td>11,771.30</td><td>13.86</td><td class='pos'>22.99</td><td style='max-width:340px'>SMA10 crossed below SMA30</td></tr><tr><td>2026-10-02 11:42</td><td><b>BIMAS</b></td><td class='pos'>BUY</td><td>28</td><td>409.00</td><td>11,471.52</td><td>13.79</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 sequence · RSI 45 · price above SMA100</td></tr><tr><td>2026-10-02 10:10</td><td><b>VAKBN</b></td><td class='pos'>BUY</td><td>347</td><td>33.80</td><td>11,748.31</td><td>13.85</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 sequence · RSI 52 · price above SMA100</td></tr><tr><td>2026-10-01 18:29</td><td><b>BIMAS</b></td><td class='neg'>SELL</td><td>28</td><td>408.00</td><td>11,404.51</td><td>13.78</td><td class='neg'>-396.46</td><td style='max-width:340px'>stop-loss: the 408.82 level was breached at the live price (the -3% rule)</td></tr><tr><td>2026-10-01 15:33</td><td><b>VAKBN</b></td><td class='neg'>SELL</td><td>362</td><td>34.42</td><td>12,439.82</td><td>13.99</td><td class='pos'>451.68</td><td style='max-width:340px'>target price: 34.11 level reached at live price (+3% rule)</td></tr><tr><td>2026-10-01 11:29</td><td><b>KRDMD</b></td><td class='neg'>SELL</td><td>266</td><td>42.86</td><td>11,381.28</td><td>13.78</td><td class='neg'>-438.24</td><td style='max-width:340px'>stop-loss: the 43.10 level was breached at the live price (the -3% rule)</td></tr><tr><td>2026-10-01 11:10</td><td><b>TUPRS</b></td><td class='neg'>SELL</td><td>31</td><td>371.75</td><td>11,504.69</td><td>13.80</td><td class='neg'>-395.88</td><td style='max-width:340px'>stop-loss: the 372.37 level was breached at the live price (the -3% rule)</td></tr><tr><td>2026-10-01 10:14</td><td><b>KRDMD</b></td><td class='pos'>BUY</td><td>266</td><td>44.36</td><td>11,819.52</td><td>13.86</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 sequence · RSI 48 · price above SMA100</td></tr><tr><td>2026-09-30 16:54</td><td><b>TAVHL</b></td><td class='neg'>SELL</td><td>44</td><td>262.25</td><td>11,519.42</td><td>13.81</td><td class='neg'>-391.41</td><td style='max-width:340px'>stop-loss: the 262.58 level was breached at the live price (the -3% rule)</td></tr><tr><td>2026-09-30 11:11</td><td><b>TUPRS</b></td><td class='pos'>BUY</td><td>31</td><td>383.25</td><td>11,900.57</td><td>13.88</td><td>—</td><td style='max-width:340px'>SMA10 &gt; SMA30 sequence · RSI 45 · price above SMA100</td></tr><tr><td>2026-09-29 16:31</td><td><b>TUPRS</b></td><td class='neg'>SELL</td><td>30</td><td>384.25</td><td>11,507.93</td><td>13.81</td><td class='neg'>-430.20</td><td style='max-width:340px'>stop-loss: the 386.00 level was breached at the live price (the -3% rule)</td></tr></table></div></div>
+<h2 class='section-title'>Sinyal Panosu (son kontrol: 2026-10-22)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>BUY</span> · GARAN · 126.50 ₺ · alım adayı</div>SMA10 &gt; SMA30 sequence · RSI 53 · price above SMA100</div></div>
+<div class='grid-iki'><div class='card'><div class='pano-baslik'>Strategy Rules</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li><b>BUY:</b> SMA10 is positioned above SMA30 + RSI14 is in the 45–75 band + price is above SMA100 (no fresh crossover expected; entry if pattern exists).</li><li><b>SELL:</b> The price crosses below SMA10/SMA30, or falls <b>3%</b> falls below it (stop), or <b>3%</b> rises above it (target).</li><li><b>Size:</b> at most 12% of equity in a single stock, max 8 positions.</li><li><b>Daily brake:</b> if equity falls 3% below yesterday's close, new buys are paused for the day.</li><li><b>Saat kuralı:</b> emirler yalnızca BIST işlem oturumunda yürütülür — hafta içi 10:00–18:00 TSİ; resmi tatillerde ve seans dışında (elle tetikleme dahil) işlem açılmaz, sinyaller sonraki seansı bekler.</li><li><b>Costs:</b> commission 0.04% (minimum 10 ₺) + BSMV 15% + legal fee ~0,020% + slippage 0.05%. Total cost for a 12.000 ₺ transaction is ~35–40 ₺ (~0.3%) — the real cost of scalping.</li><li><b>Idle cash:</b> valued at overnight reverse repo on each trading day — the annual rate is taken from the latest announced deposit interest; repo earnings are reflected in equity.</li><li><b>Tax:</b>  withholding tax is 0% on BIST stock sales; gains exceeding the annual declaration threshold must be declared.</li></ul></div><div class='card'><div class='pano-baslik'>Performance Summary</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li>Start: 2026-09-25 · 100.000.00 ₺</li><li>Toplam işlem: 33 (16 SAT / 17 AL)</li><li>Kazanan SAT oranı: 25%</li><li>Gerçekleşen K/Z: -4,031.53 ₺ · Ödenen kesinti: 400.93 ₺</li><li>Açık pozisyon K/Z (gerçekleşmemiş): -602.20 ₺</li></ul></div></div>
+<p style="color:var(--muted);font-size:12px;margin:26px 0 4px">Bu sayfa bağımsız bir simülasyondur: hiçbir gerçek emir gönderilmez, hiçbir gerçek para risk edilmez.
 Veri: İş Yatırım (EOD) + TradingView (gün içi, ~15 dk gecikmeli) · Komisyon ve kayma payı varsayımsaldır.
-Son güncelleme: 23.10.2026 22:58 (İstanbul) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir.
-
-
-📊Reports
-📈Technical
-🏦Stocks
-💼Portfolio
-🤖Robot
-📰News
-📅Calendar
-
-The information, comments and recommendations here are for informational purposes only; they do not constitute investment advisory services or investment advice.
-Simulation results are not indicative of future returns based on past performance. Data sources: İş Yatırım, RSS news feeds • Analysis: artificial intelligence (multi-agent system)Privacy &amp; Data Protection
+Son güncelleme: 23.10.2026 22:58 (İstanbul) · Burada yer alan hiçbir içerik yatırım tavsiyesi değildir.</p>
+</main>
+<nav class="altbar" aria-label="Quick menu">
+<a href="./"><span class="i" aria-hidden="true">📊</span>Reports</a>
+<a href="technical-scan"><span class="i" aria-hidden="true">📈</span>Technical</a>
+<a href="stocks/"><span class="i" aria-hidden="true">🏦</span>Stocks</a>
+<a href="portfolio"><span class="i" aria-hidden="true">💼</span>Portfolio</a>
+<a href="trading-robot" class="active"><span class="i" aria-hidden="true">🤖</span>Robot</a>
+<a href="news"><span class="i" aria-hidden="true">📰</span>News</a>
+<a href="calendar"><span class="i" aria-hidden="true">📅</span>Calendar</a>
+</nav>
+<footer class="footer">The information, comments and recommendations here are for informational purposes only; they do not constitute investment advisory services or investment advice.
+Simulation results are not indicative of future returns based on past performance. Data sources: İş Yatırım, RSS news feeds • Analysis: artificial intelligence (multi-agent system)<br><a href="privacy" style="color:inherit">Privacy &amp; Data Protection</a></footer>
 <script>
 function temaDegistir() {
   var kok = document.documentElement;
@@ -374,3 +374,4 @@ function temaDegistir() {
   setInterval(yenile, 60000);
 })();
 </script>
+</body></html>

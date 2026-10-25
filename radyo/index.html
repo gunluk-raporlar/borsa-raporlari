@@ -1,42 +1,42 @@
-
-
-
-
-
-BIST Radyo — Podcast
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIST Radyo — Podcast</title>
+<meta name="description" content="BIST Radyo: kurgusal yapay zeka sunucular Ela ve Mert ile gün başlangıcı, öğle ve kapanış piyasa bültenleri. Siteden dinle veya podcast uygulamanla abone ol.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/radyo/">
+<link rel="icon" href="/favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Günlük Raporlar">
+<meta property="og:title" content="BIST Radyo — Podcast">
+<meta property="og:description" content="Kurgusal yapay zeka sunucular Ela ve Mert ile piyasa bültenleri. Siteden dinle veya podcast uygulamanla abone ol.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/radyo/">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Günlük Raporlar kapak görseli">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BIST Radyo — Podcast">
+<meta name="twitter:description" content="Kurgusal yapay zeka sunucular Ela ve Mert ile piyasa bültenleri. Siteden dinle veya podcast uygulamanla abone ol.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "BIST Radyo — Podcast", "description": "Kurgusal yapay zeka sunucular Ela ve Mert ile piyasa bültenleri. Siteden dinle veya podcast uygulamanla abone ol.", "url": "https://borsa-raporlari.pages.dev/radyo/index.html", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="../">BIST 30 Günlük Raporlar</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
+<nav><a href="../">Ana Sayfa</a><a href="../raporlar">Raporlar</a><a href="../hisse/">Hisseler</a><a href="../derin-analiz">Derin Analiz</a><a href="../makro-analiz">Makro Analiz</a><a href="../teknik-analiz">Teknik Tarama</a><a href="../sinyal-karnesi">Sinyal Karnesi</a><a href="../borsapy-analiz">Borsapy Sinyal</a><a href="../haberler">Haberler</a><a href="../sirket-haberleri">Şirket Haberleri</a><a href="../portfolio">Deneme Portföyü</a><a href="../haftasonu">Hafta Sonu</a><a href="../haftasonu-egitimi">Borsa Okulu</a><a href="../takvim">📅 Takvim</a><a href="../sozluk">Sözlük</a><a href="../terimler">Terimler</a><a href="../muhasebe-terimleri">Muhasebe Terimleri</a><a href="../robot">İşlem Robotu</a></nav>
+</div></header>
 
-
-
-
-
-BIST 30 Günlük Raporlar
-🌙
-Ana SayfaRaporlarHisselerDerin AnalizMakro AnalizTeknik TaramaSinyal KarnesiBorsapy SinyalHaberlerŞirket HaberleriDeneme PortföyüHafta SonuBorsa Okulu📅 TakvimSözlükTerimlerMuhasebe Terimleriİşlem Robotu
-
-
-
-  Fiyatlar yükleniyor...
-
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Fiyatlar yükleniyor...</span></div>
+</div>
 <script>
 (function() {
   var kok = document.getElementById('ticker-bant').dataset.kok || '';
@@ -68,9 +68,9 @@ Ana SayfaRaporlarHisselerDerin AnalizMakro AnalizTeknik TaramaSinyal KarnesiBors
 })();  // IIFE: tanimlandigi anda calistir
 </script>
 
-
-  Piyasa verileri yükleniyor...
-
+<div class="ticker-bant" id="ticker-bant2" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Piyasa verileri yükleniyor...</span></div>
+</div>
 <script>
 (function() {
   var kutu = document.getElementById('ticker-bant2');
@@ -107,73 +107,73 @@ Ana SayfaRaporlarHisselerDerin AnalizMakro AnalizTeknik TaramaSinyal KarnesiBors
   setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
 })();
 </script>
-
-
-    
-        ⏳ Yükleniyor...
-        🌤️ İstanbul Hava Durumu...
-    
+<main class="wrap">
+<div class="site-widgets">
+    <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+        <span id="current-date-time">⏳ Yükleniyor...</span>
+        <span id="istanbul-weather">🌤️ İstanbul Hava Durumu...</span>
+    </div>
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Sayfa dili seçin">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/radyo/" hreflang="tr" lang="tr" data-dil="tr" class="aktif" aria-current="true">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/radyo/" hreflang="en" lang="en" data-dil="en">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/radyo/" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/radyo/" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/radyo/" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+</nav>
+</div>
 
-🌐
-Türkçe
-English
-Deutsch
-Русский
-简体中文
+<div class="hero">
+<h1>📻 BIST Radyo</h1>
+<p>Kurgusal yapay zeka sunucular <strong>Ela</strong> ve <strong>Mert</strong> ile işlem günlerinde açılış, öğle ve kapanış bültenleri. Buradan dinleyebilir veya podcast uygulamanızla abone olabilirsiniz.</p>
+</div>
 
+<div class="card" style="margin-bottom:18px">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+  <h3 style="margin:0">Şu an çalan</h3>
+  <span class="badge">AI sunucular</span>
+</div>
+<audio id="radyo-audio" controls preload="none" style="width:100%; height:40px;"></audio>
+<div id="radyo-simdi" style="margin-top:8px; color:var(--muted); font-size:13.5px;">Yayınlar yükleniyor...</div>
+</div>
 
+<h2 class="section-title">Yayın Arşivi</h2>
+<div id="radyo-arsiv"><p style="color:var(--muted); font-size:13.5px">Yayınlar yükleniyor...</p></div>
 
+<h2 class="section-title">Günlük Rapor Sesli Bülteni</h2>
+<div class="card" style="margin-bottom:12px">
+<p style="margin:0 0 8px; font-size:13.5px; color:var(--muted)">Her işlem günü otomatik üretilen günlük raporun (ve derin analizin) yapay zeka sesiyle okuması — radyo sohbetinden ayrı, kendi podcast akışında.</p>
+<div id="rapor-bulten-liste"><p style="color:var(--muted); font-size:13.5px; margin:0">Bültenler yükleniyor...</p></div>
+</div>
 
-📻 BIST Radyo
-Kurgusal yapay zeka sunucular Ela ve Mert ile işlem günlerinde açılış, öğle ve kapanış bültenleri. Buradan dinleyebilir veya podcast uygulamanızla abone olabilirsiniz.
+<div class="card" style="margin-top:18px">
+<h3 style="margin:0 0 8px">📡 Podcast ile abonelik</h3>
+<p style="margin:0 0 8px; font-size:14px">RSS adresini Apple Podcasts, Overcast, AntennaPod veya benzeri bir podcast uygulamasına ekleyin; yeni yayınlar otomatik gelir:</p>
+<div style="margin-bottom:10px">
+  <div style="font-size:13px; font-weight:600; margin-bottom:3px">📻 BIST Radyo — Ela &amp; Mert sohbeti</div>
+  <input type="text" readonly value="https://borsa-raporlari.pages.dev/radyo/podcast.xml" onclick="this.select()" style="width:100%; padding:7px 10px; border:1px solid var(--line); border-radius:6px; font-size:12.5px; background:var(--accent-bg); color:var(--ink);">
+</div>
+<div>
+  <div style="font-size:13px; font-weight:600; margin-bottom:3px">📰 Günlük Rapor — Sesli Bülten</div>
+  <input type="text" readonly value="https://borsa-raporlari.pages.dev/radyo/podcast-raporlar.xml" onclick="this.select()" style="width:100%; padding:7px 10px; border:1px solid var(--line); border-radius:6px; font-size:12.5px; background:var(--accent-bg); color:var(--ink);">
+</div>
+<p style="margin:8px 0 0; font-size:13px"><a href="podcast.xml" target="_blank" rel="noopener">Radyo RSS'ini aç &rarr;</a> &nbsp;&bull;&nbsp; <a href="podcast-raporlar.xml" target="_blank" rel="noopener">Rapor bülteni RSS'ini aç &rarr;</a></p>
+</div>
 
-
-
-
-  Şu an çalan
-  AI sunucular
-
-
-Yayınlar yükleniyor...
-
-
-Yayın Arşivi
-Yayınlar yükleniyor...
-
-Günlük Rapor Sesli Bülteni
-
-Her işlem günü otomatik üretilen günlük raporun (ve derin analizin) yapay zeka sesiyle okuması — radyo sohbetinden ayrı, kendi podcast akışında.
-Bültenler yükleniyor...
-
-
-
-📡 Podcast ile abonelik
-RSS adresini Apple Podcasts, Overcast, AntennaPod veya benzeri bir podcast uygulamasına ekleyin; yeni yayınlar otomatik gelir:
-
-  📻 BIST Radyo — Ela &amp; Mert sohbeti
-  
-
-
-  📰 Günlük Rapor — Sesli Bülten
-  
-
-Radyo RSS'ini aç &rarr; &nbsp;&bull;&nbsp; Rapor bülteni RSS'ini aç &rarr;
-
-
-
+<div class="card" style="margin-top:14px; color:var(--muted); font-size:12.5px">
 Kurgusal yapay zeka sunucular • Yalnızca dinlemek içindir • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.
+</div>
+</main>
 
-
-
-
-📊Raporlar
-📈Teknik
-🏦Hisseler
-💼Portföy
-📰Haberler
-📅Takvim
-
+<nav class="altbar" aria-label="Hızlı menü">
+<a href="../"><span class="i">📊</span>Raporlar</a>
+<a href="../teknik-analiz"><span class="i">📈</span>Teknik</a>
+<a href="../hisse/"><span class="i">🏦</span>Hisseler</a>
+<a href="../portfolio"><span class="i">💼</span>Portföy</a>
+<a href="../haberler"><span class="i">📰</span>Haberler</a>
+<a href="../takvim"><span class="i">📅</span>Takvim</a>
+</nav>
 
 <script>
 function temaDegistir() {
@@ -190,7 +190,7 @@ function temaDegistir() {
 })();
 </script>
 
-Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok ajanlı sistem)Gizlilik &amp; KVKK
+<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok ajanlı sistem)<br><a href="../gizlilik" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
 
 <script>
 (function() {
@@ -321,4 +321,4 @@ Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım 
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
         });
 </script>
-
+</body></html>

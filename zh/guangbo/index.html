@@ -1,48 +1,48 @@
-
-
-
-
-
-BIST 电台 — 播客
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIST 电台 — 播客</title>
+<meta name="description" content="BIST 广播：由虚构的人工智能服务器 Ela 和 Mert 带来的开盘、午间和收盘市场简报。可在网站上收听或通过播客应用订阅。">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/zh/guangbo/">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/radyo/">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/guangbo/">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/radio/">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/radio/">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/radio/">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/radyo/">
+<link rel="icon" href="..//favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="..//favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 每日股市报告与分析">
+<meta property="og:title" content="BIST 电台 — 播客">
+<meta property="og:description" content="由虚构的人工智能服务器 Ela 和 Mert 带来的市场简报。可在网站上收听或通过播客应用订阅。">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/zh/guangbo/">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 日报封面图片">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BIST 电台 — 播客">
+<meta name="twitter:description" content="由虚构的人工智能服务器 Ela 和 Mert 带来的市场简报。可在网站上收听或通过播客应用订阅。">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "BIST 电台 — 播客", "description": "BIST 广播：由虚构的人工智能服务器 Ela 和 Mert 带来的开盘、午间和收盘市场简报。可在网站上收听或通过播客应用订阅。", "url": "https://borsa-raporlari.pages.dev/zh/guangbo/", "inLanguage": "zh", "isPartOf": {"@type": "WebSite", "name": "BIST 30 每日报告", "url": "https://borsa-raporlari.pages.dev/zh/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="../">BIST 30 每日股市报告与分析</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="浅色/深色主题" aria-label="切换主题">🌙</button></div>
+<nav><a href="../">首页</a><a href="../baogao">报告</a><a href="../gupiao/">股票</a><a href="../shendu-fenxi">深度分析</a><a href="../hongguan-fenxi">宏观分析</a><a href="../jishu-saomiao">技术扫描</a><a href="../xinhao-jifenka">信号记分卡</a><a href="../borsapy-xinhao">Borsapy 信号</a><a href="../xinwen">新闻</a><a href="../gongsi-xinwen">公司新闻</a><a href="../portfolio">模拟投资组合</a><a href="../zhoumo">周末</a><a href="../gushi-xuetang">股市学堂</a><a href="../rili">📅 日历</a><a href="../cidian">词典</a><a href="../shuyu">术语</a><a href="../kuaiji-shuyu">会计术语</a><a href="../jiaoyi-jiqiren">交易机器人</a></nav>
+</div></header>
 
-
-
-
-
-BIST 30 每日股市报告与分析
-🌙
-首页报告股票深度分析宏观分析技术扫描信号记分卡Borsapy 信号新闻公司新闻模拟投资组合周末股市学堂📅 日历词典术语会计术语交易机器人
-
-
-
-  正在加载价格…
-
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">正在加载价格…</span></div>
+</div>
 <script>
 (function() {
   var kok = document.getElementById('ticker-bant').dataset.kok || '';
@@ -74,9 +74,9 @@ BIST 30 每日股市报告与分析
 })();  // IIFE: tanimlandigi anda calistir
 </script>
 
-
-  市场数据加载中...
-
+<div class="ticker-bant" id="ticker-bant2" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">市场数据加载中...</span></div>
+</div>
 <script>
 (function() {
   var kutu = document.getElementById('ticker-bant2');
@@ -113,72 +113,72 @@ BIST 30 每日股市报告与分析
   setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
 })();
 </script>
-
-
-    
-        ⏳ 加载中...
-        🌤️ 伊斯坦布尔天气...
-    
+<main class="wrap">
+<div class="site-widgets">
+    <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+        <span id="current-date-time">⏳ 加载中...</span>
+        <span id="istanbul-weather">🌤️ 伊斯坦布尔天气...</span>
+    </div>
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="选择页面语言">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/radyo/" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/radyo/" hreflang="en" lang="en" data-dil="en">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/radyo/" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/radyo/" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/guangbo/" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh" class="aktif" aria-current="true">简体中文</a>
+</nav>
+</div>
 
-🌐
-Türkçe
-English
-Deutsch
-Русский
-简体中文
+<div class="hero">
+<h1>📻 BIST 电台</h1>
+<p>虚构的人工智能服务器 <strong>埃拉</strong> 和 <strong>梅尔特</strong> 在交易日带来开盘、午间和收盘简报。可在此收听或通过您的播客应用订阅。</p>
+</div>
 
+<div class="card" style="margin-bottom:18px">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+  <h3 style="margin:0">正在播放</h3>
+  <span class="badge">AI 服务器</span>
+</div>
+<audio id="radyo-audio" controls preload="none" style="width:100%; height:40px;"></audio>
+<div id="radyo-simdi" style="margin-top:8px; color:var(--muted); font-size:13.5px;">正在加载内容...</div>
+</div>
 
+<h2 class="section-title">节目存档</h2>
+<div id="radyo-arsiv"><p style="color:var(--muted); font-size:13.5px">正在加载内容...</p></div>
 
+<h2 class="section-title">每日报告语音简报</h2>
+<div class="card" style="margin-bottom:12px">
+<p style="margin:0 0 8px; font-size:13.5px; color:var(--muted)">每个交易日自动生成的每日报告（及深度分析）由人工智能语音朗读——独立于广播聊天，有自己的播客流。</p>
+<div id="rapor-bulten-liste"><p style="color:var(--muted); font-size:13.5px; margin:0">快讯加载中...</p></div>
+</div>
 
-📻 BIST 电台
-虚构的人工智能服务器 埃拉 和 梅尔特 在交易日带来开盘、午间和收盘简报。可在此收听或通过您的播客应用订阅。
+<div class="card" style="margin-top:18px">
+<h3 style="margin:0 0 8px">📡 通过播客订阅</h3>
+<p style="margin:0 0 8px; font-size:14px">将RSS地址添加到Apple Podcasts、Overcast、AntennaPod或类似的播客应用中；新内容将自动获取：</p>
+<div style="margin-bottom:10px">
+  <div style="font-size:13px; font-weight:600; margin-bottom:3px">📻 BIST Radyo — Ela 与 Mert 对话</div>
+  <input type="text" readonly value="https://borsa-raporlari.pages.dev/zh/radyo/podcast.xml" onclick="this.select()" style="width:100%; padding:7px 10px; border:1px solid var(--line); border-radius:6px; font-size:12.5px; background:var(--accent-bg); color:var(--ink);">
+</div>
+<div>
+  <div style="font-size:13px; font-weight:600; margin-bottom:3px">📰 每日报告 — 语音简报</div>
+  <input type="text" readonly value="https://borsa-raporlari.pages.dev/zh/radyo/podcast-raporlar.xml" onclick="this.select()" style="width:100%; padding:7px 10px; border:1px solid var(--line); border-radius:6px; font-size:12.5px; background:var(--accent-bg); color:var(--ink);">
+</div>
+<p style="margin:8px 0 0; font-size:13px"><a href="podcast.xml" target="_blank" rel="noopener">打开电台 RSS →</a>  •  <a href="podcast-baogao.xml" target="_blank" rel="noopener">打开报告 RSS 订阅 →</a></p>
+</div>
 
+<div class="card" style="margin-top:14px; color:var(--muted); font-size:12.5px">
+ 虚构的人工智能服务器 • 仅用于收听 • 仅供参考，不构成投资建议。</div>
+</main>
 
-
-
-  正在播放
-  AI 服务器
-
-
-正在加载内容...
-
-
-节目存档
-正在加载内容...
-
-每日报告语音简报
-
-每个交易日自动生成的每日报告（及深度分析）由人工智能语音朗读——独立于广播聊天，有自己的播客流。
-快讯加载中...
-
-
-
-📡 通过播客订阅
-将RSS地址添加到Apple Podcasts、Overcast、AntennaPod或类似的播客应用中；新内容将自动获取：
-
-  📻 BIST Radyo — Ela 与 Mert 对话
-  
-
-
-  📰 每日报告 — 语音简报
-  
-
-打开电台 RSS →  •  打开报告 RSS 订阅 →
-
-
-
- 虚构的人工智能服务器 • 仅用于收听 • 仅供参考，不构成投资建议。
-
-
-
-📊报告
-📈技术
-🏦股票
-💼投资组合
-📰新闻
-📅日历
-
+<nav class="altbar" aria-label="快捷菜单">
+<a href="../"><span class="i">📊</span>报告</a>
+<a href="../jishu-saomiao"><span class="i">📈</span>技术</a>
+<a href="../gupiao/"><span class="i">🏦</span>股票</a>
+<a href="../portfolio"><span class="i">💼</span>投资组合</a>
+<a href="../xinwen"><span class="i">📰</span>新闻</a>
+<a href="../rili"><span class="i">📅</span>日历</a>
+</nav>
 
 <script>
 function temaDegistir() {
@@ -195,7 +195,7 @@ function temaDegistir() {
 })();
 </script>
 
-此处所含的信息、评论和建议仅供参考；不属于投资顾问服务，不构成投资建议。无法保证数据的准确性，因内容而产生的任何决定，责任均由用户自行承担。数据来源：İş Yatırım、RSS 新闻源 • 分析：人工智能（多智能体系统）隐私与数据保护
+<footer class="footer">此处所含的信息、评论和建议仅供参考；不属于投资顾问服务，不构成投资建议。无法保证数据的准确性，因内容而产生的任何决定，责任均由用户自行承担。<br>数据来源：İş Yatırım、RSS 新闻源 • 分析：人工智能（多智能体系统）<br><a href="../yinsi" style="color:inherit">隐私与数据保护</a></footer>
 
 <script>
 (function() {
@@ -326,4 +326,4 @@ function temaDegistir() {
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
         });
 </script>
-
+</body></html>

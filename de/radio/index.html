@@ -1,48 +1,48 @@
-
-
-
-
-
-BIST Radio — Podcast
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIST Radio — Podcast</title>
+<meta name="description" content="BIST Radio: fiktive KI-Moderatoren Ela und Mert mit Morgen-, Mittags- und Schlussmarkt-Bulletins. Hier online hören oder in Podcast-App abonnieren.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/de/radio/">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/radyo/">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/guangbo/">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/radio/">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/radio/">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/radio/">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/radyo/">
+<link rel="icon" href="..//favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="..//favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Tagesberichte">
+<meta property="og:title" content="BIST Radio — Podcast">
+<meta property="og:description" content="Markt-Bulletins mit den fiktiven KI-Moderatoren Ela und Mert. Hier online hören oder in Podcast-App abonnieren.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/de/radio/">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Tagesberichts Titelbild">
+<meta property="og:locale" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BIST Radio — Podcast">
+<meta name="twitter:description" content="Markt-Bulletins mit den fiktiven KI-Moderatoren Ela und Mert. Hier online hören oder in Podcast-App abonnieren.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "BIST Radio — Podcast", "description": "BIST Radio: fiktive KI-Moderatoren Ela und Mert mit Morgen-, Mittags- und Schlussmarkt-Bulletins. Hier online hören oder in Podcast-App abonnieren.", "url": "https://borsa-raporlari.pages.dev/de/radio/", "inLanguage": "de", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Tagesberichte", "url": "https://borsa-raporlari.pages.dev/de/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="../">BIST 30 Tagesberichte</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Helles/dunkles Design" aria-label="Design wechseln">🌙</button></div>
+<nav><a href="../">Startseite</a><a href="../berichte">Berichte</a><a href="../aktien/">Aktien</a><a href="../tiefenanalyse">Tiefenanalyse</a><a href="../makroanalyse">Makroanalyse</a><a href="../technischer-scan">Technischer Scan</a><a href="../signal-bilanz">Signal-Bilanz</a><a href="../borsapy-signale">Borsapy-Signale</a><a href="../nachrichten">Nachrichten</a><a href="../unternehmensnachrichten">Unternehmensnachrichten</a><a href="../portfolio">Demo-Portfolio</a><a href="../wochenende">Wochenende</a><a href="../boersenschule">Börsenschule</a><a href="../kalender">📅 Kalender</a><a href="../glossar">Glossar</a><a href="../begriffe">Begriffe</a><a href="../rechnungslegungsbegriffe">Rechnungslegungsbegriffe</a><a href="../handelsroboter">Handelsroboter</a></nav>
+</div></header>
 
-
-
-
-
-BIST 30 Tagesberichte
-🌙
-StartseiteBerichteAktienTiefenanalyseMakroanalyseTechnischer ScanSignal-BilanzBorsapy-SignaleNachrichtenUnternehmensnachrichtenDemo-PortfolioWochenendeBörsenschule📅 KalenderGlossarBegriffeRechnungslegungsbegriffeHandelsroboter
-
-
-
-  Preise werden geladen…
-
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Preise werden geladen…</span></div>
+</div>
 <script>
 (function() {
   var kok = document.getElementById('ticker-bant').dataset.kok || '';
@@ -74,9 +74,9 @@ StartseiteBerichteAktienTiefenanalyseMakroanalyseTechnischer ScanSignal-BilanzBo
 })();  // IIFE: tanimlandigi anda calistir
 </script>
 
-
-  Marktdaten werden geladen...
-
+<div class="ticker-bant" id="ticker-bant2" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Marktdaten werden geladen...</span></div>
+</div>
 <script>
 (function() {
   var kutu = document.getElementById('ticker-bant2');
@@ -113,72 +113,72 @@ StartseiteBerichteAktienTiefenanalyseMakroanalyseTechnischer ScanSignal-BilanzBo
   setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
 })();
 </script>
-
-
-    
-        ⏳ Laden...
-        🌤️ Istanbul Wetter...
-    
+<main class="wrap">
+<div class="site-widgets">
+    <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+        <span id="current-date-time">⏳ Laden...</span>
+        <span id="istanbul-weather">🌤️ Istanbul Wetter...</span>
+    </div>
 <style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Seitensprache wählen">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/radyo/" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/radyo/" hreflang="en" lang="en" data-dil="en">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/radio/" hreflang="de" lang="de" data-dil="de" class="aktif" aria-current="true">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/radyo/" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/radyo/" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+</nav>
+</div>
 
-🌐
-Türkçe
-English
-Deutsch
-Русский
-简体中文
+<div class="hero">
+<h1>📻 BIST Radio</h1>
+<p>Fiktive KI-Moderatoren <strong>Ela</strong> und <strong>Mert (Website)</strong> mit Mert an den Handelstagen mit Eröffnungs-, Mittags- und Abschluss-Bulletins. Hier anhören oder in Ihrer Podcast-App abonnieren.</p>
+</div>
 
+<div class="card" style="margin-bottom:18px">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+  <h3 style="margin:0">Aktuell läuft</h3>
+  <span class="badge">KI-Server</span>
+</div>
+<audio id="radyo-audio" controls preload="none" style="width:100%; height:40px;"></audio>
+<div id="radyo-simdi" style="margin-top:8px; color:var(--muted); font-size:13.5px;">Lade Sendungen...</div>
+</div>
 
+<h2 class="section-title">Sendearchiv</h2>
+<div id="radyo-arsiv"><p style="color:var(--muted); font-size:13.5px">Lade Sendungen...</p></div>
 
+<h2 class="section-title">Tagesbericht Sprachbulletin</h2>
+<div class="card" style="margin-bottom:12px">
+<p style="margin:0 0 8px; font-size:13.5px; color:var(--muted)">Jeden Handelstag automatisch erstellter Tagesbericht (mit Tiefenanalyse) in KI-Sprache — getrennt vom Radio-Chat, in einem eigenen Podcast-Feed.</p>
+<div id="rapor-bulten-liste"><p style="color:var(--muted); font-size:13.5px; margin:0">Lade Bulletins...</p></div>
+</div>
 
-📻 BIST Radio
-Fiktive KI-Moderatoren Ela und Mert (Website) mit Mert an den Handelstagen mit Eröffnungs-, Mittags- und Abschluss-Bulletins. Hier anhören oder in Ihrer Podcast-App abonnieren.
+<div class="card" style="margin-top:18px">
+<h3 style="margin:0 0 8px">📡 Podcast-Abonnement</h3>
+<p style="margin:0 0 8px; font-size:14px">Fügen Sie die RSS-Adresse zu Apple Podcasts, Overcast, AntennaPod oder einer ähnlichen Podcast-App hinzu; neue Veröffentlichungen kommen automatisch:</p>
+<div style="margin-bottom:10px">
+  <div style="font-size:13px; font-weight:600; margin-bottom:3px">📻 BIST Radio — Ela &amp; Mert Gespräch</div>
+  <input type="text" readonly value="https://borsa-raporlari.pages.dev/de/radyo/podcast.xml" onclick="this.select()" style="width:100%; padding:7px 10px; border:1px solid var(--line); border-radius:6px; font-size:12.5px; background:var(--accent-bg); color:var(--ink);">
+</div>
+<div>
+  <div style="font-size:13px; font-weight:600; margin-bottom:3px">📰 Tagesbericht — Sprachbulletin</div>
+  <input type="text" readonly value="https://borsa-raporlari.pages.dev/de/radyo/podcast-raporlar.xml" onclick="this.select()" style="width:100%; padding:7px 10px; border:1px solid var(--line); border-radius:6px; font-size:12.5px; background:var(--accent-bg); color:var(--ink);">
+</div>
+<p style="margin:8px 0 0; font-size:13px"><a href="podcast.xml" target="_blank" rel="noopener">Radio RSS öffnen →</a>  •  <a href="podcast-berichte.xml" target="_blank" rel="noopener">Berichtbulletin RSS öffnen →</a></p>
+</div>
 
+<div class="card" style="margin-top:14px; color:var(--muted); font-size:12.5px">
+ Fiktive KI-Server • Nur zum Hören • Zu Informationszwecken, keine Anlageberatung.</div>
+</main>
 
-
-
-  Aktuell läuft
-  KI-Server
-
-
-Lade Sendungen...
-
-
-Sendearchiv
-Lade Sendungen...
-
-Tagesbericht Sprachbulletin
-
-Jeden Handelstag automatisch erstellter Tagesbericht (mit Tiefenanalyse) in KI-Sprache — getrennt vom Radio-Chat, in einem eigenen Podcast-Feed.
-Lade Bulletins...
-
-
-
-📡 Podcast-Abonnement
-Fügen Sie die RSS-Adresse zu Apple Podcasts, Overcast, AntennaPod oder einer ähnlichen Podcast-App hinzu; neue Veröffentlichungen kommen automatisch:
-
-  📻 BIST Radio — Ela &amp; Mert Gespräch
-  
-
-
-  📰 Tagesbericht — Sprachbulletin
-  
-
-Radio RSS öffnen →  •  Berichtbulletin RSS öffnen →
-
-
-
- Fiktive KI-Server • Nur zum Hören • Zu Informationszwecken, keine Anlageberatung.
-
-
-
-📊Berichte
-📈Technik
-🏦Aktien
-💼Portfolio
-📰Nachrichten
-📅Kalender
-
+<nav class="altbar" aria-label="Schnellmenü">
+<a href="../"><span class="i">📊</span>Berichte</a>
+<a href="../technischer-scan"><span class="i">📈</span>Technik</a>
+<a href="../aktien/"><span class="i">🏦</span>Aktien</a>
+<a href="../portfolio"><span class="i">💼</span>Portfolio</a>
+<a href="../nachrichten"><span class="i">📰</span>Nachrichten</a>
+<a href="../kalender"><span class="i">📅</span>Kalender</a>
+</nav>
 
 <script>
 function temaDegistir() {
@@ -195,7 +195,7 @@ function temaDegistir() {
 })();
 </script>
 
-Die hier enthaltenen Informationen, Kommentare und Empfehlungen dienen zu Informationszwecken; sie stellen keine Anlageberatung dar und sind keine Anlageempfehlungen. Die Genauigkeit der Daten kann nicht garantiert werden, und die Verantwortung für jede Art von Entscheidung, die aus dem Inhalt entstehen könnte, liegt beim Nutzer.Datenquellen: İş Yatırım, RSS-Nachrichtenströme • Analyse: künstliche Intelligenz (Multi-Agenten-System)Datenschutz
+<footer class="footer">Die hier enthaltenen Informationen, Kommentare und Empfehlungen dienen zu Informationszwecken; sie stellen keine Anlageberatung dar und sind keine Anlageempfehlungen. Die Genauigkeit der Daten kann nicht garantiert werden, und die Verantwortung für jede Art von Entscheidung, die aus dem Inhalt entstehen könnte, liegt beim Nutzer.<br>Datenquellen: İş Yatırım, RSS-Nachrichtenströme • Analyse: künstliche Intelligenz (Multi-Agenten-System)<br><a href="../datenschutz" style="color:inherit">Datenschutz</a></footer>
 
 <script>
 (function() {
@@ -326,4 +326,4 @@ Die hier enthaltenen Informationen, Kommentare und Empfehlungen dienen zu Inform
             document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
         });
 </script>
-
+</body></html>
