@@ -8004,19 +8004,22 @@ yatırım tavsiyesi değildir.</p>
                     govde += (f"<p style='margin:6px 0 0; font-size:13.5px; font-style:italic'>Örnek: {v['ornek']}"
                               + (f" <span style='color:var(--muted)'>({v['ornek_en']})</span>" if v.get("ornek_en") else "")
                               + "</p>")
-                # Diger dillerdeki tanimlar (kaynak: denetlenmis autoclaw setleri)
-                for dil_kod, dil_etiket in (("de", "DE"), ("ru", "RU"), ("zh", "中文")):
-                    if v.get(dil_kod):
-                        govde += (f"<p style='margin:6px 0 0; font-size:13px; color:var(--muted)'>"
-                                  f"{dil_etiket}: {v[dil_kod]}</p>")
-                arama_anahtari = " ".join(v.get(d) or "" for d in ("en", "tr", "en_tanim", "de", "ru", "zh"))
+                # DE/RU/ZH tanimlari TR sayfadan CIKARILDI (25.10 kullanici
+                # bildirimi: sayfa 2,5 MB'a ulasip siteyi teklettiriyordu;
+                # 224 bin Kiril + 60 bin CJK karakter her kartta iki kez —
+                # govde + arama anahtari — tasiyordu). Ayni tanimlar kendi
+                # dil sayfalarinda yasiyor: de/ru/zh/muhasebe-terimleri +
+                # en/accounting-terms.
+                arama_anahtari = " ".join(v.get(d) or "" for d in ("en", "tr", "en_tanim"))
                 kartlar += _kart(govde, _duzelt(arama_anahtari))
         icerik = f"""
 <div class="hero">
 <h1>Muhasebe Terimleri</h1>
 <p>{len(ifrs)} terimlik muhasebe ve finansal raporlama sözlüğü; tanımlar İngilizce,
-terim karşılıkları ve örnek cümleler Türkçedir; Almanca, Rusça ve Çince tanımlar da
-her kartta yer alır. Genel ekonomi terimleri için
+terim karşılıkları ve örnek cümleler Türkçedir. Almanca, Rusça ve Çince tanımlar
+kendi dil sürümlerindedir (<a href="../de/muhasebe-terimleri.html">DE</a>,
+<a href="../ru/muhasebe-terimleri.html">RU</a>,
+<a href="../zh/muhasebe-terimleri.html">ZH</a>). Genel ekonomi terimleri için
 <a href="terimler.html">Terimler ve Tanımlar</a> sayfasına bakabilirsin.</p>
 </div>
 <div class="arama-form" style="margin:14px 0">
