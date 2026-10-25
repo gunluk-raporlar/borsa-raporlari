@@ -31,9 +31,9 @@
 </head>
 <body>
 <header class="topbar"><div class="inner">
-<div class="brand-row"><a class="brand" href="../">BIST 30 Günlük Raporlar</a>
+<div class="brand-row"><a class="brand" href="../index.html">BIST 30 Günlük Raporlar</a>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
-<nav><a href="../">Ana Sayfa</a><a href="../raporlar">Raporlar</a><a href="../hisse/">Hisseler</a><a href="../derin-analiz">Derin Analiz</a><a href="../makro-analiz">Makro Analiz</a><a href="../teknik-analiz">Teknik Tarama</a><a href="../sinyal-karnesi">Sinyal Karnesi</a><a href="../borsapy-analiz">Borsapy Sinyal</a><a href="../haberler">Haberler</a><a href="../sirket-haberleri">Şirket Haberleri</a><a href="../portfolio">Deneme Portföyü</a><a href="../haftasonu" class="active">Hafta Sonu</a><a href="../haftasonu-egitimi">Borsa Okulu</a><a href="../takvim">📅 Takvim</a><a href="../sozluk">Sözlük</a><a href="../terimler">Terimler</a><a href="../muhasebe-terimleri">Muhasebe Terimleri</a><a href="../robot">İşlem Robotu</a></nav>
+<nav><a href="../index.html">Ana Sayfa</a><a href="../raporlar.html">Raporlar</a><a href="../hisse/index.html">Hisseler</a><a href="../derin-analiz.html">Derin Analiz</a><a href="../makro-analiz.html">Makro Analiz</a><a href="../teknik-analiz.html">Teknik Tarama</a><a href="../sinyal-karnesi.html">Sinyal Karnesi</a><a href="../borsapy-analiz.html">Borsapy Sinyal</a><a href="../haberler.html">Haberler</a><a href="../sirket-haberleri.html">Şirket Haberleri</a><a href="../portfolio.html">Deneme Portföyü</a><a href="../haftasonu.html" class="active">Hafta Sonu</a><a href="../haftasonu-egitimi.html">Borsa Okulu</a><a href="../takvim.html">📅 Takvim</a><a href="../sozluk.html">Sözlük</a><a href="../terimler.html">Terimler</a><a href="../muhasebe-terimleri.html">Muhasebe Terimleri</a><a href="../robot.html">İşlem Robotu</a></nav>
 </div></header>
 
 <div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
@@ -121,10 +121,10 @@
 <nav class="dil-linkler" aria-label="Sayfa dili seçin">
 <span aria-hidden="true">🌐</span>
 <a href="https://borsa-raporlari.pages.dev/haftasonu/2026-10-25" hreflang="tr" lang="tr" data-dil="tr" class="aktif" aria-current="true">Türkçe</a>
-<a href="https://borsa-raporlari.pages.dev/en/" hreflang="en" lang="en" data-dil="en">English</a>
-<a href="https://borsa-raporlari.pages.dev/de/" hreflang="de" lang="de" data-dil="de">Deutsch</a>
-<a href="https://borsa-raporlari.pages.dev/ru/" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
-<a href="https://borsa-raporlari.pages.dev/zh/" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+<a href="https://borsa-raporlari.pages.dev/en/weekend/2026-10-25" hreflang="en" lang="en" data-dil="en">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/wochenende/2026-10-25" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/vykhodnye/2026-10-25" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/zhoumo/2026-10-25" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
 </nav>
     </div>
 
@@ -218,7 +218,7 @@
   <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Oynat / Duraklat">▶</button>
   <audio id="radyo-ses" preload="none"></audio>
   <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Ses seviyesi" title="Ses">
-  <span class="radyo-linkler"><a href="../radyo/">📻 Tüm yayınlar &amp; Podcast sayfası</a> <span class="ayrac">•</span> <a href="../radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-linkler"><a href="../radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> <span class="ayrac">•</span> <a href="../radyo/podcast.xml">RSS</a></span>
   <span class="radyo-uyari">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</span>
 </div>
 <script>
@@ -257,64 +257,33 @@
 <article class="report" id="rapor-ses-metin"><h2>1. Hafta Sonu Özeti ve Genel Değerlendirme</h2>
 <ul>
 <li>
-<p><strong>Küresel jeopolitik gerilimler</strong> Orta Doğu'da artan riskler ve ABD‑İran gerilimleri (ör. "Trump: İran'ı tekrar bombalama ihtimalim var") enerji fiyatlarını yukarı çekti. </p>
+<p>Hafta sonunun baskın teması İran-ABD gerilimiydi: Trump'ın yeni ültimatomu ve "tekrar bombalama" açıklaması, Katarlı arabulucuların Tahran'a gitmesi ve Hürmüz Boğazı'nda gemi saldırılarının rekor seviyeye ulaşması, enerji fiyatlarını 110-116 dolar bandının üzerine taşıdı.</p>
 </li>
 <li>
-<p><strong>Petrol fiyatları 110 $‑116 $ seviyelerinde</strong> sabit kalırken, navlun maliyetleri de yükselerek taşıma sektörünü zorladı. </p>
+<p>Emtia tarafında sert bir ayrışma yaşandı; altın ve gümüş düzeltirken (gram altın 3 ayın en dip seviyesini gördü) petrol ve doğalgaz yükselişini korudu.</p>
 </li>
 <li>
-<p><strong>Altın ve döviz piyasaları</strong> 3 ayın en düşük seviyelerinde seyrediyor; DXY sıkışması ve Dolar/TL 45 bandını aşması risk algısını artırdı. </p>
+<p>Fed gündemi yeni liderlik dönemiyle şekilleniyor: Fed Başkanı Warsh'ın verilere odaklanma vurgusu ve beklenen sabit faiz kararı yanında, Aralık ayında artış beklentisi güçlendi.</p>
 </li>
 <li>
-<p><strong>Türkiye'de makro veriler</strong> IMF şeffaflık değerlendirmesinde olumlu sinyal verirken, asgari ücret artışı ve Borsa‑altın kayıpları yatırımcıların temkinli tutumunu yansıtıyor. </p>
+<p>Dolar cephesinde DXY 100 seviyesinin sınavına çıkarken, Dolar/TL 45 eşiğini aştı; analizlerde yükselişin "kontrollü" ama enerji ve enflasyon baskısı altında olduğu vurgulanıyor.</p>
 </li>
 <li>
-<p><strong>Emlak piyasası</strong> fiyat artışı (%22,5) ve reel düşüş (‑%6,2) arasında çelişkili bir tablo çiziyor; yeni "metreküp" satış modeli sektörde ilgi topladı. </p>
+<p>Türkiye tarafında tablo karışık: Konut fiyatları yıllık yüzde 22,5 artmasına rağmen reel olarak yüzde 6,2 geriledi; dış ticarette "ithalat pahalandı, ihracat azaldı" makası açıldı; buna karşılık S&amp;P Global bankacılık sektöründe risklerin yönetilebilir olduğunu söyledi.</p>
 </li>
 <li>
-<p><strong>Dış ticaret</strong> makas açılması ve AB ile artan ticaret hacmi, ihracat‑ithalat dengesinin kırılganlığını ortaya koydu. </p>
+<p>ABD'de ara seçim yaklaşırken Beyaz Saray'ın bazı Kanada mallarındaki gümrükleri kaldırması, ticaret savaşlarının siyasi takvimle iç içe geçtiğini gösterdi.</p>
 </li>
 <li>
-<p><strong>Küresel ekonomi</strong> ABD seçim sonrası ticaret savaşı riskleri, Avrupa'nın otomotiv stratejileri ve AI‑odaklı politikalar piyasaların yönünü belirleyecek. </p>
+<p>Küresel piyasalar, S&amp;P 500 şirketlerinin üçte birinin bilanço açıklayacağı yoğun bir haftaya, "piyasa güvenindeki çatlaklar" (MarketWatch) ifadesiyle ve yükselen risk primleriyle giriyor; genel iştah kırılgan, enerji başlıklı enflasyon endişesi önce çıkıyor.</p>
 </li>
 </ul>
 <h2>2. Ekonomi &amp; Finans (Türkiye)</h2>
-<p>Türkiye ekonomisi, <strong>IMF'nin mali şeffaflık değerlendirmesinde üst sıralarda yer alması</strong> (Bakan Şimşek) ve <strong>merkez bankalarının faiz kararlarına odaklanan piyasa beklentileri</strong> (BloombergHT) arasında bir denge arayışında. <strong>Asgari ücretin 2027 için öngörülen zamları</strong> (CNN Turk) işgücü maliyetlerini yükseltirken, <strong>Borsa ve altının haftayı kayıpla kapatması</strong> (CNN Turk) risk iştahını düşürdü. <strong>Altının 3 ayın en dip seviyesinde olması</strong> (CNN Turk) yatırımcıları güvenli liman arayışına itti; aynı zamanda <strong>buğday üretimindeki artış beklentisi</strong> (CNN Turk) gıda fiyatları üzerindeki baskıyı hafifletebilir. <strong>Türkiye‑ABD‑Kanada gümrük vergileri değişikliği</strong> (CNN Turk) dış ticaret maliyetlerini yeniden şekillendirirken, <strong>İran‑ABD gerilimlerinin artması</strong> (BloombergHT) bölgesel risk primlerini yükseltti. Bu dinamikler, <strong>yerel yatırım araçlarının performansını</strong> (BloombergHT) yeniden değerlendirmeye itiyor.</p>
+<p>Türkiye gündeminde sosyal politika adımları öne çıktı: GSS borçlarının silinecek olması [CNN Türk] ve üniversiteler için 2027 bütçe ödeneklerinin planlanması — en yüksek payın Ankara Üniversitesine gitmesi [CNN Türk] — bütçe önceliklerini gündeme taşıdı. Asgari ücret tartışmaları da hızlandı; 2027 için ilk hesaplamalar ve toplantı takvimi sorusu [CNN Türk], enflasyon beklentileriyle birlikte işçi-işveren dengesi açısından kritik. Enerjide yerlilik oranının yüzde 70'i aşması ve Bakan Bayraktar'ın bağımsızlık vurgusu [CNN Türk], petrolün 110 doları aştığı bir dönemde dış enerji bağımlılığı riskini azaltma hedefini görünür kılıyor. Tarımda buğday üretiminde yıllık ihtiyacın aşılacağı ve kişi başına 288 kilogram beklentisi [CNN Türk], gıda enflasyonu cephesinde yumuşama sinyali olarak okunabilir; TİGEM'in 211,9 ton yağlık ayçiçeği ihalesi [CNN Türk] de arz tarafındaki hareketliliği gösteriyor. Finansal görünümde S&amp;P Global'in Türk bankacılık sektöründeki risklerin "yönetilebilir düzeyde" tespiti [Doviz.com] ve eylülde kartlı ödemelerin 3 trilyon liraya yaklaşması [Doviz.com], iç talebin canlı ama mali disiplin gerektirdiği bir tablo çiziyor. Ancak beyin göçünün artması ve mezunların tercih ettiği ülkelerin netleşmesi [Doviz.com], insan sermayesi cephesinde dikkat çeken bir zayıflık işareti.</p>
 <h2>3. Para &amp; Döviz</h2>
-<p>Altın fiyatları <strong>gram 6.641 TL, ons 4.189 $</strong> seviyelerinde (GoogleNews-Altin) seyrediyor ve <strong>DXY'de sıkışma</strong> (Investing TR Forex) riskli bir ortam yaratıyor. <strong>Dolar/TL 45 bandını aşması</strong> (Investing TR Forex) enerji ve Fed baskısının TL üzerindeki etkisini gösterirken, <strong>İng'in güvenli liman tercihlerinin değiştiği</strong> (Doviz.com) küresel sermaye akışlarını yönlendiriyor. <strong>Türk Eximbank‑EDC mutabakatı</strong> (Doviz.com) dış ticaret finansmanını desteklerken, <strong>S&amp;P Global'ın bankacılık risklerinin yönetilebilir olduğunu</strong> (Doviz.com) vurgulaması finansal istikrar sinyali veriyor. <strong>İstanbul'da kartlı ödemelerin 3 trilyon liraya yaklaşması</strong> (Doviz.com) tüketici harcamalarının dijitalleşmesine işaret ediyor. <strong>IMF Türkiye raporu</strong> (Paranin Yonu) ise uzun vadeli mali şeffaflık ilerlemesini teyit ediyor; bu, dış yatırımcı güveni için olumlu bir temel oluşturuyor.</p>
+<p>Dolar/TL hafta sonuna 45 eşiğinin aşılmasıyla girdi; Investing TR analizleri yükselişin enerji fiyatları ve Fed şahinliği kaynaklı olduğunu, ancak "kontrollü" seyrettiğini ve enflasyon raporunun kur için belirleyici olacağını işaret ediyor. DXY cephesinde 100 seviyesindeki sıkışma küresel riskleri büyütürken, "doların güvenli liman primi bitti mi" tartışması [Investing TR] yeni haftanın teknik odak noktası. ING'nin yatırımcıların güvenli liman tercihlerinin değiştiği yönündeki yorumu [Doviz.com], jeopolitik risk yükselirken klasik kaçış davranışının sorgulandığını gösteriyor. Altında ise manzara sert: Gram altın 3 ayın en dip seviyesini görürken uzmanlardan yatırımcıya kritik uyarı geldi [CNN Türk]; başlıklarda gram 6.641-6.652 TL ve ons 4.175-4.189 dolar bandı öne çıkıyor — yani yükselen jeopolitiğe rağmen düzeltme derin. Fed tarafında beklentiler netleşti: Yakın toplantıda faizlerin sabit tutulması, Aralık'ta ise artış öngörülüyor [Paranin Yonu]; Warsh'ın veri odaklı yaklaşımı [BloombergHT] bu dalgalanmayı besliyor. Şirketlerin TL yerine dolar ve euro kredisi kullanması [Investing TR], kur beklentilerinin reel ekonomiye yansıyan bir göstergesi olarak okunmalı; içeride ise kartlı ödemelerin 3 trilyon liraya yaklaşması [Doviz.com] nakit dışı geçişin hacmini gösteriyor.</p>
 <h2>4. Ticaret &amp; Dış Ticaret</h2>
-<p>Türkiye'nin dış ticaretinde <strong>makas açılması</strong> (GoogleNews-Ticaret) – ithalatın pahalanması ve ihracatın yavaşlaması – ticaret dengesinin kırılganlığını ortaya koydu. <strong>AB ile ticaret hacminin artması</strong> (CNN Turk) ülkenin beşinci en büyük ticaret ortağı konumunu pekiştirirken, <strong>İthalat‑ihracat 1,2 trilyon dolar seviyesine doğru ilerliyor</strong> (Vietnam.vn) hacim büyüklüğünü gösteriyor. <strong>Nam A Bank'ın JPMorgan Chase ile ortaklığı</strong> (Vietnam.vn) uluslararası ödeme ve finansman kapasitesini güçlendirebilir. <strong>ABD seçim sonrası olası ticaret savaşı</strong> (İstanbul Ticaret Gazetesi) ve <strong>Trump'ın ticaret vergileri konusundaki açıklamaları</strong> (Dünya Gazetesi) küresel ticaret ortamını belirsizleştiriyor. <strong>UNCTAD'ın biyolojik çeşitlilik raporu</strong> (UNCTAD) gelişmekte olan ülkeler için yeni ticaret fırsatlarını gündeme taşıyor.</p>
-<h2>5. Emlak</h2>
-<p>Konut fiyatları <strong>yıllık %22,5 artış</strong> (İndigo Dergisi) kaydederken, <strong>reel olarak %6,2 düşüş</strong> (Habertürk) fiyatların alıcı gücüne yansıdığını gösteriyor. <strong>İlan sitelerindeki fiyat artışı</strong> (Emlak Kulisi) 3 Milyon TL altındaki konutların bulunmasını zorlaştırıyor. <strong>Çin emlak piyasasındaki olumlu gelişmeler</strong> (Vietnam.vn) bölgesel fiyat baskılarını hafifletebilir. <strong>"Metreküp" satış modeli</strong> (Isindetayi Gayrimenkul) sektörde yenilikçi bir yaklaşım olarak öne çıkıyor. <strong>18.000'den fazla kiralık konutun piyasaya girişi</strong> (Vietnam.vn) ve <strong>Konut Kanunu'nun üniversite‑taşıma yakınlığı şartı</strong> (Vietnam.vn) kiralama piyasasını yeniden şekillendirebilir. <strong>Eminevim'in 600. Bin teslimatı</strong> (Sozcu Emlak) konut arzındaki artışı işaret ediyor.</p>
-<h2>6. Jeopolitik</h2>
-<p>Orta Doğu'da <strong>jeopolitik risklerin artması</strong> (Sunsirs) petrol fiyatlarını <strong>116 $‑110 $</strong> seviyelerine yükseltti (Finans Hattı). <strong>Petrol navlun maliyetindeki büyük artış</strong> (Goldman Sachs) taşıma sektörünü zorlayarak enflasyonist baskıyı artırıyor. <strong>ABD‑İran gerilimleri</strong> (AA Guncel) ve <strong>CENTCOM'un İran saldırı planı</strong> (AA Guncel) bölgesel istikrarı tehdit ederken, <strong>Yemen'de Husilerin tehditleri</strong> (AA Guncel) güvenlik risklerini genişletiyor. <strong>ABD enflasyon verileri ve jeopolitik gerilim</strong> (Instagram) güvenli liman talebini yükselterek <strong>altın ve doların yükselişini</strong> tetikledi. <strong>Hürmüz Boğazı ve Fed politikaları</strong> (CNN Türk Finans) küresel likidite akışını yönlendiriyor.</p>
-<h2>7. Küresel Ekonomi &amp; Piyasalar</h2>
-<p>ABD‑Kanada gümrük tarifelerinin kaldırılması (White House) seçim öncesi ticaret ortamını yumuşatırken, <strong>Britanya'nın bütçe planları</strong> (BBC Business) gelir artırma yollarını tartışıyor. <strong>Avrupa'nın "Made in Europe" otomotiv stratejisi</strong> (BloombergHT) sektörel rekabeti yeniden şekillendiriyor. <strong>AI‑odaklı biyogüvenlik laboratuvarı yatırımı</strong> (BBC Business) ve <strong>Nvidia'nın AI finansmanı rolü</strong> (CNBC Business) teknoloji‑finans kesişiminde yeni risk‑fırsatları doğuruyor. <strong>Trump'ın AI ve otomotiv yatırımları</strong> (CNBC Business) ABD içindeki politik ve ekonomik dinamikleri etkileyebilir. <strong>Fransa'da protestoların piyasaları sarsması</strong> (CNBC Business) jeopolitik belirsizliklerin yatırımcı davranışını nasıl yönlendirdiğini gösteriyor. <strong>Kaliforniya'nın milyarder vergisi önerisi</strong> (BBC Business) vergi politikalarının küresel sermaye akışını yeniden dağıtma potansiyelini ortaya koyuyor.</p>
-<h2>8. Yeni Hafta Ajandası</h2>
-<ul>
-<li>
-<p><strong>Merkez bankalarının faiz kararları</strong>: Türkiye ve ABD'de politika faizlerinin belirlenmesi piyasa yönünü şekillendirecek. </p>
-</li>
-<li>
-<p><strong>Petrol fiyatları ve navlun maliyetleri</strong>: Orta Doğu‑Rusya gelişmeleri ve OPEC kararları izlenecek. </p>
-</li>
-<li>
-<p><strong>Altın ve DXY hareketleri</strong>: Güvenli liman talebi ve Fed'in para politikası sinyalleri kritik olacak. </p>
-</li>
-<li>
-<p><strong>IMF şeffaflık raporu sonrası Türkiye'nin mali reform adımları</strong>: Yatırımcı güveni açısından takip edilecek. </p>
-</li>
-<li>
-<p><strong>AB‑Türkiye ticaret hacmi ve dış ticaret makası</strong>: İthalat‑ihracat dengesi yeni verilerle değerlendirilecek. </p>
-</li>
-<li>
-<p><strong>Konut piyasasındaki fiyat ve arz dinamikleri</strong>: "Metreküp" satış modeli ve yeni kiralık konut arzı incelenecek. </p>
-</li>
-<li>
-<p><strong>Jeopolitik risklerin enerji piyasalarına etkisi</strong>: Orta Doğu‑Hürmüz Boğazı gelişmeleri ve ABD‑İran gerilimleri göz önünde tutulacak. </p>
-</li>
-</ul>
-<p><em>Bu içerik yapay zeka ile hafta sonu haberlerinden derlenmiştir; bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</em></p>
+<p>Türkiye dış ticaretinde makas açıldı: İthalat pahalanırken ihracat azaldı [Cumhuriyet]; T</p>
 <p><strong>Haber kaynakları:</strong></p>
 <ul>
 <li>
@@ -324,10 +293,10 @@
 <p>Emlak: GoogleNews-Emlak, GoogleNews-Konut, Isindetayi Gayrimenkul, Sozcu Emlak</p>
 </li>
 <li>
-<p>Para &amp; Döviz: Doviz.com, GoogleNews-Altin, Investing TR Forex, Paranin Yonu</p>
+<p>Para &amp; Döviz: Doviz.com, GoogleNews-Altin, GoogleNews-Doviz, Investing TR Forex, Paranin Yonu</p>
 </li>
 <li>
-<p>Ticaret &amp; Dış Ticaret: Dunya, GoogleNews-GlobalTicaret, GoogleNews-Gumruk, GoogleNews-Ticaret</p>
+<p>Ticaret &amp; Dış Ticaret: Dunya, GoogleNews-Gumruk, GoogleNews-Ticaret</p>
 </li>
 <li>
 <p>Jeopolitik: AA Guncel, DW Turkce, GoogleNews-Jeopolitik, GoogleNews-Ortadogu</p>
@@ -336,16 +305,16 @@
 <p>Küresel Ekonomi: BBC Business, CNBC Business, MarketWatch</p>
 </li>
 </ul></article>
-<p style="margin-top:18px"><a href="../haftasonu">&larr; Tüm hafta sonu gündemine dön</a></p>
+<p style="margin-top:18px"><a href="../haftasonu.html">&larr; Tüm hafta sonu gündemine dön</a></p>
 </main>
 
 <nav class="altbar" aria-label="Hızlı menü">
-<a href="../raporlar"><span class="i" aria-hidden="true">📊</span>Raporlar</a>
-<a href="../teknik-analiz"><span class="i" aria-hidden="true">📈</span>Teknik</a>
-<a href="../hisse/"><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
-<a href="../portfolio"><span class="i" aria-hidden="true">💼</span>Portföy</a>
-<a href="../haberler"><span class="i" aria-hidden="true">📰</span>Haberler</a>
-<a href="../takvim"><span class="i" aria-hidden="true">📅</span>Takvim</a>
+<a href="../raporlar.html"><span class="i" aria-hidden="true">📊</span>Raporlar</a>
+<a href="../teknik-analiz.html"><span class="i" aria-hidden="true">📈</span>Teknik</a>
+<a href="../hisse/index.html"><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
+<a href="../portfolio.html"><span class="i" aria-hidden="true">💼</span>Portföy</a>
+<a href="../haberler.html"><span class="i" aria-hidden="true">📰</span>Haberler</a>
+<a href="../takvim.html"><span class="i" aria-hidden="true">📅</span>Takvim</a>
 </nav>
 
 <script>
@@ -363,7 +332,7 @@ function temaDegistir() {
 })();
 </script>
 
-<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)<br><a href="../gizlilik" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
+<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok ajanlı sistem)<br><a href="../gizlilik.html" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
 
 <!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
 <script>
