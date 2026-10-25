@@ -831,11 +831,11 @@ def dashboard_yaz(durum, sinyaller, notlar):
                   f"<li><b>AL:</b> SMA10, SMA30'un üzerinde dizilim + RSI14 45–75 bandında + fiyat SMA100 üzerinde (taze kesişim beklenmez; dizilim varsa girilir).</li>"
                   f"<li><b>SAT:</b> SMA10, SMA30'u aşağı keser, ya da maliyetin <b>%{abs(int(STOP_ORAN * 100))}</b> altına düşer (stop), "
                   f"ya da <b>%{int(HEDEF_ORAN * 100)}</b> yukarısına çıkar (hedef).</li>"
-                  f"<li><b>Boyut:</b> özkaynağın en fazla %{int(POZISYON_ORAN * 100)}'i tek hisseye, en fazla {MAKS_POZISYON} pozisyon.</li>"
+                  f"<li><b>Boyut:</b> özkaynağın en fazla %{int(POZISYON_ORAN * 100)}'si tek hisseye, en fazla {MAKS_POZISYON} pozisyon.</li>"
                   f"<li><b>Günlük fren:</b> özkaynak dünkü kapanışa göre %{int(GUNLUK_ZARAR_LIMITI * 100)} düşerse yeni alım o gün durdurulur.</li>"
                   f"<li><b>Saat kuralı:</b> emirler yalnızca BIST işlem oturumunda yürütülür — hafta içi 10:00–18:00 TSİ; resmi tatillerde ve seans dışında (elle tetikleme dahil) işlem açılmaz, sinyaller sonraki seansı bekler.</li>"
                   f"<li><b>Maliyetler:</b> komisyon %{KOMISYON_ORAN * 100:.2f} (en az {KOMISYON_MIN:.0f} ₺) + BSMV %15 + yasal ücret ~%{YASAL_UCRET * 100:.3f} + kayma %{KAYMA * 100:.2f}. 12.000 ₺'lik işlemin tur maliyeti ~35–40 ₺ (~%0,3) — scalping'in gerçek bedeli.</li>"
-                  f"<li><b>Boşta nakit:</b> her işlem günü gecelik ters repoda değerlenir — yıllık oran son açıklanan mevduat faizinden alınır; repo kazancı özkayda yansır.</li>"
+                  f"<li><b>Boşta nakit:</b> her işlem günü gecelik ters repoda değerlenir — yıllık oran son açıklanan mevduat faizinden alınır; repo kazancı özkaynağa yansır.</li>"
                   f"<li><b>Vergi:</b> BIST hisse satış kazancında stopaj %0; yıllık beyan sınırını aşan kazanç beyan edilir.</li></ul></div>"
                   f"<div class='card'><div class='pano-baslik'>Performans Özeti</div>"
                   f"<ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'>"
@@ -847,7 +847,7 @@ def dashboard_yaz(durum, sinyaller, notlar):
 
     icerik = f"""<div class="hero">
 <h1>İşlem Robotu <span class="badge">simülasyon</span></h1>
-<p>BIST 30 hisseleri üzerinde <b>kağıt-üstünde işlem</b> yapan otomatik robotun canlı defteri.
+<p>BIST 30 hisseleri üzerinde <b>kâğıt üzerinde işlem</b> (simülasyon) yapan otomatik robotun canlı defteri.
 Robot <b>piyasa saatlerinde 15 dakikada bir</b> canlı fiyattan (TradingView, ~15 dk gecikmeli) kontrol edilir:
 stop-loss ve hedef gün içinde tetiklenebilir, kesişim sinyalleri gün içi fiyattan değerlendirilir ve
 özkaynak eğrisi her kontrolde bir nokta kazanır. <u>Gerçek para kullanılmaz</u>; tüm emirler gerekçesiyle burada yayımlanır.
@@ -1232,7 +1232,7 @@ def _iskelet(title, icerik, guncelleme):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
-<meta name="description" content="BIST 30 kağıt-üstünde işlem robotunun canlı defteri: piyasa saatlerinde 15 dakikada bir güncellenen simüle AL/SAT emirleri, açık pozisyonlar, gün içi özkaynak eğrisi ve strateji kuralları. Gerçek para kullanılmaz; yatırım tavsiyesi değildir.">
+<meta name="description" content="BIST 30 kâğıt üzerinde işlem (simülasyon) robotunun canlı defteri: piyasa saatlerinde 15 dakikada bir güncellenen simüle AL/SAT emirleri, açık pozisyonlar, gün içi özkaynak eğrisi ve strateji kuralları. Gerçek para kullanılmaz; yatırım tavsiyesi değildir.">
 <link rel="icon" href="/favicon-120.png" type="image/png" sizes="120x120">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://borsa-raporlari.pages.dev/robot">
@@ -1263,7 +1263,7 @@ Son güncelleme: {guncelleme} (İstanbul) · Burada yer alan hiçbir içerik yat
 </main>
 {_SITE_ALTBAR}
 <footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir.
-Simülasyon sonuçları geçmiş performansın gelecek getiri göstergesi değildir. Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)<br><a href="gizlilik.html" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
+Simülasyon sonuçları geçmiş performansın gelecek getiri göstergesi değildir. Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok ajanlı sistem)<br><a href="gizlilik.html" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
 <script>
 function temaDegistir() {{
   var kok = document.documentElement;
@@ -1278,9 +1278,7 @@ function temaDegistir() {{
   if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
 }})();
 </script>
-<script>
 {_ROBOT_CANLI_JS}
-</script>
 </body></html>"""
 
 

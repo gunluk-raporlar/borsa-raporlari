@@ -276,6 +276,17 @@ def main():
     # sayilarin kart listesi (hub) — raporlar/derin/makro hub'lariyla ayni
     # desen. Bot her gun tazeler; hafta sonu yayini de hub'i burada tazeler.
     bot.build_hub_sayfalari()
+    # Hafta sonu akisi gunluk bot'u calistirmadigindan sitemap burada tazenir.
+    # i18n.sitemap_guncelle kullanilir: bot.sitemap_ve_robots_yaz TR-only yazar
+    # ve dil alternatiflerini dusururken (151 URL), bu islev mevcut kayitlari
+    # koruyup eksik sayfayi (yeni bulten/ders) dil kopyalariyla ekler (25.10
+    # denetim bulgusu: haftasonu-egitimi/2026-10-24 kaydi eksik kalmisti).
+    try:
+        from pathlib import Path as _Path
+        import i18n as _i18n
+        _i18n.sitemap_guncelle(_Path("."), ["en", "de", "ru", "zh"])
+    except Exception as _e:
+        print(f"uyari: sitemap tazelenemedi: {_e}", flush=True)
     print(f"HAFTA SONU GUNDEMI HAZIR: {tarih} | {sum(len(v) for v in kategoriler.values())} baslik", flush=True)
     return 0
 

@@ -276,6 +276,10 @@ def sinyaller(rejim):
 def sektor_aktarimi(rejim):
     """Sektor bazli egilim: {sektor: {skor, egilim, gerekce, kanallar}}."""
     sig = sinyaller(rejim)
+    # Kanal anahtarlari hisse sayfalarina ham enum olarak siziyordu
+    # ('faiz artis, ic_talep artis...' — 25.10 denetim bulgusu); burada
+    # okunur Turkce etiketlere cevrilir.
+    _kanal_ad = {"faiz": "faiz", "ic_talep": "iç talep", "kur": "kur", "emtia": "emtia"}
     sonuc = {}
     for sektor, duy in SEKTOR_DUYARLILIK.items():
         skor = 0
@@ -286,7 +290,8 @@ def sektor_aktarimi(rejim):
             katki = duy.get(kanal, 0) * s
             if katki:
                 skor += katki
-                kullanilan.append("%s %s" % (kanal, "artis" if s > 0 else "azalis"))
+                kullanilan.append("%s %s" % (_kanal_ad.get(kanal, kanal),
+                                             "artışı" if s > 0 else "azalışı"))
         egilim = "olumlu" if skor > 0 else ("olumsuz" if skor < 0 else "nötr")
         sonuc[sektor] = {"skor": skor, "egilim": egilim,
                          "kanallar": kullanilan or ["ölçülebilir kanal yok"],

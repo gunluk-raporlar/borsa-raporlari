@@ -86,8 +86,9 @@ GENERASYON_HARIC = {"muhasebe-terimleri.html"}
 # bot.py -> muhasebe_diller.yaz() en/de/ru/zh surumlerini yazar; bu yuzden
 # sitemap'te dil alternatifleri ve ayri <url> kayitlari gecerlidir.
 DIL_SAYFASI_VERIDEN = {"muhasebe-terimleri.html"}
-# Arama motoru dogrulama dosyalari (google/yandex/bing/baidu...) ve gecici onizleme sayfalari cevrilmez
-HARIC_DESEN_RE = re.compile(r"^(google|yandex|baidu|bing|naver|indexnow|site-?verification|onizleme-)", re.I)
+# Arama motoru dogrulama dosyalari (google/yandex/bing/baidu...) ve gecici onizleme sayfalari cevrilmez.
+# _tmp*/_denetim*: gecici tani dosyalari (25.10 bulgusu: sitemap'e sizmisti).
+HARIC_DESEN_RE = re.compile(r"^(google|yandex|baidu|bing|naver|indexnow|site-?verification|onizleme-|_tmp|_denetim|_duzeltme)", re.I)
 
 # ----------------------------------------------------------------------------
 # 2) ARAYUZ SOZLUGU (elle yazilmis; makine cevirisine birakilmaz)
@@ -1191,7 +1192,15 @@ def ceviri_gecerli_mi(saf: str, cev: str) -> bool:
     # kosuyu doldurup haksiz red uretir (15.10 bulgusu).
     kosu = 0
     for w_ory in v_kelimeler_ory:
-        if w_ory.isupper() or not any(c.islower() for c in w_ory):
+        if w_ory.isupper():
+            continue        # hisse kodlari sayilmaz (15.10 bulgusu)
+        if not any(c.islower() for c in w_ory):
+            # Buyuk/kucuk harf ayrimi olmayan token (CJK vb.): kaynakta
+            # bulunamiyorsa kosuyu KIRAR — aksi halde zh/ja gibi alfabelerde
+            # veri-yogun gercek ceviriler haksiz ekol-redi alir (24.10 bulgusu:
+            # 8x StochK zinciri Cinli metinde kosuyu doldurdu).
+            if w_ory.lower() not in s_kelimeler:
+                kosu = 0
             continue
         kosu = kosu + 1 if w_ory.lower() in s_kelimeler else 0
         if kosu >= 8:
@@ -1367,10 +1376,14 @@ def sayfayi_cevir(ham_html: str, dil: str, cevirmen: Cevirmen, diller: list[str]
     if sw_blok:
         ham_html = ham_html.replace(sw_blok, DIL_SW_TOKEN, 1)
 
-    # (a) mutlak SITE_URL baglantilari dil agacina tasinir (og-cover paylasilan varlik kalir)
+    # (a) mutlak SITE_URL baglantilari dil agacina tasinir (og-cover paylasilan
+    #     varlik kalir). URL adi ayni anda dilin slug tablosundan gecirilir:
+    #     yoksa paylas/kopyala dugmesi '/en/raporlar/...' gibi yarim cevrilmis
+    #     adres kopyaliyordu (25.10 denetim bulgusu). slug_degistir
+    #     idempotenttir; zaten dogru adlara dokunmaz.
     govde = re.sub(
-        re.escape(SITE_URL) + r"(?!og-cover)",
-        SITE_URL + dil + "/",
+        re.escape(SITE_URL) + r"(?!og-cover)[^\"'\s<>]*",
+        lambda m: slug_degistir(SITE_URL + dil + "/" + m.group(0)[len(SITE_URL):], dil),
         ham_html,
     )
     # (b) head alanlari
@@ -1439,6 +1452,8 @@ def turkce_sayfalar(kok: Path) -> list[Path]:
             continue
         if any(x in ("web", "node_modules", "functions", ".git") for x in parcalar):
             continue
+        if any(p.startswith(("_tmp", "_denetim", "_duzeltme")) for p in parcalar):
+            continue  # gecici tani dosyalari dil agacina ve sitemap'e girmez
         try:  # dogrulama dosyalari gibi <html> icermeyen parcalari atla
             if "<html" not in dosya.read_text(encoding="utf-8", errors="replace")[:4000].lower():
                 continue
@@ -1741,7 +1756,7 @@ def baglantilari_onar(html: str, rel: Path, agac: set[str], medya: set[str] | No
         return str(Path(y))
 
     def onar(m):
-        nitelik, hedef = m.group(1), m.group(2)
+        nitelik, hedef = m.group(1), m.group(3)
         if not hedef or hedef.startswith(("http", "//", "#", "mailto:", "data:", "javascript:")):
             return m.group(0)
         parcalar = hedef.split("#")[0].split("?")
@@ -1757,9 +1772,27 @@ def baglantilari_onar(html: str, rel: Path, agac: set[str], medya: set[str] | No
         if coz(saf) in medya:
             sayac["medya"] += 1
             return f'{nitelik}="{SITE_URL}{coz(saf).replace(chr(92), "/")}{sorgu}"'
+        # TR gövdeden gelen göreli bağlantı dil agacının yerelleşmiş dizin
+        # adına uymayabilir (../hisse/X → en agacında stocks/, de'de aktien/…);
+        # 25.10 denetimi 4 dilde ~3.480 kırık hisse bağlantısı saydı. Aday
+        # slug tablosundan geçirilip agaçta bulunursa yerelleşmiş hedef yazılır.
+        # Temiz URL'ler (.html'siz) agactaki dosya adıyla eşleşsin diye .html'li
+        # karşılaştırma da yapılır.
+        if rel.parts and rel.parts[0] in DIL_DIZINLERI:
+            aday = slug_degistir(saf, rel.parts[0])
+            if aday != saf:
+                if coz(aday) in agac or coz(aday) + ".html" in agac:
+                    sayac["n"] += 1
+                    return f'{nitelik}="{aday}{sorgu}"'
+                if coz("../" + aday) in agac or coz("../" + aday) + ".html" in agac:
+                    sayac["n"] += 1
+                    return f'{nitelik}="../{aday}{sorgu}"'
         return m.group(0)
 
-    return re.sub(r'(href|src)="([^"]+)"', onar, html), sayac["n"], sayac["medya"]
+    # tek/çift tırnaklı özniteliklerin ikisi de işlenir (bot gövdelerinde
+    # karışık kullanım var; 25.10 denetiminde tek tırnaklı ../hisse/ linkleri
+    # çift tırnak filtresine takılmamıştı)
+    return re.sub(r"(href|src)=([\"'])([^\"']+)\2", onar, html), sayac["n"], sayac["medya"]
 
 
 def seo_yol(rel: Path) -> str:
@@ -1981,11 +2014,11 @@ def dil_yollarini_cevir(kok: Path, dil: str) -> int:
     tani = SLUG_TANILAR[dil]
     dil_oneki = f"/{dil}/"
     hreflang_kod = DILLER[dil]["hreflang"]
-    nitelik_re = re.compile(r'(href|src|content)="([^"]*)"')
+    nitelik_re = re.compile(r"(href|src|content)=(['\"])([^'\"]*)\2")
     jsonld_re = re.compile(r'("(?:url|mainEntityOfPage)"\s*:\s*"[^"]*")')
 
     def _nitelik(m: "re.Match[str]") -> str:
-        nitelik, deger = m.group(1), m.group(2)
+        nitelik, deger = m.group(1), m.group(3)
         if not tani.search(deger):
             return m.group(0)
         # content= hem og:url (URL) hem og:description (metin) tasiyabilir:
@@ -2139,6 +2172,8 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
             kismi = loc.split(SITE_URL, 1)[1]
             if kismi.split("/")[0] in DILLER:
                 continue  # dil kaydi; yeniden uretilecek
+            if kismi.split("/")[0].startswith(("_tmp", "_denetim", "_duzeltme")):
+                continue  # gecici tani dosyalari sitemap'te dusurulur
             tr_kayitlar[kismi] = attr
         else:
             dis_bloklar.append(blok)

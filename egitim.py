@@ -164,7 +164,8 @@ def _guncel_veri_ornekleri(konu=""):
         if paket:
             seri30 = paket["seri"][-31:]
             deg = (seri30[-1] / seri30[0] - 1) * 100
-            parcalar.append(f"Ders grafiği örnek hissesi {paket['ad']}: son 30 işlem günü {deg:+.1f}%, "
+            parcalar.append(f"Ders grafiği örnek hissesi {paket['ad']}: grafik son {len(paket['seri'])} "
+                            f"işlem gününü gösterir; son 30 işlem günündeki değişim {deg:+.1f}%, "
                             f"aralık {min(seri30):.2f}-{max(seri30):.2f} TL; bu seriyi örnekle olarak kullan.")
     except Exception:
         pass
@@ -303,7 +304,7 @@ def _excel_veri_bolumu(metin=None):
             on_hisse = max(x_satirlar, key=lambda s: abs(s.get("gunluk", 0) or 0)).get("hisse")
         return excel_tablo.excel_tablo_html(
             x_satirlar, x_tarih,
-            baslik="TEKNIK-TARAMA.XLSX",
+            baslik="TEKNİK-TARAMA.XLSX",
             preselect_hisse=on_hisse, preselect_alan="gunluk")
     except Exception as e:
         logger.warning("Excel tablo uretilemedi (sayfa tablosuz devam ediyor): %s", e)
@@ -375,7 +376,10 @@ def main():
         liste = [f for f in liste if f != f"{tarih}.html"]
         if liste:
             baglar = " ".join(
-                f'<a href="{ARSIV_DIR}/{f}" style="margin:0 10px 0 0">{bot._tr_tarih(f[:-5])}</a>'
+                # Sayfanın kendisi ARSIV_DIR içinde olduğundan göreli ad
+                # yeterlidir; 'haftasonu-egitimi/...' öneki kendine giden
+                # kırık bağlantı üretiyordu (25.10 denetim bulgusu).
+                f'<a href="{f}" style="margin:0 10px 0 0">{bot._tr_tarih(f[:-5])}</a>'
                 for f in liste[:6])
             onceki = f'<p style="margin-top:16px; color:var(--muted); font-size:13px"><strong>Önceki dersler:</strong> {baglar}</p>'
 
@@ -413,6 +417,16 @@ def main():
     # degil, tum derslerin kart listesi (hub). Arsiv yazildiktan SONRA hub
     # yeniden yazilir ki bugunun dersi listede ilk kart olsun.
     bot.build_hub_sayfalari()
+    # Hafta sonu akisi gunluk bot'u calistirmadigindan sitemap burada tazenir;
+    # bot.sitemap_ve_robots_yaz dil alternatiflerini dusurdugunden
+    # i18n.sitemap_guncelle kullanilir (25.10 denetim bulgusu: yeni ders kaydi
+    # sitemap'e gec kalmisti).
+    try:
+        from pathlib import Path as _Path
+        import i18n as _i18n
+        _i18n.sitemap_guncelle(_Path("."), ["en", "de", "ru", "zh"])
+    except Exception as _e:
+        logger.warning("Sitemap tazelenemedi: %s", _e)
     print(f"BORSA OKULU DERSI HAZIR: {tarih} | {konu} | ders {idx + 1}/{len(MUFREDAT)}", flush=True)
     return 0
 

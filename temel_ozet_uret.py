@@ -35,7 +35,7 @@ def _sira(x):
 
 
 def _yoy(kayitlar, alan):
-    """Son donem ayni cevrek gecen yil karsilastirmasi (%) — veri yoksa None."""
+    """Son donem ayni cevrek gecen yil karsilastirmasi — (oran, yeni, eski) döner; veri yoksa None."""
     if not kayitlar:
         return None
     son = kayitlar[-1]
@@ -50,18 +50,26 @@ def _yoy(kayitlar, alan):
         return None
     if not eski:
         return None
-    return (yeni / eski - 1) * 100
+    return ((yeni / eski - 1) * 100, yeni, eski)
 
 
 def _yorum_cari(x):
     return "güçlü likidite" if x > 2 else "dengeli likidite" if x >= 1 else "kısa vadeli yükümlülük baskısı"
 
 
-def _yorum_yoy(x, birim=""):
-    if x is None:
+def _yorum_yoy(oran, yeni=None, eski=None):
+    """YoY metni; Türkçe ondalık ('%+42.8' degil '%42,8'). Negatif bazda (geçen
+    yıl zarar) yüzde oranı yanıltıcıdır; cıkıs/derinlesme metniyle anlatılır
+    (25.10 denetim bulgusu: GUBRF '-%233,6' oysa zarar kapanıp kara gecilmisti)."""
+    if oran is None:
         return None
-    ok = ("artış" if x > 0.5 else "yok denecek düzeyde" if x > -0.5 else "daralma")
-    return f"YoY %{x:+.1f}{birim} ({ok})"
+    if eski is not None and eski < 0:
+        if yeni is not None and yeni > 0:
+            return "geçen yılın zararına kıyasla anlamlı değil — zarar kapandı, kâra geçildi"
+        return "geçen yılın zararına kıyasla anlamlı değil — zarar devam ediyor"
+    ok = ("artış" if oran > 0.5 else "yok denecek düzeyde" if oran > -0.5 else "daralma")
+    isaret = "" if oran >= 0 else "-"
+    return f"YoY {isaret}%{f'{abs(oran):.1f}'.replace('.', ',')} ({ok})"
 
 
 def uret(kod, temel_veri):
@@ -91,14 +99,15 @@ def uret(kod, temel_veri):
     for alan, ad in (("satis", "Satış"), ("net_kar", "Net kâr")):
         y = _yoy(kayitlar, alan)
         if y is not None:
-            madde.append(f"{ad} büyümesi: {_yorum_yoy(y)}.")
+            madde.append(f"{ad} büyümesi: {_yorum_yoy(*y)}.")
     oz_yoy = None
     if oz:
         eski = [k for k in kayitlar[:-1] if k.get("ozsermaye")]
         if eski:
             try:
-                oz_yoy = (float(oz) / float(eski[-1]["ozsermaye"]) - 1) * 100
-                madde.append(f"Özkaynak büyümesi: {_yorum_yoy(oz_yoy)}.")
+                eski_oz = float(eski[-1]["ozsermaye"])
+                oz_yoy = (float(oz) / eski_oz - 1) * 100
+                madde.append(f"Özkaynak büyümesi: {_yorum_yoy(oz_yoy, float(oz), eski_oz)}.")
             except (TypeError, ValueError, ZeroDivisionError):
                 pass
 
@@ -125,27 +134,30 @@ def uret(kod, temel_veri):
         tv_nakit = tv.get("cash_n_equivalents_fq")
         if oz > 0:
             oran = fin / oz * 100
-            yorum = ("düşük kaldıraç" if oran < 20 else "makul kaldıraç" if oran < 60 else "yüksek kaldıraç")
-            madde.append(f"Finansal borç / özkaynak %{y1(oran)} ({yorum}); "
-                         f"toplam borç (kısa+uzun) / özkaynak %{y1((kisa + uzun) / oz * 100)}.")
+            # Banka/sigorta bilançolarında Is Yatirim 'finansal borc' alanı
+            # dolmaz; %0,0 okunup 'düşük kaldıraç' denmesi yanıltıcıdır
+            # (25.10 denetim bulgusu) — sifira yakin deger maddesiz gecer.
+            if oran > 0.5:
+                yorum = ("düşük kaldıraç" if oran < 20 else "makul kaldıraç" if oran < 60 else "yüksek kaldıraç")
+                madde.append(f"Finansal borç / özkaynak %{y1(oran)} ({yorum}); "
+                             f"toplam borç (kısa+uzun) / özkaynak %{y1((kisa + uzun) / oz * 100)}.")
         if tv_borc is not None and tv_nakit is not None:
             net = float(tv_borc) - float(tv_nakit)
             if net <= 0:
                 madde.append(f"Net finansal borç YOK — nakit, brüt borçtan {f(-net)} TL fazla.")
             else:
-                madde.append(f"Net finansal borç {f(net)} TL (TradingView bilanso kesiti).")
+                madde.append(f"Net finansal borç {f(net)} TL (TradingView bilanço kesiti).")
     except (TypeError, ValueError):
         pass
 
-    # 4) Likidite (Is Yatirim donen varlik / kisa borc + TV cari oran)
+    # 4) Likidite: Is Yatirim donen varlik / kisa borc. TradingView cari oran
+    # ayni olcutu tekrarliyordu (25.10 denetim bulgusu: cift 'Cari oran'
+    # satiri); tek kaynak birakildi.
     try:
         cari = float(son.get("donen_varlik")) / float(son.get("kisa_borc"))
         madde.append(f"Cari oran (dönen varlık / kısa borç) {y1(cari)} — {_yorum_cari(cari)}.")
     except (TypeError, ValueError, ZeroDivisionError):
         pass
-    tv_cari = tv.get("current_ratio_fq")
-    if tv_cari:
-        madde.append(f"Cari oran (TradingView bilanso kesiti) {y1(tv_cari)} — {_yorum_cari(float(tv_cari))}.")
 
     # 5) Carpanlar + temettu (TradingView TTM)
     carpanlar = []

@@ -60,6 +60,16 @@ YAZIM = {
     "Borsa Istanbul": "Borsa İstanbul", "borsa istanbul'un": "Borsa İstanbul'un",
     "tcmb": "TCMB", "Tcmb": "TCMB", "tüik": "TÜİK", "Tüik": "TÜİK",
     "evds": "EVDS", "spk": "SPK", "tufe": "TÜFE", "Tufe": "TÜFE",
+    # 25.10 denetim bulgulari: LLM cikisinda tekrar gorulen hatalar
+    "bekentisi": "beklentisi", "Bekentisi": "Beklentisi",
+    "bekentisinin": "beklentisinin", "Bekentisinin": "Beklentisinin",
+    "gelişmektekte": "gelişmekte olan", "Gelişmektekte": "Gelişmekte olan",
+    "gelişmektek": "gelişmekte olan", "Gelişmektek": "Gelişmekte olan",
+    "içsal": "içsel",
+    "depremasyon": "değer kaybı", "Depremasyon": "Değer kaybı",
+    "fiskalsal": "mali", "liraizasyon": "liralaşma",
+    "emta": "emtia", "Emta": "Emtia",
+    "sağılayıcı": "sağlayıcı", "bilanso": "bilanço",
 }
 
 # Noktalama temizliginde sayi-ondalik virgulu bozmamak icin: virgul/nokta
@@ -85,6 +95,11 @@ _BITISIK_BIRIM = re.compile(r"(\d)(TL|USD|EUR|GBP|TRY)\b")
 _TERS_YUZDE = re.compile(r"(\d)\s+%(?=\s|[.,;:!?)]|$)")
 # Kisa yazim: "vb" -> "vb."
 _VB_KISA = re.compile(r"\bvb(?=[\s.,;:!?)]|$)")
+# 25.10 denetim: LLM bazi yuzdeleri kaydirik yaziyor ('-0,38%' -> '-0,3%8',
+# '43,04%' -> '43,0%4', '%24,6' -> '%24,%6'). Rakamlar DEGISTIRILMEZ; yalnizca
+# yanlis yere dusen '%' sayinin sonuna tasinir (dogrulama desenlerini bozmaz).
+_YUZDE_KAYMA1 = re.compile(r"(\d),(\d)%(\d)(?!\d)")
+_YUZDE_KAYMA2 = re.compile(r"(\d),%(?=\d)")
 
 # --- Kodlama/karakter sagligi (Gemini incelemesi sonrasi ekleme) ---
 # Bozuk kodlama kalintilari (mojibake): "güìlendiği", "\fcsteyse" gibi —
@@ -151,6 +166,11 @@ def imla(metin: str) -> tuple:
     temiz, n = _VB_KISA.subn("vb.", temiz)
     if n:
         duzeltmeler.append(("vb", "vb.", n))
+    # yuzde kaymasi onarimi: rakamlar ayni kalir, '%' dogru konuma döner
+    onarim = _YUZDE_KAYMA2.sub(r"\1,", _YUZDE_KAYMA1.sub(r"\1,\2\3%", temiz))
+    if onarim != temiz:
+        duzeltmeler.append(("yüzde-biçimi", "kaymis '%' konumlandirildi", 1))
+        temiz = onarim
 
     # kodlama sagligi: gorunmez karakterler silinir, NBSP normal bosluk olur,
     # curly tirnaklar duzlesir (gorunum degismeden metin standartlasir)

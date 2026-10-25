@@ -2332,6 +2332,11 @@ PROFESYONEL_YAZIM_KURALLARI = (
     "ondalık basamak sayisini keyfi degistirme.\n"
     "  - Uslup: sakin, olculu, profesyonel bulten dili; dolgu ve tekrar cumlesi yok; her bolum diger "
     "bolumlerle ayni tonda; okur 'neden boyle dusunuluyor' sorusunun cevabini metinde bulabilmeli.\n"
+    "  - Dil disiplini: cikti YALNIZCA Turkce; baska bir dilin sozcugu, harfi veya cumlesi kalmasin "
+    "(korece/almanca/ingilizce kalinti yayin hatasidir) ve 'depremasyon', 'fiskalsal' gibi uydurma "
+    "sozcuk kurma; bilinen Turkce karsiligi kullan.\n"
+    "  - Yuzde bicimi: yuzdeleri daima ondalik ayiraci virgul ve '%' basta olacak bicimde yaz "
+    "('%0,38'); '%0,3%8' gibi kaymis '%' konumlari ve noktali ondalik ('0.38') yasak.\n"
     "  - Portfoy yonetimi perspektifi: onerileri getiri-risk dengesi ve pozisyon etkisiyle gerekcelendir; "
     "yalnizca yon degil, oneri hangi somut kosulda gecersizlesir de yaz."
 )
@@ -2984,6 +2989,13 @@ def portfolio_agent(state: AgentState):
     # Ayni gun tekrar calisilirsa son kaydi guncelle (uzerine yaz)
     if p["history"] and p["history"][-1]["date"] == bugun:
         p["history"].pop()
+
+    # Hafta sonu (cumartesi/pazar) yeni kayit eklenmez: metodoloji 'hafta ici
+    # her sabah guncellenir' diyor; hafta sonu kosusu canli/oglen fiyatıyla
+    # yeni satir acip Pazar'a gercek degisim yazdiriyordu (25.10 denetim
+    # bulgusu: 2026-10-11 Pazar satirinda -%0,13).
+    if datetime.strptime(bugun, "%Y-%m-%d").weekday() >= 5:
+        return {"portfoy_ozet": "Hafta sonu: portföy güncellenmedi (yalnızca işlem günlerinde değişir)."}
 
     # Son bilinen fiyatlar: bugun cesitli sebeplerle (kismi API yaniti, tatil gunu vb.)
     # fiyat gelmeyen hisseler 0 sayilip portfoy degeri sahte bir yokusa dusmesin;
@@ -4644,7 +4656,7 @@ function temaDegistir() {{
 }})();
 </script>
 
-<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok-ajanlı sistem)<br><a href="{kok}gizlilik.html" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
+<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok ajanlı sistem)<br><a href="{kok}gizlilik.html" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
 
 <!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
 <script>
@@ -4947,7 +4959,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
 <h1>{baslik}</h1>
 <div class="meta"><span class="badge">{tr_tarih}</span><span class="badge">{_yazim_ani_str()}</span><span>{alt_baslik}</span>
 <button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button>
-{paylas_html(f"{baslik} — {tr_tarih}", SITE_URL + (kok_yol or f"raporlar/{date_str}.html"))}</div>
+{paylas_html(f"{baslik} — {tr_tarih}", (SITE_URL + (kok_yol or f"raporlar/{date_str}.html")).removesuffix(".html"))}</div>
 </div>
 {_bist30_sepeti_sparkline()}
 {ses_bolumu}
@@ -6042,7 +6054,7 @@ def build_teknik_html(satirlar, date_str):
     icerik = f"""
 <div class="hero">
 <h1>Teknik Tarama</h1>
-<p>BIST 30 hisseleri icin otomatik teknik tarama: EMA dizilim sinyalleri (kısa 5-8-13-21, orta 34-55, uzun 89-144),
+<p>BIST 30 hisseleri için otomatik teknik tarama: EMA dizilim sinyalleri (kısa 5-8-13-21, orta 34-55, uzun 89-144),
 Wave Trend osilatörü ve 60 günlük regresyon kanalı konumu. Kanal konumu %0=alt bant, %100=üst bant demektir;
 %100'ün üzeri fiyatın bandın üstüne çıktığını (aşırı), 0'ın altı bandın altına düştüğünü gösterir.
 Pearson (r) son 60 gündeki trendin yönünü/gücünü gösterir (negatif r, fiyatın aşağı yönlü trendini ifade eder;
@@ -6306,7 +6318,7 @@ def piyasa_serit_yaz():
         return False
     govde = {
         "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M"),
-        "etiket": "gun sonu / gecikmeli",
+        "etiket": "gün sonu / gecikmeli",
         "kaynak": "bot",
         "gostergeler": gostergeler,
     }
@@ -6524,7 +6536,7 @@ def _sirket_profili_html(kod):
         ogeler = "".join(f"<li style='margin:5px 0'>{html.escape(satir)}</li>" for satir in p["temel"])
         temel_html = (f'<div style="margin:10px 0 0; padding-top:10px; border-top:1px solid var(--line)">'
                       f'<div style="color:var(--muted); font-size:12px; margin-bottom:4px">Temel analiz özeti '
-                      f'(elle beslenir — sağılayıcı notlarla)</div>'
+                      f'(kural tabanlı özet — sağlayıcı notlarla)</div>'
                       f'<ul style="margin:0; padding-left:18px; font-size:13px">{ogeler}</ul></div>')
     return f"""
 <div class="card" style="margin:0 0 18px">
@@ -7626,7 +7638,8 @@ def haberler_yaz(gun=14):
 </div>
 {govde}"""
     with open("haberler.html", "w", encoding="utf-8") as f:
-        f.write(_sayfa("Haber Arşivi", icerik, "haberler", yol="haberler.html"))
+        f.write(_sayfa("Haber Arşivi", icerik, "haberler", yol="haberler.html",
+                       aciklama="BIST 30 ve piyasa gündemine dair son 14 günün haber başlıkları; kaynak kuruluş ve zaman damgasıyla haber arşivi."))
     logger.info("[Haberler] %d gundelik arsiv yazildi.", len(dosyalar))
 
 
@@ -7662,7 +7675,8 @@ function sozlukSuz() {{
 }}
 </script>"""
     with open("sozluk.html", "w", encoding="utf-8") as f:
-        f.write(_sayfa("Borsa Sözlüğü", icerik, "sozluk", yol="sozluk.html"))
+        f.write(_sayfa("Borsa Sözlüğü", icerik, "sozluk", yol="sozluk.html",
+                       aciklama="Temel borsa ve finans kavramlarının sade tanımları: emir tipleri, göstergeler, endeksler ve piyasa mekanizması."))
     logger.info("[Sozluk] %d terim yazildi.", len(terimler))
 
 
@@ -8191,11 +8205,10 @@ def _ajanda_html(olaylar, limit=None, kok=""):
     yarin = (datetime.now(tz) + timedelta(days=1)).strftime("%Y-%m-%d")
 
     def _gun_etiketi(t):
-        if t == bugun:
-            return "Bugün"
-        if t == yarin:
-            return "Yarın"
-        return t[8:10] + "." + t[5:7]
+        # 'Bugün'/'Yarın' etiketi takvim sayfası hafta sonu tazelenmeyince
+        # bayatlıyordu (25.10 denetim bulgusu); grup başlıkları artık her
+        # koşuda tarih biçiminde: '23.10 (2026-10-23)'.
+        return f"{t[8:10]}.{t[5:7]} ({t})"
 
     def _deger(v):
         if v in (None, "", 0):
