@@ -1,8 +1,8 @@
 {
  "meta": {
-  "kaynak": "Fintables sirketler/<KOD>/akis (KAP bildirim akisi)",
+  "kaynak": "Fintables sirketler/<KOD>/akis + KAP bildirim-sorgu-sonuc (kap.org.tr resmi baglantilar, ~son 6 gun / 2000 kayit)",
   "tarih": "26.10.2026",
-  "not": "Akis sayfasi basina 15 oge (Fintables siniri); genis duyurular (+N sirket) dahil"
+  "not": "Akis sayfasi basina 15 oge; son ~6 gun resmi KAP baglantisi ile, daha eskisi Fintables akisi ile korunur"
  },
  "hisseler": {
   "AEFES": [
@@ -10,21 +10,21 @@
     "kaynak": "KAP",
     "tarih": "26 Ekim 10:50",
     "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
-    "url": "https://fintables.com/borsa-haber-akisi/99a98f0f-ee0e-486c-959d-cfec10f9bc54/aefes-pay-disinda-sermaye-piyasasi-araci-islemlerine-iliskin-bildirim",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1687168",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "23 Ekim 15:28",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/271279e0-c09b-41da-b7b9-a3d547dd3c68/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686674",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -122,23 +122,30 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "26 Ekim 09:00",
+    "baslik": "Özel Durum Açıklaması (Genel)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1687058",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "23 Ekim 16:54",
     "baslik": "Borsada İşlem Gören Tipe Dönüşüm Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/94f8c420-a2d5-4049-9559-d388d80ca0e5/borsada-islem-goren-tipe-donusum-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686803",
     "genis": true
    },
    {
     "kaynak": "KAP",
     "tarih": "23 Ekim 14:58",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/f390b501-0d82-4372-9fe2-0a7bfb9c3503/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686622",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -179,22 +186,8 @@
    {
     "kaynak": "KAP",
     "tarih": "13 Ekim 16:30",
-    "baslik": "İhraç Belgesi",
-    "url": "https://fintables.com/borsa-haber-akisi/c1a10673-235d-4641-a29c-c33d5e6f9788/akbnk-ihrac-belgesi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "13 Ekim 16:30",
     "baslik": "Yeşil veya Sürdürülebilir Temalı Sermaye Piyasası Aracına İlişkin Bildirim",
     "url": "https://fintables.com/borsa-haber-akisi/7e51d278-2b5f-414a-a3d5-a2f9e17647fa/akbnk-yesil-veya-surdurulebilir-temali-sermaye-piyasasi-aracina-iliski",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "13 Ekim 16:29",
-    "baslik": "İhraç Belgesi",
-    "url": "https://fintables.com/borsa-haber-akisi/7bd03cb3-af37-4d80-a56f-acfa2e6ed21e/akbnk-ihrac-belgesi",
     "genis": false
    },
    {
@@ -229,16 +222,23 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "23 Ekim 11:07",
+    "baslik": "Yeni İş İlişkisi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686331",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "23 Ekim 10:19",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/896e83f7-f5a0-4554-b7d6-f9ed3401568e/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686216",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -313,13 +313,6 @@
    },
    {
     "kaynak": "KAP",
-    "tarih": "2 Ekim 10:47",
-    "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/24425964-f4dd-495e-bc5c-23778d553a5f/temerrut-islemi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
     "tarih": "2 Ekim 09:15",
     "baslik": "Yurt dışındaki bir son kullanıcı ile Hava Savunma Sistemlerinin ihracatına ilişkin toplam tutarı 488,5 milyon Avro olan bir satış sözleşmesi imzalandı.",
     "url": "https://fintables.com/borsa-haber-akisi/d0be880f-4e1f-4790-adfb-0af429306bff/asels-yeni-is-iliskisi",
@@ -336,6 +329,13 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "26 Ekim 09:30",
+    "baslik": "Yeni İş İlişkisi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1687088",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "23 Ekim 21:22",
     "baslik": "İstanbul Cumhuriyet Başsavcılığı tarafından yürütülen soruşturma kapsamında, şirketin ana hissedarları Feridun Geçgel ve Enver Geçgel hakkında uygulanmakta olan tedbirler ve dondurma kararı kaldırıldı.",
     "url": "https://fintables.com/borsa-haber-akisi/432580e1-3d68-487e-8049-c14917069ff9/astor-ozel-durum-aciklamasi-genel",
@@ -343,30 +343,37 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "23 Ekim 21:22",
+    "baslik": "Özel Durum Açıklaması (Genel)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1687032",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "23 Ekim 16:54",
     "baslik": "Borsada İşlem Gören Tipe Dönüşüm Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/94f8c420-a2d5-4049-9559-d388d80ca0e5/borsada-islem-goren-tipe-donusum-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686803",
     "genis": true
    },
    {
     "kaynak": "KAP",
     "tarih": "23 Ekim 12:22",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/bf724c80-f621-4520-ac06-770c08e8f47e/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686449",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 17:16",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/20af1512-f1ab-4b9c-b987-dd88fd2d3aa4/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685200",
     "genis": false
    },
    {
@@ -406,13 +413,6 @@
    },
    {
     "kaynak": "KAP",
-    "tarih": "7 Ekim 10:39",
-    "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/8c0d7c87-c34e-489e-8c4c-79aa2f6d57b4/pay-bazinda-devre-kesici-bildirimi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
     "tarih": "6 Ekim 10:02",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
     "url": "https://fintables.com/borsa-haber-akisi/9d6c4215-ad52-4c67-9121-1498341960c8/pay-bazinda-devre-kesici-bildirimi",
@@ -423,13 +423,6 @@
     "tarih": "5 Ekim 12:04",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
     "url": "https://fintables.com/borsa-haber-akisi/ca17151c-a2cb-43b1-a6f6-ddfc9e32f07a/pay-bazinda-devre-kesici-bildirimi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "5 Ekim 10:20",
-    "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/14c075b4-4b18-4b39-92a0-ada3f1dfecb8/pay-bazinda-devre-kesici-bildirimi",
     "genis": false
    }
   ],
@@ -443,6 +436,13 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "26 Ekim 09:33",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1687092",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "23 Ekim 08:56",
     "baslik": "Mustafa Latif Topbaş, 371,26 TL fiyattan 200.000 adet pay aldı. Bu işlemle birlikte şirket sermayesindeki payları %0,2950 sınırına ulaştı.",
     "url": "https://fintables.com/borsa-haber-akisi/a3015587-245f-490b-9782-2e7f1aad7b3e/bimas-pay-alim-satim-bildirimi",
@@ -450,9 +450,16 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "23 Ekim 08:56",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686114",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -524,20 +531,6 @@
     "baslik": "Hak Kullanımı",
     "url": "https://fintables.com/borsa-haber-akisi/ba66c123-588b-4f9a-bc73-7085f5563607/hak-kullanimi",
     "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "3 Eylül 20:48",
-    "baslik": "Rekabet Kurulu tarafından yürütülmekte olan soruşturmanın şirket bakımından uzlaşma usulü ile sonlandırılmasına karar verildi. Şirketin ödeyeceği tutar %25 erken ödeme indirimi ile 50.413.372 TL olarak belirlendi.",
-    "url": "https://fintables.com/borsa-haber-akisi/321c0f05-d218-4e1f-afb5-15b1dbbb0116/bimas-ozel-durum-aciklamasi-genel",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "27 Ağustos 19:21",
-    "baslik": "Kredi Derecelendirmesi",
-    "url": "https://fintables.com/borsa-haber-akisi/050cb246-0e6a-47d8-8255-f5eee12c363c/bimas-kredi-derecelendirmesi",
-    "genis": false
    }
   ],
   "EKGYO": [
@@ -545,21 +538,21 @@
     "kaynak": "KAP",
     "tarih": "23 Ekim 18:17",
     "baslik": "Likidite Sağlayıcılık Kapsamındaki İşlemler",
-    "url": "https://fintables.com/borsa-haber-akisi/932eb424-e831-457d-bbed-ee56f5eb42c9/halki-likidite-saglayicilik-kapsamindaki-islemler",
-    "genis": false
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686943",
+    "genis": true
    },
    {
     "kaynak": "KAP",
     "tarih": "23 Ekim 17:31",
     "baslik": "Tertip İhraç Belgesi",
-    "url": "https://fintables.com/borsa-haber-akisi/4d27c743-5ca8-4528-ae4c-0a8be7a490c7/hlvks-tertip-ihrac-belgesi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686874",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "23 Ekim 14:29",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/71e30517-a365-4ac1-b370-2bbb0274cca7/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686548",
     "genis": false
    },
    {
@@ -581,6 +574,13 @@
     "tarih": "21 Ekim 15:26",
     "baslik": "Balıkesir Altıeylül Konut ve Ticaret İnşaatları ile Altyapı ve Çevre Düzenleme İşi'nin kesin kabulü yapılmış olup Kesin Kabul Tutanağı onaylandı.",
     "url": "https://fintables.com/borsa-haber-akisi/f1e64d85-3b1b-4157-b9f3-2f08cb655a53/ekgyo-ozel-durum-aciklamasi-genel",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
+    "tarih": "21 Ekim 15:26",
+    "baslik": "Özel Durum Açıklaması (Genel)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685110",
     "genis": false
    },
    {
@@ -638,13 +638,6 @@
     "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faizsiz)",
     "url": "https://fintables.com/borsa-haber-akisi/69ccb10f-e0fe-47c8-8040-b4fe00be7a67/hlvks-pay-disinda-sermaye-piyasasi-araci-islemlerine-iliskin-bildirim",
     "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "14 Ekim 16:32",
-    "baslik": "Küçükçekmece Halkalı Batı 3. Etap Arsa Satışı Karşılığı Gelir Paylaşımı İşi ihalesinin 1. oturumu 21 Ekim'de yapılacak.",
-    "url": "https://fintables.com/borsa-haber-akisi/ea3755d2-4576-427a-82d9-56f29af47d21/ekgyo-ozel-durum-aciklamasi-genel",
-    "genis": false
    }
   ],
   "ENKAI": [
@@ -657,9 +650,16 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "26 Ekim 09:22",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1687083",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -667,6 +667,13 @@
     "tarih": "21 Ekim 08:36",
     "baslik": "Şirket Ortağı Fatma Esra Tara, 76,85-77,6 TL fiyat aralığından 300.000 adet pay aldı. Bu işlemle birlikte şirket sermayesindeki payları %0,079 sınırına ulaştı.",
     "url": "https://fintables.com/borsa-haber-akisi/accb5856-4fe7-403e-9afb-e9f4b5735fab/enkai-pay-alim-satim-bildirimi",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
+    "tarih": "21 Ekim 08:36",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1684694",
     "genis": false
    },
    {
@@ -738,20 +745,6 @@
     "baslik": "Sorumluluk Beyanı (Konsolide)",
     "url": "https://fintables.com/borsa-haber-akisi/2adae5f4-e770-4eb0-9664-fd836b94b467/enkai-sorumluluk-beyani-konsolide",
     "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "14 Ağustos 19:22",
-    "baslik": "Faaliyet Raporu (Konsolide)",
-    "url": "https://fintables.com/borsa-haber-akisi/0d6989c2-828d-4e8a-bd78-2c8eeca3fff0/enkai-faaliyet-raporu-konsolide",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "14 Ağustos 19:22",
-    "baslik": "Finansal Rapor",
-    "url": "https://fintables.com/borsa-haber-akisi/eb50e535-9ff2-4b59-9622-54920790d008/enkai-finansal-rapor",
-    "genis": false
    }
   ],
   "EREGL": [
@@ -764,44 +757,37 @@
    },
    {
     "kaynak": "KAP",
-    "tarih": "23 Ekim 10:58",
-    "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/972220d3-f267-4928-a031-4d1da86936f6/pay-bazinda-devre-kesici-bildirimi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
     "tarih": "23 Ekim 10:03",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/dee4baab-2434-4077-a6c1-cce2a855e64c/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686178",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "22 Ekim 19:01",
     "baslik": "Sorumluluk Beyanı (Konsolide)",
-    "url": "https://fintables.com/borsa-haber-akisi/98f7fef3-08d0-4a4d-a966-f0bdd1ef86bf/eregl-sorumluluk-beyani-konsolide",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686051",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "22 Ekim 19:01",
     "baslik": "Faaliyet Raporu (Konsolide)",
-    "url": "https://fintables.com/borsa-haber-akisi/15fab23e-3245-483d-a065-b5587d2d4bc4/eregl-faaliyet-raporu-konsolide",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686050",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "22 Ekim 19:01",
     "baslik": "Finansal Rapor",
-    "url": "https://fintables.com/borsa-haber-akisi/569058c5-a4c5-44c0-a419-7f0b87c0bc5d/eregl-finansal-rapor",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686049",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -866,14 +852,14 @@
     "kaynak": "KAP",
     "tarih": "23 Ekim 14:36",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/c437a4d3-5f3a-4a3a-ac96-5dc25aa6a40f/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686560",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -934,23 +920,9 @@
    },
    {
     "kaynak": "KAP",
-    "tarih": "23 Eylül 12:12",
-    "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/1166acea-ddf9-4767-8770-0562eed7702c/temerrut-islemi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
     "tarih": "22 Eylül 20:44",
     "baslik": "Temerrüt İşlemi",
     "url": "https://fintables.com/borsa-haber-akisi/e8c7d7e7-08ad-4498-994c-52a56473874b/temerrut-islemi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "22 Eylül 11:17",
-    "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/d0191636-8d58-4b45-a6ab-ddc179097211/temerrut-islemi",
     "genis": false
    },
    {
@@ -980,49 +952,28 @@
     "kaynak": "KAP",
     "tarih": "23 Ekim 15:25",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/02eac725-02bb-455a-8399-637ccf3da2d4/pay-bazinda-devre-kesici-bildirimi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "23 Ekim 11:40",
-    "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/5294a8ec-a3a9-410e-9cd5-e1434dab2b38/temerrut-islemi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686667",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "23 Ekim 10:28",
     "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/03a38508-10c7-4e68-94d7-565c53c264cb/temerrut-islemi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "22 Ekim 18:13",
-    "baslik": "Özel Durum Açıklaması (Genel)",
-    "url": "https://fintables.com/borsa-haber-akisi/84f23497-c7d3-4783-b7d2-922baf77c6e5/glcvy-ozel-durum-aciklamasi-genel",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686245",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "22 Ekim 18:10",
     "baslik": "Özel Durum Açıklaması (Genel)",
-    "url": "https://fintables.com/borsa-haber-akisi/14325a85-e213-4441-8e69-4cf46ead43bc/brkvy-ozel-durum-aciklamasi-genel",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "22 Ekim 11:47",
-    "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/01a21b2e-9733-4f9e-a856-5aa1551799eb/temerrut-islemi",
-    "genis": false
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685964",
+    "genis": true
    },
    {
     "kaynak": "KAP",
     "tarih": "22 Ekim 10:10",
     "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/67e6b1be-f464-433c-bf84-84e56cd1421d/temerrut-islemi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685608",
     "genis": false
    },
    {
@@ -1036,7 +987,7 @@
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -1078,6 +1029,13 @@
   "GUBRF": [
    {
     "kaynak": "KAP",
+    "tarih": "26 Ekim 12:10",
+    "baslik": "Payların Geri Alınmasına İlişkin Bildirim",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1687235",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "22 Ekim 18:55",
     "baslik": "Bağlı ortaklık Gübretaş Maden Yatırımları tarafından toplam 7.252.152.706 TL tutarında yatırım gerçekleştirilmesi ve sermaye artırımlarına ilişkin tutarların sermaye avansı olarak ödenmesi kararlaştırıldı. Söz konusu işlemlerin tamamlanmasıyla, bağlı ortaklığın TK Market'te yaklaşık %10,26, TK Yem'de yaklaşık %10 ve TK Tedarik'te %30 oranında pay sahibi olması öngörülmektedir.",
     "url": "https://fintables.com/borsa-haber-akisi/0aa36ca1-1bb3-420c-8e2c-0d8f71bfa610/gubrf-ozel-durum-aciklamasi-genel",
@@ -1085,9 +1043,16 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "22 Ekim 18:55",
+    "baslik": "Özel Durum Açıklaması (Genel)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686044",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "22 Ekim 17:55",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/f3a57220-f2c1-4504-bd21-c58a615f88f0/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685942",
     "genis": false
    },
    {
@@ -1166,20 +1131,6 @@
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
     "url": "https://fintables.com/borsa-haber-akisi/7f23ad62-770d-47c4-8432-7bff7e2f336a/pay-bazinda-devre-kesici-bildirimi",
     "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "24 Eylül 12:52",
-    "baslik": "Özel Durum Açıklaması (Genel)",
-    "url": "https://fintables.com/borsa-haber-akisi/079bf758-a2cf-475b-9bb6-40c91453334c/gubrf-ozel-durum-aciklamasi-genel",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "17 Eylül 17:47",
-    "baslik": "İskenderun Gübretaş Limanı'nın; 35 yıl süre ile münhasıran Alport'a devredilmesi, Gübretaş'ın cirodan pay ve yıllık sabit işletme ücreti elde etmesi, alt yapı-üst yapı yatırımlarının Alport tarafından yapılması konularında \"İşletme Hakkı Devri Sözleşmesi\" imzalandı. Sözleşme süresi boyunca 350 milyon dolar gelir elde edilmesi öngörülüyor.",
-    "url": "https://fintables.com/borsa-haber-akisi/5d912fdb-e903-4f5c-b03f-9103523cdbb4/gubrf-ozel-durum-aciklamasi-genel",
-    "genis": false
    }
   ],
   "ISCTR": [
@@ -1187,14 +1138,14 @@
     "kaynak": "KAP",
     "tarih": "23 Ekim 14:58",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/7a7854fc-6e6a-409d-9175-d4edeb8d8f2d/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686624",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -1276,13 +1227,6 @@
    },
    {
     "kaynak": "KAP",
-    "tarih": "17 Eylül 12:02",
-    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
-    "url": "https://fintables.com/borsa-haber-akisi/9e25dd40-d89a-4bce-80cf-ac8dbe05fc25/isatr-pay-disinda-sermaye-piyasasi-araci-islemlerine-iliskin-bildirim",
-    "genis": true
-   },
-   {
-    "kaynak": "KAP",
     "tarih": "16 Eylül 17:15",
     "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
     "url": "https://fintables.com/borsa-haber-akisi/cf74dafb-30ee-4be6-9e87-5cf58f6e9f35/isatr-pay-disinda-sermaye-piyasasi-araci-islemlerine-iliskin-bildirim",
@@ -1294,7 +1238,7 @@
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -1401,7 +1345,7 @@
     "kaynak": "KAP",
     "tarih": "26 Ekim 10:56",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/24252034-a563-4dbc-be2d-6aff0bd16d69/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1687179",
     "genis": false
    },
    {
@@ -1422,7 +1366,7 @@
     "kaynak": "KAP",
     "tarih": "23 Ekim 10:16",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/0ac84116-1e00-4690-bdc3-8425e5f619eb/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686207",
     "genis": false
    },
    {
@@ -1445,6 +1389,13 @@
     "baslik": "Bank of America, 36,93-48,99 TL fiyat aralığından 5.936.571 adet pay aldı. Bu işlemle birlikte şirket sermayesindeki payları %3,118 sınırına ulaştı.",
     "url": "https://fintables.com/borsa-haber-akisi/6de4dbed-8df2-4524-88f6-7d7c69f4f1a5/krdma-pay-alim-satim-bildirimi",
     "genis": false
+   },
+   {
+    "kaynak": "KAP",
+    "tarih": "22 Ekim 09:10",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685563",
+    "genis": true
    },
    {
     "kaynak": "KAP",
@@ -1494,13 +1445,6 @@
     "baslik": "Goldman Sachs, 1.058.749 adet pay aldı. Bu işlemle birlikte şirket sermayesindeki payları %5,07 sınırına ulaştı.",
     "url": "https://fintables.com/borsa-haber-akisi/35ad97c9-24a2-407c-a079-885e6d0e4d9a/krdma-pay-alim-satim-bildirimi",
     "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "9 Ekim 15:29",
-    "baslik": "Hüseyin Çağrı Güleç, 77,20-81,50 TL fiyat aralığından 1.700.000 adet pay aldı. Bu işlemle birlikte şirket sermayesindeki payları %0,24 sınırına ulaştı.",
-    "url": "https://fintables.com/borsa-haber-akisi/1e5973a7-74c7-498b-8f91-bae25b41b7d5/krdma-pay-alim-satim-bildirimi",
-    "genis": false
    }
   ],
   "MGROS": [
@@ -1508,28 +1452,28 @@
     "kaynak": "KAP",
     "tarih": "23 Ekim 16:54",
     "baslik": "Borsada İşlem Gören Tipe Dönüşüm Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/94f8c420-a2d5-4049-9559-d388d80ca0e5/borsada-islem-goren-tipe-donusum-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686803",
     "genis": true
    },
    {
     "kaynak": "KAP",
     "tarih": "23 Ekim 15:39",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/c87d86ce-003f-4904-90d3-80dff4e33e99/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686701",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 17:11",
     "baslik": "Borsada İşlem Gören Tipe Dönüşüm Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/8b578685-ca9c-4ce8-be1d-a7f23fba05b9/borsada-islem-goren-tipe-donusum-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685196",
     "genis": true
    },
    {
@@ -1615,14 +1559,14 @@
     "kaynak": "KAP",
     "tarih": "26 Ekim 09:02",
     "baslik": "Kamuyu Aydınlatma Platformu Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/651812ff-220e-4528-8ef4-bb28b9a6cc93/kamuyu-aydinlatma-platformu-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1687059",
     "genis": true
    },
    {
     "kaynak": "KAP",
     "tarih": "23 Ekim 14:47",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/c2462cfa-991e-4f52-8488-ceb71a2b5f3d/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686606",
     "genis": false
    },
    {
@@ -1722,14 +1666,14 @@
     "kaynak": "KAP",
     "tarih": "23 Ekim 15:41",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/4494a2ac-46f7-44a0-86fc-0ff1fa92319b/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686717",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -1829,7 +1773,7 @@
     "kaynak": "KAP",
     "tarih": "26 Ekim 09:02",
     "baslik": "Kamuyu Aydınlatma Platformu Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/651812ff-220e-4528-8ef4-bb28b9a6cc93/kamuyu-aydinlatma-platformu-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1687059",
     "genis": true
    },
    {
@@ -1841,6 +1785,13 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "23 Ekim 18:33",
+    "baslik": "Payların Geri Alınmasına İlişkin Bildirim",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686979",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "23 Ekim 18:32",
     "baslik": "Carrefoursa paylarının devri kapsamında; şirket tarafında Yeni Mağazacılık'a 6.470.448 dolar tutarında ilave ödeme yapıldı.",
     "url": "https://fintables.com/borsa-haber-akisi/cee4f75b-d54e-45d2-8971-854bc662bd86/sahol-ozel-durum-aciklamasi-genel",
@@ -1848,16 +1799,23 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "23 Ekim 18:32",
+    "baslik": "Özel Durum Açıklaması (Genel)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686977",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "23 Ekim 16:54",
     "baslik": "Borsada İşlem Gören Tipe Dönüşüm Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/94f8c420-a2d5-4049-9559-d388d80ca0e5/borsada-islem-goren-tipe-donusum-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686803",
     "genis": true
    },
    {
     "kaynak": "KAP",
     "tarih": "23 Ekim 15:35",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/b666c994-b8a2-402c-af49-99dcab1f75b2/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686689",
     "genis": false
    },
    {
@@ -1869,9 +1827,16 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "21 Ekim 18:49",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685377",
+    "genis": true
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -1908,27 +1873,6 @@
     "baslik": "Serra Sabancı, 85,20-86,20 TL fiyat aralığından 1.155.000 adet pay aldı. Bu işlemle birlikte şirket sermayesindeki payları %0,6448 sınırına ulaştı.",
     "url": "https://fintables.com/borsa-haber-akisi/e655fa9b-b10b-4d72-85c7-8c903359147f/sahol-pay-alim-satim-bildirimi",
     "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "19 Ekim 16:19",
-    "baslik": "Yönetim Kurulu Üyesi ve CEO Kıvanç Zaimler, 85,25-85,95 TL fiyat aralığından 175.650 adet pay aldı. Bu işlemle birlikte şirket sermayesindeki payları %0,0083 sınırına ulaştı.",
-    "url": "https://fintables.com/borsa-haber-akisi/75b57247-c33d-475c-9b84-cef5ee2ff2e3/sahol-pay-alim-satim-bildirimi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "19 Ekim 16:12",
-    "baslik": "Özel Durum Açıklaması (Genel)",
-    "url": "https://fintables.com/borsa-haber-akisi/75ee5363-5c3f-4136-be01-869fc5595b88/sahol-ozel-durum-aciklamasi-genel",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "16 Ekim 18:34",
-    "baslik": "2026 yılının üçüncü çeyreğine ilişkin finansal raporlar 4 Kasım'da kamuya duyurulacak.",
-    "url": "https://fintables.com/borsa-haber-akisi/c7d225c4-070f-40f8-bc1c-7e26991462a7/sahol-finansal-takvim",
-    "genis": false
    }
   ],
   "SASA": [
@@ -1936,14 +1880,14 @@
     "kaynak": "KAP",
     "tarih": "23 Ekim 14:32",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/43b96af1-265d-4547-9049-db3e04912904/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686555",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -2043,7 +1987,7 @@
     "kaynak": "KAP",
     "tarih": "23 Ekim 15:43",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/da333c3b-5630-44d9-9791-0dd33f197bda/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686723",
     "genis": false
    },
    {
@@ -2055,9 +1999,16 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "21 Ekim 19:52",
+    "baslik": "Özel Durum Açıklaması (Genel)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685449",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -2132,13 +2083,6 @@
    },
    {
     "kaynak": "KAP",
-    "tarih": "21 Ağustos 18:15",
-    "baslik": "Kredi Derecelendirmesi",
-    "url": "https://fintables.com/borsa-haber-akisi/597e04b0-5a08-45b8-b493-b527cd4c144d/jcrav-kredi-derecelendirmesi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
     "tarih": "20 Ağustos 16:36",
     "baslik": "Borsada İşlem Gören Tipe Dönüşüm Duyurusu",
     "url": "https://fintables.com/borsa-haber-akisi/3f923702-25ee-486a-b288-768a2fff9c46/borsada-islem-goren-tipe-donusum-duyurusu",
@@ -2150,7 +2094,7 @@
     "kaynak": "KAP",
     "tarih": "22 Ekim 17:25",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/6d486e93-52b9-4a99-b676-640a2ef32cac/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685909",
     "genis": false
    },
    {
@@ -2164,49 +2108,49 @@
     "kaynak": "KAP",
     "tarih": "22 Ekim 15:18",
     "baslik": "Özel Durum Açıklaması (Genel)",
-    "url": "https://fintables.com/borsa-haber-akisi/900fce45-9fa1-464b-87c4-2921daaa20aa/tavhl-ozel-durum-aciklamasi-genel",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685780",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "22 Ekim 15:10",
     "baslik": "Kredi Derecelendirmesi",
-    "url": "https://fintables.com/borsa-haber-akisi/af767ae0-5b95-4e92-85ac-8e98fa637568/jcrav-kredi-derecelendirmesi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685771",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:16",
     "baslik": "Kredi Derecelendirmesi",
-    "url": "https://fintables.com/borsa-haber-akisi/49280898-cc2e-4e72-b7ae-740e33ca19cf/tavhl-kredi-derecelendirmesi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685322",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:16",
     "baslik": "Özel Durum Açıklaması (Genel)",
-    "url": "https://fintables.com/borsa-haber-akisi/d5af1f7c-96fd-455d-9519-6a2658867550/tavhl-ozel-durum-aciklamasi-genel",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685320",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:16",
     "baslik": "Faaliyet Raporu (Konsolide)",
-    "url": "https://fintables.com/borsa-haber-akisi/e99bcb29-dce8-409e-8fd7-f4ba033d5dc3/tavhl-faaliyet-raporu-konsolide",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685318",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:15",
     "baslik": "Sorumluluk Beyanı (Konsolide)",
-    "url": "https://fintables.com/borsa-haber-akisi/13463b2d-5cb0-424b-a581-6ca923d4a981/tavhl-sorumluluk-beyani-konsolide",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685316",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:15",
     "baslik": "Finansal Rapor",
-    "url": "https://fintables.com/borsa-haber-akisi/8dd1cd45-1e8e-4d3a-85a9-81cfbb5fb60e/tavhl-finansal-rapor",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685312",
     "genis": false
    },
    {
@@ -2262,16 +2206,23 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "23 Ekim 20:45",
+    "baslik": "Payların Geri Alınmasına İlişkin Bildirim",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1687024",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "23 Ekim 13:43",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/803a7b68-5572-40b8-bafd-9d73a56a608b/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686497",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "22 Ekim 19:58",
     "baslik": "Şirket Genel Bilgi Formu",
-    "url": "https://fintables.com/borsa-haber-akisi/13233c08-a7f9-402b-ae6f-b3c2b218f5cb/tcell-sirket-genel-bilgi-formu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686075",
     "genis": false
    },
    {
@@ -2283,9 +2234,16 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "22 Ekim 19:58",
+    "baslik": "Maddi Duran Varlık Alımı",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686074",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -2332,23 +2290,9 @@
    },
    {
     "kaynak": "KAP",
-    "tarih": "30 Eylül 10:51",
-    "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/49340d3b-4a52-42dc-ba95-c3eccf09f7c3/temerrut-islemi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
     "tarih": "29 Eylül 15:33",
     "baslik": "Temerrüt İşlemi",
     "url": "https://fintables.com/borsa-haber-akisi/6ce7ee4a-1ef2-4f39-9302-cd392e532a95/temerrut-islemi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "29 Eylül 11:27",
-    "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/35c35f16-69fd-4c90-95cf-ce6df227ba5f/temerrut-islemi",
     "genis": false
    },
    {
@@ -2364,7 +2308,7 @@
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -2446,13 +2390,6 @@
    },
    {
     "kaynak": "KAP",
-    "tarih": "22 Eylül 11:16",
-    "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/98d6b44a-72f4-4382-a4d9-da229f360cb3/temerrut-islemi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
     "tarih": "21 Eylül 19:29",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
     "url": "https://fintables.com/borsa-haber-akisi/e761cff7-d781-497e-90aa-8a5366ff910e/spk-islem-yasagi-nedeniyle-pay-duyurusu",
@@ -2471,21 +2408,21 @@
     "kaynak": "KAP",
     "tarih": "26 Ekim 10:09",
     "baslik": "Kurumsal Yönetim İlkelerine Uyum Derecelendirmesi",
-    "url": "https://fintables.com/borsa-haber-akisi/0b43dc25-379a-4966-9a7d-8fc7b15bc963/sahar-kurumsal-yonetim-ilkelerine-uyum-derecelendirmesi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1687140",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "23 Ekim 18:27",
     "baslik": "Kurumsal Yönetim İlkelerine Uyum Derecelendirmesi",
-    "url": "https://fintables.com/borsa-haber-akisi/57f852c0-5a5a-4065-9019-e49f1ce8d12f/toaso-kurumsal-yonetim-ilkelerine-uyum-derecelendirmesi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686963",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "23 Ekim 15:40",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/b77db68e-1a01-4a8d-af97-9757c642518f/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686715",
     "genis": false
    },
    {
@@ -2497,9 +2434,16 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "21 Ekim 18:20",
+    "baslik": "Finansal Takvim",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685333",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -2553,13 +2497,6 @@
    },
    {
     "kaynak": "KAP",
-    "tarih": "22 Eylül 11:21",
-    "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/1bdf115b-8db3-41aa-8e0a-461b731ee6e4/temerrut-islemi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
     "tarih": "21 Eylül 22:09",
     "baslik": "BIST Pay Endeksleri",
     "url": "https://fintables.com/borsa-haber-akisi/ffc953ed-e62f-4c30-80d2-b1ae8cdef356/bist-pay-endeksleri",
@@ -2583,6 +2520,13 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "23 Ekim 18:16",
+    "baslik": "Özel Durum Açıklaması (Genel)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686936",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "23 Ekim 17:22",
     "baslik": "Bank of America, 37,03-38,08 TL fiyat aralığından 6.451.095 adet pay sattı. Bu işlemle birlikte şirket sermayesindeki payları %2,957 sınırına geriledi.",
     "url": "https://fintables.com/borsa-haber-akisi/f2b60e7e-47e5-42d7-934d-a7e608232548/tralt-pay-alim-satim-bildirimi",
@@ -2590,16 +2534,23 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "23 Ekim 17:22",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686861",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "23 Ekim 12:01",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/c4825cb4-e989-41bf-b65f-627b63ff3e61/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686418",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "22 Ekim 18:26",
     "baslik": "Payların Geri Alınmasına İlişkin Bildirim",
-    "url": "https://fintables.com/borsa-haber-akisi/6d6ca59d-bab7-40c5-b8c2-2bf6f3b0eda0/tralt-paylarin-geri-alinmasina-iliskin-bildirim",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686001",
     "genis": false
    },
    {
@@ -2618,9 +2569,16 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "22 Ekim 18:25",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685997",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "22 Ekim 14:47",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/2b721f42-cc94-4188-918b-dd5537efc592/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685757",
     "genis": false
    },
    {
@@ -2646,37 +2604,16 @@
    },
    {
     "kaynak": "KAP",
-    "tarih": "20 Ekim 18:34",
-    "baslik": "Türk Altın İşletmeleri, 118,40-120,60 TL fiyat aralığından 415.211 adet pay aldı. Bu işlemle birlikte şirket sermayesindeki payları %4,02 sınırına ulaştı.",
-    "url": "https://fintables.com/borsa-haber-akisi/5d2162dd-f8c5-48ee-898e-dba6fd2b05a8/tralt-pay-alim-satim-bildirimi",
+    "tarih": "21 Ekim 19:03",
+    "baslik": "Payların Geri Alınmasına İlişkin Bildirim",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685434",
     "genis": false
    },
    {
     "kaynak": "KAP",
-    "tarih": "16 Ekim 18:17",
-    "baslik": "Hisse başına ortalama 41,22 TL fiyattan toplam 2.426.500 adet pay geri alındı.",
-    "url": "https://fintables.com/borsa-haber-akisi/8594d3c6-ef30-4c84-86e0-ac659b458437/tralt-paylarin-geri-alinmasina-iliskin-bildirim",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "16 Ekim 18:17",
-    "baslik": "Türk Altın İşletmeleri, 119,70-121,90 TL fiyat aralığından 247.977 adet pay aldı. Bu işlemle birlikte şirket sermayesindeki payları %3,9151 sınırına ulaştı.",
-    "url": "https://fintables.com/borsa-haber-akisi/5b2559cd-35ad-43b3-955c-16e27ef1a3d2/tralt-pay-alim-satim-bildirimi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "16 Ekim 18:16",
-    "baslik": "Türk Altın İşletmeleri, 87,45-89,90 TL fiyat aralığından 114.656 adet pay aldı. Bu işlemle birlikte şirket sermayesindeki payları %4,46 sınırına ulaştı.",
-    "url": "https://fintables.com/borsa-haber-akisi/0cc1ba2f-75f7-453b-b574-74cc452b2567/tralt-pay-alim-satim-bildirimi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "16 Ekim 18:16",
-    "baslik": "Özel Durum Açıklaması (Genel)",
-    "url": "https://fintables.com/borsa-haber-akisi/68ddbdd8-04c0-4b38-ba0a-8af2b5614861/tralt-ozel-durum-aciklamasi-genel",
+    "tarih": "21 Ekim 19:03",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685431",
     "genis": false
    }
   ],
@@ -2685,7 +2622,7 @@
     "kaynak": "KAP",
     "tarih": "23 Ekim 12:00",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/bdc0bc34-db53-4e30-bf99-c45386e6ec73/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686415",
     "genis": false
    },
    {
@@ -2699,7 +2636,7 @@
     "kaynak": "KAP",
     "tarih": "22 Ekim 15:03",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/e12f7f9a-86e1-45fe-a84c-837214ec62bc/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685765",
     "genis": false
    },
    {
@@ -2711,9 +2648,23 @@
    },
    {
     "kaynak": "KAP",
+    "tarih": "22 Ekim 09:12",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685565",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "21 Ekim 19:03",
     "baslik": "Türk Altın İşletmeleri, 118,40-120,10 TL fiyat aralığından 250.000 adet pay aldı. Bu işlemle birlikte şirket sermayesindeki payları %4,09 sınırına ulaştı.",
     "url": "https://fintables.com/borsa-haber-akisi/4939f0ea-afe4-4401-a33f-4f5edd90f715/tralt-pay-alim-satim-bildirimi",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
+    "tarih": "21 Ekim 19:03",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685431",
     "genis": false
    },
    {
@@ -2735,13 +2686,6 @@
     "tarih": "14 Ekim 19:39",
     "baslik": "Özel Durum Açıklaması (Genel)",
     "url": "https://fintables.com/borsa-haber-akisi/1d66ff7f-07e2-43d8-9d01-c0927c1974d3/trmet-ozel-durum-aciklamasi-genel",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "14 Ekim 18:14",
-    "baslik": "Özel Durum Açıklaması (Genel)",
-    "url": "https://fintables.com/borsa-haber-akisi/b340780d-6465-437c-a64e-c1caa97e1e5b/trmet-ozel-durum-aciklamasi-genel",
     "genis": false
    },
    {
@@ -2778,13 +2722,6 @@
     "baslik": "Şirket Genel Bilgi Formu",
     "url": "https://fintables.com/borsa-haber-akisi/adf865ac-5f52-4838-b146-9098d2e0edb3/trmet-sirket-genel-bilgi-formu",
     "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "25 Eylül 18:16",
-    "baslik": "TR Tedarik Danışmanlık ve Araç Kiralama Ticaret sermayesinin %28'ini temsil eden ve şirkete ait olan 4.200.000 adet payın 6.160.000 TL bedelle Türk Altın Holding'e satılmasına karar verildi.",
-    "url": "https://fintables.com/borsa-haber-akisi/b5c4b1bd-ff96-4ceb-891f-f82385c56bc0/trmet-finansal-duran-varlik-satisi",
-    "genis": false
    }
   ],
   "TTKOM": [
@@ -2792,14 +2729,14 @@
     "kaynak": "KAP",
     "tarih": "23 Ekim 11:53",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/35543fea-7fb8-4640-be7d-77be6691cff0/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686382",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 15:41",
     "baslik": "Kurumsal Yönetim İlkelerine Uyum Derecelendirmesi",
-    "url": "https://fintables.com/borsa-haber-akisi/29607cfb-17a9-4a3e-b0db-20cfc9c9dc9c/ttkom-kurumsal-yonetim-ilkelerine-uyum-derecelendirmesi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685118",
     "genis": false
    },
    {
@@ -2899,28 +2836,21 @@
     "kaynak": "KAP",
     "tarih": "23 Ekim 16:54",
     "baslik": "Borsada İşlem Gören Tipe Dönüşüm Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/94f8c420-a2d5-4049-9559-d388d80ca0e5/borsada-islem-goren-tipe-donusum-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686803",
     "genis": true
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "22 Ekim 11:48",
-    "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/9d822746-0e98-4d1a-bf3e-ede9237ce53a/temerrut-islemi",
-    "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "22 Ekim 10:12",
     "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/5c9fd5a1-7dc2-46e5-adf0-1446cc1cd83f/temerrut-islemi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685610",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
@@ -2981,13 +2911,6 @@
    },
    {
     "kaynak": "KAP",
-    "tarih": "2 Ekim 09:24",
-    "baslik": "Kurumsal Yönetim İlkelerine Uyum Derecelendirmesi",
-    "url": "https://fintables.com/borsa-haber-akisi/1a75b99e-50b4-420f-bdb1-5c4549034d97/tuprs-kurumsal-yonetim-ilkelerine-uyum-derecelendirmesi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
     "tarih": "1 Ekim 19:28",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
     "url": "https://fintables.com/borsa-haber-akisi/7664f8c4-1958-4675-8cbb-f88a1a30a918/spk-islem-yasagi-nedeniyle-pay-duyurusu",
@@ -3006,7 +2929,7 @@
     "kaynak": "KAP",
     "tarih": "23 Ekim 14:43",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/8d9c44a6-54dd-488d-be50-9dfda9885772/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686577",
     "genis": false
    },
    {
@@ -3014,13 +2937,6 @@
     "tarih": "22 Ekim 15:20",
     "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
     "url": "https://fintables.com/borsa-haber-akisi/c332093d-203a-48d2-b4aa-a926e40db844/tvb-pay-disinda-sermaye-piyasasi-araci-islemlerine-iliskin-bildirim-fa",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "22 Ekim 15:20",
-    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
-    "url": "https://fintables.com/borsa-haber-akisi/ae072e56-977e-4cbe-b676-d280815a3eb5/tvb-pay-disinda-sermaye-piyasasi-araci-islemlerine-iliskin-bildirim-fa",
     "genis": false
    },
    {
@@ -3087,13 +3003,6 @@
     "genis": false
    },
    {
-    "kaynak": "KAP",
-    "tarih": "30 Eylül 10:54",
-    "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/27fc478e-135f-424b-9ca6-ada462bbae11/temerrut-islemi",
-    "genis": false
-   },
-   {
     "kaynak": "Fintables",
     "tarih": "29 Eylül 14:30",
     "baslik": "Bankacılık Sektörünün Net Karı Ağustos Sonunda 676,3 Milyar TL Oldu",
@@ -3113,7 +3022,7 @@
     "kaynak": "KAP",
     "tarih": "23 Ekim 15:11",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://fintables.com/borsa-haber-akisi/7f908949-9f8a-432c-8a9c-3fb639bec3c9/pay-bazinda-devre-kesici-bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1686646",
     "genis": false
    },
    {
@@ -3125,23 +3034,16 @@
    },
    {
     "kaynak": "KAP",
-    "tarih": "22 Ekim 11:48",
-    "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/d9d71eb3-14de-48cc-8720-bc90c629fdad/temerrut-islemi",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
     "tarih": "22 Ekim 10:18",
     "baslik": "Temerrüt İşlemi",
-    "url": "https://fintables.com/borsa-haber-akisi/af9afc78-4d53-411e-82d3-c8fda523c991/temerrut-islemi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685620",
     "genis": false
    },
    {
     "kaynak": "KAP",
     "tarih": "21 Ekim 18:12",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://fintables.com/borsa-haber-akisi/b6cf3400-bbed-4f99-a415-6a9f569f0908/spk-islem-yasagi-nedeniyle-pay-duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1685308",
     "genis": true
    },
    {
