@@ -7130,7 +7130,7 @@ def _interaktif_fiyat_grafigi(kod, seri):
 
 def _kap_uyarlari_yukle():
     """data/kap/kap-akisi.json -> {KOD: [uyar, ...]}. Dosya yoksa bos sozluk;
-    KAP bildirim akisi ayri bir toplama adiminda tazelenir (Fintables akisi)."""
+    KAP bildirim akisi ayri bir toplama adiminda tazelenir (KAP bildirim-sorgu-sonuc)."""
     try:
         with open("data/kap/kap-akisi.json", encoding="utf-8") as f:
             return json.load(f).get("hisseler", {})
@@ -7149,9 +7149,8 @@ def _kap_uyarlari_karti(kod, uyarlari):
     return (f"<div class='card' style='margin-top:14px'>"
             f"<h3 style='margin:0 0 8px'>&#128203; KAP Bildirimleri</h3>"
             f"<ul style='margin:0; padding-left:18px; font-size:13.5px'>{ogeler}</ul>"
-            f"<p style='margin:8px 0 0; font-size:12.5px'>Tüm akış: "
-            f"<a href='https://fintables.com/sirketler/{kod}/akis' target='_blank' rel='noopener'>Fintables şirket akışı &rarr;</a>"
-            f" &middot; <a href='https://www.kap.org.tr/' target='_blank' rel='noopener'>KAP &rarr;</a></p></div>")
+            f"<p style='margin:8px 0 0; font-size:12.5px'>Tüm bildirimler: "
+            f"<a href='https://www.kap.org.tr/' target='_blank' rel='noopener'>KAP &rarr;</a></p></div>")
 
 
 def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=None):
