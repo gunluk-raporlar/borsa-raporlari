@@ -86,20 +86,20 @@
   },
   {
     "hisse": "ASTOR",
-    "son": 156.8,
-    "deg60": -45.4,
-    "gunluk": 9.96,
+    "son": 172.4,
+    "deg60": -42.4,
+    "gunluk": 9.95,
     "sektor": "Enerji & Petrokimya",
     "kisa": "BEKLE",
     "orta": "SAT",
     "uzun": "BEKLE",
     "wt": "DİPTE AL",
-    "wt1": -63.0,
-    "konum": 44.0,
-    "r": -0.93,
+    "wt1": -55.0,
+    "konum": 67.0,
+    "r": -0.94,
     "puan": 1,
     "genel": "SAT",
-    "stale": true
+    "stale": false
   },
   {
     "hisse": "VAKBN",

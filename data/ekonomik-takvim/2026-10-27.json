@@ -6,8 +6,8 @@
     "olay": "Unemployment Rate",
     "onem": 0,
     "tahmin": null,
-    "gercek": null,
-    "onceki": 7.8
+    "gercek": 8.4,
+    "onceki": 7.9
   },
   {
     "tarih": "2026-10-27",
@@ -16,7 +16,7 @@
     "olay": "Building Permits MoM Final",
     "onem": 0,
     "tahmin": -0.2,
-    "gercek": null,
+    "gercek": -0.4,
     "onceki": -2.1
   },
   {
@@ -26,8 +26,8 @@
     "olay": "ADP Employment Change Weekly",
     "onem": 0,
     "tahmin": null,
-    "gercek": null,
-    "onceki": 18.5
+    "gercek": 16.8,
+    "onceki": 17.5
   },
   {
     "tarih": "2026-10-27",
@@ -36,8 +36,8 @@
     "olay": "Durable Goods Orders MoM",
     "onem": 1,
     "tahmin": 1.5,
-    "gercek": null,
-    "onceki": 0
+    "gercek": 1.8,
+    "onceki": 0.1
   },
   {
     "tarih": "2026-10-27",
@@ -46,7 +46,7 @@
     "olay": "Durable Goods Orders Ex Transp MoM",
     "onem": 0,
     "tahmin": 0.6,
-    "gercek": null,
+    "gercek": 0.5,
     "onceki": 0.3
   },
   {
@@ -56,28 +56,8 @@
     "olay": "S&P/Case-Shiller Home Price YoY",
     "onem": 0,
     "tahmin": 2.5,
-    "gercek": null,
+    "gercek": 2.7,
     "onceki": 2.5
-  },
-  {
-    "tarih": "2026-10-27",
-    "saat": "14:00",
-    "ulke": "US",
-    "olay": "New Home Sales MoM",
-    "onem": 0,
-    "tahmin": null,
-    "gercek": null,
-    "onceki": 6.4
-  },
-  {
-    "tarih": "2026-10-27",
-    "saat": "14:00",
-    "ulke": "US",
-    "olay": "New Home Sales",
-    "onem": 0,
-    "tahmin": 0.65,
-    "gercek": null,
-    "onceki": 0.684
   },
   {
     "tarih": "2026-10-27",
@@ -86,17 +66,37 @@
     "olay": "CB Consumer Confidence",
     "onem": 0,
     "tahmin": 81,
-    "gercek": null,
-    "onceki": 81.9
+    "gercek": 91.7,
+    "onceki": 84.2
   },
   {
     "tarih": "2026-10-27",
-    "saat": "15:00",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "New Home Sales MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": -0.6,
+    "onceki": 5.1
+  },
+  {
+    "tarih": "2026-10-27",
+    "saat": "14:00",
+    "ulke": "US",
+    "olay": "New Home Sales",
+    "onem": 0,
+    "tahmin": 0.65,
+    "gercek": 0.676,
+    "onceki": 0.68
+  },
+  {
+    "tarih": "2026-10-27",
+    "saat": "15:45",
     "ulke": "US",
     "olay": "Atlanta Fed GDPNow",
     "onem": 0,
     "tahmin": 3.5,
-    "gercek": null,
+    "gercek": 3.4,
     "onceki": 3.5
   },
   {
@@ -115,7 +115,7 @@
     "ulke": "US",
     "olay": "API Crude Oil Stock Change",
     "onem": 0,
-    "tahmin": null,
+    "tahmin": 0.8,
     "gercek": null,
     "onceki": -4.93
   },
@@ -143,11 +143,11 @@
     "tarih": "2026-10-28",
     "saat": "12:30",
     "ulke": "US",
-    "olay": "Wholesale Inventories MoM Adv",
+    "olay": "Retail Inventories Ex Autos MoM Adv",
     "onem": 0,
-    "tahmin": 0.4,
+    "tahmin": null,
     "gercek": null,
-    "onceki": 0.5
+    "onceki": 0
   },
   {
     "tarih": "2026-10-28",
@@ -163,11 +163,11 @@
     "tarih": "2026-10-28",
     "saat": "12:30",
     "ulke": "US",
-    "olay": "Retail Inventories Ex Autos MoM Adv",
+    "olay": "Wholesale Inventories MoM Adv",
     "onem": 0,
-    "tahmin": null,
+    "tahmin": 0.5,
     "gercek": null,
-    "onceki": 0
+    "onceki": 0.5
   },
   {
     "tarih": "2026-10-28",
@@ -175,7 +175,7 @@
     "ulke": "US",
     "olay": "EIA Crude Oil Stocks Change",
     "onem": 0,
-    "tahmin": -0.3,
+    "tahmin": 0.8,
     "gercek": null,
     "onceki": -3.061
   },
@@ -185,7 +185,7 @@
     "ulke": "US",
     "olay": "EIA Gasoline Stocks Change",
     "onem": 0,
-    "tahmin": null,
+    "tahmin": -1.4,
     "gercek": null,
     "onceki": -2.952
   },
@@ -197,7 +197,7 @@
     "onem": 0,
     "tahmin": null,
     "gercek": null,
-    "onceki": null
+    "onceki": 3.4
   },
   {
     "tarih": "2026-10-28",
@@ -235,19 +235,9 @@
     "ulke": "EU",
     "olay": "Economic Sentiment",
     "onem": 0,
-    "tahmin": 97.8,
+    "tahmin": 97.5,
     "gercek": null,
     "onceki": 97.9
-  },
-  {
-    "tarih": "2026-10-29",
-    "saat": "12:30",
-    "ulke": "US",
-    "olay": "Initial Jobless Claims",
-    "onem": 0,
-    "tahmin": 200,
-    "gercek": null,
-    "onceki": 194
   },
   {
     "tarih": "2026-10-29",
@@ -263,11 +253,11 @@
     "tarih": "2026-10-29",
     "saat": "12:30",
     "ulke": "US",
-    "olay": "PCE Price Index MoM",
+    "olay": "Initial Jobless Claims",
     "onem": 0,
-    "tahmin": 0.5,
+    "tahmin": 199,
     "gercek": null,
-    "onceki": 0.3
+    "onceki": 194
   },
   {
     "tarih": "2026-10-29",
@@ -283,11 +273,31 @@
     "tarih": "2026-10-29",
     "saat": "12:30",
     "ulke": "US",
-    "olay": "Personal Income MoM",
+    "olay": "PCE Price Index MoM",
+    "onem": 0,
+    "tahmin": 0.5,
+    "gercek": null,
+    "onceki": 0.3
+  },
+  {
+    "tarih": "2026-10-29",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Core PCE Price Index MoM",
     "onem": 1,
     "tahmin": 0.3,
     "gercek": null,
     "onceki": 0.2
+  },
+  {
+    "tarih": "2026-10-29",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Personal Spending MoM",
+    "onem": 1,
+    "tahmin": 0.6,
+    "gercek": null,
+    "onceki": 0.9
   },
   {
     "tarih": "2026-10-29",
@@ -303,17 +313,7 @@
     "tarih": "2026-10-29",
     "saat": "12:30",
     "ulke": "US",
-    "olay": "Personal Spending MoM",
-    "onem": 1,
-    "tahmin": 0.5,
-    "gercek": null,
-    "onceki": 0.9
-  },
-  {
-    "tarih": "2026-10-29",
-    "saat": "12:30",
-    "ulke": "US",
-    "olay": "Core PCE Price Index MoM",
+    "olay": "Personal Income MoM",
     "onem": 1,
     "tahmin": 0.3,
     "gercek": null,
@@ -413,16 +413,6 @@
     "tarih": "2026-10-30",
     "saat": "12:30",
     "ulke": "US",
-    "olay": "Employment Cost Index QoQ",
-    "onem": 0,
-    "tahmin": 0.8,
-    "gercek": null,
-    "onceki": 0.9
-  },
-  {
-    "tarih": "2026-10-30",
-    "saat": "12:30",
-    "ulke": "US",
     "olay": "Employment Cost - Benefits QoQ",
     "onem": 0,
     "tahmin": null,
@@ -431,11 +421,21 @@
   },
   {
     "tarih": "2026-10-30",
+    "saat": "12:30",
+    "ulke": "US",
+    "olay": "Employment Cost Index QoQ",
+    "onem": 0,
+    "tahmin": 0.8,
+    "gercek": null,
+    "onceki": 0.9
+  },
+  {
+    "tarih": "2026-10-30",
     "saat": "13:45",
     "ulke": "US",
     "olay": "Chicago PMI",
     "onem": 0,
-    "tahmin": 55.5,
+    "tahmin": 56.1,
     "gercek": null,
     "onceki": 58.8
   },
@@ -573,21 +573,21 @@
     "tarih": "2026-11-04",
     "saat": "10:00",
     "ulke": "EU",
-    "olay": "Inflation Rate MoM Flash",
-    "onem": 0,
-    "tahmin": null,
-    "gercek": null,
-    "onceki": 0.6
-  },
-  {
-    "tarih": "2026-11-04",
-    "saat": "10:00",
-    "ulke": "EU",
     "olay": "Core Inflation Rate YoY Flash",
     "onem": 0,
     "tahmin": null,
     "gercek": null,
     "onceki": 2.5
+  },
+  {
+    "tarih": "2026-11-04",
+    "saat": "10:00",
+    "ulke": "EU",
+    "olay": "Inflation Rate MoM Flash",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.6
   },
   {
     "tarih": "2026-11-04",
@@ -613,6 +613,16 @@
     "tarih": "2026-11-04",
     "saat": "13:30",
     "ulke": "US",
+    "olay": "Balance of Trade",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -105.6
+  },
+  {
+    "tarih": "2026-11-04",
+    "saat": "13:30",
+    "ulke": "US",
     "olay": "Exports",
     "onem": 0,
     "tahmin": null,
@@ -631,16 +641,6 @@
   },
   {
     "tarih": "2026-11-04",
-    "saat": "13:30",
-    "ulke": "US",
-    "olay": "Balance of Trade",
-    "onem": 0,
-    "tahmin": null,
-    "gercek": null,
-    "onceki": -105.6
-  },
-  {
-    "tarih": "2026-11-04",
     "saat": "14:00",
     "ulke": "US",
     "olay": "ISM Services PMI",
@@ -653,7 +653,7 @@
     "tarih": "2026-11-04",
     "saat": "14:30",
     "ulke": "US",
-    "olay": "EIA Gasoline Stocks Change",
+    "olay": "EIA Crude Oil Stocks Change",
     "onem": 0,
     "tahmin": null,
     "gercek": null,
@@ -663,7 +663,7 @@
     "tarih": "2026-11-04",
     "saat": "14:30",
     "ulke": "US",
-    "olay": "EIA Crude Oil Stocks Change",
+    "olay": "EIA Gasoline Stocks Change",
     "onem": 0,
     "tahmin": null,
     "gercek": null,
@@ -683,17 +683,17 @@
     "tarih": "2026-11-05",
     "saat": "13:30",
     "ulke": "US",
-    "olay": "Initial Jobless Claims",
+    "olay": "Nonfarm Productivity QoQ Prel",
     "onem": 0,
     "tahmin": null,
     "gercek": null,
-    "onceki": null
+    "onceki": 1.4
   },
   {
     "tarih": "2026-11-05",
     "saat": "13:30",
     "ulke": "US",
-    "olay": "Nonfarm Productivity QoQ Prel",
+    "olay": "Initial Jobless Claims",
     "onem": 0,
     "tahmin": null,
     "gercek": null,
@@ -723,21 +723,21 @@
     "tarih": "2026-11-06",
     "saat": "13:30",
     "ulke": "US",
-    "olay": "Average Hourly Earnings YoY",
-    "onem": 0,
-    "tahmin": null,
-    "gercek": null,
-    "onceki": 3
-  },
-  {
-    "tarih": "2026-11-06",
-    "saat": "13:30",
-    "ulke": "US",
     "olay": "Average Hourly Earnings MoM",
     "onem": 0,
     "tahmin": null,
     "gercek": null,
     "onceki": 0.1
+  },
+  {
+    "tarih": "2026-11-06",
+    "saat": "13:30",
+    "ulke": "US",
+    "olay": "Average Hourly Earnings YoY",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 3
   },
   {
     "tarih": "2026-11-06",
