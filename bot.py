@@ -7980,13 +7980,16 @@ function terimSuz() {{
             return (f"<div class='card terim-oge' id='t{i}' "
                     f"style='margin:10px 0; padding:12px 16px'>{govde}</div>")
 
-        def _grub_cubugu(aktif_slug):
+        def _grub_cubugu(aktif_slug, on_ek="terimler/"):
+            # on_ek: hub kokte durur ("terimler/"); grup sayfalari terimler/
+            # klasorunde oldugundan kendi iclerinde "../terimler/" girmeli,
+            # yoksa cift onek (/terimler/terimler/...) ve kirik link olur.
             parcalar = []
             for g in gruplar:
                 still = ("background:var(--accent); color:#fff; border-color:var(--accent)"
                          if g["slug"] == aktif_slug else "background:var(--card)")
                 parcalar.append(
-                    f"<a href='terimler/{g['slug']}.html' style='display:inline-block; margin:2px 6px 2px 0; "
+                    f"<a href='{on_ek}{g['slug']}.html' style='display:inline-block; margin:2px 6px 2px 0; "
                     f"padding:4px 10px; border:1px solid var(--line); border-radius:8px; {still}; "
                     f"text-decoration:none'>{g['etiket']}</a>")
             return " ".join(parcalar)
@@ -8054,7 +8057,7 @@ function terimIndisSuz() {{
 <p>Ekonomi, finans ve borsa terminolojisi sözlüğünün <strong>{g['etiket']}</strong> grubu.
 Tanımlar TCMB, Rekabet Kurumu ve iktisat sözlükleri gibi resmî kaynaklardan derlenmiştir.
 Diğer harf grupları:</p>
-<p class="terim-grup-cubugu" style="margin:10px 0 0">{_grub_cubugu(g['slug'])}</p>
+<p class="terim-grup-cubugu" style="margin:10px 0 0">{_grub_cubugu(g['slug'], "../terimler/")}</p>
 </div>
 <div class="arama-form" style="margin:14px 0">
 <input type="text" id="terim-ara" placeholder="Bu grupta ara..." onkeyup="terimSuz()"
@@ -8069,6 +8072,7 @@ yatırım tavsiyesi değildir.</p>
                 f"Terimler ve Tanımlar: {g['etiket']}", icerik, "terimler",
                 aciklama=f"{len(uye)} terimlik {g['etiket']} grubu ekonomi ve finans sözlüğü: "
                          "TCMB, Rekabet Kurumu ve yatırım sözlüklerinden kaynaklı tanımlar.",
+                kok="../",
                 yol=f"terimler/{g['slug']}.html"))
             grup_sayisi += 1
         logger.info("[Terimler] %d harf-grup sayfasi yazildi.", grup_sayisi)

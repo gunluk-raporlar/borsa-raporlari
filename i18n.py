@@ -2261,7 +2261,10 @@ def terimler_gruplari_yeniden_dagit(kok: Path, diller: list[str]) -> dict:
             slug = terim_gruplari.terim_grup_slug(dil, terim)
             dagitim.setdefault(slug, []).append((tid, terim, kartlar[tid]))
 
-        def _cubuk(aktif_slug):
+        def _cubuk(aktif_slug, on_ek=""):
+            # on_ek: dil hub'i dil agaci kokunde durur (""); grup sayfalari
+            # terimler_ad/ klasorunde oldugundan kendi iclerinde "../" girmeli
+            # (cift onek /en/terms/terms/... kirik link uretir).
             parcalar = []
             for g in terim_gruplari.gruplar(dil):
                 if g["slug"] not in dagitim:
@@ -2269,7 +2272,7 @@ def terimler_gruplari_yeniden_dagit(kok: Path, diller: list[str]) -> dict:
                 stil = ("background:var(--accent); color:#fff; border-color:var(--accent)"
                         if g["slug"] == aktif_slug else "background:var(--card)")
                 parcalar.append(
-                    f"<a href='{terimler_ad}/{g['slug']}.html' style='display:inline-block; "
+                    f"<a href='{on_ek}{terimler_ad}/{g['slug']}.html' style='display:inline-block; "
                     f"margin:2px 6px 2px 0; padding:4px 10px; border:1px solid var(--line); "
                     f"border-radius:8px; {stil}; text-decoration:none'>{g['etiket']}</a>")
             return " ".join(parcalar)
@@ -2309,7 +2312,7 @@ def terimler_gruplari_yeniden_dagit(kok: Path, diller: list[str]) -> dict:
                                                           if v["hreflang"] == m.group(2)))
                 + m.group(3), sayfa)
             sayfa = _TERIM_CUBUK_RE.sub(
-                f'<p class="terim-grup-cubugu" style="margin:10px 0 0">{_cubuk(slug)}</p>', sayfa)
+                f'<p class="terim-grup-cubugu" style="margin:10px 0 0">{_cubuk(slug, "../")}</p>', sayfa)
             lm = re.search(r'<div[^>]*id="terim-liste"[^>]*>', sayfa)
             if not lm:
                 continue  # iskelet beklenmedik bicimde; bu grup atlanir
