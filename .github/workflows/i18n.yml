@@ -47,6 +47,10 @@ jobs:
         continue-on-error: true
         run: python -m pip install --quiet json-repair
 
+      - name: zh pinyin harflendirme (terim_gruplari; istege bagli)
+        continue-on-error: true
+        run: python -m pip install --quiet pypinyin
+
       - name: Saglayici testi (kotasiz)
         if: ${{ inputs.test }}
         env:

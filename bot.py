@@ -18,6 +18,8 @@ import logging
 
 # Yayin oncesi sirket adi / makro sayi denetimi (bkz. dogrulama.py)
 import dogrulama
+# Terim sözlüğü harf-grup tablosu (tek kaynak; i18n.py aynı tabloyu kullanır)
+import terim_gruplari
 # Dil agaclari arasi slug eslemesi (tek kaynak; i18n.py ayni tabloyu kullanir)
 from dil_yollari import slug_degistir
 import editor
@@ -7923,14 +7925,16 @@ document.addEventListener('copy', function(e) {
         return True
 
     def _arama_js(liste_id, input_id):
-        """Arama suzgeci: kartlari data-ara'ya gore gizler, bos kalan harf
-        basliklarini da saklar."""
+        """Arama suzgeci: kartlarda GORUNEN metne (textContent) gore arar.
+        data-ara ozniteligi terk edildi: i18n cevirisinde ozellikler cevrilmedigi
+        icin cevrilmis dil sayfalarinda data-ara aramasi bayat/TR kaliyordu;
+        textContent aramasi her dilde aynen calisir."""
         return f"""
 <script>
 function terimSuz() {{
-  var q = (document.getElementById('{input_id}').value || '').toLowerCase();
+  var q = (document.getElementById('{input_id}').value || '').toLocaleLowerCase('tr');
   document.querySelectorAll('#{liste_id} .terim-oge').forEach(function(el) {{
-    el.style.display = el.getAttribute('data-ara').indexOf(q) !== -1 ? '' : 'none';
+    el.style.display = el.textContent.toLocaleLowerCase('tr').indexOf(q) !== -1 ? '' : 'none';
   }});
   document.querySelectorAll('#{liste_id} h2').forEach(function(h) {{
     var gorunur = 0, kardes = h.nextElementSibling;
@@ -7947,42 +7951,113 @@ function terimSuz() {{
         anahtar = anahtar.casefold().replace("'", "").replace('"', "")
         return f"<div class='card terim-oge' data-ara='{anahtar}' style='margin:10px 0; padding:12px 16px'>{govde}</div>"
 
-    # --- 1) Terimler ve Tanımlar (genel ekonomi sozlugu) ---
+    # --- 1) Terimler ve Tanımlar (genel ekonomi sözlüğü) ---
+    # 2026-10-27 kullanıcı kararı: 1 MB'lık tek sayfa harf-grubu sayfalarına
+    # bölünür — hub (terimler.html: tanıtım + grup çubuğu + aramalı terim adı
+    # indisi) + terimler/<slug>.html (tablo: terim_gruplari.py). Kart anchor
+    # id'leri TR veri sırasından üretilir; i18n çevirisi id'ye dokunmaz, dil
+    # hub'ı ile dil grup sayfaları aynı id'lerle bağlanır. Dil versiyonlarının
+    # YENİDEN harflendirilmesi (çevrilmiş terim, çevrilmiş dilin alfabesine
+    # göre gruba girer) i18n.py terimler_gruplari_yeniden_dagit'ta yapılır.
     veri = _terim_yukle()
     if veri:
-        def _harf_sira(h):
-            # Turkce alfabe sirasi (casefold ASCII sort 'ç'yi 'c'den sonra atar)
-            sira = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
-            return (sira.index(h) if h in sira else 99, h)
+        gruplar = terim_gruplari.gruplar("tr")
 
-        harf_gruplari = {}
-        for v in veri:
-            harf_gruplari.setdefault(v["terim"][:1].upper(), []).append(v)
-        kartlar = ""
-        for harf in sorted(harf_gruplari, key=_harf_sira):
-            kartlar += f"<h2 class='section-title'>{harf}</h2>"
-            for v in harf_gruplari[harf]:
-                govde = (f"<strong style='color:var(--accent)'>{v['terim']}</strong>"
-                         + (f" <span style='color:var(--muted); font-size:13px'>{v['en']}</span>" if v["en"] else "")
-                         + f"<p style='margin:6px 0 0; font-size:14px'>{v['tanim']}</p>")
-                if v.get("ornek"):
-                    govde += (f"<p style='margin:6px 0 0; font-size:13.5px; font-style:italic'>Örnek: {v['ornek']}"
-                              + (f" <span style='color:var(--muted)'>({v['ornek_en']})</span>" if v.get("ornek_en") else "")
-                              + "</p>")
-                if v.get("en_tanim"):
-                    govde += (f"<p style='margin:6px 0 0; font-size:13px; color:var(--muted)'>"
-                              f"İngilizce tanım: {v['en_tanim']}</p>")
-                kartlar += _kart(govde, v["terim"] + " " + v["en"] + " " + v["tanim"])
+        def _grubu(v):
+            return terim_gruplari.terim_grup_slug("tr", v["terim"])
+
+        def _kart_html(i, v):
+            govde = (f"<strong style='color:var(--accent)'>{v['terim']}</strong>"
+                     + (f" <span style='color:var(--muted); font-size:13px'>{v['en']}</span>" if v["en"] else "")
+                     + f"<p style='margin:6px 0 0; font-size:14px'>{v['tanim']}</p>")
+            if v.get("ornek"):
+                govde += (f"<p style='margin:6px 0 0; font-size:13.5px; font-style:italic'>Örnek: {v['ornek']}"
+                          + (f" <span style='color:var(--muted)'>({v['ornek_en']})</span>" if v.get("ornek_en") else "")
+                          + "</p>")
+            if v.get("en_tanim"):
+                govde += (f"<p style='margin:6px 0 0; font-size:13px; color:var(--muted)'>"
+                          f"İngilizce tanım: {v['en_tanim']}</p>")
+            return (f"<div class='card terim-oge' id='t{i}' "
+                    f"style='margin:10px 0; padding:12px 16px'>{govde}</div>")
+
+        def _grub_cubugu(aktif_slug):
+            parcalar = []
+            for g in gruplar:
+                still = ("background:var(--accent); color:#fff; border-color:var(--accent)"
+                         if g["slug"] == aktif_slug else "background:var(--card)")
+                parcalar.append(
+                    f"<a href='terimler/{g['slug']}.html' style='display:inline-block; margin:2px 6px 2px 0; "
+                    f"padding:4px 10px; border:1px solid var(--line); border-radius:8px; {still}; "
+                    f"text-decoration:none'>{g['etiket']}</a>")
+            return " ".join(parcalar)
+
+        # --- hub: terimler.html ---
+        indis = " ".join(
+            f"<a href='terimler/{_grubu(v)}.html#t{i}' style='white-space:nowrap'>{v['terim']}</a>"
+            for i, v in enumerate(veri))
         icerik = f"""
 <div class="hero">
 <h1>Terimler ve Tanımlar</h1>
 <p>Ekonomi, finans ve borsa terminolojisinin {len(veri)} terimlik referans sözlüğü; tanımlar TCMB,
 Rekabet Kurumu, Kalkınma Ajansları ve iktisat sözlükleri gibi resmî kaynaklardan derlenmiştir.
-Temel kavramlar için <a href="sozluk.html">Borsa Sözlüğü</a>'ne, muhasebe terminolojisi için
-<a href="muhasebe-terimleri.html">Muhasebe Terimleri</a> sayfasına bakabilirsin.</p>
+Terimler harf gruplarına bölünmüş {len(gruplar)} sayfada; alttaki kutuya terim adı yazın,
+sonuç listeden terime tıklayınca tanıma gidin. Temel kavramlar için <a href="sozluk.html">Borsa Sözlüğü</a>'ne,
+muhasebe terminolojisi için <a href="muhasebe-terimleri.html">Muhasebe Terimleri</a> sayfasına bakabilirsin.</p>
+<p class="terim-grup-cubugu" style="margin:10px 0 0">{_grub_cubugu(None)}</p>
 </div>
 <div class="arama-form" style="margin:14px 0">
-<input type="text" id="terim-ara" placeholder="Terim ara: enflasyon, temettü, zorunlu karşılık..." onkeyup="terimSuz()"
+<input type="text" id="terim-ara" placeholder="Terim ara: enflasyon, temettü, zorunlu karşılık..." onkeyup="terimIndisSuz()"
+ style="width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink)">
+</div>
+<div id="terim-liste">
+<p style="color:var(--muted); font-size:13px">{len(veri)} terim, harfine göre grup sayfalarında:</p>
+<p id="terim-indeks" style="line-height:2.1">{indis}</p>
+</div>
+<p style="color:var(--muted); font-size:12.5px">Tanımlar ilgili kurumların kamuya açık sözlüklerinden alıntılanmıştır;
+yatırım tavsiyesi değildir.</p>
+<script>
+function terimIndisSuz() {{
+  var q = (document.getElementById('terim-ara').value || '').toLocaleLowerCase('tr');
+  document.querySelectorAll('#terim-indeks a').forEach(function(a) {{
+    a.style.display = a.textContent.toLocaleLowerCase('tr').indexOf(q) !== -1 ? 'inline' : 'none';
+  }});
+}}
+</script>
+{koruma}"""
+        _yaz("terimler.html", _sayfa(
+            "Terimler ve Tanımlar", icerik, "terimler",
+            aciklama=f"{len(veri)} terimlik ekonomi, finans ve borsa terimleri sözlüğü, harf gruplarına bölünmüş sayfalarda: "
+                     "TCMB, Rekabet Kurumu ve yatırım sözlüklerinden kaynaklı tanımlar.",
+            yol="terimler.html"))
+        logger.info("[Terimler] hub yazildi: %d terim indisi, %d grup.", len(veri), len(gruplar))
+
+        # --- harf-grup sayfaları: terimler/<slug>.html ---
+        os.makedirs("terimler", exist_ok=True)
+        gruba_gore = {}
+        for i, v in enumerate(veri):
+            gruba_gore.setdefault(_grubu(v), []).append((i, v))
+        grup_sayisi = 0
+        for g in gruplar:
+            uye = gruba_gore.get(g["slug"], [])
+            if not uye:
+                continue  # boş grup sayfası üretilmez (URL tabloda olsa da)
+            kartlar, son_harf = "", None
+            for i, v in uye:  # veri sırası = TR alfabetik
+                harf = terim_gruplari.terim_bas_harf("tr", v["terim"]) or g["etiket"][:1]
+                if harf != son_harf:
+                    kartlar += f"<h2 class='section-title'>{harf}</h2>"
+                    son_harf = harf
+                kartlar += _kart_html(i, v)
+            icerik = f"""
+<div class="hero">
+<h1>Terimler ve Tanımlar</h1>
+<p>Ekonomi, finans ve borsa terminolojisi sözlüğünün <strong>{g['etiket']}</strong> grubu.
+Tanımlar TCMB, Rekabet Kurumu ve iktisat sözlükleri gibi resmî kaynaklardan derlenmiştir.
+Diğer harf grupları:</p>
+<p class="terim-grup-cubugu" style="margin:10px 0 0">{_grub_cubugu(g['slug'])}</p>
+</div>
+<div class="arama-form" style="margin:14px 0">
+<input type="text" id="terim-ara" placeholder="Bu grupta ara..." onkeyup="terimSuz()"
  style="width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink)">
 </div>
 <div id="terim-liste">{kartlar}</div>
@@ -7990,12 +8065,13 @@ Temel kavramlar için <a href="sozluk.html">Borsa Sözlüğü</a>'ne, muhasebe t
 yatırım tavsiyesi değildir.</p>
 {_arama_js('terim-liste', 'terim-ara')}
 {koruma}"""
-        _yaz("terimler.html", _sayfa(
-            "Terimler ve Tanımlar", icerik, "terimler",
-            aciklama=f"{len(veri)} terimlik ekonomi, finans ve borsa terimleri sözlüğü: "
-                     "TCMB, Rekabet Kurumu ve yatırım sözlüklerinden kaynaklı tanımlar.",
-            yol="terimler.html"))
-        logger.info("[Terimler] %d terim tek sayfada yazildi.", len(veri))
+            _yaz(f"terimler/{g['slug']}.html", _sayfa(
+                f"Terimler ve Tanımlar: {g['etiket']}", icerik, "terimler",
+                aciklama=f"{len(uye)} terimlik {g['etiket']} grubu ekonomi ve finans sözlüğü: "
+                         "TCMB, Rekabet Kurumu ve yatırım sözlüklerinden kaynaklı tanımlar.",
+                yol=f"terimler/{g['slug']}.html"))
+            grup_sayisi += 1
+        logger.info("[Terimler] %d harf-grup sayfasi yazildi.", grup_sayisi)
 
     # --- 2) Muhasebe Terimleri (IFRS sozluguki; 5 dilli tanim kutulari) ---
     ifrs = _ifrs_yukle()
@@ -8479,14 +8555,22 @@ def site_arama_json_yaz(rapor_dosyalari):
         {"b": "Borsa Sözlüğü", "u": "sozluk.html",
          "t": "sözlük terimler RSI MACD EMA temettü kaldıraç volatilite destek direnç borsa okulu kavramlar"},
         {"b": "Terimler ve Tanımlar", "u": "terimler.html",
-         "t": "ekonomi finans terim sözlük tanım makro mikro muhasebe davranışsal finans " +
-              " ".join(v["terim"] for v in _terim_yukle())[:18000]},
+         "t": "ekonomi finans terim sözlük tanım makro mikro muhasebe davranışsal finans"},
         {"b": "Muhasebe Terimleri", "u": "muhasebe-terimleri.html",
          "t": "muhasebe IFRS terim sözlük finansal raporlama bilanço amortisman şerefiye goodwill " +
               " ".join(v["en"] + " " + v["tr"] for v in _ifrs_yukle())[:18000]},
         {"b": "Ekonomik Takvim Rehberi", "u": "takvim.html",
          "t": "ekonomik takvim faiz enflasyon FOMC bilanço TCMB TÜİK veri açıklama rehber"},
     ]
+    # Terim harf-grup sayfalari: her grup kendi terim adlariyla indekslenir
+    # (bos grup sayfasi uretilmediginden sitemap/arama da yalniz dolu gruplari alir).
+    _tr_terimler = _terim_yukle()
+    for _g in terim_gruplari.gruplar("tr"):
+        _uye = [v for v in _tr_terimler if terim_gruplari.terim_grup_slug("tr", v["terim"]) == _g["slug"]]
+        if not _uye:
+            continue
+        sayfalar.append({"b": f"Terimler ve Tanımlar: {_g['etiket']}", "u": f"terimler/{_g['slug']}.html",
+                         "t": " ".join(v["terim"] + " " + (v["en"] or "") for v in _uye)[:18000]})
     # Muhasebe terimleri DIL SAYFALARI: her biri kendi dil verisiyle indekslenir.
     _ifrs_dil = _ifrs_yukle()
     if _ifrs_dil:
@@ -8569,6 +8653,11 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
         ("haberler.html", "hourly"),
         ("sozluk.html", "weekly"),
         ("terimler.html", "weekly"),
+        # Terim harf-grup sayfalari (bos grup uretilmez; dolu olanlar sitemap'e girer)
+        *[(f"terimler/{_g['slug']}.html", "weekly")
+          for _g in terim_gruplari.gruplar("tr")
+          if any(terim_gruplari.terim_grup_slug("tr", v["terim"]) == _g["slug"]
+                 for v in _terim_yukle())],
         ("muhasebe-terimleri.html", "weekly"),
         ("takvim.html", "weekly"),
         ("hisse/", "daily"),

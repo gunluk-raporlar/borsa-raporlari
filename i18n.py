@@ -1615,7 +1615,12 @@ def sitemap_dogrula(kok: Path, diller: list[str]) -> dict:
     tekrar = [u for u, n in Counter(loclar).items() if n > 1]
 
     eksik_kayit, dil_eksik = [], []
+    # Terim harf-grup TR dosyalari dil kopyasi beklemez: dil sayfalari DIL-YEREL
+    # grup adlarindadir ve sitemap'te dil bloklari hub'lardan uretilir.
+    _grup_deseni = re.compile(r"^terimler/[a-z0-9-]+\.html$")
     for rel in turkce_sayfalar(kok):
+        if _grup_deseni.match(rel.as_posix()):
+            continue
         if SITE_URL + seo_yol(rel) not in kayitli and SITE_URL + rel.as_posix() not in kayitli:
             eksik_kayit.append(seo_yol(rel) or "/")
         for dil in diller:
@@ -2048,6 +2053,7 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
 # kullanici karariyla eklendi); _en_slug_degistir kopyasi kaldirildi — tek
 # mantik dil_yollari.slug_degistir'de.
 from dil_yollari import _SLUG_ESLEME, SLUG_TANILAR, slug_degistir
+import terim_gruplari
 
 
 def dil_yollarini_cevir(kok: Path, dil: str) -> int:
@@ -2172,6 +2178,189 @@ def dil_yollarini_cevir(kok: Path, dil: str) -> int:
 
 
 # ----------------------------------------------------------------------------
+# 5.6) TERIM HARF-GRUPLARININ DIL-YEREL YENIDEN HARFLENDIRILMESI (2026-10-27)
+# ----------------------------------------------------------------------------
+
+# Kart acilis ozellikleri bot üretiminde (id, style) dizili; taklit/eski yapida
+# data-ara arada kalabilir — regex nitelik sirasina bagli degil, id yakalayicidir.
+_TERIM_KART_RE = re.compile(
+    r"<div class='card terim-oge'[^>]*id='t(\d+)'[^>]*>(.*?)</div>", re.S)
+_TERIM_ADI_RE = re.compile(r"<strong style='color:var\(--accent\)'>([^<]+)</strong>")
+_TERIM_CUBUK_RE = re.compile(r'<p class="terim-grup-cubugu"[^>]*>.*?</p>', re.S)
+_TERIM_INDIS_RE = re.compile(r'<p id="terim-indeks"[^>]*>.*?</p>', re.S)
+
+
+def _div_kapanisi(metin: str, baslangic: int) -> int:
+    """baslangic'ta acilan <div>'in kapanis etiketinin BAS indeksi (dengeli
+    div sayimi; kart bloklarinda icice div yok, terim-liste div'inin kapanisi
+    icin kullanilir)."""
+    derinlik = 0
+    for m in re.finditer(r"<div\b[^>]*>|</div>", metin[baslangic:]):
+        if m.group(0).startswith("</"):
+            derinlik -= 1
+            if derinlik == 0:
+                return baslangic + m.start()
+        else:
+            derinlik += 1
+    return -1
+
+
+def terimler_gruplari_yeniden_dagit(kok: Path, diller: list[str]) -> dict:
+    """Çevrilmiş terim harf-grup sayfalarını, ÇEVİLMİŞ terim adlarına göre o
+    dilin harf-gruplarına (terim_gruplari.py) yeniden dağıtır.
+
+    bot.py TR'de grup sayfalarını TR harflerine göre üretir (terimler/a-b.html
+    ...); i18n bunları çevirir (en/terms/a-b.html ...). Harflendirme dili
+    bağımlıdır: "Letter of Credit" TR'de A'dadır, İngilizce'de L'de — bu yüzden
+    TR-alfabesi başlıkları çevrilmiş sayfada anlamsızdı (27.10 ölçümü). Bu adım
+    çevrilmiş kartları dilin alfabesine göre gruba atar, DİL-YEREL adlı sayfaları
+    yazar (ru: а-в..., zh: pinyin a-c...), TR-adlı dosyaları kaldırır, dil
+    hub'ının terim indisini ve grup çubuklarını dil gruplarına bağlar ve dil
+    site-arama.json'ındaki terim kayıtlarını tazeler. Kart anchor id'leri
+    (t0, t1, ...) çeviride korunur: hub linkleri ile kartlar aynı id'lerle
+    bağlanır. Hub çevirisi kuyrukta kaldıysa o dil atlanır (fail-open)."""
+    ozet: dict[str, str] = {}
+    for dil in diller:
+        terimler_ad = slug_degistir("terimler", dil)
+        hub = kok / dil / f"{terimler_ad}.html"
+        if not hub.exists():
+            ozet[dil] = "hub-yok"
+            continue
+        # 1) TR-adlı çevrilmiş grup dosyalarından kartları topla
+        kartlar: dict[str, str] = {}
+        adlar: dict[str, str] = {}
+        iskelet: str | None = None
+        tr_dosyalar: list[Path] = []
+        for tr_slug in terim_gruplari.grup_sluglari("tr"):
+            dosya = kok / dil / terimler_ad / f"{tr_slug}.html"
+            if not dosya.exists():
+                continue
+            tr_dosyalar.append(dosya)
+            metin = dosya.read_text(encoding="utf-8")
+            if iskelet is None:
+                iskelet = metin
+            for m in _TERIM_KART_RE.finditer(metin):
+                ad_m = _TERIM_ADI_RE.search(m.group(2))
+                if ad_m:
+                    kartlar["t" + m.group(1)] = m.group(0)
+                    adlar["t" + m.group(1)] = ad_m.group(1)
+        if not (kartlar and iskelet):
+            ozet[dil] = "kart-yok"
+            continue
+        # 2) çevrilmiş terim adına göre dilin harf-gruplarına dağıt
+        sira_harf = terim_gruplari.harf_sirasi(dil)
+
+        def _sira_anahtar(u):
+            _tid, terim, _blok = u
+            h = terim_gruplari.terim_bas_harf(dil, terim) or ""
+            i = sira_harf.index(h) if h in sira_harf else len(sira_harf)
+            return (i, terim.casefold(), int(_tid[1:]))
+
+        dagitim: dict[str, list] = {}
+        for tid, terim in adlar.items():
+            slug = terim_gruplari.terim_grup_slug(dil, terim)
+            dagitim.setdefault(slug, []).append((tid, terim, kartlar[tid]))
+
+        def _cubuk(aktif_slug):
+            parcalar = []
+            for g in terim_gruplari.gruplar(dil):
+                if g["slug"] not in dagitim:
+                    continue  # bos grup sayfasi uretilmedi
+                stil = ("background:var(--accent); color:#fff; border-color:var(--accent)"
+                        if g["slug"] == aktif_slug else "background:var(--card)")
+                parcalar.append(
+                    f"<a href='{terimler_ad}/{g['slug']}.html' style='display:inline-block; "
+                    f"margin:2px 6px 2px 0; padding:4px 10px; border:1px solid var(--line); "
+                    f"border-radius:8px; {stil}; text-decoration:none'>{g['etiket']}</a>")
+            return " ".join(parcalar)
+
+        def _hub_url(kod):
+            return (SITE_URL if kod == "tr" else f"{SITE_URL}{kod}/") + terimler_ad
+
+        # 3) dil-yerel grup sayfalarını yaz; TR-adlı dosyaları kaldır
+        yazilan = 0
+        for slug, uye in dagitim.items():
+            uye.sort(key=_sira_anahtar)
+            kart_blok, son_harf = [], None
+            for _tid, terim, blok in uye:
+                h = terim_gruplari.terim_bas_harf(dil, terim) or ""
+                if h != son_harf:
+                    kart_blok.append(f"<h2 class='section-title'>{h}</h2>")
+                    son_harf = h
+                kart_blok.append(blok)
+            etiket = terim_gruplari.grup_etiketi(dil, slug)
+            sayfa = iskelet
+            sayfa = re.sub(r"(<title>[^<]*: ).*?(</title>)",
+                           lambda m: m.group(1) + etiket + m.group(2), sayfa, count=1)
+            sayfa = re.sub(r"<strong>([^<]*)</strong>",
+                           lambda m: f"<strong>{etiket}</strong>", sayfa, count=1)
+            grup_url = f"{SITE_URL}{dil}/{terimler_ad}/{slug}"
+            sayfa = re.sub(r'(<link rel="canonical" href=")[^"]*(")',
+                           lambda m: m.group(1) + grup_url + m.group(2), sayfa, count=1)
+            sayfa = re.sub(r'(property="og:url" content=")[^"]*(")',
+                           lambda m: m.group(1) + grup_url + m.group(2), sayfa, count=1)
+            # hreflang alternatifleri sözlük HUB'ını gösterir (grup URL'leri
+            # diller arası 1:1 karşılıksız; harflendirme dil-bağımlı)
+            # NOT: zh-Hans büyük harf içerir — [a-zA-Z-] şart.
+            sayfa = re.sub(
+                r'(<link rel="alternate" hreflang="(x-default|[a-zA-Z-]+)" href=")[^"]*(")',
+                lambda m: m.group(1) + _hub_url("tr" if m.group(2) == "x-default"
+                                                else next(k for k, v in DILLER.items()
+                                                          if v["hreflang"] == m.group(2)))
+                + m.group(3), sayfa)
+            sayfa = _TERIM_CUBUK_RE.sub(
+                f'<p class="terim-grup-cubugu" style="margin:10px 0 0">{_cubuk(slug)}</p>', sayfa)
+            lm = re.search(r'<div[^>]*id="terim-liste"[^>]*>', sayfa)
+            if not lm:
+                continue  # iskelet beklenmedik bicimde; bu grup atlanir
+            kapanis = _div_kapanisi(sayfa, lm.start())
+            if kapanis < 0:
+                continue
+            sayfa = sayfa[:lm.end()] + "".join(kart_blok) + sayfa[kapanis:]
+            (kok / dil / terimler_ad / f"{slug}.html").write_text(sayfa, encoding="utf-8")
+            yazilan += 1
+        for dosya in tr_dosyalar:
+            # Dil-yerel ad TR adıyla çakışıyorsa (ör. en a-b, ru r-s) dosya
+            # zaten dil-yerel kartlarla ÜZERİNE YAZILDI — silinirse yeni
+            # sayfa da gider; yalnız gerçekten TR-adlı eski dosyalar kalkar.
+            if dosya.stem not in dagitim:
+                dosya.unlink()
+
+        # 4) dil hub'ı: terim indisi ve grup çubuğu çevrilmiş adlarla tazelenir
+        hub_metin = hub.read_text(encoding="utf-8")
+        indeks = " ".join(
+            f"<a href='{terimler_ad}/{terim_gruplari.terim_grup_slug(dil, adlar[tid])}.html#{tid}' "
+            f"style='white-space:nowrap'>{adlar[tid]}</a>"
+            for tid in sorted(adlar, key=lambda x: int(x[1:])))
+        hub_metin = _TERIM_CUBUK_RE.sub(
+            f'<p class="terim-grup-cubugu" style="margin:10px 0 0">{_cubuk(None)}</p>', hub_metin)
+        hub_metin = _TERIM_INDIS_RE.sub(
+            f'<p id="terim-indeks" style="line-height:2.1">{indeks}</p>', hub_metin)
+        hub.write_text(hub_metin, encoding="utf-8")
+
+        # 5) dil site-arama.json: TR-adlı grup kayıtları düştü (dosyalar silindi);
+        # dil-yerel kayıtlar çevrilmiş terim adlarıyla eklenir.
+        arama_yol = kok / dil / "site-arama.json"
+        if arama_yol.exists():
+            try:
+                _v = json.loads(arama_yol.read_text(encoding="utf-8"))
+                _sk = [s for s in (_v.get("sayfalar") or [])
+                       if not re.match(rf"^{re.escape(terimler_ad)}/[a-z0-9-]+\.html$",
+                                       str(s.get("u") or ""))]
+                for slug, uye in dagitim.items():
+                    _sk.append({"b": f"Terimler ve Tanımlar: {terim_gruplari.grup_etiketi(dil, slug)}",
+                                "u": f"{terimler_ad}/{slug}.html",
+                                "t": " ".join(u[1] for u in sorted(uye, key=_sira_anahtar))[:18000]})
+                _v["sayfalar"] = _sk
+                arama_yol.write_text(json.dumps(_v, ensure_ascii=False), encoding="utf-8")
+            except Exception:
+                pass  # bozuk JSON'a dokunma; mevcut davranis korunur
+
+        ozet[dil] = f"{yazilan} grup sayfasi, {len(adlar)} terim"
+    return ozet
+
+
+# ----------------------------------------------------------------------------
 # 6) SITEMAP ALTERNATIFLERI (opt-in)
 # ----------------------------------------------------------------------------
 
@@ -2240,6 +2429,20 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
     dil_sayisi = 0
     for sy in sorted(tr_kayitlar):
         attr = tr_kayitlar[sy]
+        if re.match(r"^terimler/[a-z0-9-]+$", sy):
+            # Terim harf-grup sayfalari diller arasi 1:1 karsiliksiz (her dil
+            # kendi alfabesine harflendirir; terim_gruplari.py): dil
+            # alternatifleri sozluk HUB'larina isaret eder; ayrica dil <url>
+            # blogu da hub'lardan uretilir (asagidaki "terimler" kaydindan).
+            alternatifler = [
+                f'    <xhtml:link rel="alternate" hreflang="{DILLER[k]["hreflang"]}" '
+                f'href="{SITE_URL}{k + "/" if k != "tr" else ""}{slug_degistir("terimler", k)}"/>'
+                for k in ["tr"] + diller
+            ]
+            alternatifler.append(
+                f'    <xhtml:link rel="alternate" hreflang="x-default" href="{SITE_URL}{sy}"/>')
+            bloklar.append(_url_bloku(f"{SITE_URL}{sy}", attr, alternatifler))
+            continue
         if sy in {g[:-5] for g in GENERASYON_HARIC} \
                 and sy not in {g[:-5] for g in DIL_SAYFASI_VERIDEN}:
             # Dil kopyasi uretilmeyecek sayfalar: yalnizca TR canonical kaydi
@@ -2287,7 +2490,11 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
 
 def dogrula(kok: Path, diller: list[str]) -> dict:
     rapor = {"kirik_baglanti": [], "hreflang_eksik": [], "canonical_hatali": [], "canonical_baska_sayfa": [], "uretilmemis": [], "kontrol": 0}
-    tr_sayfalar = {str(r): r for r in turkce_sayfalar(kok)}
+    # Terim harf-grup TR dosyalari dil kopyasi beklemez: dil kopyalari DIL-YEREL
+    # grup adlariyla terimler_gruplari_yeniden_dagit'tan cikar (TR-adli cevrilmis
+    # dosyalar o adimda silinir); TR-list dolasiminda yanlis "uretilmemis" uretmesin.
+    tr_sayfalar = {str(r): r for r in turkce_sayfalar(kok)
+                   if not re.match(r"^terimler/[a-z0-9-]+\.html$", str(r))}
     for dil in diller:
         for rel in tr_sayfalar.values():
             dosya = kok / dil / rel
@@ -2462,6 +2669,17 @@ def main() -> int:
             if dil_n:
                 print(f"[i18n] {dil} yollari yerellestirildi: {dil_n} degisiklik "
                       f"({', '.join(e + '->' + y for e, y in _SLUG_ESLEME[dil][:3])} ...)")
+        # Terim harf-gruplari: cevrilmis kartlari dil alfabesine gore yeniden
+        # dagit (dil_yollarini_cevir'den SONRA: TR-adli dosyalar orada son haliyle
+        # yazilmis olur; sitemap guncellemesi sitemap_guncelle icinde hub'lardan
+        # uretildigi icin sira fark etmez). Fail-open: dagitim hatasi kosuyu
+        # kirmaz — eski TR-adli dosyalar kalir, sonraki kosu yeniden dener.
+        try:
+            dagitim_ozeti = terimler_gruplari_yeniden_dagit(kok, diller)
+            if dagitim_ozeti:
+                print("[i18n] terim gruplari:", json.dumps(dagitim_ozeti, ensure_ascii=False))
+        except Exception as _dagitim_hata:
+            print(f"[i18n] terim gruplari dagitimi ATLANDI: {_dagitim_hata}")
 
     # --- Turkce koruma kontrolu ---
     tr_sonra = tr_hashleri(kok)
