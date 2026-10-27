@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-10-26 23:28",
+ "guncelleme": "2026-10-27 23:03",
  "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + EVDS(5) + Resmi AB/ABD(25)",
  "gostergeler": [
   {
@@ -65,13 +65,13 @@
   {
    "ulke": "Türkiye",
    "ad": "İşsizlik oranı",
-   "deger": 7.7,
+   "deger": 8.5,
    "birim": "%",
-   "donem": "2026-08-01",
+   "donem": "2026-09-01",
    "tahmin": null,
    "onceki": null,
    "kaynak_baslik": "DF_ISGUCU_AYLIK_TAMAMLAYICI_GOSTERGE_C",
-   "kaynak_periyot": "2026-08",
+   "kaynak_periyot": "2026-09",
    "frekans": "aylık",
    "teyit": "TÜİK",
    "kaynak_durumu": "TÜİK resmi verisi"
@@ -1060,6 +1060,20 @@
   },
   {
    "ulke": "ABD",
+   "ad": "Politika faizi",
+   "deger": 4.0,
+   "birim": "%",
+   "donem": "2026-10-27",
+   "tahmin": 4.0,
+   "onceki": 4.0,
+   "kaynak_baslik": "FRED Fed fon ust siniri",
+   "kaynak_periyot": "2026-10-27",
+   "frekans": "olay",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
+  },
+  {
+   "ulke": "ABD",
    "ad": "Büyüme (yıllık)",
    "deger": 2.2,
    "birim": "%",
@@ -1073,29 +1087,15 @@
    "teyit": "FRED"
   },
   {
-   "ulke": "ABD",
-   "ad": "Politika faizi",
-   "deger": 4.0,
-   "birim": "%",
-   "donem": "2026-10-26",
-   "tahmin": 4.0,
-   "onceki": 4.0,
-   "kaynak_baslik": "FRED Fed fon ust siniri",
-   "kaynak_periyot": "2026-10-26",
-   "frekans": "olay",
-   "teyit": "FRED",
-   "kaynak_durumu": "FRED resmi verisi"
-  },
-  {
    "ulke": "Euro Bölgesi",
    "ad": "Politika faizi",
    "deger": 2.65,
    "birim": "%",
-   "donem": "2026-10-26",
+   "donem": "2026-10-27",
    "tahmin": 2.65,
    "onceki": 2.65,
    "kaynak_baslik": "ECB MRO ana refinansman faizi",
-   "kaynak_periyot": "2026-10-26",
+   "kaynak_periyot": "2026-10-27",
    "frekans": "olay",
    "teyit": "ECB",
    "kaynak_durumu": "ECB resmi verisi"
