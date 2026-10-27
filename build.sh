@@ -11,7 +11,9 @@ mkdir -p dist
 # Sayfa klasorleri (mp3'ler dahil)
 # derin-analiz/ + makro-analiz/ (2026-10-07): agac yapisinde tarihli arsiv
 # sayfalari bu dizinlerde; listeye alinmazsa hub kartlari 404'e duser.
-for d in hisse raporlar derin-analiz makro-analiz radyo haftasonu haftasonu-egitimi en de ru zh; do
+# terimler/ (2026-10-28): harf-grup sayfalari ayni sekilde listeye alinmali;
+# listede yoksa dist'e kopyalanmaz ve tum terim linkleri 404'e duser.
+for d in hisse raporlar derin-analiz makro-analiz radyo haftasonu haftasonu-egitimi terimler en de ru zh; do
   if [ -d "$d" ]; then cp -r "$d" dist/; fi
 done
 
