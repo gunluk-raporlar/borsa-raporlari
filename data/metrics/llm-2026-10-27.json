@@ -145,14 +145,86 @@
    "token_giris": 2085,
    "token_cikis": 1094,
    "saat": "2026-10-27T23:17:09+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 80.346,
+   "ok": true,
+   "token_giris": 4522,
+   "token_cikis": 2782,
+   "saat": "2026-10-28T01:54:52+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 229.538,
+   "ok": true,
+   "token_giris": 15986,
+   "token_cikis": 12614,
+   "saat": "2026-10-28T01:58:41+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 1040.769,
+   "ok": true,
+   "token_giris": 11330,
+   "token_cikis": 1548,
+   "saat": "2026-10-28T02:16:02+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 34.721,
+   "ok": true,
+   "token_giris": 8845,
+   "token_cikis": 1684,
+   "saat": "2026-10-28T02:16:37+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 231.064,
+   "ok": true,
+   "token_giris": 2836,
+   "token_cikis": 13462,
+   "saat": "2026-10-28T02:20:28+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 167.034,
+   "ok": true,
+   "token_giris": 20014,
+   "token_cikis": 9978,
+   "saat": "2026-10-28T02:23:15+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 27.142,
+   "ok": true,
+   "token_giris": 9144,
+   "token_cikis": 1269,
+   "saat": "2026-10-28T02:23:42+03:00"
+  },
+  {
+   "islev": "llm_call",
+   "model": "-",
+   "sure_sn": 3.062,
+   "ok": true,
+   "token_giris": 2079,
+   "token_cikis": 994,
+   "saat": "2026-10-28T02:23:45+03:00"
   }
  ],
  "ozet": {
   "adet": 8,
-  "ortalama_sn": 295.157,
-  "p95_sn": 368.929,
-  "maks_sn": 1021.993,
+  "ortalama_sn": 226.709,
+  "p95_sn": 231.064,
+  "maks_sn": 1040.769,
   "basari_orani": 1.0,
-  "son_guncelleme": "2026-10-27T23:18:58+03:00"
+  "son_guncelleme": "2026-10-28T02:25:54+03:00"
  }
 }
