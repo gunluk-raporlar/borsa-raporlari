@@ -2277,6 +2277,33 @@ def _div_kapanisi(metin: str, baslangic: int) -> int:
     return -1
 
 
+# 2026-10-31: terim harf-grup sayfalarinin <title>/meta alanlari iskelet
+# dosyadan (ilk bulunan grup sayfasindan) kopyalaniyordu. Sonuc: en/terms/a-b.html
+# basligi "Terimler ve Tanimlar: A-B" (Turkce) kaliyor, en/terms/c-d.html ise
+# a-b'nin "134 terimlik A-B grubu..." aciklamasini tasiyordu (39 sayfa, 4 dil).
+# Basliklar hub sayfalarinin yerlesik adlariyla ayni tutuldu.
+_TERIM_BASLIK = {
+    "tr": "Terimler ve Tanımlar",
+    "en": "Stock Exchange Dictionary",
+    "de": "Börsenlexikon",
+    "ru": "Биржевой словарь",
+    "zh": "交易所术语词典",
+}
+_TERIM_META = {
+    "tr": "{n} terimlik {etiket} grubu ekonomi ve finans sözlüğü: TCMB, Rekabet "
+          "Kurumu ve yatırım sözlüklerinden kaynaklı tanımlar.",
+    "en": "{n} terms in the {etiket} group of the stock exchange dictionary: "
+          "definitions drawn from central bank, competition authority and "
+          "investor glossaries.",
+    "de": "{n} Begriffe der Gruppe {etiket} im Börsenlexikon: Definitionen aus "
+          "Zentralbank-, Wettbewerbs- und Anlegerglossaren.",
+    "ru": "{n} терминов группы {etiket} в биржевом словаре: определения из "
+          "глоссариев центрального банка, антимонопольного органа и "
+          "инвестиционных справочников.",
+    "zh": "{n} 条 {etiket} 组术语：来自央行、竞争管理局与投资词典的定义。",
+}
+
+
 def terimler_gruplari_yeniden_dagit(kok: Path, diller: list[str]) -> dict:
     """Çevrilmiş terim harf-grup sayfalarını, ÇEVİLMİŞ terim adlarına göre o
     dilin harf-gruplarına (terim_gruplari.py) yeniden dağıtır.
@@ -2303,19 +2330,33 @@ def terimler_gruplari_yeniden_dagit(kok: Path, diller: list[str]) -> dict:
         adlar: dict[str, str] = {}
         iskelet: str | None = None
         tr_dosyalar: list[Path] = []
-        for tr_slug in terim_gruplari.grup_sluglari("tr"):
-            dosya = kok / dil / terimler_ad / f"{tr_slug}.html"
-            if not dosya.exists():
-                continue
-            tr_dosyalar.append(dosya)
+        _tr_sluglar = set(terim_gruplari.grup_sluglari("tr"))
+        # 2026-10-31: kartlar TR slug listesiyle aranıyordu; hedef dilin grup
+        # adları TR'den farklı olabildiği için bazı dosyalar HİÇ okunmuyordu
+        # (TR 'r-s' / EN 'q-s': en/terms/q-s.html'deki 190 kart toplanmıyor,
+        # yeniden dağıtımda düşüyordu — en 1332 -> 1141 kart, 9 -> 7 grup).
+        # Artık dizindeki TÜM grup dosyaları okunur; SİLME kuralı değişmez
+        # (yalnızca TR-adlı eski dosyalar, dağıtımda yoksa kaldırılır).
+        _grup_dizini = kok / dil / terimler_ad
+        _grup_dosyalari = sorted(_grup_dizini.glob("*.html")) if _grup_dizini.exists() else []
+        _mevcut_kart = 0
+        for dosya in _grup_dosyalari:
+            if dosya.stem in _tr_sluglar:
+                tr_dosyalar.append(dosya)
             metin = dosya.read_text(encoding="utf-8")
             if iskelet is None:
                 iskelet = metin
             for m in _TERIM_KART_RE.finditer(metin):
+                _mevcut_kart += 1
                 ad_m = _TERIM_ADI_RE.search(m.group(2))
                 if ad_m:
                     kartlar["t" + m.group(1)] = m.group(0)
                     adlar["t" + m.group(1)] = ad_m.group(1)
+        # Güvenlik ağı: toplanan kart sayısı dizindeki toplamdan azsa dağıtım
+        # sözlüğü KÜÇÜLTÜR (terim kaybı). Böyle bir durumda hiç yazmayız.
+        if kartlar and len(kartlar) < _mevcut_kart:
+            ozet[dil] = f"korundu ({len(kartlar)}/{_mevcut_kart} kart)"
+            continue
         if not (kartlar and iskelet):
             ozet[dil] = "kart-yok"
             continue
@@ -2362,8 +2403,21 @@ def terimler_gruplari_yeniden_dagit(kok: Path, diller: list[str]) -> dict:
                 kart_blok.append(blok)
             etiket = terim_gruplari.grup_etiketi(dil, slug)
             sayfa = iskelet
-            sayfa = re.sub(r"(<title>[^<]*: ).*?(</title>)",
-                           lambda m: m.group(1) + etiket + m.group(2), sayfa, count=1)
+            # 2026-10-31: baslik ve meta artik iskeletten KOPYALANMAZ; her grup
+            # icin dil-yerel baslik + kendi terim sayisina ve harf grubuna ozel
+            # aciklama yazilir (onceden c-d sayfasi a-b'nin aciklamasini tasiyordu).
+            _baslik = f"{_TERIM_BASLIK.get(dil, _TERIM_BASLIK['tr'])}: {etiket}"
+            _meta = _TERIM_META.get(dil, _TERIM_META["tr"]).format(n=len(uye), etiket=etiket)
+            sayfa = re.sub(r"<title>.*?</title>",
+                           lambda m: f"<title>{_baslik}</title>", sayfa, count=1)
+            for _kalip, _deger in (
+                    (r'(<meta name="description" content=")[^"]*(")', _meta),
+                    (r'(<meta property="og:title" content=")[^"]*(")', _baslik),
+                    (r'(<meta property="og:description" content=")[^"]*(")', _meta),
+                    (r'(<meta name="twitter:title" content=")[^"]*(")', _baslik),
+                    (r'(<meta name="twitter:description" content=")[^"]*(")', _meta)):
+                sayfa = re.sub(_kalip, lambda m, _d=_deger: m.group(1) + _d + m.group(2),
+                               sayfa, count=1)
             sayfa = re.sub(r"<strong>([^<]*)</strong>",
                            lambda m: f"<strong>{etiket}</strong>", sayfa, count=1)
             grup_url = f"{SITE_URL}{dil}/{terimler_ad}/{slug}"
