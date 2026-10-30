@@ -48,3 +48,4 @@
 2026-10-29,07:53,gunluk,YEDEK,openai/gpt-oss-120b,1,2035,935,2.7,5,isim=2;toplam_metin=1;endeks=2,hayir,"OR/nvidia/nemotron-3-ultra-550b-a55b:freex4, AMD/DeepSeek-V4-Flashx3, YEDEK/openai/gpt-oss-120bx1",81854,18627
 2026-10-29,12:40,derin,OLLAMA,gpt-oss:120b,6,14511,4203,960.0,4,isim=1;toplam_metin=1;faiz=1;piyasa=1,hayir,OLLAMA/gpt-oss:120bx1,14511,4203
 2026-10-30,12:31,gunluk,YEDEK,openai/gpt-oss-120b,1,2027,1720,4.5,4,isim=2;toplam_metin=1;makro=1,hayir,"AMD/DeepSeek-V4-Flashx5, OR/nvidia/nemotron-3-ultra-550b-a55b:freex2, YEDEK/openai/gpt-oss-120bx1",80342,14321
+2026-10-30,12:46,derin,OLLAMA,gpt-oss:120b,6,14685,4045,707.4,2,enflasyon=1;toplam_metin=1,hayir,OLLAMA/gpt-oss:120bx1,14685,4045
