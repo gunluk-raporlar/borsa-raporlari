@@ -37,6 +37,11 @@ jobs:
           git config user.name "borsa-bot"
           git config user.email "borsa-bot@users.noreply.github.com"
           git pull --rebase -X theirs origin main
+          # Dil secici baglantilari (2026-10-30): bolum index'leri ve tarihli
+          # arsiv sayfalarindaki eski menuler yayin commit'i icinde tazelenir
+          # (ayni sayfanin cevirisi yoksa bolum hub'ina duser, ana sayfaya
+          # degil). Fail-open: betik basarisizsa yayin eskisi gibi devam eder.
+          python3 dil_baglantilari_tazele.py . || echo "UYARI: dil menusu tazeleme atlandi"
           # Ic baglanti guzel-URL temizligi (2026-10-22, GSC 'Yonlendirmeli
           # sayfa'): deploy kok dizininden yapildigi icin her yayindan once
           # repo agaci temizlenir; degisen sayfalar yayin commit'ine girer.

@@ -21,7 +21,7 @@ import dogrulama
 # Terim sözlüğü harf-grup tablosu (tek kaynak; i18n.py aynı tabloyu kullanır)
 import terim_gruplari
 # Dil agaclari arasi slug eslemesi (tek kaynak; i18n.py ayni tabloyu kullanir)
-from dil_yollari import slug_degistir
+from dil_yollari import hedef_url, menu_tazele, slug_degistir
 import editor
 import makro_veri
 import makro_katalog
@@ -4075,26 +4075,22 @@ _DIL_STIL = (
 def _dil_yolu(yol, dil):
     """Ayni sayfanin ilgili dil surumunun adresi (site .html'siz canonical kullaniyor).
     Dil agacinda adlar degisiyorsa (en/reports gibi) esleme uygulanir; hedef dosya
-    yoksa dil ana sayfasina duser — secici hicbir zaman 404'e baglanti uretmez
-    (18.10 kullanici talebi: /en/muhasebe-terimleri 404'i ve benzerleri)."""
+    yoksa bolum hub'ina, o da yoksa dil ana sayfasina duser — secici hicbir zaman
+    404'e baglanti uretmez (18.10 kullanici talebi: /en/muhasebe-terimleri 404'i
+    ve benzerleri).
+
+    30.10.2026: bolum index'leri (hisse/index.html, radyo/index.html) icin
+    "{dil}/{yol}.html" yaninda "{dil}/{yol}/index.html" de aranir. Eski kod
+    yalnizca .html'e baktigi icin /hisse/ menusu /en/, /de/, /ru/, /zh/
+    ana sayfalarina dusuyordu."""
     p = (yol or "").lstrip("/")
+    dizin = p.endswith("/")
     if p.endswith("index.html"):
         p = p[: -len("index.html")]
+        dizin = True
     elif p.endswith(".html"):
         p = p[:-5]
-    if dil:
-        p = slug_degistir(p, dil)
-        hedef_dosya = f"{dil}/{p}.html" if p else f"{dil}/index.html"
-        if not os.path.exists(hedef_dosya):
-            # Makale o dilde henuz cevrilmemisse dil ana sayfasina degil,
-            # SEKSIONUN arsiv hub'ina dus (or. /en/macro-analysis) — kullanici
-            # ilgili bolumun listesine ulasir (25.10 kullanici bildirimi:
-            # makro/borsa okulu makalelerinden dil secince hub'a atiliyordu).
-            bolum = p.split("/")[0] if p else ""
-            if bolum and os.path.exists(f"{dil}/{bolum}.html"):
-                return f"{SITE_URL}{dil}/{bolum}"
-            return f"{SITE_URL}{dil}/"
-    return f"{SITE_URL}{dil + '/' if dil else ''}{p}"
+    return hedef_url(p, dil, ".", SITE_URL, dizin=dizin)
 
 
 def _ceviri_widget(kok="", yol=""):
@@ -8740,7 +8736,7 @@ def chrome_tazele():
     atla_ad = re.compile(r"^(google|yandex|bing|baidu|naver|indexnow|site-?verification|onizleme-)")
     haric_dizin = {".git", "dist", "__pycache__", "web", "data", "docs",
                    "ajan-uyumlulugu", "node_modules", "functions"}
-    sayilar = {"nav": 0, "secici": 0}
+    sayilar = {"nav": 0, "secici": 0, "dil_baglantisi": 0}
     for agac in (".", "en", "de", "ru", "zh"):
         donor_yol = (agac + "/index.html") if agac != "." else "index.html"
         try:
@@ -8774,15 +8770,30 @@ def chrome_tazele():
                         h = f.read()
                 except OSError:
                     continue
+                h_ham = h
+                # 30.10.2026: dil secici baglantilarini son dosya durumuna gore
+                # tazele (bolum index'leri ana sayfaya dusmesin; cevirisi
+                # sonradan gelen makaleler hub'da kalmasin).
+                h, _menu_n = menu_tazele(h, rel, ".", SITE_URL)
+                sayilar["dil_baglantisi"] += _menu_n
                 nm = nav_re.search(h)
                 if not nm:
+                    if _menu_n:
+                        with open(rel, "w", encoding="utf-8", newline="\n") as f:
+                            f.write(h)
                     continue
                 eski = nm.group(0)
                 on_ek = "../" * agac_rel.count("/")
                 mevcut = {h2[len(on_ek):] for h2, _ in a_re.findall(eski)
                           if h2.startswith(on_ek)}
                 if donor_hedefleri.issubset(mevcut) and "dil-linkler" in h:
-                    continue  # menu + secici tam; dokunma
+                    if h != h_ham:  # yalnizca dil secici baglantilari degisti
+                        try:
+                            with open(rel, "w", encoding="utf-8", newline="\n") as f:
+                                f.write(h)
+                        except OSError:
+                            pass
+                    continue  # menu + secici tam; ust menuye dokunma
                 aktif_m = re.search(r'<a href="([^"]+)" class="active">', eski)
                 aktif_rel = (aktif_m.group(1)[len(on_ek):]
                              if aktif_m and aktif_m.group(1).startswith(on_ek) else None)
@@ -8798,15 +8809,16 @@ def chrome_tazele():
                         eklenecek = _ceviri_widget("", agac_rel) + "\n"
                         yeni = yeni[:hm.start()] + eklenecek + yeni[hm.start():]
                         sayilar["secici"] += 1
-                if yeni != h:
+                if yeni != h_ham:
                     try:
                         with open(rel, "w", encoding="utf-8", newline="\n") as f:
                             f.write(yeni)
                         sayilar["nav"] += 1
                     except OSError:
                         continue
-    logger.info("[Chrome] %d sayfanin ust menusu tazelendi; %d sayfaya secici eklendi.",
-                sayilar["nav"], sayilar["secici"])
+    logger.info("[Chrome] %d sayfanin ust menusu tazelendi; %d sayfaya secici eklendi; "
+                "%d dil baglantisi duzeltildi.",
+                sayilar["nav"], sayilar["secici"], sayilar["dil_baglantisi"])
     return sayilar
 
 

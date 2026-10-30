@@ -1341,49 +1341,26 @@ DIL_ADLARI = (
 )
 
 
-_TERS_SLUG = None  # tembel: _SLUG_ESLEME import'u bu modulun sonunda yapiliyor
-
-
 def _tr_yolu(rel: Path) -> str:
     """Cevirilmis dosya yolunun TR karsiligini turetir
     (en/stocks/GARAN.html -> hisse/GARAN; de/index.html -> '').
     25.10 bulgusu: eski kod ceviri yolunu dogrudan slug_degistir'e veriyordu;
     '/en/' oneki baska dilde korunmayan onek oldugundan '/en/en/stocks',
     '/de/en/stocks' gibi 404 adresler uretiliyordu (dil degistirici ana
-    sayfaya dusuyor hissi)."""
-    global _TERS_SLUG
-    if _TERS_SLUG is None:
-        _TERS_SLUG = {d: {yeni: eski for eski, yeni in t}
-                      for d, t in _SLUG_ESLEME.items()}
-    parcalar = list(rel.parts)
-    geri = _TERS_SLUG.get(parcalar[0], {}) if parcalar else {}
-    yollar = []
-    for p in parcalar[1:]:
-        if p.endswith(".html"):
-            p = p[:-5]
-        yollar.append(geri.get(p, p))
-    if yollar and yollar[-1] == "index":
-        yollar = yollar[:-1]
-    return "/".join(yollar)
+    sayfaya dusuyor hissi). 30.10: cozumleyici dil_yollari.tr_yolu'ya tasindi;
+    bolum index'leri de ({dil}/{yol}/index.html) taninir."""
+    return tr_yolu(rel)
 
 
 def dil_switcher_html(rel: Path, aktif: str, kok: Path = Path(".")) -> str:
     """Dil degistirici blogu: ayni sayfanin her dildeki surumune gercek baglanti.
-    Baglantilar TR karsiligindan turetilir ve hedef dosya agacta yoksa dil
-    ana sayfasina duser — secici hicbir zaman 404 uretmez."""
+    Baglantilar TR karsiligindan turetilir; hedef dosya agacta yoksa bolum
+    hub'ina, o da yoksa dil ana sayfasina duser — secici 404 uretmez."""
     y0 = _tr_yolu(rel)
     parcalar = [DIL_STIL, '<nav class="dil-linkler" aria-label="Sayfa dili seçin">',
                 '<span aria-hidden="true">🌐</span>']
     for kod, hl, ad in DIL_ADLARI:
-        if kod == "tr":
-            url = SITE_URL + y0
-        else:
-            p = slug_degistir(y0, kod)
-            hedef = (kok / f"{kod}/{p}.html") if p else (kok / f"{kod}/index.html")
-            if hedef.exists():
-                url = f"{SITE_URL}{kod}/{p}"
-            else:
-                url = f"{SITE_URL}{kod}/"
+        url = hedef_url(y0, "" if kod == "tr" else kod, kok, SITE_URL)
         a = ' class="aktif" aria-current="true"' if kod == aktif else ""
         parcalar.append(f'<a href="{url}" hreflang="{hl}" lang="{hl}" data-dil="{kod}"{a}>{ad}</a>')
     parcalar.append("</nav>")
@@ -1394,6 +1371,31 @@ def dil_sw_aktif(sw: str, dil: str) -> str:
     """Dil degistiricisinde aktif dili isaretler (baglantilar her dilde aynidir)."""
     sw = sw.replace(' class="aktif" aria-current="true"', "")
     return sw.replace(f'data-dil="{dil}"', f'data-dil="{dil}" class="aktif" aria-current="true"')
+
+
+def dil_menulerini_tazele(kok: Path, diller: list[str]) -> int:
+    """Dil agaclarindaki dil secici href'lerini SON dosya durumuna gore tazeler.
+
+    30.10.2026: TR makale uretilirken cevirisi henuz yoksa menu hub'a dusuyor;
+    ceviri sonradan uretilse bile eski menu hub'da kaliyordu. Bu adim her i18n
+    kosusunun sonunda calisir; yalnizca dil dizinlerine dokunur (TR korumasina
+    takilmaz) ve ayni sayfanin cevirisi varsa dogrudan ona baglar.
+    """
+    sayi = 0
+    for dil in diller:
+        for dosya in sorted((kok / dil).rglob("*.html")):
+            rel = dosya.relative_to(kok)
+            try:
+                html = dosya.read_text(encoding="utf-8")
+            except OSError:
+                continue
+            yeni, n = menu_tazele(html, rel, kok, SITE_URL)
+            if not n:
+                continue
+            with open(dosya, "w", encoding="utf-8", newline="\n") as f:
+                f.write(yeni)
+            sayi += n
+    return sayi
 
 
 def sayfayi_cevir(ham_html: str, dil: str, cevirmen: Cevirmen, diller: list[str] | None = None,
@@ -2052,7 +2054,8 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
 # 2026-10-22: en'e ozel gecis tum dil agaclarina genellesti (de/ru/zh tablolari
 # kullanici karariyla eklendi); _en_slug_degistir kopyasi kaldirildi — tek
 # mantik dil_yollari.slug_degistir'de.
-from dil_yollari import _SLUG_ESLEME, SLUG_TANILAR, slug_degistir
+from dil_yollari import (_SLUG_ESLEME, SLUG_TANILAR, hedef_url, menu_tazele,
+                         slug_degistir, tr_yolu)
 import terim_gruplari
 
 
@@ -2320,6 +2323,11 @@ def terimler_gruplari_yeniden_dagit(kok: Path, diller: list[str]) -> dict:
             if kapanis < 0:
                 continue
             sayfa = sayfa[:lm.end()] + "".join(kart_blok) + sayfa[kapanis:]
+            # 30.10.2026: iskelet, kaynak TR grubunun menusunu tasiyor
+            # (or. de/begriffe/c-d, terimler/a-b menusuyle kaliyordu). Yeni
+            # dil-yerel dosya yoluna gore secici baglantilarini tazele.
+            sayfa, _ = menu_tazele(
+                sayfa, Path(dil) / terimler_ad / f"{slug}.html", kok, SITE_URL)
             (kok / dil / terimler_ad / f"{slug}.html").write_text(sayfa, encoding="utf-8")
             yazilan += 1
         for dosya in tr_dosyalar:
@@ -2683,6 +2691,16 @@ def main() -> int:
                 print("[i18n] terim gruplari:", json.dumps(dagitim_ozeti, ensure_ascii=False))
         except Exception as _dagitim_hata:
             print(f"[i18n] terim gruplari dagitimi ATLANDI: {_dagitim_hata}")
+
+        # 30.10.2026: ceviri sonradan uretilen makalelerde dil menusu hub'da
+        # kaliyordu (TR uretilirken ceviri yoktu). Tum dil sayfalarinda
+        # secici baglantilarini son dosya durumuna gore tazele.
+        try:
+            _menu_n = dil_menulerini_tazele(kok, diller)
+            if _menu_n:
+                print(f"[i18n] dil menu baglantilari tazelendi: {_menu_n} degisiklik")
+        except Exception as _menu_hata:
+            print(f"[i18n] dil menu tazeleme ATLANDI: {_menu_hata}")
 
     # --- Turkce koruma kontrolu ---
     tr_sonra = tr_hashleri(kok)

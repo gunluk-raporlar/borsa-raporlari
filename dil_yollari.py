@@ -16,6 +16,7 @@ Yazim bicimi kullanici secimidir (mekanik SOZLUK turevi degildir): de=Almanca
 """
 
 import re
+from pathlib import Path
 
 EN_SLUG_ESLEME = [
     ("muhasebe-terimleri", "accounting-terms"),
@@ -157,3 +158,141 @@ def slug_degistir(deger, dil):
             desen += "(?<!" + re.escape(on_ek) + ")"
         deger = re.sub(desen + re.escape(eski) + r"(?![a-z0-9çğıöşü])", yeni, deger)
     return deger
+
+
+# ---------------------------------------------------------------------------
+# Sayfa hedefi cozumleme (dil secici + menu tazeleme)
+# ---------------------------------------------------------------------------
+# 30.10.2026 kullanici bildirimi: /hisse/ sayfasinda dil secilince ana sayfa
+# aciliyordu. Kok neden: bolum index'leri (hisse/index.html, radyo/index.html)
+# icin hedef "{dil}/{yol}.html" diye araniyor, "{dil}/{yol}/index.html" hic
+# denenmiyordu; hedef bulunamayinca dil ana sayfasina dusuluyordu. Asagidaki
+# cozumleyici hem .html hem de /index.html hedefini bilir; boylece dil secici
+# ayni sayfanin (varsa) cevirisine, yoksa ait oldugu bolumun hub'ina gider.
+
+_TERS_SLUG = None
+
+
+def tr_yolu(rel):
+    """Cevrilmis dosya yolunun TR karsiligini turetir.
+
+    en/stocks/GARAN.html -> hisse/GARAN; de/begriffe/c-d.html -> terimler/c-d;
+    de/index.html -> ''; hisse/index.html -> hisse.
+    """
+    global _TERS_SLUG
+    if _TERS_SLUG is None:
+        _TERS_SLUG = {d: {yeni: eski for eski, yeni in t}
+                      for d, t in _SLUG_ESLEME.items()}
+    parcalar = list(Path(rel).parts)
+    geri = {}
+    if parcalar and parcalar[0] in _SLUG_ESLEME:
+        geri = _TERS_SLUG[parcalar[0]]
+        parcalar = parcalar[1:]
+    yollar = []
+    for p in parcalar:
+        if p.endswith(".html"):
+            p = p[:-5]
+        yollar.append(geri.get(p, p))
+    if yollar and yollar[-1] == "index":
+        yollar = yollar[:-1]
+    return "/".join(yollar)
+
+
+def _dil_slug(tr_yol, dil):
+    p = (tr_yol or "").strip("/")
+    return slug_degistir(p, dil) if dil else p
+
+
+def hedef_dosya(tr_yol, dil, kok=".", dizin=False):
+    """Ayni sayfanin dil agacindaki dosyasini bulur (yoksa None).
+
+    tr_yol uzantisiz ve bas/son slash'siz olmali. dizin=True ise once
+    "{dil}/{p}/index.html", sonra "{dil}/{p}.html" denenir; boylece
+    'hisse/' gibi bolum index'leri dogru cozulur.
+    """
+    kok = Path(kok)
+    p = _dil_slug(tr_yol, dil)
+    onek = kok / dil if dil else kok
+    if not p:
+        adaylar = [onek / "index.html"]
+    elif dizin:
+        adaylar = [onek / p / "index.html", onek / f"{p}.html"]
+    else:
+        adaylar = [onek / f"{p}.html", onek / p / "index.html"]
+    for aday in adaylar:
+        if aday.is_file():
+            return aday
+    return None
+
+
+def hedef_url(tr_yol, dil, kok=".", site_url="", dizin=False):
+    """Dil secici icin ayni sayfanin hedef URL'sini uretir.
+
+    Ayni sayfa o dilde yoksa once bolum hub'ina ({dil}/{bolum} veya
+    {dil}/{bolum}/), o da yoksa dil ana sayfasina duser. Boylece secici
+    hicbir zaman 404 uretmez; bolum index'leri de ana sayfaya dusmez.
+    """
+    kok = Path(kok)
+    taban = (site_url or "").rstrip("/") + "/"
+    hedef = hedef_dosya(tr_yol, dil, kok, dizin=dizin)
+    if hedef is not None:
+        rel = hedef.relative_to(kok).as_posix()
+        if dil and rel.startswith(dil + "/"):
+            rel = rel[len(dil) + 1:]
+        if rel.endswith("index.html"):
+            rel = rel[: -len("index.html")]
+        elif rel.endswith(".html"):
+            rel = rel[:-5]
+        return f"{taban}{dil + '/' if dil else ''}{rel}"
+    # Bolum hub'i: makale cevrilmemisse listeye, ana sayfaya degil.
+    p = _dil_slug(tr_yol, dil)
+    bolum = p.split("/")[0] if p else ""
+    if bolum:
+        for aday, sonek in ((f"{bolum}.html", ""), (f"{bolum}/index.html", "/")):
+            yol = (kok / dil / aday) if dil else (kok / aday)
+            if yol.is_file():
+                return f"{taban}{dil + '/' if dil else ''}{bolum}{sonek}"
+    return f"{taban}{dil + '/' if dil else ''}"
+
+
+_DIL_NAV_RE = re.compile(
+    r'<nav\b[^>]*\bclass="[^"]*\bdil-linkler\b[^"]*"[^>]*>.*?</nav>',
+    re.S | re.I,
+)
+_DIL_A_RE = re.compile(r"<a\b[^>]*>", re.I)
+_DIL_HREF_RE = re.compile(r'\bhref="([^"]*)"', re.I)
+_DIL_DATA_RE = re.compile(r'\bdata-dil="(tr|en|de|ru|zh)"', re.I)
+
+
+def menu_tazele(html, rel, kok=".", site_url=""):
+    """Sayfadaki dil menusunun href'lerini guncel hedeflerle tazeler.
+
+    Yalnizca <nav class="dil-linkler"> icindeki <a> etiketlerinin href'i
+    degisir; aria-label, dil adlari ve aktif sinifi korunur. (html, degisim)
+    dondurur. Boylece eski kosularda uretilmis sayfalar da onarilir.
+    """
+    m = _DIL_NAV_RE.search(html)
+    if not m:
+        return html, 0
+    nav = m.group(0)
+    tr_rel = tr_yolu(rel)
+    sayi = 0
+
+    def _a_degistir(mo):
+        nonlocal sayi
+        etiket = mo.group(0)
+        dm = _DIL_DATA_RE.search(etiket)
+        hm = _DIL_HREF_RE.search(etiket)
+        if not dm or not hm:
+            return etiket
+        dil = dm.group(1).lower()
+        yeni = hedef_url(tr_rel, "" if dil == "tr" else dil, kok, site_url)
+        if hm.group(1) == yeni:
+            return etiket
+        sayi += 1
+        return etiket[:hm.start(1)] + yeni + etiket[hm.end(1):]
+
+    yeni_nav = _DIL_A_RE.sub(_a_degistir, nav)
+    if not sayi:
+        return html, 0
+    return html[:m.start()] + yeni_nav + html[m.end():], sayi

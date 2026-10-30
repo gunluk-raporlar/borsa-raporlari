@@ -30,6 +30,11 @@ for l in en de ru zh; do
   if [ -f "dist/style.css" ] && [ -d "dist/$l" ]; then cp dist/style.css "dist/$l/style.css"; fi
 done
 
+# Dil secici baglantilari (2026-10-30): bolum index'leri (hisse/, radyo/ ...)
+# ve tarihli arsiv sayfalari icin hedef cozumleyici guncellendi; dist'te daha
+# once uretilmis eski menuler yayina cikmadan tazelenir. Fail-open.
+python3 dil_baglantilari_tazele.py dist || echo "UYARI: dil menusu tazeleme atlandi"
+
 # Ic baglanti guzel-URL temizligi (2026-10-22, GSC 'Yonlendirmeli sayfa'):
 # dist kopyasindaki tum goreli .html hrefler uzantisiz adrese tasinir; dil
 # agaclarinda eski TR-slug'lar yerlesik adlara eslenir. Fail-open: python
