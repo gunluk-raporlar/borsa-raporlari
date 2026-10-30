@@ -130,7 +130,7 @@ else:
 # ~%95 sessiz red yiyor (atlanan artiyor, hata satiri yok). Ornek dizeler temiz
 # secilmisti; burada gercek sayfalardan toplanan BEKLEYEN dizelerle ayni saglayici
 # A/B test edilir (dusunme-kapama acik/kapali) ve red gerekcesi ham ciktiyla gosterilir.
-print("\n--- Gercek sayfa dizeleri probu (Discovery/deepseek-v4-flash-0731, hedef=de) ---")
+print("\n--- Gercek sayfa dizeleri probu (Discovery/deepseek-v4.1-flash-1017, hedef=de) ---")
 try:
     _aday_sayfalar = (["index.html", "raporlar.html", "derin-analiz.html"]
                       + sorted(glob.glob("raporlar/*.html"))[:3]
@@ -178,7 +178,7 @@ try:
             try:
                 _t = time.time()
                 _ham = i18n.Cevirmen._llm_istek_dayanikli(
-                    _disc_url, _disc_k, "deepseek-v4-flash-0731", _sistem_de, _grup, 60)
+                    _disc_url, _disc_k, "deepseek-v4.1-flash-1017", _sistem_de, _grup, 60)
                 print(f"[{_etiket}] istek OK ({time.time() - _t:.1f} sn, {len(_ham)}/{len(_grup)} dize)")
                 _sayim: dict[str, int] = {}
                 for _s, _c in zip(_grup, _ham):

@@ -109,9 +109,9 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_MODELS = [m.strip() for m in os.environ.get("GEMINI_MODELS", "gemini-3.8-flash").split(",") if m.strip()]
 
 # intern-ai discovery servisi (2026-10-15, kullanici karari): ceviri hattindaki
-# DISCOVERY hesabi bot'un icerik ureticilerine de baglandi. Ceviri dogrulamasi
-# deepseek-v4-flash-0731'in bu planda sorunsuz calistigini gosterdi; atria-dawn
-# bu planda YOK (404 "not supported by TokenPlan") — listede yok.
+# DISCOVERY hesabi bot'un icerik ureticilerine de baglandi. deepseek-v4-flash-0731
+# 2026-10-31'de kalkti; yerine deepseek-v4.1-flash-1017 geldi (kullanici bildirimi).
+# atria-dawn bu planda YOK (404 "not supported by TokenPlan") — listede yok.
 # NOT: tokenplan hesabi bilincli olarak BOT'A BAGLANMADI (kullanici karari —
 # hesap kullanimlarini panelinden takip edip optimizasyonu kendisi yapiyor).
 DISC_API_KEY = os.environ.get("DISCOVERY_API_KEY", "")
@@ -119,7 +119,7 @@ DISC_BASE_URL = os.environ.get("DISCOVERY_BASE_URL",
                                "https://discovery-api.intern-ai.org.cn/v1").rstrip("/")
 DISC_MODEL_TERCIH = [m.strip() for m in os.environ.get(
     "DISC_MODELS",
-    "deepseek-v4-flash-0731,deepseek-v4-pro-0813,glm-5.3,minimax-m3").split(",") if m.strip()]
+    "deepseek-v4.1-flash-1017,deepseek-v4-pro-0813,glm-5.3,minimax-m3").split(",") if m.strip()]
 # Dusunme: ceviri dogrulamasi "thinking:{type:disabled}"in deepseek tarafinda
 # kabul edildigini ve sureyi 30-90 sn'den 3-20 sn'ye indirdigini gosterdi.
 # Havuz cagrilari icin varsayilan KAPALI (DISC_DUSUNME=acik ile geri acilir).

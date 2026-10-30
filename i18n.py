@@ -36,7 +36,7 @@ ANAHTARLAR (env)
   iki ayri hesap (DISCOVERY_BASE_URL ile override; varsayilan
   https://discovery-api.intern-ai.org.cn/v1). Zincirin en onunde, sirayla denenir.
   Varsayilan modeller (yalnizca metin; DISCOVERY_MODELS ile override):
-  deepseek-v4-flash-0731, glm-5.3, minimax-m3, deepseek-v4-pro-0813, atria-dawn
+  deepseek-v4.1-flash-1017, glm-5.3, minimax-m3, deepseek-v4-pro-0813
   NVIDIA_API_KEY / OPENROUTER_API_KEY /
   ORCAROUTER_API_KEY / OPENCODE_API_KEY  -> --provider llm
   OLLAMA_BASE_URL (opsiyonel, yerel)  -> --provider llm
@@ -665,7 +665,9 @@ class Cevirmen:
                 continue
             disc_modeller = [m.strip() for m in os.environ.get(
                 "DISCOVERY_MODELS",
-                "deepseek-v4-flash-0731,glm-5.3,minimax-m3,"
+                # 2026-10-31: deepseek-v4-flash-0731 kalkti, yerine
+                # deepseek-v4.1-flash-1017 (kullanici bildirimi — model yenilendi).
+                "deepseek-v4.1-flash-1017,glm-5.3,minimax-m3,"
                 "deepseek-v4-pro-0813").split(",") if m.strip()]
             # atria-dawn 15.10'da cikarildi: bu planda 404 "not supported by
             # TokenPlan" donduruyor; 404 kalici hatadir ve hesabi devre disi birakir.
