@@ -1985,24 +1985,40 @@ def yerelle_meta(html: str, dil: str) -> str:
     return html
 
 
+def _oncelik_anahtari(r: Path) -> tuple:
+    """Kuyruk sirasi: once gunluk icerik, sonra diger sayfalar, en sonda terimler.
+
+    2026-10-31: eski siralama duz alfabetikti; 'raporlar/' 175 sayfalik kuyrukta
+    ~120. sirada kaliyor ve sure butcesi dolunca gunluk rapor hic cevrilmiyordu.
+    Artik tarihli gunluk icerik kuyrugun basinda ve EN YENI TARIH once.
+    """
+    s = r.as_posix()
+    m = re.search(r"(\d{4})-(\d{2})-(\d{2})", s)
+    ters_tarih = -int(m.group(1) + m.group(2) + m.group(3)) if m else 0
+    if s in ("terimler.html", "muhasebe-terimleri.html") or \
+            s.startswith(("terimler/", "muhasebe-terimleri")):
+        return (2, 0, ters_tarih, s)
+    for i, onek in enumerate(("raporlar/", "derin-analiz/", "makro-analiz/",
+                              "haftasonu/", "haftasonu-egitimi/")):
+        if s.startswith(onek):
+            return (0, i, ters_tarih, s)
+    return (1, 0, ters_tarih, s)
+
+
 def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | None,
                       cevirmen: Cevirmen, onarim: bool = True) -> dict:
     hedef_liste = sayfa_listesi or turkce_sayfalar(kok)
     if not sayfa_listesi:
-        # Terim sozluklari (terimler.html + muhasebe-terimleri.html) buyuk tek
-        # sayfalar: kuyrugun sonuna aliniyor ki sure butcesi dolarsa gunluk
-        # rapor/hisse/teknik sayfalari her kosuda once guncellensin.
-        def _terim_sonda(r: Path) -> int:
-            ad = str(r)
-            return 0 if ad in ("terimler.html", "muhasebe-terimleri.html") else 1
-        hedef_liste = sorted(hedef_liste, key=lambda r: (_terim_sonda(r), str(r)))
+        # 2026-10-31: gunluk icerik once (bkz. _oncelik_anahtari), terimler en sonda.
+        hedef_liste = sorted(hedef_liste, key=_oncelik_anahtari)
         # 5 dilli tek sayfa: dil kopyasi uretme (sitemap TR canonical olarak kalir)
         hedef_liste = [r for r in hedef_liste if str(r) not in GENERASYON_HARIC]
     agac = dil_agac_kumesi(kok, hedef_liste)
     medya = medya_kumesi(kok)
-    ozet = {"sayfa": 0, "dil": {}, "aktarilan_metin": 0, "onarilan_baglanti": 0, "medya_baglantisi": 0}
+    ozet = {"sayfa": 0, "dil": {}, "aktarilan_metin": 0, "onarilan_baglanti": 0,
+            "medya_baglantisi": 0}
 
-    # En az cevrilmis dil once islenir: sure butcesi dolarsa tum diller dengeli ilerler.
+    # En az cevrilmis dil once islenir: ayni sayfada butce kalirsa dengeli ilerler.
     def _kapsam(d: str) -> int:
         kume = set()
         for kaynak in (getattr(cevirmen, "elle", {}), getattr(cevirmen, "onbellek", {})):
@@ -2016,22 +2032,42 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
     except Exception:
         pass
 
-    for dil in diller:
-        n = 0
-        print(f"[i18n] --- {dil}: {len(hedef_liste)} sayfa cevirilecek ---", flush=True)
-        for rel in hedef_liste:
-            # 2026-10-13: _llm() 2 pencerede sonuc alamayinca `hicbiri_calismadi` yapiyordu
-            # ama bu bayrak SADECE main() sonunda exit kodu icin okunuyordu; sayfa dongusu
-            # devam ediyordu. ~500 sayfa x 4 dil her birinde yeniden zaman asimi yiyor ->
-            # kosu 60 dakika suruyordu. Simdi ilk sayfada tum kalan sayfalar atlanir.
-            if cevirmen.hicbiri_calismadi:
-                if n == 0:
-                    print(f"[i18n] [{dil}] hicbir saglayici calismiyor; kalan sayfalar "
-                          f"bu kosuda cevrilmiyor (sonraki kosuya birakilir).", file=sys.stderr)
+    # 2026-10-31: SAYFA-DISI dongu (eskiden dil-disi idi). Tek dil kuyrugun
+    # tamamini tuketip sure butcesini bitirince sonraki diller HIC cevrilmiyordu
+    # (30.10 gece kosusu: zh 40 sayfada ~50 dk, ardindan en/ru/de 175 sayfayi
+    # ~5 saniyede cevirisiz yazdi — govde Turkce kaldi). Artik her sayfa once
+    # TUM dillerde yazilir: butce tukenirse kayip her dilde esit olur ve en
+    # onemli sayfalar kuyrugun basinda oldugu icin once onlar tamamlanir.
+    durdu = False
+    for rel in hedef_liste:
+        if durdu:
+            break
+        # 2026-10-13: hicbir saglayici calismiyorsa kalan sayfalari bosuna
+        # denemeyelim (her biri yeniden zaman asimi yiyordu).
+        if getattr(cevirmen, "hicbiri_calismadi", False):
+            print("[i18n] hicbir saglayici calismiyor; kalan sayfalar bu kosuda "
+                  "cevrilmiyor (sonraki kosuya birakilir).", file=sys.stderr)
+            break
+        kaynak = kok / rel
+        ham = kaynak.read_text(encoding="utf-8", errors="replace")
+        for dil in diller:
+            if getattr(cevirmen, "hicbiri_calismadi", False):
+                durdu = True
                 break
-            kaynak = kok / rel
-            ham = kaynak.read_text(encoding="utf-8", errors="replace")
+            # Sure butcesi dolduysa CEVRILMEMIS SAYFA YAZILMAZ: eski (dogru
+            # cevrilmis) kopya yerinde kalir; sonraki kosu kaldigi yerden devam eder.
+            if getattr(cevirmen, "sure_doldu", False):
+                print("[i18n] sure butcesi doldu; kalan sayfalar sonraki kosuya "
+                      "birakildi (cevrilmemis sayfa yazilmaz).", file=sys.stderr)
+                durdu = True
+                break
             yeni = sayfayi_cevir(ham, dil, cevirmen, diller, rel)
+            if getattr(cevirmen, "sure_doldu", False):
+                # Butce BU sayfanin ortasinda doldu: yarim ceviriyi yazma.
+                print(f"[i18n] {dil}/{rel}: sure butcesi sayfa ortasinda doldu; "
+                      f"sayfa yazilmadi (sonraki kosuya birakildi).", file=sys.stderr)
+                durdu = True
+                break
             # ceviri onbellekinden donen bozuk tarih bicimi kendini onarir
             # (25.10: '25.04,1946' kalintisi onbellek girdilerinden geliyordu)
             yeni = re.sub(r"(\d{1,2})\.(\d{1,2}),(\d{4})", r"\1.\2.\3", yeni)
@@ -2049,11 +2085,14 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
             hedef = kok / dil / rel
             hedef.parent.mkdir(parents=True, exist_ok=True)
             hedef.write_text(yeni, encoding="utf-8")
-            n += 1
-            if n % 20 == 0:
-                print(f"[i18n] {dil}: {n}/{len(hedef_liste)} sayfa yazildi", flush=True)
-        ozet["dil"][dil] = n
-        ozet["sayfa"] += n
+            ozet["dil"][dil] = ozet["dil"].get(dil, 0) + 1
+            ozet["sayfa"] += 1
+            if ozet["sayfa"] % 20 == 0:
+                print(f"[i18n] {ozet['sayfa']} sayfa yazildi "
+                      f"(son: {dil}/{rel})", flush=True)
+    for dil in diller:
+        print(f"[i18n] {dil}: {ozet['dil'].get(dil, 0)}/{len(hedef_liste)} sayfa yazildi",
+              flush=True)
     return ozet
 
 
