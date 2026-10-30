@@ -1621,13 +1621,29 @@ def sitemap_dogrula(kok: Path, diller: list[str]) -> dict:
     # grup adlarindadir ve sitemap'te dil bloklari hub'lardan uretilir.
     _grup_deseni = re.compile(r"^terimler/[a-z0-9-]+\.html$")
     for rel in turkce_sayfalar(kok):
+        sy = seo_yol(rel)
         if _grup_deseni.match(rel.as_posix()):
             continue
-        if SITE_URL + seo_yol(rel) not in kayitli and SITE_URL + rel.as_posix() not in kayitli:
-            eksik_kayit.append(seo_yol(rel) or "/")
+        if SITE_URL + sy not in kayitli and SITE_URL + rel.as_posix() not in kayitli:
+            eksik_kayit.append(sy or "/")
+        if sy in {g[:-5] for g in GENERASYON_HARIC} \
+                and sy not in {g[:-5] for g in DIL_SAYFASI_VERIDEN}:
+            continue  # dil kopyasi uretilmeyen sayfa: yalnizca TR kaydi tutulur
         for dil in diller:
-            if f"{SITE_URL}{dil}/{seo_yol(rel)}" not in kayitli:
-                dil_eksik.append(f"{dil}/{seo_yol(rel)}")
+            # Dil agacinda adlar yerellesir (derin-analiz -> en/deep-analysis);
+            # ham seo_yol karsilastirmasi yuzlerce yanlis "eksik" uretiyordu.
+            yerel = slug_degistir(sy, dil)
+            if f"{SITE_URL}{dil}/{yerel}" not in kayitli:
+                dil_eksik.append(f"{dil}/{yerel}")
+    # Dil-yerel terim harf-gruplari ayri kayitlardir (TR grubuyla 1:1 degil).
+    for dil in diller:
+        grup_dizini = kok / dil / slug_degistir("terimler", dil)
+        if not grup_dizini.is_dir():
+            continue
+        for dosya in sorted(grup_dizini.glob("*.html")):
+            u = SITE_URL + seo_yol(dosya.relative_to(kok))
+            if u not in kayitli:
+                dil_eksik.append(seo_yol(dosya.relative_to(kok)))
 
     return {
         "sitemap_loc": len(loclar),
@@ -2280,9 +2296,6 @@ def terimler_gruplari_yeniden_dagit(kok: Path, diller: list[str]) -> dict:
                     f"border-radius:8px; {stil}; text-decoration:none'>{g['etiket']}</a>")
             return " ".join(parcalar)
 
-        def _hub_url(kod):
-            return (SITE_URL if kod == "tr" else f"{SITE_URL}{kod}/") + terimler_ad
-
         # 3) dil-yerel grup sayfalarını yaz; TR-adlı dosyaları kaldır
         yazilan = 0
         for slug, uye in dagitim.items():
@@ -2305,15 +2318,13 @@ def terimler_gruplari_yeniden_dagit(kok: Path, diller: list[str]) -> dict:
                            lambda m: m.group(1) + grup_url + m.group(2), sayfa, count=1)
             sayfa = re.sub(r'(property="og:url" content=")[^"]*(")',
                            lambda m: m.group(1) + grup_url + m.group(2), sayfa, count=1)
-            # hreflang alternatifleri sözlük HUB'ını gösterir (grup URL'leri
-            # diller arası 1:1 karşılıksız; harflendirme dil-bağımlı)
-            # NOT: zh-Hans büyük harf içerir — [a-zA-Z-] şart.
+            # Terim harf-grup sayfalari diller arasi 1:1 karsiliksiz
+            # (harflendirme dil-bagimli). Yanlis eslesen hreflang yerine hic
+            # hreflang yazilmaz; sitemap de bunlari kendi kaydi olarak listeler
+            # (30.10.2026). Kalibi koruyan eski satirlar da temizlenir.
             sayfa = re.sub(
-                r'(<link rel="alternate" hreflang="(x-default|[a-zA-Z-]+)" href=")[^"]*(")',
-                lambda m: m.group(1) + _hub_url("tr" if m.group(2) == "x-default"
-                                                else next(k for k, v in DILLER.items()
-                                                          if v["hreflang"] == m.group(2)))
-                + m.group(3), sayfa)
+                r'[ \t]*<link rel="alternate" hreflang="[^"]+" href="[^"]*">\n?',
+                "", sayfa)
             sayfa = _TERIM_CUBUK_RE.sub(
                 f'<p class="terim-grup-cubugu" style="margin:10px 0 0">{_cubuk(slug, "../")}</p>', sayfa)
             lm = re.search(r'<div[^>]*id="terim-liste"[^>]*>', sayfa)
@@ -2441,18 +2452,13 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
     for sy in sorted(tr_kayitlar):
         attr = tr_kayitlar[sy]
         if re.match(r"^terimler/[a-z0-9-]+$", sy):
-            # Terim harf-grup sayfalari diller arasi 1:1 karsiliksiz (her dil
-            # kendi alfabesine harflendirir; terim_gruplari.py): dil
-            # alternatifleri sozluk HUB'larina isaret eder; ayrica dil <url>
-            # blogu da hub'lardan uretilir (asagidaki "terimler" kaydindan).
-            alternatifler = [
-                f'    <xhtml:link rel="alternate" hreflang="{DILLER[k]["hreflang"]}" '
-                f'href="{SITE_URL}{k + "/" if k != "tr" else ""}{slug_degistir("terimler", k)}"/>'
-                for k in ["tr"] + diller
-            ]
-            alternatifler.append(
-                f'    <xhtml:link rel="alternate" hreflang="x-default" href="{SITE_URL}{sy}"/>')
-            bloklar.append(_url_bloku(f"{SITE_URL}{sy}", attr, alternatifler))
+            # Terim harf-grup sayfalari diller arasi 1:1 karsiliksizdir (her dil
+            # kendi alfabesine harflendirir; terim_gruplari.py). Bu yuzden
+            # hreflang alternatifi URETILMEZ: TR grubunu baska dilin hub'ina
+            # eslemek "ayni sayfa" iddiasi yanlistir ve karsilikli olmadigi
+            # icin Google kumeyi yok sayar. Her grup kendi <url> kaydidir;
+            # dil-yerel gruplar 3b adiminda eklenir (30.10.2026).
+            bloklar.append(_url_bloku(f"{SITE_URL}{sy}", attr, []))
             continue
         if sy in {g[:-5] for g in GENERASYON_HARIC} \
                 and sy not in {g[:-5] for g in DIL_SAYFASI_VERIDEN}:
@@ -2475,6 +2481,27 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
         for d in diller:
             bloklar.append(_url_bloku(f"{SITE_URL}{d}/{slug_degistir(sy, d)}", attr, alternatifler))
             dil_sayisi += 1
+
+    # 3b) Dil-yerel terim harf-gruplari: TR grubuyla 1:1 eslesmedikleri icin
+    # hreflang'siz, kendi <url> kayitlari olarak listelenir (30.10.2026:
+    # bu sayfalar sitemap'te hic yoktu; 40 sayfa arama motoruna yalnizca ic
+    # baglantidan gorunuyordu).
+    for d in diller:
+        grup_dizini = kok / d / slug_degistir("terimler", d)
+        if not grup_dizini.is_dir():
+            continue
+        for dosya in sorted(grup_dizini.glob("*.html")):
+            rel = dosya.relative_to(kok)
+            try:
+                lm = time.strftime("%Y-%m-%d",
+                                    time.localtime(dosya.stat().st_mtime))
+            except OSError:
+                lm = son_lastmod
+            bloklar.append(_url_bloku(
+                f"{SITE_URL}{seo_yol(rel)}",
+                {"lastmod": lm, "changefreq": "weekly", "priority": "0.6"}, []))
+            dil_sayisi += 1
+
     bloklar.extend("  " + b.strip() for b in dis_bloklar)
 
     yeni = (
@@ -2489,7 +2516,7 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
         "durum": "guncellendi",
         "turkce_url": len(tr_kayitlar),
         "dil_url": dil_sayisi,
-        "toplam_loc": len(tr_kayitlar) * (1 + len(diller)) + len(dis_bloklar),
+        "toplam_loc": len(bloklar) + len(dis_bloklar),
         "eklenen_turkce": eklenen,
     }
 
