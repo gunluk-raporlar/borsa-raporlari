@@ -2156,10 +2156,24 @@ def dil_yollarini_cevir(kok: Path, dil: str) -> int:
             sayi += 1
         eski_dizin, yeni_dizin = dil_kok / eski, dil_kok / yeni_ad
         if eski_dizin.exists() and eski_dizin.is_dir():
+            import shutil as _shutil
             if yeni_dizin.exists():
-                import shutil as _shutil
-                _shutil.rmtree(yeni_dizin)
-            eski_dizin.rename(yeni_dizin)
+                # 2026-10-31: KISMI AGAC KORUMASI. Sure butcesi doldugunda
+                # eski_dizin eksik yazilmis olabilir; eski "rmtree + rename"
+                # o durumda hedef dizindeki saglam dosyalari da siliyordu
+                # (30.10 kosusu: zh/gupiao/index.html silindi, commit
+                # rebase'inde modify/delete cakismasi -> kosu bosa gitti).
+                # Artik tasima BIRLESTIRME: yalnizca kaynakta bulunan dosyalar
+                # hedefe tasinir; hedefte olup kaynakta olmayan dosya KORUNUR.
+                for _f in list(eski_dizin.rglob("*")):
+                    if not _f.is_file():
+                        continue
+                    _hedef = yeni_dizin / _f.relative_to(eski_dizin)
+                    _hedef.parent.mkdir(parents=True, exist_ok=True)
+                    _shutil.move(str(_f), str(_hedef))
+                _shutil.rmtree(eski_dizin, ignore_errors=True)
+            else:
+                eski_dizin.rename(yeni_dizin)
             sayi += 1
         # (1b) yenilen dizindeki LEGACY dosya adlari ("<tarih>-derin-analiz.html")
         # da yerellestirilir — yoksa baglanti "<tarih>-<yeni>.html" yazip dosya

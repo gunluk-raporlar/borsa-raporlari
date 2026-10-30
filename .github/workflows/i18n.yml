@@ -180,11 +180,27 @@ jobs:
           git add -A
           if git diff --cached --quiet; then
             echo "Kaydedilecek degisiklik yok."
-          else
-            git commit -m "Cok dilli sayfalar guncellendi (ceviri kosusu) [CI Skip]"
-            git pull --rebase --quiet -X theirs origin main || true
-            git push
+            exit 0
           fi
+          git commit -m "Cok dilli sayfalar guncellendi (ceviri kosusu) [CI Skip]"
+          # 2026-10-31: eski satir "git pull --rebase ... || true" idi. Rebase
+          # cakisinca hata YUTULUYOR, ardindan `git push` yarim kalmis rebase
+          # icinde calisip "You are not currently on a branch" (exit 128) ile
+          # 60 dakikalik kosuyu cop ediyordu (30.10 kosusu boyle kayboldu).
+          # Artik cakisma varsa uzak taraf korunur ve rebase tamamlanir.
+          git fetch --quiet origin main
+          if ! git rebase --quiet -X theirs origin/main; then
+            echo "::warning::rebase cakisti; cakisan dosyalarda uzak taraf korunuyor"
+            # rebase sirasinda 'ours' = uzerine rebase edilen origin/main.
+            # Uzak taraftaki dosya silinmez; bu kosunun o dosyadaki uretimi
+            # bir sonraki kosuda yeniden yazilir.
+            for f in $(git diff --name-only --diff-filter=U); do
+              git checkout --ours -- "$f" 2>/dev/null || true
+              git add -- "$f" 2>/dev/null || true
+            done
+            GIT_EDITOR=true git rebase --continue || git rebase --abort
+          fi
+          git push origin HEAD:main
       # 2026-10-07: GitHub sabah yuk penceresinde schedule kosularini
       # dusurdugu icin yayin nobetcisi gun ici bu kadar guvenilir kaynakla
       # uyandirilir (nobetci kendi zincirini kurar; bu yalnizca baslangic).
