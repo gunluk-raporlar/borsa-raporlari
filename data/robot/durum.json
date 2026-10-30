@@ -6,21 +6,13 @@
   "bugun_tarih": "2026-10-30",
   "gerceklesen_kz": -4031.5323749999934,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 1,
+  "kontrol_sayisi": 2,
   "nakit": 65472.962312717704,
   "onceki_kapanis_ozkaynak": 95921.92,
   "ozkayit": [
     [
       "2026-09-25",
       100000.0
-    ],
-    [
-      "2026-10-14T15:34",
-      96805.43
-    ],
-    [
-      "2026-10-15T15:26",
-      96826.43
     ],
     [
       "2026-10-16T15:04",
@@ -69,6 +61,10 @@
     [
       "2026-10-28T16:46",
       95921.92
+    ],
+    [
+      "2026-10-30T16:43",
+      95190.28
     ]
   ],
   "pozisyonlar": {
@@ -81,38 +77,38 @@
     }
   },
   "rejim": "ayi",
-  "son_bar_tarihi": "2026-10-28",
+  "son_bar_tarihi": "2026-10-30",
   "son_fiyatlar": {
-    "AEFES": 15.9,
-    "AKBNK": 63.0,
-    "ASELS": 358.5,
-    "ASTOR": 176.5,
-    "BIMAS": 364.75,
-    "EKGYO": 17.08,
-    "ENKAI": 78.45,
-    "EREGL": 31.22,
-    "FROTO": 69.2,
-    "GARAN": 126.7,
-    "GUBRF": 278.0,
-    "ISCTR": 12.12,
-    "KCHOL": 199.8,
-    "KRDMD": 37.56,
-    "MGROS": 427.25,
-    "PETKM": 17.5,
-    "PGSUS": 121.5,
-    "SAHOL": 83.25,
+    "AEFES": 15.75,
+    "AKBNK": 62.2,
+    "ASELS": 351.75,
+    "ASTOR": 158.9,
+    "BIMAS": 355.0,
+    "EKGYO": 16.57,
+    "ENKAI": 77.8,
+    "EREGL": 30.24,
+    "FROTO": 66.95,
+    "GARAN": 126.4,
+    "GUBRF": 255.25,
+    "ISCTR": 11.91,
+    "KCHOL": 195.8,
+    "KRDMD": 36.8,
+    "MGROS": 424.75,
+    "PETKM": 16.7,
+    "PGSUS": 117.2,
+    "SAHOL": 82.15,
     "SASA": 1.49,
-    "SISE": 33.9,
-    "TAVHL": 254.5,
-    "TCELL": 91.15,
-    "THYAO": 252.5,
-    "TOASO": 230.0,
-    "TRALT": 36.0,
-    "TRMET": 104.5,
-    "TTKOM": 47.3,
-    "TUPRS": 355.0,
-    "VAKBN": 30.62,
-    "YKBNK": 34.48
+    "SISE": 32.92,
+    "TAVHL": 255.5,
+    "TCELL": 90.2,
+    "THYAO": 245.4,
+    "TOASO": 216.0,
+    "TRALT": 32.9,
+    "TRMET": 97.7,
+    "TTKOM": 46.68,
+    "TUPRS": 350.25,
+    "VAKBN": 29.58,
+    "YKBNK": 34.94
   },
   "son_repo_tarihi": "2026-10-30",
   "toplam_kesinti": 400.93,
