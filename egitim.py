@@ -417,6 +417,13 @@ def main():
     # degil, tum derslerin kart listesi (hub). Arsiv yazildiktan SONRA hub
     # yeniden yazilir ki bugunun dersi listede ilk kart olsun.
     bot.build_hub_sayfalari()
+    # Ana sayfa kartlari gunluk bot hafta ici kosarken tazelenir; burada
+    # cagrilmazsa yeni ders pazartesi sabaha kadar anasayfada gorunmez
+    # (derin/makro akislarindaki 2026-10-07 duzeltmesiyle ayni desen).
+    try:
+        bot.ana_sayfa_tazele()
+    except Exception as _e:
+        logger.warning("Ana sayfa tazelenemedi: %s", _e)
     # Hafta sonu akisi gunluk bot'u calistirmadigindan sitemap burada tazenir;
     # bot.sitemap_ve_robots_yaz dil alternatiflerini dusurdugunden
     # i18n.sitemap_guncelle kullanilir (25.10 denetim bulgusu: yeni ders kaydi

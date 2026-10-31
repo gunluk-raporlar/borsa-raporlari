@@ -276,6 +276,13 @@ def main():
     # sayilarin kart listesi (hub) — raporlar/derin/makro hub'lariyla ayni
     # desen. Bot her gun tazeler; hafta sonu yayini de hub'i burada tazeler.
     bot.build_hub_sayfalari()
+    # Ana sayfa kartlari gunluk bot hafta ici kosarken tazelenir; burada
+    # cagrilmazsa yeni sayi pazartesi sabaha kadar anasayfada gorunmez
+    # (derin/makro akislarindaki 2026-10-07 duzeltmesiyle ayni desen).
+    try:
+        bot.ana_sayfa_tazele()
+    except Exception as _e:
+        print(f"uyari: ana sayfa tazelenemedi: {_e}", flush=True)
     # Hafta sonu akisi gunluk bot'u calistirmadigindan sitemap burada tazenir.
     # i18n.sitemap_guncelle kullanilir: bot.sitemap_ve_robots_yaz TR-only yazar
     # ve dil alternatiflerini dusururken (151 URL), bu islev mevcut kayitlari
