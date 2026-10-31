@@ -125,6 +125,21 @@ SOZLUK = {
         "ru": "Ежедневные отчёты по BIST 30 на основе ИИ: технический скрининг, сигналы осцилляторов, модельные портфели и виртуальный портфель 100 000 TL.",
         "zh": "BIST 30的AI辅助每日报告、技术扫描和振荡器信号、模型投资组合建议以及100.000 TL虚拟投资组合的跟踪。",
     },
+    # Sabit SEO aciklamalari (2026-10-31): sozluk + robot sayfalarinin meta
+    # aciklamalari LLM kuyrugunda sure bütcesine takilip Turkce kaliyordu
+    # (8 sayfa, 4 dil). Sabit metin olduklari icin burada sabitlenir.
+    "Temel borsa ve finans kavramlarının sade tanımları: emir tipleri, göstergeler, endeksler ve piyasa mekanizması.": {
+        "en": "Plain-language definitions of core stock-market and finance terms: order types, indicators, indexes and market mechanics.",
+        "de": "Verständliche Definitionen zentraler Börsen- und Finanzbegriffe: Ordertypen, Indikatoren, Indizes und Marktmechanik.",
+        "ru": "Простые определения ключевых биржевых и финансовых терминов: типы ордеров, индикаторы, индексы и механика рынка.",
+        "zh": "以浅显语言解释核心股市与金融概念：订单类型、技术指标、指数与市场机制。",
+    },
+    "BIST 30 kâğıt üzerinde işlem (simülasyon) robotunun canlı defteri: piyasa saatlerinde 15 dakikada bir güncellenen simüle AL/SAT emirleri, açık pozisyonlar, gün içi özkaynak eğrisi ve strateji kuralları. Gerçek para kullanılmaz; yatırım tavsiyesi değildir.": {
+        "en": "Live ledger of the BIST 30 paper-trading (simulation) robot: simulated BUY/SELL orders refreshed every 15 minutes during market hours, open positions, intraday equity curve and strategy rules. No real money is used; not investment advice.",
+        "de": "Live-Buch des BIST-30-Paper-Trading-Roboters (Simulation): simulierte KAUF/VERKAUF-Orders, während der Handelszeiten alle 15 Minuten aktualisiert, offene Positionen, Intraday-Eigenkapitalkurve und Strategieregeln. Kein echtes Geld; keine Anlageberatung.",
+        "ru": "Живой журнал бумажного (симуляционного) робота по BIST 30: смоделированные ордера ПОКУПКА/ПРОДАЖА, обновляемые каждые 15 минут в часы торгов, открытые позиции, внутридневная кривая капитала и правила стратегии. Реальные деньги не используются; не является инвестиционной рекомендацией.",
+        "zh": "BIST 30 模拟交易（纸面交易）机器人的实时账本：交易时段每 15 分钟更新的模拟买入/卖出指令、未平仓头寸、日内净值曲线与策略规则。不使用真实资金；不构成投资建议。",
+    },
     "Sözlük": {"en": "Glossary", "de": "Glossar", "ru": "Глоссарий", "zh": "词典"},
     "Terimler": {"en": "Terms", "de": "Begriffe", "ru": "Термины", "zh": "术语"},
     "Muhasebe": {"en": "Accounting", "de": "Rechnungswesen", "ru": "Бухучёт", "zh": "会计"},
