@@ -8,7 +8,8 @@ on:
     - cron: '*/10 * * * *'
   workflow_dispatch: {}
 
-permissions: {}
+permissions:
+  actions: write
 
 jobs:
   ping:
@@ -18,3 +19,26 @@ jobs:
         run: |
           kod=$(curl -s -o /dev/null -w '%{http_code}' --max-time 60 https://borsa-raporlari.onrender.com/ || true)
           echo "Donen HTTP kodu: $kod"
+      # 2026-10-31: bugun nobetcinin 6 hafta sonu penceresinin TAMAMI dustu,
+      # zincir baslayamadi, yayinlanmamis icerik ogleden sonraya kaldi.
+      # Bu akisin (*/10) kendi slotlari da cogunlukla dusebiliyor ama gun
+      # icinde birkaci mutlaka yasiyor; yasayan her slot icin: nobetci
+      # ~90 dk'dir kosmadiysa onu uyandir (zincir dispatch ile kendini
+      # surdurdugu icin tek bir baslangic yeterlidir).
+      - name: Nobetci uzun suredir kosmadiysa uyandir
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          SON=$(gh run list --workflow=yayin-nobetci.yml --limit 1 \
+                --json createdAt --jq '.[0].createdAt // empty')
+          if [ -z "$SON" ]; then
+            gh workflow run yayin-nobetci.yml --ref main
+            echo "Nobetci hic kosmamis — ilk tur tetiklendi."
+            exit 0
+          fi
+          FARK=$(( $(date +%s) - $(date -d "$SON" +%s) ))
+          echo "Son nobetci kosusu $FARK saniye once ($SON)."
+          if [ "$FARK" -gt 5400 ]; then
+            gh workflow run yayin-nobetci.yml --ref main
+            echo "Nobetci 90+ dk'dir sessiz — uyandirildi."
+          fi

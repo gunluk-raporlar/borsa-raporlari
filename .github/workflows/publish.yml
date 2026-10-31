@@ -1,20 +1,26 @@
 name: Site Yayini (gunluk publish)
 # Tum icerik botlari commit'lerini [CI Skip] ile atar (build tetiklemez).
-# Bu workflow gunde 2 kez bos bir commit atarak Cloudflare Pages build'ini
-# tetikler: o ana kadar biriken tum guncellemeler siteye yayinlanir.
-# Aylik tuketim ~60 build (500 limitinin ~%12'si).
+# Bu workflow gunde 4 planli slotta bos bir commit atarak Cloudflare Pages
+# build'ini tetikler: o ana kadar biriken tum guncellemeler siteye yayinlanir.
+# 2026-10-31: GitHub planli kosulari sik sik SESSIZCE dustugu icin (bugun
+# sabah 10:37 slotu + nobetcinin 6 hafta sonu penceresinin tamami dustu)
+# slot sayisi 2 -> 4 cikarildi; en az biri yuk penceresi (08-12 UTC)
+# disinda kaliyor. Yeni icerik yoksa asagidaki kapi build harcatmaz.
+# Aylik tuketim ~120 build (500 limitinin ~%24'u).
 on:
   schedule:
     # 2026-10-10: dakika-30 cronlari da ayni sekilde sessiz dustugu icin
     # tek-saat-disi dakikalara tasindi (nobetci de publish eksigini
     # yakalayip bu akisi tetikliyor).
+    - cron: '37 3 * * *'   # 06:37 Turkiye saati — sabah yayini (gece i18n cikisi)
     - cron: '37 7 * * *'   # 10:37 Turkiye saati — oglen yayini
+    - cron: '37 13 * * *'  # 16:37 Turkiye saati — ikindi yayini (hafta sonu icerigi aksama kalmadan duser)
     - cron: '43 16 * * *'  # 19:43 Turkiye saati — aksam yayini (robot kapanisi 19:15'ten sonra)
   workflow_dispatch:
   # Sabah gunluk raporu bittigi an siteye gitsin; 10:30'u beklemesin
   # (2026-09-29: rapor 08:52'de repodaydi, site 10:30'a kadar eski kaldi).
   # Basarisiz kosular yayini tetiklemez (job kosulunda suzulur).
-  # Aylik tuketim ~60 -> ~83 build (500 limitinin ~%17'si).
+  # Aylik tuketim 4 slotla ~120 build (500 limitinin ~%24'u).
   workflow_run:
     workflows: ["Gunluk BIST 30 Raporu"]
     types: [completed]
@@ -37,6 +43,15 @@ jobs:
           git config user.name "borsa-bot"
           git config user.email "borsa-bot@users.noreply.github.com"
           git pull --rebase -X theirs origin main
+          # Yeni icerik kapisi (2026-10-31): HEAD zaten bir yayin commit'i ise
+          # depoda yayinlanmayi bekleyen sey yoktur; bos commit + CF build
+          # harcanmaz (4 slotlu tasarımda bosta build yapmamak icin sart).
+          HEAD_KONU="$(git log -1 --pretty=%s)"
+          case "$HEAD_KONU" in
+            "Site yayini"*)
+              echo "Yeni icerik yok (HEAD yayin commit'i) — yayin atlandi."
+              exit 0;;
+          esac
           # Dil secici baglantilari (2026-10-30): bolum index'leri ve tarihli
           # arsiv sayfalarindaki eski menuler yayin commit'i icinde tazelenir
           # (ayni sayfanin cevirisi yoksa bolum hub'ina duser, ana sayfaya

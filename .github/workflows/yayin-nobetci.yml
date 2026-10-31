@@ -9,13 +9,16 @@ on:
     # Hafta ici: 08:23-11:23 TSİ — gunluk rapor (raporlar/<tarih>.html).
     # 12:23-15:23 TSİ — derin analiz (derin-analiz/<tarih>.html). Pazartesi
     # gunleri makro analiz de kontrol edilir (haftalik yayin).
+    # 2026-10-31: ogleden sonrasi yedek pencere (16:23 TSİ) — derin analiz
+    # + yayin tazeligi; aksam publish slotu dustugunde telafi eder.
     - cron: '23 5,6,7,8 * * 1-5'
     - cron: '23 9,10,11,12 * * 1-5'
-    # Hafta sonu: 10:43-14:43 TSİ — hafta sonu gundem (haftasonu.html)
-    # ve borsa okulu (haftasonu-egitimi.html) + yayin akisi (publish.yml).
-    # Uretim cronlari: gundem 08:23, egitim 09:47 TSİ; ilk pencere 10:43
-    # telafi payi ~1-2 saat; 5 pencere ~4 saat kapsar.
-    - cron: '43 7,8,9,10,11 * * 6,0'
+    - cron: '23 13 * * 1-5'
+    # Hafta sonu: 10:43-16:43 TSİ — hafta sonu gundem (haftasonu.html),
+    # borsa okulu (haftasonu-egitimi.html) + yayin akisi/tazeligi
+    # (publish.yml). Uretim cronlari: gundem 08:23, egitim 09:47 TSİ; ilk
+    # pencere 10:43 telafi payi ~1-2 saat; 7 pencere ~6 saat kapsar.
+    - cron: '43 7,8,9,10,11,12,13 * * 6,0'
     # 2026-10-11 (Pazar): yukaridaki 5 hafta sonu penceresinin TAMAMI dustu
     # ve zincir ilk halkasini atamadi — hafta sonu icerigi hic uretilmedi.
     # Erken pencere: 09:43 TSİ, uretim cronlari duserse telafiyi ~1 saat
@@ -23,6 +26,11 @@ on:
     # tazelik kapilariyla korunur. Zincir bu kosudan sonra kendini 40 dk'da
     # bir tekrar tetikler.
     - cron: '43 6 * * 6,0'
+    # 2026-10-31 (Cumartesi): 6 hafta sonu penceresinin TAMAMI yine dustu,
+    # zincir baslayamadi, publish edilmemis icerik ogleden sonraya kaldi.
+    # 07:43 TSİ penceresi yuk penceresinin (08-12 UTC) DISINDA — en az bir
+    # pencerenin yasama sansini yukseltir.
+    - cron: '43 4 * * 6,0'
   workflow_dispatch:
     inputs:
       kontrol:
@@ -51,18 +59,23 @@ jobs:
             SAAT=$(TZ=Europe/Istanbul date +%H)
             if [ "$GUN" -le 5 ]; then
               # Hafta ici: 08-11 => daily; diger => derin (+ pazartesi makro)
+              # + yayin tazeligi (2026-10-31)
               if [ "$SAAT" -ge 8 ] && [ "$SAAT" -le 11 ]; then
                 HEDEF="daily"
               else
                 HEDEF="derin"
                 if [ "$GUN" = "1" ]; then HEDEF="derin makro"; fi
+                HEDEF="$HEDEF yayin"
               fi
             else
               # Hafta sonu (cumartesi/pazar): 09-14 => gundem egitim yayin
               # (uretim: gundem 08:23, egitim 09:47; erken pencere 09:43,
-              # asil pencereler 10:43-14:43).
+              # asil pencereler 10:43-16:43). 15-19 => yalniz yayin tazeligi
+              # (icerik ogleden sonra dustuyse aksama kalmadan yayinlansin).
               if [ "$SAAT" -ge 9 ] && [ "$SAAT" -le 14 ]; then
                 HEDEF="gundem egitim yayin"
+              elif [ "$SAAT" -ge 15 ] && [ "$SAAT" -le 19 ]; then
+                HEDEF="yayin"
               else
                 # Saat disinda Elle tetikleme disinda YOK
                 HEDEF="YOK"
@@ -93,27 +106,56 @@ jobs:
               gundem) DOSYA="haftasonu/${TODAY}.html" ;;
               egitim) DOSYA="haftasonu-egitimi/${TODAY}.html" ;;
               yayin)
-                # yayin hedefi: git'te dosya varken canli sitede yoksa publish tetikle
-                # (iki dosya ust-uste dusmemesi icin OR mantigi: herhangi biri eksikse yayin calisir)
-                EKSIK_YAYIN=0
-                for PUB_DOSYA in "haftasonu/${TODAY}.html" "haftasonu-egitimi/${TODAY}.html"; do
-                  # once git'te var mi? CIKIS KODUYLA denetlenir: gh api 404
-                  # govdesini stdout'a bastigi icin eski "Not Found" mesaj
-                  # karsilastirmasi hic yakalamiyor, nobetci "mevcut" sanip
-                  # ureticiyi tetiklemiyordu (2026-10-23 derin analizi kacti).
-                  if ! gh api "repos/${REPO}/contents/${PUB_DOSYA}?ref=main" --jq .git_url >/dev/null 2>&1; then
-                    echo "EKSIK (git): ${PUB_DOSYA} — henuz commit edilmemis"
-                    EKSIK_YAYIN=1
-                    continue
-                  fi
-                  # git'te varsa canli site kontrol
-                  KOD=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 30 \
-                        "https://borsa-raporlari.pages.dev/${PUB_DOSYA}?nobetci=${TODAY}-pub")
-                  echo "Canli kontrol: ${PUB_DOSYA} -> HTTP ${KOD}"
-                  case "$KOD" in 2*) ;; *) EKSIK_YAYIN=1 ;; esac
-                done
-                if [ "$EKSIK_YAYIN" -eq 1 ]; then
-                  echo "EKSIK: yayin (hafta sonu icerik git'te var ama canli degil)"
+                # yayin hedefi (2026-10-31 genisletildi):
+                # (a) TAZELIK: main'in HEAD'i bir yayin commit'i DEGILSE
+                #     depoda yayinlanmayi bekleyen icerik vardir; icerik
+                #     ~90 dk'dir duruyor VE son yayından beri ~3 saat gecti ise
+                #     publish tetiklenir. 3 saatlik sinir CF build butcesini
+                #     sinirlar (en kotu ~8 yayin/gun); 90 dk'lik sinir hala
+                #     kosan ureticiyle yarisi engeller.
+                # (b) HAFTA SONU dosya kontrolu: gundem/egitim sayfalari
+                #     git'te varken canli sitede yoksa publish tetiklenir.
+                YAYIN_EKSIK=0
+                BASLIK=$(gh api "repos/${REPO}/commits?per_page=1" --jq '.[0].commit.message' | head -n1)
+                case "$BASLIK" in
+                  "Site yayini"*) echo "Tazelik: son commit yayin commit'i — deploy taze." ;;
+                  *)
+                    SIMDI=$(date +%s)
+                    HEAD_ZAMAN=$(gh api "repos/${REPO}/commits?per_page=1" --jq '.[0].commit.committer.date')
+                    HEAD_YAS=$(( SIMDI - $(date -d "$HEAD_ZAMAN" +%s) ))
+                    SON_YAYIN=$(gh api "repos/${REPO}/commits?per_page=30" --jq '[.[] | select(.commit.message | startswith("Site yayini")) | .commit.committer.date] | .[0] // empty')
+                    if [ -n "$SON_YAYIN" ]; then
+                      YAYIN_YAS=$(( SIMDI - $(date -d "$SON_YAYIN" +%s) ))
+                    else
+                      YAYIN_YAS=999999
+                    fi
+                    echo "Tazelik: HEAD yasi ${HEAD_YAS}s, son yayin yasi ${YAYIN_YAS}s"
+                    if [ "$HEAD_YAS" -gt 5400 ] && [ "$YAYIN_YAS" -gt 10800 ]; then
+                      echo "EKSIK: yayin (depoda yayinlanmayi bekleyen icerik birikiyor)"
+                      YAYIN_EKSIK=1
+                    fi
+                    ;;
+                esac
+                # hafta sonu dosya kontrolu (gundem/egitim canlilik kontrolu)
+                if [ "$(TZ=Europe/Istanbul date +%u)" -ge 6 ]; then
+                  for PUB_DOSYA in "haftasonu/${TODAY}.html" "haftasonu-egitimi/${TODAY}.html"; do
+                    # once git'te var mi? CIKIS KODUYLA denetlenir: gh api 404
+                    # govdesini stdout'a bastigi icin eski "Not Found" mesaj
+                    # karsilastirmasi hic yakalamiyor, nobetci "mevcut" sanip
+                    # ureticiyi tetiklemiyordu (2026-10-23 derin analizi kacti).
+                    if ! gh api "repos/${REPO}/contents/${PUB_DOSYA}?ref=main" --jq .git_url >/dev/null 2>&1; then
+                      echo "EKSIK (git): ${PUB_DOSYA} — henuz commit edilmemis"
+                      YAYIN_EKSIK=1
+                      continue
+                    fi
+                    # git'te varsa canli site kontrol
+                    KOD=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 30 \
+                          "https://borsa-raporlari.pages.dev/${PUB_DOSYA}?nobetci=${TODAY}-pub")
+                    echo "Canli kontrol: ${PUB_DOSYA} -> HTTP ${KOD}"
+                    case "$KOD" in 2*) ;; *) YAYIN_EKSIK=1 ;; esac
+                  done
+                fi
+                if [ "$YAYIN_EKSIK" -eq 1 ]; then
                   EKSIK="$EKSIK yayin"
                 fi
                 continue
@@ -173,16 +215,17 @@ jobs:
       # nobetci ve derin analiz cronlarinin hicbiri calismadi; ayni dakika
       # dilimindeki workflow_dispatch'lar ise %100 calisti). Bu adim her tur
       # sonunda 40 dk sonra bir sonraki turu KENDI tetikler: zincir bir kez
-      # basladigi gun 18:00 TSİ'ye kadar kesintisiz devam eder (hafta sonu
-      # icin 10:43-14:43 pencere grubunu + gecikme payini kapsar).
+      # basladigi gun 20:00 TSİ'ye kadar kesintisiz devam eder (aksam
+      # publish slotu 19:43 dustugunde tazelik kontroluyle telafi eder).
       - name: Zincir — 40 dk sonra sonraki turu tetikle (schedule dusmelerine karsi)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          GUN=$(TZ=Europe/Istanbul date +%u)
           SAAT=$(TZ=Europe/Istanbul date +%H)
-          # Hafta ici: 16:00 TSİ sonrasi dur; Hafta sonu: 18:00 TSİ sonrasi dur
-          if { [ "$GUN" -le 5 ] && [ "$SAAT" -ge 16 ]; } || { [ "$GUN" -ge 6 ] && [ "$SAAT" -ge 18 ]; }; then
+          # 2026-10-31: hafta ici 16:00 / hafta sonu 18:00 siniri 20:00'ye
+          # uzatildi — aksam yayini (19:43) dustugunde zincir tazesigiyle
+          # yakalarsa icerik geceye birakilmaz.
+          if [ "$SAAT" -ge 20 ]; then
             echo "Zincir durduruldu (TSI $SAAT:00 sonrasi)."
             exit 0
           fi
