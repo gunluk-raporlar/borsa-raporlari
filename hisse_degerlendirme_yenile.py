@@ -56,13 +56,15 @@ def _teknik_ozeti(satir):
         return "(teknik verisi yok)"
     return (
         f"Son fiyat: {_tr_sayi(satir.get('son') or 0)} TL; günlük değişim: "
-        f"{_yuzde((satir.get('gunluk') or 0) * 100)}; 60 günlük getiri: "
-        f"{_yuzde((satir.get('deg60') or 0) * 100)}; EMA dizilimi kısa/orta/uzun: "
+        f"{_yuzde(satir.get('gunluk') or 0)}; 60 günlük getiri: "
+        f"{_yuzde(satir.get('deg60') or 0)}; EMA dizilimi kısa/orta/uzun: "
         f"{satir.get('kisa')}/{satir.get('orta')}/{satir.get('uzun')}; Wave Trend: "
         f"{satir.get('wt')}/{satir.get('wt1')}; kanal konumu: "
         f"{_yuzde(satir.get('konum') or 0)}; trend gücü (r): {satir.get('r')}; "
         f"genel puan/özet: {satir.get('puan')} / {satir.get('genel')}"
     )
+    # NOT: gunluk ve deg60 teknik dosyasında ZATEN yüzde birimidir (-1,18 =
+    # %−1,18); 100 ile çarpılmaz (2026-11-01 canlı testte yakalanan birim hatası).
 
 
 def _makro_ozeti():
