@@ -77,7 +77,8 @@ DILLER = {
 }
 
 # Sayfa uretimi disinda tutulacak dosyalar (dogrulama dosyalari vb.)
-HARIC_DOSYALAR = {"404.html", "onizleme-mobil.html"}
+# ara.html: sorgu-parametreli arama sonuclari sayfasi — noindex, TR-only.
+HARIC_DOSYALAR = {"404.html", "onizleme-mobil.html", "ara.html"}
 # Dil KOPYASI uretilmeyecek ama sitemap'te TR canonical olarak kalacak sayfalar:
 # muhasebe-terimleri.html zaten 5 dilli (her kartta EN/DE/RU/ZH tanim kutulari);
 # makine cevirisi karisik dilli icerigi bozar.

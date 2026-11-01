@@ -4187,6 +4187,38 @@ _SITE_ARAMA_KUTUSU = """
     return sayi;
   }
 
+  function kac(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function vurgula(metin, terimler) {
+    // Eslesen terimleri <mark> ile isaretler. Eslesme normalize kopyada bulunur,
+    // ayni indeksler orijinal dizgede dilimlenir; normalize Turkce haritasi
+    // uzunluk koruyucu oldugundan indeksler gecerlidir, degilse null doner
+    // (cagiran kac()'le kacilmis duz metne duser).
+    var h = normalize(metin);
+    if (h.length !== metin.length) return null;
+    var aralik = [];
+    terimler.forEach(function(t) {
+      var n = normalize(t);
+      if (!n) return;
+      var i = 0;
+      while ((i = h.indexOf(n, i)) !== -1) { aralik.push([i, i + n.length]); i += n.length; }
+    });
+    if (!aralik.length) return null;
+    aralik.sort(function(a, b) { return a[0] - b[0]; });
+    var birlesik = [];
+    aralik.forEach(function(r) {
+      var son = birlesik[birlesik.length - 1];
+      if (son && r[0] <= son[1]) son[1] = Math.max(son[1], r[1]);
+      else birlesik.push(r.slice());
+    });
+    var cikti = '', pos = 0;
+    birlesik.forEach(function(r) {
+      cikti += kac(metin.slice(pos, r[0])) + '<mark>' + kac(metin.slice(r[0], r[1])) + '</mark>';
+      pos = r[1];
+    });
+    return cikti + kac(metin.slice(pos));
+  }
+
   window.siteAra = function() {
     var giris = document.getElementById('site-arama-giris');
     var panel = document.getElementById('site-arama-sonuc');
@@ -4220,9 +4252,12 @@ _SITE_ARAMA_KUTUSU = """
           var kesit = x.s.t;
           if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
           else kesit = x.s.t.slice(0, 130);
-          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
-                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+          var vBaslik = vurgula(x.s.b, terimler);
+          var vKesit = vurgula(kesit, terimler);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + (vBaslik || kac(x.s.b)) + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + (vKesit || kac(kesit)) + '…</div></div>';
         });
+        html += '<div style="margin-top:6px"><a href="' + KOK + 'ara?q=' + encodeURIComponent(q) + '">Tüm sonuçlar &rarr;</a></div>';
       }
       panel.innerHTML = html;
     }).catch(function() {
@@ -4556,13 +4591,15 @@ def _chart_js_script(grafik):
     return '<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>'
 
 
-def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_ek=None, grafik=False):
+def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_ek=None, grafik=False, robots=None):
     """Tum sayfalar icin ortak iskelet (ust menu + govde + altbilgi).
 
     aciklama: <meta name="description"> ve og:description icin kisa ozet.
     yol: sayfanin site kokune gore yolu (canonical + og:url icin; or.
     "teknik-analiz.html", "raporlar/2026-09-08.html", "" = ana sayfa).
-    ld_ek: varsa <head>'e eklenen ikinci JSON-LD blogu (or. Article semasi)."""
+    ld_ek: varsa <head>'e eklenen ikinci JSON-LD blogu (or. Article semasi).
+    robots: verilmisse <head>'e <meta name="robots"> basar (or. "noindex, follow"
+    — sorgu-parametreli arama sayfasi gibi taranabilir icerigi olmayan sayfalar icin)."""
     a_r = ' class="active"' if aktif == "raporlar" else ""
     a_ana = ' class="active"' if aktif == "anasayfa" else ""
     a_p = ' class="active"' if aktif == "portfoy" else ""
@@ -4603,7 +4640,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title>
 <meta name="description" content="{aciklama}">
-<link rel="canonical" href="{tam_url}">
+{f'<meta name="robots" content="{robots}">' if robots else ""}<link rel="canonical" href="{tam_url}">
 <link rel="icon" href="/favicon-120.png" type="image/png" sizes="120x120">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
@@ -4953,6 +4990,105 @@ def gunun_verileri_tablosu_html(teknik_satirlar=None):
             f"<tbody>{govde}</tbody></table>")
 
 
+# --- Hisse adi baglama katmani (2026-11-01, sorgu-hedefli ic baglanti) ---
+# Rapor/derin/makro metninde gecen hisse kodu veya kurulus adinin ILK gecisi,
+# o hissenin sayfasina baglanir (GSC'de ticker sorgulari 5-15. siralarda; metin
+# ici baglanti hem ziyaretciye tiklanabilir yol hem arama motoruna alaka
+# sinyali verir). Takma adlar bilinçli olarak KISITLI: yalniz belirsizligi
+# olmayan tam kurulus adlari; "BİM", "TAV", "Enka", "koç" gibi kisa/genel
+# adlar eklenmez (_sirket_adi_geciyor_mu'daki min-5-karakter kuralinin aynisi;
+# or. "garanti" siradan bir sozcuk, "Garanti BBVA" unvandir). Ticker'lar
+# BUYUK harf duyarlidir: "asels" kucuk harfle metin olarak birakilir.
+_HISSE_LINK_TAKMA = {
+    "AEFES": ["Anadolu Efes"],
+    "AKBNK": ["Akbank"],
+    "ASELS": ["ASELSAN", "Aselsan"],
+    "ASTOR": ["Astor Enerji"],
+    "BIMAS": [],
+    "EKGYO": ["Emlak Konut"],
+    "ENKAI": ["Enka İnşaat"],
+    "EREGL": ["Erdemir", "Ereğli Demir Çelik"],
+    "FROTO": ["Ford Otosan"],
+    "GARAN": ["Garanti BBVA"],
+    "GUBRF": ["Gübretaş", "Gübre Fabrikaları"],
+    "ISCTR": ["İş Bankası"],
+    "KCHOL": ["Koç Holding"],
+    "KRDMD": ["Kardemir D", "Kardemir"],
+    "MGROS": ["Migros"],
+    "PETKM": ["Petkim"],
+    "PGSUS": ["Pegasus"],
+    "SAHOL": ["Sabancı Holding"],
+    "SASA": ["Sasa Polyester"],
+    "SISE": ["Şişecam"],
+    "TAVHL": ["TAV Havalimanları"],
+    "TCELL": ["Turkcell"],
+    "THYAO": ["THY", "Türk Hava Yolları"],
+    "TOASO": ["Tofaş"],
+    "TRALT": ["Türk Altın İşletmeleri"],
+    "TRMET": ["TR Anadolu Metal"],
+    "TTKOM": ["Türk Telekom"],
+    "TUPRS": ["Tüpraş"],
+    "VAKBN": ["Vakıfbank"],
+    "YKBNK": ["Yapı Kredi"],
+}
+_HISSE_LINK_KOD = {}
+for _k, _adlar in _HISSE_LINK_TAKMA.items():
+    _HISSE_LINK_KOD[_k] = _k
+    for _ad in _adlar:
+        _HISSE_LINK_KOD.setdefault(_ad, _k)
+_HISSE_LINK_RE = re.compile(
+    r"\b(" + "|".join(re.escape(a) for a in
+                      sorted(_HISSE_LINK_KOD, key=len, reverse=True)) + r")\b")
+# Metin dugumlerinde baglama YAPILMAYAN etiketler: tablo hucrelerindeki kodlar
+# kendi sayfalara zaten bagli, basliklar baglanti tasimamali, <a> icinde
+# icice baglanti olmaz, script/style/pre/code icerigi metin degildir.
+_HISSE_LINK_ATLA = {"a", "script", "style", "pre", "code", "table",
+                    "h1", "h2", "h3", "h4", "h5", "h6"}
+_HISSE_LINK_SAYFA_LIMITI = 5
+
+
+def _hisse_baglantilari_uygula(fragment, kok=""):
+    """Rapor parcasindaki hisse gecislerini hisse sayfalarina baglar.
+
+    Etiket-farkindalikli calisir: yalniz metin dugumlerine dokunur, acik
+    atla-etiketi (<a>, tablo, baslik ...) kapanana kadar metne mudahale etmez.
+    Kod basina tek link (ilk gecis kazanir — "Tüpraş (TUPRS)" tek link uretir),
+    sayfa basina en fazla _HISSE_LINK_SAYFA_LIMITI farkli kod; limit asilinca
+    kalan gecisler metin olarak birakilir. href ureticilerin mevcut
+    "{kok}hisse/KOD.html" bicimindedir; temiz-URL temizligi yayinda yapilir."""
+    parcalar = re.split(r"(<[^>]+>)", fragment)
+    atla = 0
+    baglanan = set()
+    cikti = []
+    for parca in parcalar:
+        if parca.startswith("<"):
+            m = re.match(r"</?\s*([a-zA-Z][a-zA-Z0-9]*)", parca)
+            etiket = m.group(1).lower() if m else ""
+            if parca.startswith("</"):
+                if etiket in _HISSE_LINK_ATLA and atla > 0:
+                    atla -= 1
+            elif not parca.endswith("/>") and etiket in _HISSE_LINK_ATLA:
+                atla += 1
+            cikti.append(parca)
+            continue
+        if atla:
+            cikti.append(parca)
+            continue
+        pos = 0
+        for m in _HISSE_LINK_RE.finditer(parca):
+            kod = _HISSE_LINK_KOD.get(m.group(0))
+            if kod is None or kod in baglanan or len(baglanan) >= _HISSE_LINK_SAYFA_LIMITI:
+                continue
+            cikti.append(parca[pos:m.start()])
+            cikti.append(f'<a href="{kok}hisse/{kod}.html">{m.group(0)}</a>')
+            pos = m.end()
+            baglanan.add(kod)
+            if len(baglanan) >= _HISSE_LINK_SAYFA_LIMITI:
+                break
+        cikti.append(parca[pos:])
+    return "".join(cikti)
+
+
 def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
                   alt_baslik="BIST 30 &bull; Yapay zeka destekli günlük analiz",
                   kok_yol=None, aciklama=None, ses_url=None, teknik_satirlar=None,
@@ -4988,7 +5124,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
 {ses_bolumu}
 {_pano_html(teknik_satirlar, kok)}
 {_ajanda_html(ajanda or [], limit=14, kok=kok)}
-<article class="report" id="rapor-govde">{html_icerik}</article>
+<article class="report" id="rapor-govde">{_hisse_baglantilari_uygula(html_icerik, kok)}</article>
 <p style="margin-top:18px"><a href="{kok}{donus_yolu}">&larr; {donus_etiket}</a></p>
 {_sesli_okuma_js()}"""
     ld_ek = json.dumps({
@@ -7215,7 +7351,7 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=N
 {hisse_analiz.degerlendirmeler_html(kod)}
 <div class="card" style="margin-top:14px">
 <h3 style="margin:0 0 8px">{kod} konulu içerikler</h3>
-<p style="margin:0"><a href="https://borsa-raporlari-web.pages.dev/ara?q={kod}" target="_blank" rel="noopener">🔍 Semantik aramada "{kod}" geçen tüm rapor bölümleri &rarr;</a></p>
+<p style="margin:0"><a href="/ara?q={kod}">🔍 Sitede "{kod}" geçen tüm rapor bölümleri &rarr;</a></p>
 <p style="margin:6px 0 0"><a href="../raporlar.html">Günlük rapor arşivi &rarr;</a></p>
 <p style="margin:6px 0 0"><a href="../hisse/">📊 BIST 30 hisse merkezi — tüm hisseler, teknik sinyaller ve grafikler &rarr;</a></p>
 </div>"""
@@ -7293,7 +7429,7 @@ SIRKET_KISALTMALARI = {
     "EREGL": ["ereğli demir", "erdeğli"],
     "PETKM": ["petkim"],
     "EKGYO": ["emlak konut"],
-    "GUBRF": ["güfre fabrikaları"],
+    "GUBRF": ["gübre fabrikaları"],
     "KRDMD": ["kardemir"],
     "SISE": ["şişecam"],
     "AEFES": ["anadolu efes"],
@@ -7694,6 +7830,132 @@ def haberler_yaz(gun=14):
         f.write(_sayfa("Haber Arşivi", icerik, "haberler", yol="haberler.html",
                        aciklama="BIST 30 ve piyasa gündemine dair son 14 günün haber başlıkları; kaynak kuruluş ve zaman damgasıyla haber arşivi."))
     logger.info("[Haberler] %d gundelik arsiv yazildi.", len(dosyalar))
+
+
+def _ara_sayfasi_yaz():
+    """Site ici arama sonuclari sayfasi (ara.html; temiz URL /ara).
+
+    Sorgu-parametreli tek statik sayfa: arama istemcide site-arama.json
+    uzerinden yapilir, eslesen terimler <mark> ile vurgulanir. Sorgulu URL'ler
+    taranabilir icerik olmadigindan noindex'tir; sitemap ve site-arama.json'a
+    eklenmez; dil kopyasi da uretilmez (i18n HARIC_DOSYALAR). Hisse
+    sayfalarindaki "Sitede KOD gecen tum rapor bolumleri" baglantisi bu sayfaya
+    yonlenir (kokeni: dis sitesindeki aramaya giden link). Navigasyonda yer
+    almaz; kesif yolu her sayfadaki arama kutusudur."""
+    icerik = """
+<div class="hero">
+<h1>Site Arama</h1>
+<div class="meta"><span>Hisse kodu, konu veya tarihle site içinde arama — eşleşen terimler vurgulanır</span></div>
+</div>
+<div class="card" style="padding:16px">
+  <div style="display:flex; gap:8px; flex-wrap:wrap">
+    <input type="text" id="ara-giris" placeholder="Hisse, konu veya tarih ara&hellip;" style="flex:1; min-width:200px; padding:8px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--card); color:var(--ink)" onkeypress="if(event.key === 'Enter') araTum()">
+    <button onclick="araTum()" style="background:#0f766e; color:white; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-weight:600">Ara</button>
+  </div>
+  <div id="ara-sonuc" style="margin-top:14px"></div>
+</div>
+<script>
+(function() {
+  var KOK = '';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u' };
+    s = String(s).toLowerCase().replace(/\\u0307/g, '');
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function kac(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  function vurgula(metin, terimler) {
+    var h = normalize(metin);
+    if (h.length !== metin.length) return null;
+    var aralik = [];
+    terimler.forEach(function(t) {
+      var n = normalize(t);
+      if (!n) return;
+      var i = 0;
+      while ((i = h.indexOf(n, i)) !== -1) { aralik.push([i, i + n.length]); i += n.length; }
+    });
+    if (!aralik.length) return null;
+    aralik.sort(function(a, b) { return a[0] - b[0]; });
+    var birlesik = [];
+    aralik.forEach(function(r) {
+      var son = birlesik[birlesik.length - 1];
+      if (son && r[0] <= son[1]) son[1] = Math.max(son[1], r[1]);
+      else birlesik.push(r.slice());
+    });
+    var cikti = '', pos = 0;
+    birlesik.forEach(function(r) {
+      cikti += kac(metin.slice(pos, r[0])) + '<mark>' + kac(metin.slice(r[0], r[1])) + '</mark>';
+      pos = r[1];
+    });
+    return cikti + kac(metin.slice(pos));
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  window.araTum = function() {
+    var giris = document.getElementById('ara-giris');
+    var kutu = document.getElementById('ara-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { kutu.innerHTML = '<p style="color:#64748b;font-size:14px">Arama yapmak için bir terim yazın.</p>'; return; }
+    kutu.innerHTML = '<p style="color:#94a3b8;font-size:14px">Aranıyor&hellip;</p>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 50);
+
+      var cikti = '<p style="color:#64748b;font-size:13px">Aranan: <strong>' + kac(q) + '</strong>' +
+                  (sonuc.length ? ' &middot; ' + sonuc.length + ' sayfa eşleşti' : '') + '</p>';
+      if (!sonuc.length) {
+        cikti += '<p style="color:#64748b;font-size:14px">Site içinde sonuç bulunamadı. Farklı bir terim veya hisse kodu deneyin.</p>';
+      } else {
+        sonuc.forEach(function(x) {
+          var vBaslik = vurgula(x.s.b, terimler);
+          var kesit = x.s.t.slice(0, 220);
+          var vKesit = vurgula(kesit, terimler);
+          cikti += '<div style="margin:0 0 14px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:15px">' + (vBaslik || kac(x.s.b)) + '</a>' +
+                   '<div style="color:#64748b;font-size:13px; margin-top:2px">' + (vKesit || kac(kesit)) + '&hellip;</div></div>';
+        });
+      }
+      kutu.innerHTML = cikti;
+    }).catch(function() {
+      kutu.innerHTML = '<p style="color:#b91c1c;font-size:14px">Arama indeksi yüklenemedi.</p>';
+    });
+  };
+
+  var ilk = new URLSearchParams(location.search).get('q');
+  if (ilk) { document.getElementById('ara-giris').value = ilk; window.araTum(); }
+})();
+</script>
+"""
+    dosya = _sayfa("Site Arama", icerik, "",
+                   aciklama="Site içinde hisse kodu, konu ve tarih araması; eşleşen terimler vurgulanır.",
+                   yol="ara.html", robots="noindex, follow")
+    with open("ara.html", "w", encoding="utf-8") as f:
+        f.write(dosya)
 
 
 def sozluk_yaz():
@@ -9033,6 +9295,10 @@ if __name__ == "__main__":
         terimler_yaz()
     except Exception:
         logger.exception("[Terimler] uretilemedi.")
+    try:
+        _ara_sayfasi_yaz()
+    except Exception:
+        logger.exception("[Ara] arama sonuclari sayfasi uretilemedi.")
     try:
         takvim_yaz()
     except Exception:
