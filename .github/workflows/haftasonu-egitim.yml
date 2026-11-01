@@ -66,6 +66,11 @@ jobs:
         run: |
           git config user.name "borsa-bot"
           git config user.email "borsa-bot@users.noreply.github.com"
+          # Ic baglanti guzel-URL temizligi (2026-10-31): icerik commit'i
+          # .html'li baglanti tasirsa publish her yayinda ayni dosyalari
+          # yeniden duzeltip surekli "temizlik dahil" commit'i uretiyordu.
+          # Fail-open: betik basarisizsa akis eskisi gibi surer.
+          python3 baglanti_guzellestir.py . || echo "UYARI: baglanti temizligi atlandi"
           git add -A
           if git diff --cached --quiet; then
             echo "Degisiklik yok; commit atlanır."
