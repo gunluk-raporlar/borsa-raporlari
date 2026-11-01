@@ -429,6 +429,32 @@
   .tm-olay { grid-template-columns:64px 1fr auto; }
   .tm-olay .verim { display:none; }
 }
+/* cok para birimli karsilastirma tablosu + lot kaynaklari (2026-11-01) */
+.detay-uc { grid-template-columns:minmax(0,1fr) auto auto auto; gap:6px 18px; }
+.detay-uc .k { color:var(--muted); }
+.detay-uc .v { font-weight:600; text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.donut-kap { display:flex; gap:20px; align-items:center; flex-wrap:wrap;
+             margin:14px 0 4px; padding:12px 14px; border:1px solid var(--line); border-radius:10px; }
+.donut-kap svg { width:120px; height:120px; flex:0 0 auto; }
+.donut-lejant { display:flex; flex-direction:column; gap:6px; font-size:13px; }
+.donut-lejant i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:7px; }
+/* tarih secici: yil -> ay paneli (temettucu tarzi, 2026-11-01) */
+.tarih-alan { position:relative; }
+.tarih-panel { position:absolute; top:calc(100% + 4px); left:0; right:0; z-index:40;
+               background:var(--card); border:1px solid var(--line); border-radius:10px;
+               padding:10px; box-shadow:0 10px 26px rgba(0,0,0,.22);
+               display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+.tarih-panel[hidden] { display:none; }
+.tarih-panel .tp-baslik { grid-column:1/-1; font-size:11.5px; color:var(--muted);
+                          text-transform:uppercase; letter-spacing:.5px; }
+.tp-btn { border:1px solid var(--line); background:var(--card); color:var(--ink);
+          border-radius:8px; padding:7px 2px; font-size:12.5px; cursor:pointer; font-family:inherit; }
+.tp-btn:hover { border-color:var(--accent); color:var(--accent); }
+.tp-btn.secili { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700; }
+@media (max-width:640px) {
+  .detay-uc { grid-template-columns:minmax(0,1fr) auto auto; }
+  .detay-uc .v:nth-child(4n) { display:none; }
+}
 </style>
 
 <div class="tm-hero">
@@ -493,8 +519,12 @@ sermaye artırımlarını gün gün simüle eder.</p>
       <p class="hesap-fiyat" id="h-secilen-fiyat">Seçilen tarihteki hisse fiyatı: —</p>
     </div>
     <div class="alan hesap-iki">
-      <div><label for="h-bas">Başlangıç Tarihi</label><input type="date" id="h-bas" value="2026-01-02" min="2008-01-02" max="2026-10-30"></div>
-      <div><label for="h-bit">Bitiş Tarihi</label><input type="date" id="h-bit" value="2026-10-30" min="2008-01-02" max="2026-10-30"></div>
+      <div class="tarih-alan"><label for="h-bas">Başlangıç Tarihi</label>
+        <input type="text" id="h-bas" readonly autocomplete="off" value="2026-01-02" data-min="2008-01-02" data-max="2026-10-30">
+        <div class="tarih-panel" hidden></div></div>
+      <div class="tarih-alan"><label for="h-bit">Bitiş Tarihi</label>
+        <input type="text" id="h-bit" readonly autocomplete="off" value="2026-10-30" data-min="2008-01-02" data-max="2026-10-30">
+        <div class="tarih-panel" hidden></div></div>
     </div>
     <p class="hesap-fiyat" style="margin:-6px 0 14px">Veri aralığı: <b>02.01.2008 – 30.10.2026</b>. Bu tarihten öncesinde kaynakta bedelsiz kayıtları eksik olduğu için hesaplayıcı geriye gitmez.</p>
     <div class="alan">
@@ -642,7 +672,7 @@ sermaye artırımlarını gün gün simüle eder.</p>
 bedelsiz sermaye artırımları oran olarak uygulanır. Seri, Borsa İstanbul resmî günlük
 bültenleriyle örneklemli olarak karşılaştırılmıştır (4 Mart 2008: %0,9 fark). Veriler otomatik
 olarak tazelenir (son güncelleme:
-2026-11-01 22:00). Bu sayfa bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.
+2026-11-01 23:02). Bu sayfa bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.
 </p>
 
 <script>
@@ -720,8 +750,10 @@ olarak tazelenir (son güncelleme:
 
     var lot = 0, nakit = 0, yatirilan = 0;
     var temettuBrut = 0, temettuNet = 0, temettuLot = 0, bedelsizLot = 0, sermayeLot = 0;
+    var yatUsd = 0, yatAlt = 0, tBrutUsd = 0, tBrutAlt = 0;
+    var hypBrut = 0, hypUsd = 0, hypAlt = 0;
     var oncekiAy = null, aySayaci = 0;
-    var aylikSeri = [], temettuKayit = [];
+    var aylikSeri = [], olayKayit = [];
     var tekSeferlik = (mod === 2 || mod === 3 || mod === 4 || mod === 8);
 
     for (var i = 0; i < gunler.length; i++) {
@@ -731,23 +763,31 @@ olarak tazelenir (son güncelleme:
         var r = bedMap[gun];
         var ek = Math.floor(lot * (r - 1));
         lot += ek; bedelsizLot += ek;
+        olayKayit.push({ tarih: gun, tip: 'Sermaye Artırımı', ek: ek, toplamLot: lot });
       }
 
-      if (temettuAl) {
-        while (olayPtr < olaylar.length && olaylar[olayPtr].odeme <= gun) {
-          var o = olaylar[olayPtr++];
-          var brut = lot * o.dps;
-          var net = Math.floor(lot * o.net);
-          if (brut <= 0) continue;
+      while (olayPtr < olaylar.length && olaylar[olayPtr].odeme <= gun) {
+        var o = olaylar[olayPtr++];
+        var brut = lot * o.dps;
+        var net = Math.floor(lot * o.net);
+        if (brut <= 0) continue;
+        var ku = kurBul(kur, gun, 'usd'), ka = kurBul(kur, gun, 'altin');
+        hypBrut += brut;
+        if (ku) hypUsd += brut / ku;
+        if (ka) hypAlt += brut / ka;
+        if (temettuAl) {
           temettuBrut += brut; temettuNet += net; nakit += net;
-          var alinabilir = fiyat > 0 ? Math.floor(nakit / fiyat) : 0;
-          temettuKayit.push({
-            tarih: gun, ex: o.ex, hisseBasi: o.dps, stopaj: o.stopaj, lot: lot,
-            brut: brut, net: net, alinan: alinabilir, fiyat: fiyat, toplamLot: lot + alinabilir
-          });
-          if (alinabilir > 0) {
-            lot += alinabilir; temettuLot += alinabilir; nakit -= alinabilir * fiyat;
-          }
+          if (ku) tBrutUsd += brut / ku;
+          if (ka) tBrutAlt += brut / ka;
+        }
+        var alinabilir = (temettuAl && fiyat > 0) ? Math.floor(nakit / fiyat) : 0;
+        olayKayit.push({
+          tarih: gun, tip: 'Temettü', ex: o.ex, hisseBasi: o.dps, stopaj: o.stopaj, lot: lot,
+          brut: brut, net: net, alinan: alinabilir, fiyat: fiyat,
+          toplamLot: lot + alinabilir, usd: ku, altin: ka
+        });
+        if (alinabilir > 0) {
+          lot += alinabilir; temettuLot += alinabilir; nakit -= alinabilir * fiyat;
         }
       }
 
@@ -781,12 +821,17 @@ olarak tazelenir (son güncelleme:
           var harcanan = adet * fiyat;
           nakit = butce - harcanan;
           yatirilan += harcanan; sermayeLot += adet;
+          var ku2 = kurBul(kur, gun, 'usd'), ka2 = kurBul(kur, gun, 'altin');
+          if (ku2) yatUsd += harcanan / ku2;
+          if (ka2) yatAlt += harcanan / ka2;
         } else { nakit = butce; }
       }
 
       if (ayBasi || i === gunler.length - 1) {
         aylikSeri.push({
           tarih: gun, lot: lot, fiyat: fiyat, deger: lot * fiyat, yatirilan: yatirilan,
+          cumBrut: temettuBrut, cumUsd: tBrutUsd, cumAlt: tBrutAlt,
+          cumHBrut: hypBrut, cumHUsd: hypUsd, cumHAlt: hypAlt,
           usd: kurBul(kur, gun, 'usd'), altin: kurBul(kur, gun, 'altin')
         });
       }
@@ -810,29 +855,45 @@ olarak tazelenir (son güncelleme:
       enflasyonReelGetiri: yatirilan > 0 ? (guncelDeger / enfMaliyet - 1) * 100 : 0,
       usd: { yatirilan: sonUsd ? yatirilan / sonUsd : null, guncel: sonUsd ? guncelDeger / sonUsd : null, kur: sonUsd },
       altin: { yatirilan: sonAltin ? yatirilan / sonAltin : null, guncel: sonAltin ? guncelDeger / sonAltin : null, kur: sonAltin },
-      aylikSeri: aylikSeri, temettuKayit: temettuKayit, gunSayisi: gunler.length
+      yatUsd: yatUsd, yatAlt: yatAlt, tBrutUsd: tBrutUsd, tBrutAlt: tBrutAlt,
+      olayKayit: olayKayit, aylikSeri: aylikSeri, gunSayisi: gunler.length
     };
   }
 
   /* ---------- SVG grafik ---------- */
   function cizGrafik(kap, seriler, secenek) {
     secenek = secenek || {};
-    var G = 680, Y = 300, sol = 62, sag = 14, ust = 14, alt = 30;
+    var eksen2 = seriler.some(function (s) { return s.eksen === 2; });
+    var G = 680, Y = 300, sol = 62, sag = eksen2 ? 48 : 14, ust = 14, alt = 30;
     var icG = G - sol - sag, icY = Y - ust - alt;
-    var tum = [];
-    seriler.forEach(function (s) { s.noktalar.forEach(function (p) { if (isFinite(p[1])) tum.push(p[1]); }); });
-    if (!tum.length) { kap.innerHTML = '<p class="tm-bos">Grafik için veri yok.</p>'; return; }
-    var min = Math.min.apply(null, tum), max = Math.max.apply(null, tum);
-    if (min === max) { min = min * 0.95; max = max * 1.05; }
-    var pay = (max - min) * 0.08; min -= pay; max += pay;
-    if (secenek.sifirdan) min = 0;
+    function topla(ikinci) {
+      var t = [];
+      seriler.forEach(function (s) {
+        if ((s.eksen === 2) === ikinci) s.noktalar.forEach(function (p) { if (isFinite(p[1])) t.push(p[1]); });
+      });
+      return t;
+    }
+    var tum = topla(false), tum2 = eksen2 ? topla(true) : [];
+    if (!tum.length && !tum2.length) { kap.innerHTML = '<p class="tm-bos">Grafik için veri yok.</p>'; return; }
+    function olcek(liste) {
+      var min = Math.min.apply(null, liste), max = Math.max.apply(null, liste);
+      if (min === max) { min = min * 0.95; max = max * 1.05; }
+      var pay = (max - min) * 0.08; min -= pay; max += pay;
+      if (secenek.sifirdan) min = 0;
+      return { min: min, max: max };
+    }
+    var m1 = olcek(tum.length ? tum : tum2), min = m1.min, max = m1.max;
+    var m2 = eksen2 && tum2.length ? olcek(tum2) : null;
 
     var xMin = seriler[0].noktalar[0][0], xMax = seriler[0].noktalar[seriler[0].noktalar.length - 1][0];
     var tMin = new Date(xMin).getTime(), tMax = new Date(xMax).getTime();
     if (tMax === tMin) tMax = tMin + 864e5;
 
     function X(t) { return sol + (new Date(t).getTime() - tMin) / (tMax - tMin) * icG; }
-    function Yy(v) { return ust + icY - (v - min) / (max - min) * icY; }
+    function Yy(v, eksen) {
+      if (eksen === 2 && m2) return ust + icY - (v - m2.min) / (m2.max - m2.min) * icY;
+      return ust + icY - (v - min) / (max - min) * icY;
+    }
 
     var svg = '<svg viewBox="0 0 ' + G + ' ' + Y + '" role="img" aria-label="' + (secenek.baslik || 'grafik') + '">';
     // ızgara + y ekseni
@@ -842,6 +903,14 @@ olarak tazelenir (son güncelleme:
         '" stroke="var(--line)" stroke-width="1" stroke-dasharray="' + (g === 0 ? '0' : '3 3') + '"/>';
       svg += '<text x="' + (sol - 8) + '" y="' + (yy + 4).toFixed(1) + '" text-anchor="end" font-size="10.5" fill="var(--muted)">' +
         (secenek.yFormat ? secenek.yFormat(deger) : TR(deger)) + '</text>';
+    }
+    if (m2) {
+      for (var d2 = 0; d2 <= 4; d2++) {
+        var deger2 = m2.min + (m2.max - m2.min) * d2 / 4;
+        svg += '<text x="' + (G - sag + 6) + '" y="' + (Yy(deger2, 2) + 4).toFixed(1) +
+          '" font-size="10.5" fill="#b45309">' + (secenek.y2Format ? secenek.y2Format(deger2) : TR(deger2, 1)) + '</text>';
+      }
+      svg += '<text x="' + (G - 4) + '" y="' + (ust - 2) + '" text-anchor="end" font-size="9.5" fill="#b45309">Gram Altın</text>';
     }
     // x ekseni etiketleri
     var adet = 5;
@@ -857,7 +926,7 @@ olarak tazelenir (son güncelleme:
       var d2 = '', ilk = true;
       s.noktalar.forEach(function (p) {
         if (!isFinite(p[1])) return;
-        d2 += (ilk ? 'M' : 'L') + X(p[0]).toFixed(1) + ' ' + Yy(p[1]).toFixed(1);
+        d2 += (ilk ? 'M' : 'L') + X(p[0]).toFixed(1) + ' ' + Yy(p[1], s.eksen).toFixed(1);
         ilk = false;
       });
       if (s.dolu) {
@@ -892,7 +961,9 @@ olarak tazelenir (son güncelleme:
       seriler.forEach(function (s) {
         var bul = null;
         for (var m = 0; m < s.noktalar.length; m++) if (s.noktalar[m][0] === secili[0]) { bul = s.noktalar[m]; break; }
-        if (bul) html += '<br>' + s.ad + ': ' + (secenek.ipucuFormat ? secenek.ipucuFormat(bul[1]) : TR(bul[1]));
+        if (bul) html += '<br>' + s.ad + ': ' + (s.birim !== undefined
+          ? TR(bul[1], s.ondalik === undefined ? 0 : s.ondalik) + s.birim
+          : (secenek.ipucuFormat ? secenek.ipucuFormat(bul[1]) : TR(bul[1])));
       });
       ipucu.innerHTML = html;
       ipucu.style.left = (X(secili[0]) / G * 100) + '%';
@@ -935,16 +1006,29 @@ olarak tazelenir (son güncelleme:
     var p = para;
     var degisimSinif = sonuc.karZarar >= 0 ? 'pos' : 'neg';
 
+    var eUsd = sonuc.usd.kur, eAlt = sonuc.altin.kur;
+    function birimYaz(v, c, o) {
+      if (v === null || v === undefined || isNaN(v)) return '—';
+      return TR(v, o === undefined ? 0 : o) + (c === 'usd' ? ' $' : c === 'altin' ? ' gr' : ' TL');
+    }
+    function digerIkili(tl, sec) {
+      if (!eUsd || !eAlt) return TR(sonuc.sonFiyat, 2) + ' TL kapanış';
+      var l = [];
+      if (sec !== 'tl') l.push(birimYaz(tl, 'tl', 0));
+      if (sec !== 'usd') l.push(birimYaz(tl / eUsd, 'usd', 0));
+      if (sec !== 'altin') l.push(birimYaz(tl / eAlt, 'altin', 1));
+      return l.join(' · ');
+    }
     var html = '<div class="sonuc-ust">' +
-      '<div class="sonuc-kart"><div class="l">Lot Sayısı</div><div class="v">' + TR(sonuc.lotSayisi) + '</div>' +
-      '<div class="a">' + TR(sonuc.gunSayisi) + ' işlem günü</div></div>' +
-      '<div class="sonuc-kart"><div class="l">Ortalama Maliyet</div><div class="v">' + TR(sonuc.ortalamaMaliyet, 2) + ' TL</div>' +
-      '<div class="a">lot başına</div></div>' +
       '<div class="sonuc-kart"><div class="l">Güncel Değer</div><div class="v">' + paraYaz(sonuc.guncelDeger, p) + '</div>' +
-      '<div class="a">' + TR(sonuc.sonFiyat, 2) + ' TL kapanış</div></div>' +
+      '<div class="a">' + digerIkili(sonuc.guncelDeger, p) + '</div></div>' +
+      '<div class="sonuc-kart"><div class="l">Yatırılan Toplam</div><div class="v">' + paraYaz(sonuc.yatirilan, p) + '</div>' +
+      '<div class="a">' + digerIkili(sonuc.yatirilan, p) + '</div></div>' +
       '<div class="sonuc-kart"><div class="l">Kâr / Zarar</div><div class="v ' + degisimSinif + '">' +
       (sonuc.karZarar >= 0 ? '+' : '') + paraYaz(sonuc.karZarar, p) + '</div>' +
-      '<div class="a ' + degisimSinif + '">' + YUZ(sonuc.getiriYuzde) + '</div></div>' +
+      '<div class="a ' + degisimSinif + '">' + YUZ(sonuc.getiriYuzde) + ' · enflasyona göre ' + YUZ(sonuc.enflasyonReelGetiri) + '</div></div>' +
+      '<div class="sonuc-kart"><div class="l">Toplam Lot</div><div class="v">' + TR(sonuc.lotSayisi) + '</div>' +
+      '<div class="a">' + TR(sonuc.gunSayisi) + ' işlem günü · temettüden ' + TR(sonuc.temettuLot) + '</div></div>' +
       '</div>';
 
     html += '<div class="tm-seg" id="h-sonuc-para" style="margin:0 0 14px">' +
@@ -953,40 +1037,89 @@ olarak tazelenir (son güncelleme:
         return '<button type="button" data-p="' + x + '" aria-pressed="' + (p === x) + '">' + ad + '</button>';
       }).join('') + '</div>';
 
-    html += '<div class="detay-liste">' +
-      '<div class="k">Yatırılan toplam</div><div class="v">' + paraYaz(sonuc.yatirilan, p) + '</div>' +
-      '<div class="k">Bitiş tarihindeki hisse fiyatı</div><div class="v">' + TR(sonuc.sonFiyat, 2) + ' TL</div>' +
-      '<div class="k">Temettüden kazanılan lot</div><div class="v">' + TR(sonuc.temettuLot) + '</div>' +
-      '<div class="k">Bedelsizden kazanılan lot</div><div class="v">' + TR(sonuc.bedelsizLot) + '</div>' +
-      '<div class="ayrac"></div>' +
-      '<div class="k">Toplam temettü (brüt)</div><div class="v">' + paraYaz(sonuc.temettuBrut, p) + '</div>' +
-      '<div class="k">Toplam temettü (net, stopaj sonrası)</div><div class="v">' + paraYaz(sonuc.temettuNet, p) + '</div>' +
-      '<div class="k">Temettünün maliyete oranı</div><div class="v">' +
-      (sonuc.yatirilan > 0 ? TR(sonuc.temettuBrut / sonuc.yatirilan * 100, 1) + '%' : '—') + '</div>' +
-      '<div class="ayrac"></div>' +
-      '<div class="k">Enflasyon düzeltmeli maliyet</div><div class="v">' + paraYaz(sonuc.enflasyonMaliyet, p) + '</div>' +
-      '<div class="k">Enflasyona göre reel getiri</div><div class="v ' + (sonuc.enflasyonReelGetiri >= 0 ? 'pos' : 'neg') + '">' +
-      YUZ(sonuc.enflasyonReelGetiri) + '</div>' +
+    function ucSatir(k, t, u, a) {
+      return '<div class="k">' + k + '</div><div class="v">' + t + '</div><div class="v">' + u + '</div><div class="v">' + a + '</div>';
+    }
+    html += '<div class="detay-liste detay-uc">' +
+      ucSatir('', '<b>TL</b>', '<b>Dolar ($)</b>', '<b>Gram Altın</b>') +
+      ucSatir('Yatırılan toplam tutar', TR(sonuc.yatirilan, 0),
+        eUsd ? TR(sonuc.yatUsd, 0) : '—', eAlt ? TR(sonuc.yatAlt, 0) + ' gr' : '—') +
+      ucSatir('Yatırılan tutarın enflasyonla bugünkü değeri', TR(sonuc.enflasyonMaliyet, 0),
+        eUsd ? TR(sonuc.enflasyonMaliyet / eUsd, 0) : '—', '—') +
+      ucSatir('Lot başına ortalama maliyet',
+        sonuc.lotSayisi ? TR(sonuc.yatirilan / sonuc.lotSayisi, 2) : '—',
+        eUsd && sonuc.lotSayisi ? TR(sonuc.yatUsd / sonuc.lotSayisi, 2) : '—',
+        eAlt && sonuc.lotSayisi ? TR(sonuc.yatAlt / sonuc.lotSayisi, 4) + ' gr' : '—') +
+      ucSatir('Bitiş tarihindeki güncel değer', TR(sonuc.guncelDeger, 0),
+        eUsd ? TR(sonuc.usd.guncel, 0) : '—', eAlt ? TR(sonuc.altin.guncel, 1) + ' gr' : '—') +
+      ucSatir('Bitişe kadarki toplam temettü (brüt)',
+        TR(sonuc.temettuBrut, 0),
+        sonuc.temettuBrut ? (eUsd ? TR(sonuc.tBrutUsd, 0) : '—') : TR(0, 0),
+        sonuc.temettuBrut ? (eAlt ? TR(sonuc.tBrutAlt, 1) + ' gr' : '—') : TR(0, 0) + ' gr') +
+      ucSatir('Bitiş tarihindeki hisse fiyatı', TR(sonuc.sonFiyat, 2),
+        eUsd ? TR(sonuc.sonFiyat / eUsd, 2) : '—', eAlt ? TR(sonuc.sonFiyat / eAlt, 4) + ' gr' : '—') +
+      '<div class="ayrac" style="grid-column:1/-1"></div>' +
+      ucSatir('Toplam temettü (net, stopaj sonrası)', paraYaz(sonuc.temettuNet, 'tl'), '—', '—') +
+      ucSatir('Enflasyona göre reel getiri',
+        '<span class="' + (sonuc.enflasyonReelGetiri >= 0 ? 'pos' : 'neg') + '">' + YUZ(sonuc.enflasyonReelGetiri) + '</span>', '—', '—') +
       '</div>';
 
+    var kaynaklar = [
+      { ad: 'Satın Alınan', v: sonuc.sermayeLot, renk: '#0ea5e9' },
+      { ad: 'Bedelsizden', v: sonuc.bedelsizLot, renk: '#8b5cf6' },
+      { ad: 'Temettüden', v: sonuc.temettuLot, renk: '#f59e0b' }
+    ].filter(function (x) { return x.v > 0; });
+    if (kaynaklar.length && sonuc.lotSayisi > 0) {
+      var aci = -Math.PI / 2, donut = '';
+      if (kaynaklar.length === 1) {
+        donut = '<circle cx="60" cy="60" r="50" fill="' + kaynaklar[0].renk + '"/>';
+      } else {
+        kaynaklar.forEach(function (x) {
+          var dilim = x.v / sonuc.lotSayisi * Math.PI * 2, R = 50, M = 60;
+          var x1 = (M + R * Math.cos(aci)).toFixed(2), y1 = (M + R * Math.sin(aci)).toFixed(2);
+          aci += dilim;
+          var x2 = (M + R * Math.cos(aci)).toFixed(2), y2 = (M + R * Math.sin(aci)).toFixed(2);
+          donut += '<path d="M ' + M + ' ' + M + ' L ' + x1 + ' ' + y1 + ' A ' + R + ' ' + R +
+            ' 0 ' + (dilim > Math.PI ? 1 : 0) + ' 1 ' + x2 + ' ' + y2 + ' Z" fill="' + x.renk +
+            '" stroke="var(--card)" stroke-width="1"/>';
+        });
+      }
+      html += '<div class="donut-kap"><svg viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Lot kaynakları">' + donut +
+        '<circle cx="60" cy="60" r="28" fill="var(--card)"/>' +
+        '<text x="60" y="58" text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">' + TR(sonuc.lotSayisi) + '</text>' +
+        '<text x="60" y="72" text-anchor="middle" font-size="8" fill="var(--muted)">toplam lot</text></svg>' +
+        '<div class="donut-lejant">' + kaynaklar.map(function (x) {
+          return '<span><i style="background:' + x.renk + '"></i>' + x.ad + ': <b>' + TR(x.v) + '</b> (%' +
+            TR(x.v / sonuc.lotSayisi * 100, 1) + ')</span>';
+        }).join('') + '</div></div>';
+    }
+
     html += '<div class="graf-sekmeler" id="h-graf-sekme">' +
-      [['Portföy Değeri', 0], ['Hisse Fiyatı', 1], ['Fiyat Ortalamaları', 2], ['Aylık Değişim', 3]].map(function (s) {
+      [['Temettü Getirisi', 0], ['Lot Sayısı', 1], ['Portföy Değeri', 2], ['Hisse Fiyatı', 3], ['Fiyat Ortalamaları', 4], ['Aylık Değişim', 5]].map(function (s) {
         return '<button type="button" data-s="' + s[1] + '" aria-pressed="' + (sekmem === s[1]) + '">' + s[0] + '</button>';
       }).join('') + '</div>' +
       '<div class="graf-kutu" id="h-graf"></div>' +
       '<div class="graf-lejant" id="h-lejant"></div>';
 
-    if (sonuc.temettuKayit.length) {
-      html += '<h3 style="font-size:14px;margin:20px 0 8px">Temettü geçmişi</h3><div class="tbl-wrap"><table class="tm-tablo tm-tablo-min">' +
-        '<thead><tr><th>Ex-tarih</th><th class="sayi">Hisse başı</th><th class="sayi">Stopaj</th>' +
-        '<th class="sayi">Eldeki lot</th><th class="sayi">Net temettü</th><th class="sayi">Alınan lot</th></tr></thead><tbody>' +
-        sonuc.temettuKayit.map(function (t) {
-          return '<tr><td>' + tarihYaz(t.ex) + '</td>' +
+    if (sonuc.olayKayit.length) {
+      html += '<h3 style="font-size:14px;margin:20px 0 8px">Temettü ve sermaye artırımı geçmişi</h3>' +
+        '<div class="tbl-wrap"><table class="tm-tablo tm-tablo-min">' +
+        '<thead><tr><th>Tarih</th><th>Tip</th><th class="sayi">Hisse başı</th><th class="sayi">TL</th>' +
+        '<th class="sayi">Dolar ($)</th><th class="sayi">Altın (gr)</th>' +
+        '<th class="sayi">Kazanılan lot</th><th class="sayi">Toplam lot</th></tr></thead><tbody>' +
+        sonuc.olayKayit.map(function (t) {
+          if (t.tip === 'Sermaye Artırımı') {
+            return '<tr><td>' + tarihYaz(t.tarih) + '</td><td>Sermaye Artırımı</td>' +
+              '<td class="sayi">—</td><td class="sayi">—</td><td class="sayi">—</td><td class="sayi">—</td>' +
+              '<td class="sayi">' + TR(t.ek) + '</td><td class="sayi">' + TR(t.toplamLot) + '</td></tr>';
+          }
+          return '<tr><td>' + tarihYaz(t.tarih) + '</td><td>Temettü</td>' +
             '<td class="sayi">' + TR(t.hisseBasi, 4) + '</td>' +
-            '<td class="sayi">%' + TR(t.stopaj * 100, 0) + '</td>' +
-            '<td class="sayi">' + TR(t.lot) + '</td>' +
-            '<td class="sayi">' + TR(t.net) + '</td>' +
-            '<td class="sayi">' + TR(t.alinan) + '</td></tr>';
+            '<td class="sayi">' + TR(t.brut, 0) + '</td>' +
+            '<td class="sayi">' + (t.usd ? TR(t.brut / t.usd, 0) : '—') + '</td>' +
+            '<td class="sayi">' + (t.altin ? TR(t.brut / t.altin, 1) : '—') + '</td>' +
+            '<td class="sayi">' + (t.alinan ? TR(t.alinan) : '—') + '</td>' +
+            '<td class="sayi">' + TR(t.toplamLot) + '</td></tr>';
         }).join('') + '</tbody></table></div>';
     }
 
@@ -1003,32 +1136,42 @@ olarak tazelenir (son güncelleme:
     var kap = document.getElementById('h-graf'), lejant = document.getElementById('h-lejant');
     var seri = sonuc.aylikSeri;
     if (!seri.length) return;
-    var p = para;
 
     if (sekmem === 0) {
-      var deger = seri.map(function (r) { return [r.tarih, paraDeger(r.deger, p)]; });
-      var yat = seri.map(function (r) { return [r.tarih, paraDeger(r.yatirilan, p)]; });
       cizGrafik(kap, [
-        { ad: 'Portföy', renk: 'var(--accent)', noktalar: deger, dolu: true, kalin: 2.2 },
-        { ad: 'Yatırılan', renk: '#94a3b8', noktalar: yat, kesik: true, kalin: 1.6 }
-      ], {
-        baslik: 'Portföy değeri', sifirdan: true,
-        yFormat: function (v) {
-          if (p !== 'tl') return TR(v, 0);
-          if (Math.abs(v) >= 1e6) return TR(v / 1e6, 1) + 'M';
-          if (Math.abs(v) >= 1e3) return TR(v / 1e3, 0) + 'B';
-          return TR(v, 0);
-        },
-        ipucuFormat: function (v) { return p === 'tl' ? TRY(v) : TR(v, 2) + paraEtiket(p); }
-      });
-      lejant.innerHTML = '<span><i style="border-color:var(--accent)"></i>Portföy değeri</span>' +
-        '<span><i style="border-color:#94a3b8"></i>Yatırılan toplam</span>';
+        { ad: 'Temettü Getirisi TL', renk: '#1d4ed8', noktalar: seri.map(function (r) { return [r.tarih, r.cumHBrut]; }), kalin: 2, birim: ' TL' },
+        { ad: 'Temettü Getirisi Dolar', renk: '#15803d', noktalar: seri.map(function (r) { return [r.tarih, r.cumHUsd]; }), kalin: 1.8, birim: ' $' },
+        { ad: 'Temettü Getirisi Gram Altın', renk: '#d97706', noktalar: seri.map(function (r) { return [r.tarih, r.cumHAlt]; }), kalin: 1.8, eksen: 2, birim: ' gr', ondalik: 2 }
+      ], { baslik: 'Temettü getirisi (kümülatif, brüt — temettü ile lot alımı kapalıyken bile olası ödemeler gösterilir)' });
+      lejant.innerHTML = '<span><i style="border-color:#1d4ed8"></i>Temettü Getirisi TL</span>' +
+        '<span><i style="border-color:#15803d"></i>Temettü Getirisi Dolar</span>' +
+        '<span><i style="border-color:#d97706"></i>Temettü Getirisi Gram Altın (sağ eksen)</span>';
     } else if (sekmem === 1) {
-      var f = seri.map(function (r) { return [r.tarih, r.fiyat]; });
-      cizGrafik(kap, [{ ad: 'Fiyat', renk: 'var(--accent)', noktalar: f, dolu: true, kalin: 2 }],
-        { baslik: 'Hisse fiyatı', yFormat: function (v) { return TR(v, 0); }, ipucuFormat: function (v) { return TR(v, 2) + ' TL'; } });
-      lejant.innerHTML = '<span><i style="border-color:var(--accent)"></i>Kapanış fiyatı (TL)</span>';
+      cizGrafik(kap, [
+        { ad: 'Biriktirilen Lot Sayısı', renk: '#dc2626', noktalar: seri.map(function (r) { return [r.tarih, r.lot]; }), dolu: true, kalin: 2, birim: ' lot' }
+      ], { baslik: 'Lot sayısı', sifirdan: true });
+      lejant.innerHTML = '<span><i style="border-color:#dc2626"></i>Biriktirilen Lot Sayısı</span>';
     } else if (sekmem === 2) {
+      cizGrafik(kap, [
+        { ad: 'Portföy Değeri TL', renk: '#1d4ed8', noktalar: seri.map(function (r) { return [r.tarih, r.deger]; }), dolu: true, kalin: 2, birim: ' TL' },
+        { ad: 'Portföy Değeri Dolar', renk: '#15803d', noktalar: seri.map(function (r) { return [r.tarih, r.usd ? r.deger / r.usd : null]; }), kalin: 1.8, birim: ' $', ondalik: 0 },
+        { ad: 'Portföy Değeri Gram Altın', renk: '#d97706', noktalar: seri.map(function (r) { return [r.tarih, r.altin ? r.deger / r.altin : null]; }), kalin: 1.8, eksen: 2, birim: ' gr', ondalik: 1 },
+        { ad: 'Yatırılan Toplam', renk: '#94a3b8', noktalar: seri.map(function (r) { return [r.tarih, r.yatirilan]; }), kesik: true, kalin: 1.5, birim: ' TL' }
+      ], { baslik: 'Portföy değeri' });
+      lejant.innerHTML = '<span><i style="border-color:#1d4ed8"></i>Portföy Değeri TL</span>' +
+        '<span><i style="border-color:#15803d"></i>Dolar</span>' +
+        '<span><i style="border-color:#d97706"></i>Gram Altın (sağ eksen)</span>' +
+        '<span><i style="border-color:#94a3b8"></i>Yatırılan Toplam</span>';
+    } else if (sekmem === 3) {
+      cizGrafik(kap, [
+        { ad: 'Hisse Fiyatı TL', renk: '#1d4ed8', noktalar: seri.map(function (r) { return [r.tarih, r.fiyat]; }), dolu: true, kalin: 2, birim: ' TL', ondalik: 2 },
+        { ad: 'Hisse Fiyatı Dolar', renk: '#15803d', noktalar: seri.map(function (r) { return [r.tarih, r.usd ? r.fiyat / r.usd : null]; }), kalin: 1.8, birim: ' $', ondalik: 2 },
+        { ad: 'Hisse Fiyatı Gram Altın', renk: '#d97706', noktalar: seri.map(function (r) { return [r.tarih, r.altin ? r.fiyat / r.altin : null]; }), kalin: 1.8, eksen: 2, birim: ' gr', ondalik: 3 }
+      ], { baslik: 'Hisse fiyatı (düzeltilmemiş kapanış)' });
+      lejant.innerHTML = '<span><i style="border-color:#1d4ed8"></i>Hisse Fiyatı TL</span>' +
+        '<span><i style="border-color:#15803d"></i>Dolar</span>' +
+        '<span><i style="border-color:#d97706"></i>Gram Altın (sağ eksen)</span>';
+    } else if (sekmem === 4) {
       function ort(seri, n) {
         var out = [], top = 0;
         for (var i = 0; i < seri.length; i++) {
@@ -1060,7 +1203,8 @@ olarak tazelenir (son güncelleme:
   /* ---------- form ---------- */
   function secilenFiyatGuncelle() {
     var kod = document.getElementById('h-hisse').value;
-    var bas = document.getElementById('h-bas').value;
+    var basIn = document.getElementById('h-bas');
+    var bas = basIn.dataset.iso || basIn.value;
     var el = document.getElementById('h-secilen-fiyat');
     if (!kod || !bas) return;
     seriYukle(kod).then(function (d) {
@@ -1099,7 +1243,8 @@ olarak tazelenir (son güncelleme:
 
   function hesaplaTikla() {
     var kod = document.getElementById('h-hisse').value;
-    var bas = document.getElementById('h-bas').value, bit = document.getElementById('h-bit').value;
+    var bIn = document.getElementById('h-bas'), sIn = document.getElementById('h-bit');
+    var bas = bIn.dataset.iso || bIn.value, bit = sIn.dataset.iso || sIn.value;
     var durum = document.getElementById('h-durum');
     if (!kod || !bas || !bit) { durum.textContent = 'Hisse ve tarih aralığı seçin.'; return; }
     if (bas >= bit) { durum.textContent = 'Başlangıç tarihi bitişten önce olmalı.'; return; }
@@ -1120,7 +1265,7 @@ olarak tazelenir (son güncelleme:
         asgariUcret: (OZET && OZET.asgariUcret) || null
       });
       durum.textContent = sonuc ? '' : 'Bu aralıkta veri yok.';
-      if (sonuc) { sekmem = 0; para = 'tl'; sonucCiz(); }
+      if (sonuc) { para = 'tl'; sekmem = 0; sonucCiz(); }
       document.getElementById('h-hesapla').disabled = false;
     }).catch(function (e) {
       durum.textContent = 'Veri yüklenemedi (' + e.message + ').';
@@ -1169,6 +1314,83 @@ olarak tazelenir (son güncelleme:
     satirlar.forEach(function (s) { tb.appendChild(s); });
   }
 
+  /* ---------- tarih seçici (yıl -> ay paneli) ---------- */
+  var AY_KISA = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+  function trTarih(iso) {
+    var p = iso.split('-');
+    return p[2] + '.' + p[1] + '.' + p[0];
+  }
+  function panelKapat() {
+    Array.prototype.forEach.call(document.querySelectorAll('.tarih-panel'), function (p) { p.hidden = true; });
+  }
+  function aySec(input, yil, aa) {
+    var iso;
+    if (input.id === 'h-bit') {
+      iso = (input.dataset.max && input.dataset.max.slice(0, 7) === yil + '-' + aa)
+        ? input.dataset.max
+        : yil + '-' + aa + '-' + new Date(+yil, +aa, 0).getDate();
+    } else {
+      iso = (input.dataset.min && input.dataset.min.slice(0, 7) === yil + '-' + aa)
+        ? input.dataset.min
+        : yil + '-' + aa + '-01';
+    }
+    input.dataset.iso = iso;
+    input.value = trTarih(iso);
+    panelKapat();
+    secilenFiyatGuncelle();
+  }
+  function aylariGoster(input, panel, yil) {
+    var seciliIso = input.dataset.iso || input.value;
+    panel.innerHTML = '<div class="tp-baslik">' + yil + ' · ay seçin</div>';
+    panel.style.gridTemplateColumns = 'repeat(3,1fr)';
+    for (var a = 1; a <= 12; a++) {
+      var aa = (a < 10 ? '0' : '') + a;
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'tp-btn' + (seciliIso.slice(0, 7) === yil + '-' + aa ? ' secili' : '');
+      b.textContent = AY_KISA[a - 1];
+      b.addEventListener('click', (function (yy, mm) {
+        return function () { aySec(input, yy, mm); };
+      })(yil, aa));
+      panel.appendChild(b);
+    }
+  }
+  function panelAc(input) {
+    var panel = input.parentElement.querySelector('.tarih-panel');
+    if (!panel) return;
+    var acikMi = !panel.hidden;
+    panelKapat();
+    if (acikMi) return;
+    var minYil = +(input.dataset.min || '2008-01-01').slice(0, 4);
+    var maxYil = +(input.dataset.max || '2026-12-31').slice(0, 4);
+    var yil = +(input.dataset.iso || input.value).slice(0, 4);
+    panel.innerHTML = '<div class="tp-baslik">Yıl seçin</div>';
+    panel.style.gridTemplateColumns = 'repeat(4,1fr)';
+    for (var y = minYil; y <= maxYil; y++) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'tp-btn' + (y === yil ? ' secili' : '');
+      b.textContent = y;
+      b.addEventListener('click', (function (yy) {
+        return function () { aylariGoster(input, panel, yy); };
+      })(y));
+      panel.appendChild(b);
+    }
+    panel.hidden = false;
+  }
+  function tarihSeciciKur() {
+    ['h-bas', 'h-bit'].forEach(function (id) {
+      var input = document.getElementById(id);
+      if (!input) return;
+      if (input.value && input.value.indexOf('-') === 4) input.dataset.iso = input.value;
+      if (input.dataset.iso) input.value = trTarih(input.dataset.iso);
+      input.addEventListener('click', function () { panelAc(input); });
+    });
+    document.addEventListener('click', function (ev) {
+      if (!ev.target.closest('.tarih-alan')) panelKapat();
+    });
+  }
+
   /* ---------- başlat ---------- */
   function baslat() {
     fetch('temettu-veri/ozet.json').then(function (r) { return r.json(); }).then(function (d) {
@@ -1208,6 +1430,7 @@ olarak tazelenir (son güncelleme:
       document.getElementById('h-enf-alan').hidden = !this.checked;
     });
     modGuncelle();
+    tarihSeciciKur();
     secilenFiyatGuncelle();
   }
 

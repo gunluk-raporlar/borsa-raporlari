@@ -101,6 +101,32 @@
   .tm-olay { grid-template-columns:64px 1fr auto; }
   .tm-olay .verim { display:none; }
 }
+/* cok para birimli karsilastirma tablosu + lot kaynaklari (2026-11-01) */
+.detay-uc { grid-template-columns:minmax(0,1fr) auto auto auto; gap:6px 18px; }
+.detay-uc .k { color:var(--muted); }
+.detay-uc .v { font-weight:600; text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.donut-kap { display:flex; gap:20px; align-items:center; flex-wrap:wrap;
+             margin:14px 0 4px; padding:12px 14px; border:1px solid var(--line); border-radius:10px; }
+.donut-kap svg { width:120px; height:120px; flex:0 0 auto; }
+.donut-lejant { display:flex; flex-direction:column; gap:6px; font-size:13px; }
+.donut-lejant i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:7px; }
+/* tarih secici: yil -> ay paneli (temettucu tarzi, 2026-11-01) */
+.tarih-alan { position:relative; }
+.tarih-panel { position:absolute; top:calc(100% + 4px); left:0; right:0; z-index:40;
+               background:var(--card); border:1px solid var(--line); border-radius:10px;
+               padding:10px; box-shadow:0 10px 26px rgba(0,0,0,.22);
+               display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+.tarih-panel[hidden] { display:none; }
+.tarih-panel .tp-baslik { grid-column:1/-1; font-size:11.5px; color:var(--muted);
+                          text-transform:uppercase; letter-spacing:.5px; }
+.tp-btn { border:1px solid var(--line); background:var(--card); color:var(--ink);
+          border-radius:8px; padding:7px 2px; font-size:12.5px; cursor:pointer; font-family:inherit; }
+.tp-btn:hover { border-color:var(--accent); color:var(--accent); }
+.tp-btn.secili { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700; }
+@media (max-width:640px) {
+  .detay-uc { grid-template-columns:minmax(0,1fr) auto auto; }
+  .detay-uc .v:nth-child(4n) { display:none; }
+}
 </style>
 
 <div class="tm-hero">
@@ -165,8 +191,12 @@ sermaye artırımlarını gün gün simüle eder.</p>
       <p class="hesap-fiyat" id="h-secilen-fiyat">Seçilen tarihteki hisse fiyatı: —</p>
     </div>
     <div class="alan hesap-iki">
-      <div><label for="h-bas">Başlangıç Tarihi</label><input type="date" id="h-bas" value="{{BAS_DEFAULT}}" min="{{MIN_TARIH}}" max="{{MAX_TARIH}}"></div>
-      <div><label for="h-bit">Bitiş Tarihi</label><input type="date" id="h-bit" value="{{MAX_TARIH}}" min="{{MIN_TARIH}}" max="{{MAX_TARIH}}"></div>
+      <div class="tarih-alan"><label for="h-bas">Başlangıç Tarihi</label>
+        <input type="text" id="h-bas" readonly autocomplete="off" value="{{BAS_DEFAULT}}" data-min="{{MIN_TARIH}}" data-max="{{MAX_TARIH}}">
+        <div class="tarih-panel" hidden></div></div>
+      <div class="tarih-alan"><label for="h-bit">Bitiş Tarihi</label>
+        <input type="text" id="h-bit" readonly autocomplete="off" value="{{MAX_TARIH}}" data-min="{{MIN_TARIH}}" data-max="{{MAX_TARIH}}">
+        <div class="tarih-panel" hidden></div></div>
     </div>
     <p class="hesap-fiyat" style="margin:-6px 0 14px">Veri aralığı: <b>{{VERI_ARALIGI}}</b>. Bu tarihten öncesinde kaynakta bedelsiz kayıtları eksik olduğu için hesaplayıcı geriye gitmez.</p>
     <div class="alan">
