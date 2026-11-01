@@ -8,12 +8,12 @@ BIST 30 günlük piyasa raporlarını üreten otomasyonun iki katmanı:
 1. **Üretim (mevcut, değişmedi):** Python scriptleri GitHub Actions cron ile çalışır,
    rapor HTML'lerini repoya commitler; Cloudflare Pages **borsa-raporlari.pages.dev**
    adresinde yayınlar.
-2. **Yeni platform (bu çalışmada eklendi):** pgvector ile **semantik arama**, Next.js
+2. **Arama platformu (web/):** pgvector ile **semantik arama**, Next.js
    **ISR + SWR** arayüzü ve **izleme metrikleri**. Hepsi GitHub Actions + ücretsiz
    bulut servisleriyle çalışır, sunucu/Docker gerektirmez.
 
 ```
-GitHub Actions (cron) ──▶ bot.py rapor üretir ──▶ reports/*.html ──▶ Cloudflare Pages (eski site)
+GitHub Actions (cron) ──▶ bot.py rapor üretir ──▶ raporlar/*.html ──▶ Cloudflare Pages
         │                                        │
         └─▶ pipeline/embed.py (async batch)      └─▶ web/ (Next.js: ISR + SWR arayüzü)
                 │  Cloudflare Workers AI bge-m3          ├─ /            rapor arşivi (ISR 5 dk)
@@ -192,10 +192,10 @@ python pipeline/embed.py --backfill         # tüm arşivi embed eder (secret is
 
 ## Deploy zinciri
 
-- **Eski statik site** (`borsa-raporlari.pages.dev`): Cloudflare Pages git entegrasyonu,
+- **Ana site** (`borsa-raporlari.pages.dev`): Cloudflare Pages git entegrasyonu,
   repo kökündeki HTML'leri yayınlar — bu platform çalışması köke dokunmadığı için
   etkilenmez.
-- **Yeni arayüz**: `web/**` değişince `Web (Next.js) Deploy` workflow'u build alıp
+- **Arama/RAG arayüzü (web/)**: `web/**` değişince `Web (Next.js) Deploy` workflow'u build alıp
   `borsa-raporlari-web.pages.dev`'e deploy eder (wrangler + mevcut CF secret'ları).
 
 Yasal uyarı: sitedeki hiçbir içerik yatırım tavsiyesi değildir.

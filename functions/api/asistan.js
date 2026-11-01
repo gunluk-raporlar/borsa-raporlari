@@ -1,5 +1,5 @@
 // /api/asistan — AI asistan proxy'si (Pages Function, ana site).
-// Grafiği çalıştıran uç nokta yeni arayüz projesinde (borsa-raporlari-web
+// Grafiği çalıştıran uç nokta web/ projesinde (borsa-raporlari-web
 // /api/asistan, LangGraph.js); ana site aynı-köken tek kapı olarak hizmet
 // verir — ikinci host adı ziyaretçiye sızdırılmaz (architect notu 2026-11-01:
 // hata mesajlarında da host geçmez, upstream status aynen geçirilir,

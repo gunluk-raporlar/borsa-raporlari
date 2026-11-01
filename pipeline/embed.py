@@ -44,6 +44,16 @@ KAYNAKLAR = [
     ("haftasonu", "haftasonu", re.compile(r"^\d{4}-\d{2}-\d{2}\.html$")),
     ("egitim", "haftasonu-egitimi", re.compile(r"^\d{4}-\d{2}-\d{2}\.html$")),
 ]
+
+# Kök dizindeki tarihsiz sözlük sayfaları (kullanıcı kararı 2026-11-01:
+# sözlükler pgvector'a eklensin). Adlarında tarih olmadığından tarih = dosya
+# mtime'ı alınır ve 10 günlük tazelik süzgecine takılmazlar; içerik
+# değişmedikçe hash aynı kaldığından embedding maliyeti çıkmaz.
+KOK_SAYFALAR = [
+    ("sozluk", "sozluk.html"),
+    ("terimler", "terimler.html"),
+    ("muhasebe-terimleri", "muhasebe-terimleri.html"),
+]
 SITE_BASE = os.environ.get("SITE_URL", "https://borsa-raporlari.pages.dev").rstrip("/")
 PARCA_BOYUTU = 1400
 
@@ -120,6 +130,26 @@ def parcala(metin, boyut=PARCA_BOYUTU):
     return parcalar
 
 
+def _belge_ekle(belgeler, kaynak, yol, tarih, url):
+    try:
+        baslik, metin = html_metni(yol)
+    except Exception as e:
+        print(f"  [atla] {yol}: {e}")
+        return
+    if len(metin) < 400:
+        return
+    for i, parca in enumerate(parcala(metin)):
+        belgeler.append({
+            "kaynak": kaynak,
+            "url": url,
+            "parca": i,
+            "baslik": baslik,
+            "tarih": tarih,
+            "icerik": parca,
+            "hash": hashlib.sha256(parca.encode("utf-8")).hexdigest()[:16],
+        })
+
+
 def belgeleri_topla(backfill=False):
     """(kaynak, klasör, desen) üçlülerine göre HTML'leri parçalar."""
     sinir = (datetime.now() - timedelta(days=10)).strftime("%Y-%m-%d")
@@ -133,25 +163,13 @@ def belgeleri_topla(backfill=False):
             tarih = ad[:10]
             if not backfill and tarih < sinir:
                 continue
-            yol = os.path.join(klasor, ad)
-            try:
-                baslik, metin = html_metni(yol)
-            except Exception as e:
-                print(f"  [atla] {yol}: {e}")
-                continue
-            if len(metin) < 400:
-                continue
-            url = f"{SITE_BASE}/{klasor}/{ad}"
-            for i, parca in enumerate(parcala(metin)):
-                belgeler.append({
-                    "kaynak": kaynak,
-                    "url": url,
-                    "parca": i,
-                    "baslik": baslik,
-                    "tarih": tarih,
-                    "icerik": parca,
-                    "hash": hashlib.sha256(parca.encode("utf-8")).hexdigest()[:16],
-                })
+            _belge_ekle(belgeler, kaynak, os.path.join(klasor, ad), tarih,
+                        f"{SITE_BASE}/{klasor}/{ad}")
+    for kaynak, ad in KOK_SAYFALAR:
+        if not os.path.isfile(ad):
+            continue
+        tarih = datetime.fromtimestamp(os.path.getmtime(ad)).strftime("%Y-%m-%d")
+        _belge_ekle(belgeler, kaynak, ad, tarih, f"{SITE_BASE}/{ad}")
     return belgeler
 
 

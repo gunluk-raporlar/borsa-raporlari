@@ -38,6 +38,10 @@ async function semanticGetir(soru) {
   const kaynaktanUrl = (s) => {
     const k = (s.kaynak || "").toLowerCase();
     const t = s.tarih || "";
+    // Sözlük sayfaları (2026-11-01 pgvector'a eklendi) tarihsiz ve kalıcıdır.
+    if (k.includes("sozluk")) return "/sozluk";
+    if (k.includes("muhasebe")) return "/muhasebe-terimleri";
+    if (k.includes("terim")) return "/terimler";
     if (k.includes("derin")) return `/derin-analiz/${t}`;
     if (k.includes("makro")) return `/makro-analiz/${t}`;
     if (k.includes("egitim")) return `/haftasonu-egitimi/${t}`;
