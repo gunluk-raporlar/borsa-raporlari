@@ -4244,6 +4244,9 @@ _SITE_ARAMA_KUTUSU = """
       // yapay zeka kutusu karari sonrasi — baglanti hicbir islem yapmiyordu).
       if (!sonuc.length) {
         html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Farklı bir terim veya hisse kodu deneyin.</div>';
+        // Dogal dilde sorular dizinde sonuc vermez; kullaniciyi asistana yonlendir
+        // (2026-11-01 kullanicinin "boyle mi?" ekranindaki gurultu vakasi).
+        html += '<div style="margin-top:6px; font-size:13px"><a href="' + KOK + 'ara?q=' + encodeURIComponent(q) + '">🤖 Bu soruyu asistana sor &rarr;</a></div>';
       } else {
         sonuc.forEach(function(x) {
           var metin = normalize(x.s.t);
@@ -4257,7 +4260,7 @@ _SITE_ARAMA_KUTUSU = """
           html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + (vBaslik || kac(x.s.b)) + '</a>' +
                   '<div style="color:#64748b;font-size:12.5px">' + (vKesit || kac(kesit)) + '…</div></div>';
         });
-        html += '<div style="margin-top:6px"><a href="' + KOK + 'ara?q=' + encodeURIComponent(q) + '">Tüm sonuçlar &rarr;</a></div>';
+        html += '<div style="margin-top:6px; font-size:12.5px"><a href="' + KOK + 'ara?q=' + encodeURIComponent(q) + '">Tüm sonuçlar ve 🤖 asistana sor &rarr;</a></div>';
       }
       panel.innerHTML = html;
     }).catch(function() {
