@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-10-31 22:18",
+ "guncelleme": "2026-11-01 22:34",
  "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + EVDS(5) + Resmi AB/ABD(24)",
  "gostergeler": [
   {
@@ -1058,6 +1058,20 @@
   },
   {
    "ulke": "ABD",
+   "ad": "Politika faizi",
+   "deger": 4.0,
+   "birim": "%",
+   "donem": "2026-11-01",
+   "tahmin": 4.0,
+   "onceki": 4.0,
+   "kaynak_baslik": "FRED Fed fon ust siniri",
+   "kaynak_periyot": "2026-11-01",
+   "frekans": "olay",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
+  },
+  {
+   "ulke": "ABD",
    "ad": "Büyüme (yıllık)",
    "deger": 2.1,
    "birim": "%",
@@ -1069,20 +1083,6 @@
    "kaynak_periyot": "2026-09-30",
    "frekans": "üç aylık",
    "teyit": "FRED"
-  },
-  {
-   "ulke": "ABD",
-   "ad": "Politika faizi",
-   "deger": 4.0,
-   "birim": "%",
-   "donem": "2026-10-31",
-   "tahmin": 4.0,
-   "onceki": 4.0,
-   "kaynak_baslik": "FRED Fed fon ust siniri",
-   "kaynak_periyot": "2026-10-31",
-   "frekans": "olay",
-   "teyit": "FRED",
-   "kaynak_durumu": "FRED resmi verisi"
   },
   {
    "ulke": "Euro Bölgesi",

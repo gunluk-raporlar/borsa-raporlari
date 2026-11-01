@@ -1,9 +1,9 @@
 {
   "schema": "borsa-raporlari/resmi-veri",
   "schema_version": 1,
-  "snapshot_id": "makro-2026-10-31-evening",
-  "guncelleme": "2026-10-31",
-  "olusturma": "2026-10-31T22:15:46+03:00",
+  "snapshot_id": "makro-2026-11-01-evening",
+  "guncelleme": "2026-11-01",
+  "olusturma": "2026-11-01T22:31:01+03:00",
   "kaynaklar": [
     "BEA",
     "BLS",
@@ -991,12 +991,12 @@
       "label": "Politika faizi",
       "value": 4.0,
       "unit": "%",
-      "period": "2026-10-31",
+      "period": "2026-11-01",
       "frequency": "olay",
       "forecast": 4.0,
       "previous": 4.0,
       "source_title": "FRED Fed fon ust siniri",
-      "source_period": "2026-10-31",
+      "source_period": "2026-11-01",
       "provenance": "FRED resmi verisi",
       "confirmed_by": "FRED",
       "kaynak_turu": "resmi kanal"
