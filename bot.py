@@ -5091,15 +5091,21 @@ _HISSE_LINK_ATLA = {"a", "script", "style", "pre", "code", "table",
 def _hisse_baglantilari_uygula(fragment, kok=""):
     """Rapor parcasindaki hisse gecislerini hisse sayfalarina baglar.
 
-    Raporda adi gecen TUM hisseler baglanir (kullanici karari 2026-11-01:
-    sayfa basi limit konmaz); kod basina tek link — ilk gecis kazanir,
-    "Tüpraş (TUPRS)" tek link uretir. Etiket-farkindalikli calisir: yalniz
-    metin dugumlerine dokunur, acik atla-etiketi kapanana kadar metne
-    mudahale etmez. href ureticilerin mevcut "{kok}hisse/KOD.html" bicimindedir;
+    Raporda adi gecen TUM hisselerin TUM gecisleri baglanir (kullanici
+    kararlari 2026-11-01: sayfa basi limit konmaz; bir hisse bir yerde
+    linkli baska yerde duz metin kalmaz). Yalniz istisna "Tüpraş (TUPRS)"
+    kalibidir: bir linkten hemen sonra — arada yalniz bosluk/parantez
+    varken — ayni kodun parantez icindeki tekrarina link eklenmez. Bu
+    bitisiklik denetimi etiket sinirlarini de tanir (cikisin kendi
+    <a>…</a> ciktisi uzerinden ikinci kosum da ayni sonucu verir;
+    idempotent). Tablo/baslik/<a>/script/style/pre/code icine dokunulmaz.
+    href ureticilerin mevcut "{kok}hisse/KOD.html" bicimindedir;
     temiz-URL temizligi yayinda yapilir."""
     parcalar = re.split(r"(<[^>]+>)", fragment)
     atla = 0
-    baglanan = set()
+    son_kod = None  # en son uretilen/ustlenilen baglantinin kodu
+    ara = ""        # son baglantidan bu yana biriken duz metin
+    aday = None     # <a href="…/hisse/KOD…"> icindeyken baglantinin kodu
     cikti = []
     for parca in parcalar:
         if parca.startswith("<"):
@@ -5108,8 +5114,18 @@ def _hisse_baglantilari_uygula(fragment, kok=""):
             if parca.startswith("</"):
                 if etiket in _HISSE_LINK_ATLA and atla > 0:
                     atla -= 1
-            elif not parca.endswith("/>") and etiket in _HISSE_LINK_ATLA:
-                atla += 1
+                if etiket == "a":
+                    son_kod, ara, aday = aday, "", None
+                else:
+                    son_kod, ara = None, ""
+            else:
+                if not parca.endswith("/>") and etiket in _HISSE_LINK_ATLA:
+                    atla += 1
+                if etiket == "a":
+                    hm = re.search(r"/hisse/([A-Za-z0-9]+)", parca)
+                    aday = hm.group(1).upper() if hm else None
+                elif etiket in _HISSE_LINK_ATLA:
+                    son_kod, ara = None, ""
             cikti.append(parca)
             continue
         if atla:
@@ -5118,13 +5134,16 @@ def _hisse_baglantilari_uygula(fragment, kok=""):
         pos = 0
         for m in _HISSE_LINK_RE.finditer(parca):
             kod = _HISSE_LINK_KOD.get(m.group(0))
-            if kod is None or kod in baglanan:
+            if kod is None:
                 continue
+            if kod == son_kod and not (ara + parca[pos:m.start()]).strip(" ("):
+                continue  # "Tüpraş (TUPRS)": bitisik tekrara link eklenmez
             cikti.append(parca[pos:m.start()])
             cikti.append(f'<a href="{kok}hisse/{kod}.html">{m.group(0)}</a>')
             pos = m.end()
-            baglanan.add(kod)
+            son_kod, ara = kod, ""
         cikti.append(parca[pos:])
+        ara += parca[pos:]
     return "".join(cikti)
 
 
