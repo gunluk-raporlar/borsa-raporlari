@@ -1,0 +1,64 @@
+name: Hisse degerlendirme yenileme (haftalik)
+on:
+  schedule:
+    # Pazar 08:30 TSİ — piyasa kapalı, haftalık periyot (kullanıcı kararı
+    # 2026-11-01: "hisseleri güncelle, sonra haftalık güncellensin").
+    # bilanco_degerlendirmesi bu koşuda YALNIZ yeni dönem gelen hissede
+    # yenilenir (şirket açıklama takvimi); teknik/makro metni her koşuda.
+    - cron: '30 5 * * 0'
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: hisse-degerlendirme
+  cancel-in-progress: false
+jobs:
+  yenile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+      - name: Gunluk kosunun bitmesini bekle (sayfa cakismasini onler)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for i in $(seq 1 75); do
+            AKTIF=$(gh run list --workflow=daily.yml --status in-progress \
+                    --json databaseId -q 'length(.)' 2>/dev/null || echo 1)
+            if [ "$AKTIF" = "0" ]; then echo "Gunluk kosu yok — devam."; exit 0; fi
+            echo "Gunluk kosu suruyor ($i. dk) — bekleniyor..."
+            sleep 60
+          done
+          echo "75 dk beklendi; gunluk kosu hala suruyor — yine de devam (rebase koruması var)."
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Kutuphaneleri kur
+        run: pip install -r requirements.txt
+      - name: EMA Lightning kur (bot importu icin, fail-open)
+        run: |
+          pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+          pip install "ema-lightning==1.0.1" || echo "[TTS] ema-lightning kurulamadi"
+      - name: Degerlendirme metinlerini yenile
+        env:
+          AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
+          DISCOVERY_API_KEY: ${{ secrets.DISCOVERY_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+        run: python hisse_degerlendirme_yenile.py
+      - name: Degisiklikleri depoya geri kaydet
+        run: |
+          git config user.name "borsa-bot"
+          git config user.email "borsa-bot@users.noreply.github.com"
+          python3 baglanti_guzellestir.py . || echo "UYARI: baglanti temizligi atlandi"
+          git add -A
+          git diff --cached --quiet || git commit -m "Hisse degerlendirmeleri haftalik yenileme [CI Skip]"
+          git pull --rebase -X theirs origin main
+          git push origin main

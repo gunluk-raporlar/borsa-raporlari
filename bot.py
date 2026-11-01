@@ -5044,18 +5044,17 @@ _HISSE_LINK_RE = re.compile(
 # icice baglanti olmaz, script/style/pre/code icerigi metin degildir.
 _HISSE_LINK_ATLA = {"a", "script", "style", "pre", "code", "table",
                     "h1", "h2", "h3", "h4", "h5", "h6"}
-_HISSE_LINK_SAYFA_LIMITI = 5
 
 
 def _hisse_baglantilari_uygula(fragment, kok=""):
     """Rapor parcasindaki hisse gecislerini hisse sayfalarina baglar.
 
-    Etiket-farkindalikli calisir: yalniz metin dugumlerine dokunur, acik
-    atla-etiketi (<a>, tablo, baslik ...) kapanana kadar metne mudahale etmez.
-    Kod basina tek link (ilk gecis kazanir — "Tüpraş (TUPRS)" tek link uretir),
-    sayfa basina en fazla _HISSE_LINK_SAYFA_LIMITI farkli kod; limit asilinca
-    kalan gecisler metin olarak birakilir. href ureticilerin mevcut
-    "{kok}hisse/KOD.html" bicimindedir; temiz-URL temizligi yayinda yapilir."""
+    Raporda adi gecen TUM hisseler baglanir (kullanici karari 2026-11-01:
+    sayfa basi limit konmaz); kod basina tek link — ilk gecis kazanir,
+    "Tüpraş (TUPRS)" tek link uretir. Etiket-farkindalikli calisir: yalniz
+    metin dugumlerine dokunur, acik atla-etiketi kapanana kadar metne
+    mudahale etmez. href ureticilerin mevcut "{kok}hisse/KOD.html" bicimindedir;
+    temiz-URL temizligi yayinda yapilir."""
     parcalar = re.split(r"(<[^>]+>)", fragment)
     atla = 0
     baglanan = set()
@@ -5077,14 +5076,12 @@ def _hisse_baglantilari_uygula(fragment, kok=""):
         pos = 0
         for m in _HISSE_LINK_RE.finditer(parca):
             kod = _HISSE_LINK_KOD.get(m.group(0))
-            if kod is None or kod in baglanan or len(baglanan) >= _HISSE_LINK_SAYFA_LIMITI:
+            if kod is None or kod in baglanan:
                 continue
             cikti.append(parca[pos:m.start()])
             cikti.append(f'<a href="{kok}hisse/{kod}.html">{m.group(0)}</a>')
             pos = m.end()
             baglanan.add(kod)
-            if len(baglanan) >= _HISSE_LINK_SAYFA_LIMITI:
-                break
         cikti.append(parca[pos:])
     return "".join(cikti)
 
@@ -7835,28 +7832,36 @@ def haberler_yaz(gun=14):
 def _ara_sayfasi_yaz():
     """Site ici arama sonuclari sayfasi (ara.html; temiz URL /ara).
 
-    Sorgu-parametreli tek statik sayfa: arama istemcide site-arama.json
-    uzerinden yapilir, eslesen terimler <mark> ile vurgulanir. Sorgulu URL'ler
-    taranabilir icerik olmadigindan noindex'tir; sitemap ve site-arama.json'a
-    eklenmez; dil kopyasi da uretilmez (i18n HARIC_DOSYALAR). Hisse
-    sayfalarindaki "Sitede KOD gecen tum rapor bolumleri" baglantisi bu sayfaya
-    yonlenir (kokeni: dis sitesindeki aramaya giden link). Navigasyonda yer
-    almaz; kesif yolu her sayfadaki arama kutusudur."""
+    Iki katmanli arama: BIRINCIL katman anlam-duzeyi (embedding/pgvector)
+    aramadir — istemci, ayni-kokenli /api/ara vekil fonksiyonunu cagirir
+    (functions/api/ara.js), o da arka uca POST eder; sonuclarin URL'leri
+    kendi sayfalarimiza cevrilmis gelir. YEDEK katman site-arama.json
+    uzerinden sayfa-basligi aramasidir; arka uc yanit vermez veya bos
+    donerse devreye girer (fail-open). Eslesen terimler <mark> ile
+    vurgulanir. Sorgulu URL'ler taranabilir icerik olmadigindan noindex'tir;
+    sitemap ve site-arama.json'a eklenmez; dil kopyasi da uretilmez
+    (i18n HARIC_DOSYALAR). Hisse sayfalarindaki "Sitede KOD gecen tum rapor
+    bolumleri" baglantisi bu sayfaya yonlenir. Navigasyonda yer almaz;
+    kesif yolu her sayfadaki arama kutusudur."""
     icerik = """
 <div class="hero">
 <h1>Site Arama</h1>
-<div class="meta"><span>Hisse kodu, konu veya tarihle site içinde arama — eşleşen terimler vurgulanır</span></div>
+<div class="meta"><span>Rapor arşivinde anlam düzeyinde akıllı arama (embedding) + sayfa dizini araması — eşleşen terimler vurgulanır</span></div>
 </div>
 <div class="card" style="padding:16px">
   <div style="display:flex; gap:8px; flex-wrap:wrap">
-    <input type="text" id="ara-giris" placeholder="Hisse, konu veya tarih ara&hellip;" style="flex:1; min-width:200px; padding:8px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--card); color:var(--ink)" onkeypress="if(event.key === 'Enter') araTum()">
+    <input type="text" id="ara-giris" placeholder="Soru, hisse kodu veya konu ara&hellip;" style="flex:1; min-width:200px; padding:8px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--card); color:var(--ink)" onkeypress="if(event.key === 'Enter') araTum()">
     <button onclick="araTum()" style="background:#0f766e; color:white; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-weight:600">Ara</button>
+  </div>
+  <div style="margin-top:8px; font-size:12.5px; color:#64748b">Örnek sorular:
+    <button onclick="ornekBak(this)" class="ornek-soru" style="border:none; background:none; color:#0f766e; cursor:pointer; font-size:12.5px; text-decoration:underline; padding:0">TCMB faiz kararı sonrası banka yorumları</button> ·
+    <button onclick="ornekBak(this)" class="ornek-soru" style="border:none; background:none; color:#0f766e; cursor:pointer; font-size:12.5px; text-decoration:underline; padding:0">RSI aşırı alım sinyali veren hisseler</button> ·
+    <button onclick="ornekBak(this)" class="ornek-soru" style="border:none; background:none; color:#0f766e; cursor:pointer; font-size:12.5px; text-decoration:underline; padding:0">TUPRS bilanço ve temettü gelişmeleri</button>
   </div>
   <div id="ara-sonuc" style="margin-top:14px"></div>
 </div>
 <script>
 (function() {
-  var KOK = '';
   var INDEKS = null;
 
   function normalize(s) {
@@ -7904,46 +7909,82 @@ def _ara_sayfasi_yaz():
 
   function indeksYukle() {
     if (INDEKS) return Promise.resolve(INDEKS);
-    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+    return fetch('site-arama.json?t=' + Date.now())
       .then(function(r) { return r.json(); })
       .then(function(d) { INDEKS = d; return d; });
   }
+
+  function dizinSonuclari(indeks, q) {
+    var terimler = q.split(/\\s+/).filter(Boolean);
+    return (indeks.sayfalar || []).map(function(s) {
+      var puan = 0;
+      terimler.forEach(function(t) { puan += kacKez(s.b, t) * 8 + kacKez(s.t, t); });
+      return { s: s, puan: puan };
+    }).filter(function(x) { return x.puan > 0; })
+      .sort(function(a, b) { return b.puan - a.puan; });
+  }
+
+  function yerelHtml(liste, terimler, tam) {
+    var cikti = '';
+    liste.forEach(function(x) {
+      var vBaslik = vurgula(x.s.b, terimler);
+      var kesit = tam ? x.s.t.slice(0, 200) : x.s.t.slice(0, 110);
+      var vKesit = vurgula(kesit, terimler);
+      cikti += '<div style="margin:0 0 ' + (tam ? '14px' : '6px') + '"><a href="' + x.s.u + '" style="font-weight:600; font-size:' + (tam ? '15px' : '13.5px') + '">' + (vBaslik || kac(x.s.b)) + '</a>' +
+               '<div style="color:#64748b; font-size:' + (tam ? '13px' : '12px') + '">' + (vKesit || kac(kesit)) + '&hellip;</div></div>';
+    });
+    return cikti;
+  }
+
+  function semantikHtml(sonuc, q) {
+    var terimler = q.split(/\\s+/).filter(Boolean);
+    var cikti = '<h2 style="margin:14px 0 8px; font-size:16px">&#129504; Anlam düzeyinde ' + sonuc.length + ' sonuç</h2>';
+    sonuc.forEach(function(x) {
+      var yuzde = Math.round(100 * (x.benzerlik || 0));
+      var baslik = (x.tarih || '') + ' — ' + (x.baslik || '') + ((x.kaynak || '') ? ' (' + x.kaynak + ')' : '');
+      var kesit = (x.icerik || '').slice(0, 300);
+      var vBaslik = vurgula(baslik, terimler);
+      var vKesit = vurgula(kesit, terimler);
+      cikti += '<div style="margin:0 0 16px">' +
+        '<div style="color:#0f766e; font-size:12.5px; font-weight:600">%' + yuzde + ' benzerlik</div>' +
+        '<a href="' + kac(x.url || '') + '" style="font-weight:600; font-size:15px">' + (vBaslik || kac(baslik)) + '</a>' +
+        '<div style="color:#64748b; font-size:13px; margin-top:2px">' + (vKesit || kac(kesit)) + ((x.icerik || '').length > 300 ? '&hellip;' : '') + '</div></div>';
+    });
+    return cikti;
+  }
+
+  window.ornekBak = function(btn) {
+    document.getElementById('ara-giris').value = btn.textContent;
+    window.araTum();
+  };
 
   window.araTum = function() {
     var giris = document.getElementById('ara-giris');
     var kutu = document.getElementById('ara-sonuc');
     var q = (giris.value || '').trim();
-    if (!q) { kutu.innerHTML = '<p style="color:#64748b;font-size:14px">Arama yapmak için bir terim yazın.</p>'; return; }
-    kutu.innerHTML = '<p style="color:#94a3b8;font-size:14px">Aranıyor&hellip;</p>';
-    indeksYukle().then(function(indeks) {
-      var terimler = q.split(/\\s+/).filter(Boolean);
-      var sonuc = (indeks.sayfalar || []).map(function(s) {
-        var puan = 0;
-        terimler.forEach(function(t) {
-          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
-        });
-        return { s: s, puan: puan };
-      }).filter(function(x) { return x.puan > 0; })
-        .sort(function(a, b) { return b.puan - a.puan; })
-        .slice(0, 50);
-
-      var cikti = '<p style="color:#64748b;font-size:13px">Aranan: <strong>' + kac(q) + '</strong>' +
-                  (sonuc.length ? ' &middot; ' + sonuc.length + ' sayfa eşleşti' : '') + '</p>';
-      if (!sonuc.length) {
-        cikti += '<p style="color:#64748b;font-size:14px">Site içinde sonuç bulunamadı. Farklı bir terim veya hisse kodu deneyin.</p>';
-      } else {
-        sonuc.forEach(function(x) {
-          var vBaslik = vurgula(x.s.b, terimler);
-          var kesit = x.s.t.slice(0, 220);
-          var vKesit = vurgula(kesit, terimler);
-          cikti += '<div style="margin:0 0 14px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:15px">' + (vBaslik || kac(x.s.b)) + '</a>' +
-                   '<div style="color:#64748b;font-size:13px; margin-top:2px">' + (vKesit || kac(kesit)) + '&hellip;</div></div>';
-        });
-      }
-      kutu.innerHTML = cikti;
-    }).catch(function() {
-      kutu.innerHTML = '<p style="color:#b91c1c;font-size:14px">Arama indeksi yüklenemedi.</p>';
-    });
+    if (!q) { kutu.innerHTML = '<p style="color:#64748b; font-size:14px">Arama yapmak için bir terim veya soru yazın.</p>'; return; }
+    kutu.innerHTML = '<p style="color:#94a3b8; font-size:14px">Aranıyor&hellip;</p>';
+    var semantik = null;
+    fetch('/api/ara', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q: q }) })
+      .then(function(r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function(v) { semantik = v.sonuc || []; return indeksYukle(); })
+      .catch(function() { semantik = null; return indeksYukle(); })
+      .then(function(indeks) {
+        var terimler = q.split(/\\s+/).filter(Boolean);
+        var yerel = dizinSonuclari(indeks, q);
+        var cikti = '<p style="color:#64748b; font-size:13px">Aranan: <strong>' + kac(q) + '</strong></p>';
+        if (semantik && semantik.length) {
+          cikti += semantikHtml(semantik, q);
+          if (yerel.length) {
+            cikti += '<h2 style="margin:18px 0 8px; font-size:15px; color:#475569">Sayfa başlığı eşleşmeleri</h2>' + yerelHtml(yerel.slice(0, 8), terimler, false);
+          }
+        } else if (semantik && !semantik.length) {
+          cikti += '<p style="color:#64748b; font-size:14px">Anlam araması sonuç vermedi; sayfa dizininde aranıyor&hellip;</p>' + yerelHtml(yerel.slice(0, 50), terimler, true);
+        } else {
+          cikti += '<p style="color:#b45309; font-size:13px">Akıllı arama şu anda yanıt vermedi; sayfa dizini araması gösteriliyor.</p>' + yerelHtml(yerel.slice(0, 50), terimler, true);
+        }
+        kutu.innerHTML = cikti;
+      });
   };
 
   var ilk = new URLSearchParams(location.search).get('q');
