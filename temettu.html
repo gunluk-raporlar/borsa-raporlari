@@ -672,7 +672,7 @@ sermaye artırımlarını gün gün simüle eder.</p>
 bedelsiz sermaye artırımları oran olarak uygulanır. Seri, Borsa İstanbul resmî günlük
 bültenleriyle örneklemli olarak karşılaştırılmıştır (4 Mart 2008: %0,9 fark). Veriler otomatik
 olarak tazelenir (son güncelleme:
-2026-11-01 23:02). Bu sayfa bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.
+2026-11-02 00:35). Bu sayfa bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.
 </p>
 
 <script>
@@ -1385,6 +1385,12 @@ olarak tazelenir (son güncelleme:
       if (input.value && input.value.indexOf('-') === 4) input.dataset.iso = input.value;
       if (input.dataset.iso) input.value = trTarih(input.dataset.iso);
       input.addEventListener('click', function () { panelAc(input); });
+    });
+    // Panel icindeki tiklamalar belgeye yayilmasin: yil butonu innerHTML yenilemesiyle
+    // DOM'dan koparilinca kopuk hedefin closest(.tarih-alan)'i bos doner ve panel
+    // haksiz yere kapanir (yil secilince ay listesi gorunmuyordu).
+    Array.prototype.forEach.call(document.querySelectorAll('.tarih-panel'), function (p) {
+      p.addEventListener('click', function (ev) { ev.stopPropagation(); });
     });
     document.addEventListener('click', function (ev) {
       if (!ev.target.closest('.tarih-alan')) panelKapat();
