@@ -49,7 +49,7 @@ async function llmCagir(messages) {
     method: "POST",
     headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
     body: JSON.stringify({
-      model: process.env.ASISTAN_MODEL || "meta-llama/llama-3.3-70b-instruct:free",
+      model: process.env.ASISTAN_MODEL || "deepseek/deepseek-chat-v3.1:free",
       messages,
       temperature: 0.2,
     }),
