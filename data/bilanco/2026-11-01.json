@@ -12,19 +12,6 @@
     "finansal_borc": 106168737000.0,
     "donem": "2026/6"
   },
-  "ASELS": {
-    "donen_varlik": 281300186000.0,
-    "duran_varlik": 337570724000.0,
-    "toplam_varlik": 618870910000.0,
-    "kisa_borc": 193955131000.0,
-    "uzun_borc": 84847406000.0,
-    "ozsermaye": 340068373000.0,
-    "odenmis_sermaye": 4560000000.0,
-    "satis": 151486106000.0,
-    "net_kar": 26349554000.0,
-    "finansal_borc": 87008083000.0,
-    "donem": "2026/9"
-  },
   "BIMAS": {
     "donen_varlik": 152411807000.0,
     "duran_varlik": 276162543000.0,
@@ -36,32 +23,6 @@
     "satis": 449695235000.0,
     "net_kar": 15094815000.0,
     "finansal_borc": 62592510000.0,
-    "donem": "2026/6"
-  },
-  "EKGYO": {
-    "donen_varlik": 387011301000.0,
-    "duran_varlik": 36612383000.0,
-    "toplam_varlik": 423623684000.0,
-    "kisa_borc": 177353069000.0,
-    "uzun_borc": 91939011000.0,
-    "ozsermaye": 154331604000.0,
-    "odenmis_sermaye": 3800000000.0,
-    "satis": 51262860000.0,
-    "net_kar": 2981907000.0,
-    "finansal_borc": 62614128000.0,
-    "donem": "2026/6"
-  },
-  "ENKAI": {
-    "donen_varlik": 248557693000.0,
-    "duran_varlik": 294250678000.0,
-    "toplam_varlik": 542808371000.0,
-    "kisa_borc": 84728253000.0,
-    "uzun_borc": 41324552000.0,
-    "ozsermaye": 416755566000.0,
-    "odenmis_sermaye": 6021689000.0,
-    "satis": 84745798000.0,
-    "net_kar": 20485513000.0,
-    "finansal_borc": 7584491000.0,
     "donem": "2026/6"
   },
   "EREGL": {
