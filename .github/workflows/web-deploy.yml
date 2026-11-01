@@ -59,6 +59,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           set -e
           printf '%s' "https://ttmdhdoxhbrjnzrxttmr.supabase.co" | npx wrangler@3 pages secret put SUPABASE_URL --project-name=borsa-raporlari-web
@@ -67,6 +68,11 @@ jobs:
           fi
           printf '%s' "$CLOUDFLARE_API_TOKEN" | npx wrangler@3 pages secret put CF_API_KEY --project-name=borsa-raporlari-web
           printf '%s' "$CLOUDFLARE_ACCOUNT_ID" | npx wrangler@3 pages secret put CF_ACCOUNT_ID --project-name=borsa-raporlari-web
+          # Asistan LLM anahtari (runtime secret; build env'e konmaz —
+          # architect notu 2026-11-01: bundle'a değme riski).
+          if [ -n "$OPENROUTER_API_KEY" ]; then
+            printf '%s' "$OPENROUTER_API_KEY" | npx wrangler@3 pages secret put OPENROUTER_API_KEY --project-name=borsa-raporlari-web
+          fi
 
       - name: Deploy
         env:

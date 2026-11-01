@@ -10,6 +10,7 @@
     "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static --project-name=borsa-raporlari-web"
   },
   "dependencies": {
+    "@langchain/langgraph": "~1.5.2",
     "next": "15.5.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",

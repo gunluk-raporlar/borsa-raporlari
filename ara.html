@@ -23,7 +23,6 @@
 <meta name="twitter:description" content="Site içinde hisse kodu, konu ve tarih araması; eşleşen terimler vurgulanır.">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
-<meta name="yandex-verification" content="2c8df12d0b97a734">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Site Arama", "description": "Site içinde hisse kodu, konu ve tarih araması; eşleşen terimler vurgulanır.", "url": "https://borsa-raporlari.pages.dev/ara", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -32,9 +31,9 @@
 </head>
 <body>
 <header class="topbar"><div class="inner">
-<div class="brand-row"><a class="brand" href="./">BIST 30 Günlük Raporlar</a>
+<div class="brand-row"><a class="brand" href="index.html">BIST 30 Günlük Raporlar</a>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
-<nav><a href="./">Ana Sayfa</a><a href="raporlar">Raporlar</a><a href="hisse/">Hisseler</a><a href="derin-analiz">Derin Analiz</a><a href="makro-analiz">Makro Analiz</a><a href="teknik-analiz">Teknik Tarama</a><a href="sinyal-karnesi">Sinyal Karnesi</a><a href="borsapy-analiz">Borsapy Sinyal</a><a href="haberler">Haberler</a><a href="sirket-haberleri">Şirket Haberleri</a><a href="portfolio">Deneme Portföyü</a><a href="haftasonu">Hafta Sonu</a><a href="haftasonu-egitimi">Borsa Okulu</a><a href="takvim">📅 Takvim</a><a href="sozluk">Sözlük</a><a href="terimler">Terimler</a><a href="muhasebe-terimleri">Muhasebe Terimleri</a><a href="robot">İşlem Robotu</a></nav>
+<nav><a href="index.html">Ana Sayfa</a><a href="raporlar.html">Raporlar</a><a href="hisse/index.html">Hisseler</a><a href="derin-analiz.html">Derin Analiz</a><a href="makro-analiz.html">Makro Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="sinyal-karnesi.html">Sinyal Karnesi</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="haberler.html">Haberler</a><a href="sirket-haberleri.html">Şirket Haberleri</a><a href="portfolio.html">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu</a><a href="haftasonu-egitimi.html">Borsa Okulu</a><a href="takvim.html">📅 Takvim</a><a href="sozluk.html">Sözlük</a><a href="terimler.html">Terimler</a><a href="muhasebe-terimleri.html">Muhasebe Terimleri</a><a href="robot.html">İşlem Robotu</a></nav>
 </div></header>
 
 <div class="ticker-bant" id="ticker-bant" data-kok="" style="margin-bottom:16px">
@@ -254,7 +253,7 @@
   <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Oynat / Duraklat">▶</button>
   <audio id="radyo-ses" preload="none"></audio>
   <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Ses seviyesi" title="Ses">
-  <span class="radyo-linkler"><a href="radyo/">📻 Tüm yayınlar &amp; Podcast sayfası</a> <span class="ayrac">•</span> <a href="radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-linkler"><a href="radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> <span class="ayrac">•</span> <a href="radyo/podcast.xml">RSS</a></span>
   <span class="radyo-uyari">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</span>
 </div>
 <script>
@@ -302,6 +301,47 @@
   </div>
   <div id="ara-sonuc" style="margin-top:14px"></div>
 </div>
+<div class="card" style="padding:16px; margin-top:14px">
+  <h2 style="margin:0 0 6px; font-size:16px">🤖 Asistana sor</h2>
+  <p style="margin:0 0 10px; font-size:12.5px; color:#64748b">Rapor arşivi ve güncel hisse verilerine dayanarak yanıtlar; kaynak sayfaları gösterir, sayıları kaynaklarına karşı doğrular. Yatırım tavsiyesi değildir.</p>
+  <div style="display:flex; gap:8px; flex-wrap:wrap">
+    <input type="text" id="asistan-giris" placeholder="Örn. GARAN bu hafta nasıl? / temettü nedir? / RSI aşırı alım hangi hisselerde?" style="flex:1; min-width:200px; padding:8px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--card); color:var(--ink)" onkeypress="if(event.key === 'Enter') asistanSor()">
+    <button onclick="asistanSor()" style="background:#1d4ed8; color:white; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-weight:600">Sor</button>
+  </div>
+  <div id="asistan-cikti" style="margin-top:12px"></div>
+</div>
+<script>
+function _kacHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+window.asistanSor = function() {
+  var g = document.getElementById('asistan-giris');
+  var k = document.getElementById('asistan-cikti');
+  var s = (g.value || '').trim();
+  if (!s) { k.innerHTML = '<p style="color:#64748b; font-size:13px">Önce bir soru yazın.</p>'; return; }
+  k.innerHTML = '<p style="color:#94a3b8; font-size:13px">🤖 Düşünüyor&hellip; (kaynaklar taranıyor, 10-30 saniye sürebilir)</p>';
+  fetch('/api/asistan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ soru: s }) })
+    .then(function(r) { return r.json().then(function(j) { return { kod: r.status, j: j }; }); })
+    .then(function(o) {
+      if (o.kod !== 200 || !o.j.cevap) {
+        k.innerHTML = '<p style="color:#b91c1c; font-size:13px">' + _kacHtml(o.j.hata || 'Asistan şu anda yanıt vermedi; biraz sonra deneyin.') + '</p>';
+        return;
+      }
+      var h = '<div style="border-top:1px solid var(--line); padding-top:10px; white-space:pre-wrap; font-size:14px; line-height:1.6">' + _kacHtml(o.j.cevap) + '</div>';
+      if (o.j.uyari) h += '<p style="color:#b45309; font-size:12.5px; margin-top:8px">' + _kacHtml(o.j.uyari) + '</p>';
+      var kay = o.j.kaynaklar || [];
+      if (kay.length) {
+        h += '<p style="margin-top:8px; font-size:12.5px">Kaynaklar: ';
+        kay.forEach(function(kk, i) {
+          h += (i ? ' &middot; ' : '') + '<a href="' + _kacHtml(kk.url || '') + '">' + _kacHtml(kk.baslik || '') + '</a>';
+        });
+        h += '</p>';
+      }
+      k.innerHTML = h;
+    })
+    .catch(function() {
+      k.innerHTML = '<p style="color:#b91c1c; font-size:13px">Asistan şu anda yanıt vermedi; biraz sonra deneyin.</p>';
+    });
+};
+</script>
 <script>
 (function() {
   var INDEKS = null;
@@ -437,12 +477,12 @@
 </main>
 
 <nav class="altbar" aria-label="Hızlı menü">
-<a href="raporlar"><span class="i" aria-hidden="true">📊</span>Raporlar</a>
-<a href="teknik-analiz"><span class="i" aria-hidden="true">📈</span>Teknik</a>
-<a href="hisse/"><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
-<a href="portfolio"><span class="i" aria-hidden="true">💼</span>Portföy</a>
-<a href="haberler"><span class="i" aria-hidden="true">📰</span>Haberler</a>
-<a href="takvim"><span class="i" aria-hidden="true">📅</span>Takvim</a>
+<a href="raporlar.html"><span class="i" aria-hidden="true">📊</span>Raporlar</a>
+<a href="teknik-analiz.html"><span class="i" aria-hidden="true">📈</span>Teknik</a>
+<a href="hisse/index.html"><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
+<a href="portfolio.html"><span class="i" aria-hidden="true">💼</span>Portföy</a>
+<a href="haberler.html"><span class="i" aria-hidden="true">📰</span>Haberler</a>
+<a href="takvim.html"><span class="i" aria-hidden="true">📅</span>Takvim</a>
 </nav>
 
 <script>
@@ -460,7 +500,7 @@ function temaDegistir() {
 })();
 </script>
 
-<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok ajanlı sistem)<br><a href="gizlilik" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
+<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok ajanlı sistem)<br><a href="gizlilik.html" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
 
 <!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
 <script>

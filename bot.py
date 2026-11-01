@@ -7860,6 +7860,47 @@ def _ara_sayfasi_yaz():
   </div>
   <div id="ara-sonuc" style="margin-top:14px"></div>
 </div>
+<div class="card" style="padding:16px; margin-top:14px">
+  <h2 style="margin:0 0 6px; font-size:16px">🤖 Asistana sor</h2>
+  <p style="margin:0 0 10px; font-size:12.5px; color:#64748b">Rapor arşivi ve güncel hisse verilerine dayanarak yanıtlar; kaynak sayfaları gösterir, sayıları kaynaklarına karşı doğrular. Yatırım tavsiyesi değildir.</p>
+  <div style="display:flex; gap:8px; flex-wrap:wrap">
+    <input type="text" id="asistan-giris" placeholder="Örn. GARAN bu hafta nasıl? / temettü nedir? / RSI aşırı alım hangi hisselerde?" style="flex:1; min-width:200px; padding:8px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; background:var(--card); color:var(--ink)" onkeypress="if(event.key === 'Enter') asistanSor()">
+    <button onclick="asistanSor()" style="background:#1d4ed8; color:white; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-weight:600">Sor</button>
+  </div>
+  <div id="asistan-cikti" style="margin-top:12px"></div>
+</div>
+<script>
+function _kacHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+window.asistanSor = function() {
+  var g = document.getElementById('asistan-giris');
+  var k = document.getElementById('asistan-cikti');
+  var s = (g.value || '').trim();
+  if (!s) { k.innerHTML = '<p style="color:#64748b; font-size:13px">Önce bir soru yazın.</p>'; return; }
+  k.innerHTML = '<p style="color:#94a3b8; font-size:13px">🤖 Düşünüyor&hellip; (kaynaklar taranıyor, 10-30 saniye sürebilir)</p>';
+  fetch('/api/asistan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ soru: s }) })
+    .then(function(r) { return r.json().then(function(j) { return { kod: r.status, j: j }; }); })
+    .then(function(o) {
+      if (o.kod !== 200 || !o.j.cevap) {
+        k.innerHTML = '<p style="color:#b91c1c; font-size:13px">' + _kacHtml(o.j.hata || 'Asistan şu anda yanıt vermedi; biraz sonra deneyin.') + '</p>';
+        return;
+      }
+      var h = '<div style="border-top:1px solid var(--line); padding-top:10px; white-space:pre-wrap; font-size:14px; line-height:1.6">' + _kacHtml(o.j.cevap) + '</div>';
+      if (o.j.uyari) h += '<p style="color:#b45309; font-size:12.5px; margin-top:8px">' + _kacHtml(o.j.uyari) + '</p>';
+      var kay = o.j.kaynaklar || [];
+      if (kay.length) {
+        h += '<p style="margin-top:8px; font-size:12.5px">Kaynaklar: ';
+        kay.forEach(function(kk, i) {
+          h += (i ? ' &middot; ' : '') + '<a href="' + _kacHtml(kk.url || '') + '">' + _kacHtml(kk.baslik || '') + '</a>';
+        });
+        h += '</p>';
+      }
+      k.innerHTML = h;
+    })
+    .catch(function() {
+      k.innerHTML = '<p style="color:#b91c1c; font-size:13px">Asistan şu anda yanıt vermedi; biraz sonra deneyin.</p>';
+    });
+};
+</script>
 <script>
 (function() {
   var INDEKS = null;
