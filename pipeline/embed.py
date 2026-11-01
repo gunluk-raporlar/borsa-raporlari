@@ -38,6 +38,9 @@ KAYNAKLAR = [
     # (kaynak adı, klasör, dosya adı deseni)
     ("gunluk-rapor", "raporlar", re.compile(r"^\d{4}-\d{2}-\d{2}\.html$")),
     ("derin-analiz", "derin-analiz", re.compile(r"^\d{4}-\d{2}-\d{2}\.html$")),
+    # makro-analiz başlangıçta unutulmuştu (kullanıcı bulgusu 2026-11-01:
+    # akıllı aramada makro sonuçları yok); backfill ile tüm arşiv işlenir.
+    ("makro-analiz", "makro-analiz", re.compile(r"^\d{4}-\d{2}-\d{2}\.html$")),
     ("haftasonu", "haftasonu", re.compile(r"^\d{4}-\d{2}-\d{2}\.html$")),
     ("egitim", "haftasonu-egitimi", re.compile(r"^\d{4}-\d{2}-\d{2}\.html$")),
 ]
