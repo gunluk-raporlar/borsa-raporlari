@@ -49,7 +49,10 @@ async function llmCagir(messages) {
     method: "POST",
     headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
     body: JSON.stringify({
-      model: process.env.ASISTAN_MODEL || "deepseek/deepseek-chat-v3.1:free",
+      // Varsayılan, OpenRouter'ın güncel kataloğunda doğrulanmış hızlı ücretsiz
+      // model (eski deepseek-chat-v3.1:free katalogdan kalktı — canlı testte
+      // LLM 404, 2026-11-01). ASISTAN_MODEL env ile değiştirilebilir.
+      model: process.env.ASISTAN_MODEL || "nvidia/nemotron-3.5-lightning:free",
       messages,
       temperature: 0.2,
     }),
