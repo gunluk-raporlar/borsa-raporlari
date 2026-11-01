@@ -43,15 +43,38 @@ async function stokVerisi(kod) {
 }
 
 async function llmCagir(messages) {
+  // 1. yol: Cloudflare Workers AI — embeddings ile AYNI anahtar zaten web
+  // projesinde kurulu; ücretsiz OpenRouter'a göre çok daha hızlı (kullanıcının
+  // zaman aşımı vakası 2026-11-01). Model env ile değiştirilebilir.
+  const { CF_ACCOUNT_ID, CF_API_KEY } = process.env;
+  if (CF_ACCOUNT_ID && CF_API_KEY) {
+    try {
+      const r = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/ai/run/${process.env.ASISTAN_CF_MODEL || "@cf/meta/llama-3.3-70b-instruct-fp8-fast"}`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${CF_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ messages, max_tokens: 700, temperature: 0.2 }),
+          signal: AbortSignal.timeout(35000),
+        }
+      );
+      if (r.ok) {
+        const j = await r.json();
+        const metin = j?.result?.response;
+        if (metin && metin.trim()) return metin;
+      }
+    } catch {
+      // Workers AI düşerse OpenRouter yedeği devralır
+    }
+  }
+
+  // 2. yol: OpenRouter (ücretsiz katman; yavaş/kota değişebilir)
   const key = process.env.OPENROUTER_API_KEY;
-  if (!key) throw new Error("OPENROUTER_API_KEY yok");
+  if (!key) throw new Error("LLM anahtarı yok");
   const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
     body: JSON.stringify({
-      // Varsayılan, OpenRouter'ın güncel kataloğunda doğrulanmış hızlı ücretsiz
-      // model (eski deepseek-chat-v3.1:free katalogdan kalktı — canlı testte
-      // LLM 404, 2026-11-01). ASISTAN_MODEL env ile değiştirilebilir.
       model: process.env.ASISTAN_MODEL || "nvidia/nemotron-3.5-lightning:free",
       messages,
       temperature: 0.2,
@@ -85,7 +108,11 @@ async function asistanCalistir(soru) {
       },
     };
   } catch (e) {
-    return { status: 502, body: { hata: e.message || "asistan hatası" } };
+    const mesaj = String(e?.message || "asistan hatası");
+    if (/aborted|timeout/i.test(mesaj)) {
+      return { status: 504, body: { hata: "Asistan şu anda yoğun (zaman aşımı); birkaç saniye sonra tekrar deneyin." } };
+    }
+    return { status: 502, body: { hata: mesaj } };
   }
 }
 

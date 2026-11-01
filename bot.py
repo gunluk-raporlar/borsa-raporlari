@@ -4219,6 +4219,44 @@ _SITE_ARAMA_KUTUSU = """
     return cikti + kac(metin.slice(pos));
   }
 
+  function kacHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function soruMu(q) {
+    // Dogal dilde soru gorunumunde ise asistani otomatik devreye al (2026-11-01
+    // kullanici: "site ici arama kutusuna yapmistim sanmistim" — asistan arama
+    // kutusundan ulasilabilir olmali). normalize sonrasi ASCII desenler.
+    if (/\\?\\s*$/.test(q)) return true;
+    return /nasil|nedir|neden|ne kadar|kac|ne zaman|yukseldi|dustu|oneri|tavsiye|hangi|kartir|kimdir/i.test(normalize(q));
+  }
+
+  function asistanBagla(panel, q, kok) {
+    var blok = document.createElement('div');
+    blok.style.cssText = 'margin:0 0 10px; padding:8px 10px; border:1px solid #dbeafe; background:#eff6ff; border-radius:6px';
+    blok.innerHTML = '<div style="font-size:12.5px; color:#1d4ed8; font-weight:600">🤖 Sorunuz asistana iletildi&hellip; (10-30 sn)</div>';
+    panel.insertBefore(blok, panel.firstChild);
+    fetch(kok + 'api/asistan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ soru: q }) })
+      .then(function(r) { return r.json().then(function(j) { return { kod: r.status, j: j }; }); })
+      .then(function(o) {
+        var c = '';
+        if (o.kod === 200 && o.j.cevap) {
+          c = '<div style="white-space:pre-wrap; font-size:13px; line-height:1.55">' + kacHtml(o.j.cevap) + '</div>';
+          if (o.j.uyari) c += '<div style="color:#b45309; font-size:12px; margin-top:6px">' + kacHtml(o.j.uyari) + '</div>';
+          var kay = o.j.kaynaklar || [];
+          if (kay.length) {
+            c += '<div style="font-size:12px; margin-top:6px">Kaynaklar: ';
+            kay.forEach(function(kk, i) { c += (i ? ' &middot; ' : '') + '<a href="' + kacHtml(kk.url || '') + '">' + kacHtml(kk.baslik || '') + '</a>'; });
+            c += '</div>';
+          }
+        } else {
+          c = '<span style="color:#b91c1c; font-size:12.5px">' + kacHtml(o.j.hata || 'Asistan şu anda yanıt vermedi.') + '</span>';
+        }
+        blok.innerHTML = '<div style="font-size:12px; color:#1d4ed8; font-weight:600; margin-bottom:4px">🤖 Asistan yanıtı</div>' + c;
+      })
+      .catch(function() {
+        blok.innerHTML = '<span style="color:#b91c1c; font-size:12.5px">Asistan şu anda yanıt vermedi.</span>';
+      });
+  }
+
   window.siteAra = function() {
     var giris = document.getElementById('site-arama-giris');
     var panel = document.getElementById('site-arama-sonuc');
@@ -4263,6 +4301,7 @@ _SITE_ARAMA_KUTUSU = """
         html += '<div style="margin-top:6px; font-size:12.5px"><a href="' + KOK + 'ara?q=' + encodeURIComponent(q) + '">Tüm sonuçlar ve 🤖 asistana sor &rarr;</a></div>';
       }
       panel.innerHTML = html;
+      if (soruMu(q)) asistanBagla(panel, q, KOK);
     }).catch(function() {
       panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';
     });
