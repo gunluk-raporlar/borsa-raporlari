@@ -27,6 +27,8 @@
   Cache-Control: public, max-age=300
 /zh/hisse/grafik.js
   Cache-Control: public, max-age=300
+/temettu-veri/*.json
+  Cache-Control: public, max-age=3600
 /style.css
   Cache-Control: public, max-age=3600
 /og-cover.png

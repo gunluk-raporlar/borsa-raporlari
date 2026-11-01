@@ -4665,6 +4665,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     a_alt_p = ' class="active"' if aktif == "portfoy" else ""
     a_alt_hb = ' class="active"' if aktif == "haberler" else ""
     a_tkv = ' class="active"' if aktif == "takvim" else ""
+    a_tm = ' class="active"' if aktif == "temettu" else ""
     a_alt_tkv = ' class="active"' if aktif == "takvim" else ""
     tam_url = SITE_URL + _guzel_url(yol.lstrip("/") if yol else "")
     if not aciklama:
@@ -4709,7 +4710,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <header class="topbar"><div class="inner">
 <div class="brand-row"><a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
-<nav><a href="{kok}index.html"{a_ana}>Ana Sayfa</a><a href="{kok}raporlar.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}makro-analiz.html"{a_mk}>Makro Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a><a href="{kok}terimler.html"{a_trm}>Terimler</a><a href="{kok}muhasebe-terimleri.html"{a_muh}>Muhasebe Terimleri</a><a href="{kok}robot.html"{a_rb}>İşlem Robotu</a></nav>
+<nav><a href="{kok}index.html"{a_ana}>Ana Sayfa</a><a href="{kok}raporlar.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}makro-analiz.html"{a_mk}>Makro Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}temettu.html"{a_tm}>💰 Temettü</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a><a href="{kok}terimler.html"{a_trm}>Terimler</a><a href="{kok}muhasebe-terimleri.html"{a_muh}>Muhasebe Terimleri</a><a href="{kok}robot.html"{a_rb}>İşlem Robotu</a></nav>
 </div></header>
 {_kendi_ticker(kok)}
 {_kendi_ticker2(kok)}
@@ -8966,6 +8967,8 @@ def site_arama_json_yaz(rapor_dosyalari):
               " ".join(v["en"] + " " + v["tr"] for v in _ifrs_yukle())[:18000]},
         {"b": "Ekonomik Takvim Rehberi", "u": "takvim.html",
          "t": "ekonomik takvim faiz enflasyon FOMC bilanço TCMB TÜİK veri açıklama rehber"},
+        {"b": "Temettü Merkezi — Takvim, Verim ve Hesaplayıcı", "u": "temettu.html",
+         "t": "temettü kâr payı bedelsiz bölünme birleşme sermaye artırımı temettü verimi hesaplayıcı takvim"},
     ]
     # Terim harf-grup sayfalari: her grup kendi terim adlariyla indekslenir
     # (bos grup sayfasi uretilmediginden sitemap/arama da yalniz dolu gruplari alir).
@@ -9065,6 +9068,7 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
                  for v in _terim_yukle())],
         ("muhasebe-terimleri.html", "weekly"),
         ("takvim.html", "weekly"),
+        ("temettu.html", "weekly"),
         ("hisse/", "daily"),
         ("sirket-haberleri.html", "daily"),
         ("radyo/index.html", "weekly"),

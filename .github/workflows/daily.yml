@@ -110,6 +110,13 @@ jobs:
           done
           echo "3 denemenin hepsi basarisiz oldu."
           exit 1
+      # Temettu Merkezi (2026-11-01): veri tazeleme (borsapy+Yahoo, ~2 dk) + sayfa
+      # uretimi. Fail-open: basarisizlik gunluk rapor yayinini etkilemez; onceki
+      # temettu-veri/ ve temettu.html yayinda kalir.
+      - name: Temettu verisi ve sayfasi
+        run: |
+          python -u temettu_cek.py || echo "::warning::Temettu veri cekimi basarisiz — onceki veriyle devam."
+          python -u temettu.py || echo "::warning::Temettu sayfasi uretilemedi — onceki sayfa yayinda kalir."
       - name: Degisiklikleri depoya geri kaydet
         run: |
           git config user.name "borsa-bot"

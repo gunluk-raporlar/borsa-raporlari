@@ -1,0 +1,318 @@
+<style>
+/* ---- Temettü sayfası ---- */
+.tm-hero h1 { margin:0 0 6px; font-size:27px; }
+.tm-hero p { margin:0; color:var(--muted); font-size:14.5px; max-width:78ch; }
+.tm-not { color:var(--muted); font-size:12.5px; line-height:1.6; margin:10px 0 0; }
+.tm-chip-row { display:flex; gap:6px; flex-wrap:wrap; margin:0 0 14px; }
+.tm-chip { border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:999px;
+           padding:4px 14px; font-size:12.5px; cursor:pointer; font-family:inherit; }
+.tm-chip[aria-pressed="true"] { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); font-weight:700; }
+.tm-ay { margin:0 0 18px; }
+.tm-ay h3 { font-size:14px; margin:0 0 6px; color:var(--muted); text-transform:uppercase; letter-spacing:.7px; font-weight:700; }
+.tm-olay { display:grid; grid-template-columns:76px 1fr auto auto auto; gap:10px; align-items:center;
+           padding:8px 0; border-bottom:1px solid var(--line); font-size:13.5px; }
+.tm-olay:last-child { border-bottom:none; }
+.tm-olay .t { color:var(--muted); font-variant-numeric:tabular-nums; }
+.tm-olay .k { font-weight:700; }
+.tm-olay .v { font-variant-numeric:tabular-nums; text-align:right; }
+.tm-olay .verim { font-size:12px; color:var(--muted); min-width:62px; text-align:right; }
+.tm-olay .f { font-size:12.5px; color:var(--muted); text-align:right; min-width:76px; font-variant-numeric:tabular-nums; }
+.tm-tahmin { opacity:.72; }
+.tm-etiket { display:inline-block; font-size:10px; letter-spacing:.4px; text-transform:uppercase;
+             border:1px dashed var(--line); border-radius:999px; padding:1px 7px; color:var(--muted); margin-left:6px; }
+.tm-bos { color:var(--muted); font-size:13px; padding:10px 0; }
+
+/* tablo */
+.tm-tablo th[data-sirala] { cursor:pointer; user-select:none; }
+.tm-tablo th[data-sirala]:hover { color:var(--accent); }
+.tm-tablo td.sayi { text-align:right; font-variant-numeric:tabular-nums; }
+.tm-tablo th.sayi { text-align:right; }
+.tm-tablo tr.tm-vurgu td { background:var(--accent-bg); }
+.tm-tablo-min { min-width:0 !important; font-size:12.5px; }
+.tm-tablo-min th, .tm-tablo-min td { padding:6px 8px; }
+
+/* hesaplayıcı */
+.hesap { display:grid; grid-template-columns:minmax(0,330px) minmax(0,1fr); gap:16px; align-items:start; }
+.hesap-form .alan { margin:0 0 14px; }
+.hesap-form label { display:block; font-size:12px; color:var(--muted); text-transform:uppercase;
+                    letter-spacing:.5px; margin:0 0 5px; font-weight:600; }
+.hesap-form select, .hesap-form input[type=text], .hesap-form input[type=number], .hesap-form input[type=date] {
+  width:100%; padding:9px 11px; border:1px solid var(--line); border-radius:8px; background:var(--card);
+  color:var(--ink); font-size:14px; font-family:inherit; }
+.hesap-form select:focus, .hesap-form input:focus { outline:2px solid var(--accent); outline-offset:1px; }
+.hesap-iki { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.hesap-fiyat { font-size:12.5px; color:var(--muted); margin:4px 0 0; }
+.hesap-fiyat b { color:var(--ink); }
+.hesap-onay { display:flex; align-items:flex-start; gap:8px; font-size:13px; color:var(--ink);
+              text-transform:none; letter-spacing:0; font-weight:400; margin:0 0 10px; cursor:pointer; }
+.hesap-onay input { margin:3px 0 0; width:16px; height:16px; accent-color:var(--accent); }
+.hesap-btn { width:100%; padding:12px; border:none; border-radius:9px; background:var(--accent);
+             color:#fff; font-size:15px; font-weight:700; letter-spacing:.6px; cursor:pointer; font-family:inherit; }
+.hesap-btn:hover { filter:brightness(1.08); }
+.hesap-btn:disabled { opacity:.6; cursor:progress; }
+.tm-seg { display:flex; gap:0; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+.tm-seg button { flex:1; border:none; background:var(--card); color:var(--ink); padding:8px 4px;
+                 font-size:13px; cursor:pointer; font-family:inherit; border-right:1px solid var(--line); }
+.tm-seg button:last-child { border-right:none; }
+.tm-seg button[aria-pressed="true"] { background:var(--accent); color:#fff; font-weight:700; }
+
+/* sonuç */
+.sonuc-bos { padding:40px 20px; text-align:center; color:var(--muted); font-size:14px; }
+.sonuc-ust { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:0 0 16px; }
+.sonuc-kart { background:var(--accent-bg); border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
+.sonuc-kart .l { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; }
+.sonuc-kart .v { font-size:19px; font-weight:700; margin-top:2px; font-variant-numeric:tabular-nums; }
+.sonuc-kart .a { font-size:11.5px; color:var(--muted); }
+.detay-liste { display:grid; grid-template-columns:1fr auto; gap:6px 14px; font-size:13.5px; margin:0 0 16px; }
+.detay-liste .k { color:var(--muted); }
+.detay-liste .v { font-weight:600; text-align:right; font-variant-numeric:tabular-nums; }
+.detay-liste .ayrac { grid-column:1/-1; border-top:1px solid var(--line); margin:6px 0; }
+
+/* grafik */
+.graf-sekmeler { display:flex; gap:6px; flex-wrap:wrap; margin:0 0 10px; }
+.graf-sekmeler button { border:1px solid var(--line); background:var(--card); color:var(--ink);
+                        border-radius:8px; padding:4px 12px; font-size:12px; cursor:pointer; font-family:inherit; }
+.graf-sekmeler button[aria-pressed="true"] { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); font-weight:700; }
+.graf-kutu { position:relative; width:100%; }
+.graf-kutu svg { width:100%; height:auto; display:block; }
+.graf-ipucu { position:absolute; pointer-events:none; background:#0f172a; color:#f8fafc; border-radius:6px;
+              padding:5px 9px; font-size:11.5px; line-height:1.5; opacity:0; white-space:nowrap; z-index:5;
+              transform:translate(-50%,-115%); transition:opacity .12s; }
+.graf-ipucu b { font-size:12.5px; }
+.graf-lejant { display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin:6px 0 0; }
+.graf-lejant i { display:inline-block; width:14px; border-top:3px solid; vertical-align:middle; margin:0 5px 3px 0; border-radius:2px; }
+
+/* bilgi kutuları */
+.bilgi-izgara { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; }
+.bilgi-kutu { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; }
+.bilgi-kutu h3 { margin:0 0 8px; font-size:15px; }
+.bilgi-kutu p { margin:0 0 8px; font-size:13.5px; line-height:1.65; }
+.bilgi-kutu p:last-child { margin-bottom:0; }
+.sss { margin:0; }
+.sss details { border-bottom:1px solid var(--line); padding:10px 0; }
+.sss details:last-child { border-bottom:none; }
+.sss summary { cursor:pointer; font-weight:600; font-size:14px; }
+.sss summary::marker { color:var(--accent); }
+.sss p { margin:8px 0 0; font-size:13.5px; color:var(--muted); line-height:1.65; }
+.formul { background:var(--accent-bg); border:1px solid var(--line); border-radius:8px; padding:10px 12px;
+          font-family:ui-monospace,Consolas,monospace; font-size:12.5px; overflow-x:auto; margin:8px 0; }
+@media (max-width:900px) {
+  .hesap { grid-template-columns:1fr; }
+  .tm-olay { grid-template-columns:64px 1fr auto; }
+  .tm-olay .verim { display:none; }
+}
+</style>
+
+<div class="tm-hero">
+<h1>Temettü Merkezi</h1>
+<p>BIST 30 hisselerinin hisse başına kâr payı geçmişi, aylık temettü takvimi, güncel temettü verimi ve
+geçmişe dönük temettü getirisi hesaplayıcısı. Hesaplayıcı; düzenli alım, temettü ile lot alımı ve bedelsiz
+sermaye artırımlarını gün gün simüle eder.</p>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="label">Bu yıl temettü ödeyen</div><div class="value">{{S_BURSYIL}}</div><div class="a" style="font-size:11.5px;color:var(--muted)">{{S_BURSYIL_ADET}} · ex-tarih bazlı</div></div>
+  <div class="stat"><div class="label">Ortalama temettü verimi</div><div class="value">{{S_VERIM}}</div><div class="a" style="font-size:11.5px;color:var(--muted)">son 12 ay · {{S_VERIM_ADET}} hisse</div></div>
+  <div class="stat"><div class="label">En yüksek verim</div><div class="value">{{S_VEREN}}</div><div class="a" style="font-size:11.5px;color:var(--muted)">{{S_VEREN_AD}}</div></div>
+  <div class="stat"><div class="label">Sonraki tahmini ex-tarih</div><div class="value">{{S_SONRAKI}}</div><div class="a" style="font-size:11.5px;color:var(--muted)">{{S_SONRAKI_AD}}</div></div>
+</div>
+
+<section id="takvim">
+<h2 class="section-title">📅 Temettü Takvimi</h2>
+<div class="card">
+  <p style="margin:0 0 12px;font-size:13.5px;color:var(--muted)">
+    Hisse başına brüt kâr payı tutarları ve o günkü kapanış fiyatına göre verim. Tarih, temettünün
+    <b>ex-tarihi</b>dir (hissenin temettü hakkı olmadan işlem gördüğü ilk gün); ödeme genellikle 2 iş günü sonradır.
+  </p>
+  <div class="tm-chip-row" id="takvim-yillar">{{YIL_CHIP}}</div>
+  <div id="takvim-liste">{{TAKVIM}}</div>
+  <p class="tm-not">Tahmini satırlar geçmiş ödeme deseninden üretilir; şirket genel kurulu kararı olmadan
+  kesinleşmez. Kesin tarih ve tutarlar KAP bildirimlerinde yayımlanır.</p>
+</div>
+</section>
+
+<section id="verim">
+<h2 class="section-title">📊 Temettü Verimi Tablosu</h2>
+<div class="card">
+  <div class="tbl-wrap">
+  <table class="tm-tablo" id="verim-tablo">
+    <thead><tr>
+      <th data-sirala="kod">Hisse</th>
+      <th data-sirala="sonTutar" class="sayi">Son temettü</th>
+      <th data-sirala="sonTarih">Ex-tarih</th>
+      <th data-sirala="fiyat" class="sayi">Fiyat</th>
+      <th data-sirala="verim" class="sayi">Verim</th>
+      <th data-sirala="onIkiAy" class="sayi">12 ay toplam</th>
+      <th data-sirala="besYilVerim" class="sayi">5 yıl ort. verim</th>
+      <th data-sirala="yilSayisi" class="sayi">Kesintisiz yıl</th>
+      <th data-sirala="toplamOnYil" class="sayi">10 yıl temettü</th>
+    </tr></thead>
+    <tbody>{{VERIM}}</tbody>
+  </table>
+  </div>
+  <p class="tm-not">Verim = son 12 ayda hisse başına dağıtılan brüt temettü ÷ güncel fiyat. Bankalarda ve
+  holdinglerde kâr payı düzensizdir; tek yılın verimi tek başına gösterge değildir.</p>
+</div>
+</section>
+
+<section id="hesap">
+<h2 class="section-title">🧮 Temettü Hesaplayıcı</h2>
+<div class="hesap">
+  <div class="card hesap-form">
+    <div class="alan">
+      <label for="h-hisse">Hisse Kodu</label>
+      <select id="h-hisse">{{HISSE_SEC}}</select>
+      <p class="hesap-fiyat" id="h-secilen-fiyat">Seçilen tarihteki hisse fiyatı: —</p>
+    </div>
+    <div class="alan hesap-iki">
+      <div><label for="h-bas">Başlangıç Tarihi</label><input type="date" id="h-bas" value="{{BAS_DEFAULT}}" min="{{MIN_TARIH}}" max="{{MAX_TARIH}}"></div>
+      <div><label for="h-bit">Bitiş Tarihi</label><input type="date" id="h-bit" value="{{MAX_TARIH}}" min="{{MIN_TARIH}}" max="{{MAX_TARIH}}"></div>
+    </div>
+    <p class="hesap-fiyat" style="margin:-6px 0 14px">Veri aralığı: <b>{{VERI_ARALIGI}}</b>. Bu tarihten öncesinde kaynakta bedelsiz kayıtları eksik olduğu için hesaplayıcı geriye gitmez.</p>
+    <div class="alan">
+      <label>Para Birimi</label>
+      <div class="tm-seg" id="h-para">
+        <button type="button" data-p="tl" aria-pressed="true">TL</button>
+        <button type="button" data-p="usd" aria-pressed="false">Dolar</button>
+        <button type="button" data-p="altin" aria-pressed="false">Altın (gr)</button>
+      </div>
+    </div>
+    <div class="alan">
+      <label for="h-mod">Alım Yöntemi</label>
+      <select id="h-mod">
+        <optgroup label="Düzenli Alım">
+          <option value="0">Günlük Lot Alım</option>
+          <option value="1">Aylık Lot Alım</option>
+          <option value="5" selected>Aylık TL ile Alım</option>
+          <option value="6">Aylık Dolar ile Alım</option>
+          <option value="9">Aylık Altın ile Alım</option>
+          <option value="7">Asgari Ücret ile Alım</option>
+        </optgroup>
+        <optgroup label="Tek Seferde">
+          <option value="2">Tek Seferde Lot Alım</option>
+          <option value="3">Tek Seferde TL ile Alım</option>
+          <option value="4">Tek Seferde Dolar ile Alım</option>
+          <option value="8">Tek Seferde Altın ile Alım</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="alan" id="h-lot-alan" hidden>
+      <label for="h-lot">Alınan Lot Sayısı</label>
+      <input type="number" id="h-lot" value="100" min="1" step="1">
+    </div>
+    <div class="alan" id="h-tutar-alan">
+      <label for="h-tutar" id="h-tutar-etiket">Alım Tutarı (TL)</label>
+      <input type="number" id="h-tutar" value="10000" min="0" step="100">
+    </div>
+    <div class="alan" id="h-oran-alan" hidden>
+      <label for="h-oran">Asgari Ücrete Oranı</label>
+      <input type="number" id="h-oran" value="1" min="0.1" max="10" step="0.1">
+    </div>
+    <label class="hesap-onay"><input type="checkbox" id="h-temettu" checked> Temettü ile lot alımı</label>
+    <label class="hesap-onay"><input type="checkbox" id="h-enf"> Alımları enflasyon oranında yıllık arttır</label>
+    <div class="alan" id="h-enf-alan" hidden>
+      <label for="h-enf-oran">Yıllık enflasyon varsayımı (%)</label>
+      <input type="number" id="h-enf-oran" value="{{ENF_ORAN}}" min="0" max="200" step="0.5">
+    </div>
+    <button type="button" class="hesap-btn" id="h-hesapla">HESAPLA</button>
+    <p class="tm-not" id="h-durum" style="min-height:18px"></p>
+  </div>
+
+  <div class="card" id="h-sonuc">
+    <div class="sonuc-bos">Sonuçları görmek için soldaki formu doldurup <b>HESAPLA</b>'ya basın.</div>
+  </div>
+</div>
+</section>
+
+<section id="bilgi">
+<h2 class="section-title">📚 Temettü Rehberi</h2>
+<div class="bilgi-izgara">
+  <div class="bilgi-kutu">
+    <h3>Temettü nedir?</h3>
+    <p>Şirketin dönem kârının bir bölümünü ortaklarına nakit olarak dağıtmasıdır. Genel kurul kararıyla
+    belirlenir, hisse başına brüt TL olarak açıklanır ve hesaba <b>net</b> tutar geçer.</p>
+    <p>Temettü dağıtımı şirketin büyüme potansiyelini sınırlar; bu yüzden hızlı büyüyen şirketler kârı
+    içeride tutmayı tercih eder, olgun şirketler dağıtır.</p>
+  </div>
+  <div class="bilgi-kutu">
+    <h3>Ex-tarih ve ödeme tarihi</h3>
+    <p><b>Ex-tarih</b>, hissenin temettü hakkı olmadan işlem gördüğü ilk gündür; fiyat o sabah temettü
+    kadar düzeltilir. Temettüye hak kazanmak için hisseyi ex-tarihten <b>bir gün önce</b> kapanışta
+    elinizde tutmanız gerekir.</p>
+    <p><b>Ödeme tarihi</b> genellikle ex-tarihten 2 iş günü sonradır; nakit hesaba bu tarihte geçer.</p>
+  </div>
+  <div class="bilgi-kutu">
+    <h3>Stopaj ve vergi</h3>
+    <p>BIST'te kâr payı dağıtımında stopaj kaynakta kesilir: <b>2020 öncesi %15</b>, <b>2020 ve sonrası
+    %10</b>. Hesaplayıcı bu oranları ödeme tarihine göre uygular; tablolardaki tutarlar aksi belirtilmedikçe
+    <b>brüt</b>tür.</p>
+    <p>Tam mükellef gerçek kişilerde beyan sınırı aşılırsa ek gelir vergisi doğabilir; yatırım kararı öncesi
+    mali müşavirinize danışın.</p>
+  </div>
+  <div class="bilgi-kutu">
+    <h3>Temettü verimi nasıl hesaplanır?</h3>
+    <div class="formul">Verim (%) = Hisse başına yıllık brüt temettü ÷ Fiyat × 100</div>
+    <p>Örnek: 100 TL'lik hisse yılda 8 TL brüt temettü dağıtıyorsa verim %8'dir. Yüksek verim her zaman
+    iyi değildir; fiyat düşüşü verimi yapay olarak yükseltir.</p>
+  </div>
+  <div class="bilgi-kutu">
+    <h3>Temettü mü, bedelsiz mi?</h3>
+    <p><b>Temettü</b> nakit çıkışıdır: lot sayınız aynı kalır, nakit alırsınız. <b>Bedelsiz sermaye
+    artırımı</b> ise lot sayınızı çoğaltır, fiyatı oran kadar böler; servetiniz değişmez.</p>
+    <p>Hesaplayıcı bedelsizleri otomatik uygular, temettüyü ise tercihinize göre lota çevirir.</p>
+  </div>
+  <div class="bilgi-kutu">
+    <h3>Eski fiyatlar neden farklı görünüyor?</h3>
+    <p>Fiyatlar <b>nominal ve düzeltilmemiştir</b>. İki şey fiyatı bugünkünden koparır:</p>
+    <p><b>1) 2005 para reformu.</b> O tarihe kadar fiyatlar eski TL ile yazılıyordu; 1 Ocak
+    2005'te paradan altı sıfır atıldı (42.000.000 TL = 42 TL).</p>
+    <p><b>2) Bedelsiz sermaye artırımı.</b> Her bedelsizde fiyat oran kadar bölünür, lot
+    aynı oranda çoğalır — servet değişmez.</p>
+    <p>Örnek: TUPRS 2000'de 42 TL'ydi. 2001'de %235 bedelsiz → fiyat 12,5 TL'ye indi,
+    elinizdeki 1 hisse 3,35 hisse oldu. 2023'te %600 bedelsiz → fiyat 7'ye bölündü, hisse
+    sayısı 23,45'e çıktı.</p>
+    <table class="tm-tablo tm-tablo-min" style="margin:8px 0 10px">
+      <thead><tr><th></th><th class="sayi">2000</th><th class="sayi">Bugün</th></tr></thead>
+      <tbody>
+        <tr><td>Hisse fiyatı</td><td class="sayi">42,00 TL</td><td class="sayi">343,50 TL</td></tr>
+        <tr><td>Dolar</td><td class="sayi">$72,3</td><td class="sayi">$6,88</td></tr>
+        <tr><td>Aynı hisse</td><td class="sayi">1 hisse</td><td class="sayi">23,45 hisse</td></tr>
+      </tbody>
+    </table>
+    <p>Hisse başına fiyat "ucuzlamış" görünüyor, çünkü hisse 23 kat çoğaldı. Yatırdığın para
+    ise 26 yılda <b>192 kat</b> arttı (42 TL → 8.055 TL). Fiyat düzeyine değil, <b>paranın
+    getirisine</b> bakmak gerekir.</p>
+  </div>
+  <div class="bilgi-kutu">
+    <h3>Hesaplayıcı neyi simüle eder?</h3>
+    <p>Seçilen tarih aralığında gün gün ilerler: alım planınızı uygular, ex-tarihte temettüyü lot sayınızla
+    çarpar, stopajı düşer, tercihe göre aynı gün fiyatından lota çevirir ve bedelsiz oranlarını lotunuza uygular.</p>
+    <p>Kalan nakit sonraki alıma devreder. Fiyatlar düzeltilmemiş kapanıştır; işlem maliyeti (komisyon,
+    BSMV) hesaba katılmaz.</p>
+  </div>
+</div>
+
+<h3 class="section-title" style="font-size:16px;margin-top:28px">Sık sorulan sorular</h3>
+<div class="card sss">
+  <details><summary>Temettü aldığımda hisse fiyatı neden düşüyor?</summary>
+  <p>Ex-tarihte şirketin kasasından nakit çıktığı için fiyat temettü tutarı kadar düzeltilir. Bu bir kayıp
+  değildir: düşen fiyat + aldığınız nakit = önceki değer. Uzun vadede belirleyici olan, şirketin dağıttığı
+  nakdi yeniden üretebilmesidir.</p></details>
+  <details><summary>Hesaplayıcı neden geçmiş fiyatları kullanıyor?</summary>
+  <p>Amaç "bugün karar verseydim ne olurdu" sorusunu yanıtlamak değil, biriktirme disiplininin geçmişte
+  ne ürettiğini göstermektir. Geçmiş getiri gelecek getiriyi garanti etmez.</p></details>
+  <details><summary>Temettü verimi %10 üzeri olan hisse alınır mı?</summary>
+  <p>Tek başına yeterli değildir. Yüksek verim; kârın sürdürülebilirliği, borçluluk, nakit akışı ve
+  dağıtım politikasıyla birlikte okunmalıdır. Tek seferlik yüksek dağıtımlar verimi yapay şişirir.</p></details>
+  <details><summary>Neden bazı hisselerde temettü görünmüyor?</summary>
+  <p>Bazı şirketler kârı büyümeye ayırdığı için hiç kâr payı dağıtmaz (ör. havayolu ve teknoloji
+  şirketlerinin bir bölümü). Bu bir eksiklik değil, dağıtım politikası tercihidir.</p></details>
+</div>
+
+<p class="tm-not" style="margin-top:18px">
+<b>Yöntem ve kaynak:</b> Fiyatlar günlük kapanış, temettüler hisse başına brüt TL ve ex-tarih bazındadır;
+bedelsiz sermaye artırımları oran olarak uygulanır. Seri, Borsa İstanbul resmî günlük
+bültenleriyle örneklemli olarak karşılaştırılmıştır (4 Mart 2008: %0,9 fark). Veriler otomatik
+olarak tazelenir (son güncelleme:
+{{GUNCELLEME}}). Bu sayfa bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.
+</p>

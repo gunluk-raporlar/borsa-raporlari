@@ -13,7 +13,8 @@ mkdir -p dist
 # sayfalari bu dizinlerde; listeye alinmazsa hub kartlari 404'e duser.
 # terimler/ (2026-10-28): harf-grup sayfalari ayni sekilde listeye alinmali;
 # listede yoksa dist'e kopyalanmaz ve tum terim linkleri 404'e duser.
-for d in hisse raporlar derin-analiz makro-analiz radyo haftasonu haftasonu-egitimi terimler en de ru zh; do
+# temettu-veri/ (2026-11-01): temettu.html'in tarayicida okudugu JSON verileri.
+for d in hisse raporlar derin-analiz makro-analiz radyo haftasonu haftasonu-egitimi terimler temettu-veri en de ru zh; do
   if [ -d "$d" ]; then cp -r "$d" dist/; fi
 done
 
