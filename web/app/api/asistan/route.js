@@ -28,10 +28,23 @@ async function semanticGetir(soru) {
   const ej = await er.json();
   const vektor = ej?.data?.[0]?.embedding;
   if (!vektor) throw new Error("embedding boş");
-  return sbRest("rpc/match_belgeler", {
+  const eslesen = await sbRest("rpc/match_belgeler", {
     method: "POST",
     body: JSON.stringify({ sorgu_embedding: vektor, eslesme_sayisi: 6, min_skor: 0.3 }),
   });
+  // Kaynak URL'ini DEPOLANAN değerden değil kaynak adı+tarihten üret: eski
+  // embedding toplu işlerinde /reports/ gibi bozuk yollar kaydedilmişti
+  // (2026-11-01 canlı testte K2/K4 linkleri kırık çıktı).
+  const kaynaktanUrl = (s) => {
+    const k = (s.kaynak || "").toLowerCase();
+    const t = s.tarih || "";
+    if (k.includes("derin")) return `/derin-analiz/${t}`;
+    if (k.includes("makro")) return `/makro-analiz/${t}`;
+    if (k.includes("egitim")) return `/haftasonu-egitimi/${t}`;
+    if (k.includes("haftasonu")) return `/haftasonu/${t}`;
+    return `/raporlar/${t}`;
+  };
+  return (eslesen || []).map((s) => ({ ...s, url: kaynaktanUrl(s) }));
 }
 
 async function stokVerisi(kod) {
