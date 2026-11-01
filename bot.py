@@ -9275,39 +9275,52 @@ def og_cover_png_yaz():
 if __name__ == "__main__":
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     date_str = datetime.now(tz).strftime('%Y-%m-%d')
-    # Uretim baslamadan once onceki aksam snapshot'ini zorunlu dogrula.
-    guncel_snapshot = makro_snapshot_cek(expected_report_date=date_str)
-    logger.info("Makro snapshot: %s (%d kayit)", guncel_snapshot["snapshot_id"],
-                len(guncel_snapshot["records"]))
-    result = app.invoke({"news_data": "", "tech_data": "", "tech_prices": {}, "fundamental_data": "", "final_report": ""})
-    report = result["final_report"]
 
+    # Hafta sonu kapisi (2026-11-01 kullanici karari): 1 Kasim Pazar raporu,
+    # daily.yml'deki force denetimi hafta-sonu denetiminden once geldigi icin
+    # elle tetiklemeyle uretildi. Kapinin gercek yeri uretimin kendisidir:
+    # Cmt/Paz gunlerinde gunluk rapor (LangGraph LLM zinciri + TTS) hic
+    # uretilmez — token/sure harcanmaz, rapor dosyasi yazilmaz; force ile de
+    # asilamaz. LLM'siz diger sayfalar (teknik tarama, hisseler, arsivler)
+    # tazelenmeye devam eder; kod degisiklikleri hafta sonunda da sayfalara
+    # duser.
+    hafta_sonu = datetime.now(tz).weekday() >= 5
     os.makedirs("raporlar", exist_ok=True)
+    if hafta_sonu:
+        logger.info("[Gunluk rapor] Hafta sonu (TSI %s): gunluk rapor uretilmedi "
+                    "(piyasa kapali, LLM cagrisi yapilmadi); LLM'siz sayfalar "
+                    "tazelenecek.", date_str)
+    else:
+        # Uretim baslamadan once onceki aksam snapshot'ini zorunlu dogrula.
+        guncel_snapshot = makro_snapshot_cek(expected_report_date=date_str)
+        logger.info("Makro snapshot: %s (%d kayit)", guncel_snapshot["snapshot_id"],
+                    len(guncel_snapshot["records"]))
+        result = app.invoke({"news_data": "", "tech_data": "", "tech_prices": {}, "fundamental_data": "", "final_report": ""})
+        report = result["final_report"]
 
-    # Sesli bülten: rapor yazilmadan ONCE uretilir; boylece sayfa MP3 oynaticiyi
-    # gorebilirim. Basarisiszlik raporu asla engellemez.
-    try:
-        rapor_sesi_uret(markdown_to_html(report), date_str)
-    except Exception:
-        logger.exception("[TTS] ses uretimi atlandi; rapor uretimini etkilemez.")
-    _eski_sesleri_temizle()
+        # Sesli bülten: rapor yazilmadan ONCE uretilir; boylece sayfa MP3 oynaticiyi
+        # gorebilirim. Basarisiszlik raporu asla engellemez.
+        try:
+            rapor_sesi_uret(markdown_to_html(report), date_str)
+        except Exception:
+            logger.exception("[TTS] ses uretimi atlandi; rapor uretimini etkilemez.")
+        _eski_sesleri_temizle()
+
+        # Ekonomik takvim: TradingView acik ucundan; rapora 'Gunluk Ajanda'
+        # bolumu olarak girer ve takvim.html'de yayinlanir.
+        ajanda = []
+        try:
+            ajanda = ekonomik_takvim_cek()
+        except Exception:
+            logger.exception("[Takvim] cekilemedi; eski veri varsa o kullanilir.")
+        if not ajanda:
+            ajanda = _ekonomik_takvim_yukle()
+
+        # TUIK verisi akşam snapshot tarafından yazılır; rapor canlı veri çekmez.
+        with open(f"raporlar/{date_str}.html", "w", encoding="utf-8") as f:
+            f.write(build_html(report, date_str, teknik_satirlar=_SON_TEKNIK, ajanda=ajanda))
 
     raporlar = sorted((fn for fn in os.listdir("raporlar") if fn.endswith(".html")), reverse=True)
-
-    # Ekonomik takvim: TradingView acik ucundan; rapora 'Gunluk Ajanda'
-    # bolumu olarak girer ve takvim.html'de yayinlanir.
-    ajanda = []
-    try:
-        ajanda = ekonomik_takvim_cek()
-    except Exception:
-        logger.exception("[Takvim] cekilemedi; eski veri varsa o kullanilir.")
-    if not ajanda:
-        ajanda = _ekonomik_takvim_yukle()
-
-    # TUIK verisi akşam snapshot tarafından yazılır; rapor canlı veri çekmez.
-
-    with open(f"raporlar/{date_str}.html", "w", encoding="utf-8") as f:
-        f.write(build_html(report, date_str, teknik_satirlar=_SON_TEKNIK, ajanda=ajanda))
 
     # Teknik tarama: LLM'den bagimsiz, saf matematik; basarisiz olursa diger
     # sayfalarin uretimini bozmamasi icin ayri try/except icinde.

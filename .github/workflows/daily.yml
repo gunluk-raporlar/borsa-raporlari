@@ -59,7 +59,10 @@ jobs:
           # yoluyla gelen kosulari korumaz — 11 Ekim Pazar raporu harici bir
           # workflow_dispatch ile uretildi. Uretim anindaki Istanbul gunu
           # Cmt/Paz ise uretim yapilmaz; force=true ile elle zorlanabilir
-          # (derin-analiz.yml'deki ayni adin kopyasi).
+          # (derin-analiz.yml'deki ayni adin kopyasi). 2026-11-01 duzeltmesi:
+          # asil kapı bot.py __main__ girisinde — force ile acilan hafta-sonu
+          # kosusunda bot gunluk raporu URETEMEZ (LLM zinciri + TTS atlanir),
+          # yalniz LLM'siz sayfalari tazeler.
           GUN=$(TZ=Europe/Istanbul date +%u)   # 6=Cumartesi, 7=Pazar
           if [ "$GUN" -ge 6 ]; then
             echo "Hafta sonu (TSI $(TZ=Europe/Istanbul date +%F)) — gunluk rapor hafta ici yayinlanir; uretim atlandi."
@@ -111,6 +114,11 @@ jobs:
         run: |
           git config user.name "borsa-bot"
           git config user.email "borsa-bot@users.noreply.github.com"
+          # Ic baglanti guzel-URL temizligi (2026-10-31): icerik commit'i
+          # .html'li baglanti tasirsa publish her yayinda ayni dosyalari
+          # yeniden duzeltip surekli "temizlik dahil" commit'i uretiyordu.
+          # Fail-open: betik basarisizsa akis eskisi gibi surer.
+          python3 baglanti_guzellestir.py . || echo "UYARI: baglanti temizligi atlandi"
           git add -A
           git diff --cached --quiet || git commit -m "Gunluk rapor ve portfoy guncellemesi [CI Skip]"
           # Insan veya diger isler araya commit atarsa (fetch first) cakismasin:
