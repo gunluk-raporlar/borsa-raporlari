@@ -28,6 +28,9 @@ jobs:
       - name: Nobetci uzun suredir kosmadiysa uyandir
         env:
           GH_TOKEN: ${{ github.token }}
+          # gh, depoyu normalde git remote'dan secer; bu job checkout yapmadigi
+          # icin .git yoktu ve "failed to determine base repo" ile dusuyordu.
+          GH_REPO: ${{ github.repository }}
         run: |
           SON=$(gh run list --workflow=yayin-nobetci.yml --limit 1 \
                 --json createdAt --jq '.[0].createdAt // empty')
