@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-11-01 22:34",
+ "guncelleme": "2026-11-03 02:08",
  "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + EVDS(5) + Resmi AB/ABD(24)",
  "gostergeler": [
   {
@@ -136,6 +136,18 @@
    "onceki": 0.2,
    "kaynak_baslik": "Retail Sales MoM",
    "kaynak_periyot": "Aug",
+   "frekans": "aylık"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "İmalat PMI",
+   "deger": 47.3,
+   "birim": "puan",
+   "donem": "2026-11-02",
+   "tahmin": null,
+   "onceki": 47.9,
+   "kaynak_baslik": "Istanbul Chamber of Industry Manufacturing PMI",
+   "kaynak_periyot": "Oct",
    "frekans": "aylık"
   },
   {
@@ -585,12 +597,12 @@
   {
    "ulke": "ABD",
    "ad": "İmalat PMI",
-   "deger": 55.3,
+   "deger": 55.5,
    "birim": "puan",
-   "donem": "2026-10-30",
-   "tahmin": 56.1,
-   "onceki": 58.8,
-   "kaynak_baslik": "Chicago PMI",
+   "donem": "2026-11-02",
+   "tahmin": 54.6,
+   "onceki": 54.5,
+   "kaynak_baslik": "ISM Manufacturing PMI",
    "kaynak_periyot": "Oct",
    "frekans": "aylık"
   },
@@ -946,6 +958,18 @@
   },
   {
    "ulke": "Euro Bölgesi",
+   "ad": "İmalat PMI",
+   "deger": 52.7,
+   "birim": "puan",
+   "donem": "2026-11-02",
+   "tahmin": 52.4,
+   "onceki": 52.9,
+   "kaynak_baslik": "S&P Global Manufacturing PMI Final",
+   "kaynak_periyot": "Oct",
+   "frekans": "aylık"
+  },
+  {
+   "ulke": "Euro Bölgesi",
    "ad": "Tüketici Güveni",
    "deger": -17.9,
    "birim": "puan",
@@ -1061,11 +1085,11 @@
    "ad": "Politika faizi",
    "deger": 4.0,
    "birim": "%",
-   "donem": "2026-11-01",
+   "donem": "2026-11-02",
    "tahmin": 4.0,
    "onceki": 4.0,
    "kaynak_baslik": "FRED Fed fon ust siniri",
-   "kaynak_periyot": "2026-11-01",
+   "kaynak_periyot": "2026-11-02",
    "frekans": "olay",
    "teyit": "FRED",
    "kaynak_durumu": "FRED resmi verisi"
@@ -1089,11 +1113,11 @@
    "ad": "Politika faizi",
    "deger": 2.65,
    "birim": "%",
-   "donem": "2026-10-31",
+   "donem": "2026-11-02",
    "tahmin": 2.65,
    "onceki": 2.65,
    "kaynak_baslik": "ECB MRO ana refinansman faizi",
-   "kaynak_periyot": "2026-10-31",
+   "kaynak_periyot": "2026-11-02",
    "frekans": "olay",
    "teyit": "ECB",
    "kaynak_durumu": "ECB resmi verisi"
@@ -1101,7 +1125,7 @@
   {
    "ulke": "Türkiye",
    "ad": "Mevduat Faizi",
-   "deger": 43.04,
+   "deger": 42.925,
    "birim": "%",
    "donem": "2026-10-01",
    "frekans": "aylık",
@@ -1137,7 +1161,7 @@
   {
    "ulke": "Türkiye",
    "ad": "M3 Para Arzı (yıllık)",
-   "deger": 28.646,
+   "deger": 29.1009,
    "birim": "%",
    "donem": "2026-10-01",
    "frekans": "aylık",
