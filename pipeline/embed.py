@@ -49,10 +49,14 @@ KAYNAKLAR = [
 # sözlükler pgvector'a eklensin). Adlarında tarih olmadığından tarih = dosya
 # mtime'ı alınır ve 10 günlük tazelik süzgecine takılmazlar; içerik
 # değişmedikçe hash aynı kaldığından embedding maliyeti çıkmaz.
+# 2026-11-02 (kullanıcı kararı): temettü merkezi de anlam aramasında çıksın —
+# takvim/verim içerikleri sunucuda üretilip HTML'e yazılır (metne çıkar);
+# hesaplayıcı istemci JS olduğundan indekse girmez.
 KOK_SAYFALAR = [
     ("sozluk", "sozluk.html"),
     ("terimler", "terimler.html"),
     ("muhasebe-terimleri", "muhasebe-terimleri.html"),
+    ("temettu", "temettu.html"),
 ]
 SITE_BASE = os.environ.get("SITE_URL", "https://borsa-raporlari.pages.dev").rstrip("/")
 PARCA_BOYUTU = 1400
