@@ -4264,6 +4264,40 @@ _SITE_ARAMA_KUTUSU = """
     if (!q) { panel.style.display = 'none'; return; }
     panel.style.display = 'block';
     panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    // Akıllı (anlam) arama: /api/ara pgvector vekiline paralel istek (2026-11-02).
+    // Yanıt gelirse sonuç listesinin üstüne "ANLAM ARAMASI" bloğu yerleşir;
+    // gelmezse kutu sessizce kalkar — kelime araması tek başına da çalışır.
+    var akilliKutu = '<div id="akilli-blok" style="margin:0 0 10px;padding:8px 9px;background:rgba(15,118,110,0.07);border:1px solid var(--line);border-radius:8px"><span style="color:#94a3b8;font-size:12px">🧠 Anlam araması yapılıyor&hellip;</span></div>';
+    var akilliIcerik = null, akilliBitti = false, yerelSon = null;
+    function ciz() {
+      if (yerelSon === null) return;
+      panel.innerHTML = (akilliBitti ? (akilliIcerik || '') : akilliKutu) + yerelSon;
+    }
+    fetch('/api/ara?q=' + encodeURIComponent(q), { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function(v) {
+        var KA = { 'gunluk-rapor': 'Günlük', 'derin-analiz': 'Derin', 'makro-analiz': 'Makro', 'haftasonu': 'Hafta sonu', 'egitim': 'Okul', 'sozluk': 'Sözlük', 'terimler': 'Terimler', 'muhasebe-terimleri': 'Muhasebe' };
+        var liste = ((v && v.sonuc) || []).slice(0, 3);
+        if (liste.length) {
+          var ik = '<div style="font-size:11.5px;color:#0f766e;font-weight:700;margin-bottom:6px">🧠 ANLAM ARAMASI</div>';
+          liste.forEach(function(s) {
+            var oz = kac(String(s.icerik || '').slice(0, 110));
+            ik += '<div style="margin-bottom:6px"><a href="' + kac(s.url || '#') + '" style="font-weight:600;font-size:13px">' + kac(s.baslik || 'Rapor') + '</a>' +
+                  ' <span style="color:#64748b;font-size:11px">' + kac(KA[s.kaynak] || s.kaynak || '') + (s.tarih ? ' · ' + kac(s.tarih) : '') + ' · %' + Math.round((s.benzerlik || 0) * 100) + '</span>' +
+                  '<div style="color:#64748b;font-size:12px">' + oz + '…</div></div>';
+          });
+          akilliIcerik = '<div id="akilli-blok" style="margin:0 0 10px;padding:8px 9px;background:rgba(15,118,110,0.07);border:1px solid var(--line);border-radius:8px">' + ik + '</div>';
+        } else {
+          akilliIcerik = '';
+        }
+        akilliBitti = true;
+        ciz();
+      })
+      .catch(function() {
+        akilliIcerik = '';
+        akilliBitti = true;
+        ciz();
+      });
     indeksYukle().then(function(indeks) {
       var terimler = q.split(/\\s+/).filter(Boolean);
       var sonuc = (indeks.sayfalar || []).map(function(s) {
@@ -4300,7 +4334,8 @@ _SITE_ARAMA_KUTUSU = """
         });
         html += '<div style="margin-top:6px; font-size:12.5px"><a href="' + KOK + 'ara?q=' + encodeURIComponent(q) + '">Tüm sonuçlar ve 🤖 asistana sor &rarr;</a></div>';
       }
-      panel.innerHTML = html;
+      yerelSon = html;
+      ciz();
       if (soruMu(q)) asistanBagla(panel, q, KOK);
     }).catch(function() {
       panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Arama indeksi yüklenemedi.</span>';

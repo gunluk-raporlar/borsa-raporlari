@@ -7,6 +7,8 @@
 // (kaynak: gunluk-rapor → /raporlar/<tarih>, derin-analiz →
 // /derin-analiz/<tarih>, makro → /makro-analiz/<tarih>). Arka uç yanıt
 // vermezse /ara sayfası yerel dizin aramasına düşer (fail-open).
+// 2026-11-02: GET destegi eklendi — baslik hizli arama kutusu (her sayfada)
+// ayni vekile ?q= ile baglandi; POST davranisi birebir korundu.
 
 const UST = "https://borsa-raporlari-web.pages.dev/api/ara";
 const CACHE_TTL = 120; // saniye — aynı sorgunun kısa süreli kenar önbelleği
@@ -28,12 +30,7 @@ const jsonYanit = (obj, status = 200) => new Response(JSON.stringify(obj), {
   },
 });
 
-export async function onRequestPost(context) {
-  let q = "";
-  try {
-    const govde = await context.request.json();
-    q = String(govde.q || "").trim();
-  } catch {}
+async function akilliAra(q) {
   if (!q) return jsonYanit({ hata: "sorgu-bos" }, 400);
 
   let ust;
@@ -68,4 +65,18 @@ export async function onRequestPost(context) {
     url: hedefUrl(s),
   }));
   return jsonYanit({ sonuc });
+}
+
+export async function onRequestPost(context) {
+  let q = "";
+  try {
+    const govde = await context.request.json();
+    q = String(govde.q || "").trim();
+  } catch {}
+  return akilliAra(q);
+}
+
+export async function onRequestGet(context) {
+  const q = String(new URL(context.request.url).searchParams.get("q") || "").trim();
+  return akilliAra(q);
 }
