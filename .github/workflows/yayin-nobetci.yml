@@ -58,14 +58,21 @@ jobs:
           if [ -z "$HEDEF" ]; then
             SAAT=$(TZ=Europe/Istanbul date +%H)
             if [ "$GUN" -le 5 ]; then
-              # Hafta ici: 08-11 => daily; diger => derin (+ pazartesi makro)
-              # + yayin tazeligi (2026-10-31)
-              if [ "$SAAT" -ge 8 ] && [ "$SAAT" -le 11 ]; then
-                HEDEF="daily"
+              # 2026-11-02 uretim penceresi: 08:00-22:59 TSİ. sicak-tut
+              # uyandirmasi gece de zincir baslatabiliyor; gece turlarinda
+              # uretim YOK — yalniz yayin tazeligi denetlenir (yayinlacak
+              # icerik yoksa bos kosar). 08-11 daily; 12-22 derin
+              # (+ pazartesi makro) + yayin tazeligi.
+              if [ "$SAAT" -ge 8 ] && [ "$SAAT" -le 22 ]; then
+                if [ "$SAAT" -le 11 ]; then
+                  HEDEF="daily"
+                else
+                  HEDEF="derin"
+                  if [ "$GUN" = "1" ]; then HEDEF="derin makro"; fi
+                  HEDEF="$HEDEF yayin"
+                fi
               else
-                HEDEF="derin"
-                if [ "$GUN" = "1" ]; then HEDEF="derin makro"; fi
-                HEDEF="$HEDEF yayin"
+                HEDEF="yayin"
               fi
             else
               # Hafta sonu (cumartesi/pazar): 09-14 => gundem egitim yayin
@@ -220,13 +227,15 @@ jobs:
       - name: Zincir — 40 dk sonra sonraki turu tetikle (schedule dusmelerine karsi)
         env:
           GH_TOKEN: ${{ github.token }}
+          HEDEFLER: ${{ steps.sec.outputs.hedefler }}
         run: |
           SAAT=$(TZ=Europe/Istanbul date +%H)
-          # 2026-10-31: hafta ici 16:00 / hafta sonu 18:00 siniri 20:00'ye
-          # uzatildi — aksam yayini (19:43) dustugunde zincir tazesigiyle
-          # yakalarsa icerik geceye birakilmaz.
-          if [ "$SAAT" -ge 20 ]; then
-            echo "Zincir durduruldu (TSI $SAAT:00 sonrasi)."
+          # 2026-11-02: zincir yalniz 08:00-22:59 TSİ penceresinde kendini
+          # surdurur; gece uyandirmalari TEK turluk tazelik kontrolu yapip
+          # durur (sicak-tut 90+ dk sessizlikte tekrar uyandirir). Hafta
+          # sonu pencere-disi (YOK) turlar da zincir baslatmaz.
+          if [ "$HEDEFLER" = "YOK" ] || [ "$SAAT" -ge 23 ] || [ "$SAAT" -lt 8 ]; then
+            echo "Zincir durduruldu (TSI $SAAT:00, hedefler: ${HEDEFLER:-yok})."
             exit 0
           fi
           echo "Sonraki kontrol 40 dk sonra (simdi TSI $SAAT)."
