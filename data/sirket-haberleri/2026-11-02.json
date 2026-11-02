@@ -22,6 +22,13 @@
   },
   {
     "kod": "AEFES",
+    "baslik": "‍!$[CANLI İZLƏYİN]TV!] Anadolu Efes Hapoel Tel Aviv TRT Spor Canlı Yayın",
+    "kaynak": "Vantage Data Centers",
+    "link": "https://news.google.com/rss/articles/CBMi3gJBVV95cUxPa2lRM2FuOW11cTNxQjk5TUNjVHdyNklvVEZfeTl1dTJRSVota2hkUTZCUXJ4V3IwcllwOGJUUnJXWFJsVGRGQVZsUDB6UmZmN3JfMTNVOVU2WDdROTJaei1JWXg5ckhnbkpIVHNzdmNPRnRKVzNxZTBoNWVOcDVLc1dyTjFacUgyZFVZNWJkNmZlRGhBLUVnRWRsV3ZjS1NKVDlIakFuQXh4ZEZKcGJNS3dMX1RRanhhRW1fR0lDb2ZmZFRKbklMZzBYcGh1c0w3cm41QzdNSXBlWmMwRExXdlc3UzAzVDBCcjFaOG5vTGNDRTdJMXVISXdyXzBsUU9PVzNYc2owaTRpOWtya0lnNExZQVptenpBcW53SUdFeVRpM0M1LWZBUHVGNzU4QjJDNkFRZExiVGRfUkg2NXBxMEJqQUdKbzRoc01IMmZqbEMwZld6WXNHczFKUVBMQQ?oc=5",
+    "ts": 1793210198
+  },
+  {
+    "kod": "AEFES",
     "baslik": "Anadolu Efes, Hapoel Tel Aviv deplasmanında kayıp",
     "kaynak": "Hürriyet",
     "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNd1FaQ002aDUxaUluU3NhcDNwTXI3V25vdWJYYmlld1h1c1dHTnRTSkszYXlJVE5MOTlUSmNqTkl0bHBGOUJEclI3b1ExbkRobDZMR24yR21XdUtNS0VuNDVib01pcnRCV2J0WVkxQktFN0N3amE2OTFwYkRkbG9OUURLdU52M2FQQ3p2WWM5V3JWelRodHVLbzE4SQ?oc=5",
@@ -33,13 +40,6 @@
     "kaynak": "Eurohoops",
     "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxNbXc5Sm0wcXBQSG1sQmlFbm5LSDljYVJ4VVo2bGhfQy1IR2FmMFJJT2dMcXgxVEF6SUVtY2JqTGgtSUhLa195YkxCd0JiUmZkRVB1bEJzWjJ0SmFzbWxWUHZtY2tRZXJDN2ZrYnJNWjlNQk9hT3NXMXNWeE1yS1JFRW1KLUQ3QUJVdW5nU0hXV29XUEZaWS1HQ2NUMHA3dDg0REoxd2xCQkJvV092MERN?oc=5",
     "ts": 1793097840
-  },
-  {
-    "kod": "AEFES",
-    "baslik": "Anadolu Efes Bulgaristan'dan mağlup döndü",
-    "kaynak": "TRTSpor",
-    "link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPcVlST0dDWXdyaU9ZZmVVZjJnSTkwM01McGptZWN3V1MxYVhfdGI0WDFsTU5PaG1wLXEyR3ZHTG9TQVp3V2p2MnJYZ0owLV9DaXF2eW1sNm9RaGpiRWtBbkI1X1UzYi1aRDhoU1NlWUlxaGlDTi1wMElvN2g5dWFaMnhoN0NBeWt5WTU0bUp4QUJJbjJ3YTNZ?oc=5",
-    "ts": 1793181540
   },
   {
     "kod": "AKBNK",
@@ -148,6 +148,13 @@
   },
   {
     "kod": "ASTOR",
+    "baslik": "Astor Enerji’den ABD’ye 33,5 Milyon Dolarlık Transformatör Anlaşması",
+    "kaynak": "Enerjimagazin",
+    "link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxOR3NtUzFJNHZNdUpDX1R0NllBZ0IyaExZVkxocTJpbUxJT2xOZHhPd1hkV2huLWRaNi1CZm1JVFptYWRyUmNSYWtDUFpjUlhHSFNXYUZJb2dMOU1OZFRyd3lWOXJRbU42b21XR1JEZFBjcm9jQjkxZFVPSWF4c24wLXV3NHNMRVJlWmxWR2hlNzZJUzZTeThkSk1qSGtfTjdBQmxWS2NUT1EtT3N2VG9ZdERaZw?oc=5",
+    "ts": 1793174118
+  },
+  {
+    "kod": "ASTOR",
     "baslik": "Astor Enerji'den KAP açıklaması: ABD'li firma ile 33 milyon dolarlık sözleşme",
     "kaynak": "CNBC-e",
     "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPeWJqR0xWV1oxXzAzdUhmcWJ2MGhjZnlfYjgtZE42MUhRQTVyY1c3SVNQdGwwcHFsRnRWTnVhZy16eEZCVWRWb3NoeDJwdHZweGloWUdwUFhobzdYS3h4dXVnZ0dndm5fdl8zWTdBeWtqU3ZrSGllcUtBdGZLaHpnS1ZERDV3aFZiNUZidU1xTFQ5V2F4OHpBekJLX1dwZC1DTVhvX25FbEZMS1NvY05yajZ4dV9KWmNXeGVXdw?oc=5",
@@ -155,17 +162,10 @@
   },
   {
     "kod": "ASTOR",
-    "baslik": "Astor Enerji, 33,5 milyon dolarlık transformatör sözleşmesi imzaladı",
-    "kaynak": "Investing.com Türkiye",
-    "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxNa0VEZ1F6TF90c2dlSlZOVGVJUHFZOXlxNF9mTkctS05PTEpiaWU3eGI2ejJubFAtbE5lV1p2TUpuTGhoeW1RRDdhdnFlS1hucE5kTU52Y1FLeUZfRWdQSEY0VVV3cW1vSmVEWXNsSVF0VDM2YVFmZkJDb0ozdm9ZNkNiczBONC1ZZXhVTWN0cElOYVl2eXZHRVRxSk55R01XdXpNeENEeVl2RDB2QjI5TVh1cHBST1NZTUswN0F0MA?oc=5",
-    "ts": 1793003449
-  },
-  {
-    "kod": "ASTOR",
-    "baslik": "ASTOR’dan 33,5 milyon dolarlık transformatör anlaşması",
-    "kaynak": "Paratic Haber",
-    "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1xNkJoN2lReUt5UEZCbW1nYXZIaWpyNVNMWDJqQVphSUhOSko5Zk03bkxWeDVYaGN3MFBCeXl1QTBFQlFWV1UtWG1KTURCYkZHTVNOOURiZGZISFNkaHpoNDJIbjZkWVNPbGVLbHBKWTRoMXdHX2NKckt1UWxUWDg?oc=5",
-    "ts": 1792998081
+    "baslik": "Astor Enerji’de 5 milyar liralık iade: Feridun ve Enver Geçgel hakkında yeni gelişme",
+    "kaynak": "bursa tv",
+    "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPRmR5dE5tTi0xNjdWMHR3b3NGUl8tQ0F6TGZpOE03a0U1UFAxYWtuZHRyR0ZiVUdkNTBRNlk1SERTSXROeXBpMkl0UldJaXEwaXFRVVZrdHhoa2ZTNDVRdlpkQ1M4WExkN2lSaEM2Vll2alA1c3Q5ZVI2b2RWZEVIRWRHMmtoM3BWTUxkM2lXUzlSNVdXQ1hWb2E5UXhaZGZFRWNmRm13aDVtX0VLTzB5Q1NjMUNBdw?oc=5",
+    "ts": 1793002020
   },
   {
     "kod": "BIMAS",
@@ -187,13 +187,6 @@
     "kaynak": "Rota Borsa",
     "link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxOQ3hIWUtkNlFSUkc3R3R2MXJDbncydmtvbGNlVmpJajBPUGRfTnlGeloxYUEzYXJPeVQ2S2pVVnExSlgwcUNMeWhKQXZQbUVQLU44a3A4NWxsOVpfYlowRDQyU0tERGxYTWhmenZtWjh6T3VMTXJNc0N3S0taS0FsSk9wVnl1bFlUYkhKNThiTU9mNlVibzNYX2ZzMjlIaU5oRG5vSw?oc=5",
     "ts": 1792996580
-  },
-  {
-    "kod": "EKGYO",
-    "baslik": "Emlak Konut’un dokuz aylık satışlarında konut ve iş yerleri öne çıktı",
-    "kaynak": "EKOTÜRK",
-    "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQcm1IdVdEUU92TnRZdm14T3RlWU1qMG5ZYXNOdEFLYVZfdndZOFNLWlpybkFpSWpBT01UY3JKWnF4YVpIbV9EOWtKcjJqYmtHNURMZngzWVpDNkY3LW5sZkkwU3BWdHMxTlZHcWNnMjVLVHVIVkRzMXF4a0lvY3VTLTluRmQ5RHhna1A1NU1qZnp3SXNwbHdoRmlGM0dxc0k?oc=5",
-    "ts": 1793393985
   },
   {
     "kod": "EKGYO",
@@ -229,6 +222,13 @@
     "kaynak": "Mersin Haber Merkezi",
     "link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQc3dxRFhuV29HTUF1eE4taVdTbF93NkdBakpaaG9OUXFtNGY1dVJDVjBPZXhvLVdLNk1JN2ZucXduX3I0R3ktbVpnQVAzQUFHVnFDSEhqd09uV2NQWEFyOGZGRHQ3RjdsTVhWUkJNNmRWN1lkTTJGME5YWVBrRURSaERvNHBrQnBHR3k4eU5iZGZ2UQ?oc=5",
     "ts": 1793452020
+  },
+  {
+    "kod": "EKGYO",
+    "baslik": "﻿Emlak Konut yarın ZVVZ USK Prag deplasmanında olacak - STAR",
+    "kaynak": "Haberler",
+    "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxNWHdYUWlHcm1vQzRmZ2l5X3ZMWkJ6YnJqV0w1Ni15cmxxT0hxM2V6SzZ6czZFV2wwemYzRWJXUGZySXA4ZG1SUjdWME1tUFg5am1zQXVGaXBMQkUtTlZ4S18wcndkdFF5UzlydFZpRnFKdlBacW90dWVTS04wQ0lEenRzdXVfY05KXzE1QzNzVlhmTDFuWU9oMnlQNmvSAZ8BQVVfeXFMT0tNSm92REVPdjA2dm5ld0IwSlhSUTRySDBnOFd4bXJCdHlrSll1dnpkNWp5TEhabG9rc052SUI5cXdvdTE3ZXNRbHA2ZmI0VEkwRFlDaE1RUzJkOEkyTFVNY2FOZkQ0WXFlNTJPaEY4N3J2M3ZnU2U2Uk9fQlhxcVpRRklIcGJKVjk1MmVNMGtWc2VpbkZUaS1fUTJIZHRj?oc=5",
+    "ts": 1793094000
   },
   {
     "kod": "ENKAI",
@@ -421,13 +421,6 @@
   },
   {
     "kod": "ISCTR",
-    "baslik": "Türkiye İş Bankası 48. İstanbul Maratonu nedeniyle yarın bazı yollar trafiğe kapatılacak",
-    "kaynak": "Anka Haber",
-    "link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxNemhwSldGUzYxekhidzMtOEpGMWd1RFJTejlsaExZS3habHdWN2dZUmg2WkY3cllJSWw2cjB2X1Mzck9ublF2NWlqSHNpZ25hY0s1V19BdFNLNTE5SWtTcU9PV0cyY2RNOHhla3BQTTFKUmNxNy12bF9zVzZzbnJmZTd3N0tKc09JVGpDSkpjdkRNR25aSWlObUhpVE1sM2JQUTlwdlZaMmF0c202Z0xpbm45blpST2lZRlR0WEVyMFc5UQ?oc=5",
-    "ts": 1793438284
-  },
-  {
-    "kod": "ISCTR",
     "baslik": "Türkiye İş Bankası 48. İstanbul Maratonu",
     "kaynak": "Anadolu Ajansı",
     "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxQdmllZFBnSjBra1ZLVW8xSmQ3WXczQng4WVQ4VG9XUFRwT2F5OVlLVnU0NGJTYzNYVURNUm5aZTRibTEycWhhWkNPNTI2M1dYNDViazU5UlZrc2xYWDBDMnh1RmVmUXdtXzBpZWktcEFRWl9BLWpxWWRHdlFIdGJNTGdpNmhJVzg1RjRJZHFEYw?oc=5",
@@ -455,6 +448,13 @@
     "ts": 1793514840
   },
   {
+    "kod": "ISCTR",
+    "baslik": "Türkiye İş Bankası 48. İstanbul Maratonu’nu kadınlarda Etiyopyalı atlet Kasanesh Ayenew Baze kazandı.",
+    "kaynak": "İhlas Haber Ajansı",
+    "link": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxNSy1aaWd5ZndELTdaLWJZMkJkZ0RDV1NwSHRnclYxd01sTzdBZ2J2M0UyUUZCQmpaaUd4ZV9DN1gzTUxIOXB3TC1zQnNpOE1sVUlMNnMwdW55bFhlRGpaeVRMZmF6QXRuWVpRcE4xcmlNU1RTSi1sOUVLYVhPaE00bHNkOWhzVGlOME1TXzA0SGktOFlMbFg5dDZhY2txZllNTUYyeVV6OFVhUGRIdmFVU1BSOTZXYVBNUXRBRW1QVS1NQnVhalhHcUc5V2ZteTltRExSX1NzWTY4YV9XbGxhNjBuV3Y?oc=5",
+    "ts": 1793521541
+  },
+  {
     "kod": "KCHOL",
     "baslik": "Koç’un siyanürü katlanacak",
     "kaynak": "birgun.net",
@@ -477,10 +477,10 @@
   },
   {
     "kod": "KCHOL",
-    "baslik": "Eskişehir Ticaret Odası üyelerinden Koç Holding Şeref Başkanı Rahmi M. Koç'a ziyaret",
-    "kaynak": "Haber 7",
-    "link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxPci1mMlpYZVpJWmIwbHQzWEwxM015UXY3TWpwaE1GVWdkQktMMWwzanh5NjFGZThkNXFSU0lnczU2eXUzcFY0aWhTejhFdVdLRncxTEpUQ0lxd2xxWmpuN0RXeXNHOXlaZW9NeG1tbThXNHY3UHNLcVRhN2g3QTVjVHVnVWF5d1RaZjlPZHZpYXAzNEpXUUp4ZFp4ZWsyem14SnNGMWlxNVk4LUpIcXFyZndxa0xjYU0yTWRtVEt6X0pjUQ?oc=5",
-    "ts": 1793542260
+    "baslik": "Koç Topluluğu’nun 100. yılı: Sanattan yapay zeka eğitimine projeler",
+    "kaynak": "Euronews.com",
+    "link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxQSUdseFRNRVdwVGh5YzUzZU40S3d2TjRGQzlhM1hHRGRIMUNDc1laNlFLQl80RGhXQ3lFLVlQZXgwSFZOem11ZDNQYzMwaGlwOVRBZUpfUXZmbC1SSUItSU10UldPV3Y3aUNlRVNubmdYU2lJSEFfTWpwM1kxSWhOLVpLUEJOM1ppQmN0SEJENHZ4NHRJeS1uX0t5cHNWT2xMZkJnYTJnYWpFcHU0WEE?oc=5",
+    "ts": 1793188042
   },
   {
     "kod": "KCHOL",
@@ -505,10 +505,10 @@
   },
   {
     "kod": "KRDMD",
-    "baslik": "Kardemir (KRDMD) Hisse Geri Alım Açıklaması (26 Ekim 2026)",
-    "kaynak": "Finans Hattı",
-    "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE8xTmd2bjZDamZLeGZ4LWtaY0txaElXUUl3cFdleWU0Q2t0MC1ZWUhEcGlWS3Itd2lGenk4YnktRXBXWnktYWRzVG9OeUVRcndrR3NPRnlYXzZsYzhRc0RwSno4NWhieWRnUUpNbkZXZzhUQ1h5OGlCSFUtakxrc2s?oc=5",
-    "ts": 1793032260
+    "baslik": "Kardemir, A ve D grubu paylarında toplam 300 bin nominal tutarlı geri alım yaptı",
+    "kaynak": "hibya.com",
+    "link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNNDY1ejlSa05uWFJNTU5HZHJpS3NkZHN2eVJmQjlZeXRnTjBSLVhUX2JmaFZEVU5TVkdEbnpHOEdWU2Zma3JyczZtQUNhamROY2V1VVljcWkwOHNSQlFudWFZcGoybFBSV3Y4RFJycnJmc2RwSVVpbTI3S3gyT3kzZFlnZUZIMlVEYlN4NHNONWdBQ1VNTTkyREZlSmNHN0ZpM0xYdU1LQ1I?oc=5",
+    "ts": 1793028968
   },
   {
     "kod": "KRDMD",
@@ -519,24 +519,24 @@
   },
   {
     "kod": "KRDMD",
-    "baslik": "Kardemir Karabükspor Başkanı Tankut:",
-    "kaynak": "Haber 7",
-    "link": "https://news.google.com/rss/articles/CBMigwFBVV95cUxQeVpBTDFoOGQwVjQ4UmVXcUp0ZDBCWG1SLWlDSGpzVWExMXRwTjFvZnpFSGl0WTN4blhsOERidUdBemkwc01iU1FySjM2SzBvUHk2cTJPUF9QbDd6dHJ6Z3A5UTlKRE0yd2ZBYUtMUTJ1eFVxV0pRY2d5TXYyLXRxaDJBdw?oc=5",
-    "ts": 1793476980
-  },
-  {
-    "kod": "KRDMD",
-    "baslik": "Kardemir Karabükspor'da Popovic sesleri",
-    "kaynak": "Haber 7",
-    "link": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNcGg3S2pnSzJ0RmtPTlJ0NzNrNURmUnN3MjNmMGdwazBzWGZiQ0R5TkJ6Nko4VVBpdjNXUnlUYUl1QzJ6Rm1kVUg3RlBPRGxiU3VSVmlRS2ctbFc5TEtteFM3UW9DTndrdXFHc3B4dnE4RzgtSTE2bE5ZUFNkU0UtVTJtTQ?oc=5",
-    "ts": 1793437260
-  },
-  {
-    "kod": "KRDMD",
     "baslik": "Kardemir Karabükspor Kulübü Başkanı Tankut:",
     "kaynak": "Haber 7",
-    "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQZ0RvVHBVc05PSE5uaWRrWnd2U0FnQXVxZzg3MDU3dTdicEFKTjBGTjQxdGlTZEJGWGs1Z1I1VC1EWDJUZWxoV1VIa1hROFpDb2pnRjVkdFBWUDI0Q1E0WUhYRGNkYWFBYnQwOGJDbDhGTmU1QzFWajYydGk1Q2k4VDZ3MnFOWmVwZ2lpSWJn?oc=5",
-    "ts": 1793460420
+    "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOOXUzb0RieVd6SGZueXZ6LXM1cXlCZ1VPbldvMC1WNERXY014dUN3UTJBVHV0ampqYWF3TjVjR3pRUHo1UmlPZGhOZnViSXRTWjg4NkRwRW5mSFQ3dGljeTBFSWNBVjZyVGNnaEFWR1BsLWpNSFN6RUkzb0ZOcldjYktSRHd2S0ZK?oc=5",
+    "ts": 1793454960
+  },
+  {
+    "kod": "KRDMD",
+    "baslik": "Kardemir Karabükspor'da 5 yöneticinin istifa ettiği iddiası",
+    "kaynak": "Haber 7",
+    "link": "https://news.google.com/rss/articles/CBMingFBVV95cUxPeW1fLU1SZFR5Q2Rhc2l2ZnZ5WFN2eXh4cVZVNmpadGhqVUFha2stNjd0dmhXNndaOE44Vlp1SHltdU9oUlo1d1o4U3NSdVdSLXFaNXJIWDJ1NEVuZ0xyYmpDSkw1Znptby1yclh0OU5PeHA1eVQ5RlhGT0xmWnVQa0c5QU9GSmtBM1VRcTNzNGhqVVRRRnUtTnVINzh4dw?oc=5",
+    "ts": 1793462460
+  },
+  {
+    "kod": "KRDMD",
+    "baslik": "Kardemir Karabükspor'da transfer çalışmaları",
+    "kaynak": "Haber 7",
+    "link": "https://news.google.com/rss/articles/CBMiigFBVV95cUxOT1pwN2N1UDhiYkdfdnpPVEF0eWd3R1pfdXp3V29FX1p0anZCdUN5SFdRQmpycE5qSGpzSEdReGwzaWRLaVdBcmxWUERuLVA2TkNwYVVXeDIzOEhTVUdENGpwdkt5NHN2Tzd0TU9TT2JxUE9mMjdMbVc2R0VlMWhIMTZ1U1E4N2JNVUE?oc=5",
+    "ts": 1793439360
   },
   {
     "kod": "MGROS",
@@ -659,10 +659,10 @@
   },
   {
     "kod": "PGSUS",
-    "baslik": "Pegasus uçağı kuş sürüsüne daldı!",
-    "kaynak": "AirportHaber",
-    "link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxPcy1sNVd6TmhKTEF5NDQ3dEtTLXYyQ1h1Y3JIcWFXTHc0TzNTanZDYXhORTN4Ukk2dHZ1MkM2YV9YTFlxRFdsYWVNZU5wcnhHaUJGNEMzOXNBV0JNVXBHOE9GQURQdThSLXd2cF9rVFFzdjdIdDViMnBuLUdNazNQaFB4Q2xjdGdqLU9lcnEwMlZhNzR1RlNaOFJn?oc=5",
-    "ts": 1793356764
+    "baslik": "Fitch’ten Pegasus ve Wizz Air için kredi notu uyarısı",
+    "kaynak": "EKOTÜRK",
+    "link": "https://news.google.com/rss/articles/CBMiigFBVV95cUxOVjhlVXcyUkl0dUxMd1R0Zm9IYVQ1eHM4a3FsUWtrUE1jOFJSTE8ybzhHYU02U2xvWTdudE5XaHloMXVHbU1lQXVfeU0yZ0FIZmYwWkNkSzl3VlM0ZmVPMXdJcUFDRDBWSDFaTmhVNFQ3V3hUZlQyaWtTTDI0d1VBTjE2eEVwR1ZJM1E?oc=5",
+    "ts": 1793393985
   },
   {
     "kod": "SAHOL",
@@ -876,10 +876,10 @@
   },
   {
     "kod": "THYAO",
-    "baslik": "THY'den ucuz bilet kampanyası",
-    "kaynak": "NTV Haber",
-    "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTFB3SHhVSWs5Mm1sdndsVjBHNHR2dXFaY3ZzeVNTTHNpSHR0c2J1M19RbkNkaVlDUWlBVmpkck5xTVhNYUVXSE5oTGRKUVV3VU5wVTVudkFHRWo0aENGczgyUmVDeDhyNFVPLWFnVm40U2Z1SEl6dmc?oc=5",
-    "ts": 1793171076
+    "baslik": "THY Haberleri - Son Dakika THY Hakkında Güncel Haber ve Bilgiler",
+    "kaynak": "Hürriyet",
+    "link": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE1xR1FoS2dZZEZYMDJpYXptTlFORWlaeEdoOUlBcE4wWVk3ZjBQWm5IQ3ZYNFZPX0pqOVFpbXZ5aDNqdkJ6NmZkVTFkR2pWbENqd3N3?oc=5",
+    "ts": 1793377976
   },
   {
     "kod": "THYAO",
@@ -897,10 +897,10 @@
   },
   {
     "kod": "THYAO",
-    "baslik": "THY’den 29 Ekim’e özel dikkat çeken kampanya: Yurt içi uçuşlar 1.699 TL’den",
-    "kaynak": "GZT",
-    "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQckFReVRTcVZxRUtBRnJmZmk4XzIxOFdnbFpZSmg1UEtnSkxTWDNSVkRqZE5YbC1UbkxnaEJNcmVlT1l5SUlVdzc1ckUtUV9IX1lpQzlLTXJQSUFIaGV5STRQckllY3J4eUpKQVBWQjM4dnJoQXcxQnI4WHBQVDUzQmNiZTdmZjM5UGtaMzFRNlBuWjBsZ3ZuM1pEWVdwNlFfWldfZWFYS1ZVd0NTQ2VjZnI3ZHBGSWdPRTE2SEJB?oc=5",
-    "ts": 1793169867
+    "baslik": "Çalışanlarının maaşında indirime giden THY'den milyarlık reklam",
+    "kaynak": "Sözcü Gazetesi",
+    "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQdDI0em9wbjdsclRkN1dKaTJhMmtvUHJiYjFDLUNzdWVXNG1WTy1YSHJUbzREOG5rYzhxaFZUOUJaYWhEMFlZVDhQa19uNFRjUS1PU29DNHp0MWFsZlJ4T216ZjdfSGkzb2FNN0NWdi1GaFhydE8zeEI3TU1BRzJpSGUxTTFFZDVSeWRLdkRFYkNmU050Y3FGTlpBak0?oc=5",
+    "ts": 1792999115
   },
   {
     "kod": "THYAO",
@@ -911,10 +911,10 @@
   },
   {
     "kod": "THYAO",
-    "baslik": "Türk Hava Yolları indirimli bilet kampanyasını duyurdu: Peki hangi uçuşlarda geçerli?",
-    "kaynak": "Ekonomim",
-    "link": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxNQmpzNUVfQkxYQ053Vkh4a19qYUFvblZyOHM4U3B3MnVPSUtkTkFPMzZnSnVrMDZ4aGV0UlM0ZWI1cGxNSXdzQlEtUEZzTlpaSEwzZXZhQWttVEcxb2J3cDZjQVpzTkVPSmRrUjN6Nl9YcmNOSk9HLXNOOVhEcGZXY3NBS245aXNtSV9nSHdrLTNnQnJBbTdYQjZBWlh3RzQtYW9raVA2V21KZWlteGZpUTV6d1lHME1QXzNZVzQ3MFFhS2lpTVhGT0dwS2pXMElEZmJsYUtLMFFqdw?oc=5",
-    "ts": 1793176800
+    "baslik": "Türk Hava Yolları, JCR Avrasya’dan AAA (tr) notu teyidi aldı",
+    "kaynak": "Investing.com Türkiye",
+    "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQVDJIb1N2dWxjMlZMZ2dKN29WdGlFNkdnVWo3Z3BTMWhjamdZZTQzWkR3aGUzaGp1Q1RzNzRJX1BoVExodHFBQjlpY3pyeTJ0cXBGM3E1ZUdDc1h2MTBWcEtmUFRpWWZCdzFMWEcyMzdZQlB6MU9hX2NzTm1YS0RlTGl2RHk2WTVWeThIT2R1YXU2YlRRQVhKS3d6eU12WEVPU3VjRHMzMmZHb3VMTTQtYUNn?oc=5",
+    "ts": 1793022473
   },
   {
     "kod": "TOASO",
@@ -1016,17 +1016,17 @@
   },
   {
     "kod": "TTKOM",
-    "baslik": "Türk Telekom COP31’in dijital altyapısını üstleniyor",
-    "kaynak": "Yeni Şafak",
-    "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNYTgwNzQ0dVd2bm01N0VxZVFqSWFJbGFVNEJxLUZhVjY2a3A2ZE9OckZBYWdheGtGOC1GejNfb0dRZFdWamdxcjRmdDE5TlQ5Z3VPYi1lVW9qaHlNOUlDWnNjdUwxcEM1T19GYlEwMFVCc3lPSlhaRVBJZ0J5eFBCS1VoMEc0TWRiZjBHem4yNFlOSy1pQ1lRcA?oc=5",
-    "ts": 1793188589
-  },
-  {
-    "kod": "TTKOM",
     "baslik": "Türk Telekom, COP31'in dijital altyapısını kuruyor: 5G, fiber ağ ve siber güvenlik desteği",
     "kaynak": "Dünya Gazetesi",
     "link": "https://news.google.com/rss/articles/CBMizAFBVV95cUxOUHh1c0hXbjlzbGhTb0lqLUFjN0ZkS1NJNHdlMjJBVFltWjdUODBwNl9UUTBfOF80bmtGeEEtY3hYWmZvV0U0ZUp1T0FDOUhJWFFBRnRmRVh1ajVzSHU0ckhvZVBuSklKUC1BUkdoOHRRaXFJX1BkNFE3SzRIOS0zTVhjQ3BYUWNjbnJ1NXprOFltTFdCS0o3M0ZITENMak1oTEJ2b2pwSmpUdjYyTFBNeHozY0tYd3E1bzAxNEtLYlBoWUhILXZiQ3V6aWI?oc=5",
     "ts": 1793183940
+  },
+  {
+    "kod": "TTKOM",
+    "baslik": "COP31’in dijital omurgasını Türk Telekom örüyor",
+    "kaynak": "Sabah",
+    "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQR0hNclNnYTVOeXJ3WHh4MEQ5dDdiVmFmNG05NXhTTjFkVUlVV19TNFdmQ092bnlPeFVMMnR4LXI5Q0xUVUVxYzZBNjF6U1lxRVZJLXZGYmloTVdRWWttY3NsV3RJQmJxa0E2RkxZQXNQVUlfU0V4VnVvU0FKbGpzN04wZm8tMURiV1ZIaWk4MHlfTXZObVk3cmczSTHSAaIBQVVfeXFMTmdwaG16Mkh1VUtnRzJNWE1QQ1VTQU1hWnNRczFGLU1vTndxTXdxd3l0OXJ0T281TmdoMnZXU2g1c3NFYjZsSkZ1R3NFel80bDZPWDNWODFYc0dnZ0s0ZElFMUR5cjVod2RqcGp2cTNVTUZQdkMtVDNKaU5FMmFwejhDTDRtYlc2MXdWSWJDR0psMVd1bHc4VENlQlFUY2RNS2Jn?oc=5",
+    "ts": 1793332970
   },
   {
     "kod": "TTKOM",
@@ -1058,13 +1058,6 @@
   },
   {
     "kod": "TUPRS",
-    "baslik": "Tüpraş'tan 500 milyon dolarlık dev anlaşma: Enerji devi, gücüne güç katıyor",
-    "kaynak": "EKOTÜRK",
-    "link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxQQS0tUlZXNlE2S2JwSFBDZi0wTUFaa2xURjcxZkFYQ3lWQjdqZzg4N0lFV3RldmZCQ2F6eHhPOUxWeENCWXlmeWhOS015YVU0Q29FQWNnVVhBcU10ZXhObXdZeG5TTHFUVEdObnlab3VIWE9RdXo3bS0tNHJoZDJMYXlUWDZSSEh3LVJBajQyZmRmdkRBRFFTWkI3Q3JCV3BxXzc5SA?oc=5",
-    "ts": 1793393985
-  },
-  {
-    "kod": "TUPRS",
     "baslik": "Tüpraş ile ABD Ticaret ve Kalkınma Ajansı arasında enerji işbirliği",
     "kaynak": "Habertürk",
     "link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxNbkN5V3lWclpfcGotaERJUHJFS3VDRTVOemF2bnFvUkZzT2ZvUDYxdlppcFNVM1lvT2ZDVUhhWW5HbEVrTm5WVDVHTmpVU05LZmNsU0NUaGxZN25NSm1oM3ZXbFNxbFFPYjNWa29MQWNIWmx5RjdRdDRzQTNnc0oxa2NvRGxPVDM1aTU4aTFNSVp0a3ZrUGFFZTdfVmZhcnpTcjZNY2FIeGJrWU5STkE?oc=5",
@@ -1076,6 +1069,13 @@
     "kaynak": "Ekonomim",
     "link": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxQR0ZhZUxpYXBZMVdHLXVOeTZlc3pLUTB5RW4wa2NPemR1Sjh5ZGY4ajFMMjZ0ZXNXdUx6WlYtWjhsb1FkeHpSNDVSbnpPSDBJWmVDbzRqOWFKNDN3WDhjQjZyMHM2aVpkSnlpT2RyRU5ROVp6aTJqSEJJSFZRSkJtczBMSkxKbmNLYVN2ZWw5UDRONmV6QmVwdWhxellFRFYyRkNNU0oxWHJ5dGRqazJZMzVCOUJjakl1eGZxZFFVNnBCNUVYQkx6M25CS3RMVGlHVTR2Y29Oek14Xy14TFdoOWxR?oc=5",
     "ts": 1793176860
+  },
+  {
+    "kod": "TUPRS",
+    "baslik": "BIST 30’da Tüpraş yüzde 107 kazandırdı, Sasa yüzde 45 geriledi haberi",
+    "kaynak": "Borsanın Gündemi",
+    "link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNVGFINVR1aEVVNUtoYlZRMDhQZFI3NElCTnRReVZITzhSaFA2Z0NZWktqZDA1eXhvQ3NZZUdhd2stU0Jwd05URlNOWXJCdFdFZG9ZLVh5cHdydmE1dV85Z2NpeWlBTGcybFU4dGJtSjA1Z0tKZ2diTFk0eDN0LUNpV3pzZXZIS3dDczV6YWdFLU9ZN1NaTng4LW9YcjA3cTZzR3JXVTJFSUxPUQ?oc=5",
+    "ts": 1793186057
   },
   {
     "kod": "VAKBN",
@@ -1090,6 +1090,13 @@
     "kaynak": "Sözcü Gazetesi",
     "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPbGlsM3d6dXlVdlJwTDl3YkJWRzVRaFhOWVpHRHJqenhJMzB4cGJnUWg5dWhtT0J2LW4tazFJbUZfc3dJRWdYMEZCeUZzbFZVMG1GcVdrS25sUGlKNkdmZ2djZ0ljLWU2NUxBSjFNVmYzTENWMThhN1JzRU9CNVhDNXJZUlpaS0NG?oc=5",
     "ts": 1793190300
+  },
+  {
+    "kod": "VAKBN",
+    "baslik": "VakıfBank’tan Döngüsel Ekonomiye 10 milyar liralık Finansman Desteği...",
+    "kaynak": "Para Analiz",
+    "link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxOVDlVZlNxQTRlYk5sRTdiZ2ZSZ3VwbjdjWDh5U1NUYVMyeFZJclNpVEk3ZkwzcjAyRE9wQUxtNTF0NEFSeUFrUW1iVkNIR2d1cjg1RVlfaTV0VDB6WUo5X0F3YVk3WlNYM0ZQRUxqQ0NzcWpZamZQTTJ6TDNkTXpXUm9sRW1ucEZsbHI0bXBjUXhQVFNUU3VjR0FQNzhuZHlGRmc?oc=5",
+    "ts": 1793149637
   },
   {
     "kod": "VAKBN",
@@ -1111,13 +1118,6 @@
     "kaynak": "Mahalli Gündem",
     "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1IeEkxbjNDaURZS0J5N0RtYW1fcHR2M082T3IySnlNNklsTzZULWs2Z2J4am9fWW8tVkV3Y2JHMGdUYkhkcG05cFQzVWtOZ3lVUFFfRUxCUV9iRy1fclJja2JDdjFubzJVQmNpMnk3M0hfVTFoVWFPWmp5RjJoMkk?oc=5",
     "ts": 1793544245
-  },
-  {
-    "kod": "VAKBN",
-    "baslik": "Afyon'da VakıfBank'a karşı tarihi set! 35-33'lük mücadeleye rağmen kazanan değişmedi",
-    "kaynak": "Afyon Ana Haber",
-    "link": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPVGQ4NjgxNVQ2cm14RTF4V1lXZ1ZwS3g3anZiWE56UnVLN2E4NkJES1FCVUVxRlJTUW03VnZhR3Y4Q0RNXzNfOURiNTlFZVEtbk5odldRaWJ4UW1oX0ZpR2NYSmJkMHJVa1Q0dTZCWlJrSk5QMHpSNTRkeS1pVjFyWkhtVUVHendCRXRJdVNVazdOUHEzQmpEeFJTZV95dVdMcVFxX0ZFTlROdXNIck0xX05ZS2d2MW1lamctUXVYSDlrcG8?oc=5",
-    "ts": 1793560114
   },
   {
     "kod": "YKBNK",
