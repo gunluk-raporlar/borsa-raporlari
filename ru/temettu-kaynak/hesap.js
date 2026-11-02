@@ -708,6 +708,12 @@
       if (input.dataset.iso) input.value = trTarih(input.dataset.iso);
       input.addEventListener('click', function () { panelAc(input); });
     });
+    // Panel icindeki tiklamalar belgeye yayilmasin: yil butonu innerHTML yenilemesiyle
+    // DOM'dan koparilinca kopuk hedefin closest(.tarih-alan)'i bos doner ve panel
+    // haksiz yere kapanir (yil secilince ay listesi gorunmuyordu).
+    Array.prototype.forEach.call(document.querySelectorAll('.tarih-panel'), function (p) {
+      p.addEventListener('click', function (ev) { ev.stopPropagation(); });
+    });
     document.addEventListener('click', function (ev) {
       if (!ev.target.closest('.tarih-alan')) panelKapat();
     });
