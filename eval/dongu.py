@@ -243,6 +243,28 @@ def metrik(durum):
     return {"metrikler": metrikler}
 
 
+def tablo_ayarlari():
+    """arama_ayar tablosunun güncel değerleri; yoksa/erişilemezse None.
+
+    Mimar bulgusu (2026-11-03): karar tabanı gecmis.json'dan okunursa elle
+    tabloya yazılan değerlerden sapar; taban her koşuda tablodan alınır.
+    """
+    if not (SUPABASE_URL and SUPABASE_KEY):
+        return None
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/arama_ayar",
+            params={"select": "anahtar,deger"},
+            headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"},
+            timeout=30,
+        )
+        r.raise_for_status()
+        return {s["anahtar"]: s["deger"] for s in r.json()}
+    except Exception as e:
+        print(f"[uyarı] arama_ayar okunamadı, taban gecmis.json'dan alınacak: {type(e).__name__}")
+        return None
+
+
 def karar(durum):
     gecmis = []
     if os.path.exists(GECMIS_YOL):
@@ -254,6 +276,8 @@ def karar(durum):
     m = durum["metrikler"]
     karar, degisen = "olcum", None
     n = lambda kol: m.get(kol, {}).get("ndcg")
+    # Ayar tabanı: önce tablo, erişilemezse gecmis.json (mimar önerisi 2026-11-03)
+    mevcut_ayar = tablo_ayarlari() or (gecmis[-1].get("ayarlar", {}) if gecmis else {})
 
     if m.get("normal", {}).get("ndcg") is None or durum.get("kuru"):
         karar = "olcum"
@@ -261,7 +285,7 @@ def karar(durum):
         karar = "baseline"
     elif durum["bos"]["normal"] > 0 and _ik_ardisik(gecmis, lambda k: k.get("bos_normal", 0) > 0):
         # 1. öncelik: boş dönen sorgu varsa eşiği düşür
-        gecerli = gecmis[-1].get("ayarlar", {}).get("min_skor", 0.30)
+        gecerli = mevcut_ayar.get("min_skor", 0.30)
         yeni = _sinirli("min_skor", gecerli - 0.05)
         if yeni != _sinirli("min_skor", gecerli):
             karar, degisen = "ayar", {"anahtar": "min_skor", "eski": gecerli, "yeni": yeni}
@@ -269,7 +293,7 @@ def karar(durum):
         # 2/3. öncelik: kol karşılaştırmaları (aynı koşuda A/B)
         fark_ham = n("ham") - n("normal")
         fark_rerank = (n("rerank") - n("normal")) if n("rerank") is not None else 0.0
-        onceki = gecmis[-1].get("ayarlar", {})
+        onceki = mevcut_ayar
         if fark_ham >= FARK_ESIK and _ik_ardisik(
                 gecmis, lambda k: (k.get("ndcg_ham") or 0) - (k.get("ndcg_normal") or 0) >= FARK_ESIK):
             if onceki.get("genisletme", 1) == 1:
@@ -287,7 +311,6 @@ def karar(durum):
             if onceki.get("rerank_top_k", 0) == 8:
                 karar, degisen = "ayar", {"anahtar": "rerank_top_k", "eski": 8, "yeni": 0}
 
-    mevcut_ayar = gecmis[-1].get("ayarlar", {}) if gecmis else {}
     return {"karar": karar, "degisen": degisen, "gecmis": gecmis, "mevcut_ayar": mevcut_ayar}
 
 

@@ -226,7 +226,8 @@ async function aramaYap(soru, secenek = {}) {
     // Yeniden sıralama: ham kolu hiç açmaz; normal kol config'e bakar
     const rerankIstenen = secenek.rerank || (!secenek.ham && (ayar.rerank_top_k || 0) > 0);
     if (rerankIstenen && adaylar.length >= 3) {
-      const sirali = await yenidenSirala(q, adaylar.slice(0, 16), 8);
+      const istenenAdet = Math.round(ayar.rerank_top_k) || 8;
+      const sirali = await yenidenSirala(q, adaylar.slice(0, 16), istenenAdet);
       // sirali boş dizi/hiç dönerse vektör sırası korunur (fail-open)
       if (sirali && sirali.length) adaylar = sirali;
     }

@@ -18,6 +18,9 @@ flowchart TD
         hsegitim["haftasonu-egitim.yml<br/>Cmt + Paz 07:30"]
         hsgundem["haftasonu-gundem.yml<br/>Cmt + Paz 06:00"]
         i18nw["i18n.yml<br/>2 saatte bir"]
+        embeddingw["embedding.yml<br/>hafta içi 08:35 TSİ + dispatch<br/>(artımlı / backfill)"]
+        evalw["eval.yml<br/>Pazartesi 06:50 TSİ + dispatch"]
+        webdeployw["web-deploy.yml<br/>web/** push'u → ayrı Pages"]
         publish["publish.yml<br/>2 x gün boş commit<br/>(+ daily sonrası)"]
     end
 
@@ -35,6 +38,18 @@ flowchart TD
 
     subgraph VERI["data/ — kaynak ve ara veri (git'te)"]
         d["teknik tarama, prices, news,<br/>portfolio.json, robot/, makro-*"]
+        evald["data/eval/<br/>latest.json + gecmis.json + rapor-*.md<br/>(eval.yml CI'la commit'ler)"]
+    end
+
+    subgraph ARAMA["Arama alt sistemi (anlam araması)"]
+        embed["pipeline/embed.py<br/>HTML→metin (<main> odaklı) → bge-m3<br/>artımlı upsert (hash karşılaştırma)"]
+        supa["Supabase pgvector<br/>belgeler + match_belgeler(_v2) + arama_ayar"]
+        route["web/app/api/ara/route.js (edge)<br/>arama_ayar → şirket genişletmesi →<br/>embedding → v2 RPC → rerank → kalibrasyon"]
+        rerank["Workers AI bge-reranker-base<br/>(VARSAYILAN KAPALI; fail-open)"]
+        vekil["functions/api/ara.js<br/>/api/ara vekili: url geçişi,<br/>ham/rerank A/B, 120 sn cache"]
+        araui["ara.html + başlık hızlı arama<br/>(bot.py _ara_sayfasi_yaz)"]
+        dongu["eval/dongu.py<br/>LangGraph: sorgu_sec→arama→yargıç<br/>→metrik→karar→yaz"]
+        yargic["Workers AI llama-3.3-70b<br/>yargıç (0/1/2 puan)"]
     end
 
     subgraph CIKTI["Üretilen site (git'e commit)"]
@@ -67,6 +82,7 @@ flowchart TD
     egitim <--> d
     bot --> trhtml
     bot --> grafikjs
+    bot -- "ara.html + arama kutusu" --> araui
     egitim --> trhtml
     haftasonu --> trhtml
     robot --> trhtml
@@ -87,6 +103,18 @@ flowchart TD
     dilhtml --> buildsh
     buildsh --> cf
     publish -- "boş commit = build tetikleyici" --> cf
+
+    embeddingw --> embed
+    embed -- "artımlı upsert (hash)" --> supa
+    evalw --> dongu
+    dongu --> yargic
+    dongu -- "üç kol ölçüm (GET)" --> vekil
+    dongu -- "arama_ayar yazımı (sınırlı)" --> supa
+    dongu --> evald
+    araui -- "fetch /api/ara" --> vekil
+    vekil -- "arka uca POST" --> route
+    route --> supa
+    route -- "top_k>0 ise" --> rerank
 ```
 
 ## Modül sorumlulukları (satır başına bir görev)
@@ -174,12 +202,41 @@ flowchart TD
   `workflow_dispatch` ile üretildi. Hafta sonu üreticileri (`haftasonu-gundem`,
   `haftasonu-egitim`) de tazelik kapısı + `force` girdisi taşıyor ve her biri
   yük-dışı yedek cron penceresine sahip — GitHub schedule koşularını sessizce
-  düşürdüğü için tek cron tek hata noktası sayılmaz.
+  düşürdüğü için tek cron tek hata noktası sayılmaz. `embedding.yml` (hafta içi
+  08:35 TSİ, daily'den 35 dk sonra) ve `eval.yml` (Pazartesi 06:50 TSİ) aynı
+  secret setiyle çalışır; ikisi de raporları/metriği CI'la repoya işler.
+  `web-deploy.yml` yalnız `web/**` push'unda ayrı Pages projesini
+  (borsa-raporlari-web.pages.dev) deploy eder — statik site etkilenmez.
 - **data/** — tek doğruluk kaynağı: teknik tarama çıktıları, fiyat serileri
   (`data/fiyat/<KOD>.json` fiyat deposu ≈300-420 işlem günü, hisse sayfası
   grafiklerinin ana kaynağı; `data/prices/<tarih>.json` günlük kesitleri, piyasa
   geneli seriler + doldurma), haberler, portföy geçmişi, robot günlüğü, makro
   snapshot/rejim. Botlar bunun üzerine yazan deterministik + LLM destekli HTML üretir.
+  `data/eval/` arama değerlendirme koşularının (eval.yml) commit'lenen kaydıdır.
+- **pipeline/embed.py** — anlam araması indeksleyici: `raporlar/`, `derin-analiz/`,
+  `makro-analiz/`, `haftasonu/`, `haftasonu-egitimi/` (son 10 gün; `--backfill` tümü) ve
+  4 kök sözlük/temettü sayfasını metne çıkarıp (~1400 karakterlik parçalar) bge-m3 ile
+  embed'ler, hash karşılaştırmasıyla ARTIMLI Supabase `belgeler` upsert'i yapar; küçülen
+  belgelerin artık parçalarını siler. Secret yoksa CI'ı kırmadan atlar.
+- **functions/api/ara.js** — TR sitesindeki `/api/ara` vekili: arka uç
+  (borsa-raporlari-web.pages.dev) yanıtı üzerinden kendi sayfa URL'lerimize çevirir
+  (önce arka ucun `s.url`'ü geçirilir, eski kaynak haritası yalnız yedektir);
+  ham/rerank A/B parametreleri; 120 sn kenar cache; arka uç yoksa /ara sayfası
+  yerel dizin aramasına düşer.
+- **web/app/api/ara/route.js** — arama hattı (edge): `arama_ayar` tablosunu 10 dk
+  cache + stale-while-error okur → şirket kodu↔ad sorgu genişletmesi (36 kayıt, en
+  fazla 2 ekleme, Türkçe normalizasyon, kelime sınırı) → bge-m3 embedding →
+  `match_belgeler_v2` (48 aday havuzu, url-başı en iyi parça, tarihli kaynaklara
+  sönümlü tazelik çarpanı; yoksa eski `match_belgeler`) → bge-reranker-base
+  (VARSAYILAN KAPALI `rerank_top_k=0`; izole try/catch, boş/geçersiz yanıt → vektör
+  sırası korunur) → gösterim kalibrasyonu ((benzerlik−taban)/0.30).
+- **eval/dongu.py** — LangGraph StateGraph değerlendirme döngüsü: 6 düğüm
+  (sorgu_sec→arama→yargıç→metrik→karar→yaz), 16 tohum sorguyu üç kolda (normal/
+  ham/rerank) ölçer, llama-3.3-70b yargıç 0/1/2 puanlar, nDCG@8+MRR hesaplar.
+  Güvenlik rayları: koşu başına tek parametre, 2 ardışık koşu histerezisi,
+  min_skor∈[0.15,0.45] + taze_boost∈[0,0.15] aralık sınırı, yalnız beyaz liste
+  anahtarlar (`min_skor, taze_boost, rerank_top_k, genisletme`); kod değişikliği
+  ASLA otomatik uygulanmaz.
 - **reports/ + en/de/ru/zh/** — üretilen çıktı git'te yaşar; deploy = git checkout.
   TR sayfa ile dil kopyası arasındaki yapısal eşdeğerlik `i18n.py --esdeger` ile
   denetlenir.
@@ -218,3 +275,22 @@ flowchart TD
   hafta sonu üretici + nöbetçi cronlarının TAMAMI düştü. Önlem: çoklu yük-dışı
   cron pencereleri + tazelik kapıları + nöbetçi zinciri; köklü çözüm adayı
   (ileride): Cloudflare Worker Cron Trigger ile GH dispatch API kick'i.
+- **Arama: reranker yanıt biçimi** (izleme): Workers AI bge-reranker-base'in
+  yanıt gövdesi (`result.response`) biçimi üç biçimli yakalanıyor; boş/geçersiz
+  yanıtta fail-open vektör sırası korunur (2026-11-03 eval koşusu: rerank kolu
+  16/16 boş döndü, normal kol etkilenmedi). Rerank açılmadan (histerezis
+  kararı) önce yanıt biçimi canlıda tek sorguyla doğrulanmalı.
+- **Arama: başlık hızlı arama kutusu eski üretim** (izleme): bot.py'deki
+  `gosterim` tercihi (bot.py:4286) yeni bot koşusuyla sayfalara işlenir;
+  mevcut yayımlanmış sayfalardaki kutu ham `benzerlik*100` yüzdesi gösterir —
+  sıradaki günlük koşu (hafta içi 09:17 TSİ) tüm sayfaları yeniden üretince
+  kalkar. Gösterim ölçeği iki modda farklıdır (rerank skoru×100 vs
+  (benzerlik−taban)/0.30); kutu ve /ara aynı kalibrasyona kavuşturulmalı.
+- **Eval: ayar tabanı kendi geçmişi** (izleme): dongu.py `karar` düğümü değişecek
+  parametrenin eski değerini arama_ayar tablosundan değil gecmis.json'daki
+  `ayarlar` sözlüğünden okur; elle tabloya yazılan bir değer eval'in tabanından
+  sapabilir (aralık sınırı [0.15,0.45] sapmayı sınırlar).
+- **Depo kökü çalışma alanı kirliliği**: depo kökünde `git status` 79+ izlenmeyen
+  dosya var (`_tmp_*`, `_kap_*`, probe betikleri, `i18n-elle.json.yedek-*`).
+  Yayımlanmazlar ama inceleme/yedekleme gürültüsü yaratır; `_SILME-KUYRUGU/`
+  mekanizmasıyla periyodik temizlik önerilir.
