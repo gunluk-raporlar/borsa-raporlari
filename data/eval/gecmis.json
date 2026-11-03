@@ -1,0 +1,14 @@
+{
+ "kosular": [
+  {
+   "tarih": "2026-11-03",
+   "ndcg_normal": null,
+   "ndcg_ham": null,
+   "ndcg_rerank": null,
+   "mrr_normal": 0.0,
+   "bos_normal": 0,
+   "karar": "olcum",
+   "ayarlar": {}
+  }
+ ]
+}

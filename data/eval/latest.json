@@ -1,0 +1,27 @@
+{
+ "tarih": "2026-11-03",
+ "sorgu_sayisi": 16,
+ "metrikler": {
+  "normal": {
+   "ndcg": null,
+   "mrr": 0.0
+  },
+  "ham": {
+   "ndcg": null,
+   "mrr": 0.0
+  },
+  "rerank": {
+   "ndcg": null,
+   "mrr": null
+  }
+ },
+ "bos": {
+  "normal": 0,
+  "ham": 0,
+  "rerank": 16
+ },
+ "yargic_hata": 256,
+ "yargic_yok": false,
+ "karar": "olcum",
+ "degisen": null
+}
