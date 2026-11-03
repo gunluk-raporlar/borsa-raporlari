@@ -19,6 +19,16 @@
    "bos_normal": 0,
    "karar": "olcum",
    "ayarlar": {}
+  },
+  {
+   "tarih": "2026-11-03",
+   "ndcg_normal": 0.9078,
+   "ndcg_ham": 0.9129,
+   "ndcg_rerank": null,
+   "mrr_normal": 0.7969,
+   "bos_normal": 0,
+   "karar": "olcum",
+   "ayarlar": {}
   }
  ]
 }
