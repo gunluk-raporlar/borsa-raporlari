@@ -3,7 +3,7 @@
  "sorgu_sayisi": 16,
  "metrikler": {
   "normal": {
-   "ndcg": 0.9078,
+   "ndcg": 0.9052,
    "mrr": 0.8594
   },
   "ham": {
@@ -12,7 +12,7 @@
   },
   "rerank": {
    "ndcg": 0.9052,
-   "mrr": 0.7969
+   "mrr": 0.8594
   }
  },
  "bos": {
@@ -23,5 +23,11 @@
  "yargic_hata": 0,
  "yargic_yok": false,
  "karar": "olcum",
- "degisen": null
+ "degisen": null,
+ "geriye": {
+  "kayit_islenen": 20,
+  "parca_etiketlenen": 153,
+  "yargic_hata": 0,
+  "atlandi": null
+ }
 }
