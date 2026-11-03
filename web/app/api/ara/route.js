@@ -133,11 +133,16 @@ async function yenidenSirala(soru, adaylar, topK) {
     );
     if (!r.ok) return null;
     const rj = await r.json();
-    const liste = (rj.result && rj.result.response) || rj.response || [];
-    return liste
-      .filter((x) => Number.isInteger(x.index) && adaylar[x.index])
+    const liste = (rj.result && Array.isArray(rj.result.response) && rj.result.response) ||
+      (Array.isArray(rj.response) && rj.response) || [];
+    // Yalnız geçerli indeksli öğeler; hiçbiri gelmezse null — vektör sırası
+    // korunur (fail-open; boş diziyi başarı sanıp sonuçları sıfırlamayız —
+    // 2026-11-03 eval koşusunda rerank kolunun boş dönme nedeni buydu).
+    const sirali = liste
+      .filter((x) => x && Number.isInteger(x.index) && adaylar[x.index])
       .sort((a, b) => (b.score || 0) - (a.score || 0))
       .map((x) => ({ ...adaylar[x.index], rerank_skor: x.score || 0 }));
+    return sirali.length ? sirali : null;
   } catch {
     return null;
   }
@@ -221,8 +226,9 @@ async function aramaYap(soru, secenek = {}) {
     // Yeniden sıralama: ham kolu hiç açmaz; normal kol config'e bakar
     const rerankIstenen = secenek.rerank || (!secenek.ham && (ayar.rerank_top_k || 0) > 0);
     if (rerankIstenen && adaylar.length >= 3) {
-      const sirali = await yenidenSirala(q, adaylar, 8);
-      if (sirali) adaylar = sirali;
+      const sirali = await yenidenSirala(q, adaylar.slice(0, 16), 8);
+      // sirali boş dizi/hiç dönerse vektör sırası korunur (fail-open)
+      if (sirali && sirali.length) adaylar = sirali;
     }
     adaylar = adaylar.slice(0, 8);
 
