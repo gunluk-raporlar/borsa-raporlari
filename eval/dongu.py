@@ -85,6 +85,8 @@ def vekil_ara(sorgu, kol, zaman_asimi=25):
     sonuc = r.json().get("sonuc") or []
     return [
         {
+            "id": s.get("id"),
+            "url": s.get("url") or "",
             "baslik": s.get("baslik") or "",
             "kaynak": s.get("kaynak") or "",
             "tarih": s.get("tarih") or "",
@@ -319,6 +321,128 @@ def karar(durum):
     return {"karar": karar, "degisen": degisen, "gecmis": gecmis, "mevcut_ayar": mevcut_ayar}
 
 
+# ---------- Geriye dönük etiketleme (gerçek aramalardan eğitim verisi) ----------
+
+GERIYE_KAYIT_SINIRI = 25   # koşu başına işlenen en fazla arama kaydı
+
+
+def geriye_etiketle(durum):
+    """arama_gunluk'taki gerçek aramaları 70B yargıçla geriye dönük etiketler.
+
+    Fine-tune veri hattının hızlandırıcısı (kullanıcı kararı 2026-11-03):
+    tohum sorgular yetmeyince sitenin gerçek kullanımından eğitim örneği
+    üretilir. Her arama kaydı bir kez işlenir (data/eval/geriye_durum.json);
+    parça metinleri arama_gunluk'ta bulunmadığından belgeler tablosundan id
+    ile alınır. Etiketler kol="geriye" ile etiketler.jsonl'e eklenir. Her
+    hata fail-open — ana değerlendirme akışını asla bozmaz.
+    """
+    ozet = {"kayit_islenen": 0, "parca_etiketlenen": 0, "yargic_hata": 0, "atlandi": None}
+    if durum.get("kuru"):
+        ozet["atlandi"] = "kuru"
+        return {"geriye": ozet}
+    if not (SUPABASE_URL and SUPABASE_KEY):
+        ozet["atlandi"] = "SUPABASE secret yok"
+        return {"geriye": ozet}
+    if not (CF_ACCOUNT_ID and CF_API_KEY):
+        ozet["atlandi"] = "CF secret yok"
+        return {"geriye": ozet}
+
+    durum_yol = os.path.join(DATA_KOK, "geriye_durum.json")
+    islenen = set()
+    if os.path.exists(durum_yol):
+        try:
+            with open(durum_yol, encoding="utf-8") as fh:
+                islenen = set(json.load(fh).get("islenen", []))
+        except Exception:
+            islenen = set()
+
+    try:
+        r = requests.get(
+            f"{SUPABASE_URL}/rest/v1/arama_gunluk",
+            params={"select": "kayit,terim,sonuc", "order": "arama_tarihi.desc",
+                    "limit": str(GERIYE_KAYIT_SINIRI * 3)},
+            headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"},
+            timeout=30,
+        )
+        r.raise_for_status()
+        kayitlar = [k for k in (r.json() or [])
+                    if k.get("kayit") not in islenen and k.get("sonuc")]
+    except Exception as e:
+        print(f"[uyarı] arama_gunluk okunamadı — geriye etiket atlandı: {type(e).__name__}")
+        ozet["atlandi"] = f"arama_gunluk okunamadi: {type(e).__name__}"
+        return {"geriye": ozet}
+
+    kayitlar = kayitlar[:GERIYE_KAYIT_SINIRI]
+    if not kayitlar:
+        ozet["atlandi"] = "yeni kayit yok"
+        return {"geriye": ozet}
+
+    # Parça metinleri belgeler'den id ile topla (arama_gunluk'ta icerik yok)
+    idler = sorted({str(s.get("id")) for k in kayitlar for s in (k.get("sonuc") or [])
+                    if s.get("id") is not None})
+    icerikler = {}
+    for i in range(0, len(idler), 50):
+        grup = ",".join(idler[i:i + 50])
+        try:
+            rr = requests.get(
+                f"{SUPABASE_URL}/rest/v1/belgeler",
+                params={"select": "id,icerik", "id": f"in.({grup})"},
+                headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"},
+                timeout=30,
+            )
+            rr.raise_for_status()
+            for satir in rr.json() or []:
+                icerikler[str(satir["id"])] = (satir.get("icerik") or "")[:400]
+        except Exception as e:
+            print(f"[uyarı] belgeler okunamadı — geriye etiket atlandı: {type(e).__name__}")
+            ozet["atlandi"] = f"belgeler okunamadi: {type(e).__name__}"
+            return {"geriye": ozet}
+
+    isler = []
+    for k in kayitlar:
+        for s in (k.get("sonuc") or []):
+            icerik = icerikler.get(str(s.get("id")))
+            if icerik:
+                isler.append((k["kayit"], k.get("terim") or "", s, icerik))
+    print(f"  geriye etiket: {len(kayitlar)} gerçek arama / {len(isler)} parça")
+
+    def puanla(is_):
+        kayit, terim, s, icerik = is_
+        try:
+            return kayit, terim, s, cf_yargic(terim, icerik)
+        except Exception:
+            return kayit, terim, s, None
+
+    etiketlenen, hatali = 0, 0
+    bugun = _bugun()
+    etiket_yol = os.path.join(DATA_KOK, "etiketler.jsonl")
+    os.makedirs(DATA_KOK, exist_ok=True)
+    with ThreadPoolExecutor(max_workers=4) as havuz:
+        for kayit, terim, s, puan in havuz.map(puanla, isler):
+            if puan is None:
+                hatali += 1
+                continue
+            etiketlenen += 1
+            with open(etiket_yol, "a", encoding="utf-8") as fh:
+                fh.write(json.dumps({
+                    "tarih": bugun, "kol": "geriye", "sorgu": terim,
+                    "sira": s.get("sira"), "puan": puan,
+                    "kaynak": s.get("kaynak"), "belge_tarih": None,
+                    "icerik": icerikler.get(str(s.get("id"))),
+                    "kayit": kayit, "url": s.get("url"),
+                }, ensure_ascii=False) + "\n")
+
+    for k in kayitlar:
+        islenen.add(k["kayit"])
+    with open(durum_yol, "w", encoding="utf-8") as fh:
+        json.dump({"islenen": sorted(islenen)[-2000:]}, fh, ensure_ascii=False)
+
+    ozet.update({"kayit_islenen": len(kayitlar), "parca_etiketlenen": etiketlenen,
+                 "yargic_hata": hatali})
+    print(f"[geriye] {len(kayitlar)} gerçek arama işlendi, {etiketlenen} parça etiketlendi (hata: {hatali})")
+    return {"geriye": ozet}
+
+
 def yaz(durum):
     if durum.get("kuru"):
         print("KURU KOŞU — dosya yazılmadı, ayar değiştirilmedi.")
@@ -330,7 +454,8 @@ def yaz(durum):
              "metrikler": durum["metrikler"], "bos": durum["bos"],
              "yargic_hata": durum.get("yargic_hata", 0),
              "yargic_yok": durum.get("yargic_yok", False),
-             "karar": durum["karar"], "degisen": durum["degisen"]}
+             "karar": durum["karar"], "degisen": durum["degisen"],
+             "geriye": durum.get("geriye") or {}}
     with open(os.path.join(DATA_KOK, "latest.json"), "w", encoding="utf-8") as fh:
         json.dump(kayit, fh, ensure_ascii=False, indent=1)
 
@@ -345,7 +470,8 @@ def yaz(durum):
                 for sira, s in enumerate(liste):
                     kayit = {
                         "tarih": tarih, "kol": kol, "sorgu": sorgu, "sira": sira,
-                        "puan": puans.get(sira),
+                        "puan": puans.get(sira), "id": s.get("id"),
+                        "url": s.get("url") or "",
                         "kaynak": s.get("kaynak"), "belge_tarih": s.get("tarih"),
                         "icerik": s.get("icerik"),
                     }
@@ -394,6 +520,7 @@ def yaz(durum):
 
     # İnsan-okur rapor
     m = durum["metrikler"]
+    geriye = durum.get("geriye") or {}
     satirlar = [
         f"# Arama değerlendirme raporu — {tarih}",
         "",
@@ -405,6 +532,9 @@ def yaz(durum):
         f"- Karar: **{durum['karar']}**"
         + (f" · {d['anahtar']}: {d['eski']} → {d['yeni']}"
            + (" (arama_ayar'a yazıldı)" if yazildi else " (YAZILAMADI)") if d else ""),
+        f"- Geriye etiket: {geriye.get('parca_etiketlenen', 0)} parça / "
+        f"{geriye.get('kayit_islenen', 0)} gerçek arama"
+        + (f" · atlandı: {geriye['atlandi']}" if geriye.get("atlandi") else ""),
         "",
         "Kod değişikliği önerileri bu raporda kalır; otomatik uygulanmaz.",
     ]
@@ -454,6 +584,7 @@ class Durum(TypedDict, total=False):
     metrikler: dict
     karar: str
     degisen: dict
+    geriye: dict
     gecmis: list
     mevcut_ayar: dict
 
@@ -467,13 +598,15 @@ def graf_kur():
     builder.add_node("yargic", yargic)
     builder.add_node("metrik", metrik)
     builder.add_node("karar", karar)
+    builder.add_node("geriye_etiket", geriye_etiketle)
     builder.add_node("yaz", yaz)
     builder.set_entry_point("sorgu_sec")
     builder.add_edge("sorgu_sec", "arama")
     builder.add_edge("arama", "yargic")
     builder.add_edge("yargic", "metrik")
     builder.add_edge("metrik", "karar")
-    builder.add_edge("karar", "yaz")
+    builder.add_edge("karar", "geriye_etiket")
+    builder.add_edge("geriye_etiket", "yaz")
     builder.add_edge("yaz", END)
     return builder.compile()
 
