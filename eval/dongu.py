@@ -89,6 +89,23 @@ def vekil_ara(sorgu, kol, zaman_asimi=25):
     ]
 
 
+def _yargic_metni(j):
+    """Workers AI yanıt gövdesinden puan aranacak metni çıkarır.
+
+    Model biçimi değişken olabilir: result.response düz metin olabileceği
+    gibi mesaj nesnesi ({"role":..., "content":...}) de dönebiliyor
+    (2026-11-03 ilk koşudaki 256x TypeError'ın kök nedeni). Güvenli yol:
+    dict/liste ise JSON'a çevirip regex'i ona uygula.
+    """
+    r = j.get("result") if isinstance(j, dict) else None
+    cevap = r.get("response") if isinstance(r, dict) else (j.get("response") if isinstance(j, dict) else None)
+    if isinstance(cevap, str):
+        return cevap
+    if cevap is None:
+        return json.dumps(j, ensure_ascii=False)
+    return json.dumps(cevap, ensure_ascii=False)
+
+
 def cf_yargic(sorgu, icerik):
     """Workers AI yargıcı: sonucun sorgu ile ilgisini 0/1/2 puanlar."""
     prompt = (
@@ -106,8 +123,10 @@ def cf_yargic(sorgu, icerik):
     )
     r.raise_for_status()
     j = r.json()
-    metin = (j.get("result") or {}).get("response") if isinstance(j.get("result"), dict) else j.get("response")
-    m = re.search(r'"puan"\s*:\s*([0-2])', metin or "")
+    metin = _yargic_metni(j)
+    # Düz metin, JSON-dump nesne ve kaçışlı tırnaklı ("\puan\" biçimli) dizileri
+    # tek desenle yakalar.
+    m = re.search(r'puan\\?"?\s*:\s*([0-2])', metin or "")
     return int(m.group(1)) if m else None
 
 
