@@ -373,6 +373,10 @@ def geriye_etiketle(durum):
         return {"geriye": ozet}
 
     kayitlar = kayitlar[:GERIYE_KAYIT_SINIRI]
+    # Eval'in kendi tohum sorguları yargıç düğümünde zaten etiketleniyor;
+    # günlüğe de düştükleri için burada tekrar etiketlememek üzere elenir.
+    tohumlar = {str(s).strip().lower() for s in (durum.get("sorgular") or [])}
+    kayitlar = [k for k in kayitlar if str(k.get("terim") or "").strip().lower() not in tohumlar]
     if not kayitlar:
         ozet["atlandi"] = "yeni kayit yok"
         return {"geriye": ozet}
