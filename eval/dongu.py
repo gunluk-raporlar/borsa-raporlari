@@ -615,12 +615,33 @@ def graf_kur():
     return builder.compile()
 
 
+def _son_kosu_bugun():
+    """Bugün zaten tam koşu yapıldı mı? (Workers AI günlük neuron kotasını
+    yanlışlıkla tekrar yakmamak için — 2026-11-03: aynı gün 6 koşu, sitenin
+    embedding kotasını tüketti.)"""
+    if os.path.exists(_gecmis_yol()):
+        try:
+            with open(_gecmis_yol(), encoding="utf-8") as fh:
+                kosular = json.load(fh).get("kosular", [])
+            return bool(kosular and kosular[-1].get("tarih") == _bugun())
+        except Exception:
+            return False
+    return False
+
+
 def main():
     ayrik = argparse.ArgumentParser(description="Arama kalitesi değerlendirme döngüsü")
     ayrik.add_argument("--kuru", action="store_true",
                        help="ağ yok: sahte veriyle graf doğrulaması (dosya yazılmaz)")
+    ayrik.add_argument("--zorla", action="store_true",
+                       help="aynı gün koşulmuş olsa bile çalışır (kota bilinçli harcanır)")
     arg = ayrik.parse_args()
     t0 = time.time()
+
+    if not arg.kuru and not arg.zorla and _son_kosu_bugun():
+        print("[atlandı] Bugün zaten tam koşu yapıldı; kota korunuyor. "
+              "Yeniden koşmak için: python eval/dongu.py --zorla")
+        return
 
     app = graf_kur()
     son: Dict[str, Any] = app.invoke({"kuru": bool(arg.kuru)},

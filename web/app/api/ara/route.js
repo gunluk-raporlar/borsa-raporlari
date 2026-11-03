@@ -174,17 +174,25 @@ async function aramaYap(soru, secenek = {}) {
   }
 
   try {
-    const er = await fetch(
-      `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/ai/v1/embeddings`,
-      {
-        method: "POST",
-        headers: { Authorization: `Bearer ${CF_API_KEY}`, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: process.env.EMBED_MODEL || "@cf/baai/bge-m3",
-          input: [embedMetni],
-        }),
-      }
-    );
+    // Embedding: 429/anlık 5xx'te tek seferlik nazik retry (1,5 sn). Günlük
+    // neuron kotası tükenmişse retry da 429 döner ve arama fail-open düşer.
+    let er = null;
+    for (let deneme = 0; deneme < 2; deneme++) {
+      if (deneme) await new Promise((coz) => setTimeout(coz, 1500));
+      er = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/ai/v1/embeddings`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${CF_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: process.env.EMBED_MODEL || "@cf/baai/bge-m3",
+            input: [embedMetni],
+          }),
+        }
+      );
+      if (er.ok) break;
+      if (er.status !== 429 && er.status < 500) break;
+    }
     if (!er.ok) throw new Error(`embedding endpoint ${er.status}`);
     const ej = await er.json();
     const vektor = ej && ej.data && ej.data[0] && ej.data[0].embedding;
