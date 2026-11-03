@@ -6,25 +6,13 @@
   "bugun_tarih": "2026-11-03",
   "gerceklesen_kz": -4031.5323749999934,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 1,
+  "kontrol_sayisi": 2,
   "nakit": 65730.15823966812,
   "onceki_kapanis_ozkaynak": 95190.28,
   "ozkayit": [
     [
       "2026-09-25",
       100000.0
-    ],
-    [
-      "2026-10-16T15:04",
-      96638.83
-    ],
-    [
-      "2026-10-16T19:34",
-      96787.21
-    ],
-    [
-      "2026-10-19T17:13",
-      97416.23
     ],
     [
       "2026-10-20T15:24",
@@ -65,6 +53,10 @@
     [
       "2026-10-30T16:43",
       95190.28
+    ],
+    [
+      "2026-11-03T17:45",
+      95598.74
     ]
   ],
   "pozisyonlar": {
@@ -77,38 +69,38 @@
     }
   },
   "rejim": "ayi",
-  "son_bar_tarihi": "2026-11-02",
+  "son_bar_tarihi": "2026-11-03",
   "son_fiyatlar": {
-    "AEFES": 16.24,
-    "AKBNK": 63.3,
-    "ASELS": 342.25,
-    "ASTOR": 153.0,
-    "BIMAS": 356.0,
-    "EKGYO": 16.77,
-    "ENKAI": 80.05,
-    "EREGL": 30.02,
-    "FROTO": 66.8,
-    "GARAN": 129.3,
-    "GUBRF": 275.25,
-    "ISCTR": 12.32,
-    "KCHOL": 195.7,
-    "KRDMD": 37.92,
-    "MGROS": 428.0,
-    "PETKM": 16.51,
-    "PGSUS": 122.2,
-    "SAHOL": 83.0,
-    "SASA": 1.48,
-    "SISE": 33.42,
-    "TAVHL": 262.0,
-    "TCELL": 91.95,
-    "THYAO": 261.0,
-    "TOASO": 221.3,
-    "TRALT": 34.14,
-    "TRMET": 98.9,
-    "TTKOM": 47.22,
-    "TUPRS": 337.0,
-    "VAKBN": 29.6,
-    "YKBNK": 35.64
+    "AEFES": 16.59,
+    "AKBNK": 62.15,
+    "ASELS": 342.75,
+    "ASTOR": 156.7,
+    "BIMAS": 358.5,
+    "EKGYO": 16.57,
+    "ENKAI": 80.4,
+    "EREGL": 30.9,
+    "FROTO": 66.35,
+    "GARAN": 128.3,
+    "GUBRF": 271.75,
+    "ISCTR": 12.29,
+    "KCHOL": 195.1,
+    "KRDMD": 38.28,
+    "MGROS": 436.5,
+    "PETKM": 17.0,
+    "PGSUS": 127.6,
+    "SAHOL": 82.55,
+    "SASA": 1.5,
+    "SISE": 34.32,
+    "TAVHL": 266.0,
+    "TCELL": 91.75,
+    "THYAO": 266.75,
+    "TOASO": 218.0,
+    "TRALT": 34.22,
+    "TRMET": 100.9,
+    "TTKOM": 47.44,
+    "TUPRS": 338.75,
+    "VAKBN": 29.88,
+    "YKBNK": 34.7
   },
   "son_repo_tarihi": "2026-11-03",
   "toplam_kesinti": 400.93,
