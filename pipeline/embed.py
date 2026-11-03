@@ -65,29 +65,67 @@ PARCA_BOYUTU = 1400
 # ---------- HTML → metin ----------
 
 class _MetinCikarici(HTMLParser):
-    ATLANAN = {"script", "style", "noscript", "svg", "head"}
+    # 2026-11-03 mimar notu: gezinme/uygulama kabuğu embedding parçalarına
+    # karışmasın — head/nav/header/footer vb. atlanır; sınıf/id'sinde "hesap"
+    # veya "asistan" geçen öğeler (hesaplayıcı, asistan kartı) özel atlanır;
+    # sayfada <main> varsa yalnız main içinden metin alınır.
+    ATLANAN = {"script", "style", "noscript", "svg", "head", "nav", "header",
+               "footer", "aside", "button", "form", "select", "option",
+               "label", "template"}
+    ATLA_SINIF = ("hesap", "asistan", "site-widgets", "live-clock",
+                  "interactive-box", "arama-kutusu", "radyo")
 
-    def __init__(self):
+    def __init__(self, yalniz_ana=False):
         super().__init__()
         self.parcalar = []
         self.atla = 0
         self.baslik = ""
         self._h1 = False
+        self.yalniz_ana = yalniz_ana
+        self.ana = 0
+        self.ozel_turu = None
+        self.ozel_derinlik = 0
+
+    def _arayuz_mi(self, attrs):
+        for k, v in attrs:
+            if k in ("class", "id") and v and any(p in v for p in self.ATLA_SINIF):
+                return True
+        return False
 
     def handle_starttag(self, tag, attrs):
-        if tag in self.ATLANAN:
+        if self.ozel_turu is not None:
+            if tag == self.ozel_turu:
+                self.ozel_derinlik += 1
+            return
+        if tag == "main":
+            self.ana += 1
+        elif tag in self.ATLANAN:
             self.atla += 1
+            return
         elif tag == "h1":
             self._h1 = True
+        if self._arayuz_mi(attrs):
+            self.ozel_turu = tag
+            self.ozel_derinlik = 1
 
     def handle_endtag(self, tag):
+        if self.ozel_turu is not None:
+            if tag == self.ozel_turu:
+                self.ozel_derinlik -= 1
+                if self.ozel_derinlik <= 0:
+                    self.ozel_turu = None
+            return
         if tag in self.ATLANAN and self.atla:
             self.atla -= 1
         elif tag == "h1":
             self._h1 = False
+        elif tag == "main" and self.ana:
+            self.ana -= 1
 
     def handle_data(self, data):
-        if self.atla:
+        if self.atla or self.ozel_turu is not None:
+            return
+        if self.yalniz_ana and self.ana == 0:
             return
         metin = data.strip()
         if not metin:
@@ -100,7 +138,7 @@ class _MetinCikarici(HTMLParser):
 def html_metni(yol):
     with open(yol, encoding="utf-8", errors="replace") as fh:
         ham = fh.read()
-    c = _MetinCikarici()
+    c = _MetinCikarici(yalniz_ana="<main" in ham)
     c.feed(ham)
     baslik = c.baslik
     if not baslik:

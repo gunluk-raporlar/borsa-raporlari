@@ -23,7 +23,6 @@
 <meta name="twitter:description" content="Site içinde hisse kodu, konu ve tarih araması; eşleşen terimler vurgulanır.">
 <meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
 <meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
-<meta name="yandex-verification" content="2c8df12d0b97a734">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Site Arama", "description": "Site içinde hisse kodu, konu ve tarih araması; eşleşen terimler vurgulanır.", "url": "https://borsa-raporlari.pages.dev/ara", "inLanguage": "tr", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Günlük Raporlar", "url": "https://borsa-raporlari.pages.dev/"}}</script>
 <script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -32,9 +31,9 @@
 </head>
 <body>
 <header class="topbar"><div class="inner">
-<div class="brand-row"><a class="brand" href="./">BIST 30 Günlük Raporlar</a>
+<div class="brand-row"><a class="brand" href="index.html">BIST 30 Günlük Raporlar</a>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
-<nav><a href="./">Ana Sayfa</a><a href="raporlar">Raporlar</a><a href="hisse/">Hisseler</a><a href="derin-analiz">Derin Analiz</a><a href="makro-analiz">Makro Analiz</a><a href="teknik-analiz">Teknik Tarama</a><a href="sinyal-karnesi">Sinyal Karnesi</a><a href="borsapy-analiz">Borsapy Sinyal</a><a href="haberler">Haberler</a><a href="sirket-haberleri">Şirket Haberleri</a><a href="portfolio">Deneme Portföyü</a><a href="haftasonu">Hafta Sonu</a><a href="haftasonu-egitimi">Borsa Okulu</a><a href="takvim">📅 Takvim</a><a href="temettu">💰 Temettü</a><a href="sozluk">Sözlük</a><a href="terimler">Terimler</a><a href="muhasebe-terimleri">Muhasebe Terimleri</a><a href="robot">İşlem Robotu</a></nav>
+<nav><a href="index.html">Ana Sayfa</a><a href="raporlar.html">Raporlar</a><a href="hisse/index.html">Hisseler</a><a href="derin-analiz.html">Derin Analiz</a><a href="makro-analiz.html">Makro Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="sinyal-karnesi.html">Sinyal Karnesi</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="haberler.html">Haberler</a><a href="sirket-haberleri.html">Şirket Haberleri</a><a href="portfolio.html">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu</a><a href="haftasonu-egitimi.html">Borsa Okulu</a><a href="takvim.html">📅 Takvim</a><a href="temettu.html">💰 Temettü</a><a href="sozluk.html">Sözlük</a><a href="terimler.html">Terimler</a><a href="muhasebe-terimleri.html">Muhasebe Terimleri</a><a href="robot.html">İşlem Robotu</a></nav>
 </div></header>
 
 <div class="ticker-bant" id="ticker-bant" data-kok="" style="margin-bottom:16px">
@@ -257,7 +256,7 @@
     fetch('/api/ara?q=' + encodeURIComponent(q), { cache: 'no-store' })
       .then(function(r) { if (!r.ok) throw 0; return r.json(); })
       .then(function(v) {
-        var KA = { 'gunluk-rapor': 'Günlük', 'derin-analiz': 'Derin', 'makro-analiz': 'Makro', 'haftasonu': 'Hafta sonu', 'egitim': 'Okul', 'sozluk': 'Sözlük', 'terimler': 'Terimler', 'muhasebe-terimleri': 'Muhasebe' };
+        var KA = { 'gunluk-rapor': 'Günlük', 'derin-analiz': 'Derin', 'makro-analiz': 'Makro', 'haftasonu': 'Hafta sonu', 'egitim': 'Okul', 'sozluk': 'Sözlük', 'terimler': 'Terimler', 'muhasebe-terimleri': 'Muhasebe', 'temettu': 'Temettü' };
         var liste = ((v && v.sonuc) || []).slice(0, 3);
         if (liste.length) {
           var ik = '<div style="font-size:11.5px;color:#0f766e;font-weight:700;margin-bottom:6px">🧠 ANLAM ARAMASI</div>';
@@ -331,7 +330,7 @@
   <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Oynat / Duraklat">▶</button>
   <audio id="radyo-ses" preload="none"></audio>
   <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Ses seviyesi" title="Ses">
-  <span class="radyo-linkler"><a href="radyo/">📻 Tüm yayınlar &amp; Podcast sayfası</a> <span class="ayrac">•</span> <a href="radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-linkler"><a href="radyo/index.html">📻 Tüm yayınlar &amp; Podcast sayfası</a> <span class="ayrac">•</span> <a href="radyo/podcast.xml">RSS</a></span>
   <span class="radyo-uyari">Yalnızca dinlemek içindir • Kurgusal yapay zeka sunucular • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</span>
 </div>
 <script>
@@ -496,22 +495,51 @@ window.asistanSor = function() {
     return cikti;
   }
 
-  function semantikHtml(sonuc, q) {
+  var KAYNAK_AD = { 'gunluk-rapor': 'Günlük Rapor', 'derin-analiz': 'Derin Analiz', 'makro-analiz': 'Makro Analiz', 'haftasonu': 'Hafta Sonu', 'egitim': 'Eğitim', 'sozluk': 'Sözlük', 'terimler': 'Terimler', 'muhasebe-terimleri': 'Muhasebe Terimleri', 'temettu': 'Temettü' };
+
+  function semantikHtml(sonuc, q, genisletilen) {
     var terimler = q.split(/\s+/).filter(Boolean);
     var cikti = '<h2 style="margin:14px 0 8px; font-size:16px">&#129504; Anlam düzeyinde ' + sonuc.length + ' sonuç</h2>';
+    if (genisletilen && genisletilen.length) {
+      cikti += '<p style="color:#0f766e; font-size:12px; margin:0 0 10px">Arama şununla genişletildi: ' + kac(genisletilen.join(' · ')) + '</p>';
+    }
+    var gruplar = [];
+    sonuc.forEach(function(x) { var k = x.kaynak || ''; if (gruplar.indexOf(k) === -1) gruplar.push(k); });
+    if (gruplar.length > 1) {
+      cikti += '<div id="ara-cipler" style="margin:0 0 12px">';
+      cikti += '<button type="button" data-k="" class="ara-cip" style="border:1px solid #0f766e; border-radius:999px; padding:3px 10px; font-size:12px; background:#f8fafc; cursor:pointer; margin:0 6px 6px 0">Tümü (' + sonuc.length + ')</button>';
+      gruplar.forEach(function(k) {
+        var adet = sonuc.filter(function(x) { return (x.kaynak || '') === k; }).length;
+        cikti += '<button type="button" data-k="' + kac(k) + '" class="ara-cip" style="border:1px solid #cbd5e1; border-radius:999px; padding:3px 10px; font-size:12px; background:#f8fafc; cursor:pointer; margin:0 6px 6px 0">' + kac(KAYNAK_AD[k] || k) + ' (' + adet + ')</button>';
+      });
+      cikti += '</div>';
+    }
     sonuc.forEach(function(x) {
-      var yuzde = Math.round(100 * (x.benzerlik || 0));
-      var baslik = (x.tarih || '') + ' — ' + (x.baslik || '') + ((x.kaynak || '') ? ' (' + x.kaynak + ')' : '');
+      var yuzde = (typeof x.gosterim === 'number') ? x.gosterim : Math.round(100 * (x.benzerlik || 0));
+      var rozet = KAYNAK_AD[x.kaynak] || x.kaynak || '';
+      var baslik = (x.tarih || '') + ' — ' + (x.baslik || '');
       var kesit = (x.icerik || '').slice(0, 300);
       var vBaslik = vurgula(baslik, terimler);
       var vKesit = vurgula(kesit, terimler);
-      cikti += '<div style="margin:0 0 16px">' +
-        '<div style="color:#0f766e; font-size:12.5px; font-weight:600">%' + yuzde + ' benzerlik</div>' +
+      cikti += '<div class="ara-sem" data-kaynak="' + kac(x.kaynak || '') + '" style="margin:0 0 16px">' +
+        '<div style="color:#0f766e; font-size:12.5px; font-weight:600">%' + yuzde + ' benzerlik' + (rozet ? ' · ' + kac(rozet) : '') + '</div>' +
         '<a href="' + kac(x.url || '') + '" style="font-weight:600; font-size:15px">' + (vBaslik || kac(baslik)) + '</a>' +
         '<div style="color:#64748b; font-size:13px; margin-top:2px">' + (vKesit || kac(kesit)) + ((x.icerik || '').length > 300 ? '&hellip;' : '') + '</div></div>';
     });
     return cikti;
   }
+
+  window.araSuzBagla = function() {
+    document.querySelectorAll('#ara-cipler .ara-cip').forEach(function(b) {
+      b.addEventListener('click', function() {
+        var k = b.getAttribute('data-k') || '';
+        document.querySelectorAll('#ara-cipler .ara-cip').forEach(function(o) { o.style.opacity = (o === b) ? '1' : '0.55'; });
+        document.querySelectorAll('.ara-sem').forEach(function(d) {
+          d.style.display = (!k || d.getAttribute('data-kaynak') === k) ? '' : 'none';
+        });
+      });
+    });
+  };
 
   window.ornekBak = function(btn) {
     document.getElementById('ara-giris').value = btn.textContent;
@@ -525,16 +553,17 @@ window.asistanSor = function() {
     if (!q) { kutu.innerHTML = '<p style="color:#64748b; font-size:14px">Arama yapmak için bir terim veya soru yazın.</p>'; return; }
     kutu.innerHTML = '<p style="color:#94a3b8; font-size:14px">Aranıyor&hellip;</p>';
     var semantik = null;
+    var genisletilen = [];
     fetch('/api/ara', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q: q }) })
       .then(function(r) { if (!r.ok) throw 0; return r.json(); })
-      .then(function(v) { semantik = v.sonuc || []; return indeksYukle(); })
+      .then(function(v) { semantik = v.sonuc || []; genisletilen = v.genisletilen || []; return indeksYukle(); })
       .catch(function() { semantik = null; return indeksYukle(); })
       .then(function(indeks) {
         var terimler = q.split(/\s+/).filter(Boolean);
         var yerel = dizinSonuclari(indeks, q);
         var cikti = '<p style="color:#64748b; font-size:13px">Aranan: <strong>' + kac(q) + '</strong></p>';
         if (semantik && semantik.length) {
-          cikti += semantikHtml(semantik, q);
+          cikti += semantikHtml(semantik, q, genisletilen);
           if (yerel.length) {
             cikti += '<h2 style="margin:18px 0 8px; font-size:15px; color:#475569">Sayfa başlığı eşleşmeleri</h2>' + yerelHtml(yerel.slice(0, 8), terimler, false);
           }
@@ -544,6 +573,7 @@ window.asistanSor = function() {
           cikti += '<p style="color:#b45309; font-size:13px">Akıllı arama şu anda yanıt vermedi; sayfa dizini araması gösteriliyor.</p>' + yerelHtml(yerel.slice(0, 50), terimler, true);
         }
         kutu.innerHTML = cikti;
+        if (semantik && semantik.length) window.araSuzBagla();
       });
   };
 
@@ -555,12 +585,12 @@ window.asistanSor = function() {
 </main>
 
 <nav class="altbar" aria-label="Hızlı menü">
-<a href="raporlar"><span class="i" aria-hidden="true">📊</span>Raporlar</a>
-<a href="teknik-analiz"><span class="i" aria-hidden="true">📈</span>Teknik</a>
-<a href="hisse/"><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
-<a href="portfolio"><span class="i" aria-hidden="true">💼</span>Portföy</a>
-<a href="haberler"><span class="i" aria-hidden="true">📰</span>Haberler</a>
-<a href="takvim"><span class="i" aria-hidden="true">📅</span>Takvim</a>
+<a href="raporlar.html"><span class="i" aria-hidden="true">📊</span>Raporlar</a>
+<a href="teknik-analiz.html"><span class="i" aria-hidden="true">📈</span>Teknik</a>
+<a href="hisse/index.html"><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
+<a href="portfolio.html"><span class="i" aria-hidden="true">💼</span>Portföy</a>
+<a href="haberler.html"><span class="i" aria-hidden="true">📰</span>Haberler</a>
+<a href="takvim.html"><span class="i" aria-hidden="true">📅</span>Takvim</a>
 </nav>
 
 <script>
@@ -578,7 +608,7 @@ function temaDegistir() {
 })();
 </script>
 
-<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok ajanlı sistem)<br><a href="gizlilik" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
+<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok ajanlı sistem)<br><a href="gizlilik.html" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
 
 <!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
 <script>

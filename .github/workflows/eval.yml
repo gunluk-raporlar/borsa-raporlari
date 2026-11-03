@@ -1,0 +1,49 @@
+name: Arama degerlendirme dongusu (LangGraph)
+
+# Kullanıcının gerçek arama zincirini (vekil uç noktası) haftalık ölçer;
+# LLM yargıç puanlarıyla nDCG@8/MRR hesaplar; yalnız güvenli arama_ayar
+# parametrelerini (histerezis + aralık sınırlı) günceller; kod değişikliği
+# önerilerini rapor olarak bırakır. Secret'lar yoksa ölçüm yapmadan çıkar.
+
+on:
+  schedule:
+    - cron: '50 3 * * 1' # Pazartesi 06:50 TSİ — gecelik işlerden sonra
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Bagimliliklar
+        run: pip install -r eval/requirements.txt
+
+      - name: Degerlendirme dongusu
+        env:
+          CF_API_KEY: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          SUPABASE_URL: https://ttmdhdoxhbrjnzrxttmr.supabase.co
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python eval/dongu.py
+
+      - name: Raporlari repoya isle
+        run: |
+          [ -d data/eval ] || { echo "Eval klasoru yok (dongu calisamadi); commit gerekmez."; exit 0; }
+          git config user.name "gunluk-raporlar"
+          git config user.email "gunluk-raporlar@users.noreply.github.com"
+          git add data/eval
+          if git diff --cached --quiet; then
+            echo "Yeni eval kaydı yok, commit atlanıyor."
+          else
+            git commit -m "eval: arama degerlendirme kosusu $(date -u +%F-%H:%M UTC) [CI Skip]"
+            git pull --rebase -X theirs origin main || true
+            git push origin main || echo "[uyari] push başarısız — raporlar sonraki çalışmada işlenir"
+          fi

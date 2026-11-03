@@ -1,0 +1,2 @@
+langgraph==1.2.11
+requests>=2.31

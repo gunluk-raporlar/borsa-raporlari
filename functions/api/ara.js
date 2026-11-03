@@ -11,13 +11,24 @@
 // ayni vekile ?q= ile baglandi; POST davranisi birebir korundu.
 
 const UST = "https://borsa-raporlari-web.pages.dev/api/ara";
+const KOK = "https://borsa-raporlari.pages.dev";
 const CACHE_TTL = 120; // saniye — aynı sorgunun kısa süreli kenar önbelleği
 
+// 2026-11-03 mimar notu: arka uç adresi zaten SITE_URL tabanlı üretip
+// döndürüyor (pipeline/embed.py); kök/adresi çevirip geçir — yedek harita
+// yalnız url alanı eksikse çalışır, yeni kaynaklar otomatik kapsanır.
 function hedefUrl(s) {
+  if (s.url && s.url.startsWith(KOK + "/")) return s.url.slice(KOK.length);
   const kaynak = (s.kaynak || "").toLowerCase();
   const tarih = s.tarih || "";
   if (kaynak.includes("derin")) return `/derin-analiz/${tarih}`;
   if (kaynak.includes("makro")) return `/makro-analiz/${tarih}`;
+  if (kaynak === "egitim") return `/haftasonu-egitimi/${tarih}.html`;
+  if (kaynak === "haftasonu") return `/haftasonu/${tarih}.html`;
+  if (kaynak === "sozluk") return "/sozluk.html";
+  if (kaynak === "terimler") return "/terimler.html";
+  if (kaynak === "muhasebe-terimleri") return "/muhasebe-terimleri.html";
+  if (kaynak === "temettu") return "/temettu.html";
   return `/raporlar/${tarih}`;
 }
 
@@ -30,8 +41,13 @@ const jsonYanit = (obj, status = 200) => new Response(JSON.stringify(obj), {
   },
 });
 
-async function akilliAra(q) {
+async function akilliAra(q, secenek) {
   if (!q) return jsonYanit({ hata: "sorgu-bos" }, 400);
+  const govde = { q };
+  // Değerlendirme döngüsünün A/B kolları: ham = genişletme+rerank yok,
+  // rerank = genişletme açık + zorunlu yeniden sıralama (arka uç karar verir).
+  if (secenek && secenek.ham) govde.ham = 1;
+  if (secenek && secenek.rerank) govde.rerank = 1;
 
   let ust;
   try {
@@ -40,7 +56,7 @@ async function akilliAra(q) {
     ust = await fetch(UST, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ q }),
+      body: JSON.stringify(govde),
       signal: denetim.signal,
     });
     clearTimeout(zaman);
@@ -61,22 +77,30 @@ async function akilliAra(q) {
     baslik: s.baslik,
     kaynak: s.kaynak,
     benzerlik: s.benzerlik,
+    gosterim: s.gosterim,
+    genisletilen: s.genisletilen,
     icerik: s.icerik,
     url: hedefUrl(s),
   }));
-  return jsonYanit({ sonuc });
+  return jsonYanit({ sonuc, ayar: veri.ayar || null });
 }
 
 export async function onRequestPost(context) {
-  let q = "";
+  let q = "", secenek = {};
   try {
     const govde = await context.request.json();
     q = String(govde.q || "").trim();
+    if (govde.ham) secenek.ham = 1;
+    if (govde.rerank) secenek.rerank = 1;
   } catch {}
-  return akilliAra(q);
+  return akilliAra(q, secenek);
 }
 
 export async function onRequestGet(context) {
-  const q = String(new URL(context.request.url).searchParams.get("q") || "").trim();
-  return akilliAra(q);
+  const p = new URL(context.request.url).searchParams;
+  const q = String(p.get("q") || "").trim();
+  const secenek = {};
+  if (p.get("ham")) secenek.ham = 1;
+  if (p.get("rerank")) secenek.rerank = 1;
+  return akilliAra(q, secenek);
 }

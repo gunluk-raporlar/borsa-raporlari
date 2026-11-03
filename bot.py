@@ -4276,14 +4276,14 @@ _SITE_ARAMA_KUTUSU = """
     fetch('/api/ara?q=' + encodeURIComponent(q), { cache: 'no-store' })
       .then(function(r) { if (!r.ok) throw 0; return r.json(); })
       .then(function(v) {
-        var KA = { 'gunluk-rapor': 'Günlük', 'derin-analiz': 'Derin', 'makro-analiz': 'Makro', 'haftasonu': 'Hafta sonu', 'egitim': 'Okul', 'sozluk': 'Sözlük', 'terimler': 'Terimler', 'muhasebe-terimleri': 'Muhasebe' };
+        var KA = { 'gunluk-rapor': 'Günlük', 'derin-analiz': 'Derin', 'makro-analiz': 'Makro', 'haftasonu': 'Hafta sonu', 'egitim': 'Okul', 'sozluk': 'Sözlük', 'terimler': 'Terimler', 'muhasebe-terimleri': 'Muhasebe', 'temettu': 'Temettü' };
         var liste = ((v && v.sonuc) || []).slice(0, 3);
         if (liste.length) {
           var ik = '<div style="font-size:11.5px;color:#0f766e;font-weight:700;margin-bottom:6px">🧠 ANLAM ARAMASI</div>';
           liste.forEach(function(s) {
             var oz = kac(String(s.icerik || '').slice(0, 110));
             ik += '<div style="margin-bottom:6px"><a href="' + kac(s.url || '#') + '" style="font-weight:600;font-size:13px">' + kac(s.baslik || 'Rapor') + '</a>' +
-                  ' <span style="color:#64748b;font-size:11px">' + kac(KA[s.kaynak] || s.kaynak || '') + (s.tarih ? ' · ' + kac(s.tarih) : '') + ' · %' + Math.round((s.benzerlik || 0) * 100) + '</span>' +
+                  ' <span style="color:#64748b;font-size:11px">' + kac(KA[s.kaynak] || s.kaynak || '') + (s.tarih ? ' · ' + kac(s.tarih) : '') + ' · %' + (typeof s.gosterim === 'number' ? s.gosterim : Math.round((s.benzerlik || 0) * 100)) + '</span>' +
                   '<div style="color:#64748b;font-size:12px">' + oz + '…</div></div>';
           });
           akilliIcerik = '<div id="akilli-blok" style="margin:0 0 10px;padding:8px 9px;background:rgba(15,118,110,0.07);border:1px solid var(--line);border-radius:8px">' + ik + '</div>';
@@ -8074,22 +8074,51 @@ window.asistanSor = function() {
     return cikti;
   }
 
-  function semantikHtml(sonuc, q) {
+  var KAYNAK_AD = { 'gunluk-rapor': 'Günlük Rapor', 'derin-analiz': 'Derin Analiz', 'makro-analiz': 'Makro Analiz', 'haftasonu': 'Hafta Sonu', 'egitim': 'Eğitim', 'sozluk': 'Sözlük', 'terimler': 'Terimler', 'muhasebe-terimleri': 'Muhasebe Terimleri', 'temettu': 'Temettü' };
+
+  function semantikHtml(sonuc, q, genisletilen) {
     var terimler = q.split(/\\s+/).filter(Boolean);
     var cikti = '<h2 style="margin:14px 0 8px; font-size:16px">&#129504; Anlam düzeyinde ' + sonuc.length + ' sonuç</h2>';
+    if (genisletilen && genisletilen.length) {
+      cikti += '<p style="color:#0f766e; font-size:12px; margin:0 0 10px">Arama şununla genişletildi: ' + kac(genisletilen.join(' · ')) + '</p>';
+    }
+    var gruplar = [];
+    sonuc.forEach(function(x) { var k = x.kaynak || ''; if (gruplar.indexOf(k) === -1) gruplar.push(k); });
+    if (gruplar.length > 1) {
+      cikti += '<div id="ara-cipler" style="margin:0 0 12px">';
+      cikti += '<button type="button" data-k="" class="ara-cip" style="border:1px solid #0f766e; border-radius:999px; padding:3px 10px; font-size:12px; background:#f8fafc; cursor:pointer; margin:0 6px 6px 0">Tümü (' + sonuc.length + ')</button>';
+      gruplar.forEach(function(k) {
+        var adet = sonuc.filter(function(x) { return (x.kaynak || '') === k; }).length;
+        cikti += '<button type="button" data-k="' + kac(k) + '" class="ara-cip" style="border:1px solid #cbd5e1; border-radius:999px; padding:3px 10px; font-size:12px; background:#f8fafc; cursor:pointer; margin:0 6px 6px 0">' + kac(KAYNAK_AD[k] || k) + ' (' + adet + ')</button>';
+      });
+      cikti += '</div>';
+    }
     sonuc.forEach(function(x) {
-      var yuzde = Math.round(100 * (x.benzerlik || 0));
-      var baslik = (x.tarih || '') + ' — ' + (x.baslik || '') + ((x.kaynak || '') ? ' (' + x.kaynak + ')' : '');
+      var yuzde = (typeof x.gosterim === 'number') ? x.gosterim : Math.round(100 * (x.benzerlik || 0));
+      var rozet = KAYNAK_AD[x.kaynak] || x.kaynak || '';
+      var baslik = (x.tarih || '') + ' — ' + (x.baslik || '');
       var kesit = (x.icerik || '').slice(0, 300);
       var vBaslik = vurgula(baslik, terimler);
       var vKesit = vurgula(kesit, terimler);
-      cikti += '<div style="margin:0 0 16px">' +
-        '<div style="color:#0f766e; font-size:12.5px; font-weight:600">%' + yuzde + ' benzerlik</div>' +
+      cikti += '<div class="ara-sem" data-kaynak="' + kac(x.kaynak || '') + '" style="margin:0 0 16px">' +
+        '<div style="color:#0f766e; font-size:12.5px; font-weight:600">%' + yuzde + ' benzerlik' + (rozet ? ' · ' + kac(rozet) : '') + '</div>' +
         '<a href="' + kac(x.url || '') + '" style="font-weight:600; font-size:15px">' + (vBaslik || kac(baslik)) + '</a>' +
         '<div style="color:#64748b; font-size:13px; margin-top:2px">' + (vKesit || kac(kesit)) + ((x.icerik || '').length > 300 ? '&hellip;' : '') + '</div></div>';
     });
     return cikti;
   }
+
+  window.araSuzBagla = function() {
+    document.querySelectorAll('#ara-cipler .ara-cip').forEach(function(b) {
+      b.addEventListener('click', function() {
+        var k = b.getAttribute('data-k') || '';
+        document.querySelectorAll('#ara-cipler .ara-cip').forEach(function(o) { o.style.opacity = (o === b) ? '1' : '0.55'; });
+        document.querySelectorAll('.ara-sem').forEach(function(d) {
+          d.style.display = (!k || d.getAttribute('data-kaynak') === k) ? '' : 'none';
+        });
+      });
+    });
+  };
 
   window.ornekBak = function(btn) {
     document.getElementById('ara-giris').value = btn.textContent;
@@ -8103,16 +8132,17 @@ window.asistanSor = function() {
     if (!q) { kutu.innerHTML = '<p style="color:#64748b; font-size:14px">Arama yapmak için bir terim veya soru yazın.</p>'; return; }
     kutu.innerHTML = '<p style="color:#94a3b8; font-size:14px">Aranıyor&hellip;</p>';
     var semantik = null;
+    var genisletilen = [];
     fetch('/api/ara', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q: q }) })
       .then(function(r) { if (!r.ok) throw 0; return r.json(); })
-      .then(function(v) { semantik = v.sonuc || []; return indeksYukle(); })
+      .then(function(v) { semantik = v.sonuc || []; genisletilen = v.genisletilen || []; return indeksYukle(); })
       .catch(function() { semantik = null; return indeksYukle(); })
       .then(function(indeks) {
         var terimler = q.split(/\\s+/).filter(Boolean);
         var yerel = dizinSonuclari(indeks, q);
         var cikti = '<p style="color:#64748b; font-size:13px">Aranan: <strong>' + kac(q) + '</strong></p>';
         if (semantik && semantik.length) {
-          cikti += semantikHtml(semantik, q);
+          cikti += semantikHtml(semantik, q, genisletilen);
           if (yerel.length) {
             cikti += '<h2 style="margin:18px 0 8px; font-size:15px; color:#475569">Sayfa başlığı eşleşmeleri</h2>' + yerelHtml(yerel.slice(0, 8), terimler, false);
           }
@@ -8122,6 +8152,7 @@ window.asistanSor = function() {
           cikti += '<p style="color:#b45309; font-size:13px">Akıllı arama şu anda yanıt vermedi; sayfa dizini araması gösteriliyor.</p>' + yerelHtml(yerel.slice(0, 50), terimler, true);
         }
         kutu.innerHTML = cikti;
+        if (semantik && semantik.length) window.araSuzBagla();
       });
   };
 
