@@ -1,0 +1,21 @@
+{
+  "aciklama": "Arama kalitesi değerlendirme tohum seti. 'ipucu' iyi bir sonucun içinde geçmesi beklenen anahtar kelimedir; yargıcın puanlamasına girdi olarak kullanılmaz, yalnız rapor işaretidir.",
+  "sorgular": [
+    { "sorgu": "garanti bankası haftalık değerlendirme", "ipucu": "GARAN" },
+    { "sorgu": "GARAN bu hafta nasıl", "ipucu": "Garanti" },
+    { "sorgu": "aselsan teknik görünüm", "ipucu": "ASELS" },
+    { "sorgu": "thyao son durum", "ipucu": "THYAO" },
+    { "sorgu": "temettü verimi yüksek hisseler", "ipucu": "temettü" },
+    { "sorgu": "RSI aşırı alım sinyali veren hisseler", "ipucu": "RSI" },
+    { "sorgu": "TCMB faiz kararı sonrası banka yorumları", "ipucu": "faiz" },
+    { "sorgu": "enflasyon verisi piyasaları nasıl etkiler", "ipucu": "enflasyon" },
+    { "sorgu": "BIST 30 haftalık özet", "ipucu": "BIST" },
+    { "sorgu": "bollinger bandı nedir", "ipucu": "Bollinger" },
+    { "sorgu": "eps ve piyasa değeri farkı", "ipucu": "EPS" },
+    { "sorgu": "altın gram fiyat yorumu", "ipucu": "gram altın" },
+    { "sorgu": "petkim son analiz", "ipucu": "PETKM" },
+    { "sorgu": "ereğli demir çelik hedef fiyat", "ipucu": "EREGL" },
+    { "sorgu": "makro analiz enflasyon faiz", "ipucu": "makro" },
+    { "sorgu": "temettü takvimi ne zaman", "ipucu": "takvim" }
+  ]
+}
