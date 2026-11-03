@@ -4,15 +4,15 @@
  "metrikler": {
   "normal": {
    "ndcg": 0.9052,
-   "mrr": 0.8594
+   "mrr": 0.7969
   },
   "ham": {
    "ndcg": 0.915,
    "mrr": 0.8594
   },
   "rerank": {
-   "ndcg": 0.9052,
-   "mrr": 0.8594
+   "ndcg": 0.896,
+   "mrr": 0.6719
   }
  },
  "bos": {
@@ -20,14 +20,14 @@
   "ham": 0,
   "rerank": 0
  },
- "yargic_hata": 0,
+ "yargic_hata": 25,
  "yargic_yok": false,
  "karar": "olcum",
  "degisen": null,
  "geriye": {
-  "kayit_islenen": 20,
-  "parca_etiketlenen": 153,
+  "kayit_islenen": 0,
+  "parca_etiketlenen": 0,
   "yargic_hata": 0,
-  "atlandi": null
+  "atlandi": "yeni kayit yok"
  }
 }
