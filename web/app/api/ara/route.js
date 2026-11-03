@@ -247,6 +247,10 @@ async function aramaYap(soru, secenek = {}) {
         ? Math.round(100 * Math.min(1, Math.max(0, s.rerank_skor)))
         : Math.round(100 * Math.min(1, Math.max(0, ((s.benzerlik || 0) - taban) / 0.3))),
     }));
+    // (Anonim arama kaydı vekilde yapılır: functions/api/ara.js her aramaya
+    // kayit kimliği üretip sonucu arka plana loglar; IP/kimlik/oturum YOK —
+    // kullanıcı kararı 2026-11-03. Terim istatistiği arama_gunluk'tan türetilir.)
+
     return { status: 200, body: { sonuc: temiz, genisletilen, ayar: { min_skor: ayar.min_skor } } };
   } catch (e) {
     return { status: 502, body: { hata: e.message || "bilinmeyen hata" } };

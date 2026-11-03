@@ -8093,14 +8093,14 @@ window.asistanSor = function() {
       });
       cikti += '</div>';
     }
-    sonuc.forEach(function(x) {
+    sonuc.forEach(function(x, i) {
       var yuzde = (typeof x.gosterim === 'number') ? x.gosterim : Math.round(100 * (x.benzerlik || 0));
       var rozet = KAYNAK_AD[x.kaynak] || x.kaynak || '';
       var baslik = (x.tarih || '') + ' — ' + (x.baslik || '');
       var kesit = (x.icerik || '').slice(0, 300);
       var vBaslik = vurgula(baslik, terimler);
       var vKesit = vurgula(kesit, terimler);
-      cikti += '<div class="ara-sem" data-kaynak="' + kac(x.kaynak || '') + '" style="margin:0 0 16px">' +
+      cikti += '<div class="ara-sem" data-kaynak="' + kac(x.kaynak || '') + '" data-sira="' + i + '" style="margin:0 0 16px">' +
         '<div style="color:#0f766e; font-size:12.5px; font-weight:600">%' + yuzde + ' benzerlik' + (rozet ? ' · ' + kac(rozet) : '') + '</div>' +
         '<a href="' + kac(x.url || '') + '" style="font-weight:600; font-size:15px">' + (vBaslik || kac(baslik)) + '</a>' +
         '<div style="color:#64748b; font-size:13px; margin-top:2px">' + (vKesit || kac(kesit)) + ((x.icerik || '').length > 300 ? '&hellip;' : '') + '</div></div>';
@@ -8120,6 +8120,22 @@ window.asistanSor = function() {
     });
   };
 
+  // Anonim tıklama günlüğü: hangi arama kaydında hangi sıradaki sonuca
+  // tıklandı (kayit = arama_gunluk.kayit; kimlik verisi YOK). sendBeacon
+  // sayfa terk edilse bile gönderir; hata sessizce yutulur.
+  window.araTikBagla = function(kayit) {
+    if (!kayit) return;
+    document.querySelectorAll('.ara-sem').forEach(function(d) {
+      var a = d.querySelector('a');
+      if (!a) return;
+      a.addEventListener('click', function() {
+        try {
+          navigator.sendBeacon('/api/ara-tik', new Blob([JSON.stringify({ kayit: kayit, sira: parseInt(d.getAttribute('data-sira') || '0', 10), url: a.getAttribute('href') || '' })], { type: 'application/json' }));
+        } catch (e) {}
+      });
+    });
+  };
+
   window.ornekBak = function(btn) {
     document.getElementById('ara-giris').value = btn.textContent;
     window.araTum();
@@ -8133,9 +8149,10 @@ window.asistanSor = function() {
     kutu.innerHTML = '<p style="color:#94a3b8; font-size:14px">Aranıyor&hellip;</p>';
     var semantik = null;
     var genisletilen = [];
+    var kayitKimligi = null;
     fetch('/api/ara', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q: q }) })
       .then(function(r) { if (!r.ok) throw 0; return r.json(); })
-      .then(function(v) { semantik = v.sonuc || []; genisletilen = v.genisletilen || []; return indeksYukle(); })
+      .then(function(v) { semantik = v.sonuc || []; genisletilen = v.genisletilen || []; kayitKimligi = v.kayit || null; return indeksYukle(); })
       .catch(function() { semantik = null; return indeksYukle(); })
       .then(function(indeks) {
         var terimler = q.split(/\\s+/).filter(Boolean);
@@ -8152,7 +8169,7 @@ window.asistanSor = function() {
           cikti += '<p style="color:#b45309; font-size:13px">Akıllı arama şu anda yanıt vermedi; sayfa dizini araması gösteriliyor.</p>' + yerelHtml(yerel.slice(0, 50), terimler, true);
         }
         kutu.innerHTML = cikti;
-        if (semantik && semantik.length) window.araSuzBagla();
+        if (semantik && semantik.length) { window.araSuzBagla(); window.araTikBagla(kayitKimligi); }
       });
   };
 

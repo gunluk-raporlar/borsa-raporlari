@@ -58,7 +58,12 @@ AYAR_YAZILABILIR = {"min_skor", "taze_boost", "rerank_top_k", "genisletme"}
 
 DOSYA_KOK = os.path.dirname(os.path.abspath(__file__))
 DATA_KOK = os.path.join(DOSYA_KOK, "..", "data", "eval")
-GECMIS_YOL = os.path.join(DATA_KOK, "gecmis.json")
+
+
+def _gecmis_yol():
+    """gecmis.json yolu çağrı anında türetilir (testlerde DATA_KOK
+    yönlendirilebilsin — sabit yol testin gerçek veriyi ezmesine yol açmıştı)."""
+    return os.path.join(DATA_KOK, "gecmis.json")
 
 
 def _bugun():
@@ -267,9 +272,9 @@ def tablo_ayarlari():
 
 def karar(durum):
     gecmis = []
-    if os.path.exists(GECMIS_YOL):
+    if os.path.exists(_gecmis_yol()):
         try:
-            with open(GECMIS_YOL, encoding="utf-8") as fh:
+            with open(_gecmis_yol(), encoding="utf-8") as fh:
                 gecmis = json.load(fh).get("kosular", [])
         except Exception:
             gecmis = []
@@ -329,6 +334,23 @@ def yaz(durum):
     with open(os.path.join(DATA_KOK, "latest.json"), "w", encoding="utf-8") as fh:
         json.dump(kayit, fh, ensure_ascii=False, indent=1)
 
+    # Fine-tune hammaddesi: parça-bazlı yargıç etiketleri (kullanıcı kararı
+    # 2026-11-03: (sorgu, parça, puan) üçlüleri etiketler.jsonl'de biriktirilir;
+    # terim+sayaç gibi kimlik verisi YOK — yalnız model etiketi ve içerik).
+    etiket_yol = os.path.join(DATA_KOK, "etiketler.jsonl")
+    with open(etiket_yol, "a", encoding="utf-8") as fh:
+        for kol in KOL_KOLLAR:
+            for sorgu, liste in durum["kol_sonuc"][kol].items():
+                puans = durum.get("puanlar", {}).get(kol, {}).get(sorgu, {})
+                for sira, s in enumerate(liste):
+                    kayit = {
+                        "tarih": tarih, "kol": kol, "sorgu": sorgu, "sira": sira,
+                        "puan": puans.get(sira),
+                        "kaynak": s.get("kaynak"), "belge_tarih": s.get("tarih"),
+                        "icerik": s.get("icerik"),
+                    }
+                    fh.write(json.dumps(kayit, ensure_ascii=False) + "\n")
+
     # Ayar yazımı: yalnız güvenli anahtarlar; secret yoksa yalnız öneri kalır
     yazildi = False
     d = durum.get("degisen")
@@ -367,7 +389,7 @@ def yaz(durum):
         "karar": durum["karar"],
         "ayarlar": ayarlar,
     }
-    with open(GECMIS_YOL, "w", encoding="utf-8") as fh:
+    with open(_gecmis_yol(), "w", encoding="utf-8") as fh:
         json.dump({"kosular": (durum["gecmis"] + [kosu])[-30:]}, fh, ensure_ascii=False, indent=1)
 
     # İnsan-okur rapor

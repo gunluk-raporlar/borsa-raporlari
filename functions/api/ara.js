@@ -12,6 +12,7 @@
 
 const UST = "https://borsa-raporlari-web.pages.dev/api/ara";
 const KOK = "https://borsa-raporlari.pages.dev";
+const GUNLUK_UST = "https://borsa-raporlari-web.pages.dev/api/ara-gunluk";
 const CACHE_TTL = 120; // saniye — aynı sorgunun kısa süreli kenar önbelleği
 
 // 2026-11-03 mimar notu: arka uç adresi zaten SITE_URL tabanlı üretip
@@ -41,7 +42,7 @@ const jsonYanit = (obj, status = 200) => new Response(JSON.stringify(obj), {
   },
 });
 
-async function akilliAra(q, secenek) {
+async function akilliAra(q, secenek, waitUntil) {
   if (!q) return jsonYanit({ hata: "sorgu-bos" }, 400);
   const govde = { q };
   // Değerlendirme döngüsünün A/B kolları: ham = genişletme+rerank yok,
@@ -72,17 +73,44 @@ async function akilliAra(q, secenek) {
     return jsonYanit({ hata: "ust-servis-gecersiz-json" }, 502);
   }
 
-  const sonuc = (veri.sonuc || []).map((s) => ({
+  // Anonim arama kaydı: her aramaya kayit (uuid) verilir; sorgu + dönen
+  // sonuçlar + %'ler arama_gunluk'a yazılır (IP/kimlik/oturum YOK — kullanıcı
+  // kararı 2026-11-03). waitUntil ile yanıtı beklemeden yazılır; hata aramayı
+  // etkilemez. Tıklamalar bu kayit kimliğine bağlanır (/api/ara-tik).
+  const kayit = crypto.randomUUID();
+  const sonuc = (veri.sonuc || []).map((s, sira) => ({
+    sira,
+    id: s.id,
     tarih: s.tarih,
     baslik: s.baslik,
     kaynak: s.kaynak,
     benzerlik: s.benzerlik,
     gosterim: s.gosterim,
-    genisletilen: s.genisletilen,
     icerik: s.icerik,
     url: hedefUrl(s),
   }));
-  return jsonYanit({ sonuc, ayar: veri.ayar || null });
+  const genisletilen = veri.genisletilen || [];
+
+  // ham/rerank kolları değerlendirme trafiğidir — günlüğe yazılmaz
+  if (waitUntil && !(secenek.ham || secenek.rerank)) {
+    try {
+      waitUntil(
+        fetch(GUNLUK_UST, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            kayit,
+            terim: q.slice(0, 200),
+            sonuc: sonuc.map(({ icerik, ...gerisi }) => gerisi),
+          }),
+        }).catch(() => {})
+      );
+    } catch {
+      // günlük yazılamadı — arama etkilenmez
+    }
+  }
+
+  return jsonYanit({ sonuc, kayit, genisletilen, ayar: veri.ayar || null });
 }
 
 export async function onRequestPost(context) {
@@ -93,7 +121,7 @@ export async function onRequestPost(context) {
     if (govde.ham) secenek.ham = 1;
     if (govde.rerank) secenek.rerank = 1;
   } catch {}
-  return akilliAra(q, secenek);
+  return akilliAra(q, secenek, context.waitUntil);
 }
 
 export async function onRequestGet(context) {
@@ -102,5 +130,5 @@ export async function onRequestGet(context) {
   const secenek = {};
   if (p.get("ham")) secenek.ham = 1;
   if (p.get("rerank")) secenek.rerank = 1;
-  return akilliAra(q, secenek);
+  return akilliAra(q, secenek, context.waitUntil);
 }

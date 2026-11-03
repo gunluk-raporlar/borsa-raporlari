@@ -119,3 +119,31 @@ insert into arama_ayar (anahtar, deger) values
   ('rerank_top_k', 0),
   ('genisletme', 1)
 on conflict (anahtar) do nothing;
+
+-- ============================================================
+-- 2026-11-03b — Anonim arama kaydı + tıklama günlüğü (fine-tune verisi)
+-- Kullanıcı kararı: ne arandığı, ne döndüğü, benzerlik %'leri ve hangi
+-- sonucun tıklandığı kaydedilir; IP/kimlik/oturum YOK — kimlikle
+-- bağlanmamış olay kaydı anonim veridir (KVKK kapsamı dışında).
+-- akış: vekil her aramaya kayit (uuid) üretir → arama_gunluk'a yazar;
+-- /ara sayfasındaki tıklama /api/ara-tik → arama_tik'e yazılır.
+-- ============================================================
+
+create table if not exists arama_gunluk (
+  kayit uuid primary key,
+  terim text not null,
+  sonuc jsonb not null default '[]',  -- [{sira, id, url, baslik, kaynak, gosterim, benzerlik}]
+  arama_tarihi timestamptz not null default now()
+);
+alter table arama_gunluk enable row level security;
+create index if not exists arama_gunluk_terim_idx on arama_gunluk (terim);
+
+create table if not exists arama_tik (
+  id bigserial primary key,
+  kayit uuid not null,
+  sira int not null,
+  url text not null,
+  tik_tarihi timestamptz not null default now()
+);
+alter table arama_tik enable row level security;
+create index if not exists arama_tik_kayit_idx on arama_tik (kayit);
