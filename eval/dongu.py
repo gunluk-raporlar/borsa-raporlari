@@ -189,7 +189,9 @@ def yargic(durum):
         try:
             return kol, sorgu, sira, cf_yargic(sorgu, s["icerik"])
         except Exception as e:
-            print(f"  [hata] yargıç {kol}/{sorgu}/{sira}: {type(e).__name__}")
+            import traceback
+            print(f"  [hata] yargıç {kol}/{sorgu}/{sira}: {type(e).__name__}: {e}")
+            print(traceback.format_exc(limit=3))
             return kol, sorgu, sira, None
 
     with ThreadPoolExecutor(max_workers=4) as havuz:
