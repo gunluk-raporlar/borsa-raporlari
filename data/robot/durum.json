@@ -6,21 +6,13 @@
   "bugun_tarih": "2026-11-04",
   "gerceklesen_kz": -4031.5323749999934,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 1,
+  "kontrol_sayisi": 2,
   "nakit": 65794.5061957624,
   "onceki_kapanis_ozkaynak": 95598.74,
   "ozkayit": [
     [
       "2026-09-25",
       100000.0
-    ],
-    [
-      "2026-10-20T15:24",
-      97180.73
-    ],
-    [
-      "2026-10-20T20:23",
-      97875.02
     ],
     [
       "2026-10-21T15:44",
@@ -57,6 +49,10 @@
     [
       "2026-11-03T17:45",
       95598.74
+    ],
+    [
+      "2026-11-04T17:58",
+      96422.1
     ]
   ],
   "pozisyonlar": {
@@ -69,38 +65,38 @@
     }
   },
   "rejim": "ayi",
-  "son_bar_tarihi": "2026-11-03",
+  "son_bar_tarihi": "2026-11-04",
   "son_fiyatlar": {
-    "AEFES": 16.61,
-    "AKBNK": 62.25,
-    "ASELS": 342.5,
-    "ASTOR": 155.5,
-    "BIMAS": 359.5,
-    "EKGYO": 16.57,
-    "ENKAI": 80.2,
-    "EREGL": 30.9,
-    "FROTO": 66.1,
-    "GARAN": 128.8,
-    "GUBRF": 272.75,
-    "ISCTR": 12.31,
-    "KCHOL": 195.5,
-    "KRDMD": 38.34,
-    "MGROS": 435.5,
-    "PETKM": 17.0,
-    "PGSUS": 127.2,
-    "SAHOL": 82.45,
-    "SASA": 1.5,
-    "SISE": 34.46,
-    "TAVHL": 267.25,
-    "TCELL": 93.8,
-    "THYAO": 265.0,
-    "TOASO": 218.5,
-    "TRALT": 34.18,
-    "TRMET": 100.0,
-    "TTKOM": 47.56,
-    "TUPRS": 338.25,
-    "VAKBN": 29.8,
-    "YKBNK": 34.7
+    "AEFES": 16.72,
+    "AKBNK": 66.75,
+    "ASELS": 352.75,
+    "ASTOR": 164.5,
+    "BIMAS": 372.0,
+    "EKGYO": 17.56,
+    "ENKAI": 81.3,
+    "EREGL": 31.92,
+    "FROTO": 68.75,
+    "GARAN": 137.7,
+    "GUBRF": 285.25,
+    "ISCTR": 12.88,
+    "KCHOL": 203.2,
+    "KRDMD": 40.7,
+    "MGROS": 455.0,
+    "PETKM": 17.78,
+    "PGSUS": 134.2,
+    "SAHOL": 86.6,
+    "SASA": 1.65,
+    "SISE": 35.74,
+    "TAVHL": 279.5,
+    "TCELL": 93.0,
+    "THYAO": 290.75,
+    "TOASO": 227.5,
+    "TRALT": 36.8,
+    "TRMET": 107.6,
+    "TTKOM": 48.8,
+    "TUPRS": 341.25,
+    "VAKBN": 31.46,
+    "YKBNK": 36.14
   },
   "son_repo_tarihi": "2026-11-04",
   "toplam_kesinti": 400.93,
