@@ -1475,7 +1475,12 @@ def _tekrar_satirlarini_temizle(metin: str) -> str:
     temiz = []
     for satir in metin.split("\n"):
         anahtar = satir.strip()
-        if len(anahtar) > 30 and anahtar in gorulen:
+        # 2026-11-04 (architect bulgusu): baslik satirlari esiksiz dedupe —
+        # "## 7. Önerilen Model Portföy" (28 karakter) 30 eşiğini aşamadığından
+        # h2 çift başlık yayına gidebiliyordu. Kısa düz satırlar için eşik
+        # korunur: aynı kısa satır bazen meşru tekrardır (pano öğeleri vb.).
+        esiksiz = anahtar.startswith("#")
+        if (esiksiz or len(anahtar) > 30) and anahtar in gorulen:
             continue  # birebir ayni satir: atla
         gorulen.add(anahtar)
         temiz.append(satir)
