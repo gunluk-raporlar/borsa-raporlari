@@ -2832,8 +2832,25 @@ def master_cio_agent(state: AgentState):
     # Yayin onesi otomatik temizlik: uydurulmus tarih/yayinci satirlari,
     # koseli parantezli yer tutucular, eksik h2 yapisi, ASCII Turkce...
     response = rapor_son_islem(rapor)
+    # 2026-11-04 (P0, architect REVISE i): gunluk rapor yoluna da ret esigi
+    # baglandi — derin/makro yollarindaki desenin aynisi: cok uydurma iceren
+    # metin None doner; tum denemeler tersse en az duzeltmeli aday "dusuk
+    # guvenilirlik" rozetiyle son care yayini (UYDURMA_ESIGI*2), o da yoksa
+    # istisna → daily.yml 3 denemelik dongu + hata bildirimi devreye girer.
+    en_iyi = {}
     response = _metin_dogrula_ve_kaydet(
-        response, " / gunluk rapor", snapshot=snapshot)
+        response, " / gunluk rapor", snapshot=snapshot,
+        uydurma_esigi=UYDURMA_ESIGI, en_iyi=en_iyi)
+    if response is None:
+        son_care_esik = UYDURMA_ESIGI * 2
+        if en_iyi and en_iyi.get("adet", 10 ** 9) <= son_care_esik:
+            uyari = ("> ⚠️ **Düşük güvenilirlik sürümü:** Bu sayfa, üretim denemelerinin tamamı "
+                     f"kalite eşiğine takıldığı için en az düzeltme gerektiren adaydan "
+                     f"({en_iyi['adet']} düzeltme ile) yayınlanmıştır; sayılar doğrulama katmanında "
+                     "gerçek veriyle düzeltilmiştir, yine de tablolarla çapraz kontrol edin.\n\n")
+            return {"final_report": uyari + en_iyi["metin"]}
+        raise RuntimeError("Gunluk rapor dogrulama esigini gecemedi (UYDURMA_ESIGI=%s); "
+                           "CI deneme dongusu tekrar uretim yapacak." % UYDURMA_ESIGI)
     return {"final_report": response}
 
 
@@ -5104,7 +5121,11 @@ def gunun_verileri_tablosu_html(teknik_satirlar=None):
         sirali = ["GÜÇLÜ AL", "AL", "NÖTR", "SAT", "GÜÇLÜ SAT"]
         gruplar = {}
         for s in teknik_satirlar:
-            gruplar.setdefault(s.get("oneri", "?"), []).append(s.get("hisse", "?"))
+            # teknik tarama satirlarinda anahtar "genel"; "oneri" borsapy
+            # satirlarinin anahtari — ikisini de kabul et (2026-11-04 keşif
+            # bulgusu: yanlis anahtar sinyal dağılım satırını sessizce
+            # gizliyordu, tüm satırlar "?" grubuna düşüyordu).
+            gruplar.setdefault(s.get("genel") or s.get("oneri", "?"), []).append(s.get("hisse", "?"))
         parcalar = []
         for ad in sirali:
             kodlar = gruplar.get(ad)
