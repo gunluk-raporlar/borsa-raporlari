@@ -1,15 +1,24 @@
 # -*- coding: utf-8 -*-
-"""dist HTML'lerine hreflang kümesi ekler (2026-11-04, çok dilli SEO).
+"""dist HTML'lerine ajan-okunurluk ekleri koyar (hreflang + .md linkleri).
 
-Ne yapar?
-  dist'teki her .html için TR <-> en/de/ru/zh karşılıklarını SABİT eşleme
-  tablolarıyla bulur; karşılık .html dosyası dist'te VARSA <head>'e
-  rel="alternate" hreflang link kümesi ekler. URL'ler uzantısızdır
-  (güzel-URL; baglanti_guzellestir.py ile aynı biçim — bu script ondan
-  SONRA koşar). Karşılığı olmayan sayfaya hreflang EKLENMEZ (404'e işaret
-  yasağı). Tarihli sayfalarda karşılık AYNI tarihte aranır; en sürümü
-  yoksa x-default TR'ye düşer. Küme zaten eklenmiş sayfa atlanır
-  (idempotent — build her koşuda yeniden çalışır).
+Üç BAĞIMSIZ adım uygular; her biri KENDİ idempotent işaretine bakar, birinin
+eklenmiş olması ötekini engellemez (2026-11-05 öncesi tek işaretli kontrol,
+hreflang kümesi eklenmiş sayfada md link adımlarını da atlıyordu):
+
+  1) HEAD MD LINK  — işaret: 'type="text/markdown"'. Karşılık .md dosyası
+     dist'te VARSA <head>'e <link rel="alternate" type="text/markdown">
+     satırı ekler (yerleşim: </title> baştan bar; yoksa meta description,
+     o da yoksa <head> açılışı).
+  2) FOOTER MD SATIRI — işaret: 'LLM/ajanlar için Markdown sürümü'.
+     Karşılık .md VARSA </footer> kapanışından hemen önceye görünür md
+     satırı ekler; </footer> yoksa atlanır (fail-open).
+  3) HREFLANG      — işaret: 'rel="alternate" hreflang='. TR <-> en/de/ru/zh
+     karşılıklarını SABİT eşleme tablolarıyla bulur; karşılık .html dosyası
+     dist'te VARSA <head>'e rel="alternate" hreflang link kümesi ekler.
+     URL'ler uzantısızdır (güzel-URL; baglanti_guzellestir.py ile aynı
+     biçim — bu script ondan SONRA koşar). Karşılığı olmayan sayfaya
+     hreflang EKLENMEZ (404'e işaret yasağı). Tarihli sayfalarda karşılık
+     AYNI tarihte aranır; en sürümü yoksa x-default TR'ye düşer.
 
 Eşleme tabloları pipeline/md_ayna.py (KOK_ESLE/KLASOR_ESLE) ile AYNI adları
 kullanır; iki script bilinçli bağımsızdır (import yok, tablo tekrarı kabul
@@ -23,6 +32,13 @@ import sys
 
 SITE = "https://borsa-raporlari.pages.dev"
 DILLER = ("en", "de", "ru", "zh")
+
+# Bu işaretler bot.py ile senkron — değiştirirsen öbürünü de değiştir.
+# (HEAD MD LINK bot.py'deki md_ek satırının, FOOTER MD bot.py'deki md_footer
+# bloğunun birebir çıktısıdır; HREFLANG kümesini yalnız bu script üretir.)
+MD_HEAD_ISARET = 'type="text/markdown"'
+MD_FOOTER_ISARET = "LLM/ajanlar için Markdown sürümü"
+HREFLANG_ISARET = 'rel="alternate" hreflang='
 
 # hreflang değerleri: tablo anahtarı "zh", ama sitenin MEVCUT kümeleri
 # (i18n hattının dil sayfalarına yazdığı) Çince için "zh-Hans" kullanır —
@@ -131,7 +147,7 @@ def _kume(rel, dist):
 
 def _url(rel):
     """rel -> güzel-URL. Ana sayfalar sitenin mevcut küme kuralına uyar:
-    kök "/" , dil ana sayfaları "/<dil>/" (or. en/index -> /en/)."""
+    kök "/" , dil ana sayfaları "/<dil>/" (ör. en/index -> /en/)."""
     if rel == "index":
         return SITE + "/"
     if rel.endswith("/index") and rel.split("/")[0] in DILLER:
@@ -139,15 +155,58 @@ def _url(rel):
     return SITE + "/" + rel
 
 
-def _ekle(yol, rel, dist):
-    """Sayfaya hreflang kümesini ekler; eklendiyse True döner."""
-    with open(yol, encoding="utf-8", errors="replace") as fh:
-        ham = fh.read()
-    if 'rel="alternate" hreflang=' in ham:
-        return False           # zaten eklenmiş: idempotent atla
+def _md_href(rel):
+    """rel -> .md aynasının tam adresi (bot.py md_href biçimiyle aynı:
+    kök sayfa /index.md, ötekiler /<rel>.md)."""
+    if rel == "index":
+        return SITE + "/index.md"
+    return SITE + "/" + rel + ".md"
+
+
+def _md_head(ham, rel, dist):
+    """1. adım HEAD MD LINK: karşılık .md dist'te VARSA ve sayfada işaret
+    yoksa <head>'e type="text/markdown" alternate linkini ekler."""
+    if MD_HEAD_ISARET in ham:
+        return ham, False           # zaten eklenmiş: idempotent atla
+    if not os.path.isfile(os.path.join(dist, rel + ".md")):
+        return ham, False           # karşılık .md yok: ekleme yapılmaz
+    m = re.search(r"</title>", ham, re.I)
+    if not m:
+        m = re.search(r'<meta name="description"[^>]*>', ham, re.I)
+    if not m:
+        m = re.search(r"<head[^>]*>", ham, re.I)
+    if not m:
+        return ham, False
+    satir = ('\n<link rel="alternate" type="text/markdown" href="'
+             + _md_href(rel) + '">')
+    return ham[:m.end()] + satir + ham[m.end():], True
+
+
+def _md_footer(ham, rel, dist):
+    """2. adım FOOTER MD SATIRI: karşılık .md dist'te VARSA ve sayfada
+    işaret yoksa </footer> kapanışının hemen öncesine görünür md satırını
+    ekler; </footer> yoksa atlanır (fail-open)."""
+    if MD_FOOTER_ISARET in ham:
+        return ham, False           # zaten eklenmiş: idempotent atla
+    if not os.path.isfile(os.path.join(dist, rel + ".md")):
+        return ham, False           # karşılık .md yok: ekleme yapılmaz
+    m = re.search(r"</footer>", ham, re.I)
+    if not m:
+        return ham, False
+    tam_md = _md_href(rel)
+    blok = ('<br><span style="font-size:11.5px">📄 LLM/ajanlar için Markdown sürümü: '
+            '<a href="' + tam_md + '" style="color:inherit">'
+            + tam_md.replace("https://", "") + "</a></span>")
+    return ham[:m.start()] + blok + ham[m.start():], True
+
+
+def _hreflang(ham, rel, dist):
+    """3. adım HREFLANG: küme kurulabiliyorsa <head>'e ekler."""
+    if HREFLANG_ISARET in ham:
+        return ham, False           # zaten eklenmiş: idempotent atla
     kume = _kume(rel, dist)
     if not kume:
-        return False
+        return ham, False
     satirlar = []
     for dil in ("tr",) + DILLER:
         if dil in kume:
@@ -165,16 +224,27 @@ def _ekle(yol, rel, dist):
     if not m:
         m = re.search(r"<head[^>]*>", ham, re.I)
     if not m:
-        return False
-    ham = ham[:m.end()] + blok + ham[m.end():]
-    with open(yol, "w", encoding="utf-8", newline="") as fh:
-        fh.write(ham)
-    return True
+        return ham, False
+    return ham[:m.end()] + blok + ham[m.end():], True
+
+
+def _sayfa_isle(yol, rel, dist):
+    """Üç bağımsız adımı sırayla uygular; (head, footer, hreflang) değişim
+    üçlüsü döner. Değişiklik olduysa dosyaya bir kez yazılır."""
+    with open(yol, encoding="utf-8", errors="replace") as fh:
+        ham = fh.read()
+    ham, d_head = _md_head(ham, rel, dist)
+    ham, d_footer = _md_footer(ham, rel, dist)
+    ham, d_hreflang = _hreflang(ham, rel, dist)
+    if d_head or d_footer or d_hreflang:
+        with open(yol, "w", encoding="utf-8", newline="") as fh:
+            fh.write(ham)
+    return d_head, d_footer, d_hreflang
 
 
 def main():
     dist = sys.argv[1] if len(sys.argv) > 1 else "dist"
-    eklenen = atlanan = 0
+    head = footer = hreflang = atlanan = 0
     for kokd, _alt, dosyalar in os.walk(dist):
         for ad in dosyalar:
             if not ad.endswith(".html"):
@@ -182,15 +252,17 @@ def main():
             yol = os.path.join(kokd, ad)
             rel = os.path.relpath(yol, dist).replace("\\", "/")[:-5]
             try:
-                if _ekle(yol, rel, dist):
-                    eklenen += 1
-                else:
+                d_head, d_footer, d_hreflang = _sayfa_isle(yol, rel, dist)
+                head += d_head
+                footer += d_footer
+                hreflang += d_hreflang
+                if not (d_head or d_footer or d_hreflang):
                     atlanan += 1
             except Exception as e:
                 atlanan += 1
                 print(f"[uyari] {rel}: {e}")
-    print(f"[hreflang] {eklenen} sayfaya eklendi, {atlanan} sayfa "
-          f"atlandı/karşılıksız ({dist}).")
+    print(f"[md-gorsel] head={head} footer={footer} hreflang={hreflang}, "
+          f"atlanan={atlanan} ({dist}).")
 
 
 if __name__ == "__main__":

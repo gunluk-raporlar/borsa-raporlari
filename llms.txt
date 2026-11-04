@@ -1,6 +1,6 @@
 # Borsa Raporları
 
-> Yapay zeka destekli günlük BIST 30 analiz platformu: teknik tarama ve osilatör sinyalleri, model portföy, makroekonomik değerlendirme, günlük piyasa raporları ve sesli bülten. Raporlar her iş günü 08:00 TR saatinde güncellenir.
+> Yapay zeka destekli günlük BIST 30 analiz platformu: teknik tarama ve osilatör sinyalleri, model portföy, makroekonomik değerlendirme, günlük piyasa raporları ve sesli bülten. Raporlar her iş günü sabah güncellenir.
 
 İçerik Türkçedir; İngilizce, Almanca, Rusça ve Çince sürümleri de aynı yapıda sunulur. Tüm içerik bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.
 
@@ -57,6 +57,7 @@ her dosyanın "guncelleme" alanındadır.
 - [piyasa-serit.json](https://borsa-raporlari.pages.dev/piyasa-serit.json): endeksler (BIST 30/100), altın, dolar, euro ve gram altın — alanlar: `guncelleme, etiket, gostergeler[{k, ad, f, d, b, o}]` (o=ondalık basamak)
 - [site-arama.json](https://borsa-raporlari.pages.dev/site-arama.json): sitenin tam arama indeksi — alanlar: `guncelleme, sayfalar[{b, u, t}]` (b=başlık, u=göreceli URL, t=metin alıntıları); site içi arama bu veriyle çalışır
 - [sitemap.xml](https://borsa-raporlari.pages.dev/sitemap.xml): hreflang'li tüm sayfa URL'leri ve lastmod değerleri
+- [raporlar.xml](https://borsa-raporlari.pages.dev/raporlar.xml): günlük raporların RSS beslemesi (item linkleri .md)
 
 Not: Ticker/şerit verileri iş günü ~30 dakikada bir güncellenir; sayfalardaki
 kayan şeritler aynı veriyi görüntüler. Sayfa HTML'inde şerit değerleri

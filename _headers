@@ -64,3 +64,11 @@
   X-Robots-Tag: noindex
 /zh/radyo/podcast-raporlar.xml
   X-Robots-Tag: noindex
+
+/*.md
+  X-Robots-Tag: noindex, follow
+  Cache-Control: public, max-age=0, must-revalidate
+/sitemap.xml
+  Cache-Control: public, max-age=300
+/raporlar.xml
+  Cache-Control: public, max-age=300

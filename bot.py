@@ -4312,7 +4312,7 @@ def _radyo_kutusu(kok=""):
   <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Oynat / Duraklat">\u25B6</button>
   <audio id="radyo-ses" preload="none"></audio>
   <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Ses seviyesi" title="Ses">
-  <span class="radyo-linkler"><a href="{kok}radyo/index.html">\U0001F4FB T\u00fcm yay\u0131nlar &amp; Podcast sayfas\u0131</a> <span class="ayrac">\u2022</span> <a href="{kok}radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-linkler"><a href="{kok}radyo/index.html">\U0001F4FB T\u00fcm yay\u0131nlar &amp; Podcast sayfas\u0131</a> <span class="ayrac">\u2022</span> <a href="{kok}radyo/podcast.xml">Podcast</a> · <a href="{kok}raporlar.xml">RSS</a></span>
   <span class="radyo-uyari">Yaln\u0131zca dinlemek i\u00e7indir \u2022 Kurgusal yapay zeka sunucular \u2022 Bilgilendirme ama\u00e7l\u0131d\u0131r, yat\u0131r\u0131m tavsiyesi de\u011fildir.</span>
 </div>
 <script>
@@ -4923,6 +4923,8 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     tam_url = SITE_URL + _guzel_url(yol.lstrip("/") if yol else "")
     md_ek = ""
     if _md_ayna_mi(yol):
+        # İşaret dizgileri hreflang_ekle.py ile senkron (head: type="text/markdown",
+        # footer: "LLM/ajanlar için Markdown sürümü") — değiştirirsen öbürünü de değiştir.
         md_href = SITE_URL + "/index.md" if not (yol or "").strip("/") else tam_url + ".md"
         md_ek = f'\n<link rel="alternate" type="text/markdown" href="{md_href}">'
     if not aciklama:
@@ -5100,6 +5102,7 @@ def paylas_html(metin, url):
     if yol and _md_ayna_mi(yol):
         ek = (f'<span style="color:var(--muted)">|</span>'
               f'<a class="paylas" href="{url}.md" target="_blank" rel="noopener" '
+              f'aria-label="Markdown sürümünü aç" '
               f'title="LLM/ajanlar için Markdown sürümü">MD</a>')
     return (f'<span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px">'
             f'<a class="paylas" href="https://twitter.com/intent/tweet?text={m}&url={u}" target="_blank" rel="noopener" title="X\'te paylaş">𝕏</a>'
@@ -8057,7 +8060,7 @@ def hisse_sayfalari_yaz(teknik_satirlar):
 <p>Her hisse için güncel fiyat, teknik sinyal durumu, fiyat grafiği ve son 7 günün haberleri.</p>
 </div>
 <div id="isi-haritasi"></div>
-<script src="isi-haritasi.js?v=8" defer></script>
+<script src="isi-haritasi.js?v=9" defer></script>
 <h2 class="section-title">Hisse Kartları</h2>
 <div class="grid">{kartlar}</div>"""
     # DİKKAT: bu sayfa hisse/ alt klasorunde — kok="../" olmazsa CSS ve
@@ -9308,7 +9311,7 @@ def _ajanda_html(olaylar, limit=None, kok=""):
 </tbody>
 </table>
 </div>
-<p class="pano-not">🔴 = yüksek etkili veri. Kaynak: TradingView ekonomik takvimi; saatler TR zamanıdır. <a href="{kok}takvim.html">Ekonomik Takvim Rehberi &rarr;</a></p>
+<p class="pano-not">🔴 = yüksek etkili veri. Kaynak: TradingView ekonomik takvimi; saatler TR zamanıdır. <a href="{kok}takvim.html">Tam liste: Ekonomik Takvim &rarr;</a></p>
 </div>"""
 
 

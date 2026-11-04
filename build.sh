@@ -55,6 +55,107 @@ python3 pipeline/md_ayna.py dist || echo "UYARI: md aynalari atlandi"
 # Eşleme tabloları pipeline/md_ayna.py KOK_ESLE/KLASOR_ESLE ile aynıdır.
 python3 hreflang_ekle.py dist || echo "UYARI: hreflang atlandi"
 
+# raporlar.xml (2026-11-05, ajan beslemesi): dist/raporlar/ altindaki .md
+# raporlardan RSS 2.0 beslemesi; item linkleri dogrudan .md adresleridir.
+# Tarih front matter'dan, yoksa dosya adindan okunur; en yeni 50 item,
+# tarihe gore tersten. Fail-open: besleme uretilemezse build surer.
+python3 - <<'PY' || echo "UYARI: raporlar.xml uretilemedi"
+import os
+import re
+from datetime import datetime
+from email.utils import format_datetime
+from xml.sax.saxutils import escape
+from zoneinfo import ZoneInfo
+
+SITE = "https://borsa-raporlari.pages.dev"
+klasor = os.path.join("dist", "raporlar")
+ogeler = []
+for ad in (os.listdir(klasor) if os.path.isdir(klasor) else []):
+    if not ad.endswith(".md"):
+        continue
+    with open(os.path.join(klasor, ad), encoding="utf-8", errors="replace") as fh:
+        bas = fh.read(4096)
+    baslik = re.search(r'^title:\s*"?([^"\r\n]+)"?\s*$', bas, re.M)
+    tarih = re.search(r'^date:\s*"?(\d{4})-(\d{2})-(\d{2})', bas, re.M)
+    if not tarih:
+        tarih = re.search(r'(\d{4})-(\d{2})-(\d{2})', ad)
+    if not tarih:
+        continue                  # tarihsiz dosya (or. index.md) beslemeye girmez
+    y, a, g = (int(t) for t in tarih.groups())
+    ogeler.append({
+        "tarih": (y, a, g),
+        "baslik": baslik.group(1).strip() if baslik else ad[:-3],
+        "link": SITE + "/raporlar/" + ad,
+    })
+ogeler.sort(key=lambda o: o["tarih"], reverse=True)
+kalemler = []
+for o in ogeler[:50]:
+    yayin = format_datetime(datetime(*o["tarih"], tzinfo=ZoneInfo("Europe/Istanbul")))
+    kalemler.append(
+        "    <item>\n"
+        "      <title>%s</title>\n"
+        "      <link>%s</link>\n"
+        '      <guid isPermaLink="true">%s</guid>\n'
+        "      <pubDate>%s</pubDate>\n"
+        "    </item>" % (escape(o["baslik"]), o["link"], o["link"], yayin))
+rss = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+       '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n'
+       '<channel>\n'
+       '<title>Borsa Raporları — Günlük Piyasa Raporları</title>\n'
+       '<link>' + SITE + "/raporlar</link>\n"
+       '<description>Yapay zeka destekli günlük BIST 30 piyasa raporları: '
+       'günün özeti, endeks durumu, teknik tarama ve osilatör sinyalleri '
+       '(LLM/ajanlar için Markdown sürümleri).</description>\n'
+       '<language>tr</language>\n'
+       '<atom:link href="' + SITE + '/raporlar.xml" rel="self" '
+       'type="application/rss+xml"/>\n'
+       + "\n".join(kalemler) + "\n"
+       "</channel>\n</rss>\n")
+with open(os.path.join("dist", "raporlar.xml"), "w", encoding="utf-8", newline="\n") as fh:
+    fh.write(rss)
+print("[raporlar.xml] %d item yazildi" % len(kalemler))
+PY
+echo "raporlar.xml: $(wc -c < dist/raporlar.xml 2>/dev/null || echo 0) bayt, $(grep -c '<item>' dist/raporlar.xml 2>/dev/null || echo 0) item"
+
+# MD link denetimi (2026-11-05): dist'teki .md aynalarindaki
+# https://borsa-raporlari.pages.dev/... baglantilari karsiliksiz mi diye
+# denetler; hedef .md'sizlestirilir, dist'te <yol>.html YA DA <yol>.md
+# aranir. Kirik link build'i BLOKLAMAZ: yalniz uyarı basar, her kosulda
+# exit 0. Fail-open: python yoksa denetim atlanir.
+python3 - <<'PY' || echo "UYARI: md link denetimi atlandi"
+import os
+import re
+
+SITE = "https://borsa-raporlari.pages.dev"
+kok = "dist"
+toplam = 0
+kirik = []
+for kkd, _alt, adlar in os.walk(kok):
+    for a in adlar:
+        if not a.endswith(".md"):
+            continue
+        md = os.path.join(kkd, a)
+        with open(md, encoding="utf-8", errors="replace") as fh:
+            icerik = fh.read()
+        for hedef in re.findall(r"\]\(" + re.escape(SITE) + r"/([^)\s]*)\)", icerik):
+            toplam += 1
+            yol = hedef.split("#", 1)[0].rstrip("/")
+            if yol.endswith(".md"):
+                yol = yol[:-3]
+            if not yol:
+                continue                  # SITE kökü -> dist/index.html mevcut
+            for aday in (yol + ".html", yol + ".md"):
+                if os.path.isfile(os.path.join(kok, aday)):
+                    break
+            else:
+                kirik.append((os.path.relpath(md, kok).replace("\\", "/"), hedef))
+if kirik:
+    for md, hedef in kirik:
+        print("::warning::md kirik link: %s -> %s" % (md, hedef))
+print("[md-link] %s (%d link)" % ("tum linkler OK" if not kirik
+                                 else "%d kirik" % len(kirik), toplam))
+PY
+
 # llms-full.txt (2026-11-04, ajan beslemesi): dist'teki TUM .md aynalarinin
 # (TR kök + en/de/ru/zh ağaçları) yol sırasıyla birlesik tek dosyasi; her
 # dosya "## <yol>" başlığıyla ayrılır. llms.txt (kısa indeks) DOKUNULMAZ.

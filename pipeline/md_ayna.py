@@ -25,6 +25,21 @@
   4 Kasim 2026); hero-meta satiri (badge yigini) atlanir.
 Asistan kartlari, ticker, ses butonlari vb. gurultu atlanmaya devam
 eder (embed.py _MetinCikarici ile ayni kume mantigi).
+
+2026-11-04 üçüncü revizyon (dört dış denetim + kullanıcı istekleri):
+- pano-man satırları (▲/▼/📣/🏷️) madde olur; listeden sonra boş satırsız
+  gelen div metni lazy-continuation ile maddeye yapışamaz.
+- sepet-grafik kartı md'ye gelir ("BIST 30 sepeti — son 19 gün: -%15,01").
+- Başlık seviyeleri kırpılır (# sonrası ### → ##; yukarı çekilmez).
+- Tablolar sütun-hizalı doldurulur; başlıksız tablonun ilk satırı iki kez
+  basılmaz; takvim grup başlığındaki çift tarih tekilleşir.
+- Klasör-kök ("../hisse/") ve sayfaya-göreli ("ISCTR") iç linkler doğru
+  .md'ye çözülür; parçalı hedefler (#) HTML'e bırakılır.
+- Front matter: updated/symbols/data; dil kolu chrome'u EN (en) +
+  machine_translated; üstte tek satırlık tüketim notu.
+- İşaretli yüzde biçimleri tek biçime çekilir; ajanda ondalıkları TR'ye
+  çevrilir (yalnız tam 2 kesirli hane); açılış tırnağı önceki söze
+  yapışmaz.
 """
 import os
 import re
@@ -36,11 +51,13 @@ ATLANAN = {"script", "style", "noscript", "svg", "head", "nav", "header",
            "footer", "aside", "button", "form", "select", "option",
            "label", "template"}
 # 2026-11-04: "pano-veri" ve "pano-man" atlama listesinden CIKARILDI
-# (veri kaybi — Hy4 bulgusu); sepet-grafik ve hero-meta eklendi.
+# (veri kaybi — Hy4 bulgusu); hero-meta eklendi. 2026-11-04 (üçüncü
+# revizyon): "sepet-grafik" de çıkarıldı — kartın "BIST 30 sepeti — son 19
+# gün -%15,01" metni md'ye akmalıydı (dört denetimin ortak bulgusu); svg
+# zaten ATLANAN'da.
 ATLA_SINIF = ("hesap", "asistan", "site-widgets", "live-clock",
               "interactive-box", "arama-kutusu", "radyo",
-              "ticker", "paylas", "sesli-bulten", "sepet-grafik",
-              "hero-meta")
+              "ticker", "paylas", "sesli-bulten", "hero-meta")
 
 # Kök sayfalar (uzantısız adlar; .html okunur, .md yazılır)
 KOK_SAYFALAR = [
@@ -113,15 +130,18 @@ ONEK = "([{"                      # SONRASINA bosluk konmaz
 
 
 class _MdCikarici(HTMLParser):
-    def __init__(self, kok=None, dil="tr", planli=None):
+    def __init__(self, kok=None, dil="tr", planli=None, sayfa_rel=None):
         super().__init__(convert_charrefs=True)
         # kok: dist kökü (dil kolunda .md varlığı kontrolü için); dil: sayfanın
         # dili — "tr" = TR kolu (davranış değişmez), "en/de/ru/zh" = dil kolu.
         # planli: bu koşuda ÜRETİLECEK dil .md'lerinin rel kümesi — link
         # çevirisi diske yazım SIRASINDAN bağımsız olsun diye dosya varlığına
         # ek olarak buna da bakılır (2026-11-04).
+        # sayfa_rel: kaynağın dist'e göreli uzantısız yolu — sayfaya-göreli
+        # çıplak href'ler ("ISCTR") bu bağlamla çözülür (2026-11-04).
         self.kok = kok or ""
         self.dil = dil
+        self.sayfa_rel = (sayfa_rel or "").replace("\\", "/").strip("/")
         self.planli = planli or set()
         self.satirlar = []
         self.atla = 0
@@ -291,6 +311,17 @@ class _MdCikarici(HTMLParser):
                 metin = self._satir_duz(self._zengin_metin(self._b_buf))
                 # baslik-alti AYNI metin tekrarini at (or. "6. Risk ..." strong-p)
                 if metin and metin != self._son_baslik:
+                    # 2026-11-04 (Hy4 P0-1): "- " maddesinden sonra boş satırsız
+                    # gelen div metni lazy-continuation ile maddeye yapışıyor.
+                    # Pano-man satırları (▲/▼/📣/🏷️) maddenin devamı olarak
+                    # maddeye çevrilir; diğer metinlerden önce boş satır konur.
+                    son_dolu = next((s for s in reversed(self.satirlar)
+                                     if s.strip()), "")
+                    if son_dolu.startswith("- "):
+                        if metin[0] in "▲▼📣🏷":
+                            metin = "- " + metin
+                        else:
+                            self.satirlar.append("")
                     self.satirlar.append(self._link_listesi(metin))
                 self._b_buf = []
         elif tag in ("td", "th"):
@@ -355,7 +386,12 @@ class _MdCikarici(HTMLParser):
                 continue
             if not cikti:
                 cikti = metin
-            elif metin[0] in SON_EK:
+            elif metin[0] in SON_EK and not (
+                    # 2026-11-04 (GLM): düz tırnak hem açılış hem kapanış
+                    # işaretidir; arkası harf gelen tırnak AÇILIŞTIR — önceki
+                    # söze yapıştırılmaz ([VAKBN](…)"GÜÇLÜ SAT" hatası).
+                    # Kesme işaretine (') dokunulmaz: Türkçe ek yapışması doğrudur.
+                    metin[0] == '"' and len(metin) > 1 and metin[1] not in SON_EK):
                 cikti += metin
             elif metin[0] in DASH_BAS or son_sonu or once:
                 cikti += " " + metin
@@ -390,7 +426,7 @@ class _MdCikarici(HTMLParser):
         HTML'e birakir) — fail-open."""
         if href.startswith(("http://", "https://", "#", "mailto:", "tel:")):
             return href
-        temiz = re.sub(r"^(\.\./)+", "", href).lstrip("/")
+        temiz = re.sub(r"^(\.\./)+", "", href).lstrip("/").rstrip("/")
         if temiz.endswith(".html"):
             temiz = temiz[:-5]
         if self.dil != "tr":
@@ -411,11 +447,30 @@ class _MdCikarici(HTMLParser):
                 if es:                                 # eski TR-slug'li link
                     aday = es + "/" + kalan
             else:
+                # 2026-11-04 (Qwen ①): klasör-kök bağlantısı ("../stocks/")
+                # ağacın index.md'ine gider; sayfaya-göreli çıplak yol
+                # ("PGSUS" en/stocks sayfasında) sayfanın klasörüyle çözülür.
+                if self.kok and os.path.isfile(
+                        os.path.join(self.kok, self.dil, temiz, "index.html")):
+                    if self.dil + "/" + temiz + "/index" in self.planli:
+                        return SITE_URL + "/" + self.dil + "/" + temiz + "/index.md"
+                if self.kok and "/" in self.sayfa_rel:
+                    sayfa_klasor = self.sayfa_rel.split("/")[1]
+                    if (sayfa_klasor in KLASOR_ESLE.get(self.dil, {}).values()
+                            and temiz not in KOK_ESLE.get(self.dil, {}).values()):
+                        aday2 = sayfa_klasor + "/" + temiz
+                        if os.path.isfile(os.path.join(
+                                self.kok, self.dil, aday2 + ".html")):
+                            return SITE_URL + "/" + self.dil + "/" + aday2 + ".md"
                 aday = KOK_ESLE.get(self.dil, {}).get(temiz, temiz)
             if (aday in self.planli or
                     os.path.isfile(os.path.join(self.kok, self.dil, aday + ".md"))):
                 return SITE_URL + "/" + self.dil + "/" + aday + ".md"
             return SITE_URL + "/" + self.dil + "/" + temiz  # .md yok: HTML'e
+        if "#" in temiz:
+            # 2026-11-04: parçalı hedef (#bolum) .md kopyada yok — HTML'e
+            # bırakılır (fail-open, architect P2).
+            return SITE_URL + "/" + temiz
         if not temiz:
             return SITE_URL + "/index.md"        # href="/" ana sayfa
         if temiz.endswith(".md"):
@@ -423,6 +478,25 @@ class _MdCikarici(HTMLParser):
         ilk = temiz.split("/")[0]
         if ilk in ("en", "de", "ru", "zh"):
             return SITE_URL + "/" + temiz
+        # 2026-11-04 (Qwen ①): klasör-kök bağlantısı ("../hisse/", "/hisse")
+        # — .md karşılığı ağacın index.md'idir ("/hisse.md" 404'tür); hub'ı
+        # kök sayfa olan ağaçlarda (terimler, raporlar) kök .md kullanılır.
+        if temiz in KLASORLER and self.kok:
+            if os.path.isfile(os.path.join(self.kok, temiz, "index.html")):
+                return SITE_URL + "/" + temiz + "/index.md"
+            if temiz in KOK_SAYFALAR:
+                return SITE_URL + "/" + temiz + ".md"
+        # 2026-11-04 (Qwen ①): sayfaya-göreli çıplak yol ("ISCTR" hisse
+        # sayfasında /ISCTR değil /hisse/ISCTR'e çözülür; html varlığı
+        # esas alınır — md aynı koşuda üretilir, sıra fark etmez).
+        if ("/" not in temiz and self.kok and self.sayfa_rel
+                and "/" in self.sayfa_rel):
+            klasor = self.sayfa_rel.split("/")[0]
+            if (klasor in KLASORLER and temiz not in KOK_SAYFALAR
+                    and temiz not in KLASORLER):
+                aday = klasor + "/" + temiz
+                if os.path.isfile(os.path.join(self.kok, aday + ".html")):
+                    return SITE_URL + "/" + aday + ".md"
         if ilk in KOK_SAYFALAR or ilk in KLASORLER:
             return SITE_URL + "/" + temiz + ".md"
         return SITE_URL + "/" + temiz            # .md'siz bilinmeyen yol: HTML'e
@@ -433,34 +507,73 @@ class _MdCikarici(HTMLParser):
         baslik = self._tablo_baslik
         self.satirlar.append("")  # tablo oncesi bos satir: markdown render sartı
 
-        def _blok(satirlar):
-            if not satirlar:
-                return
-            ust = baslik or satirlar[0]
-            genis = max([len(r) for r in satirlar] + [len(ust)])
-            self.satirlar.append("| " + " | ".join(
-                [c.replace("|", "\\|") for c in ust] + [""] * (genis - len(ust))) + " |")
-            self.satirlar.append("|" + " --- |" * genis)
-            for s in satirlar:
-                hucreler = [c.replace("|", "\\|") for c in s] + [""] * (genis - len(s))
-                self.satirlar.append("| " + " | ".join(hucreler) + " |")
-            self.satirlar.append("")
+        # 2026-11-04 (Qwen ②): başlıksız tabloda ilk satır hem başlık hem
+        # gövde olarak basılıyordu ("ust = baslik or satirlar[0]" + tüm
+        # satırların basılması) — ilk satır artık yalnız başlık. 2026-11-04
+        # (kullanıcı): hücreler sütun genişliğine doldurulur; ham metin
+        # görüntüleyicide dikey çizgiler hizalı akar. Dolgulu satır 250
+        # karakteri aşarsa tablo dolgusuz basılır (fail-open).
+        def _esc(s):
+            return s.replace("|", "\\|")
+
+        ajanda_mi = (bool(baslik) and any("Beklenen" in c for c in baslik)
+                     and any("Önceki" in c for c in baslik))
+
+        def _ondalik(h):
+            # 2026-11-04 (GLM/Muse): ajanda/takvim tablolarında ABD ondalığı
+            # TR'ye çevrilir; "tam 2 kesirli hane" kuralı binlik grupları
+            # ("13.754", "5,091.2") ve tarihleri dışarıda bırakır. Yalnız
+            # ajanda tablolarına uygulanır — bilanço metinleri korunur.
+            return re.sub(r"(?<![\d.,])([+\-−]?\d+)\.(\d{2})(?!\d)", r"\1,\2", h)
 
         # 2026-11-04 (Hy4 takvim P0'i): tek-hucreli satirlar colspan'li GRUP
-        # basligidir — tabloyu bogmaz; tabloyu bolup "#### baslik" olarak
-        # akisa yazilir (or. "#### 04.11 (2026-11-04)").
+        # basligidir — tabloyu bolup "#### baslik" olarak akisa yazilir.
+        # 2026-11-04 (Qwen ③): grup başlığındaki çift tarih tekrarı
+        # ("04.11 (X) (X)") tekilleştirilir.
+        bloklar = []
         segment = []
         for s in self._tablo_satirlari:
             if len(s) == 1 and (baslik and len(baslik) > 1):
-                _blok(segment)
-                segment = []
+                if segment:
+                    bloklar.append(("tablo", baslik, segment))
+                    segment = []
                 if s[0]:
-                    self.satirlar.append("")
-                    self.satirlar.append("#### " + s[0])
-                    self.satirlar.append("")
+                    metin = re.sub(r"\s+(\([^)]+\))\s+\1$", r" \1", s[0])
+                    bloklar.append(("grup", metin, None))
                 continue
             segment.append(s)
-        _blok(segment)
+        if segment:
+            bloklar.append(("tablo", baslik, segment))
+
+        for tur, a, b in bloklar:
+            if tur == "grup":
+                self.satirlar.append("")
+                self.satirlar.append("#### " + a)
+                self.satirlar.append("")
+                continue
+            ust, satirlar = a, b
+            if baslik is not None:
+                ust_ham, govde_ham = ust, satirlar
+            else:
+                ust_ham, govde_ham = satirlar[0], satirlar[1:]
+            genis = max([len(r) for r in satirlar] + [len(ust_ham)])
+            ust_e = [_esc(_ondalik(c)) for c in ust_ham] + [""] * (genis - len(ust_ham))
+            rows_e = [[_esc(_ondalik(c)) for c in s] + [""] * (genis - len(s))
+                      for s in govde_ham]
+            gen = [max([len(ust_e[j])] + [len(r[j]) for r in rows_e])
+                   for j in range(genis)]
+            dolgu = 3 * genis + sum(gen) <= 250
+
+            def _satir(hucreler):
+                if dolgu:
+                    hucreler = [c.ljust(gen[j]) for j, c in enumerate(hucreler)]
+                return "| " + " | ".join(hucreler) + " |"
+
+            self.satirlar.append(_satir(ust_e))
+            self.satirlar.append(_satir(["---"] * genis))
+            for r in rows_e:
+                self.satirlar.append(_satir(r))
+            self.satirlar.append("")
         self.satirlar.append("")
         self._tablo_satirlari = []
         self._hucreler = []
@@ -468,14 +581,34 @@ class _MdCikarici(HTMLParser):
         self._son_hucre_etiketi = ""
 
 
+def _baslik_kirp(govde):
+    """Başlık seviyelerindeki atlamaları aşağı kırp (# sonrası ### → ##);
+    asla yukarı çekmez. Sarmalayıcının yazdığı H1 (seviye 1) referanstır
+    (2026-11-04, Hy4/Qwen başlık hiyerarşisi bulgusu)."""
+    satirlar = govde.split("\n")
+    onceki = 1
+    for i, s in enumerate(satirlar):
+        m = re.match(r"^(#{2,6}) ", s)
+        if m:
+            sev = min(len(m.group(1)), onceki + 1)
+            if sev != len(m.group(1)):
+                satirlar[i] = "#" * sev + s[len(m.group(1)):]
+            onceki = sev
+    return "\n".join(satirlar)
+
+
 def html_md(yol, rel=None, dil="tr", kok=None, planli=None):
     """HTML dosyasını Markdown'a çevirir; front matter + yasal kapanışlı
-    md metni döner. rel: dist köküne göreli uzantısız yol (canonical için).
-    dil: front matter'daki language alanı ("tr" = TR kolu, davranış eski);
-    kok: dist kökü; planli: dil kolunda bu koşuda üretilecek .md rel kümesi."""
+    md metni döner. rel: dist köküne göreli uzantısız yol (canonical ve
+    sayfaya-göreli link çözümü için). dil: front matter'daki language
+    alanı ("tr" = TR kolu, davranış eski); kok: dist kökü; planli: dil
+    kolunda bu koşuda üretilecek .md rel kümesi."""
     with open(yol, encoding="utf-8", errors="replace") as fh:
         ham = fh.read()
-    c = _MdCikarici(kok=kok, dil=dil, planli=planli)
+    rel_temiz = (rel or os.path.basename(yol)).replace("\\", "/")
+    if rel_temiz.endswith(".html"):
+        rel_temiz = rel_temiz[:-5]
+    c = _MdCikarici(kok=kok, dil=dil, planli=planli, sayfa_rel=rel_temiz)
     c.yalniz_ana = "<main" in ham
     c.feed(ham)
     baslik = c.baslik
@@ -486,10 +619,28 @@ def html_md(yol, rel=None, dil="tr", kok=None, planli=None):
     govde = re.sub(r"\n{3,}", "\n\n", govde).strip()
     if not govde:
         return ""
-    rel_temiz = (rel or os.path.basename(yol)).replace("\\", "/")
-    if rel_temiz.endswith(".html"):
-        rel_temiz = rel_temiz[:-5]
-    canli = SITE_URL + "/" + rel_temiz
+    # 2026-11-04: başlık kırpma + işaretli yüzde biçimi normalize
+    # ("+%4,09" ve "+4,09%" karışıklığı — çoğunluk biçimi kazanır;
+    # işaretsiz "%X,Y" biçimlerine dokunulmaz).
+    govde = _baslik_kirp(govde)
+    govde = re.sub(r"([+\-−])%(\d[\d,]*)", r"\1\2%", govde)
+    govde = re.sub(r"%([+\-−])(\d[\d,]*)", r"\1\2%", govde)
+    # 2026-11-04 (GLM): eski artifact'lerdeki sesli-bülten kartı bugünkü
+    # "card" sınıflıydı — oyuncusuz kalan "🔊 Sesli bülten" etiketi satırı
+    # md'yi kirletir; yeni üretimde kart zaten ATLA_SINIF'ta.
+    govde = "\n".join(l for l in govde.split("\n") if l.strip() != "🔊 Sesli bülten")
+    # 2026-11-04 (Qwen/Muse): canonical gerçek insan URL'idir — kök "/"
+    # ("/index" 308'e düşer), klasör hub'ı "/hisse/" biçiminde.
+    if rel_temiz == "index":
+        canli = SITE_URL + "/"
+    elif rel_temiz.endswith("/index"):
+        canli = SITE_URL + "/" + rel_temiz[:-6] + "/"
+    else:
+        canli = SITE_URL + "/" + rel_temiz
+    if rel_temiz == "index" or rel_temiz.endswith("/index"):
+        md_url = SITE_URL + "/" + rel_temiz + ".md"
+    else:
+        md_url = canli + ".md"
     m_t = re.search(r"\d{4}-\d{2}-\d{2}", rel_temiz)
     # 2026-11-04 (Hy4 ③): H1 ve title tarihli olur — dosya tek basina
     # okundugunda hangi rapor oldugu ilk satirdan belli olsun.
@@ -502,20 +653,52 @@ def html_md(yol, rel=None, dil="tr", kok=None, planli=None):
             # dil sayfasında Türkçe ay adı karışmasın: ISO tarih
             baslik_md = f"{baslik} — {m_t.group(0)}"
     govde = f"# {baslik_md}\n\n{govde}\n"
-    # YAML front matter + yasal kapanış — .md dosyası tek başına paylaşıldı
-    # ğında bağlam, kaynak ve uyarı kaybolmasın (2026-11-04).
+    # YAML front matter + yasal kapanış — .md dosyası tek başına paylaşıldığında
+    # bağlam, kaynak ve uyarı kaybolmasın (2026-11-04). Dil kolu için EN
+    # chrome'u yalnız en'e verilir (de/ru/zh çevirisi uydurulmaz — TR kalır,
+    # machine_translated bayrağı dürüstlük işareti); kapanıştaki URL < >
+    # autolink olur — italik içindeki çıplak URL tıklanmazdı (2026-11-04).
+    if dil == "en":
+        gen_by = "Artificial intelligence (multi-agent system)"
+        feragat = "Not investment advice."
+        not_satiri = ("> This file is a raw Markdown copy for LLM/agent "
+                      "consumption; human version: <" + canli + ">")
+        kapanis = ("\n---\n\n_Note: This content was produced by the site's "
+                   "automation with AI (multi-agent system); educational "
+                   "purposes only, not investment advice. Live version: <"
+                   + canli + ">_\n")
+    else:
+        gen_by = "Yapay zeka (çok ajanlı sistem)"
+        feragat = "Yatırım tavsiyesi değildir."
+        not_satiri = ("> Bu dosya LLM/ajan tüketimi için ham Markdown "
+                      "kopyasıdır; insan sürümü: <" + canli + ">")
+        kapanis = ("\n---\n\n_Bilgilendirme: Bu içerik site otomasyonu tarafından "
+                   "yapay zeka (çok ajanlı sistem) ile üretilmiştir; eğitim amaçlıdır, "
+                   "yatırım tavsiyesi değildir. Canlı sürüm: <" + canli + ">_\n")
+    m_dm = re.search(r'"dateModified":\s*"([^"]+)"', ham)
+    semboller = {k for k in re.findall(
+        r"/(?:hisse|stocks|aktien|aktsii|gupiao)/([A-Z][A-Z0-9]{1,5})(?=[/\"'.?#)])",
+        ham) if k != "index"}
+    if dil == "tr" and "/" in rel_temiz and rel_temiz.split("/")[0] == "hisse":
+        semboller.add(rel_temiz.split("/")[1])
+    semboller = sorted(semboller)[:40]
     fm = ["---", 'title: "%s"' % baslik_md.replace('"', "'")]
     if m_t:
         fm.append("date: " + m_t.group(0))
     fm += ['canonical: "' + canli + '"',
-           'markdown: "' + canli + '.md"',
+           'markdown: "' + md_url + '"',
            "language: " + dil,
-           'generated_by: "Yapay zeka (çok ajanlı sistem)"',
-           'disclaimer: "Yatırım tavsiyesi değildir."', "---"]
-    kapanis = ("\n---\n\n_Bilgilendirme: Bu içerik site otomasyonu tarafından "
-               "yapay zeka (çok ajanlı sistem) ile üretilmiştir; eğitim amaçlıdır, "
-               "yatırım tavsiyesi değildir. Canlı sürüm: " + canli + "_\n")
-    return "\n".join(fm) + "\n\n" + govde + kapanis
+           'generated_by: "' + gen_by + '"',
+           'disclaimer: "' + feragat + '"']
+    if m_dm:
+        fm.append('updated: "' + m_dm.group(1) + '"')
+    if semboller:
+        fm.append("symbols: [" + ", ".join(semboller) + "]")
+    fm.append('data: "' + SITE_URL + '/ticker.json"')
+    if dil != "tr":
+        fm.append("machine_translated: true")
+    fm.append("---")
+    return "\n".join(fm) + "\n\n" + not_satiri + "\n\n" + govde + kapanis
 
 
 def _yaz(yol, icerik):
