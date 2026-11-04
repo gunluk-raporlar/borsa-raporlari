@@ -6611,9 +6611,15 @@ def build_teknik_html(satirlar, date_str):
         return ("4,120,87" if deg >= 0 else "185,28,28") + f",{a:.2f}"
 
     sirali = sorted(satirlar, key=lambda x: x.get("gunluk", 0), reverse=True)
+    # 2026-11-05 (kullanıcı): ısı haritası kutucukları tıklanabilir olmalı —
+    # sayfanın kendi metni "Hisse adına tıklayın: detay sayfası" diyor ama
+    # kutucuklar düz <div> idi. Kutucuğun kendisi anchor'a çevrildi; tablo
+    # satırlarındaki gibi göreli 'hisse/<KOD>.html' adresine gider.
     isi = "".join(
-        f"<div class='isi-hucre' style=\"background:rgba({_isi_renk(s.get('gunluk', 0))})\">"
-        f"<b>{s['hisse']}</b><span>{_ty(s.get('gunluk', 0))}%</span></div>"
+        f"<a class='isi-hucre' href='hisse/{s['hisse']}.html' "
+        f"style=\"background:rgba({_isi_renk(s.get('gunluk', 0))}); text-decoration:none; cursor:pointer\" "
+        f"title=\"{s['hisse']} detay sayfası\">"
+        f"<b>{s['hisse']}</b><span>{_ty(s.get('gunluk', 0))}%</span></a>"
         for s in sirali
     )
     isi_bolumu = f"""
