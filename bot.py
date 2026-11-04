@@ -4677,6 +4677,29 @@ def _chart_js_script(grafik):
     return '<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>'
 
 
+# md aynası kapsamı — pipeline/md_ayna.py KOK_SAYFALAR/KLASORLER ile senkron
+# (build.sh'te .md kopyaları yalnız bu yollar için üretilir). HTML head'e
+# alternate-markdown bağlantısı yalnız bunlarda basılır; aynası olmayan
+# sayfada boş 404 linki basmamak için koşullu (2026-11-04, dış inceleme).
+_MD_AYNA_KOK = {"index", "raporlar", "derin-analiz", "makro-analiz", "teknik-analiz",
+                "borsapy-analiz", "sinyal-karnesi", "portfolio", "haftasonu",
+                "haftasonu-egitimi", "haberler", "sirket-haberleri", "takvim",
+                "sozluk", "terimler", "muhasebe-terimleri", "temettu"}
+_MD_AYNA_KLASOR = {"raporlar", "derin-analiz", "makro-analiz", "haftasonu",
+                   "haftasonu-egitimi", "hisse", "terimler", "muhasebe-terimleri"}
+
+
+def _md_ayna_mi(yol):
+    y = (yol or "").lstrip("/")
+    if y.endswith(".html"):
+        y = y[:-5]
+    if not y:
+        return "index" in _MD_AYNA_KOK
+    if "/" not in y:
+        return y in _MD_AYNA_KOK
+    return y.split("/", 1)[0] in _MD_AYNA_KLASOR
+
+
 def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_ek=None, grafik=False, robots=None):
     """Tum sayfalar icin ortak iskelet (ust menu + govde + altbilgi).
 
@@ -4712,6 +4735,10 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     a_tm = ' class="active"' if aktif == "temettu" else ""
     a_alt_tkv = ' class="active"' if aktif == "takvim" else ""
     tam_url = SITE_URL + _guzel_url(yol.lstrip("/") if yol else "")
+    md_ek = ""
+    if _md_ayna_mi(yol):
+        md_href = SITE_URL + "/index.md" if not (yol or "").strip("/") else tam_url + ".md"
+        md_ek = f'\n<link rel="alternate" type="text/markdown" href="{md_href}">'
     if not aciklama:
         aciklama = "Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi."
     ld_ek_html = f'<script type="application/ld+json">{ld_ek}</script>' if ld_ek else ""
@@ -4727,7 +4754,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title>
 <meta name="description" content="{aciklama}">
-{f'<meta name="robots" content="{robots}">' if robots else ""}<link rel="canonical" href="{tam_url}">
+{f'<meta name="robots" content="{robots}">' if robots else ""}<link rel="canonical" href="{tam_url}">{md_ek}
 <link rel="icon" href="/favicon-120.png" type="image/png" sizes="120x120">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">

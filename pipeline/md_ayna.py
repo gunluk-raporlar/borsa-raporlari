@@ -55,6 +55,8 @@ KLASORLER = [
     "haftasonu-egitimi", "hisse", "terimler", "muhasebe-terimleri",
 ]
 
+SITE_URL = "https://borsa-raporlari.pages.dev"
+
 
 class _MdCikarici(HTMLParser):
     def __init__(self):
@@ -128,6 +130,7 @@ class _MdCikarici(HTMLParser):
             if metin.strip("# "):
                 self.satirlar.append("")
                 self.satirlar.append(metin)
+                self.satirlar.append("")  # başlık sonrası boş satır: paragraf bitişmesin (2026-11-04 dış inceleme bulgusu)
             self._b_sev = 0
             self._b_buf = []
         elif tag == "a":
@@ -138,7 +141,7 @@ class _MdCikarici(HTMLParser):
             metin = " ".join(x for x in self._a_buf if x.strip())
             href = self._a_href or ""
             if metin and href:
-                self._b_buf.append("[%s](%s)" % (metin.replace("[", "(").replace("]", ")"), href))
+                self._b_buf.append("[%s](%s)" % (metin.replace("[", "(").replace("]", ")"), self._mutlak(href)))
             elif metin:
                 self._b_buf.append(metin)
             self._a_href = None
@@ -196,6 +199,15 @@ class _MdCikarici(HTMLParser):
     def _satir_duz(metin):
         return re.sub(r"\s+", " ", metin).strip()
 
+    @staticmethod
+    def _mutlak(href):
+        """Göreli linkleri site köküne çevirir — .md dosyası tek başına
+        okunduğunda/indirildiğinde bağlantılar çalışsın (2026-11-04)."""
+        if href.startswith(("http://", "https://", "#", "mailto:", "tel:")):
+            return href
+        temiz = re.sub(r"^(\.\./)+", "", href).lstrip("/")
+        return SITE_URL + "/" + temiz if temiz else href
+
     def _tablo_yaz(self):
         if not self._tablo_satirlari:
             return
@@ -211,8 +223,9 @@ class _MdCikarici(HTMLParser):
         self._hucreler = []
 
 
-def html_md(yol):
-    """HTML dosyasını Markdown'a çevirir; (baslik, md_metni) döner."""
+def html_md(yol, rel=None):
+    """HTML dosyasını Markdown'a çevirir; front matter + yasal kapanışlı
+    md metni döner. rel: dist köküne göreli uzantısız yol (canonical için)."""
     with open(yol, encoding="utf-8", errors="replace") as fh:
         ham = fh.read()
     c = _MdCikarici()
@@ -226,7 +239,25 @@ def html_md(yol):
     govde = re.sub(r"\n{3,}", "\n\n", govde).strip()
     if not govde:
         return ""
-    return f"# {baslik}\n\n{govde}\n"
+    govde = f"# {baslik}\n\n{govde}\n"
+    # 2026-11-04 (dış inceleme önerileri, kullanıcı onayı): YAML front matter
+    # + yasal kapanış — .md dosyası tek başına paylaşıldığında bağlam ve
+    # uyarı kaybolmasın.
+    rel_temiz = (rel or os.path.basename(yol)).replace("\\", "/")
+    if rel_temiz.endswith(".html"):
+        rel_temiz = rel_temiz[:-5]
+    canli = SITE_URL + "/" + rel_temiz
+    m_t = re.search(r"\d{4}-\d{2}-\d{2}", rel_temiz)
+    fm = ["---", 'title: "%s"' % baslik.replace('"', "'")]
+    if m_t:
+        fm.append("date: " + m_t.group(0))
+    fm += ['canonical: "' + canli + '"', "language: tr",
+           'generated_by: "Yapay zeka (çok ajanlı sistem)"',
+           'disclaimer: "Yatırım tavsiyesi değildir."', "---"]
+    kapanis = ("\n---\n\n_Bilgilendirme: Bu içerik site otomasyonu tarafından "
+               "yapay zeka (çok ajanlı sistem) ile üretilmiştir; eğitim amaçlıdır, "
+               "yatırım tavsiyesi değildir. Canlı sürüm: " + canli + "_\n")
+    return "\n".join(fm) + "\n\n" + govde + kapanis
 
 
 def _yaz(yol, icerik):
@@ -250,7 +281,7 @@ def main():
         yol = os.path.join(kok, ad + ".html")
         if not os.path.isfile(yol):
             continue
-        md = html_md(yol)
+        md = html_md(yol, rel=ad)
         if md and _yaz(os.path.join(kok, ad + ".md"), md):
             yazilan += 1
     # Klasör ağaçları
@@ -262,7 +293,7 @@ def main():
             if not ad.endswith(".html"):
                 continue
             yol = os.path.join(dizin, ad)
-            md = html_md(yol)
+            md = html_md(yol, rel=klasor + "/" + ad[:-5])
             if md and _yaz(os.path.join(dizin, ad[:-5] + ".md"), md):
                 yazilan += 1
     print(f"[md-ayna] {yazilan} Markdown aynası üretildi ({kok}).")
