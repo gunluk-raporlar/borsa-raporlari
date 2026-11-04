@@ -394,11 +394,18 @@ def sb_mevcut_hashler(base, anahtar, url_listesi):
     return hashler
 
 
+# PostgREST'e giden satırlar beyaz listeyle sınırlı: _belge_ekle satırlarda
+# gömme girdisini de taşıyor ('girdi', hash için) — o kolon DB'de olmadığından
+# PostgREST tüm grubu 400 ile reddediyordu (2026-11-04 backfill koşusu; hata
+# gövdesi 'girdi'yi sayıyordu, 'bolum' arayan fail-open koşulu yakalayamadı).
+_DB_KOLONLARI = ("kaynak", "url", "parca", "baslik", "bolum", "tarih", "icerik", "hash", "embedding")
+
+
 def sb_upsert(base, anahtar, satirlar):
     import requests
 
     for i in range(0, len(satirlar), 50):
-        grup = satirlar[i:i + 50]
+        grup = [{k: s[k] for k in _DB_KOLONLARI} for s in satirlar[i:i + 50]]
         r = requests.post(
             f"{base}/rest/v1/belgeler",
             params={"on_conflict": "kaynak,url,parca"},
@@ -416,9 +423,11 @@ def sb_upsert(base, anahtar, satirlar):
                 f"{base}/rest/v1/belgeler",
                 params={"on_conflict": "kaynak,url,parca"},
                 headers={**_sb_basliklar(anahtar), "Prefer": "resolution=merge-duplicates"},
-                json=[{k: v for k, v in s.items() if k != "bolum"} for s in grup],
+                json=[{k: v for k, v in s.items() if k in _DB_KOLONLARI and k != "bolum"} for s in grup],
                 timeout=120,
             )
+        if not r.ok:
+            print(f"[upsert-hata] HTTP {r.status_code}: {r.text[:400]}")
         r.raise_for_status()
 
 
