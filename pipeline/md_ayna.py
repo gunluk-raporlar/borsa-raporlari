@@ -31,10 +31,16 @@ ATLA_SINIF = ("hesap", "asistan", "site-widgets", "live-clock",
               "interactive-box", "arama-kutusu", "radyo",
               # 2026-11-04 (kullanıcı kararı): .md kopyalar "yalnız asıl
               # içerik" modunda — fiyat şeritleri (bant + bant2 kopyası),
-              # paylaşım butonları (javascript:void(0) dahil), günün
-              # panosu ve sesli bülten ajani için saf gürültü; HTML
-              # sayfalara dokunulmaz.
-              "ticker", "paylas", "pano", "sesli-bulten")
+              # paylaşım butonları (javascript:void(0) dahil) ve sesli
+              # bülten ajani için saf gürültü; HTML sayfalara dokunulmaz.
+              # İlk turdaki geniş "pano" atlaması rapor gövdesindeki veri
+              # tablosunu (pano-tablo veri-tablo), 30 hisselik pano
+              # tablosunu ve ekonomik ajandayı da yutuyordu (2026-11-04
+              # dış inceleme yakaladı); tablolar tablo olarak kalmalı —
+              # yalnız sayısal kutucuk şeridi (pano-veri) ve
+              # yükselen/düşen/sektör satırları (pano-man) çıkarılır
+              # (ikinci kullanıcı kararı; pano-not yasal satırı kalır).
+              "ticker", "paylas", "pano-veri", "pano-man", "sesli-bulten")
 
 # Kök sayfalar (uzantısız adlar; .html okunur, .md yazılır)
 KOK_SAYFALAR = [
