@@ -278,6 +278,7 @@ class _MdCikarici(HTMLParser):
         self._bekleyen = False
         if self._h1 and not self.baslik:
             self.baslik = metin
+            return  # h1 metni govdeye ikinci kez yazilmaz (2026-11-04 canli test bulgusu)
         if self._kalin_lead is not None:
             self._lead_geri_koy()
         if self._a_href is not None:
@@ -301,6 +302,8 @@ class _MdCikarici(HTMLParser):
                 cikti += metin
             elif metin[0] in DASH_BAS or son_sonu or once:
                 cikti += " " + metin
+            elif cikti[-1] in ",;:.!?" and metin[0] not in SON_EK:
+                cikti += " " + metin  # noktalama sonrasi gelen link: bosluk sart
             elif cikti[-1] in ONEK:
                 cikti += metin
             else:
@@ -346,6 +349,7 @@ class _MdCikarici(HTMLParser):
         if not self._tablo_satirlari:
             return
         baslik = self._tablo_baslik
+        self.satirlar.append("")  # tablo oncesi bos satir: markdown render sartı
 
         def _blok(satirlar):
             if not satirlar:
