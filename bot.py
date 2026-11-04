@@ -4752,6 +4752,13 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
         "description": aciklama, "url": tam_url, "inLanguage": "tr",
         "isPartOf": {"@type": "WebSite", "name": SITE_ADI, "url": SITE_URL},
     }, ensure_ascii=False)
+    # 2026-11-04 (kullanici istegi): md aynasi kapsamindaki sayfalarda
+    # footer'da LLM/ajanlar icin .md baglantisi gorunur olsun.
+    md_footer = ""
+    if yol and _md_ayna_mi(yol):
+        tam_md = tam_url + ".md"
+        md_footer = (f'<br><span style="font-size:11.5px">📄 LLM/ajanlar için Markdown sürümü: '
+                     f'<a href="{tam_md}" style="color:inherit">{tam_md.replace("https://", "")}</a></span>')
     return f"""<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -4835,7 +4842,7 @@ function temaDegistir() {{
 }})();
 </script>
 
-<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok ajanlı sistem)<br><a href="{kok}gizlilik.html" style="color:inherit">Gizlilik &amp; KVKK</a></footer>
+<footer class="footer">Burada yer alan bilgi, yorum ve öneriler bilgilendirme amaçlıdır; yatırım danışmanlığı kapsamında değildir, yatırım tavsiyesi değildir. Verilerin doğruluğunun garanti edilmesi mümkün olmayıp içerikten doğabilecek her türlü kararda sorumluluk kullanıcıya aittir.<br>Veri kaynakları: İş Yatırım, RSS haber akışları &bull; Analiz: yapay zeka (çok ajanlı sistem)<br><a href="{kok}gizlilik.html" style="color:inherit">Gizlilik &amp; KVKK</a>{md_footer}</footer>
 
 <!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
 <script>
@@ -4901,16 +4908,25 @@ def markdown_to_html(metin):
 
 def paylas_html(metin, url):
     """Rapor/hisse sayfalarina kucuk sosyal paylasim rozetleri
-    (X, Telegram, WhatsApp + baglanti kopyala)."""
+    (X, Telegram, WhatsApp + baglanti kopyala). md aynasi kapsamindaki
+    sayfalarda ayrica LLM/ajanlar icin .md baglantisi gosterilir
+    (2026-11-04 kullanici istegi: "llm ve md icin ayri baglanti")."""
     import urllib.parse
     m = urllib.parse.quote_plus(metin)
     u = urllib.parse.quote_plus(url)
+    ek = ""
+    yol = url.removeprefix(SITE_URL).lstrip("/")
+    if yol and _md_ayna_mi(yol):
+        ek = (f'<span style="color:var(--muted)">|</span>'
+              f'<a class="paylas" href="{url}.md" target="_blank" rel="noopener" '
+              f'title="LLM/ajanlar için Markdown sürümü">MD</a>')
     return (f'<span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px">'
             f'<a class="paylas" href="https://twitter.com/intent/tweet?text={m}&url={u}" target="_blank" rel="noopener" title="X\'te paylaş">𝕏</a>'
             f'<a class="paylas" href="https://t.me/share/url?url={u}&text={m}" target="_blank" rel="noopener" title="Telegram\'da paylaş">✈</a>'
             f'<a class="paylas" href="https://wa.me/?text={m}%20{u}" target="_blank" rel="noopener" title="WhatsApp\'ta paylaş">💬</a>'
             f'<a class="paylas" href="javascript:void(0)" title="Bağlantıyı kopyala" '
-            f'onclick="if(navigator.clipboard){{navigator.clipboard.writeText(\'{url}\');this.textContent=\'✓\';}}">🔗</a></span>')
+            f'onclick="if(navigator.clipboard){{navigator.clipboard.writeText(\'{url}\');this.textContent=\'✓\';}}">🔗</a>'
+            f'{ek}</span>')
 
 
 def _pano_html(satirlar, kok=""):
