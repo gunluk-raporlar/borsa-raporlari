@@ -5,13 +5,16 @@ Makro analiz raporu denetleyici.
 Kaynak: Claude denetim taslagi (kullanici iletisi, 2026-10-07); depoya
 uyarlandi. Rapor uretildikten SONRA, yayinlanmadan ONCE calisir:
   python rapor_denetle.py makro-analiz/2026-10-07.html [--json]
+Gunluk rapor (--mod gunluk, G01-G06):
+  python rapor_denetle.py raporlar/2026-11-04.html --mod gunluk
 
 Cikis kodu: en az bir ERROR varsa 1, yoksa 0.
 CI'da su an YALNIZCA raporlamak icin kullanilir (adim `|| echo` ile
-non-blocking); esikler birkaq kosu gunlene kadar yayini durdurmaz.
+non-blocking); esikler birkaç kosu gunlene kadar yayini durdurmaz.
 
-Kurallar: R01-R15 metin/mantik, T01-T07 tablo, N01-N02 sayi kaynakli,
-S01 yasakli kalip. ERROR = buyuk olasilikla yanlis, WARN = elle bakilmali,
+Kurallar: R01-R14+R10b metin/mantik, T01-T07 tablo, N01-N02 sayi, S01 stil
+(makro modu); G01-G06 gunluk mod. ERROR = buyuk olasilikla yanlis,
+WARN = elle bakilmali,
 INFO = bilgi. dogrulama.py (sayi-duzeltici katman) ile birlikte dusunun:
 o yayin-ONCESI metni duzeltir, bu uretilmis sayfayi bagimsiz denetler.
 """
@@ -58,18 +61,26 @@ def add(sev, rule, msg):
 
 
 # ---------------------------------------------------------------- yükleme
-def load(src):
+def fetch(src):
+    """Ham içeriği okur (dosya veya URL); etiket temizliği yapmaz."""
     if src.startswith("http"):
-        raw = urllib.request.urlopen(src, timeout=30).read().decode("utf-8", "replace")
-    else:
-        with open(src, encoding="utf-8") as f:
-            raw = f.read()
+        return urllib.request.urlopen(src, timeout=30).read().decode("utf-8", "replace")
+    with open(src, encoding="utf-8") as f:
+        return f.read()
+
+
+def clean(raw):
+    """HTML etiketlerini temizler; tabloları 'a | b | c' satırlarına çevirir."""
     if re.search(r"<html|<td", raw, re.I):
         raw = re.sub(r"(?is)<(script|style).*?</\1>", "", raw)
         raw = re.sub(r"(?i)</t[dh]>", " | ", raw)
         raw = re.sub(r"(?i)</tr>|<br\s*/?>|</p>|</h\d>|</li>", "\n", raw)
         raw = html.unescape(re.sub(r"<[^>]+>", "", raw))
     return raw
+
+
+def load(src):
+    return clean(fetch(src))
 
 
 def parse_table(text):
@@ -292,27 +303,128 @@ def check_style(body):
             add("WARN", "S01", f"{msg}: '{m.group(0)}'")
 
 
+# ------------------------------------------------------------- günlük mod
+PANO_SATIR = 30  # BIST 30
+
+
+def _h2_listesi(raw):
+    return [re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", m))).strip()
+            for m in re.findall(r"(?is)<h2[^>]*>(.*?)</h2>", raw)]
+
+
+def check_gunluk(raw, text):
+    """Günlük BIST raporu şeması (G01-G06). Şema/pano kontrolleri ham HTML,
+    S01 stil taraması temizlenmiş gövde metni üzerinde çalışır."""
+    # G01: pano tablosu — class'ında "pano-tablo" geçen ve başlığında
+    # "Hisse" kolonu olan tablo (ajanda/veri tabloları da pano-tablo
+    # sınıflı olduğundan başlık filtresiyle daraltıldı).
+    pano = next((t for t in re.findall(r"(?is)<table[^>]*pano-tablo[^>]*>.*?</table>", raw)
+                 if re.search(r"(?is)<th[^>]*>\s*Hisse\s*<", t)), None)
+    if pano is None:
+        add("ERROR", "G01", 'Pano tablosu bulunamadı (class="pano-tablo", başlıkta "Hisse" kolonu).')
+    else:
+        n = len(re.findall(r"(?is)<tr[^>]*>\s*<td", pano))
+        if n != PANO_SATIR:
+            add("ERROR", "G01", f"Pano tablosunda {n} veri satırı var, beklenen {PANO_SATIR}.")
+
+    # G02: "Sinyal dağılımı" satırı — &middot; load() ile '·' karakterine
+    # döndüğünden ayracı ona göre parse ediyoruz.
+    m = re.search(r"Sinyal dağılımı:\s*GÜÇLÜ AL\s*(\d+)\s*·\s*AL\s*(\d+)\s*·\s*NÖTR\s*(\d+)"
+                  r"\s*·\s*SAT\s*(\d+)\s*·\s*GÜÇLÜ SAT\s*(\d+)", text)
+    if m is None:
+        add("WARN", "G02", '"Sinyal dağılımı" satırı bulunamadı.')
+    else:
+        toplam = sum(int(x) for x in m.groups())
+        if toplam != PANO_SATIR:
+            add("WARN", "G02", f"Sinyal dağılımı toplamı {toplam}, pano {PANO_SATIR} hisse olmalı.")
+
+    # G03: model portföy tablosu — "Önerilen Model Portföy" h2'sinden sonraki
+    # ilk tablo; ağırlık kolonu başlığında "Ağırlık" geçen kolondur.
+    mh = re.search(r"(?is)<h2[^>]*>[^<]*Önerilen Model Portföy.*?</h2>", raw)
+    if mh is None:
+        add("WARN", "G03", '"Önerilen Model Portföy" bölümü bulunamadı.')
+    else:
+        mt = re.search(r"(?is)<table.*?</table>", raw[mh.end():])
+        if mt is None:
+            add("WARN", "G03", "Model portföy bölümünden sonra tablo bulunamadı.")
+        else:
+            tablo = mt.group(0)
+            basliklar = [re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", c))).strip()
+                         for c in re.findall(r"(?is)<th[^>]*>(.*?)</th>", tablo)]
+            ai = next((j for j, b in enumerate(basliklar) if "Ağırlık" in b), None)
+            satirlar = [[re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", c))).strip()
+                         for c in re.findall(r"(?is)<td[^>]*>(.*?)</td>", r)]
+                        for r in re.findall(r"(?is)<tr[^>]*>(.*?)</tr>", tablo)]
+            satirlar = [r for r in satirlar if r]
+            if ai is None:
+                add("WARN", "G03", 'Portföy tablosunda "Ağırlık" başlıklı kolon bulunamadı.')
+            else:
+                hisse_n = sum(1 for r in satirlar if r[0].upper() != "NAKİT")
+                if hisse_n > 8:
+                    add("WARN", "G03", f"Model portföyde {hisse_n} hisse satırı var (>8).")
+                if hisse_n == len(satirlar):
+                    add("WARN", "G03", 'Model portföyde "NAKİT" satırı yok.')
+                toplam = sum(tonum(r[ai]) or 0.0 for r in satirlar if len(r) > ai)
+                if not 99.5 <= toplam <= 100.5:
+                    add("WARN", "G03", f"Ağırlık kolonu toplamı {toplam:g}, 100±0,5 aralığının dışında.")
+
+    # G04: beklenen h2 başlıkları (yalnız VAR/YOK kontrolü)
+    h2ler = _h2_listesi(raw)
+    eksik = []
+    if not any(h == "Özet" for h in h2ler):
+        eksik.append('"Özet"')
+    if not any(re.match(r"\d\.\s", h) for h in h2ler):
+        eksik.append('numaralı bölüm başlığı (ör. "1. Günün Verileri")')
+    if not any("Metodoloji" in h for h in h2ler):
+        eksik.append('"Metodoloji"')
+    if eksik:
+        add("WARN", "G04", f"{len(eksik)} beklenen başlık eksik: {', '.join(eksik)}.")
+
+    # G05: aynı h2 başlığı 2+ kez
+    gorulen = {}
+    for h in h2ler:
+        k = h.casefold()
+        gorulen[k] = gorulen.get(k, 0) + 1
+    for k, n in gorulen.items():
+        if n > 1:
+            add("WARN", "G05", f'Aynı h2 başlığı {n} kez: "{k}".')
+
+    # G06: yasaklı kalıp taraması (S01) — günlük modda da; LLM çıktısı
+    # article gövdesindedir, bulunamazsa tüm temizlenmiş metin taranır.
+    ma = re.search(r"(?is)<article[^>]*>.*?</article>", raw)
+    check_style(clean(ma.group(0)) if ma else text)
+
+
 # ---------------------------------------------------------------- ana akış
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("source", help="dosya yolu veya URL")
+    ap.add_argument("--mod", choices=["makro", "gunluk"], default="makro",
+                    help="denetim modu: makro (varsayilan) veya gunluk")
     ap.add_argument("--json", action="store_true", help="JSON çıktı")
     a = ap.parse_args()
 
-    text = load(a.source)
-    T = parse_table(text)
-    if not T:
-        print("HATA: veri tablosu ayrıştırılamadı (sütun düzenini kontrol edin).", file=sys.stderr)
-        sys.exit(2)
-    i = text.find("## Veri Tabanı")
-    body = text[:i] if i > 0 else text
-    sents = [x.strip() for x in re.split(r"(?<=[^\d])\.\s+|\n+", body) if x.strip()]
-    wins = sents + [a_ + " " + b_ for a_, b_ in zip(sents, sents[1:])]
+    raw = fetch(a.source)
+    text = clean(raw)
+    ozet = ""
+    if a.mod == "gunluk":
+        check_gunluk(raw, text)
+        ozet = "günlük rapor denetimi"
+    else:
+        T = parse_table(text)
+        if not T:
+            print("HATA: veri tablosu ayrıştırılamadı (sütun düzenini kontrol edin).", file=sys.stderr)
+            sys.exit(2)
+        i = text.find("## Veri Tabanı")
+        body = text[:i] if i > 0 else text
+        sents = [x.strip() for x in re.split(r"(?<=[^\d])\.\s+|\n+", body) if x.strip()]
+        wins = sents + [a_ + " " + b_ for a_, b_ in zip(sents, sents[1:])]
 
-    check_table(T)
-    check_text(T, body, wins)
-    check_numbers(T, body)
-    check_style(body)
+        check_table(T)
+        check_text(T, body, wins)
+        check_numbers(T, body)
+        check_style(body)
+        ozet = f"{len(T)} tablo satırı okundu"
 
     order = {"ERROR": 0, "WARN": 1, "INFO": 2}
     findings.sort(key=lambda f: (order[f["severity"]], f["rule"]))
@@ -322,7 +434,7 @@ def main():
         for f in findings:
             print(f"[{f['severity']:<5}] {f['rule']:<4} {f['message']}")
         n = {s: sum(f["severity"] == s for f in findings) for s in order}
-        print(f"\n{len(T)} tablo satırı okundu | ERROR={n['ERROR']} WARN={n['WARN']} INFO={n['INFO']}")
+        print(f"\n{ozet} | ERROR={n['ERROR']} WARN={n['WARN']} INFO={n['INFO']}")
     sys.exit(1 if any(f["severity"] == "ERROR" for f in findings) else 0)
 
 

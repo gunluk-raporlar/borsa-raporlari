@@ -29,6 +29,7 @@ eder (embed.py _MetinCikarici ile ayni kume mantigi).
 import os
 import re
 import sys
+from datetime import date, timedelta
 from html.parser import HTMLParser
 
 ATLANAN = {"script", "style", "noscript", "svg", "head", "nav", "header",
@@ -55,6 +56,54 @@ KLASORLER = [
 ]
 
 SITE_URL = "https://borsa-raporlari.pages.dev"
+
+# --- Çok dilli kol (2026-11-04, architect S9 ölçek sınırı: tarihli
+# klasörlerde yalnız SON 30 GÜN) ---
+# SABİT eşleme tabloları: TR adı → dil adı. hreflang_ekle.py (depo kökü)
+# AYNI adları kullanır; iki script bilinçli bağımsızdır (import yok) —
+# bir tarafı değiştirirsen öbürünü de değiştir. Adlar dil klasörlerinin
+# ls çıktısıyla doğrulanmıştır (en/de/ru/zh; olmayan sayfa fail-open atlanır).
+DILLER = ("en", "de", "ru", "zh")
+KOK_ESLE = {
+    "en": {"index": "index", "raporlar": "reports", "derin-analiz": "deep-analysis",
+           "makro-analiz": "macro-analysis", "teknik-analiz": "technical-scan",
+           "sinyal-karnesi": "signal-scorecard", "portfolio": "portfolio",
+           "haftasonu": "weekend", "haberler": "news", "takvim": "calendar",
+           "sozluk": "glossary", "terimler": "terms",
+           "muhasebe-terimleri": "accounting-terms", "hisse": "stocks"},
+    "de": {"index": "index", "raporlar": "berichte", "derin-analiz": "tiefenanalyse",
+           "makro-analiz": "makroanalyse", "teknik-analiz": "technischer-scan",
+           "sinyal-karnesi": "signal-bilanz", "portfolio": "portfolio",
+           "haftasonu": "wochenende", "haberler": "nachrichten", "takvim": "kalender",
+           "sozluk": "glossar", "terimler": "begriffe",
+           "muhasebe-terimleri": "rechnungslegungsbegriffe", "hisse": "aktien"},
+    "ru": {"index": "index", "raporlar": "otchety", "derin-analiz": "glubokiy-analiz",
+           "makro-analiz": "makroanaliz", "teknik-analiz": "tekhnicheskiy-analiz",
+           "sinyal-karnesi": "svodka-signalov", "portfolio": "portfolio",
+           "haftasonu": "vykhodnye", "haberler": "novosti", "takvim": "kalendar",
+           "sozluk": "glossariy", "terimler": "terminy",
+           "muhasebe-terimleri": "bukhgalterskie-terminy", "hisse": "aktsii"},
+    "zh": {"index": "index", "raporlar": "baogao", "derin-analiz": "shendu-fenxi",
+           "makro-analiz": "hongguan-fenxi", "teknik-analiz": "jishu-saomiao",
+           "sinyal-karnesi": "xinhao-jifenka", "portfolio": "portfolio",
+           "haftasonu": "zhoumo", "haberler": "xinwen", "takvim": "rili",
+           "sozluk": "cidian", "terimler": "shuyu",
+           "muhasebe-terimleri": "kuaiji-shuyu", "hisse": "gupiao"},
+}
+KLASOR_ESLE = {
+    "en": {"raporlar": "reports", "derin-analiz": "deep-analysis",
+           "makro-analiz": "macro-analysis", "haftasonu": "weekend",
+           "hisse": "stocks", "terimler": "terms"},
+    "de": {"raporlar": "berichte", "derin-analiz": "tiefenanalyse",
+           "makro-analiz": "makroanalyse", "haftasonu": "wochenende",
+           "hisse": "aktien", "terimler": "begriffe"},
+    "ru": {"raporlar": "otchety", "derin-analiz": "glubokiy-analiz",
+           "makro-analiz": "makroanaliz", "haftasonu": "vykhodnye",
+           "hisse": "aktsii", "terimler": "terminy"},
+    "zh": {"raporlar": "baogao", "derin-analiz": "shendu-fenxi",
+           "makro-analiz": "hongguan-fenxi", "haftasonu": "zhoumo",
+           "hisse": "gupiao", "terimler": "shuyu"},
+}
 AYLAR = ("Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
          "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık")
 # Akıllı birleştirme kümleri (2026-11-04 kok-neden fix'i)
@@ -64,8 +113,16 @@ ONEK = "([{"                      # SONRASINA bosluk konmaz
 
 
 class _MdCikarici(HTMLParser):
-    def __init__(self):
+    def __init__(self, kok=None, dil="tr", planli=None):
         super().__init__(convert_charrefs=True)
+        # kok: dist kökü (dil kolunda .md varlığı kontrolü için); dil: sayfanın
+        # dili — "tr" = TR kolu (davranış değişmez), "en/de/ru/zh" = dil kolu.
+        # planli: bu koşuda ÜRETİLECEK dil .md'lerinin rel kümesi — link
+        # çevirisi diske yazım SIRASINDAN bağımsız olsun diye dosya varlığına
+        # ek olarak buna da bakılır (2026-11-04).
+        self.kok = kok or ""
+        self.dil = dil
+        self.planli = planli or set()
         self.satirlar = []
         self.atla = 0
         self.baslik = ""
@@ -324,16 +381,41 @@ class _MdCikarici(HTMLParser):
             return "- " + metin.replace(")[", ")\n- [")
         return metin
 
-    @staticmethod
-    def _mutlak(href):
-        """Goreli linkleri site kokune cevirir. Ic linkler .md kopyaya
-        yonlendirilir (ajan md zincirinde kalir, 2026-11-04 Hy4 ④);
-        dil kopyalarinda .md olmadigindan (en/de/ru/zh — 404) dokunulmaz."""
+    def _mutlak(self, href):
+        """Goreli linkleri site kokune cevirir. TR kolu: ic linkler .md kopyaya
+        yonlendirilir (ajan md zincirinde kalir, 2026-11-04 Hy4 ④); dil
+        kopyalarina (en/de/ru/zh — .md'siz, 404) DOKUNULMAZ (92/92 kurali
+        aynen korunur). Dil kolu (2026-11-04): yalniz AYNI dil agacinda .md
+        karsiligi dist'te VARSA .md'ye yonlendirir; yoksa dokunmaz (guzel-URL
+        HTML'e birakir) — fail-open."""
         if href.startswith(("http://", "https://", "#", "mailto:", "tel:")):
             return href
         temiz = re.sub(r"^(\.\./)+", "", href).lstrip("/")
         if temiz.endswith(".html"):
             temiz = temiz[:-5]
+        if self.dil != "tr":
+            temiz = temiz.strip("/")
+            if temiz.startswith(self.dil + "/"):
+                temiz = temiz[len(self.dil) + 1:]
+            if temiz.endswith(".md"):
+                temiz = temiz[:-3]
+            if temiz in ("", ".", "index"):
+                if (self.dil + "/index" in self.planli or
+                        os.path.isfile(os.path.join(self.kok, self.dil, "index.md"))):
+                    return SITE_URL + "/" + self.dil + "/index.md"
+                return SITE_URL + "/" + self.dil      # href="/" ana sayfa
+            aday = temiz
+            if "/" in temiz:
+                ilk, kalan = temiz.split("/", 1)
+                es = KLASOR_ESLE.get(self.dil, {}).get(ilk)
+                if es:                                 # eski TR-slug'li link
+                    aday = es + "/" + kalan
+            else:
+                aday = KOK_ESLE.get(self.dil, {}).get(temiz, temiz)
+            if (aday in self.planli or
+                    os.path.isfile(os.path.join(self.kok, self.dil, aday + ".md"))):
+                return SITE_URL + "/" + self.dil + "/" + aday + ".md"
+            return SITE_URL + "/" + self.dil + "/" + temiz  # .md yok: HTML'e
         if not temiz:
             return SITE_URL + "/index.md"        # href="/" ana sayfa
         if temiz.endswith(".md"):
@@ -386,12 +468,14 @@ class _MdCikarici(HTMLParser):
         self._son_hucre_etiketi = ""
 
 
-def html_md(yol, rel=None):
+def html_md(yol, rel=None, dil="tr", kok=None, planli=None):
     """HTML dosyasını Markdown'a çevirir; front matter + yasal kapanışlı
-    md metni döner. rel: dist köküne göreli uzantısız yol (canonical için)."""
+    md metni döner. rel: dist köküne göreli uzantısız yol (canonical için).
+    dil: front matter'daki language alanı ("tr" = TR kolu, davranış eski);
+    kok: dist kökü; planli: dil kolunda bu koşuda üretilecek .md rel kümesi."""
     with open(yol, encoding="utf-8", errors="replace") as fh:
         ham = fh.read()
-    c = _MdCikarici()
+    c = _MdCikarici(kok=kok, dil=dil, planli=planli)
     c.yalniz_ana = "<main" in ham
     c.feed(ham)
     baslik = c.baslik
@@ -412,7 +496,11 @@ def html_md(yol, rel=None):
     baslik_md = baslik
     if m_t:
         y, ay, g = m_t.group(0).split("-")
-        baslik_md = f"{baslik} — {int(g)} {AYLAR[int(ay) - 1]} {y}"
+        if dil == "tr":
+            baslik_md = f"{baslik} — {int(g)} {AYLAR[int(ay) - 1]} {y}"
+        else:
+            # dil sayfasında Türkçe ay adı karışmasın: ISO tarih
+            baslik_md = f"{baslik} — {m_t.group(0)}"
     govde = f"# {baslik_md}\n\n{govde}\n"
     # YAML front matter + yasal kapanış — .md dosyası tek başına paylaşıldı
     # ğında bağlam, kaynak ve uyarı kaybolmasın (2026-11-04).
@@ -421,7 +509,7 @@ def html_md(yol, rel=None):
         fm.append("date: " + m_t.group(0))
     fm += ['canonical: "' + canli + '"',
            'markdown: "' + canli + '.md"',
-           "language: tr",
+           "language: " + dil,
            'generated_by: "Yapay zeka (çok ajanlı sistem)"',
            'disclaimer: "Yatırım tavsiyesi değildir."', "---"]
     kapanis = ("\n---\n\n_Bilgilendirme: Bu içerik site otomasyonu tarafından "
@@ -446,12 +534,13 @@ def _yaz(yol, icerik):
 def main():
     kok = sys.argv[1] if len(sys.argv) > 1 else "dist"
     yazilan = 0
+    # --- TR kolu (davranış aynen korunur) ---
     # Kök sayfalar
     for ad in KOK_SAYFALAR:
         yol = os.path.join(kok, ad + ".html")
         if not os.path.isfile(yol):
             continue
-        md = html_md(yol, rel=ad)
+        md = html_md(yol, rel=ad, kok=kok)
         if md and _yaz(os.path.join(kok, ad + ".md"), md):
             yazilan += 1
     # Klasör ağaçları
@@ -463,9 +552,61 @@ def main():
             if not ad.endswith(".html"):
                 continue
             yol = os.path.join(dizin, ad)
-            md = html_md(yol, rel=klasor + "/" + ad[:-5])
+            md = html_md(yol, rel=klasor + "/" + ad[:-5], kok=kok)
             if md and _yaz(os.path.join(dizin, ad[:-5] + ".md"), md):
                 yazilan += 1
+    # --- Dil kolu (2026-11-04): sabit eşleme + tarihli klasörlerde SON 30 GÜN
+    # (architect S9 ölçek sınırı; bugün terminal saatinden alınır). Olmayan
+    # sayfa/klasör sessizce atlanır (fail-open). ---
+    sinir = (date.today() - timedelta(days=30)).isoformat()
+    # 1. geçiş: bu koşuda üretilecek dil .md'lerinin rel kümesi — link
+    # çevirisi yazım sırasından bağımsız olsun diye önceden hesaplanır.
+    planli = set()
+    for dil in DILLER:
+        if not os.path.isdir(os.path.join(kok, dil)):
+            continue
+        for tr_ad, dil_ad in KOK_ESLE.get(dil, {}).items():
+            if os.path.isfile(os.path.join(kok, dil, dil_ad + ".html")):
+                planli.add(dil + "/" + dil_ad)
+        for tr_klasor, dil_klasor in KLASOR_ESLE.get(dil, {}).items():
+            dizin = os.path.join(kok, dil, dil_klasor)
+            if not os.path.isdir(dizin):
+                continue
+            for ad in os.listdir(dizin):
+                if not ad.endswith(".html"):
+                    continue
+                m_t = re.match(r"^(\d{4}-\d{2}-\d{2})\.html$", ad)
+                if m_t and m_t.group(1) < sinir:
+                    continue
+                planli.add(dil + "/" + dil_klasor + "/" + ad[:-5])
+    # 2. geçiş: üretim
+    for dil in DILLER:
+        dil_kok = os.path.join(kok, dil)
+        if not os.path.isdir(dil_kok):
+            continue
+        for tr_ad, dil_ad in sorted(KOK_ESLE.get(dil, {}).items()):
+            yol = os.path.join(dil_kok, dil_ad + ".html")
+            if not os.path.isfile(yol):
+                continue
+            md = html_md(yol, rel=dil + "/" + dil_ad, dil=dil, kok=kok,
+                         planli=planli)
+            if md and _yaz(os.path.join(dil_kok, dil_ad + ".md"), md):
+                yazilan += 1
+        for tr_klasor, dil_klasor in sorted(KLASOR_ESLE.get(dil, {}).items()):
+            dizin = os.path.join(dil_kok, dil_klasor)
+            if not os.path.isdir(dizin):
+                continue
+            for ad in sorted(os.listdir(dizin)):
+                if not ad.endswith(".html"):
+                    continue
+                m_t = re.match(r"^(\d{4}-\d{2}-\d{2})\.html$", ad)
+                if m_t and m_t.group(1) < sinir:
+                    continue   # son 30 günün dışındaki tarihli arşiv sayfası
+                yol = os.path.join(dizin, ad)
+                md = html_md(yol, rel=dil + "/" + dil_klasor + "/" + ad[:-5],
+                             dil=dil, kok=kok, planli=planli)
+                if md and _yaz(os.path.join(dizin, ad[:-5] + ".md"), md):
+                    yazilan += 1
     print(f"[md-ayna] {yazilan} Markdown aynası üretildi ({kok}).")
 
 

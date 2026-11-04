@@ -75,6 +75,45 @@ KOK_KLASORLER = [
 SITE_BASE = os.environ.get("SITE_URL", "https://borsa-raporlari.pages.dev").rstrip("/")
 PARCA_BOYUTU = 1400
 
+# Akıllı birleştirme kümleri — pipeline/md_ayna.py (SON_EK/DASH_BAS/ONEK,
+# 61-63. satırlar) ile AYNI kümeler. İki dosya bilinçli bağımsızdır (import
+# yok); kural sırası md_ayna._zengin_metin ile aynıdır — bir tarafı
+# değiştirirsen öbürünü de değiştir (2026-11-04 boşluk fix'i).
+SON_EK = ",;:.!?)]}>'’\"…»"      # öncesine boşluk KOYULMAZ (Türkçe ek dahil)
+DASH_BAS = "—–-"                  # öncesine boşluk konur (tipografi)
+ONEK = "([{"                      # SONRASINA boşluk konmaz
+
+
+def _zengin_birlestir(parcalar):
+    """(metin, once, sonu) üçlülerini HTML'deki gerçek boşluk bilgisine
+    sadık kalarak birleştirir; Türkçe ek kesmesi ("PGSUS" + "'un") ve
+    noktalama yapışık kalır, em-dash ve boşluklu sınırlarda boşluk korunur.
+    md_ayna.py _zengin_metin (290-312) ile aynı kural sırası:
+    1) sonraki parça SON_EK ile başlıyorsa yapışık;
+    2) DASH_BAS veya önce/sonu boşlukluysa boşluk;
+    3) önceki parça noktalama ile bitiyorsa boşluk;
+    4) önceki parça ONEK ile bitiyorsa yapışık;
+    5) HTML'de boşluk bilgisi yoksa (once ve sonu False) yapışık."""
+    cikti = ""
+    son_sonu = False
+    for metin, once, sonu in parcalar:
+        if not metin:
+            continue
+        if not cikti:
+            cikti = metin
+        elif metin[0] in SON_EK:
+            cikti += metin
+        elif metin[0] in DASH_BAS or son_sonu or once:
+            cikti += " " + metin
+        elif cikti[-1] in ",;:.!?" and metin[0] not in SON_EK:
+            cikti += " " + metin  # noktalama sonrası gelen parça: boşluk şart
+        elif cikti[-1] in ONEK:
+            cikti += metin
+        else:
+            cikti += metin  # HTML'de boşluk yoktu: yapışık
+        son_sonu = sonu
+    return cikti
+
 
 # ---------- HTML → metin ----------
 
@@ -86,6 +125,10 @@ class _MetinCikarici(HTMLParser):
     # 2026-11-04 (Faz 6, ajan-okunurluk): olay akışı (seviye, metin) üretir —
     # h2/h3 ayrı olay olarak gelir (başlık-sınırı bölme için), td/th sınırı
     # " | " olarak korunur (tablo kolon anlamı artık düz metne ezilmez).
+    # 2026-11-04 (boşluk fix'i, architect S7): olaylar (seviye, metin, once,
+    # sonu) DÖRTLÜSÜdür — strip'ten ÖNCE yakalanan ilk/son karakter boşluk
+    # bilgisi taşınır (md_ayna.py 271-287 deseni); _zengin_birlestir ile
+    # satır-içi birleştirmede kullanılır.
     ATLANAN = {"script", "style", "noscript", "svg", "head", "nav", "header",
                "footer", "aside", "button", "form", "select", "option",
                "label", "template"}
@@ -94,12 +137,13 @@ class _MetinCikarici(HTMLParser):
 
     def __init__(self, yalniz_ana=False):
         super().__init__()
-        self.olaylar = []      # (seviye, metin); seviye 0=metin, 2=h2, 3=h3
+        self.olaylar = []      # (seviye, metin, once, sonu); 0=metin, 2=h2, 3=h3
         self.atla = 0
         self.baslik = ""
         self._h1 = False
         self._b_sev = 0        # aktif h2/h3 birikimi (0 = başlık dışında)
-        self._b_buf = []
+        self._b_buf = []       # (metin, once, sonu) üçlüleri
+        self._bekleyen = False  # salt-boşluk düğümü görüldü: sonraki parça boşluklu
         self.yalniz_ana = yalniz_ana
         self.ana = 0
         self.ozel_turu = None
@@ -127,6 +171,15 @@ class _MetinCikarici(HTMLParser):
             self._b_sev = int(tag[1])
             self._b_buf = []
             return
+        elif tag == "br":
+            # br eski çıktıda satır ayrımıydı: run'ı kapat (BLOK) + boşluk işareti
+            self.olaylar.append((0, "\u0001BLOK\u0001", False, False))
+            self._bekleyen = True
+            return
+        elif tag == "table":
+            # tablo BAŞLANGICI blok sınırıdır: paragraf akışı ilk hücreye
+            # yapışmasın (2026-11-04 boşluk fix'i, sentetik test bulgusu).
+            self.olaylar.append((0, "\u0001BLOK\u0001", False, False))
         if self._arayuz_mi(attrs):
             self.ozel_turu = tag
             self.ozel_derinlik = 1
@@ -144,16 +197,24 @@ class _MetinCikarici(HTMLParser):
             self._h1 = False
         elif tag in ("h2", "h3"):
             if self._b_sev:
-                metin = " ".join(x.strip() for x in self._b_buf if x.strip())
+                # akıllı birleştirme: boşluk bilgisine sadık başlık metni
+                # (eski davranış: " ".join → "] 'un" / "( [" yapay boşlukları)
+                metin = re.sub(r"\s+", " ", _zengin_birlestir(self._b_buf)).strip()
                 if metin:
-                    self.olaylar.append((self._b_sev, metin))
+                    self.olaylar.append((self._b_sev, metin, False, False))
                 self._b_sev = 0
                 self._b_buf = []
             return
         elif tag in ("td", "th"):
-            self.olaylar.append((0, " | "))
+            self.olaylar.append((0, " | ", False, False))
         elif tag == "tr":
-            self.olaylar.append((0, "\u0001SATIR\u0001"))
+            self.olaylar.append((0, "\u0001SATIR\u0001", False, False))
+        elif tag in ("p", "div", "li", "table", "ul", "ol"):
+            # blok sınırı (2026-11-04 boşluk fix'i): görünmez işaretçi —
+            # satır-içi run'ı kapatır, çıktıya metin girmez; eski "\n"
+            # satır ayrımı böylece korunur (md_ayna.py p/div/li kapanışı
+            # satır boşaltır; embed olay akışında karşılığı budur).
+            self.olaylar.append((0, "\u0001BLOK\u0001", False, False))
         elif tag == "main" and self.ana:
             self.ana -= 1
 
@@ -162,15 +223,21 @@ class _MetinCikarici(HTMLParser):
             return
         if self.yalniz_ana and self.ana == 0:
             return
+        # boşluk bilgisi strip'ten ÖNCE yakalanır (md_ayna.py 271-287 deseni)
+        onlu = bool(data) and data[0].isspace()
+        sonu = bool(data) and data[-1].isspace()
         metin = data.strip()
         if not metin:
+            self._bekleyen = True   # salt-boşluk düğümü: sonraki parça boşluklu
             return
+        once = onlu or self._bekleyen
+        self._bekleyen = False
         if self._h1 and not self.baslik:
             self.baslik = metin
         if self._b_sev:
-            self._b_buf.append(metin)
+            self._b_buf.append((metin, once, sonu))
             return
-        self.olaylar.append((0, metin))
+        self.olaylar.append((0, metin, once, sonu))
 
 
 def html_metni(yol):
@@ -211,10 +278,15 @@ def _satir_bol(metin, boyut):
 
 
 def bolumle(olaylar, sayfa_basligi="", boyut=PARCA_BOYUTU):
-    """Olay akışını (seviye, metin) chunk'lara böler (2026-11-04 Faz 6):
+    """Olay akışını (seviye, metin, once, sonu) chunk'lara böler:
     - h2/h3'te KESİN bölme: her başlık yeni parça açar ve parçanın ilk satırı
       başlık olur — başlıksız, bağlamsız parça sorunu (Johnson; Anthropic
       Contextual Retrieval) kaynağında çözülür.
+    - Aynı satır-blokundaki ardışık olaylar _zengin_birlestir ile birleşir
+      (2026-11-04 boşluk fix'i): "PGSUS" + "'un" artık "PGSUS\n'un" değil
+      "PGSUS'un" olur. Blok semantiği korunur: h2/h3 (seviye değişimi),
+      " | " hücre sınırı ve \u0001SATIR\u0001 işaretçisi run'ı bitirir; run
+      dışındaki satırlar eski "\n" birleşimiyle katılır.
     - Aynı kesitte cümle sınırlarına saygılı ~boyut paketleme.
     Dönüş: (bolum_etiketi, temiz_parca) listesi. Etiket YALNIZCA gömme
     girdisine eklenir; saklanan 'icerik' temiz kalır — /api/ara arayüzüne
@@ -231,9 +303,24 @@ def bolumle(olaylar, sayfa_basligi="", boyut=PARCA_BOYUTU):
 
     parcalar = []
     h2 = h3 = ""
-    suanki = []
+    suanki = []       # satırlar (str): başlıklar, yapısal işaretçiler, bitmiş satırlar
+    yakin_run = []    # AYNI satır-blokundaki ardışık (metin, once, sonu) üçlüleri
+
+    def _run_kapat():
+        # Satır-içi run'ı birleştirip satır(lar)a yazar.
+        if not yakin_run:
+            return
+        metin = _zengin_birlestir(yakin_run).strip()
+        yakin_run.clear()
+        if not metin:
+            return
+        for satir in _satir_bol(metin, boyut):
+            if sum(len(s) + 1 for s in suanki) + len(satir) + 1 > boyut:
+                _kapat()
+            suanki.append(satir)
 
     def _kapat():
+        _run_kapat()
         if not suanki:
             return
         metin = "\n".join(suanki)
@@ -247,26 +334,28 @@ def bolumle(olaylar, sayfa_basligi="", boyut=PARCA_BOYUTU):
             parcalar.append((_etiket(), metin))
         suanki.clear()
 
-    for sev, metin in olaylar:
-        if sev == 2:
+    for sev, metin, once, sonu in olaylar:
+        if sev in (2, 3):
             _kapat()
-            h2, h3 = metin, ""
-            suanki.append(metin)
-        elif sev == 3:
-            _kapat()
-            h3 = metin
+            if sev == 2:
+                h2, h3 = metin, ""
+            else:
+                h3 = metin
             suanki.append(metin)
         else:
             # Yapısal ayırıcılar (' | ' hücre sınırı, SATIR işaretçisi) satır
             # bölücünden GEÇMEZ: _satir_bol strip()lediği için boşlukları
             # yutup '|' yapıyordu (2026-11-04 hata ayıklama bulgusu).
+            # Ayrıca run'ı bitirirler: tablo satır/hücre semantiği taşır.
             if metin in (" | ", "\u0001SATIR\u0001"):
+                _run_kapat()
                 suanki.append(metin)
                 continue
-            for satir in _satir_bol(metin, boyut):
-                if sum(len(s) + 1 for s in suanki) + len(satir) + 1 > boyut:
-                    _kapat()
-                suanki.append(satir)
+            if metin == "\u0001BLOK\u0001":
+                # blok sınırı: yalnız satır-içi run'ı kapatır (eski "\n")
+                _run_kapat()
+                continue
+            yakin_run.append((metin, once, sonu))
     _kapat()
     return parcalar
 

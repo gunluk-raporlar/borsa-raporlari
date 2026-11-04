@@ -1838,9 +1838,13 @@ def _tuik_veri(akis_id, seciciler, end_period=None):
     yapi = _tuik_yapi(akis_id)
     key, secildi = _tuik_key(yapi, seciciler)
     if not secildi:
+        # 2026-11-04: sessiz bos donus, TUIK teyidinin hicbir zaman
+        # calismadigini gizliyordu (makro-snapshot tazelik incelemesi).
+        logger.warning("[TUIK] %s akisi icin secici eslesmedi; teyit bos kalacak.", akis_id)
         return []
     token = _tuik_token()
     if not token:
+        logger.warning("[TUIK] API anahtari yok; %s akisi teyit edilemedi.", akis_id)
         return []
     import urllib.request
     import urllib.error
@@ -2146,7 +2150,9 @@ def makro_cek(gun=170, yol="data/makro.json", as_of=None):
     try:
         for kod, ulke_ad in MAKRO_ULKELER.items():
             url = ("https://economic-calendar.tradingview.com/events"
-                   f"?from={frm}T00%3A00%3A00.000Z&to={bugun}T00%3A00%3A00.000Z&countries={kod}")
+                   # 2026-11-04: to siniri T23:59:59 — bugunun yayimlari artik
+                   # pencereye girer (yerel tarih filtresi ayni gunu sinirlar).
+                   f"?from={frm}T00%3A00%3A00.000Z&to={bugun}T23%3A59%3A59.000Z&countries={kod}")
             req = urllib.request.Request(
                 url, headers={"User-Agent": "Mozilla/5.0",
                               "Origin": "https://www.tradingview.com"})
@@ -2780,6 +2786,118 @@ def master_cio_agent(state: AgentState):
 
     bolum_metinleri = []
     basarisiz_bolumler = []
+
+    # ---- P0-(iii) 2026-11-04: portfoy tablosu yapisal denetimi (architect
+    # S5). 7. bolumun model ciktisi her denemede bu denetimden gecer: evren
+    # disi/kirilamayan aktif adi, gecersiz agirlik ve 50-150 disi toplam HER
+    # denemede reddedilir (STRICT); toplam 100±0,5 disi sapmasi veya tablonun
+    # hic ayristirilamamasi ilk 3 denemede reddedilip 4+ denemede uyariyla
+    # kabul edilir (son denemede tolerans; mevcut satir denetimi + CI
+    # rapor denetimi arkada kaliyor). NAKIT satiri toplama dahildir; NAKIT
+    # olmasi tek basina zorunlu tutulmaz (toplam kurali yeterli).
+    def _portfoy_tablo_ayristir(icerik):
+        """'|'-baslayan satirlardan portfoy tablosunu ayristirir.
+
+        Donus: (satirlar, tam_parse) — satirlar [(kod_hucre, agirlik_float),
+        ...]; ayraç (|---|) sonrasi veri satirlari, 3. kolon "Ağırlık (%)"
+        (8-kolon sablonu, bot.py'daki tablo talimatinda sabit), "%12" /
+        "12%" / "%12,5" biçimleri okunur. Tablo/ayraç hiç yoksa (None, False);
+        bir agirlik hucresi sayisal degilse (satirlar, False) — yumusak yol.
+        """
+        satirlar, ayraz_gecti, tam_parse = [], False, True
+        for satir in icerik.splitlines():
+            k = satir.strip()
+            if not k.startswith("|"):
+                continue
+            hucreler = [c.strip() for c in k.strip("|").split("|")]
+            if (hucreler and any(hucreler) and all(
+                    re.fullmatch(r":?-+:?", c) for c in hucreler if c)):
+                ayraz_gecti = True
+                continue
+            if not ayraz_gecti:
+                continue  # ayraçtan önceki baslik satiri
+            if len(hucreler) < 3:
+                tam_parse = False
+                continue
+            m = re.search(r"-?\d+(?:[.,]\d+)?", hucreler[2] or "")
+            if m is None:
+                tam_parse = False
+                continue
+            satirlar.append((hucreler[0],
+                             float(m.group(0).replace(",", "."))))
+        if not ayraz_gecti or not satirlar:
+            return None, False
+        return satirlar, tam_parse
+
+    def _portfoy_kontrol(icerik):
+        """llm_call tamamlık callback'i (TEK arg; mevcut 3 lambda gibi).
+
+        Deneme sayaci kapatma-degiskeniyle (dict box) tutulur; her bolum
+        dongusunde sifirlanir (asagida _portfoy_deneme = {"n": 0}).
+        """
+        _portfoy_deneme["n"] += 1
+        deneme_no = _portfoy_deneme["n"]
+        satirlar, tam_parse = _portfoy_tablo_ayristir(icerik)
+        if satirlar is None or not tam_parse:
+            if deneme_no >= 4:
+                logger.warning(
+                    "[Bas Analist] portfoy tablosu %d. denemede hala "
+                    "ayristirilamiyor; uyariyla kabul ediliyor (satir "
+                    "denetimi + CI rapor denetimi arkada).", deneme_no)
+                return True
+            logger.warning(
+                "[Bas Analist] portfoy tablosu ayristirilamadi (deneme %d); "
+                "reddedildi, siradaki model denenecek.", deneme_no)
+            return False
+        evren = {str(k).upper() for k in (state.get("tech_prices") or {})}
+        evren.update(h.upper() for h in HISSELER)
+        hisse_adedi, toplam = 0, 0.0
+        for kod_hucre, agirlik in satirlar:
+            toplam += agirlik
+            kod_norm = str(kod_hucre).upper()
+            # STRICT: agirlik pozitif olmali
+            if agirlik <= 0:
+                logger.warning(
+                    "[Bas Analist] portfoy satiri gecersiz agirlik iceriyor "
+                    "('%s': %s); reddedildi.", kod_hucre, agirlik)
+                return False
+            if str(kod_norm).startswith("NAK"):
+                continue  # NAKIT satiri: evren denetimi disinda
+            hisse_adedi += 1
+            # STRICT: evren disi aktif adi (evren bos ise denetim atlanir —
+            # fail-open; fiyat verisi hic gelmedigi gun kilitleme olmasin)
+            if evren and not any(k in kod_norm for k in evren):
+                logger.warning(
+                    "[Bas Analist] portfoy satiri evren disi aktif iceriyor "
+                    "('%s'); reddedildi.", kod_hucre)
+                return False
+        # STRICT: en fazla 8 hisse + toplam 50-150 bandi
+        if hisse_adedi > 8:
+            logger.warning(
+                "[Bas Analist] portfoy tablosunda %d hisse satiri var (>8); "
+                "reddedildi.", hisse_adedi)
+            return False
+        if toplam < 50 or toplam > 150:
+            logger.warning(
+                "[Bas Analist] portfoy agirlik toplami %.1f (50-150 disi); "
+                "reddedildi.", toplam)
+            return False
+        # YUMUSAK: toplam 100±0,5 disi (±5 bandi dahil, strict sinirlar
+        # icindeki tum sapmalar) -> ilk 3 denemede reddet, 4+ denemede kabul.
+        if abs(toplam - 100.0) > 0.5:
+            if deneme_no >= 4:
+                logger.warning(
+                    "[Bas Analist] portfoy agirlik toplami %.1f (100±0,5 "
+                    "disi) %d. denemede uyariyla kabul ediliyor (S5 son-"
+                    "deneme toleransi).", toplam, deneme_no)
+                return True
+            logger.warning(
+                "[Bas Analist] portfoy agirlik toplami %.1f (100±0,5 disi, "
+                "deneme %d); reddedildi, siradaki model denenecek.",
+                toplam, deneme_no)
+            return False
+        return True
+
     for bolum in rapor_bolumleri:
         bloklar = "\n".join(veri_bloklari.get(k, "") for k in bolum["veri"] if veri_bloklari.get(k))
         bolum_prompt = (
@@ -2795,7 +2913,15 @@ def master_cio_agent(state: AgentState):
             "ÇIKTI YALNIZCA bu bölümün gövde metni olsun: bölüm başlığını (## ile) YAZMA — sistem "
             "ekler; diğer bölümleri yazma; giriş/kapanış paragrafı ekleme."
         )
-        metin = llm_call(bolum_prompt)
+        # Portfoy bolumu (7): yapisal tablo denetimi callback ile her denemede
+        # uygulanir; sayac her bolumde sifirlanir. max_deneme acikca 6
+        # gecilir — yumusak kuralin "4+ denemede tolerans"i icin yeterli
+        # deneme butcesi garanti olsun (architect S5).
+        _portfoy_deneme = {"n": 0}
+        metin = llm_call(
+            bolum_prompt, max_deneme=6,
+            dogrulama=(_portfoy_kontrol
+                       if "| Hisse |" in bolum.get("talimat", "") else None))
         if not metin or metin.startswith("(LLM hizmetine ulaşılamadı"):
             logger.warning("[Bas Analist] %d. bolum uretilemedi; atlandi.", bolum["no"])
             basarisiz_bolumler.append(bolum["baslik"])
@@ -3866,6 +3992,7 @@ def _enflasyon_fakt(snapshot=None):
 # icindeki "dogrulama" anahtarina yazar (izleme sayfasinin gosterdigi).
 DOGRULAMA_IST = {"isim": 0, "enflasyon": 0, "toplam_metin": 0, "endeks": 0,
                  "endeks_uyari": 0, "faiz": 0, "makro": 0, "piyasa": 0,
+                 "reel_fisher": 0, "dolar": 0, "cari": 0,
                  "son_guncelleme": ""}
 
 
@@ -3914,6 +4041,10 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
     snapshot = snapshot or makro_snapshot_cek()
     enflasyon_oranlari, faiz_oranlari, gostergeler = makro_veri.rate_maps(snapshot)
     piyasa_serileri = makro_veri.piyasa_map(snapshot)
+    # Turetilmis metrikler (2026-11-04, architect S1): Fisher reel faiz, kur-
+    # duzeltmeli gunluk USD getirisi ve cari denge yonu KOD tarafinda hesap-
+    # lanir; ayni degerler hem duzelticilere hem izinli evrene gider.
+    turetilmis = makro_veri.turetilmis_degerler(snapshot)
     enflasyon = _enflasyon_fakt(snapshot)
     try:
 
@@ -3937,6 +4068,20 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
             izinli.add(float(enflasyon["yuzde"]))
         endeks_map = _endeks_seviyeleri()
         izinli.update(float(v) for v in endeks_map.values() if v)
+        # Turetilmis TUM sayilar da gercek sayilir (2026-11-04, architect S1):
+        # LLM kilitli cerceveden aynen kopyaladiginda (or. "reel faiz %4,83",
+        # "dolar bazinda +0,51") dogrulayici bunlari baska degerle
+        # degistirmesin; yanlis-pozitif / gereksiz-duzeltme artmasin.
+        for f_turev in (turetilmis.get("reel_fisher") or {}).values():
+            for alan in ("tam", "yaklasik"):
+                if isinstance(f_turev.get(alan), (int, float)):
+                    izinli.add(float(f_turev[alan]))
+        izinli.update(float(v) for v in
+                      (turetilmis.get("usd_getiri_gunluk") or {}).values()
+                      if isinstance(v, (int, float)))
+        cari_turev = turetilmis.get("cari_denge") or {}
+        if isinstance(cari_turev.get("deger"), (int, float)):
+            izinli.add(float(cari_turev["deger"]))
         sonuc = dogrulama.metin_dogrula(
             metin, HISSE_ADLARI, enflasyon["yuzde"] if enflasyon else None,
             endeks_seviyesi=endeks, faiz_oranlari=faiz_oranlari,
@@ -3945,16 +4090,24 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
             makro_gostergeleri=gostergeler,
             piyasa_serileri=piyasa_serileri,
             endeks_seviyeleri=endeks_map,
-            izinli_degerler=sorted(izinli))
+            izinli_degerler=sorted(izinli),
+            reel_fisher=turetilmis.get("reel_fisher"),
+            usd_getiri=turetilmis.get("usd_getiri_gunluk"),
+            cari_denge=turetilmis.get("cari_denge"))
         if (sonuc["isim_duzeltme"] or sonuc["enflasyon_duzeltme"]
                 or sonuc["endeks_duzeltme"] or sonuc["faiz_duzeltme"]
-                or sonuc["makro_duzeltme"] or sonuc["piyasa_duzeltme"]):
+                or sonuc["makro_duzeltme"] or sonuc["piyasa_duzeltme"]
+                or sonuc["reel_fisher_duzeltme"] or sonuc["dolar_duzeltme"]
+                or sonuc["cari_duzeltme"]):
             DOGRULAMA_IST["isim"] += len(sonuc["isim_duzeltme"])
             DOGRULAMA_IST["enflasyon"] += len(sonuc["enflasyon_duzeltme"])
             DOGRULAMA_IST["endeks"] += len(sonuc["endeks_duzeltme"])
             DOGRULAMA_IST["faiz"] += len(sonuc["faiz_duzeltme"])
             DOGRULAMA_IST["makro"] += len(sonuc["makro_duzeltme"])
             DOGRULAMA_IST["piyasa"] += len(sonuc["piyasa_duzeltme"])
+            DOGRULAMA_IST["reel_fisher"] += len(sonuc["reel_fisher_duzeltme"])
+            DOGRULAMA_IST["dolar"] += len(sonuc["dolar_duzeltme"])
+            DOGRULAMA_IST["cari"] += len(sonuc["cari_duzeltme"])
             for yanlis, dogru, kod in sonuc["isim_duzeltme"]:
                 logger.warning("[Dogrulama%s] sirket adi duzeltildi: '%s' -> '%s (%s)'",
                                etiket, yanlis, dogru, kod)
@@ -3973,12 +4126,23 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
             for eski, yeni in sonuc["endeks_duzeltme"]:
                 logger.warning("[Dogrulama%s] endeks seviyesi duzeltildi: %s -> %s",
                                etiket, eski, yeni)
+            for eski, yeni in sonuc["reel_fisher_duzeltme"]:
+                logger.warning("[Dogrulama%s] reel faiz (Fisher) duzeltildi: %s -> %s",
+                               etiket, eski, yeni)
+            for eski, yeni in sonuc["dolar_duzeltme"]:
+                logger.warning("[Dogrulama%s] dolar bazli getiri duzeltildi: %s -> %s",
+                               etiket, eski, yeni)
+            for eski, yeni in sonuc["cari_duzeltme"]:
+                logger.warning("[Dogrulama%s] cari denge yonu duzeltildi: %s -> %s",
+                               etiket, eski, yeni)
         for uyari in sonuc.get("endeks_uyari", []):
             DOGRULAMA_IST["endeks_uyari"] += 1
             logger.warning("[Dogrulama%s] seviye mantigi: %s", etiket, uyari)
         duzeltme_sayisi = (len(sonuc["isim_duzeltme"]) + len(sonuc["enflasyon_duzeltme"])
                            + len(sonuc["endeks_duzeltme"]) + len(sonuc["faiz_duzeltme"])
-                           + len(sonuc["makro_duzeltme"]) + len(sonuc["piyasa_duzeltme"]))
+                           + len(sonuc["makro_duzeltme"]) + len(sonuc["piyasa_duzeltme"])
+                           + len(sonuc["reel_fisher_duzeltme"])
+                           + len(sonuc["dolar_duzeltme"]) + len(sonuc["cari_duzeltme"]))
         if uydurma_esigi is not None and duzeltme_sayisi > uydurma_esigi:
             # Son çare yayını için en iyi adayı sakla (2026-10-06): düzeltilmiş
             # metin + düzeltme sayısı; çağıran son çareye karar verir.
@@ -8927,7 +9091,7 @@ def enflasyon_cek():
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     frm = (datetime.now(tz) - timedelta(days=50)).strftime("%Y-%m-%d")
     url = (f"https://economic-calendar.tradingview.com/events"
-           f"?from={frm}T00%3A00%3A00.000Z&to={bugun}T00%3A00%3A00.000Z&countries=TR")
+           f"?from={frm}T00%3A00%3A00.000Z&to={bugun}T23%3A59%3A59.000Z&countries=TR")
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0",
                                                "Origin": "https://www.tradingview.com"})
     try:
@@ -8975,7 +9139,7 @@ def ekonomik_takvim_cek(gun=14):
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     to = (datetime.now(tz) + timedelta(days=gun)).strftime("%Y-%m-%d")
     url = (f"https://economic-calendar.tradingview.com/events"
-           f"?from={bugun}T00%3A00%3A00.000Z&to={to}T00%3A00%3A00.000Z&countries=TR,US,EU")
+           f"?from={bugun}T00%3A00%3A00.000Z&to={to}T23%3A59%3A59.000Z&countries=TR,US,EU")
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0",
                                                "Origin": "https://www.tradingview.com"})
     with urllib.request.urlopen(req, timeout=25) as r:

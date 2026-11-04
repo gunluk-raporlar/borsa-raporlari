@@ -117,6 +117,18 @@ jobs:
         run: |
           python -u temettu_cek.py || echo "::warning::Temettu veri cekimi basarisiz — onceki veriyle devam."
           python -u temettu.py || echo "::warning::Temettu sayfasi uretilemedi — onceki sayfa yayinda kalir."
+      # Uretilmis gunluk sayfayi bagimsiz denetle (G01-G06; makro-analiz.yml'deki
+      # ayni desen). Su asamada non-blocking: bulgular log'a duser, yayini
+      # durdurmaz; pano tablosu yoksa ERROR uretir.
+      - name: Rapor denetimi (rapor_denetle.py --mod gunluk)
+        run: |
+          BUGUN=$(TZ=Europe/Istanbul date +%F)
+          F="raporlar/${BUGUN}.html"
+          if [ -f "$F" ]; then
+            python rapor_denetle.py "$F" --mod gunluk || echo "::warning::Gunluk rapor denetimi bulgu verdi: $F"
+          else
+            echo "Gunluk rapor dosyasi yok (uretim basarisiz olabilir)."
+          fi
       - name: Degisiklikleri depoya geri kaydet
         run: |
           git config user.name "borsa-bot"

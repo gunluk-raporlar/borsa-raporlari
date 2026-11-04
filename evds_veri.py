@@ -6,7 +6,9 @@ EKLEMEZ; makro snapshot'i TV/TÜİK verisiyle aynen calismaya devam eder.
 Anahtar oldugunda iki blogu doldurur:
 
 - Makro (TR): mevduat faizi, tuketici kredisi faizi, kredi buyumesi,
-  M3 para yillik buyumesi, reel efektif doviz kuru.
+  M3 para yillik buyumesi, reel efektif doviz kuru; 2026-11-04'ten itibaren
+  enflasyon (yillik, TP.FG.J0 + formulas=3) — taze oldugunda TV satirinin
+  UZERINE yazar ("ez"); TUIK SDMX teyitli satiri ezmez.
 
 Dogrulanmis seri kodlari `ELLE_KODLAR` haritasinda elle sabitlidir (24-25
  Eylul 2026 canli denetimle veri + ad birebir kontrol edildi); bu gostergeler
@@ -79,6 +81,21 @@ MACRO_HEDEFLERI = (
      "grup": r"reel efektif|real effective|reer",
      "seri": r"reel efektif|real effective|reer",
      "tercih": r"^t[u]fe bazl", "disi": r"^yi[- ]?ufe|nominal"},
+    # 2026-11-04 (kullanıcı kararı: TR'de birincil kaynak TÜİK/TCMB resmi
+    # kanallar, TradingView yedek): TÜFE genel endeksi (TÜİK verisi, TCMB
+    # EVDS hattı) formulas=3 ile yıllık % değişim döndürür. Kod + formül
+    # ikili kanıtla doğrulandı: borsapy README örneğinde TP.FG.J0+yoy_pct
+    # Ocak 2026'da 30.65 veriyor (TCMB tablosu 01-2026 = 30.65 birebir);
+    # repo içi m3_yoy/credit_growth_yoy aynı deseni kullanıyor.
+    # "ez": 1 = taze olduğunda TV satırının ÜZERİNE yaz (resmi_veri.py
+    # deseni); TÜİK SDMX teyitli satır ezilmez (TÜİK resmi birincildir).
+    {"id": "inflation_yoy", "ad": "Enflasyon (yıllık)", "birim": "%",
+     "siklik": "aylık", "frekans": 5, "formul": 3,
+     "min": -20.0, "max": 300.0, "gun": 400,
+     "grup": r"t[u]ketici fiyat|tufe|consumer price",
+     "seri": r"t[u]ketici fiyat endeksi|j0|0\.genel",
+     "tercih": r"genel|j0", "disi": r"mevsim|ar[ıi]nd[ıi]r|sezon",
+     "ez": 1},
 )
 
 # 24-25.09.2026 canli denetimle (evds-probe2/4) verisi + adi birebir
@@ -103,6 +120,9 @@ ELLE_KODLAR = {
     "reer": {"kod": "TP.RK.T1.Y",
              "ad": "TÜFE Bazlı Reel Efektif Döviz Kuru (2025=100)",
              "grup": "Reel Efektif Döviz Kuru - TÜFE Bazlı"},
+    "inflation_yoy": {"kod": "TP.FG.J0",
+                      "ad": "Tüketici Fiyat Endeksi (Genel) (2025=100)",
+                      "grup": "TÜKETİCİ FİYAT ENDEKSİ (TÜİK)"},
 }
 
 
@@ -412,16 +432,62 @@ def _veri_cek(hedef, kod, bitis_tarih):
     return deger, onceki, donem
 
 
+_AY_KISALTMA = {"jan": "01", "feb": "02", "mar": "03", "apr": "04",
+                "may": "05", "jun": "06", "jul": "07", "aug": "08",
+                "sep": "09", "oct": "10", "nov": "11", "dec": "12",
+                "oca": "01", "şub": "02", "sub": "02", "nis": "04",
+                "haz": "06", "tem": "07", "ağu": "08", "agu": "08",
+                "eyl": "09", "eki": "10", "kas": "11", "ara": "12"}
+
+
+def _yil_ay(metin):
+    """'2026-10-05' / 'Sep. 2026' / 'Eyl. 2026' tarzi donemleri YYYY-AA'ya cevirir."""
+    if not metin:
+        return ""
+    s = str(metin).strip()
+    m = re.match(r"^(\d{4})-(\d{2})", s)
+    if m:
+        return f"{m.group(1)}-{m.group(2)}"
+    m = re.match(r"^([^\d\s.]{3})[^\s]*\.?\s+(\d{4})$", s)
+    if m:
+        return f"{m.group(2)}-{_AY_KISALTMA.get(m.group(1).lower()[:3], '')}"
+    return ""
+
+
+def _evds_ez_meli(mevcut, evds_donem):
+    """EVDS, mevcut (TV) satiri ezebilir mi? (2026-11-04, resmi_veri deseni)
+
+    Birincil kaynak sirasi: TÜİK SDMX > TCMB EVDS > TradingView.
+    - TÜİK teyitli satır ASLA ezilmez.
+    - EVDS veri dönemi TV'nin veri döneminden (kaynak_periyot; bozuksa
+      donem) GERİDE ise TV taze kalır; eşit/ileri ise EVDS kazanır
+      (resmi kanal eşitlikte tutarlılık sağlar).
+    """
+    if str(mevcut.get("teyit") or "") == "TÜİK":
+        return False
+    evds_ay = _yil_ay(evds_donem)
+    if not evds_ay:
+        return False
+    veri_ay = (_yil_ay(mevcut.get("kaynak_periyot"))
+               or _yil_ay(mevcut.get("donem")))
+    if not veri_ay:
+        return False
+    return evds_ay >= veri_ay
+
+
 def gostergeleri_ekle(gostergeler, tarih):
-    """EVDS makro gostergelerini listeye ekler; anahtar/kesif yoksa 0 dondurur."""
+    """EVDS makro gostergelerini ekler; 'ez' hedefleri taze olduklarinda
+    mevcut (TV) satirin UZERINE yazar. Anahtar/kesif yoksa 0 dondurur."""
     if not anahtar():
         logger.info("[EVDS] EVDS_API_KEY yok; makro EVDS adimlari atlandi.")
         return 0
-    mevcut = {(str(g.get("ulke")), str(g.get("ad"))) for g in gostergeler}
     kesif = _Kesif()
     eklenen = 0
     for hedef in MACRO_HEDEFLERI:
-        if ("Türkiye", hedef["ad"]) in mevcut:
+        mevcut = next((g for g in gostergeler
+                       if str(g.get("ulke")) == "Türkiye"
+                       and str(g.get("ad")) == hedef["ad"]), None)
+        if mevcut is not None and not hedef.get("ez"):
             continue
         try:
             kod, seri_adi = kesif.kod(hedef)
@@ -433,6 +499,24 @@ def gostergeleri_ekle(gostergeler, tarih):
             continue
         except Exception as exc:  # pragma: no cover - guvenlik agi
             logger.warning("[EVDS] %s beklenmeyen hata: %s", hedef["id"], exc)
+            continue
+        eski = mevcut.get("deger") if mevcut is not None else None
+        if mevcut is not None:
+            if not _evds_ez_meli(mevcut, donem):
+                continue
+            mevcut.update({
+                "deger": round(deger, 4), "birim": hedef["birim"],
+                "donem": donem, "frekans": hedef["siklik"],
+                "onceki": round(onceki, 4) if onceki is not None else None,
+                "kaynak_baslik": f"TCMB EVDS {kod} ({seri_adi})",
+                "kaynak_periyot": donem,
+                "kaynak_durumu": "TCMB EVDS (akşam snapshot)",
+                "teyit": "TCMB EVDS",
+            })
+            if eski is not None and abs(float(eski) - deger) > 0.0005:
+                logger.warning("[EVDS] %s farkı: TV %s / EVDS %s (%s) -> EVDS",
+                               hedef["id"], eski, deger, donem)
+            eklenen += 1
             continue
         gostergeler.append({
             "ulke": "Türkiye", "ad": hedef["ad"], "deger": round(deger, 4),

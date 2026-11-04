@@ -49,6 +49,34 @@ python3 baglanti_guzellestir.py dist || echo "UYARI: baglanti temizligi atlandi,
 # pipeline/md_ayna.py icinde. Fail-open: python yoksa site .md'siz yayinlanir.
 python3 pipeline/md_ayna.py dist || echo "UYARI: md aynalari atlandi"
 
+# Hreflang kumeleri (2026-11-04, cokdilli SEO): baglanti_guzellestir'den SONRA
+# kosar; karşılık .html dist'te VARSA <head>'e rel=alternate hreflang kümesi
+# ekler (güzel-URL, uzantısız). Zaten kümesi olan sayfa atlanır (idempotent).
+# Eşleme tabloları pipeline/md_ayna.py KOK_ESLE/KLASOR_ESLE ile aynıdır.
+python3 hreflang_ekle.py dist || echo "UYARI: hreflang atlandi"
+
+# llms-full.txt (2026-11-04, ajan beslemesi): dist'teki TUM .md aynalarinin
+# (TR kök + en/de/ru/zh ağaçları) yol sırasıyla birlesik tek dosyasi; her
+# dosya "## <yol>" başlığıyla ayrılır. llms.txt (kısa indeks) DOKUNULMAZ.
+python3 - <<'PY' || echo "UYARI: llms-full.txt uretilemedi"
+import os
+kok = "dist"
+mdler = []
+for kkd, _alt, adlar in os.walk(kok):
+    for a in adlar:
+        if a.endswith(".md"):
+            mdler.append(os.path.relpath(os.path.join(kkd, a), kok).replace("\\", "/"))
+mdler.sort()
+bolumler = []
+for r in mdler:
+    with open(os.path.join(kok, r), encoding="utf-8", errors="replace") as fh:
+        bolumler.append("## %s\n\n%s" % (r, fh.read().strip()))
+with open(os.path.join(kok, "llms-full.txt"), "w", encoding="utf-8", newline="\n") as fh:
+    fh.write("\n\n".join(bolumler) + "\n")
+print("[llms-full] %d md birlestirildi" % len(mdler))
+PY
+echo "llms-full.txt: $(wc -c < dist/llms-full.txt 2>/dev/null || echo 0) bayt, $(wc -l < dist/llms-full.txt 2>/dev/null || echo 0) satir"
+
 # --- Yayina girmeyecek kaynak/veri dosyalari kaldirilir (2026-10-22 gizlilik) ---
 # Cloudflare Pages build'i GECICI bir klon uzerinde calisir; bu silme yalnizca
 # bu build'in yuklenecek agacini etkiler, depoya ve yerel kopyaya dokunmaz.

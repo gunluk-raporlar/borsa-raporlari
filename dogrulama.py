@@ -737,6 +737,312 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005, izinli=None):
 _SAYI_MARKET = re.compile(r"(?<![\w.])-?\d{1,8}(?:[.,]\d+)?(?![\w])")
 
 
+# --- Reel faiz (Fisher), dolar-bazli getiri, cari denge duzelticileri -------
+# 4 Kasim 2026 canli raporunda kanitlanan uc sayisal hata sinifi (architect
+# S1-S4): (1) "reel faiz -%36" yazildi; Fisher tam turevi ≈ +%4,83 idi.
+# (2) Dolar bazli gunluk getiri ayni raporda hem +%0,35 hem +%4 yazildi.
+# (3) "cari acik 4,05 milyar" yazildi; kayit FAZLA (pozitif) idi. Turevler
+# makro_veri.turetilmis_degerler ile KOD tarafinda hesaplanir; bu duzelticiler
+# ayni turevleri esas alir.
+_REEL_FAIZ = re.compile(r"\breel\s+faiz", re.IGNORECASE)
+# Bu ikisi DÜZELTİLMEZ (architect S3): "reel kur" REER baglamidir, "reel
+# mevduat faizi" gercerek mevduat oranidir; ikisinin sayisi Fisher tureviyle
+# degistirilemez.
+_REEL_KUR = re.compile(r"\breel\s+kur", re.IGNORECASE)
+_REEL_MEVDUAT = re.compile(r"\breel\s+mevduat", re.IGNORECASE)
+_YUZDE_PUAN = re.compile(r"y[üu]zde\s+puan", re.IGNORECASE)
+_DOLAR_BAZ = re.compile(r"dolar\s+baz", re.IGNORECASE)
+_GETIRI_KELIME = re.compile(r"\b(?:getiri|performans)\b", re.IGNORECASE)
+_GUNLUK_KELIME = re.compile(r"\bg[üu]nl[üu]k\b", re.IGNORECASE)
+# Turev yalnizca GUNLUK getiridir; baska donem ipucu cumleyi dislar.
+_DONEM_IPUCU = re.compile(
+    r"\b(?:yıllık|yillik|aylık|aylik|çeyreklik|ceyreklik|haftalık|haftalik|"
+    r"ocak|şubat|subat|mart|nisan|mayıs|mayis|haziran|temmuz|ağustos|agustos|"
+    r"eylül|eylul|ekim|kasım|kasim|aralık|aralik)\b", re.IGNORECASE)
+_CARI_KELIME = re.compile(r"\bcari\b", re.IGNORECASE)
+_CARI_YON = re.compile(r"\b(?:açık|acik|acık|fazla|dengi)\b", re.IGNORECASE)
+# %-isaretli yazimlar; "-%36" on-ekli isaret de TEK aday olarak yakalanir
+# (aksi halde yalniz "%36" eslesir ve eski isaret metinde kalirdi).
+_SAYI_YUZDE_ISARETLI = re.compile(
+    r"(?<![\w.])-?\s?%\s*-?\d{1,3}(?:[.,]\d{1,3})?"
+    r"|(?<![\w.])-?\d{1,3}(?:[.,]\d{1,3})?\s*%"
+    r"|(?<![\w.])\b(?:yüzde|yuzde)\s*-?\d{1,3}(?:[.,]\d{1,3})?"
+)
+# Fisher adaylari ek olarak ciplak ondaliklari da kapsar ("reel faiz 6,27
+# yüzde puan" yazimi); yil korumasi aday dongusunde uygulanir.
+_SAYI_FISHER = re.compile(
+    _SAYI_YUZDE_ISARETLI.pattern
+    + r"|(?<![\w.])-?\d{1,4}(?:[.,]\d{1,4})?(?!\w)")
+# Gri bolge (architect S3): isaret dogruysa hedefe ~2 puana kadar DOKUNULMAZ
+# — "hedefe 0,5-2 puan" sapmalar LLM'in hafifce farkli formül/yuvarlama
+# kullanimi sayilir; yalnizca acik hatalar (isaret bozuklugu ya da iki
+# turevden de belirgin uzaklik) duzeltilir.
+_FISHER_GRI_BOLGE = 2.0
+# Cari denge yon kelimesi yalnizca sayi kayda bu BAGIL yakinsakta degisir.
+_CARI_YAKINLIK = 0.05
+
+
+def _hedef_yaz(yazi, hedef, yuzde=True):
+    """Eski yazimin stilini koruyarak hedef degeri Turkce virgulle yazar.
+
+    "-%36" gibi on-ekli eski isaret kalintisi birakmaz: isaret HEDEF'ten
+    yeniden hesaplanir (hedef pozitifse eski '-' dusurulur, negatifse eklenir).
+    "%x" -> "%y", "x%" -> "y%", "yüzde x" -> "%y" (mevcut dogrultucularin
+    normalize bicimi), ciplak sayi (yuzde=False) -> ciplak "y".
+    """
+    sayi = ("%.2f" % hedef).rstrip("0").rstrip(".")
+    if not sayi or sayi == "-":
+        sayi = "0"
+    sayi = sayi.replace(".", ",")
+    isaret = "-" if hedef < 0 else ""
+    govde = yazi.strip()
+    if govde.startswith("-"):
+        govde = govde[1:].lstrip()
+    on = govde.lower()
+    if on.startswith("%") or on.startswith("yüzde") or on.startswith("yuzde"):
+        return isaret + "%" + sayi
+    if govde.endswith("%"):
+        return isaret + sayi + "%"
+    if yuzde:
+        return isaret + "%" + sayi
+    return isaret + sayi
+
+
+def reel_fisher_duzelt(metin, fisher, tolerans=0.01, izinli=None):
+    """Reel faiz (Fisher) cumlelerini snapshot'tan turetilmis degerle duzeltir.
+
+    `fisher` = makro_veri.turetilmis_degerler(...)["reel_fisher"] sozlugu:
+    {"tr": {"tam": 4.83, "yaklasik": 6.27}, ...}. Cümle "yüzde puan" diyorsa
+    YAKLASIK türev (faiz−enflasyon), düz "reel faiz %x" yazimi TAM türev
+    ((1+faiz)/(1+enf)-1) esas alınır.
+
+    DAR TETIK (architect S3, 2026-11-04): yalnizca (i) ISARET bozuk (yazılan
+    negatif, hedef pozitif veya tersi) ya da (ii) yazılan deger HER IKI Fisher
+    turevinden de 2*tolerans'tan uzakken duzeltilir. Isaret denetimi
+    _gercek_mi'den ONCE yapilir: "reel faiz -%36" yazisinin mutlak degeri
+    politika faizi (+36) ile cakissa bile yazi yanlistir — oran baglaminda
+    isaret, ticaret dengesindeki ("acik 5,23" ≈ -5,23) gibi serbest yazim
+    bicimi degildir. Isaret dogruysa hedefe ~2 puana (gri bolge) kadar
+    DOKUNULMAZ. "reel kur" ve "reel mevduat faizi" cumleleri disarida birakilir.
+    Donus: (yeni_metin, [(eski, yeni), ...]).
+    """
+    if not metin or not fisher:
+        return metin, []
+    fisher = {str(k).lower(): v for k, v in fisher.items()}
+    duzeltmeler, cikti = [], []
+    for satir in metin.split("\n"):
+        parcalar = re.split(r"(?<=[.!?])\s+", satir)
+        yeni_parcalar = []
+        for cumle in parcalar:
+            if not _REEL_FAIZ.search(cumle):
+                yeni_parcalar.append(cumle)
+                continue
+            adaylar = []
+            for m in _SAYI_FISHER.finditer(cumle):
+                yazi = m.group(0)
+                deger = _yuzde_degeri(yazi)
+                if deger is None:
+                    continue
+                # Yil korumasi: ciplak dallanan "2026" gibi tarihler aday olamaz.
+                if 1900 <= deger <= 2100 and not re.search(r"[.,]", yazi):
+                    continue
+                d_faiz = _kelime_mesafesi(cumle, m.start(), _REEL_FAIZ)
+                if d_faiz is None:
+                    continue
+                # Sayi "reel kur"/"reel mevduat faizi"ne daha yakinsa o sayi
+                # Fisher tureviyle KIYASLANMAZ (yanlis gosterge korumasi).
+                rakip_yakin = False
+                for rakip in (_REEL_KUR, _REEL_MEVDUAT):
+                    d_rakip = _kelime_mesafesi(cumle, m.start(), rakip)
+                    if d_rakip is not None and d_rakip < d_faiz:
+                        rakip_yakin = True
+                        break
+                if rakip_yakin:
+                    continue
+                anahtar = _ulke_anahtari(cumle, m.start())
+                turevler = fisher.get(anahtar) if anahtar else None
+                if not turevler:
+                    continue
+                tam = turevler.get("tam")
+                yak = turevler.get("yaklasik")
+                if tam is None or yak is None:
+                    continue
+                esas = yak if _YUZDE_PUAN.search(cumle) else tam
+                # DAR TETIK (i): isaret bozuk (ayrinti yukarida).
+                if (deger < 0 < esas) or (esas < 0 < deger):
+                    adaylar.append((m, esas))
+                    continue
+                # GERCEK DEGER KORUMASI (zorunlu, 2026-10-07 deseni).
+                if _gercek_mi(deger, izinli):
+                    continue
+                # DAR TETIK (ii): iki turevden birine yakinse dokunma.
+                if (abs(deger - tam) <= 2 * tolerans
+                        or abs(deger - yak) <= 2 * tolerans):
+                    continue
+                # Gri bolge: isaret dogru, hedefe ~0,5-2 puan sapma -> dokunma.
+                if abs(deger - esas) <= _FISHER_GRI_BOLGE:
+                    continue
+                adaylar.append((m, esas))
+            # Sagdan-sola uygula (konum kaymasini onler).
+            for m, esas in sorted(adaylar, key=lambda x: x[0].start(),
+                                  reverse=True):
+                yazi = m.group(0)
+                yuzde_mi = bool(re.search(r"%|y[üu]zde", yazi, re.IGNORECASE))
+                dogru = _hedef_yaz(yazi, esas, yuzde=yuzde_mi)
+                cumle = cumle[:m.start()] + dogru + cumle[m.end():]
+                duzeltmeler.append((yazi, dogru))
+            yeni_parcalar.append(cumle)
+        cikti.append(" ".join(yeni_parcalar) if len(parcalar) > 1
+                     else yeni_parcalar[0])
+    return "\n".join(cikti), duzeltmeler
+
+
+def dolar_getiri_duzelt(metin, usd_getiri, tolerans=0.02, izinli=None):
+    """'Dolar bazinda gunluk getiri/performans' cumlelerini kur-duzeltmeli
+    turevle denetler.
+
+    `usd_getiri` = makro_veri.turetilmis_degerler(...)["usd_getiri_gunluk"].
+    DAR BANT (architect S2): yazilan deger TL getirisiyle tolerans icindeyse
+    veya USD turevine yakinsa DOKUNULMAZ; ikisinden de uzaksa USD turevine
+    duzeltilir (4 Kasim 2026'da ayni raporda +%0,35 ve +%4 celiskili
+    yazilmisti). Cümle "günlük" demeli; yıllık/aylık/çeyreklik/haftalık veya
+    ay adi gibi dönem ipucu varsa cumle ATLANIR (turev yalnizca gunluktur).
+    Cümle BIST 30/XU030 iceriyorsa ve BIST 100/XU100 icermiyorsa XU030
+    turevi, aksi halde XU100 turevi esas alinir. Sayiya "dolar baz" ifadesine
+    en yakin TEK aday bakar. Donus: (yeni_metin, [(eski, yeni), ...]).
+    """
+    if not metin or not usd_getiri:
+        return metin, []
+    duzeltmeler, cikti = [], []
+    for satir in metin.split("\n"):
+        parcalar = re.split(r"(?<=[.!?])\s+", satir)
+        yeni_parcalar = []
+        for cumle in parcalar:
+            if not (_DOLAR_BAZ.search(cumle) and _GETIRI_KELIME.search(cumle)
+                    and _GUNLUK_KELIME.search(cumle)):
+                yeni_parcalar.append(cumle)
+                continue
+            if _DONEM_IPUCU.search(cumle):
+                yeni_parcalar.append(cumle)
+                continue
+            xu30_cumle = bool(re.search(r"(BIST\s*30|XU0?30)", cumle, re.IGNORECASE))
+            xu100_cumle = bool(re.search(r"(BIST\s*100|XU0?100)", cumle, re.IGNORECASE))
+            if xu30_cumle and not xu100_cumle:
+                hedef_usd = usd_getiri.get("xu30")
+                hedef_tl = usd_getiri.get("tl_getiri_xu30")
+            else:
+                hedef_usd = usd_getiri.get("xu100")
+                hedef_tl = usd_getiri.get("tl_getiri")
+            if hedef_usd is None:
+                yeni_parcalar.append(cumle)
+                continue
+            # "dolar baz" ifadesine en yakin tek yuzde adayi.
+            aday, aday_d = None, None
+            for m in _SAYI_YUZDE_ISARETLI.finditer(cumle):
+                if _yuzde_degeri(m.group(0)) is None:
+                    continue
+                d_baz = _kelime_mesafesi(cumle, m.start(), _DOLAR_BAZ)
+                if d_baz is None:
+                    continue
+                if aday is None or d_baz < aday_d:
+                    aday, aday_d = m, d_baz
+            if aday is None or aday_d > 80:
+                yeni_parcalar.append(cumle)
+                continue
+            deger = _yuzde_degeri(aday.group(0))
+            if deger is not None and not _gercek_mi(deger, izinli):
+                # DAR BANT: TL getirisi ya da USD turevi tolerans icinde -> dokunma.
+                tl_yakin = (hedef_tl is not None
+                            and abs(deger - hedef_tl) <= tolerans)
+                usd_yakin = abs(deger - hedef_usd) <= tolerans
+                if not (tl_yakin or usd_yakin):
+                    yazi = aday.group(0)
+                    dogru = _hedef_yaz(yazi, hedef_usd, yuzde=True)
+                    cumle = (cumle[:aday.start()] + dogru
+                             + cumle[aday.end():])
+                    duzeltmeler.append((yazi, dogru))
+            yeni_parcalar.append(cumle)
+        cikti.append(" ".join(yeni_parcalar) if len(parcalar) > 1
+                     else yeni_parcalar[0])
+    return "\n".join(cikti), duzeltmeler
+
+
+def cari_denge_duzelt(metin, cari, izinli=None):
+    """'Cari acik/fazla' YON kelimesini snapshot kaydinin yonuyle dogrular.
+
+    `cari` = makro_veri.turetilmis_degerler(...)["cari_denge"] ({"deger",
+    "birim", "yazi": "fazla"|"acik", "frekans"}). YALNIZCA en guvenli desen
+    duzeltilir: cumledeki sayi kayit degerine bagil %5 yakinsa ve metin
+    "cari acik" derken kayit FAZLA (pozitif) ise kelime obegi "cari fazla"ya
+    cevrilir (tersi de boyle). SAYIYA DOKUNULMAZ — makro_gosterge_duzelt
+    sayiyi zaten duzeltir; cakisma olmasin. FREKANS kelimesi bu duzelticide
+    ASLA degistirilmez (architect S4: snapshot TR frekans etiketi dogrulanmadi;
+    yon degisimi yalnizca "cari acik/fazla" obegine dokunur). Donus:
+    (yeni_metin, [(eski, yeni), ...]).
+    """
+    if not metin or not cari:
+        return metin, []
+    hedef_deger = cari.get("deger")
+    yazi_yon = str(cari.get("yazi") or "")
+    birim = str(cari.get("birim") or "")
+    if hedef_deger is None or yazi_yon not in ("fazla", "açık"):
+        return metin, []
+    if yazi_yon == "fazla":
+        yanlis_yon = re.compile(r"\b(cari\s+)(?:açık|acik|acık)\b", re.IGNORECASE)
+    else:
+        yanlis_yon = re.compile(r"\b(cari\s+)fazla\b", re.IGNORECASE)
+    duzeltmeler, cikti = [], []
+    for satir in metin.split("\n"):
+        parcalar = re.split(r"(?<=[.!?])\s+", satir)
+        yeni_parcalar = []
+        for cumle in parcalar:
+            if not (_CARI_KELIME.search(cumle) and _CARI_YON.search(cumle)):
+                yeni_parcalar.append(cumle)
+                continue
+            # Sayi kayit degerine yakin mi? (genis bagil tolerans; "4,05"
+            # gibi yazimlar _yuzde_degeri ile, "4.053" Turkce-yanlisi ondalik
+            # okumayla da denenir; "milyon" yazilarsa kayit milyar'a gore
+            # 1000'e bolunerek karsilastirilir.)
+            yakin = False
+            olcek = (1000.0 if re.search(r"\bmilyon\b", cumle, re.IGNORECASE)
+                     and "milyar" in birim.lower() else 1.0)
+            karsilastir = hedef_deger / olcek
+            for m2 in _SAYI_MARKET.finditer(cumle):
+                tok = m2.group(0)
+                adaylar_v = [_yuzde_degeri(tok)]
+                if re.fullmatch(r"-?\d\.\d{3}", tok):
+                    adaylar_v.append(float(tok.replace(".", ",")))
+                for v in adaylar_v:
+                    if v is None:
+                        continue
+                    # Isaret toleransi (_gercek_mi'deki desen): "cari fazla
+                    # 2,1 milyar" yazimi kayittaki -2,1 ile ayni gercektir.
+                    if (abs(v - karsilastir) <= max(
+                            0.05, _CARI_YAKINLIK * abs(karsilastir))
+                            or abs(abs(v) - abs(karsilastir)) <= max(
+                                0.05, _CARI_YAKINLIK * abs(karsilastir))):
+                        yakin = True
+                        break
+                if yakin:
+                    break
+            if not yakin:
+                yeni_parcalar.append(cumle)
+                continue
+            # "Cari" yazimi (buyuk/kucuk) korunur, yon kelimesi kayitla degisir.
+            def _yon_degistir(m3):
+                return m3.group(1) + yazi_yon
+            yeni_cumle, adet = yanlis_yon.subn(_yon_degistir, cumle)
+            if adet:
+                for m3 in yanlis_yon.finditer(cumle):
+                    duzeltmeler.append((m3.group(0),
+                                        m3.group(1) + yazi_yon))
+                cumle = yeni_cumle
+            yeni_parcalar.append(cumle)
+        cikti.append(" ".join(yeni_parcalar) if len(parcalar) > 1
+                     else yeni_parcalar[0])
+    return "\n".join(cikti), duzeltmeler
+
+
 def _etiket_cekirdegi(etiket):
     """'Gram Altın (türetilmiş)' -> 'Gram Altın' (raporlar parantezi yazmaz)."""
     return re.sub(r"\s*\([^)]*\)\s*$", "", etiket).strip()
@@ -1082,14 +1388,19 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
                    faiz_oranlari=None, enflasyon_oranlari=None,
                    makro_gostergeleri=None, piyasa_serileri=None,
                    enflasyon_aylik_oranlari=None, endeks_seviyeleri=None,
-                   izinli_degerler=None):
+                   izinli_degerler=None, reel_fisher=None, usd_getiri=None,
+                   cari_denge=None):
     """Tum dogrulama zinciri. Donus sozlugu:
     {"metin": ..., "isim_duzeltme": [...], "enflasyon_duzeltme": [...],
      "endeks_duzeltme": [...], "endeks_uyari": [...], "faiz_duzeltme": [...],
-     "makro_duzeltme": [...], "piyasa_duzeltme": [...]}.
+     "makro_duzeltme": [...], "piyasa_duzeltme": [...],
+     "reel_fisher_duzeltme": [...], "dolar_duzeltme": [...],
+     "cari_duzeltme": [...]}.
     `makro_gostergeleri`: makro snapshot'inin ulke/indikator deger sozlugu.
     `endeks_seviyeleri`: {"30": XU030 seviyesi, "100": XU100 seviyesi} —
     BIST 100 cumleleri gercek XU100 seviyesiyle denetlenir.
+    `reel_fisher` / `usd_getiri` / `cari_denge`: makro_veri.turetilmis_
+    degerler(...) ciktisinin ayni adli bolumleri (2026-11-04, architect S1-S4).
     Hicbir durumda istisna yukseltmez; cagiran taraf zaten sarmaladi.
     """
     metin, isim = isim_duzelt(metin, adlar)
@@ -1099,6 +1410,11 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
     metin, faiz = faiz_duzelt(metin, faiz_oranlari, izinli=izinli_degerler)
     metin, makro = makro_gosterge_duzelt(metin, makro_gostergeleri,
                                          izinli=izinli_degerler)
+    metin, fisher = reel_fisher_duzelt(metin, reel_fisher,
+                                       izinli=izinli_degerler)
+    metin, dolar = dolar_getiri_duzelt(metin, usd_getiri,
+                                       izinli=izinli_degerler)
+    metin, cari = cari_denge_duzelt(metin, cari_denge, izinli=izinli_degerler)
     metin, piyasa = piyasa_serileri_duzelt(metin, piyasa_serileri,
                                            izinli=izinli_degerler)
     metin, endeks, uyari = endeks_seviye_duzelt(metin, endeks_seviyesi,
@@ -1107,7 +1423,8 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
     return {"metin": metin, "isim_duzeltme": isim, "enflasyon_duzeltme": enf,
             "endeks_duzeltme": endeks, "endeks_uyari": uyari,
             "faiz_duzeltme": faiz, "makro_duzeltme": makro,
-            "piyasa_duzeltme": piyasa}
+            "piyasa_duzeltme": piyasa, "reel_fisher_duzeltme": fisher,
+            "dolar_duzeltme": dolar, "cari_duzeltme": cari}
 
 
 if __name__ == "__main__":
@@ -1502,5 +1819,106 @@ if __name__ == "__main__":
         "BIST 30 2026 hedef konuşuluyor.",
         15327.05, endeks_seviyeleri={"30": 15327.05, "100": 16450.0})
     assert p15b[1] == [] and "2026" in p15b[0], p15b
+
+    # --- 2026-11-04 canli hatalar: Fisher / dolar-getiri / cari-denge ---
+    # makro_veri.turetilmis_degerler canli snapshot ciktisinin birebir degerleri.
+    FISHER = {"tr": {"tam": 4.8331, "yaklasik": 6.27},
+              "us": {"tam": 0.2893, "yaklasik": 0.30},
+              "eu": {"tam": -1.1079, "yaklasik": -1.15}}
+    USD = {"xu100": 0.5130, "tl_getiri": 0.5645,
+           "xu30": 0.3707, "tl_getiri_xu30": 0.4221}
+    CARI = {"deger": 4.053, "birim": "milyar $", "yazi": "fazla",
+            "frekans": "üç aylık"}
+    T_IZINLI = [36.0, 4.0, 2.65, 29.73, 3.7, 3.8, 4.8331, 6.27, 0.2893, 0.30,
+                -1.1079, -1.15, 0.5130, 0.5645, 0.3707, 0.4221, 4.053, 43.8]
+
+    # 1) Fisher: isaret bozmasi yakalanir; "-%36" -> tam turev +4,83 (eski
+    #    isaret metinde kalintı olarak KALMAZ).
+    f1 = reel_fisher_duzelt(
+        "Faiz korumaya ragmen reel faiz -%36 seviyesine gerilemistir.",
+        FISHER, izinli=T_IZINLI)
+    assert "reel faiz %4,83" in f1[0] and "-%36" not in f1[0], f1
+    assert f1[1] == [("-%36", "%4,83")], f1
+    # 2) Gri bolge: isaret dogru, hedefe 0,67 puan -> DOKUNMA.
+    f2 = reel_fisher_duzelt("Reel faiz %5,5 seviyesinde seyrediyor.", FISHER,
+                            izinli=T_IZINLI)
+    assert f2[1] == [], f2
+    # 3) Turevden belirgin uzak + isaret dogru -> duzeltilir; cümle "yüzde
+    #    puan" dedigi için YAKLASIK türev esas alinir; ciplak yazim korunur.
+    f3 = reel_fisher_duzelt("Reel faiz 12 yüzde puan seviyesindedir.", FISHER,
+                            izinli=T_IZINLI)
+    assert "Reel faiz 6,27 yüzde puan" in f3[0] and f3[1], f3
+    # 4) "reel kur" ve "reel mevduat faizi" duzeltilmez.
+    f4 = reel_fisher_duzelt(
+        "Reel kur %10 seviyesindedir. Reel mevduat faizi %43,8 seviyesindedir.",
+        FISHER, izinli=T_IZINLI)
+    assert f4[1] == [] and "%10" in f4[0] and "%43,8" in f4[0], f4
+    # 5) Avrupa cumlesinde negatif tureve dokunulmaz; TR sayisi EU tureviyle
+    #    degistirilemez.
+    f5 = reel_fisher_duzelt(
+        "Euro Bölgesi'nde reel faiz -1,1 ile negatif bölgededir.",
+        FISHER, izinli=T_IZINLI)
+    assert f5[1] == [] and "-1,1" in f5[0], f5
+
+    # 6) Dolar getiri: ikisinden de uzak -> USD turevine duzeltme (4 Kasim'da
+    #    ayni raporda +%0,35 yazilmisti).
+    d1 = dolar_getiri_duzelt(
+        "Dolar bazında günlük performans %0,35 olarak gerçekleşti.", USD,
+        izinli=T_IZINLI)
+    assert "%0,51" in d1[0] and d1[1] == [("%0,35", "%0,51")], d1
+    # 7) DAR BANT: TL getirisi tolerans icinde -> DOKUNMA.
+    d2 = dolar_getiri_duzelt(
+        "Dolar bazında günlük getiri %0,56 seviyesinde kaldı.", USD,
+        izinli=T_IZINLI)
+    assert d2[1] == [] and "%0,56" in d2[0], d2
+    # 8) Yillik donem ipucu -> cumle atlanir.
+    d3 = dolar_getiri_duzelt(
+        "Dolar bazında yıllık getiri %12 seviyesine ulaştı.", USD,
+        izinli=T_IZINLI)
+    assert d3[1] == [] and "%12" in d3[0], d3
+    # 9) BIST 30 cumlesi XU030 tureviyle denetlenir.
+    d4 = dolar_getiri_duzelt(
+        "BIST 30'da dolar bazında günlük getiri %2,1 olarak yazıldı.", USD,
+        izinli=T_IZINLI)
+    assert "%0,37" in d4[0] and d4[1], d4
+
+    # 10) Cari denge: metin "cari açık" derken kayit FAZLA -> yon kelimesi
+    #     degisir, SAYIYA dokunulmaz, frekans kelimesi korunur.
+    c1 = cari_denge_duzelt(
+        "Cari açık 4,05 milyar dolar seviyesinde gerçekleşti; frekans üç aylık.",
+        CARI, izinli=T_IZINLI)
+    assert "Cari fazla 4,05 milyar" in c1[0], c1
+    assert "frekans üç aylık" in c1[0], c1
+    assert c1[1] == [("Cari açık", "Cari fazla")], c1
+    # 11) Tersi: kayit acik (negatif) iken metin "cari fazla" diyorsa duzelir.
+    c2 = cari_denge_duzelt(
+        "Cari fazla 2,1 milyar dolar olarak açıklandı.",
+        {"deger": -2.1, "birim": "milyar $", "yazi": "açık", "frekans": "aylık"},
+        izinli=T_IZINLI)
+    assert "Cari açık 2,1 milyar" in c2[0] and c2[1], c2
+    # 12) Sayi kayda yakin degilse yon kelimesine dokunulmaz (en guvenli desen).
+    c3 = cari_denge_duzelt(
+        "Cari açık yılın geri kalanında derinleşebilir; bu beklenti ağırlıklı.",
+        CARI, izinli=T_IZINLI)
+    assert c3[1] == [] and "Cari açık" in c3[0], c3
+
+    # 13) Zincir entegrasyonu: uc duzeltici metin_dogrula icinden calisir.
+    st = metin_dogrula(
+        "Politika faizi %43 kaldi; reel faiz -%36 seviyesindedir. "
+        "Dolar bazında günlük performans %0,35 gerçekleşti. "
+        "Cari açık 4,05 milyar dolar oldu.",
+        {}, faiz_oranlari={"tr": 36.0}, izinli_degerler=T_IZINLI,
+        reel_fisher=FISHER, usd_getiri=USD, cari_denge=CARI)
+    assert "%36 kaldi" in st["metin"], st["metin"]
+    assert "reel faiz %4,83" in st["metin"], st["metin"]
+    assert "%0,51 gerçekleşti" in st["metin"], st["metin"]
+    assert "Cari fazla 4,05" in st["metin"], st["metin"]
+    assert st["reel_fisher_duzeltme"] and st["dolar_duzeltme"] \
+        and st["cari_duzeltme"], st
+    # 14) fail-open: veri yoksa hicbir duzeltici devreye girmez.
+    st2 = metin_dogrula("Reel faiz -%36 seviyesindedir. Cari açık 4,05 milyar dolar.",
+                        {}, izinli_degerler=T_IZINLI)
+    assert st2["reel_fisher_duzeltme"] == [] and st2["cari_duzeltme"] == [] \
+        and st2["dolar_duzeltme"] == [], st2
 
     print("dogrulama.py: tum kendini testler gecti.")

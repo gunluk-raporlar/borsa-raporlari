@@ -321,6 +321,111 @@ def legacy_data(snapshot):
     }
 
 
+def _ty(x, hane=2):
+    """Isaretli Turkce sayi: 4.8333 -> '+4,83' (bot.py _ty ile ayni bicim)."""
+    try:
+        return (f"{x:+,.{hane}f}".replace(",", "\x00")
+                .replace(".", ",").replace("\x00", "."))
+    except Exception:
+        return str(x)
+
+
+def _tsayi(x, hane=3):
+    """Isaretsiz Turkce sayi: 4.053 -> '4,053' (cari denge kayit yazimi)."""
+    try:
+        return (f"{x:,.{hane}f}".replace(",", "\x00")
+                .replace(".", ",").replace("\x00", "."))
+    except Exception:
+        return str(x)
+
+
+def turetilmis_degerler(snapshot):
+    """Snapshot kayitlarindan tek-kaynak turetme (2026-11-04, architect S1).
+
+    LLM'in kendi basina hesapladigi turetmeler 4 Kasim 2026 raporunda kanitli
+    hata uretti: reel faiz "-%36" yazildi (Fisher tam turev ≈ +%4,83), "cari
+    acik 4,05 milyar" yazildi (kayit FAZLA), dolar bazli getiri ayni raporda
+    hem +%0,35 hem +%4 yazildi. Hesap bu yuzden KOD tarafinda yapilir; ayni
+    deger frame_text'in kilitli bloguna ve dogrulayici duzelticilerine gider.
+
+    Fail-open sozlesmesi: ham kayit yoksa/bozuksa ilgili anahtar SONUCTA
+    YOKTUR — kilite satir yazilmaz, dogrultucu devreye girmez. validate()
+    cagrilmaz; cagiran taraf (bot/frame_text) snapshot'i zaten dogrular.
+    """
+    if not isinstance(snapshot, dict):
+        return {}
+    kayitlar = snapshot.get("records") or []
+    piyasa = snapshot.get("piyasa") or []
+    sonuc = {}
+
+    def _sayi(v):
+        return (isinstance(v, (int, float)) and not isinstance(v, bool)
+                and math.isfinite(float(v)))
+
+    # --- reel Fisher: ((1+faiz/100)/(1+enf/100)-1)*100 ---
+    oranlar = {}
+    for r in kayitlar:
+        if not isinstance(r, dict):
+            continue
+        ind = r.get("indicator")
+        if ind in ("policy_rate", "inflation_yoy") and _sayi(r.get("value")):
+            oranlar.setdefault(str(r.get("country_code", "")).upper(), {})[ind] = float(r["value"])
+    fisher = {}
+    for ulke, tablo in sorted(oranlar.items()):
+        faiz = tablo.get("policy_rate")
+        enf = tablo.get("inflation_yoy")
+        if faiz is None or enf is None or enf <= -100.0:
+            continue  # (1+enf/100) sifira yaklasirsa turev tanimsiz
+        try:
+            tam = ((1.0 + faiz / 100.0) / (1.0 + enf / 100.0) - 1.0) * 100.0
+        except (ZeroDivisionError, OverflowError):
+            continue
+        if not math.isfinite(tam):
+            continue
+        fisher[ulke.lower()] = {"tam": tam, "yaklasik": faiz - enf}
+    if fisher:
+        sonuc["reel_fisher"] = fisher
+
+    # --- kur-duzeltmeli gunluk USD getirisi: (1+tl)/(1+kur)-1 ---
+    degisim = {}
+    for p in piyasa:
+        if not isinstance(p, dict):
+            continue
+        kod = p.get("indicator")
+        if kod in ("bist100", "bist30", "usdtry") and _sayi(p.get("change")):
+            degisim[kod] = float(p["change"])
+    usd = {}
+    c_kur = degisim.get("usdtry")
+    if c_kur is not None and (1.0 + c_kur / 100.0) != 0.0:
+        for kod, kod_anahtar, tl_anahtar in (
+                ("bist100", "xu100", "tl_getiri"),
+                ("bist30", "xu30", "tl_getiri_xu30")):
+            c_tl = degisim.get(kod)
+            if c_tl is None:
+                continue
+            usd[kod_anahtar] = ((1.0 + c_tl / 100.0) / (1.0 + c_kur / 100.0)
+                                - 1.0) * 100.0
+            usd[tl_anahtar] = c_tl
+    if usd:
+        sonuc["usd_getiri_gunluk"] = usd
+
+    # --- cari denge (TR current_account): yon kelimesi kodda belirir ---
+    cari_kayit = next(
+        (r for r in kayitlar
+         if isinstance(r, dict) and r.get("country_code") == "TR"
+         and r.get("indicator") == "current_account" and _sayi(r.get("value"))),
+        None)
+    if cari_kayit:
+        deger = float(cari_kayit["value"])
+        sonuc["cari_denge"] = {
+            "deger": deger,
+            "birim": str(cari_kayit.get("unit") or ""),
+            "yazi": "fazla" if deger > 0 else "açık",
+            "frekans": str(cari_kayit.get("frequency") or ""),
+        }
+    return sonuc
+
+
 def frame_text(snapshot):
     """LLM'e kilitli, degistirilemez makro sayi cercevesi uretir."""
     validate(snapshot)
@@ -366,6 +471,44 @@ def frame_text(snapshot):
                 f"- {r['label']}: {r['value']}{birim_yazi}"
                 f"{onceki}{degisim} | tarih: {r['period']} | "
                 f"kaynak: {r.get('source', '')}")
+    # Turetilmis metrikler: yukaridaki ham kayitlardan KOD tarafinda hesaplanir
+    # (2026-11-04, S1). Eksik veri satiri YAZILMAZ (turetilmis_degerler fail-open).
+    turetilmis = turetilmis_degerler(snapshot)
+    if turetilmis:
+        satirlar.append(
+            "[TÜRETİLMİŞ METRİKLER — yukarıdaki kayıtlardan hesaplandı, DEĞİŞTİRİLEMEZ]")
+        for ulke, f in sorted((turetilmis.get("reel_fisher") or {}).items()):
+            ad = {k.lower(): v for v, k in ULKE_KOD.items()}.get(
+                ulke.lower(), ulke.upper())
+            satirlar.append(
+                f"- {ad} reel faizi: tam {_ty(f['tam'])}% "
+                f"| yaklaşık {_ty(f['yaklasik'])} yüzde puan "
+                f"(politika faizi − enflasyon)")
+        usd = turetilmis.get("usd_getiri_gunluk") or {}
+        if "tl_getiri" in usd or "xu100" in usd:
+            parcalar = []
+            if "tl_getiri" in usd:
+                parcalar.append(f"XU100 günlük TL getirisi: {_ty(usd['tl_getiri'])}%")
+            if "xu100" in usd:
+                parcalar.append("dolar bazında günlük getiri (kur düzeltmeli): "
+                                f"{_ty(usd['xu100'])}%")
+            satirlar.append("- " + " | ".join(parcalar))
+        if "tl_getiri_xu30" in usd or "xu30" in usd:
+            parcalar = []
+            if "tl_getiri_xu30" in usd:
+                parcalar.append(
+                    f"XU030 günlük TL getirisi: {_ty(usd['tl_getiri_xu30'])}%")
+            if "xu30" in usd:
+                parcalar.append("dolar bazında günlük getiri (kur düzeltmeli): "
+                                f"{_ty(usd['xu30'])}%")
+            satirlar.append("- " + " | ".join(parcalar))
+        cari = turetilmis.get("cari_denge")
+        if cari:
+            satirlar.append(
+                f"- Türkiye cari denge: son kayıt {_tsayi(cari['deger'])} "
+                f"{cari['birim']} {str(cari['yazi']).upper()} "
+                "(pozitif değer fazla demektir; negatif açık olur) "
+                f"| frekans: {cari.get('frekans') or '-'}")
     return "\n".join(satirlar)
 
 
