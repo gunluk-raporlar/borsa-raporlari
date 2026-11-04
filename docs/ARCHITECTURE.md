@@ -42,8 +42,8 @@ flowchart TD
     end
 
     subgraph ARAMA["Arama alt sistemi (anlam araması)"]
-        embed["pipeline/embed.py<br/>HTML→metin (<main> odaklı) → bge-m3<br/>artımlı upsert (hash karşılaştırma)"]
-        supa["Supabase pgvector<br/>belgeler + match_belgeler(_v2) + arama_ayar"]
+        embed["pipeline/embed.py<br/>HTML→olay akışı (h2/h3, tablo hücresi)<br/>→ başlık-sınırı bölme → bge-m3<br/>artımlı upsert (hash; bağlam etiketi gömme girdisinde)"]
+        supa["Supabase pgvector<br/>belgeler (+bolum) + match_belgeler(_v2)<br/>+ arama_ayar"]
         route["web/app/api/ara/route.js (edge)<br/>arama_ayar → şirket genişletmesi →<br/>embedding → v2 RPC → rerank → kalibrasyon"]
         rerank["Workers AI bge-reranker-base<br/>(VARSAYILAN KAPALI; fail-open)"]
         vekil["functions/api/ara.js<br/>/api/ara vekili: url geçişi,<br/>ham/rerank A/B, 120 sn cache"]
@@ -62,6 +62,7 @@ flowchart TD
     llm["LLM zinciri<br/>Z.AI → AMD → NVIDIA → Groq → OpenRouter"]
     deepl["DeepL"]
     buildsh["build.sh<br/>dist/ içine yalnız site dosyaları"]
+    mdayna["pipeline/md_ayna.py<br/>dist HTML → .md aynaları<br/>(ajan &lt;sayfa&gt;.md çeker; fail-open)"]
     cf["Cloudflare Pages"]
 
     daily --> bot
@@ -101,7 +102,7 @@ flowchart TD
     trhtml --> buildsh
     grafikjs --> buildsh
     dilhtml --> buildsh
-    buildsh --> cf
+    buildsh --> mdayna --> cf
     publish -- "boş commit = build tetikleyici" --> cf
 
     embeddingw --> embed
@@ -145,7 +146,13 @@ flowchart TD
   23.10 kararı) YALNIZCA ses metninde uygular — yayın HTML'i ve LLM istemleri resmi
   adı korur; ardından `editor.tts_telaffuz` sayı/kod açılımları. Ses EMA Lightning
   (`ema_tts.py`) ile `raporlar/<tarih>.mp3`; EMA atarsa Edge-TTS yedeği —
-  başarısızlık rapor üretimini asla etkilemez.
+  başarısızlık rapor üretimini asla etkilemez. Muhasebe Terimleri sözlüğü
+  (2026-11-04 bölünme): `terimler_yaz` hub sayfayı (`muhasebe-terimleri.html`,
+  terim-adı indisi) + 18 harf-grup sayfasını (`muhasebe-terimleri/<Harf>.html`,
+  kartlar `id=#t<i>`) üretir; harf-grup sayfaları i18n çevirisi DIŞINDADIR
+  (i18n.py `MUHASEBE_GRUP_ONEKI` muafiyeti), en/de/ru/zh hub sürümleri veriden
+  `muhasebe_diller.yaz` ile ayrı yazılır. `_yaz` değişmeyen dosyayı atlar —
+  sözlük sayfalarının hash'i (dolayısıyla embedding maliyeti) sabit kalır.
 - **egitim.py** — hafta sonu borsa okulu: Cmt/Paz ders üretir,
   `haftasonu-egitimi.html` + `haftasonu-egitimi/<tarih>.html` yazar; müfredat
   deterministik, içerik LLM.
@@ -184,7 +191,12 @@ flowchart TD
   (2026-10-23 itibarıyla).
 - **build.sh** — Cloudflare Pages build adımı: yalnızca site dosyalarını (HTML,
   CSS, json, görsel, dil klasörleri) `dist/`'e kopyalar; kaynak kod ve `data/`
-  yayımlanmaz (`.assetsignore` ile ikinci katman).
+  yayımlanmaz (`.assetsignore` ile ikinci katman). Ardından dist üzerinde
+  `baglanti_guzellestir.py` (güzel-URL) ve `pipeline/md_ayna.py` (17 kök sayfa +
+  8 klasör ağacının `.md` aynası; ajan `<sayfa>.md` çeker) çalışır, ikisi de
+  fail-open. Deploy topolojisi: Pages build çıktısı `dist`, Functions ise repo
+  kökündeki `functions/`'ten alınır (CF kuralı: functions statik kökte değil
+  proje kökünde durur).
 - **.github/workflows** — üretim takvimi (bkz. diyagram): `daily.yml` rapor,
   `i18n.yml` 2 saatte bir çeviri (`[CI Skip]` commit), `publish.yml` günde 2 kez
   boş "Site yayini" commit'i ile Cloudflare build'ini tetikler; `[CI Skip]` içeren
@@ -214,13 +226,19 @@ flowchart TD
   snapshot/rejim. Botlar bunun üzerine yazan deterministik + LLM destekli HTML üretir.
   `data/eval/` arama değerlendirme koşularının (eval.yml) commit'lenen kaydıdır.
 - **pipeline/embed.py** — anlam araması indeksleyici: `raporlar/`, `derin-analiz/`,
-  `makro-analiz/`, `haftasonu/`, `haftasonu-egitimi/` (son 10 gün; `--backfill` tümü) ve
-  4 kök sözlük/temettü sayfasını metne çıkarıp (~1400 karakterlik parçalar) bge-m3 ile
-  embed'ler, hash karşılaştırmasıyla ARTIMLI Supabase `belgeler` upsert'i yapar; küçülen
-  belgelerin artık parçalarını siler. Secret yoksa CI'ı kırmadan atlar.
+  `makro-analiz/`, `haftasonu/`, `haftasonu-egitimi/` (son 10 gün; `--backfill` tümü),
+  4 kök sözlük/temettü sayfası ve `muhasebe-terimleri/` harf-grup klasörünü (kaynak
+  adı `muhasebe-terimleri-grup`) işler. 2026-11-04: HTML olay akışına çıkarılır
+  (h2/h3 ayrı olay, td sınırı " | "), `bolumle()` BAŞLIK SINIRINDA böler
+  (~1400 karakter) ve parçaya "Sayfa > Bölüm > Alt bölüm" etiketi üretir — etiket
+  YALNIZCA gömme girdisinde (hash bu girdi üzerinde); saklanan `icerik` temiz kalır,
+  bağlam `bolum` kolonuna yazılır (kolon yoksa fail-open: etiket olmadan yazılır).
+  bge-m3 + hash karşılaştırmalı ARTIMLI Supabase `belgeler` upsert'i; küçülen
+  belgelerin artık parçaları silinir. Secret yoksa CI'ı kırmadan atlar.
 - **functions/api/ara.js** — TR sitesindeki `/api/ara` vekili: arka uç
   (borsa-raporlari-web.pages.dev) yanıtı üzerinden kendi sayfa URL'lerimize çevirir
-  (önce arka ucun `s.url`'ü geçirilir, eski kaynak haritası yalnız yedektir);
+  (önce arka ucun `s.url`'ü geçirilir, eski kaynak haritası yalnız yedektir;
+  `muhasebe-terimleri-grup` yedeği hub'a gider) ve `bolum`'ü sayfaya geçirir;
   ham/rerank A/B parametreleri; 120 sn kenar cache; arka uç yoksa /ara sayfası
   yerel dizin aramasına düşer.
 - **web/app/api/ara/route.js** — arama hattı (edge): `arama_ayar` tablosunu 10 dk
@@ -229,7 +247,9 @@ flowchart TD
   `match_belgeler_v2` (48 aday havuzu, url-başı en iyi parça, tarihli kaynaklara
   sönümlü tazelik çarpanı; yoksa eski `match_belgeler`) → bge-reranker-base
   (VARSAYILAN KAPALI `rerank_top_k=0`; izole try/catch, boş/geçersiz yanıt → vektör
-  sırası korunur) → gösterim kalibrasyonu ((benzerlik−taban)/0.30).
+  sırası korunur) → gösterim kalibrasyonu ((benzerlik−taban)/0.30). Sonuçta
+  `bolum` alanı (2026-11-04) RPC döndürdüyse geçilir, döndürmüyorsa atlanır
+  (eski RPC'ye karşı güvenli).
 - **eval/dongu.py** — LangGraph StateGraph değerlendirme döngüsü: 6 düğüm
   (sorgu_sec→arama→yargıç→metrik→karar→yaz), 16 tohum sorguyu üç kolda (normal/
   ham/rerank) ölçer, llama-3.3-70b yargıç 0/1/2 puanlar, nDCG@8+MRR hesaplar.
@@ -252,6 +272,22 @@ flowchart TD
    → boş string (çevrilmemiş TR kalır, sıradaki koşuda yeniden denenir).
 
 ## Bilinen riskler
+
+- **Arama: schema.sql 2026-11-04 bloğu DROP'sız** (2026-11-04 yapısal inceleme):
+  PostgreSQL `CREATE OR REPLACE FUNCTION`, mevcut fonksiyonun OUT
+  parametre/RETURNS TABLE kolon listesini DEĞİŞTİREMEZ (doküman: "you cannot
+  change the types of any OUT parameters except by dropping the function");
+  `bolum` kolonlu iki RPC'nin yeniden yaratılmasından ÖNCE
+  `drop function if exists match_belgeler(vector, integer, double precision);`
+  ve v2 için eşdeğeri gerekir, aksi halde Supabase SQL Editor'de blok hata
+  verir. İkinci uç: SQL uygulanmadan önceki fail-open koşulunda yazılan
+  satırlar `bolum=NULL` kalır ve hash etiketi içerdiğinden değişmeyen içerik
+  yeniden embed EDİLMEZ — `bolum` backfill'i için SQL sonrası bir kez
+  `MOD=backfill` koşusu şart.
+- **Muhasebe harf-grup URL'leri BÜYÜK harfli**: `/muhasebe-terimleri/A` … `/Y`
+  (bot.py `_harf_slug` harfi aynen korur; Pages büyük/küçük harfe duyarlıdır).
+  llms.txt'teki örnek küçük harfli (`/muhasebe-terimleri/a … /y`) — 404 verir;
+  llms.txt satırı büyük harfe düzeltilmeli (2026-11-04 inceleme).
 
 - **Zehirli önbellek kaydı**: kısa dizelerde kimlik-çeviri kabulü + alıntı-sarmallı
   TR çıktı + denetimsiz elle kayıt, "çevrilmiş" görünen Türkçe metin üretebilir.

@@ -40,24 +40,42 @@ def _birlestir(deger, birim):
 
 
 def _veri_tablosu(makro):
-    """Genişletilmiş göstergeler, tahmin/önceki ve kaynak bilgisi tablosu."""
-    satirlar = "".join(
-        "<tr>"
-        f"<td>{g['ulke']}</td><td>{g['ad']}</td>"
-        f"<td><strong>{_birlestir(g['deger'], g['birim'])}</strong></td>"
-        f"<td>{_birlestir(g.get('tahmin'), g['birim'])}</td>"
-        f"<td>{_birlestir(g.get('onceki'), g['birim'])}</td>"
-        f"<td>{g['donem']}</td><td>{g.get('frekans') or '—'}</td>"
-        f"<td>{g.get('kaynak', 'TradingView')}</td>"
-        "</tr>"
-        for g in makro["gostergeler"]
-    )
+    """Genişletilmiş göstergeler, tahmin/önceki ve kaynak bilgisi tablosu.
+    2026-11-04 (ajan-okunurluk, Faz 4): 100+ satırlık tek tablo ülke bazlı alt
+    tablolara bölündü (architect REVISE) — chunk bütçesini aşan tablo parçalanınca
+    kolon anlamı kayboluyordu; her alt tablo kendi başlık satırını taşır.
+    Kolon düzeni DEĞİŞMEDİ: rapor_denetle.py parse_table 8 kolonlu satırın ilk
+    hücresinde ülke arar (c[0] in COUNTRIES); kolon sırası aynen korunur."""
+    gruplar = {}
+    for g in makro["gostergeler"]:
+        gruplar.setdefault(g["ulke"] or "Diğer", []).append(g)
+
+    def _alt_tablo(uye):
+        satirlar = "".join(
+            "<tr>"
+            f"<td>{g['ulke']}</td><td>{g['ad']}</td>"
+            f"<td><strong>{_birlestir(g['deger'], g['birim'])}</strong></td>"
+            f"<td>{_birlestir(g.get('tahmin'), g['birim'])}</td>"
+            f"<td>{_birlestir(g.get('onceki'), g['birim'])}</td>"
+            f"<td>{g['donem']}</td><td>{g.get('frekans') or '—'}</td>"
+            f"<td>{g.get('kaynak', 'TradingView')}</td>"
+            "</tr>"
+            for g in uye)
+        return ('<div class="tbl-wrap"><table>'
+                '<caption style="caption-side:top; text-align:left; font-weight:600; padding:4px 0 8px">'
+                "Makro göstergeler: gerçekleşen, tahmin, önceki değerler</caption>"
+                "<tr><th>Kapsam/Ülke</th><th>Gösterge</th><th>Gerçekleşen</th>"
+                "<th>Tahmin</th><th>Önceki</th><th>Dönem</th><th>Frekans</th><th>Kaynak</th></tr>"
+                f"{satirlar}</table></div>")
+
+    bolumler = "".join(
+        f'<h3 class="section-title" style="font-size:16.5px">{ulke} göstergeleri ({len(uye)})</h3>'
+        + _alt_tablo(uye)
+        for ulke, uye in sorted(gruplar.items()))
     return (
         '<h2 class="section-title">Veri Tabanı (analizde kullanılan kilitli göstergeler)</h2>'
-        '<div class="card" style="padding:8px 24px 16px"><div class="tbl-wrap"><table>'
-        "<tr><th>Kapsam/Ülke</th><th>Gösterge</th><th>Gerçekleşen</th>"
-        "<th>Tahmin</th><th>Önceki</th><th>Dönem</th><th>Frekans</th><th>Kaynak</th></tr>"
-        f"{satirlar}</table></div>"
+        '<div class="card" style="padding:8px 24px 16px">'
+        f"{bolumler}"
         f'<p style="color:var(--muted);font-size:12.5px">Kaynak: {makro.get("kaynak", "")}'
         f' &bull; snapshot: {makro.get("guncelleme", "")}. Analiz metni yalnızca bu '
         "tablodaki rakamlarla üretilir; yoksa sayı yazılmaz ve yayın öncesi "

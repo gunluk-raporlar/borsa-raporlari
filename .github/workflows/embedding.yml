@@ -20,6 +20,13 @@ on:
 permissions:
   contents: write
 
+# 2026-11-04 (architect P3): manuel dispatch ile gecelik schedule'in ayni
+# anda kosup upsert'i cakistirmasinin onune gecer (merge-duplicates zaten
+# koruyor; bu yalnizca gurultu/kota korumasi).
+concurrency:
+  group: embedding
+  cancel-in-progress: false
+
 jobs:
   embed:
     runs-on: ubuntu-latest

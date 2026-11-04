@@ -147,3 +147,88 @@ create table if not exists arama_tik (
 );
 alter table arama_tik enable row level security;
 create index if not exists arama_tik_kayit_idx on arama_tik (kayit);
+
+-- ============================================================
+-- 2026-11-04 — Parçalara bölüm bağlamı (Contextual Retrieval, Faz 6)
+-- embed.py artık her parçayı başlık sınırında bölüyor ve gömme girdisine
+-- "Sayfa > Bölüm > Alt bölüm" öneki ekliyor. Saklanan 'icerik' temiz kalır;
+-- 'bolum' yalnızca arayüzde kaynak göstergesi olarak döner. embed.py kolon
+-- yoksa kendini eski davranışa düşürür (fail-open); bu yüzden bu blok
+-- gecikse de zincir kırılmaz.
+-- ============================================================
+
+alter table belgeler add column if not exists bolum text;
+
+-- POSTGRESQL KISITI (2026-11-04 architect P0): create or replace, mevcut
+-- fonksiyonun RETURNS TABLE kolon listesini DEGISTIREMEZ ("will not let you
+-- change the return type of an existing function"). bolum kolonu eklenen yeni
+-- imzalar icin once drop sart; yoksa bu blok SQL Editor'de hata verir.
+-- Route.js eski RPC'ye de dustugu icin drop aninda arama kisaca eski yola
+-- duserek calismaya devam eder (fail-open vekil).
+drop function if exists match_belgeler(vector(1024), integer, double precision);
+drop function if exists match_belgeler_v2(vector(1024), integer, double precision, double precision, double precision);
+
+-- Her iki RPC de bolum dönsün (route.js alanı yoksa sessizce atlar).
+create or replace function match_belgeler(
+  sorgu_embedding vector(1024),
+  eslesme_sayisi int default 8,
+  min_skor float default 0.30
+)
+returns table (
+  id bigint,
+  kaynak text,
+  baslik text,
+  bolum text,
+  url text,
+  tarih date,
+  icerik text,
+  benzerlik float
+)
+language sql stable as $$
+  select b.id, b.kaynak, b.baslik, b.bolum, b.url, b.tarih, b.icerik,
+         1 - (b.embedding <=> sorgu_embedding) as benzerlik
+  from belgeler b
+  where 1 - (b.embedding <=> sorgu_embedding) > min_skor
+  order by b.embedding <=> sorgu_embedding
+  limit eslesme_sayisi;
+$$;
+
+create or replace function match_belgeler_v2(
+  sorgu_embedding vector(1024),
+  eslesme_sayisi int default 8,
+  min_skor float default 0.30,
+  taze_boost float default 0.12,
+  taze_gun int default 60
+)
+returns table (
+  id bigint,
+  kaynak text,
+  baslik text,
+  bolum text,
+  url text,
+  tarih date,
+  icerik text,
+  benzerlik float
+)
+language sql stable as $$
+  with aday as (
+    select b.id, b.kaynak, b.baslik, b.bolum, b.url, b.tarih, b.icerik,
+           1 - (b.embedding <=> sorgu_embedding) as skor,
+           row_number() over (partition by b.url order by b.embedding <=> sorgu_embedding) as sira
+    from belgeler b
+    where 1 - (b.embedding <=> sorgu_embedding) > min_skor
+    order by b.embedding <=> sorgu_embedding
+    limit 48
+  )
+  select a.id, a.kaynak, a.baslik, a.bolum, a.url, a.tarih, a.icerik, a.skor::float as benzerlik
+  from aday a
+  where a.sira = 1
+  order by
+    case
+      when a.kaynak in ('gunluk-rapor','derin-analiz','makro-analiz','haftasonu','egitim')
+           and a.tarih is not null
+      then a.skor * (1 + taze_boost * greatest(0, 1 - (current_date - a.tarih)::float / greatest(taze_gun, 1)))
+      else a.skor
+    end desc
+  limit eslesme_sayisi;
+$$;

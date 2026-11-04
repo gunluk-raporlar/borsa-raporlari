@@ -84,7 +84,13 @@ HARIC_DOSYALAR = {"404.html", "onizleme-mobil.html", "ara.html", "temettu.html"}
 # Dil KOPYASI uretilmeyecek ama sitemap'te TR canonical olarak kalacak sayfalar:
 # muhasebe-terimleri.html zaten 5 dilli (her kartta EN/DE/RU/ZH tanim kutulari);
 # makine cevirisi karisik dilli icerigi bozar.
+# 2026-11-04: muhasebe-terimleri/ klasoru (harf-grup sayfari) da ayni
+# kapsamdadir — terimler dil-sayfasi gibi VERIDEN uretilen en/de/ru/zh tekil
+# sayfalara sahiptir; TR grup sayfalari makine cevirisine gitmez. Onek kontrolu
+# üç kullanim yerinde yapilir (GENERASYON_HARIC tam dosya adi tutar):
+# eksik-kayit denetimi, ceviri hedef listesi, sitemap url bloklari.
 GENERASYON_HARIC = {"muhasebe-terimleri.html"}
+MUHASEBE_GRUP_ONEKI = "muhasebe-terimleri/"
 # Dil sayfasi makine cevirisiyle DEGIL, dogrudan veriden uretilen sayfalar:
 # bot.py -> muhasebe_diller.yaz() en/de/ru/zh surumlerini yazar; bu yuzden
 # sitemap'te dil alternatifleri ve ayri <url> kayitlari gecerlidir.
@@ -1640,9 +1646,10 @@ def sitemap_dogrula(kok: Path, diller: list[str]) -> dict:
     # Terim harf-grup TR dosyalari dil kopyasi beklemez: dil sayfalari DIL-YEREL
     # grup adlarindadir ve sitemap'te dil bloklari hub'lardan uretilir.
     _grup_deseni = re.compile(r"^terimler/[a-z0-9-]+\.html$")
+    _muhasebe_grup_deseni = re.compile(r"^muhasebe-terimleri/[a-z0-9-]+\.html$")
     for rel in turkce_sayfalar(kok):
         sy = seo_yol(rel)
-        if _grup_deseni.match(rel.as_posix()):
+        if _grup_deseni.match(rel.as_posix()) or _muhasebe_grup_deseni.match(rel.as_posix()):
             continue
         if SITE_URL + sy not in kayitli and SITE_URL + rel.as_posix() not in kayitli:
             eksik_kayit.append(sy or "/")
@@ -2032,7 +2039,10 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
         # 2026-10-31: gunluk icerik once (bkz. _oncelik_anahtari), terimler en sonda.
         hedef_liste = sorted(hedef_liste, key=_oncelik_anahtari)
         # 5 dilli tek sayfa: dil kopyasi uretme (sitemap TR canonical olarak kalir)
-        hedef_liste = [r for r in hedef_liste if str(r) not in GENERASYON_HARIC]
+        # 2026-11-04: muhasebe harf-grup sayfalari da veri tabanli ailedendir.
+        hedef_liste = [r for r in hedef_liste
+                       if str(r) not in GENERASYON_HARIC
+                       and not r.as_posix().startswith(MUHASEBE_GRUP_ONEKI)]
     agac = dil_agac_kumesi(kok, hedef_liste)
     medya = medya_kumesi(kok)
     ozet = {"sayfa": 0, "dil": {}, "aktarilan_metin": 0, "onarilan_baglanti": 0,
@@ -2587,10 +2597,13 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
             # dil-yerel gruplar 3b adiminda eklenir (30.10.2026).
             bloklar.append(_url_bloku(f"{SITE_URL}{sy}", attr, []))
             continue
-        if sy in {g[:-5] for g in GENERASYON_HARIC} \
+        if (sy in {g[:-5] for g in GENERASYON_HARIC}
+                or sy.startswith(MUHASEBE_GRUP_ONEKI)) \
                 and sy not in {g[:-5] for g in DIL_SAYFASI_VERIDEN}:
             # Dil kopyasi uretilmeyecek sayfalar: yalnizca TR canonical kaydi
             # (sy uzantisiz URL yolu; GENERASYON_HARIC dosya adi tutar).
+            # 2026-11-04: muhasebe-terimleri/<harf> grup sayfalari da bu daldadir
+            # — dil muadilleri veriden uretilen ayri sayfalardir, 1:1 esleme yok.
             bloklar.append(_url_bloku(f"{SITE_URL}{sy}", attr, []))
             continue
         # Dil ad eslemesi kaynaktan: en/raporlar degil /en/reports yazilir.

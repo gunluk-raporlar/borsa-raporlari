@@ -13,8 +13,10 @@ mkdir -p dist
 # sayfalari bu dizinlerde; listeye alinmazsa hub kartlari 404'e duser.
 # terimler/ (2026-10-28): harf-grup sayfalari ayni sekilde listeye alinmali;
 # listede yoksa dist'e kopyalanmaz ve tum terim linkleri 404'e duser.
+# muhasebe-terimleri/ (2026-11-04): IFRS sozlugunun harf-grup sayfari —
+# terimler ile ayni nedenle listede olmak zorunda.
 # temettu-veri/ (2026-11-01): temettu.html'in tarayicida okudugu JSON verileri.
-for d in hisse raporlar derin-analiz makro-analiz radyo haftasonu haftasonu-egitimi terimler temettu-veri en de ru zh; do
+for d in hisse raporlar derin-analiz makro-analiz radyo haftasonu haftasonu-egitimi terimler muhasebe-terimleri temettu-veri en de ru zh; do
   if [ -d "$d" ]; then cp -r "$d" dist/; fi
 done
 
@@ -41,6 +43,11 @@ python3 dil_baglantilari_tazele.py dist || echo "UYARI: dil menusu tazeleme atla
 # agaclarinda eski TR-slug'lar yerlesik adlara eslenir. Fail-open: python
 # yoksa/basarisizsa build eskisi gibi devam eder.
 python3 baglanti_guzellestir.py dist || echo "UYARI: baglanti temizligi atlandi, dist .html linkli yayinlandi"
+
+# Markdown aynalari (2026-11-04, ajan-okunurluk): secili sayfalarin .md kopyasi
+# — ajan "<sayfa>.md" yazarak tablo/baslik korunmus surumu ceker. Sayfa listesi
+# pipeline/md_ayna.py icinde. Fail-open: python yoksa site .md'siz yayinlanir.
+python3 pipeline/md_ayna.py dist || echo "UYARI: md aynalari atlandi"
 
 # --- Yayina girmeyecek kaynak/veri dosyalari kaldirilir (2026-10-22 gizlilik) ---
 # Cloudflare Pages build'i GECICI bir klon uzerinde calisir; bu silme yalnizca

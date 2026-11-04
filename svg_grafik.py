@@ -19,6 +19,11 @@ def _seed(konu):
 
 def _sarmal(w, h, govde, baslik=None, alt="şematik — temsilidir"):
     ek = ""
+    # 2026-11-04 (ajan-okunurluk): SVG'ye <title> eklendi — aria-label niteliği
+    # HTML→Markdown dönüştürücülerde çoğunlukla düşer; <title> SVG metni olarak
+    # kalır ve görselin neyi gösterdiği ayrıştırıcılara taşınır.
+    baslik_metni = baslik or "şematik eğitim grafiği"
+    ek += f'<title>{baslik_metni}</title>'
     if baslik:
         ek += (f'<text x="14" y="26" font-family="Segoe UI,Arial" font-size="15" font-weight="700" '
                f'fill="{RENK["lacivert"]}">{baslik}</text>')

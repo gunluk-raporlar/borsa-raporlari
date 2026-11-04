@@ -3420,6 +3420,11 @@ def makro_analiz_yap(yedek_amd=False, snapshot=None):
 
 Yanıtını şu yapıda oluştur (başlıklar aynen bu şekilde, "## " ile):
 
+BÖLÜMLEME KURALI: uzun paragraf duvarı kurma — her "## " bölümünün içinde alt
+konuları "### Alt Başlık" ile böl; her alt başlığın altında 3-5 cümlelik
+paragraflar yaz; bir "## " bölümünün düzyazısı tablolar hariç yaklaşık 300
+kelimeyi aşmasın (aşacaksa alt başlığa böl).
+
 ## 1. Küresel Makroekonomik Görünüm
 (ABD ve Euro Bölgesi verileri: enflasyon, politika faizi, büyüme, işsizlik; küresel likidite ve risk iştahına etkileri)
 
@@ -4276,7 +4281,7 @@ _SITE_ARAMA_KUTUSU = """
     fetch('/api/ara?q=' + encodeURIComponent(q), { cache: 'no-store' })
       .then(function(r) { if (!r.ok) throw 0; return r.json(); })
       .then(function(v) {
-        var KA = { 'gunluk-rapor': 'Günlük', 'derin-analiz': 'Derin', 'makro-analiz': 'Makro', 'haftasonu': 'Hafta sonu', 'egitim': 'Okul', 'sozluk': 'Sözlük', 'terimler': 'Terimler', 'muhasebe-terimleri': 'Muhasebe', 'temettu': 'Temettü' };
+        var KA = { 'gunluk-rapor': 'Günlük', 'derin-analiz': 'Derin', 'makro-analiz': 'Makro', 'haftasonu': 'Hafta sonu', 'egitim': 'Okul', 'sozluk': 'Sözlük', 'terimler': 'Terimler', 'muhasebe-terimleri': 'Muhasebe', 'muhasebe-terimleri-grup': 'Muhasebe', 'hisse-detay': 'Hisse', 'temettu': 'Temettü' };
         var liste = ((v && v.sonuc) || []).slice(0, 3);
         if (liste.length) {
           var ik = '<div style="font-size:11.5px;color:#0f766e;font-weight:700;margin-bottom:6px">🧠 ANLAM ARAMASI</div>';
@@ -4304,6 +4309,10 @@ _SITE_ARAMA_KUTUSU = """
         var puan = 0;
         terimler.forEach(function(t) {
           puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+          // 2026-11-04 (kullanıcı kararı): şirket adı/kodu bir hisse sayfasının
+          // BAŞLIĞINDA geçiyorsa o sayfa en başta çıksın — rapor metinlerindeki
+          // çok sayıda geçiş (×1) tek başlık eşleşmesini geçebiliyordu.
+          if (kacKez(s.b, t) > 0 && (s.u + '').indexOf('hisse/') === 0) puan += 60;
         });
         return { s: s, puan: puan };
       }).filter(function(x) { return x.puan > 0; })
@@ -5540,17 +5549,35 @@ def _html_dosyalari(dizin):
 
 
 def _hub_kartlari(dosyalar, alt_etiket, suffix="", href_on="raporlar/"):
-    """Arsiv dosya adlarini en yeni once rcard gridine dokar; bos ise not."""
-    kartlar = [
-        f'<a class="rcard" href="{href_on}{fn}"><span class="date">'
-        f'{_tr_tarih(fn[:-5].replace(suffix, ""))}</span>'
-        f'<span class="sub">{alt_etiket} &rarr;</span></a>'
-        for fn in sorted(dosyalar, reverse=True)
-    ]
-    if kartlar:
-        return f'<div class="grid">{"".join(kartlar)}</div>'
-    return ('<p style="color:var(--muted)">Bu bölümde henüz arşiv raporu yok; '
-            "ilk rapor üretildiğinde burada listelenecek.</p>")
+    """Arsiv dosya adlarini en yeni once rcard gridine dokar; bos ise not.
+    2026-11-04 (ajan-okunurluk): kartlar ay-yil h2 bolumlerine gruplandi —
+    baslik iskeleti chunk sinirlarini belirginlestirir; insan okuyucuda
+    uzun liste taranirligi artar."""
+    if not dosyalar:
+        return ('<p style="color:var(--muted)">Bu bölümde henüz arşiv raporu yok; '
+                "ilk rapor üretildiğinde burada listelenecek.</p>")
+    AY_TR = {1: "Ocak", 2: "Şubat", 3: "Mart", 4: "Nisan", 5: "Mayıs", 6: "Haziran",
+             7: "Temmuz", 8: "Ağustos", 9: "Eylül", 10: "Ekim", 11: "Kasım", 12: "Aralık"}
+    aylar = {}
+    for fn in sorted(dosyalar, reverse=True):
+        on_ek = fn[:7]
+        anahtar = on_ek if (len(fn) > 7 and on_ek[:4].isdigit() and fn[4] == "-") else "diger"
+        aylar.setdefault(anahtar, []).append(fn)
+    bolumler = []
+    for anahtar in sorted(aylar, reverse=True):
+        kartlar = "".join(
+            f'<a class="rcard" href="{href_on}{fn}"><span class="date">'
+            f'{_tr_tarih(fn[:-5].replace(suffix, ""))}</span>'
+            f'<span class="sub">{alt_etiket} &rarr;</span></a>'
+            for fn in aylar[anahtar])
+        if anahtar == "diger":
+            etiket = "Diğer"
+        else:
+            y, a = anahtar[:4], int(anahtar[5:7])
+            etiket = f"{AY_TR.get(a, '')} {y}"
+        bolumler.append(f"<h2 class='section-title'>{etiket}</h2>"
+                        f'<div class="grid">{kartlar}</div>')
+    return "".join(bolumler)
 
 
 def build_hub_sayfalari():
@@ -6294,7 +6321,7 @@ def build_teknik_html(satirlar, date_str):
     isi_bolumu = f"""
 <h2 class="section-title">Günlük Isı Haritası</h2>
 <div class="isi-harita">{isi}</div>
-<p style="color:var(--muted); font-size:12px; margin:8px 0 0">Renk koyuluğu değişim büyüklüğünü gösterir — yeşil yükselenler, kırmızı düşenler. Hisse adına tıklayın: detay sayfası (fiyat grafiği, teknik durum, haberler).</p>"""
+<p style="color:var(--muted); font-size:12px; margin:8px 0 0">Renk koyuluğu değişim büyüklüğünü gösterir — yeşil yükselenler, kırmızı düşenler. Isı haritası görsel bir özettir; sayısal değerlerin tamamı aşağıdaki tabloda satır satır yer alır. Hisse adına tıklayın: detay sayfası (fiyat grafiği, teknik durum, haberler).</p>"""
 
     satir_html = "".join(
         f"<tr style='cursor:pointer' onclick=\"tvAc('{s['hisse']}')\"><td><a style='color:inherit; text-decoration:none; font-weight:700' href='hisse/{s['hisse']}.html'>{s['hisse']}</a></td>"
@@ -6327,8 +6354,12 @@ gösterebilir. <strong>Mum grafiği için tablodaki bir hisseye tıklayın.</str
 {_sektor_isi_haritasi(satirlar)}
 {isi_bolumu}
 <div class="card" style="padding:8px 24px 16px">
+<h2 class="section-title" style="font-size:17px; margin:14px 0 8px">BIST 30 teknik tarama tablosu</h2>
+<p style="margin:0 0 10px; color:var(--muted); font-size:13.5px">Her satırda: hisse kodu, son fiyat, gün içi ve 60 günlük
+değişim, kısa/orta/uzun vade EMA dizilimi, Wave Trend, regresyon kanalı konumu (%), Pearson (r) ve genel sinyal.</p>
 <div class="tbl-wrap">
 <table>
+<caption style="caption-side:top; text-align:left; font-weight:600; padding:4px 0 8px">BIST 30 EMA / Wave Trend / regresyon kanalı tarama sonuçları</caption>
 <tr><th>Hisse</th><th>Son</th><th>Gün</th><th>60G %</th><th>Kısa Vade</th><th>Orta Vade</th><th>Uzun Vade</th><th>Wave Trend</th><th>Kanal</th><th>Pearson</th><th>Genel</th></tr>
 {satir_html}
 </table>
@@ -6425,7 +6456,7 @@ def build_borsapy_html(satirlar, date_str):
         grafik_id = f"borsapy-rsi-{random.randint(100000, 999999)}"
         grafik = f"""
 <div class="card" style="margin-bottom:20px">
-<h3 style="margin:4px 0 10px">RSI (14) — Aşırı Alım/Satım Haritası</h3>
+<h2 class="section-title" style="font-size:17px; margin:4px 0 10px">RSI (14) — Aşırı Alım/Satım Haritası</h2>
 <div style="position:relative; height:{max(340, 18 * len(rsi_veri))}px">
 <canvas id="{grafik_id}"></canvas>
 </div>
@@ -6503,8 +6534,12 @@ etiketleri momentum oylarının çoğunluğunu yansıtır, aşırı alım riskin
 </div>
 {grafik}
 <div class="card" style="padding:8px 24px 16px">
+<h2 class="section-title" style="font-size:17px; margin:14px 0 8px">BIST 30 sinyal tablosu</h2>
+<p style="margin:0 0 10px; color:var(--muted); font-size:13.5px">Her satırda: hisse kodu, genel Öneri (AL/SAT/NÖTR),
+Al/Sat/Nötr oy dökümü, RSI (14), MACD, Stoch %K, CCI20 ve ADX değerleri.</p>
 <div class="tbl-wrap">
 <table>
+<caption style="caption-side:top; text-align:left; font-weight:600; padding:4px 0 8px">TradingView göstergelerine göre BIST 30 teknik sinyal özeti</caption>
 <tr><th>Hisse</th><th>Öneri</th><th>Al/Sat/Nötr</th><th>RSI</th><th>MACD</th><th>Stoch %K</th><th>CCI20</th><th>ADX</th></tr>
 {hucreler}
 </table>
@@ -8056,7 +8091,12 @@ window.asistanSor = function() {
     var terimler = q.split(/\\s+/).filter(Boolean);
     return (indeks.sayfalar || []).map(function(s) {
       var puan = 0;
-      terimler.forEach(function(t) { puan += kacKez(s.b, t) * 8 + kacKez(s.t, t); });
+      terimler.forEach(function(t) {
+        puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        // 2026-11-04 (kullanıcı kararı): şirket adı/kodu bir hisse sayfasının
+        // BAŞLIĞINDA geçiyorsa o sayfa en başta çıksın (hızlı kutuyla aynı kural).
+        if (kacKez(s.b, t) > 0 && (s.u + '').indexOf('hisse/') === 0) puan += 60;
+      });
       return { s: s, puan: puan };
     }).filter(function(x) { return x.puan > 0; })
       .sort(function(a, b) { return b.puan - a.puan; });
@@ -8074,7 +8114,7 @@ window.asistanSor = function() {
     return cikti;
   }
 
-  var KAYNAK_AD = { 'gunluk-rapor': 'Günlük Rapor', 'derin-analiz': 'Derin Analiz', 'makro-analiz': 'Makro Analiz', 'haftasonu': 'Hafta Sonu', 'egitim': 'Eğitim', 'sozluk': 'Sözlük', 'terimler': 'Terimler', 'muhasebe-terimleri': 'Muhasebe Terimleri', 'temettu': 'Temettü' };
+  var KAYNAK_AD = { 'gunluk-rapor': 'Günlük Rapor', 'derin-analiz': 'Derin Analiz', 'makro-analiz': 'Makro Analiz', 'haftasonu': 'Hafta Sonu', 'egitim': 'Eğitim', 'sozluk': 'Sözlük', 'terimler': 'Terimler', 'muhasebe-terimleri': 'Muhasebe Terimleri', 'muhasebe-terimleri-grup': 'Muhasebe Terimleri', 'hisse-detay': 'Hisse Detay', 'temettu': 'Temettü' };
 
   function semantikHtml(sonuc, q, genisletilen) {
     var terimler = q.split(/\\s+/).filter(Boolean);
@@ -8100,9 +8140,12 @@ window.asistanSor = function() {
       var kesit = (x.icerik || '').slice(0, 300);
       var vBaslik = vurgula(baslik, terimler);
       var vKesit = vurgula(kesit, terimler);
+      // 2026-11-04: Sayfa > Bölüm bağlam etiketi (embed Faz 6; RPC eskiyse alan yok)
+      var bolumSatiri = x.bolum ? '<div style="color:#94a3b8; font-size:12px">' + kac(x.bolum) + '</div>' : '';
       cikti += '<div class="ara-sem" data-kaynak="' + kac(x.kaynak || '') + '" data-sira="' + i + '" style="margin:0 0 16px">' +
         '<div style="color:#0f766e; font-size:12.5px; font-weight:600">%' + yuzde + ' benzerlik' + (rozet ? ' · ' + kac(rozet) : '') + '</div>' +
         '<a href="' + kac(x.url || '') + '" style="font-weight:600; font-size:15px">' + (vBaslik || kac(baslik)) + '</a>' +
+        bolumSatiri +
         '<div style="color:#64748b; font-size:13px; margin-top:2px">' + (vKesit || kac(kesit)) + ((x.icerik || '').length > 300 ? '&hellip;' : '') + '</div></div>';
     });
     return cikti;
@@ -8186,18 +8229,28 @@ window.asistanSor = function() {
 
 
 def sozluk_yaz():
-    """data/sozluk.json iceriginden aramali sozluk sayfasi uretir."""
+    """data/sozluk.json iceriginden aramali sozluk sayfasi uretir.
+    2026-11-04 (ajan-okunurluk, Faz 2): terim adlari strong yerine gercek h3;
+    harf h2'leri eklendi — chunk sinirlari belirginlesti. sozlukSuz artik bos
+    kalan harf basliklarini da gizler (terimSuz'un h2 mantigi)."""
     try:
         with open("data/sozluk.json", encoding="utf-8") as f:
             terimler = json.load(f)
     except Exception:
         terimler = []
-    ogeler = "".join(
-        f"<div class='card sozluk-oge' data-terim='{t['terim'].lower()}' style='margin:10px 0'>"
-        f"<strong style='color:var(--accent)'>{t['terim']}</strong>"
-        f"<p style='margin:6px 0 0; font-size:14px'>{t['aciklama']}</p></div>"
-        for t in sorted(terimler, key=lambda x: x["terim"].casefold())
-    )
+    harfa_gore = {}
+    for t in sorted(terimler, key=lambda x: x["terim"].casefold()):
+        harf = terim_gruplari.terim_bas_harf("tr", t["terim"]) or (t["terim"][:1].upper() or "#")
+        harfa_gore.setdefault(harf, []).append(t)
+    ogeler = ""
+    for harf in sorted(harfa_gore):
+        ogeler += f"<h2 class='section-title'>{harf}</h2>"
+        ogeler += "".join(
+            f"<div class='card sozluk-oge' data-terim='{t['terim'].lower()}' style='margin:10px 0'>"
+            f"<h3 style='margin:0; font-size:16px; font-weight:700; color:var(--accent)'>{t['terim']}</h3>"
+            f"<p style='margin:6px 0 0; font-size:14px'>{t['aciklama']}</p></div>"
+            for t in harfa_gore[harf]
+        )
     icerik = f"""
 <div class="hero">
 <h1>Borsa Sözlüğü</h1>
@@ -8211,8 +8264,16 @@ Ekonomi ve finansın tam sözlüğü için <a href="terimler.html">Terimler ve T
 <script>
 function sozlukSuz() {{
   var q = (document.getElementById('sozluk-ara').value || '').toLowerCase();
-  document.querySelectorAll('.sozluk-oge').forEach(function(el) {{
+  document.querySelectorAll('#sozluk-liste .sozluk-oge').forEach(function(el) {{
     el.style.display = el.getAttribute('data-terim').indexOf(q) !== -1 ? '' : 'none';
+  }});
+  document.querySelectorAll('#sozluk-liste h2').forEach(function(h) {{
+    var gorunur = 0, kardes = h.nextElementSibling;
+    while (kardes && kardes.tagName !== 'H2') {{
+      if (kardes.classList && kardes.classList.contains('sozluk-oge') && kardes.style.display !== 'none') gorunur++;
+      kardes = kardes.nextElementSibling;
+    }}
+    h.style.display = gorunur ? '' : 'none';
   }});
 }}
 </script>"""
@@ -8452,8 +8513,13 @@ function terimSuz() {{
             return terim_gruplari.terim_grup_slug("tr", v["terim"])
 
         def _kart_html(i, v):
-            govde = (f"<strong style='color:var(--accent)'>{v['terim']}</strong>"
-                     + (f" <span style='color:var(--muted); font-size:13px'>{v['en']}</span>" if v["en"] else "")
+            # 2026-11-04: terim adi strong yerine gercek h3 (ajan-okunur;
+            # h2 harf basliginin altinda dogru hiyerarsi, gorunum inline
+            # stillerle korunur).
+            govde = (f"<h3 style='margin:0 0 2px; font-size:16px; font-weight:700; color:var(--accent)'>"
+                     f"{v['terim']}"
+                     + (f" <span style='color:var(--muted); font-size:13px; font-weight:400'>{v['en']}</span>" if v["en"] else "")
+                     + "</h3>"
                      + f"<p style='margin:6px 0 0; font-size:14px'>{v['tanim']}</p>")
             if v.get("ornek"):
                 govde += (f"<p style='margin:6px 0 0; font-size:13.5px; font-style:italic'>Örnek: {v['ornek']}"
@@ -8574,54 +8640,132 @@ yatırım tavsiyesi değildir.</p>
                 metin = metin.replace(eski, yeni_)
             return metin
 
-        bolum_gruplari = {}
-        for v in ifrs:
-            bolum_gruplari.setdefault(v["bolum"] or "#", []).append(v)
-        kartlar = ""
-        for bolum in sorted(bolum_gruplari):
-            kartlar += f"<h2 class='section-title'>{bolum}</h2>"
-            for v in bolum_gruplari[bolum]:
-                en_gor = _duzelt(v["en"])
-                tanim_en = v.get("en2") or v["en_tanim"]
-                govde = (f"<strong style='color:var(--accent)'>{en_gor}</strong>"
-                         f" <span style='color:var(--muted); font-size:13px'>{v['tr']}</span>"
-                         f"<p style='margin:6px 0 0; font-size:14px'>{tanim_en}</p>")
-                if v["ornek"]:
-                    govde += (f"<p style='margin:6px 0 0; font-size:13.5px; font-style:italic'>Örnek: {v['ornek']}"
-                              + (f" <span style='color:var(--muted)'>({v['ornek_en']})</span>" if v.get("ornek_en") else "")
-                              + "</p>")
-                # Diger dillerdeki tanimlar (kaynak: denetlenmis autoclaw setleri).
-                # 25.10'da agirlik nedeniyle cikarilmisti; kullanici karariyla
-                # GERI getirildi — icerik silinmez, ayri sayfaya tasınmaz.
-                for dil_kod, dil_etiket in (("de", "DE"), ("ru", "RU"), ("zh", "中文")):
-                    if v.get(dil_kod):
-                        govde += (f"<p style='margin:6px 0 0; font-size:13px; color:var(--muted)'>"
-                                  f"{dil_etiket}: {v[dil_kod]}</p>")
-                arama_anahtari = " ".join(v.get(d) or "" for d in ("en", "tr", "en_tanim", "de", "ru", "zh"))
-                kartlar += _kart(govde, _duzelt(arama_anahtari))
+        # 2026-11-04 (architect REVISE, kullanici onayli): 2,16 MB'lik tek sayfa
+        # harf-grup sayfalarina bolundu — terimler kalibi (2026-10-27 karari):
+        # hub (muhasebe-terimleri.html: tanitim + grup cubugu + aramali terim
+        # adi indisi) + muhasebe-terimleri/<harf>.html (kartlar). Kart capalari
+        # ayni global sirayla (#t<i>) uretilir. Terim adlari artik gercek h3
+        # (ajan-okunur; chunk sinirlari kart basliginda). Dil sayfalari
+        # muhasebe_diller ile veriden uretilmeye devam eder; yeni klasor i18n
+        # cevirisi disindadir (i18n.py muhasebe-terimleri/ onek muafiyeti).
+        def _harf_slug(h):
+            return h if (h and h != "#") else "diger"
+
+        def _harf_etiket(h):
+            return h if (h and h != "#") else "Diğer"
+
+        harfa_gore = {}
+        for i, v in enumerate(ifrs):
+            harfa_gore.setdefault(v["bolum"] or "#", []).append((i, v))
+        dolu_harfler = sorted(harfa_gore)
+
+        def _harf_cubugu(aktif, on_ek="muhasebe-terimleri/"):
+            parcalar = []
+            for h in dolu_harfler:
+                stil = ("background:var(--accent); color:#fff; border-color:var(--accent)"
+                        if h == aktif else "background:var(--card)")
+                et = _harf_etiket(h)
+                parcalar.append(
+                    f"<a href='{on_ek}{_harf_slug(h)}.html' style='display:inline-block; margin:2px 6px 2px 0; "
+                    f"padding:4px 10px; border:1px solid var(--line); border-radius:8px; {stil}; "
+                    f"text-decoration:none'>{et}</a>")
+            return " ".join(parcalar)
+
+        def _ifrs_kart_html(i, v):
+            en_gor = _duzelt(v["en"])
+            tanim_en = v.get("en2") or v["en_tanim"]
+            govde = (f"<h3 style='margin:0 0 2px; font-size:16px; font-weight:700; color:var(--accent)'>"
+                     f"{en_gor} <span style='color:var(--muted); font-size:13px; font-weight:400'>{v['tr']}</span></h3>"
+                     f"<p style='margin:6px 0 0; font-size:14px'>{tanim_en}</p>")
+            if v["ornek"]:
+                govde += (f"<p style='margin:6px 0 0; font-size:13.5px; font-style:italic'>Örnek: {v['ornek']}"
+                          + (f" <span style='color:var(--muted)'>({v['ornek_en']})</span>" if v.get("ornek_en") else "")
+                          + "</p>")
+            # Diger dillerdeki tanimlar (kaynak: denetlenmis autoclaw setleri).
+            # 25.10'da agirlik nedeniyle cikarilmisti; kullanici karariyla
+            # GERI getirildi — icerik silinmez, ayri sayfaya tasınmaz.
+            for dil_kod, dil_etiket in (("de", "DE"), ("ru", "RU"), ("zh", "中文")):
+                if v.get(dil_kod):
+                    govde += (f"<p style='margin:6px 0 0; font-size:13px; color:var(--muted)'>"
+                              f"{dil_etiket}: {v[dil_kod]}</p>")
+            return (f"<div class='card terim-oge' id='t{i}' "
+                    f"style='margin:10px 0; padding:12px 16px'>{govde}</div>")
+
+        # --- hub: muhasebe-terimleri.html ---
+        indis = " ".join(
+            f"<a href='muhasebe-terimleri/{_harf_slug(v['bolum'] or '#')}.html#t{i}' "
+            f"style='white-space:nowrap'>{_duzelt(v['en'])}</a>"
+            for i, v in enumerate(ifrs))
         icerik = f"""
 <div class="hero">
 <h1>Muhasebe Terimleri</h1>
 <p>{len(ifrs)} terimlik muhasebe ve finansal raporlama sözlüğü; tanımlar İngilizce,
 terim karşılıkları ve örnek cümleler Türkçedir; Almanca, Rusça ve Çince tanımlar da
-her kartta yer alır. Genel ekonomi terimleri için
-<a href="terimler.html">Terimler ve Tanımlar</a> sayfasına bakabilirsin.</p>
+her kartta yer alır. Terimler harf gruplarına bölünmüş {len(dolu_harfler)} sayfada;
+alttaki kutuya terim adı yazın, listeden terime tıklayınca tanıma gidin. Genel ekonomi
+terimleri için <a href="terimler.html">Terimler ve Tanımlar</a> sayfasına bakabilirsin.</p>
+<p class="terim-grup-cubugu" style="margin:10px 0 0">{_harf_cubugu(None)}</p>
 </div>
 <div class="arama-form" style="margin:14px 0">
-<input type="text" id="muhasebe-ara" placeholder="Terim ara: amortisman, şerefiye, goodwill..." onkeyup="terimSuz()"
+<input type="text" id="muhasebe-indeks-ara" placeholder="Terim ara: amortisman, şerefiye, goodwill..." onkeyup="muhasebeIndisSuz()"
  style="width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink)">
 </div>
-<div id="muhasebe-liste">{kartlar}</div>
+<h2 class='section-title'>Terim dizini</h2>
+<p id="muhasebe-indeks-liste" style="line-height:2.1">{indis}</p>
+<p style="color:var(--muted); font-size:12.5px">Tanımlar kamuya açık IFRS sözlüğünden alıntılanmıştır;
+yatırım tavsiyesi değildir.</p>
+<script>
+function muhasebeIndisSuz() {{
+  var q = (document.getElementById('muhasebe-indeks-ara').value || '').toLocaleLowerCase('tr');
+  document.querySelectorAll('#muhasebe-indeks-liste a').forEach(function(a) {{
+    a.style.display = a.textContent.toLocaleLowerCase('tr').indexOf(q) !== -1 ? 'inline' : 'none';
+  }});
+}}
+</script>
+{koruma}"""
+        _yaz("muhasebe-terimleri.html", _sayfa(
+            "Muhasebe Terimleri", icerik, "muhasebe",
+            aciklama=f"{len(ifrs)} terimlik IFRS muhasebe terimleri sözlüğü, harf gruplarına bölünmüş "
+                     "sayfalarda: İngilizce tanım, Türkçe karşılık ve örnek cümlelerle.",
+            yol="muhasebe-terimleri.html"))
+        logger.info("[Terimler] Muhasebe hub yazildi: %d terim indisi, %d harf grubu.",
+                    len(ifrs), len(dolu_harfler))
+
+        # --- harf-grup sayfaları: muhasebe-terimleri/<harf>.html ---
+        os.makedirs("muhasebe-terimleri", exist_ok=True)
+        grup_sayisi = 0
+        for h in dolu_harfler:
+            uye = harfa_gore[h]
+            et = _harf_etiket(h)
+            kartlar = "".join(_ifrs_kart_html(i, v) for i, v in uye)
+            icerik = f"""
+<div class="hero">
+<h1>Muhasebe Terimleri: {et}</h1>
+<p>IFRS muhasebe ve finansal raporlama sözlüğünün <strong>{et}</strong> grubu
+({len(uye)} terim); tanımlar İngilizce, terim karşılıkları ve örnek cümleler
+Türkçedir; Almanca, Rusça ve Çince tanımlar da her kartta yer alır. Diğer harf grupları:</p>
+<p class="terim-grup-cubugu" style="margin:10px 0 0">{_harf_cubugu(h, "../muhasebe-terimleri/")}</p>
+</div>
+<div class="arama-form" style="margin:14px 0">
+<input type="text" id="muhasebe-ara" placeholder="Bu grupta ara..." onkeyup="terimSuz()"
+ style="width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--ink)">
+</div>
+<div id="muhasebe-liste">
+<h2 class='section-title'>{et} grubu terimleri</h2>
+{kartlar}
+</div>
 <p style="color:var(--muted); font-size:12.5px">Tanımlar kamuya açık IFRS sözlüğünden alıntılanmıştır;
 yatırım tavsiyesi değildir.</p>
 {_arama_js('muhasebe-liste', 'muhasebe-ara')}
 {koruma}"""
-        _yaz("muhasebe-terimleri.html", _sayfa(
-            "Muhasebe Terimleri", icerik, "muhasebe",
-            aciklama=f"{len(ifrs)} terimlik IFRS muhasebe terimleri sözlüğü: İngilizce tanım, "
-                     "Türkçe karşılık ve örnek cümlelerle.",
-            yol="muhasebe-terimleri.html"))
-        logger.info("[Terimler] %d IFRS terimi tek sayfada yazildi.", len(ifrs))
+            _yaz(f"muhasebe-terimleri/{_harf_slug(h)}.html", _sayfa(
+                f"Muhasebe Terimleri: {et}", icerik, "muhasebe",
+                aciklama=f"{len(uye)} terimlik {et} grubu IFRS muhasebe terimleri sözlüğü: "
+                         "İngilizce tanım, Türkçe karşılık ve örnek cümlelerle.",
+                kok="../",
+                yol=f"muhasebe-terimleri/{_harf_slug(h)}.html"))
+            grup_sayisi += 1
+        logger.info("[Terimler] %d muhasebe harf-grup sayfasi yazildi.", grup_sayisi)
 
         # --- 2b) Muhasebe Terimleri: DIL SAYFALARI (ceviri degil, veri tabanli) ---
         # /en /de /ru /zh surumleri kendi dil verisinden uretilir (muhasebe-en.csv,
@@ -9046,8 +9190,7 @@ def site_arama_json_yaz(rapor_dosyalari):
         {"b": "Terimler ve Tanımlar", "u": "terimler.html",
          "t": "ekonomi finans terim sözlük tanım makro mikro muhasebe davranışsal finans"},
         {"b": "Muhasebe Terimleri", "u": "muhasebe-terimleri.html",
-         "t": "muhasebe IFRS terim sözlük finansal raporlama bilanço amortisman şerefiye goodwill " +
-              " ".join(v["en"] + " " + v["tr"] for v in _ifrs_yukle())[:18000]},
+         "t": "muhasebe IFRS terim sözlük finansal raporlama bilanço amortisman şerefiye goodwill"},
         {"b": "Ekonomik Takvim Rehberi", "u": "takvim.html",
          "t": "ekonomik takvim faiz enflasyon FOMC bilanço TCMB TÜİK veri açıklama rehber"},
         {"b": "Temettü Merkezi — Takvim, Verim ve Hesaplayıcı", "u": "temettu.html",
@@ -9062,6 +9205,20 @@ def site_arama_json_yaz(rapor_dosyalari):
             continue
         sayfalar.append({"b": f"Terimler ve Tanımlar: {_g['etiket']}", "u": f"terimler/{_g['slug']}.html",
                          "t": " ".join(v["terim"] + " " + (v["en"] or "") for v in _uye)[:18000]})
+    # Muhasebe harf-grup sayfalari (2026-11-04 bolunme): her grup kendi
+    # terimleriyle indekslenir (bos grup uretilmez, sitemap ile ayni kume).
+    _ifrs_arama = _ifrs_yukle()
+    _ifrs_harf = {}
+    for _v in _ifrs_arama:
+        _ifrs_harf.setdefault(_v["bolum"] or "#", []).append(_v)
+    for _h in sorted(_ifrs_harf):
+        _et = _h if (_h and _h != "#") else "Diğer"
+        _sl = _h if (_h and _h != "#") else "diger"
+        sayfalar.append({"b": f"Muhasebe Terimleri: {_et}",
+                         "u": f"muhasebe-terimleri/{_sl}.html",
+                         "t": "muhasebe IFRS terim sözlük finansal raporlama " +
+                              " ".join((v["en"] + " " + v["tr"] + " " + (v.get("en2") or v["en_tanim"]))
+                                       for v in _ifrs_harf[_h])[:18000]})
     # Muhasebe terimleri DIL SAYFALARI: her biri kendi dil verisiyle indekslenir.
     _ifrs_dil = _ifrs_yukle()
     if _ifrs_dil:
@@ -9103,9 +9260,15 @@ def site_arama_json_yaz(rapor_dosyalari):
                 sayfalar.append({"b": f"{etiket} — {fn[:-5]}", "u": f"{dizin}/{fn}", "t": metin[:3500]})
     # HISSE DETAY SAYFALARI (2026-10-15): indekste hic yoklardi — kullanici sirket
     # aradiginda detay sayfasina hicbir zaman ulasamiyordu. Baslik sayfanin
-    # <title>'indan alinir (sirket adi icerir); iletide hisse kodu one alinir.
-    # URL bilincli olarak 'hisse/...' yazilir: os.path.join Windows'ta ters bolu
+    # <title>'indan alinir; iletide hisse kodu one alinir.
+    # 2026-11-04 (kullanici karari): sayfa <title>'i sirket adini ICERMIYOR
+    # ("ASELS — Hisse Analizi") — "aselsan" diye arayan kullanıcıyı raporlar
+    # eziyordu. Baslik, sirketler.json'daki unvan ile zenginlestirilir:
+    # "ASELS — Aselsan — Hisse Analizi"; +dizinSonuclari'daki hisse başlık primi
+    # böylece tetiklenir (kullanıcı şirketi ADIYLA arasın da koduyla da).
+    # URL bilinçli olarak 'hisse/...' yazilir: os.path.join Windows'ta ters bolu
     # uretir ve JSON'a boyle sinir (yerel kosta bozuk baglanti, CI'da dogru).
+    _profiller = _sirket_profilleri()
     for fn in _html_dosyalari("hisse"):
         yol = "hisse/" + fn
         metin = makale_metni(yol)
@@ -9117,7 +9280,11 @@ def site_arama_json_yaz(rapor_dosyalari):
             _src = ""
         m_t = re.search(r"<title>([^<]+)</title>", _src)
         baslik = m_t.group(1).strip() if m_t else f"Hisse Detay — {fn[:-5]}"
-        sayfalar.append({"b": baslik, "u": yol, "t": f"{fn[:-5]} " + metin[:3500]})
+        _kod = fn[:-5]
+        _unvan = (_profiller.get(_kod) or {}).get("unvan") or ""
+        if _unvan and _unvan.casefold() != _kod.casefold() and _unvan.casefold() not in baslik.casefold():
+            baslik = f"{_kod} — {_unvan} — Hisse Analizi"
+        sayfalar.append({"b": baslik, "u": yol, "t": f"{_kod} {_unvan} " + metin[:3500]})
     veri = {
         "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M"),
         "sayfalar": sayfalar,
@@ -9150,6 +9317,9 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
           if any(terim_gruplari.terim_grup_slug("tr", v["terim"]) == _g["slug"]
                  for v in _terim_yukle())],
         ("muhasebe-terimleri.html", "weekly"),
+        # Muhasebe harf-grup sayfalari (2026-11-04 bolunme; bos grup uretilmez)
+        *[(f"muhasebe-terimleri/{(_h if (_h and _h != '#') else 'diger')}.html", "weekly")
+          for _h in sorted({(v["bolum"] or "#") for v in _ifrs_yukle()})],
         ("takvim.html", "weekly"),
         ("temettu.html", "weekly"),
         ("hisse/", "daily"),

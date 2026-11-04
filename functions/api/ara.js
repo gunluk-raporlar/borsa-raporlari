@@ -29,6 +29,12 @@ function hedefUrl(s) {
   if (kaynak === "sozluk") return "/sozluk.html";
   if (kaynak === "terimler") return "/terimler.html";
   if (kaynak === "muhasebe-terimleri") return "/muhasebe-terimleri.html";
+  // 2026-11-04: muhasebe harf-grup sayfari — url alanı embed'den geldiği için
+  // normalde bu satıra düşmez; yedek olarak hub'a gider.
+  if (kaynak === "muhasebe-terimleri-grup") return "/muhasebe-terimleri.html";
+  // 2026-11-04: hisse detay sayfalari anlam aramasinda — url alanı embed'den
+  // gelir (hisse/<KOD>); bu satır yalnız url eksikse yedektir.
+  if (kaynak === "hisse-detay") return "/hisse/";
   if (kaynak === "temettu") return "/temettu.html";
   return `/raporlar/${tarih}`;
 }
@@ -84,6 +90,7 @@ async function akilliAra(q, secenek, waitUntil) {
     tarih: s.tarih,
     baslik: s.baslik,
     kaynak: s.kaynak,
+    bolum: s.bolum, // 2026-11-04: Sayfa > Bölüm etiketi (RPC eskiyse alan yok)
     benzerlik: s.benzerlik,
     gosterim: s.gosterim,
     icerik: s.icerik,

@@ -247,6 +247,7 @@ async function aramaYap(soru, secenek = {}) {
       id: s.id,
       kaynak: s.kaynak,
       baslik: s.baslik,
+      bolum: s.bolum, // 2026-11-04: RPC bolum döndürmüyorsa undefined kalır, alan atlanır
       url: s.url,
       tarih: s.tarih,
       icerik: (s.icerik || "").slice(0, 600),
