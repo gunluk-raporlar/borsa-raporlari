@@ -5211,7 +5211,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
     ses_bolumu = ""
     if ses_url:
         ses_bolumu = f"""
-<div class="card" style="margin:0 0 18px; padding:8px 14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+<div class="card sesli-bulten" style="margin:0 0 18px; padding:8px 14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
   <strong style="font-size:13px; white-space:nowrap">🔊 Sesli bülten</strong>
   <audio controls preload="none" src="{ses_url}" style="flex:1; min-width:220px; height:34px;"></audio>
 </div>"""

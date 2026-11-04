@@ -28,7 +28,13 @@ ATLANAN = {"script", "style", "noscript", "svg", "head", "nav", "header",
            "footer", "aside", "button", "form", "select", "option",
            "label", "template"}
 ATLA_SINIF = ("hesap", "asistan", "site-widgets", "live-clock",
-              "interactive-box", "arama-kutusu", "radyo")
+              "interactive-box", "arama-kutusu", "radyo",
+              # 2026-11-04 (kullanıcı kararı): .md kopyalar "yalnız asıl
+              # içerik" modunda — fiyat şeritleri (bant + bant2 kopyası),
+              # paylaşım butonları (javascript:void(0) dahil), günün
+              # panosu ve sesli bülten ajani için saf gürültü; HTML
+              # sayfalara dokunulmaz.
+              "ticker", "paylas", "pano", "sesli-bulten")
 
 # Kök sayfalar (uzantısız adlar; .html okunur, .md yazılır)
 KOK_SAYFALAR = [
