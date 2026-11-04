@@ -5224,6 +5224,68 @@ def _hisse_baglantilari_uygula(fragment, kok=""):
     return "".join(cikti)
 
 
+def _ozet_html(teknik_satirlar, html_icerik):
+    """Rapor başındaki türetilmiş özet (2026-11-04 dış inceleme önerisi):
+    yalnız teknik_satirlar'daki deterministik verilerden üretilir; LLM
+    metniyle sayı çatışması bu katmanda oluşamaz. Veri yoksa sessizce boş
+    döner (fail-open)."""
+    veri = [s for s in (teknik_satirlar or []) if s.get("hisse")]
+    if len(veri) < 5:
+        return ""
+
+    def _f(v):
+        v = v or 0
+        return ("+" if v >= 0 else "-") + "%" + f"{abs(v):.2f}".replace(".", ",")
+
+    yuk = sum(1 for s in veri if (s.get("gunluk") or 0) > 0)
+    dus = sum(1 for s in veri if (s.get("gunluk") or 0) < 0)
+    sirali = sorted(veri, key=lambda s: (s.get("gunluk") or 0), reverse=True)
+    g_al = sum(1 for s in veri if s.get("genel") == "GÜÇLÜ AL")
+    al = sum(1 for s in veri if s.get("genel") == "AL")
+    sat_s = sum(1 for s in veri if s.get("genel") == "SAT")
+    g_sat = sum(1 for s in veri if s.get("genel") == "GÜÇLÜ SAT")
+    notr = len(veri) - g_al - al - sat_s - g_sat
+    sektor_ort = {}
+    for s in veri:
+        sektor_ort.setdefault(s.get("sektor", "Diğer"), []).append(s.get("gunluk", 0) or 0)
+    sektorler = sorted(((k, sum(v) / len(v)) for k, v in sektor_ort.items()),
+                       key=lambda kv: kv[1], reverse=True)
+    madde = [f"<li>BIST 30 taramasında {len(veri)} hisseden {yuk} tanesi yükseldi, "
+             f"{dus} tanesi düştü.</li>",
+             f"<li>Günün en güçlü hissesi {sirali[0]['hisse']} ({_f(sirali[0].get('gunluk'))}); "
+             f"en zayıf {sirali[-1]['hisse']} ({_f(sirali[-1].get('gunluk'))}).</li>",
+             f"<li>Sinyal dağılımı: GÜÇLÜ AL {g_al} &middot; AL {al} &middot; NÖTR {notr} "
+             f"&middot; SAT {sat_s} &middot; GÜÇLÜ SAT {g_sat}.</li>"]
+    if sektorler:
+        madde.append(f"<li>Sektör lideri {sektorler[0][0].replace('&', '&amp;')} "
+                     f"({_f(sektorler[0][1])}); en zayıf sektör "
+                     f"{sektorler[-1][0].replace('&', '&amp;')} ({_f(sektorler[-1][1])}).</li>")
+    m_nakit = re.search(r"<td>\s*NAKİT\s*</td>((?:\s*<td[^>]*>[\s\S]*?</td>){1,3})",
+                        html_icerik or "")
+    if m_nakit:
+        n = re.search(r"\d{1,3}", m_nakit.group(1))
+        if n:
+            madde.append(f"<li>Model portföyün nakit ağırlığı %{n.group(0)}.</li>")
+    return '<h2 class="section-title">Özet</h2><ul>' + "".join(madde) + "</ul>"
+
+
+def _metodoloji_html():
+    """Sabit metodoloji/terimler bloğu (2026-11-04 dış inceleme önerisi):
+    osilatör oyu ile genel sinyal farkı dahil; her raporun sonuna eklenir
+    ve .md aynasına otomatik düşer."""
+    return """
+<h2 class="section-title">Metodoloji ve Terimler</h2>
+<ul>
+<li><strong>Sinyal (genel):</strong> hisse bazlı genel teknik değerlendirme (GÜÇLÜ AL / AL / NÖTR / SAT / GÜÇLÜ SAT); panoda ve teknik tarama tablosunda görülür.</li>
+<li><strong>Osilatör oyu:</strong> RSI, StochK, MACD, CCI, WT gibi göstergelerin bireysel AL/SAT oyları; "11 al/8 sat" biçiminde verilir ve genel sinyalle çelişebilir (örneğin pano sinyali SAT iken osilatör oylarında bir hisse pozitif ayrışabilir).</li>
+<li><strong>WT (Wave Trend):</strong> kısa vadeli döngü (tepe/dip) osilatörü; AL/SAT oyu üretir.</li>
+<li><strong>Kanal (%N):</strong> fiyatın 60 günlük regresyon kanalı içindeki konumu; %0 kanal altına yakın (dip bölgesi), %100 kanal üstüne yakın (tepe bölgesi).</li>
+<li><strong>ADX:</strong> Ortalama Yön Endeksi; 25 üzeri değer güçlü trendi, 20 altı değer zayıf/yatay seyri gösterir.</li>
+<li><strong>r:</strong> 60 günlük pencerede hesaplanan Pearson korelasyon katsayısı (trend gücü göstergesi); model portföy tablosunda parantez içinde verilir.</li>
+<li><strong>NAKİT:</strong> model portföyde hisseye ayrılmamış, korunabilirlik için tutulan oran.</li>
+</ul>"""
+
+
 def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
                   alt_baslik="BIST 30 &bull; Yapay zeka destekli günlük analiz",
                   kok_yol=None, aciklama=None, ses_url=None, teknik_satirlar=None,
@@ -5251,7 +5313,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
     icerik = f"""
 <div class="hero">
 <h1>{baslik}</h1>
-<div class="meta"><span class="badge">{tr_tarih}</span><span class="badge">{_yazim_ani_str()}</span><span>{alt_baslik}</span>
+<div class="meta hero-meta"><span class="badge">{tr_tarih}</span><span class="badge">{_yazim_ani_str()}</span><span>{alt_baslik}</span>
 <button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Raporu sesli oku">🔊 Sesli Oku</button>
 {paylas_html(f"{baslik} — {tr_tarih}", (SITE_URL + (kok_yol or f"raporlar/{date_str}.html")).removesuffix(".html"))}</div>
 </div>
@@ -5259,7 +5321,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
 {ses_bolumu}
 {_pano_html(teknik_satirlar, kok)}
 {_ajanda_html(ajanda or [], limit=14, kok=kok)}
-<article class="report" id="rapor-govde">{_hisse_baglantilari_uygula(html_icerik, kok)}</article>
+<article class="report" id="rapor-govde">{_ozet_html(teknik_satirlar, html_icerik)}{_hisse_baglantilari_uygula(html_icerik, kok)}{_metodoloji_html()}</article>
 <p style="margin-top:18px"><a href="{kok}{donus_yolu}">&larr; {donus_etiket}</a></p>
 {_sesli_okuma_js()}"""
     ld_ek = json.dumps({
@@ -5269,7 +5331,7 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
         "inLanguage": "tr", "description": aciklama,
         "author": {"@type": "Organization", "name": SITE_ADI, "url": SITE_URL},
         "publisher": {"@type": "Organization", "name": SITE_ADI, "url": SITE_URL},
-        "mainEntityOfPage": SITE_URL + (kok_yol or ""),
+        "mainEntityOfPage": SITE_URL + (kok_yol or "").removesuffix(".html"),
     }, ensure_ascii=False)
     return _sayfa(f"{baslik} - {tr_tarih}", icerik, "raporlar", kok=kok,
                   aciklama=aciklama, yol=kok_yol, ld_ek=ld_ek)
@@ -6717,11 +6779,14 @@ def _bist30_sepeti_sparkline(gun=30):
         grafik = _mini_sparkline(seri, etiket=f"BIST 30 sepeti fiyat grafiği (son {len(seri)} gün)")
         deg = seri[-1] - seri[0]
         sinif = "pos" if deg >= 0 else "neg"
+        # 2026-11-04: .md aynasinda sepet grafigi karti atlanir (sepet-grafik);
+        # yuzde bicimi turkce sablonla ayni: isaret + % + virgullu sayi.
+        deg_str = ("+" if deg >= 0 else "-") + "%" + f"{abs(deg):.2f}".replace(".", ",")
         return f"""
-<div class="card" style="margin:0 0 18px; padding:14px 18px">
+<div class="card sepet-grafik" style="margin:0 0 18px; padding:14px 18px">
 <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
 <strong style="font-size:14px">BIST 30 sepeti — son {len(seri)} gün</strong>
-<span class="{sinif}" style="font-weight:700">{deg:+.2f}%</span>
+<span class="{sinif}" style="font-weight:700">{deg_str}</span>
 </div>
 {grafik}
 <div style="color:var(--muted); font-size:12px">30 hissenin eşit ağırlıklı sepeti, ilk görüldüğü fiyata göre normalize edildi.</div>
@@ -9021,7 +9086,7 @@ def _ajanda_html(olaylar, limit=None, kok=""):
     son_gun = None
     for e in secili:
         if e.get("tarih") != son_gun:
-            satirlar.append(f"<tr><td colspan='5' style='background:var(--accent-bg); font-weight:700; font-size:12px'>{_gun_etiketi(e['tarih'])} ({e['tarih']})</td></tr>")
+            satirlar.append(f"<tr><td colspan='5' style='background:var(--accent-bg); font-weight:700; font-size:12px'>{_gun_etiketi(e['tarih'])}</td></tr>")
             son_gun = e["tarih"]
         onem = " 🔴" if e.get("onem", 0) >= 1 else ""
         tr = _takvim_tr(e.get("olay", ""))

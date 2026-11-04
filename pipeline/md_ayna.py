@@ -1,23 +1,30 @@
 # -*- coding: utf-8 -*-
-"""Markdown aynaları (2026-11-04, Faz 7 — ajan-okunurluk).
+"""HTML -> Markdown ayna uretici (LLM/ajan okumasi icin "yalniz asil icerik").
 
-Ne yapar?
-  dist ağacındaki seçili HTML sayfaların .md kopyasını üretir: ajanlar
-  "<sayfa-adı>.md" yazarak tabloları boru formatında, başlıkları korunmuş,
-  gezinme kabuğu arındırılmış sürümü çeker (idratherbewriting.com kalıbı:
-  "Markdown versions of all pages are available by appending .md").
-
-Neden derleme anında?
-  Başlıklar ve tablolar zaten düzgün üretilen HTML'den çevrilir; arama
-  motoru/ajan için ayrı bir servis katmanı (?format=md Function'ı) gerekmez,
-  CDN önbelleği aynen çalışır.
-
-Kullanım:
-  python3 pipeline/md_ayna.py dist        # build.sh'ten: dist ağacında üret
-  python3 pipeline/md_ayna.py .           # yerel deneme (repo kökünde)
-
-Atlanan öğeler: script/style/nav/header/footer/aside/form + hesaplayıcı/
-asistan kartları (embed.py _MetinCikarici ile aynı küme — tek davranış).
+2026-11-04 ikinci revizyon (dis incelemeler: Claude, ChatGPT, Hy4):
+- Bozukluk kok-nedeni tek yerde: HTML dugum arasindaki bosluk bilgisi
+  artik her parcayla tasinir (once/sonu). Tablo hucresi "".join ile
+  birlestigi icin "50,02(onceki", paragraf " ".join ile birlestigi icin
+  "] 'un" / "( [PGSUS]" gibi yapay bosluklar olusuyordu; ikisi de
+  akilli birlestirmeyle duzeltildi (Turkce ek kesmesi, noktalama,
+  parantez-acilisi, em-dash ve emoji sinirlari dahil).
+- pano-veri (10 KPI karti) ve pano-man (yuksekler/dusenler, sinyal
+  dagilimi, sektor ortalamalari) artik ATLANMAZ — makine-okunur en yogun
+  veri md'de olmali (Hy4 1. bulgu). pano-hucre "- Etiket: Deger"
+  maddesine map'lenir.
+- pano-baslik ("📊 Gunun Panosu", "📅 Gunluk Ajanda") "###" basliga
+  map'lenir; insan sayfasinda gorunum degismez.
+- Rapor paragraflarindaki kalin-altbaslik + <br> kalibi (§4) "####"
+  basliga doner; paragrafa yapismaz.
+- h2/h3'ten hemen sonra AYNI metni tekrar eden baslik/strong-paragraf
+  atlanir (6. Risk tekrari ve benzerleri — uretim tarafindan gelmeye
+  devam edebilecegi icin jenerik).
+- Ic linkler artik .md kopyalara gider (ajan md zincirinde kalir);
+  dil kopyalari (en/de/ru/zh) .md'siz oldugundan onlara dokunulmaz.
+- H1 ve front matter title tarihli olur (# Gunluk Piyasa Raporu —
+  4 Kasim 2026); hero-meta satiri (badge yigini) atlanir.
+Asistan kartlari, ticker, ses butonlari vb. gurultu atlanmaya devam
+eder (embed.py _MetinCikarici ile ayni kume mantigi).
 """
 import os
 import re
@@ -27,20 +34,12 @@ from html.parser import HTMLParser
 ATLANAN = {"script", "style", "noscript", "svg", "head", "nav", "header",
            "footer", "aside", "button", "form", "select", "option",
            "label", "template"}
+# 2026-11-04: "pano-veri" ve "pano-man" atlama listesinden CIKARILDI
+# (veri kaybi — Hy4 bulgusu); sepet-grafik ve hero-meta eklendi.
 ATLA_SINIF = ("hesap", "asistan", "site-widgets", "live-clock",
               "interactive-box", "arama-kutusu", "radyo",
-              # 2026-11-04 (kullanıcı kararı): .md kopyalar "yalnız asıl
-              # içerik" modunda — fiyat şeritleri (bant + bant2 kopyası),
-              # paylaşım butonları (javascript:void(0) dahil) ve sesli
-              # bülten ajani için saf gürültü; HTML sayfalara dokunulmaz.
-              # İlk turdaki geniş "pano" atlaması rapor gövdesindeki veri
-              # tablosunu (pano-tablo veri-tablo), 30 hisselik pano
-              # tablosunu ve ekonomik ajandayı da yutuyordu (2026-11-04
-              # dış inceleme yakaladı); tablolar tablo olarak kalmalı —
-              # yalnız sayısal kutucuk şeridi (pano-veri) ve
-              # yükselen/düşen/sektör satırları (pano-man) çıkarılır
-              # (ikinci kullanıcı kararı; pano-not yasal satırı kalır).
-              "ticker", "paylas", "pano-veri", "pano-man", "sesli-bulten")
+              "ticker", "paylas", "sesli-bulten", "sepet-grafik",
+              "hero-meta")
 
 # Kök sayfalar (uzantısız adlar; .html okunur, .md yazılır)
 KOK_SAYFALAR = [
@@ -56,11 +55,17 @@ KLASORLER = [
 ]
 
 SITE_URL = "https://borsa-raporlari.pages.dev"
+AYLAR = ("Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+         "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık")
+# Akıllı birleştirme kümleri (2026-11-04 kok-neden fix'i)
+SON_EK = ",;:.!?)]}>'’\"…»"      # oncesine bosluk KOYULMAZ (Turkce ek dahil)
+DASH_BAS = "—–-"                  # oncesine bosluk konur (tiipografi)
+ONEK = "([{"                      # SONRASINA bosluk konmaz
 
 
 class _MdCikarici(HTMLParser):
     def __init__(self):
-        super().__init__()
+        super().__init__(convert_charrefs=True)
         self.satirlar = []
         self.atla = 0
         self.baslik = ""
@@ -69,13 +74,26 @@ class _MdCikarici(HTMLParser):
         self.ozel_turu = None
         self.ozel_derinlik = 0
         self._b_sev = 0
-        self._b_buf = []
+        self._b_buf = []          # (metin, once_bosluk, sonu_bosluk) uclu
         self._a_href = None
         self._a_buf = []
         self._hucreler = []
         self._tablo_satirlari = []
         self._liste_turu = None
         self._td = 0
+        self._tablo_baslik = None
+        self._son_hucre_etiketi = ""
+        self._bekleyen = False    # salt-bosluk dugumunden sonra: bosluk var
+        # pano karta map (2026-11-04)
+        self._etiket_modu = False
+        self._hucre_ici = False
+        self._k_etiket = ""
+        self._div_baslik = False
+        # kalin-altbaslik + <br> -> #### (2026-11-04)
+        self._kalin_basi = False
+        self._kalin_lead = None
+        # baslik-alti ayni-metin tekrar dedupe (2026-11-04)
+        self._son_baslik = ""
 
     def _arayuz_mi(self, attrs):
         for k, v in attrs:
@@ -83,12 +101,22 @@ class _MdCikarici(HTMLParser):
                 return True
         return False
 
+    def _lead_geri_koy(self):
+        """strong kapanip <br> gelmeden metin devam ettiyse lead'i normal
+        akisa geri koyar (#### olmadan)."""
+        if self._kalin_lead is not None:
+            lead = self._kalin_lead
+            self._kalin_lead = None
+            if lead:
+                self._b_buf.insert(0, (lead, False, True))
+
     def handle_starttag(self, tag, attrs):
         if self.ozel_turu is not None:
             if tag == self.ozel_turu:
                 self.ozel_derinlik += 1
             return
         oz = dict(attrs)
+        cls = oz.get("class") or ""
         if tag == "main":
             self.ana += 1
         elif tag in ATLANAN:
@@ -104,11 +132,37 @@ class _MdCikarici(HTMLParser):
             self._a_href = oz.get("href") or ""
             self._a_buf = []
             return
+        elif tag == "br":
+            if not self._td and self._kalin_lead is not None:
+                lead = self._kalin_lead
+                self._kalin_lead = None
+                if lead:
+                    self.satirlar.append("")
+                    self.satirlar.append("#### " + lead)
+                    self.satirlar.append("")
+            self._bekleyen = True
+            return
+        elif tag == "strong":
+            if not self._b_buf and not self._td:
+                self._kalin_basi = True
         elif tag in ("td", "th"):
             self._td += 1
+            self._son_hucre_etiketi = tag
             return
         elif tag == "li":
             self._liste_turu = self._liste_turu or "-"
+        elif tag == "div":
+            if "pano-baslik" in cls:
+                self._div_baslik = True
+                self._b_buf = []
+            elif "pano-hucre" in cls:
+                self._hucre_ici = True
+                self._b_buf = []
+            elif "pano-etiket" in cls:
+                self._etiket_modu = True
+                self._k_etiket = ""
+            elif "pano-deger" in cls:
+                self._etiket_modu = False
         if self._arayuz_mi(attrs):
             self.ozel_turu = tag
             self.ozel_derinlik = 1
@@ -125,52 +179,85 @@ class _MdCikarici(HTMLParser):
         elif tag == "h1":
             self._h1 = False
         elif tag in ("h2", "h3", "h4", "h5", "h6"):
-            metin = self._satir_duz("#" * self._b_sev + " " +
-                                    self._zengin_metin(self._b_buf))
-            if metin.strip("# "):
+            metin = self._satir_duz(self._zengin_metin(self._b_buf))
+            if metin and metin != self._son_baslik:
                 self.satirlar.append("")
-                self.satirlar.append(metin)
-                self.satirlar.append("")  # başlık sonrası boş satır: paragraf bitişmesin (2026-11-04 dış inceleme bulgusu)
+                self.satirlar.append("#" * self._b_sev + " " + metin)
+                self.satirlar.append("")  # baslik sonrasi bos satir
+                self._son_baslik = metin
             self._b_sev = 0
             self._b_buf = []
+        elif tag == "strong":
+            if self._kalin_basi:
+                self._kalin_lead = self._satir_duz(self._zengin_metin(self._b_buf))
+                self._b_buf = []
+                self._kalin_basi = False
         elif tag == "a":
-            # 2026-11-04 architect P1 duzeltmesi: baglanti metni _a_buf'ta
-            # kalip _b_buf'a hic girmedigi icin tablo hucreleri/paragraflar
-            # bos kaliyordu. Baglanti kapanis aninda markdown olarak dogrudan
-            # metin akisina yazilir.
-            metin = " ".join(x for x in self._a_buf if x.strip())
+            # baglanti kapanis aninda markdown olarak metin akisina yazilir;
+            # once/sonra bosluk bilgisi akılli birlestirmede kullanilir.
+            metin = " ".join(x[0] for x in self._a_buf if x[0].strip())
             href = self._a_href or ""
+            once = self._bekleyen
+            self._bekleyen = False
             if metin and href:
-                self._b_buf.append("[%s](%s)" % (metin.replace("[", "(").replace("]", ")"), self._mutlak(href)))
+                self._b_buf.append(("[%s](%s)" % (metin.replace("[", "(").replace("]", ")"),
+                                                  self._mutlak(href)), once, False))
             elif metin:
-                self._b_buf.append(metin)
+                self._b_buf.append((metin, once, False))
             self._a_href = None
             self._a_buf = []
         elif tag in ("p", "div"):
-            if self._td:
+            if tag == "div" and self._div_baslik:
+                metin = self._satir_duz(self._zengin_metin(self._b_buf))
+                if metin:
+                    self.satirlar.append("")
+                    self.satirlar.append("### " + metin)
+                    self.satirlar.append("")
+                self._div_baslik = False
+                self._b_buf = []
+            elif tag == "div" and self._etiket_modu:
+                self._etiket_modu = False  # etiket kutusu bitti; hucre suruyor
+            elif tag == "div" and self._hucre_ici:
+                etiket = self._k_etiket.strip(" :")
+                metin = self._satir_duz(self._zengin_metin(self._b_buf))
+                satir = (f"- {etiket}: {metin}" if etiket and metin else metin)
+                if satir:
+                    self.satirlar.append(satir)
+                self._hucre_ici = False
+                self._k_etiket = ""
+                self._b_buf = []
+            elif self._td:
                 # hücre içindeyiz: metin satırlara değil, hücre birikimine akar
                 pass
             else:
+                self._lead_geri_koy()
                 metin = self._satir_duz(self._zengin_metin(self._b_buf))
-                if metin:
-                    self.satirlar.append(metin)
-            self._b_buf = []
+                # baslik-alti AYNI metin tekrarini at (or. "6. Risk ..." strong-p)
+                if metin and metin != self._son_baslik:
+                    self.satirlar.append(self._link_listesi(metin))
+                self._b_buf = []
         elif tag in ("td", "th"):
             self._td = max(0, self._td - 1)
-            self._hucreler.append(" ".join("".join(self._b_buf).split()))
+            self._hucreler.append(self._satir_duz(self._zengin_metin(self._b_buf)))
             self._b_buf = []
         elif tag == "tr":
             if self._hucreler:
-                self._tablo_satirlari.append(self._hucreler)
+                # ilk th-satiri tablo basligi (thead); segment yaziminda
+                # her blokta tekrar basilir (takvim grubu bolunmesi icin)
+                if self._tablo_baslik is None and self._son_hucre_etiketi == "th":
+                    self._tablo_baslik = list(self._hucreler)
+                else:
+                    self._tablo_satirlari.append(self._hucreler)
                 self._hucreler = []
         elif tag == "table":
             self._tablo_yaz()
         elif tag in ("ul", "ol"):
             self._liste_turu = None
         elif tag == "li":
+            self._lead_geri_koy()
             metin = self._satir_duz(self._zengin_metin(self._b_buf))
             if metin:
-                self.satirlar.append("- " + metin)
+                self.satirlar.append("- " + self._link_listesi(metin).removeprefix("- "))
             self._b_buf = []
         elif tag == "main" and self.ana:
             self.ana -= 1
@@ -178,49 +265,121 @@ class _MdCikarici(HTMLParser):
     def handle_data(self, data):
         if self.atla or self.ozel_turu is not None:
             return
+        if self._etiket_modu:
+            self._k_etiket += data
+            return
+        onlu = bool(data) and data[0].isspace()
+        sonu = bool(data) and data[-1].isspace()
         metin = data.strip()
         if not metin:
+            self._bekleyen = True   # salt-bosluk dugumu: sonraki parca bosluklu
             return
+        once = onlu or self._bekleyen
+        self._bekleyen = False
         if self._h1 and not self.baslik:
             self.baslik = metin
+        if self._kalin_lead is not None:
+            self._lead_geri_koy()
         if self._a_href is not None:
-            self._a_buf.append(metin)
+            self._a_buf.append((metin, once, sonu))
             return
-        self._b_buf.append(metin)
+        self._b_buf.append((metin, once, sonu))
 
     # --- yardımcılar ---
-    @staticmethod
-    def _zengin_metin(buf):
-        """_b_buf parçalarını sırayla birleştirir (markdown bağlantıları
-        kapanış anında zaten _b_buf'a yazılmıştır)."""
-        return " ".join(x.strip() for x in buf if x.strip())
+    def _zengin_metin(self, buf):
+        """(metin, once, sonu) uclulerini HTML'deki gercek bosluk bilgisine
+        sadik kalarak birlestirir; Turkce ek kesmesi ve noktalama yapisik
+        kalir, em-dash ve emoji sinirlarinda bosluk korunur (2026-11-04)."""
+        cikti = ""
+        son_sonu = False
+        for metin, once, sonu in buf:
+            if not metin:
+                continue
+            if not cikti:
+                cikti = metin
+            elif metin[0] in SON_EK:
+                cikti += metin
+            elif metin[0] in DASH_BAS or son_sonu or once:
+                cikti += " " + metin
+            elif cikti[-1] in ONEK:
+                cikti += metin
+            else:
+                cikti += metin  # HTML'de bosluk yoktu: yapisk
+            son_sonu = sonu
+        return cikti
 
     @staticmethod
     def _satir_duz(metin):
         return re.sub(r"\s+", " ", metin).strip()
 
     @staticmethod
+    def _link_listesi(metin):
+        """Yapisik ardısık linkler ("...(url)[...") HTML'de tek div'e
+        yigilmis liste demektir; her linki ayrı maddeye boler (2026-11-04
+        Hy4 ④ — rapor arsivi aylari tek satira basiliyordu)."""
+        if metin.count(")[") >= 2:
+            return "- " + metin.replace(")[", ")\n- [")
+        return metin
+
+    @staticmethod
     def _mutlak(href):
-        """Göreli linkleri site köküne çevirir — .md dosyası tek başına
-        okunduğunda/indirildiğinde bağlantılar çalışsın (2026-11-04)."""
+        """Goreli linkleri site kokune cevirir. Ic linkler .md kopyaya
+        yonlendirilir (ajan md zincirinde kalir, 2026-11-04 Hy4 ④);
+        dil kopyalarinda .md olmadigindan (en/de/ru/zh — 404) dokunulmaz."""
         if href.startswith(("http://", "https://", "#", "mailto:", "tel:")):
             return href
         temiz = re.sub(r"^(\.\./)+", "", href).lstrip("/")
-        return SITE_URL + "/" + temiz if temiz else href
+        if temiz.endswith(".html"):
+            temiz = temiz[:-5]
+        if not temiz:
+            return SITE_URL + "/index.md"        # href="/" ana sayfa
+        if temiz.endswith(".md"):
+            return SITE_URL + "/" + temiz
+        ilk = temiz.split("/")[0]
+        if ilk in ("en", "de", "ru", "zh"):
+            return SITE_URL + "/" + temiz
+        if ilk in KOK_SAYFALAR or ilk in KLASORLER:
+            return SITE_URL + "/" + temiz + ".md"
+        return SITE_URL + "/" + temiz            # .md'siz bilinmeyen yol: HTML'e
 
     def _tablo_yaz(self):
         if not self._tablo_satirlari:
             return
-        genis = max(len(r) for r in self._tablo_satirlari)
-        self.satirlar.append("")
-        for i, satir in enumerate(self._tablo_satirlari):
-            hucreler = [c.replace("|", "\\|") for c in satir] + [""] * (genis - len(satir))
-            self.satirlar.append("| " + " | ".join(hucreler) + " |")
-            if i == 0:
-                self.satirlar.append("|" + " --- |" * genis)
+        baslik = self._tablo_baslik
+
+        def _blok(satirlar):
+            if not satirlar:
+                return
+            ust = baslik or satirlar[0]
+            genis = max([len(r) for r in satirlar] + [len(ust)])
+            self.satirlar.append("| " + " | ".join(
+                [c.replace("|", "\\|") for c in ust] + [""] * (genis - len(ust))) + " |")
+            self.satirlar.append("|" + " --- |" * genis)
+            for s in satirlar:
+                hucreler = [c.replace("|", "\\|") for c in s] + [""] * (genis - len(s))
+                self.satirlar.append("| " + " | ".join(hucreler) + " |")
+            self.satirlar.append("")
+
+        # 2026-11-04 (Hy4 takvim P0'i): tek-hucreli satirlar colspan'li GRUP
+        # basligidir — tabloyu bogmaz; tabloyu bolup "#### baslik" olarak
+        # akisa yazilir (or. "#### 04.11 (2026-11-04)").
+        segment = []
+        for s in self._tablo_satirlari:
+            if len(s) == 1 and (baslik and len(baslik) > 1):
+                _blok(segment)
+                segment = []
+                if s[0]:
+                    self.satirlar.append("")
+                    self.satirlar.append("#### " + s[0])
+                    self.satirlar.append("")
+                continue
+            segment.append(s)
+        _blok(segment)
         self.satirlar.append("")
         self._tablo_satirlari = []
         self._hucreler = []
+        self._tablo_baslik = None
+        self._son_hucre_etiketi = ""
 
 
 def html_md(yol, rel=None):
@@ -239,19 +398,26 @@ def html_md(yol, rel=None):
     govde = re.sub(r"\n{3,}", "\n\n", govde).strip()
     if not govde:
         return ""
-    govde = f"# {baslik}\n\n{govde}\n"
-    # 2026-11-04 (dış inceleme önerileri, kullanıcı onayı): YAML front matter
-    # + yasal kapanış — .md dosyası tek başına paylaşıldığında bağlam ve
-    # uyarı kaybolmasın.
     rel_temiz = (rel or os.path.basename(yol)).replace("\\", "/")
     if rel_temiz.endswith(".html"):
         rel_temiz = rel_temiz[:-5]
     canli = SITE_URL + "/" + rel_temiz
     m_t = re.search(r"\d{4}-\d{2}-\d{2}", rel_temiz)
-    fm = ["---", 'title: "%s"' % baslik.replace('"', "'")]
+    # 2026-11-04 (Hy4 ③): H1 ve title tarihli olur — dosya tek basina
+    # okundugunda hangi rapor oldugu ilk satirdan belli olsun.
+    baslik_md = baslik
+    if m_t:
+        y, ay, g = m_t.group(0).split("-")
+        baslik_md = f"{baslik} — {int(g)} {AYLAR[int(ay) - 1]} {y}"
+    govde = f"# {baslik_md}\n\n{govde}\n"
+    # YAML front matter + yasal kapanış — .md dosyası tek başına paylaşıldı
+    # ğında bağlam, kaynak ve uyarı kaybolmasın (2026-11-04).
+    fm = ["---", 'title: "%s"' % baslik_md.replace('"', "'")]
     if m_t:
         fm.append("date: " + m_t.group(0))
-    fm += ['canonical: "' + canli + '"', "language: tr",
+    fm += ['canonical: "' + canli + '"',
+           'markdown: "' + canli + '.md"',
+           "language: tr",
            'generated_by: "Yapay zeka (çok ajanlı sistem)"',
            'disclaimer: "Yatırım tavsiyesi değildir."', "---"]
     kapanis = ("\n---\n\n_Bilgilendirme: Bu içerik site otomasyonu tarafından "

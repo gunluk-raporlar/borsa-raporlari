@@ -44,10 +44,12 @@ sinyalleri, sinyal karnesi, portföy, hafta sonu, haberler, şirket haberleri,
 takvim, sözlükler, temettü merkezi ve tüm tarihli rapor/hisse sayfaları.
 Örnek: `https://borsa-raporlari.pages.dev/sozluk.md`,
 `https://borsa-raporlari.pages.dev/raporlar/2026-11-04.md`.
+Tüm tarihli raporların `.md` bağlantı listesi:
+`https://borsa-raporlari.pages.dev/raporlar.md`.
 
 ## Makine-okunur veri uç noktaları (ajanlar ve otomasyonlar için)
 
-Bu dosyalar insan sayfası DEĞİLDIR; yapay zeka ajanlerinin ve otomasyonların
+Bu dosyalar insan sayfası DEĞİLDİR; yapay zeka ajanlarının ve otomasyonların
 doğrudan JSON çekmesi içindir. Alan adları kararlı tutulur; güncelleme saatleri
 her dosyanın "guncelleme" alanındadır.
 
