@@ -37,7 +37,7 @@ def bugun_neuron():
         "query": (
             'query { viewer { accounts(filter: {accountTag: "%s"}) { '
             "aiInferenceAdaptiveGroups(limit: 1, "
-            'filter: {datetime_geq: "%s"}) { sum { neurons } } } } }'
+            'filter: {datetime_geq: "%s"}) { sum { totalNeurons } } } } }'
             % (hesap, bas.strftime("%Y-%m-%dT%H:%M:%SZ"))
         )
     }
@@ -67,6 +67,6 @@ def bugun_neuron():
         )
         if not gruplar:
             return 0.0, "ok"
-        return float(gruplar[0]["sum"]["neurons"]), "ok"
+        return float(gruplar[0]["sum"]["totalNeurons"]), "ok"
     except Exception as e:
         return None, f"{type(e).__name__}: {e}"[:120]
