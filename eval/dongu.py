@@ -28,18 +28,34 @@ Ortam değişkenleri:
   CF_ACCOUNT_ID, CF_API_KEY           yargıç modeli (Workers AI; mevcut secret)
   SUPABASE_URL, SUPABASE_SERVICE_KEY  arama_ayar yazımı (mevcut secret)
   ARA_URL                             varsayılan https://borsa-raporlari.pages.dev/api/ara
+  EVAL_KOTA_LIMIT / EVAL_KOTA_MALIYET yargıç önü kota eşiği (varsayılan 9000/4000;
+                                      aşılırsa puanlama atlanır, ölçümler yine alınır)
 """
 import argparse
 import json
 import math
 import os
 import re
+import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from typing import Any, Dict, TypedDict
 
 import requests
+
+# Kota denetimi (kullanıcı kararı 2026-11-05): yargıç öncesi Workers AI
+# günlük neuron tüketimini oku; eşik aşılırsa puanlamayı atla. Paylaşılan
+# yardımcı pipeline/cf_kota.py'de; dongu eval/ içinden çalıştığı için repo
+# kökü sys.path'e eklenir. Modül bulunamazsa denetim sessizce devre dışı.
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+try:
+    from pipeline.cf_kota import GUNLUK_LIMIT, KOSU_MALIYETI, bugun_neuron
+except Exception:  # kota denetimi isteğe bağlı — eski davranışa düş
+    GUNLUK_LIMIT, KOSU_MALIYETI = 0, 0
+
+    def bugun_neuron():
+        return None, "cf_kota modülü yok"
 
 # ---------- Sabitler ----------
 
@@ -199,9 +215,23 @@ def arama(durum):
 def yargic(durum):
     if durum.get("kuru"):
         return _kuru_yargic(durum)
+    # Kota koruması (2026-11-05): bugün harcanan neuron + bu koşunun payı
+    # eşiği aşarsa puanlamayı baştan atla — 3 Kasım'daki 6 koşuluk kota
+    # kazasının tekrarını engeller. Ölçüm rapora ve gecmis.json'a yazılır.
+    kota, kota_kaynak = bugun_neuron()
+    kota_bilgisi = {"bugun": kota, "kaynak": kota_kaynak,
+                    "limit": GUNLUK_LIMIT, "maliyet": KOSU_MALIYETI}
+    if kota is not None and kota + KOSU_MALIYETI > GUNLUK_LIMIT:
+        print(f"[atlandı] Kota koruması: bugün {kota:.0f} neuron kullanılmış; "
+              f"yargıç koşusu (~{KOSU_MALIYETI}) {GUNLUK_LIMIT} eşiğini aşar. "
+              "Puanlama yapılmadı; ölçümler (ham) yine de alınır.")
+        return {"yargic_yok": True, "yargic_hata": 0,
+                "puanlar": {kol: {} for kol in KOL_KOLLAR},
+                "yargic_atlandi": "kota", "kota": kota_bilgisi}
     if not (CF_ACCOUNT_ID and CF_API_KEY):
         print("[uyarı] CF anahtarları yok — yargıç atlandı, puanlama yapılamaz.")
-        return {"yargic_yok": True, "yargic_hata": 0, "puanlar": {kol: {} for kol in KOL_KOLLAR}}
+        return {"yargic_yok": True, "yargic_hata": 0,
+                "puanlar": {kol: {} for kol in KOL_KOLLAR}, "kota": kota_bilgisi}
     puanlar = {kol: {} for kol in KOL_KOLLAR}
     isler = []
     for kol in KOL_KOLLAR:
@@ -224,7 +254,7 @@ def yargic(durum):
         for kol, sorgu, sira, puan in havuz.map(puanla, isler):
             puanlar[kol].setdefault(sorgu, {})[sira] = puan
     hatali = sum(1 for kol in KOL_KOLLAR for d in puanlar[kol].values() for p in d.values() if p is None)
-    return {"puanlar": puanlar, "yargic_hata": hatali, "yargic_yok": False}
+    return {"puanlar": puanlar, "yargic_hata": hatali, "yargic_yok": False, "kota": kota_bilgisi}
 
 
 def metrik(durum):
@@ -458,6 +488,8 @@ def yaz(durum):
              "metrikler": durum["metrikler"], "bos": durum["bos"],
              "yargic_hata": durum.get("yargic_hata", 0),
              "yargic_yok": durum.get("yargic_yok", False),
+             "yargic_atlandi": durum.get("yargic_atlandi") or "",
+             "kota": durum.get("kota") or {},
              "karar": durum["karar"], "degisen": durum["degisen"],
              "geriye": durum.get("geriye") or {}}
     with open(os.path.join(DATA_KOK, "latest.json"), "w", encoding="utf-8") as fh:
@@ -518,6 +550,7 @@ def yaz(durum):
         "bos_normal": durum["bos"]["normal"],
         "karar": durum["karar"],
         "ayarlar": ayarlar,
+        "kota": (durum.get("kota") or {}).get("bugun"),
     }
     with open(_gecmis_yol(), "w", encoding="utf-8") as fh:
         json.dump({"kosular": (durum["gecmis"] + [kosu])[-30:]}, fh, ensure_ascii=False, indent=1)
@@ -525,11 +558,20 @@ def yaz(durum):
     # İnsan-okur rapor
     m = durum["metrikler"]
     geriye = durum.get("geriye") or {}
+    kota = durum.get("kota") or {}
+    if kota.get("bugun") is not None:
+        kota_metin = (f"- Kota: bugün {kota['bugun']:.0f} neuron kullanılmış "
+                      f"(eşik {kota.get('limit')}, yargıç payı ~{kota.get('maliyet')})"
+                      + (" → **yargıç atlandı**" if durum.get("yargic_atlandi") == "kota"
+                         else " → yargıç koştu"))
+    else:
+        kota_metin = f"- Kota: okunamadı ({kota.get('kaynak', '?')}) — yargıç eski davranışla koştu"
     satirlar = [
         f"# Arama değerlendirme raporu — {tarih}",
         "",
         f"- Sorgu sayısı: {len(durum['sorgular'])} · Yargıç hatası: {durum.get('yargic_hata', 0)}"
         + (" · YARGIÇ YOK (CF anahtarları eksik)" if durum.get("yargic_yok") else ""),
+        kota_metin,
         f"- normal nDCG@8: {m['normal']['ndcg']} · MRR: {m['normal']['mrr']} · boş sorgu: {durum['bos']['normal']}",
         f"- ham    nDCG@8: {m['ham']['ndcg']} · MRR: {m['ham']['mrr']} · boş sorgu: {durum['bos']['ham']}",
         f"- rerank nDCG@8: {m['rerank']['ndcg']} · MRR: {m['rerank']['mrr']} · boş sorgu: {durum['bos']['rerank']}",
@@ -585,6 +627,8 @@ class Durum(TypedDict, total=False):
     puanlar: dict
     yargic_yok: bool
     yargic_hata: int
+    yargic_atlandi: str
+    kota: dict
     metrikler: dict
     karar: str
     degisen: dict

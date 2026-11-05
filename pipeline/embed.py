@@ -559,8 +559,16 @@ def metrik_yaz(belge_sayisi, embed_edilen, sure_sn):
         with open(latest_yol, "w", encoding="utf-8") as fh:
             json.dump(latest, fh, ensure_ascii=False, indent=1)
         tarih = datetime.now().strftime("%Y-%m-%d")
+        # Kota notu (kullanıcı kararı 2026-11-05): her koşu günün Workers AI
+        # neuron tüketimini metrics'e işler; okunamadıysa alan kayıtsız kalır.
+        try:
+            from cf_kota import bugun_neuron
+        except ImportError:
+            from pipeline.cf_kota import bugun_neuron
+        kota, kota_neden = bugun_neuron()
+        print(f"[kota] bugün harcanan neuron: {kota if kota is not None else kota_neden}")
         with open(os.path.join("data", "metrics", f"embedding-{tarih}.json"), "w", encoding="utf-8") as fh:
-            json.dump({"tarih": tarih, **bolum}, fh, ensure_ascii=False, indent=1)
+            json.dump({"tarih": tarih, "kota": {"bugun": kota, "kaynak": kota_neden}, **bolum}, fh, ensure_ascii=False, indent=1)
         print(f"[metrik] latest.json güncellendi: {bolum}")
     except Exception as e:
         print(f"[uyarı] metrik yazılamadı (çalışışı etkilemez): {e}")
