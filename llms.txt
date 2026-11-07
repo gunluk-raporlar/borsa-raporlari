@@ -13,7 +13,7 @@
 - [Teknik Tarama](https://borsa-raporlari.pages.dev/teknik-analiz): BIST 30 teknik tarama sonuçları
 - [Borsapy Sinyalleri](https://borsa-raporlari.pages.dev/borsapy-analiz): hisse bazlı sinyal tablosu
 - [Sinyal Karnesi](https://borsa-raporlari.pages.dev/sinyal-karnesi): AL sinyallerinin backtest performansı
-- [Deneme Portföyü](https://borsa-raporlari.pages.dev/portfolio): 100.000 TL sanal model portföy
+- [Deneme Portföyü](https://borsa-raporlari.pages.dev/portfoy): 100.000 TL sanal model portföy
 - [Hafta Sonu Gündemi](https://borsa-raporlari.pages.dev/haftasonu): hafta içi gelişmelerin değerlendirmesi
 
 ## Hisse ve veri

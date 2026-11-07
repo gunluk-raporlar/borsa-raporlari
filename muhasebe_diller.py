@@ -175,7 +175,7 @@ MENU = [
     ("borsapy-analiz.html",  "Borsapy Sinyal",   "Borsapy Signals",  "Borsapy-Signale",        "Сигналы Borsapy",    "Borsapy 信号"),
     ("haberler.html",        "Haberler",         "News",             "Nachrichten",            "Новости",            "新闻"),
     ("sirket-haberleri.html","Şirket Haberleri", "Company News",     "Unternehmensnachrichten","Новости компаний",   "公司新闻"),
-    ("portfolio.html",       "Deneme Portföyü",  "Demo Portfolio",   "Demo-Portfolio",         "Демо-портфель",      "模拟投资组合"),
+    ("portfoy.html",         "Deneme Portföyü",  "Demo Portfolio",   "Demo-Portfolio",         "Демо-портфель",      "模拟投资组合"),
     ("haftasonu.html",       "Hafta Sonu",       "Weekend",          "Wochenende",             "Выходные",           "周末"),
     ("haftasonu-egitimi.html","Borsa Okulu",     "Market School",    "Börsenschule",           "Школа рынка",        "股市学堂"),
     ("takvim.html",          "📅 Takvim",        "📅 Calendar",      "📅 Kalender",            "📅 Календарь",       "📅 日历"),

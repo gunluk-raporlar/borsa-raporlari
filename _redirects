@@ -5,6 +5,20 @@
 /https:/borsa-raporlari.pages.dev/*   /:splat  301
 /http://borsa-raporlari.pages.dev/*   /:splat  301
 
+# 2026-11-07 slug göçü: portfolio -> portfoy (TR), ru portfel, zh touzizuhe.
+# en/de "portfolio" adını korur (zaten o dilin kelimesi); /portfolio.json veri
+# dosyası etkilenmez (kural tam yol eşleşmesidir).
+/portfolio        /portfoy  301
+/ru/portfolio     /ru/portfel  301
+/zh/portfolio     /zh/touzizuhe  301
+# Eski .html biçimli adresler (dosya adı değişti; doğrudan .html istekleri
+# 404 vermesin). /portfolio.json veri dosyası ad değiştirmediği için bilinçli
+# olarak kapsam dışıdır; .md varyantı (11-04'ten beri yayında) kural sınırı
+# nedeniyle eklenmedi — istenirse +3 kural ile 100'e taşınır.
+/portfolio.html        /portfoy  301
+/ru/portfolio.html     /ru/portfel  301
+/zh/portfolio.html     /zh/touzizuhe  301
+
 # Eski /reports + /raporlar tarihli derin/makro yollari (eski duz yapidan agac
 # yapisina geciste kaliyor). TEK glob kurali tum tarihleri kapsar. DİKKAT:
 # Pages pratikte _redirects'in yalnizca ilk ~100 kuralini isliyor (2026-10-17
@@ -93,26 +107,18 @@
 
 # 10 Ekim 2026 (Cumartesi) derin analizi hatala yayinlandi ve kaldirildi (2026-10-11);
 # icerik Cuma kapanis verisinin tekrariydi — ayni veriyi iceren 9 Ekim raporuna yonlendirilir.
-/derin-analiz/2026-10-10 /derin-analiz/2026-10-09 301
-/derin-analiz/2026-10-10.html /derin-analiz/2026-10-09.html 301
-/en/deep-analysis/2026-10-10 /en/deep-analysis/2026-10-09 301
-/en/deep-analysis/2026-10-10.html /en/deep-analysis/2026-10-09.html 301
-/de/derin-analiz/2026-10-10 /de/derin-analiz/2026-10-09 301
-/de/derin-analiz/2026-10-10.html /de/derin-analiz/2026-10-09.html 301
-/ru/derin-analiz/2026-10-10 /ru/derin-analiz/2026-10-09 301
-/ru/derin-analiz/2026-10-10.html /ru/derin-analiz/2026-10-09.html 301
-/zh/derin-analiz/2026-10-10 /zh/derin-analiz/2026-10-09 301
-/zh/derin-analiz/2026-10-10.html /zh/derin-analiz/2026-10-09.html 301
+# .html ve güzel-URL varyantları tek glob'da birleştirildi (2026-11-07; kural
+# sayısı ~100 sınırında kalması için — :splat hem "" hem ".html" değerini alır).
+/derin-analiz/2026-10-10* /derin-analiz/2026-10-09:splat 301
+/en/deep-analysis/2026-10-10* /en/deep-analysis/2026-10-09:splat 301
+/de/derin-analiz/2026-10-10* /de/derin-analiz/2026-10-09:splat 301
+/ru/derin-analiz/2026-10-10* /ru/derin-analiz/2026-10-09:splat 301
+/zh/derin-analiz/2026-10-10* /zh/derin-analiz/2026-10-09:splat 301
 
 # 11 Ekim 2026 (Pazar) gunluk raporu hatala yayinlandi ve kaldirildi (2026-10-11);
 # pazar gunu borsa kapali — ayni kapanis verisini tasiyan 9 Ekim Cuma raporuna yonlendirilir.
-/raporlar/2026-10-11 /raporlar/2026-10-09 301
-/raporlar/2026-10-11.html /raporlar/2026-10-09.html 301
-/en/reports/2026-10-11 /en/reports/2026-10-09 301
-/en/reports/2026-10-11.html /en/reports/2026-10-09.html 301
-/de/raporlar/2026-10-11 /de/raporlar/2026-10-09 301
-/de/raporlar/2026-10-11.html /de/raporlar/2026-10-09.html 301
-/ru/raporlar/2026-10-11 /ru/raporlar/2026-10-09 301
-/ru/raporlar/2026-10-11.html /ru/raporlar/2026-10-09.html 301
-/zh/raporlar/2026-10-11 /zh/raporlar/2026-10-09 301
-/zh/raporlar/2026-10-11.html /zh/raporlar/2026-10-09.html 301
+/raporlar/2026-10-11* /raporlar/2026-10-09:splat 301
+/en/reports/2026-10-11* /en/reports/2026-10-09:splat 301
+/de/raporlar/2026-10-11* /de/raporlar/2026-10-09:splat 301
+/ru/raporlar/2026-10-11* /ru/raporlar/2026-10-09:splat 301
+/zh/raporlar/2026-10-11* /zh/raporlar/2026-10-09:splat 301

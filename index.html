@@ -34,7 +34,7 @@
 <header class="topbar"><div class="inner">
 <div class="brand-row"><a class="brand" href="./">BIST 30 Günlük Raporlar</a>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
-<nav><a href="./" class="active">Ana Sayfa</a><a href="raporlar">Raporlar</a><a href="hisse/">Hisseler</a><a href="derin-analiz">Derin Analiz</a><a href="makro-analiz">Makro Analiz</a><a href="teknik-analiz">Teknik Tarama</a><a href="sinyal-karnesi">Sinyal Karnesi</a><a href="borsapy-analiz">Borsapy Sinyal</a><a href="haberler">Haberler</a><a href="sirket-haberleri">Şirket Haberleri</a><a href="portfolio">Deneme Portföyü</a><a href="haftasonu">Hafta Sonu</a><a href="haftasonu-egitimi">Borsa Okulu</a><a href="takvim">📅 Takvim</a><a href="temettu">💰 Temettü</a><a href="sozluk">Sözlük</a><a href="terimler">Terimler</a><a href="muhasebe-terimleri">Muhasebe Terimleri</a><a href="robot">İşlem Robotu</a></nav>
+<nav><a href="./" class="active">Ana Sayfa</a><a href="raporlar">Raporlar</a><a href="hisse/">Hisseler</a><a href="derin-analiz">Derin Analiz</a><a href="makro-analiz">Makro Analiz</a><a href="teknik-analiz">Teknik Tarama</a><a href="sinyal-karnesi">Sinyal Karnesi</a><a href="borsapy-analiz">Borsapy Sinyal</a><a href="haberler">Haberler</a><a href="sirket-haberleri">Şirket Haberleri</a><a href="portfoy">Deneme Portföyü</a><a href="haftasonu">Hafta Sonu</a><a href="haftasonu-egitimi">Borsa Okulu</a><a href="takvim">📅 Takvim</a><a href="temettu">💰 Temettü</a><a href="sozluk">Sözlük</a><a href="terimler">Terimler</a><a href="muhasebe-terimleri">Muhasebe Terimleri</a><a href="robot">İşlem Robotu</a></nav>
 </div></header>
 
 <div class="ticker-bant" id="ticker-bant" data-kok="" style="margin-bottom:16px">
@@ -471,7 +471,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="tbl-wrap">
 <table><tr><th>Hisse</th><th>Adet</th><th>İlk Alım</th><th>Son Fiyat</th><th>Getiri</th></tr><tr><td><a href="hisse/GARAN"><strong>GARAN</strong></a></td><td>25,37</td><td>131,40 TL</td><td>137,50 TL</td><td class='pos'>+4,64%</td></tr><tr><td><a href="hisse/TAVHL"><strong>TAVHL</strong></a></td><td>12,43</td><td>268,25 TL</td><td>278,75 TL</td><td class='pos'>+3,91%</td></tr><tr><td><a href="hisse/YKBNK"><strong>YKBNK</strong></a></td><td>92,85</td><td>35,90 TL</td><td>36,52 TL</td><td class='pos'>+1,73%</td></tr><tr><td><a href="hisse/ISCTR"><strong>ISCTR</strong></a></td><td>256,21</td><td>13,01 TL</td><td>12,87 TL</td><td class='neg'>-1,08%</td></tr><tr><td><a href="hisse/THYAO"><strong>THYAO</strong></a></td><td>11,26</td><td>296,00 TL</td><td>291,25 TL</td><td class='neg'>-1,60%</td></tr><tr><td><a href="hisse/TCELL"><strong>TCELL</strong></a></td><td>33,96</td><td>98,15 TL</td><td>93,95 TL</td><td class='neg'>-4,28%</td></tr><tr><td><a href="hisse/KCHOL"><strong>KCHOL</strong></a></td><td>15,50</td><td>215,10 TL</td><td>203,00 TL</td><td class='neg'>-5,63%</td></tr><tr><td><a href="hisse/TTKOM"><strong>TTKOM</strong></a></td><td>64,23</td><td>51,90 TL</td><td>48,90 TL</td><td class='neg'>-5,78%</td></tr></table>
 </div>
-<p style="margin:12px 0 4px"><a href="portfolio">Detaylı portföy geçmişi &rarr;</a>
+<p style="margin:12px 0 4px"><a href="portfoy">Detaylı portföy geçmişi &rarr;</a>
 <span style="color:var(--muted); font-size:12.5px">(30 hissenin tamamı portföy sayfasında)</span></p>
 <p style="margin:0 0 6px; color:var(--muted); font-size:12.5px">Portföy hafta içi her sabah otomatik olarak, bir önceki işlem gününün kapanış fiyatlarıyla güncellenir; hafta sonu ve tatil günlerinde değer değişmez. Canlı fiyatlar için üstteki fiyat şeridine bakınız. Getiri, başlangıçta eşit dağıtılan 100.000 TL'nin güncel değerine göre hesaplanır; tablodaki tekil hisse yüzdelerinin basit ortalaması değildir. Karşılaştırma çizgileri (altın/dolar/mevduat/endeks/enflasyon) da aynı 100.000 TL tabanına normalize edilmiştir. Getiri dönemi portföyün başlangıç tarihidir (yıl başı değildir); ilk gün de aynı kapanış fiyatlarıyla değerlendiği için ilk kayıt 100.000,00 TL'den birkaç lira sapabilir (örn. 100.013 TL).</p>
 </div>
@@ -481,7 +481,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <a href="raporlar"><span class="i" aria-hidden="true">📊</span>Raporlar</a>
 <a href="teknik-analiz"><span class="i" aria-hidden="true">📈</span>Teknik</a>
 <a href="hisse/"><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
-<a href="portfolio"><span class="i" aria-hidden="true">💼</span>Portföy</a>
+<a href="portfoy"><span class="i" aria-hidden="true">💼</span>Portföy</a>
 <a href="haberler"><span class="i" aria-hidden="true">📰</span>Haberler</a>
 <a href="takvim"><span class="i" aria-hidden="true">📅</span>Takvim</a>
 </nav>

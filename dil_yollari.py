@@ -37,6 +37,10 @@ EN_SLUG_ESLEME = [
     ("radyo", "radio"),
     ("hisse", "stocks"),
     ("robot", "trading-robot"),
+    # 2026-11-07 slug göçü: TR "portfolio" -> "portfoy" (kullanıcı kararı; eski
+    # adresler _redirects'te 301). en/de "portfolio" adını korur — zaten o
+    # dillerin kelimesi; ru/zh çeviri ad alır (portfel / touzizuhe).
+    ("portfoy", "portfolio"),
 ]
 
 # de: Almanca slug'lar (SOZLUK basliklarindan; ASCII yazim ae/oe/ue)
@@ -59,6 +63,7 @@ DE_SLUG_ESLEME = [
     ("radyo", "radio"),
     ("hisse", "aktien"),
     ("robot", "handelsroboter"),
+    ("portfoy", "portfolio"),
 ]
 
 # ru: transliterasyon (Kiril URL degil — ASCII mimari guvenligi; kullanici karari)
@@ -81,6 +86,7 @@ RU_SLUG_ESLEME = [
     ("radyo", "radio"),
     ("hisse", "aktsii"),
     ("robot", "torgovyy-robot"),
+    ("portfoy", "portfel"),
 ]
 
 # zh: pinyin (kullanici karari; Baidu/Google uygulamasinda onerilen Latin yazim)
@@ -103,6 +109,7 @@ ZH_SLUG_ESLEME = [
     ("radyo", "guangbo"),
     ("hisse", "gupiao"),
     ("robot", "jiaoyi-jiqiren"),
+    ("portfoy", "touzizuhe"),
 ]
 
 _SLUG_ESLEME = {

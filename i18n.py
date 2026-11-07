@@ -134,6 +134,27 @@ SOZLUK = {
         "ru": "Ежедневные отчёты по BIST 30 на основе ИИ: технический скрининг, сигналы осцилляторов, модельные портфели и виртуальный портфель 100 000 TL.",
         "zh": "BIST 30的AI辅助每日报告、技术扫描和振荡器信号、模型投资组合建议以及100.000 TL虚拟投资组合的跟踪。",
     },
+    # 2026-11-08 (Search Console verisi, kullanici karari "duzelt"): ana sayfa
+    # 110 gosterim / konum 3,4 / TO %0,91 — baslikta "borsa" kelimesi yoktu.
+    # Yeni baslik + aciklama sorgu kelimeleri tasir; Bing kurali (<=160) korunur.
+    "BIST 30 Günlük Borsa Raporu ve Hisse Analizi": {
+        "en": "BIST 30 Daily Stock Market Report & Analysis",
+        "de": "BIST 30 Tagesbericht: Börsenreport & Aktienanalyse",
+        "ru": "BIST 30: ежедневный биржевой отчёт и анализ акций",
+        "zh": "BIST 30 每日股市报告与个股分析",
+    },
+    "BIST 30 günlük borsa raporu: yapay zekâ destekli teknik tarama, osilatör sinyalleri, hisse analizleri ve sanal portföy takibi — her işlem günü güncellenir.": {
+        "en": "Daily BIST 30 market report: AI-powered technical screening, oscillator signals, stock analysis and virtual portfolio tracking — updated every trading day.",
+        "de": "Täglicher BIST-30-Börsenbericht: KI-gestützte technische Scans, Oszillatorsignale, Aktienanalysen und virtuelles Portfolio — jeden Handelstag aktuell.",
+        "ru": "Ежедневный биржевой отчёт по BIST 30: ИИ-скрининг, сигналы осцилляторов, анализ акций и виртуальный портфель — каждый торговый день.",
+        "zh": "BIST 30 每日股市报告：AI技术扫描、振荡器信号、个股分析与虚拟投资组合跟踪——每个交易日更新。",
+    },
+    "Muhasebe Terimleri Sözlüğü — İngilizce-Türkçe": {
+        "en": "Accounting Terms Glossary — English–Turkish",
+        "de": "Glossar der Bilanzierungsbegriffe — Englisch–Türkisch",
+        "ru": "Глоссарий бухгалтерских терминов — английско-турецкий",
+        "zh": "会计术语词典 — 英土对照",
+    },
     # Sabit SEO aciklamalari (2026-10-31): sozluk + robot sayfalarinin meta
     # aciklamalari LLM kuyrugunda sure bütcesine takilip Turkce kaliyordu
     # (8 sayfa, 4 dil). Sabit metin olduklari icin burada sabitlenir.

@@ -3857,7 +3857,7 @@ SITE_ADI = "BIST 30 Günlük Raporlar"
 INDEXNOW_KEY = "ba8235ea226b9c95831f13f37a9e223f"
 INDEXNOW_ANA_SAYFALAR = [
     "index.html", "derin-analiz.html", "makro-analiz.html", "teknik-analiz.html",
-    "borsapy-analiz.html", "portfolio.html", "haftasonu.html",
+    "borsapy-analiz.html", "portfoy.html", "haftasonu.html",
 ]
 
 
@@ -4907,7 +4907,7 @@ def _chart_js_script(grafik):
 # alternate-markdown bağlantısı yalnız bunlarda basılır; aynası olmayan
 # sayfada boş 404 linki basmamak için koşullu (2026-11-04, dış inceleme).
 _MD_AYNA_KOK = {"index", "raporlar", "derin-analiz", "makro-analiz", "teknik-analiz",
-                "borsapy-analiz", "sinyal-karnesi", "portfolio", "haftasonu",
+                "borsapy-analiz", "sinyal-karnesi", "portfoy", "haftasonu",
                 "haftasonu-egitimi", "haberler", "sirket-haberleri", "takvim",
                 "sozluk", "terimler", "muhasebe-terimleri", "temettu"}
 _MD_AYNA_KLASOR = {"raporlar", "derin-analiz", "makro-analiz", "haftasonu",
@@ -5019,7 +5019,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <header class="topbar"><div class="inner">
 <div class="brand-row"><a class="brand" href="{kok}index.html">BIST 30 Günlük Raporlar</a>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Açık/Koyu tema" aria-label="Tema değiştir">🌙</button></div>
-<nav><a href="{kok}index.html"{a_ana}>Ana Sayfa</a><a href="{kok}raporlar.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}makro-analiz.html"{a_mk}>Makro Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfolio.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}temettu.html"{a_tm}>💰 Temettü</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a><a href="{kok}terimler.html"{a_trm}>Terimler</a><a href="{kok}muhasebe-terimleri.html"{a_muh}>Muhasebe Terimleri</a><a href="{kok}robot.html"{a_rb}>İşlem Robotu</a></nav>
+<nav><a href="{kok}index.html"{a_ana}>Ana Sayfa</a><a href="{kok}raporlar.html"{a_r}>Raporlar</a><a href="{kok}hisse/index.html"{a_his}>Hisseler</a><a href="{kok}derin-analiz.html"{a_d}>Derin Analiz</a><a href="{kok}makro-analiz.html"{a_mk}>Makro Analiz</a><a href="{kok}teknik-analiz.html"{a_t}>Teknik Tarama</a><a href="{kok}sinyal-karnesi.html"{a_k}>Sinyal Karnesi</a><a href="{kok}borsapy-analiz.html"{a_b}>Borsapy Sinyal</a><a href="{kok}haberler.html"{a_hb}>Haberler</a><a href="{kok}sirket-haberleri.html"{a_shb}>Şirket Haberleri</a><a href="{kok}portfoy.html"{a_p}>Deneme Portföyü</a><a href="{kok}haftasonu.html"{a_h}>Hafta Sonu</a><a href="{kok}haftasonu-egitimi.html"{a_e}>Borsa Okulu</a><a href="{kok}takvim.html"{a_tkv}>📅 Takvim</a><a href="{kok}temettu.html"{a_tm}>💰 Temettü</a><a href="{kok}sozluk.html"{a_s}>Sözlük</a><a href="{kok}terimler.html"{a_trm}>Terimler</a><a href="{kok}muhasebe-terimleri.html"{a_muh}>Muhasebe Terimleri</a><a href="{kok}robot.html"{a_rb}>İşlem Robotu</a></nav>
 </div></header>
 {_kendi_ticker(kok)}
 {_kendi_ticker2(kok)}
@@ -5048,7 +5048,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
 <a href="{kok}raporlar.html"{a_alt_r}><span class="i" aria-hidden="true">📊</span>Raporlar</a>
 <a href="{kok}teknik-analiz.html"{a_alt_t}><span class="i" aria-hidden="true">📈</span>Teknik</a>
 <a href="{kok}hisse/index.html"{a_alt_his}><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
-<a href="{kok}portfolio.html"{a_alt_p}><span class="i" aria-hidden="true">💼</span>Portföy</a>
+<a href="{kok}portfoy.html"{a_alt_p}><span class="i" aria-hidden="true">💼</span>Portföy</a>
 <a href="{kok}haberler.html"{a_alt_hb}><span class="i" aria-hidden="true">📰</span>Haberler</a>
 <a href="{kok}takvim.html"{a_alt_tkv}><span class="i" aria-hidden="true">📅</span>Takvim</a>
 </nav>
@@ -5581,7 +5581,10 @@ def rapor_sayfasi(html_icerik, date_str, baslik="Günlük Piyasa Raporu",
         "publisher": {"@type": "Organization", "name": SITE_ADI, "url": SITE_URL},
         "mainEntityOfPage": SITE_URL + (kok_yol or "").removesuffix(".html"),
     }, ensure_ascii=False)
-    return _sayfa(f"{baslik} - {tr_tarih}", icerik, "raporlar", kok=kok,
+    # 2026-11-08 (Search Console verisi): <title> sorgu kelimeleri tasisin —
+    # sayfalar konum 3-8'de gösterilip 0 tıklama aliyordu (titlematchScore).
+    # H1, description ve JSON-LD headline degismez; yalnizca <title> zenginlesir.
+    return _sayfa(f"{baslik} — BIST 30 · {tr_tarih}", icerik, "raporlar", kok=kok,
                   aciklama=aciklama, yol=kok_yol, ld_ek=ld_ek)
 
 
@@ -6162,7 +6165,7 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
 <div class="tbl-wrap">
 <table><tr><th>Hisse</th><th>Adet</th><th>İlk Alım</th><th>Son Fiyat</th><th>Getiri</th></tr>{_portfoy_satirlari(p, limit=8, en_iyi=True)}</table>
 </div>
-<p style="margin:12px 0 4px"><a href="portfolio.html">Detaylı portföy geçmişi &rarr;</a>
+<p style="margin:12px 0 4px"><a href="portfoy.html">Detaylı portföy geçmişi &rarr;</a>
 <span style="color:var(--muted); font-size:12.5px">({hisse_sayisi} hissenin tamamı portföy sayfasında)</span></p>
 <p style="margin:0 0 6px; color:var(--muted); font-size:12.5px">{PORTFOY_NOTU}</p>
 </div>"""
@@ -6180,8 +6183,9 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
 {teknik_bolumu}
 {portfoy_bolumu}"""
     return _sayfa(
-        "BIST 30 Günlük Raporlar", icerik, "anasayfa", yol="",
-        aciklama="BIST 30'un yapay zeka destekli günlük raporları, teknik tarama ve osilatör sinyalleri, model portföy önerileri ve 100.000 TL'lik sanal portföyün takibi.",
+        "BIST 30 Günlük Borsa Raporu ve Hisse Analizi", icerik, "anasayfa", yol="",
+        aciklama="BIST 30 günlük borsa raporu: yapay zekâ destekli teknik tarama, osilatör "
+                 "sinyalleri, hisse analizleri ve sanal portföy takibi — her işlem günü güncellenir.",
         grafik=True,
     )
 
@@ -6232,7 +6236,7 @@ hafta içi her sabah bir önceki işlem gününün kapanış fiyatlarıyla otoma
 * Tarih sütunu, portföyün güncellendiği günü gösterir; fiyatlar bir önceki işlem gününün kapanışına aittir.
 Hafta sonu ve tatil günlerinde değer değişmez.</p>"""
     return _sayfa(
-        "Deneme Portföyü", icerik, "portfoy", yol="portfolio.html",
+        "Deneme Portföyü", icerik, "portfoy", yol="portfoy.html",
         aciklama="100.000 TL sermayeyle BIST 30 hisselerine eşit dağıtılmış sanal deneme portföyü: günlük değer takibi, hisse performansı ve altın/dolar/mevduat karşılaştırması.",
         grafik=True,
     )
@@ -7836,7 +7840,7 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=N
 <p style="margin:6px 0 0"><a href="../hisse/">📊 BIST 30 hisse merkezi — tüm hisseler, teknik sinyaller ve grafikler &rarr;</a></p>
 </div>"""
     return _sayfa(
-        f"{kod} — Hisse Analizi", icerik, "hisseler", kok="../",
+        f"{kod} Hisse Yorumu ve Teknik Analizi", icerik, "hisseler", kok="../",
         yol=f"hisse/{kod}.html",
         aciklama=f"{kod} ({satir.get('sektor', 'BIST 30')}) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.",
     )
@@ -9075,7 +9079,7 @@ function muhasebeIndisSuz() {{
 </script>
 {koruma}"""
         _yaz("muhasebe-terimleri.html", _sayfa(
-            "Muhasebe Terimleri", icerik, "muhasebe",
+            "Muhasebe Terimleri Sözlüğü — İngilizce-Türkçe", icerik, "muhasebe",
             aciklama=f"{len(ifrs)} terimlik IFRS muhasebe terimleri sözlüğü, harf gruplarına bölünmüş "
                      "sayfalarda: İngilizce tanım, Türkçe karşılık ve örnek cümlelerle.",
             yol="muhasebe-terimleri.html"))
@@ -9523,7 +9527,7 @@ def site_arama_json_yaz(rapor_dosyalari):
          "t": "EMA dizilim sinyalleri kısa orta uzun vade Wave Trend WT osilatör regresyon kanalı konumu Pearson korelasyon ısı haritası sektör mum grafiği TradingView " + hisse_listesi + " " + " ".join(SEKTORLER.keys())},
         {"b": "Borsapy Sinyalleri (TradingView)", "u": "borsapy-analiz.html",
          "t": "osilatör oyları al sat nötr güçlü al genel öneri RSI MACD stokastik stoch CCI ADX aşırı alım aşırı satım " + hisse_listesi},
-        {"b": "Deneme Portföyü", "u": "portfolio.html",
+        {"b": "Deneme Portföyü", "u": "portfoy.html",
          "t": "sanal portföy 100.000 TL eşit dağıtılmış hisse performansı günlük geçmiş getiri altın dolar mevduat XU100 benchmark karşılaştırma " + hisse_listesi},
     ]
     sayfalar += [
@@ -9634,7 +9638,7 @@ def site_arama_json_yaz(rapor_dosyalari):
         _kod = fn[:-5]
         _unvan = (_profiller.get(_kod) or {}).get("unvan") or ""
         if _unvan and _unvan.casefold() != _kod.casefold() and _unvan.casefold() not in baslik.casefold():
-            baslik = f"{_kod} — {_unvan} — Hisse Analizi"
+            baslik = f"{_kod} — {_unvan} — Hisse Yorumu ve Teknik Analizi"
         sayfalar.append({"b": baslik, "u": yol, "t": f"{_kod} {_unvan} " + metin[:3500]})
     veri = {
         "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M"),
@@ -9656,7 +9660,7 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
         ("makro-analiz.html", "weekly"),
         ("teknik-analiz.html", "hourly"),
         ("borsapy-analiz.html", "hourly"),
-        ("portfolio.html", "daily"),
+        ("portfoy.html", "daily"),
         ("haftasonu.html", "weekly"),
         ("sinyal-karnesi.html", "daily"),
         ("haberler.html", "hourly"),
@@ -10011,7 +10015,7 @@ if __name__ == "__main__":
         logger.exception("[Hub] rapor turu arsiv sayfalari yazilamadi; "
                          "diger sayfalar etkilenmez.")
     if p and p.get("history"):
-        with open("portfolio.html", "w", encoding="utf-8") as f:
+        with open("portfoy.html", "w", encoding="utf-8") as f:
             f.write(build_portfolio_html(p))
 
     # Yeni bolumler: hepsi data/ klasorundeki gecmisle calisir, LLM gerekmez;
