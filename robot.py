@@ -5,7 +5,8 @@ Kaldırmak için: robot.py, robot.html, data/robot/, .github/workflows/robot.yml
 Başka hiçbir dosyaya bağımlılığı yoktur.
 
 Calisma duzeni:
-  - Kron hafta ici 10:00-18:45 TSİ arasinda (plus 19:15 kapanis ozeti) her 15 dakikada bir kosar.
+  - Kron hafta ici 10:00-18:45 TSİ arasinda (plus 19:15 kapanis ozeti) ~30 dakikada bir kosar
+    (2026-11-07: cron düşmelerine karşı oturum içi kendini-tetikleme zinciri; robot.yml).
   - SAAT KURALI (22.10.2026 kullanici karari): emirler yalnizca BIST sürekli işlem
     oturumunda yürütülür — hafta içi 10:00-18:00 TSİ, resmi tatiller hariç
     (islem_saati_mi). Seans dışı koşular (GitHub gecikmesi, elle tetikleme,
@@ -732,7 +733,7 @@ def _bugun_bolumu(durum):
     return (f"<h2 class='section-title'>Bugün ({_kisa_zaman(bugun)})</h2>"
             f"<div class='grid' style='gap:10px'>"
             f"<div class='pano-hucre'><div class='pano-etiket'>Fiyat kontrolü</div>"
-            f"<span id='bugun-kontrol'>{kontrol}</span> kez · piyasa saatlerinde 15 dakikada bir · {acik_etiket}</div>"
+            f"<span id='bugun-kontrol'>{kontrol}</span> kez · piyasa saatlerinde ~30 dakikada bir · {acik_etiket}</div>"
             f"{hucreler}</div>")
 
 
@@ -848,7 +849,7 @@ def dashboard_yaz(durum, sinyaller, notlar):
     icerik = f"""<div class="hero">
 <h1>İşlem Robotu <span class="badge">simülasyon</span></h1>
 <p>BIST 30 hisseleri üzerinde <b>kâğıt üzerinde işlem</b> (simülasyon) yapan otomatik robotun canlı defteri.
-Robot <b>piyasa saatlerinde 15 dakikada bir</b> canlı fiyattan (TradingView, ~15 dk gecikmeli) kontrol edilir:
+Robot <b>piyasa saatlerinde ~30 dakikada bir</b> canlı fiyattan (TradingView, ~15 dk gecikmeli) kontrol edilir:
 stop-loss ve hedef gün içinde tetiklenebilir, kesişim sinyalleri gün içi fiyattan değerlendirilir ve
 özkaynak eğrisi her kontrolde bir nokta kazanır. <u>Gerçek para kullanılmaz</u>; tüm emirler gerekçesiyle burada yayımlanır.
 <strong>Yatırım tavsiyesi değildir.</strong> Son güncelleme: {now} (İstanbul).</p>
@@ -910,7 +911,7 @@ def _dil_blok_html():
 # (dosyadan hash, elle duzenlemede bot sayfalarindan farkli ?v= uretiyordu).
 from site_css import CSS_SURUM as _CSS_SURUM
 
-_SITE_NAV = """<nav><a href="index.html">Ana Sayfa</a><a href="raporlar.html">Raporlar</a><a href="hisse/index.html">Hisseler</a><a href="derin-analiz.html">Derin Analiz</a><a href="makro-analiz.html">Makro Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="sinyal-karnesi.html">Sinyal Karnesi</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="haberler.html">Haberler</a><a href="sirket-haberleri.html">Şirket Haberleri</a><a href="portfolio.html">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu</a><a href="haftasonu-egitimi.html">Borsa Okulu</a><a href="takvim.html">📅 Takvim</a><a href="sozluk.html">Sözlük</a><a href="terimler.html">Terimler</a><a href="muhasebe-terimleri.html">Muhasebe Terimleri</a><a href="robot.html" class="active">İşlem Robotu</a></nav>"""
+_SITE_NAV = """<nav><a href="index.html">Ana Sayfa</a><a href="raporlar.html">Raporlar</a><a href="hisse/index.html">Hisseler</a><a href="derin-analiz.html">Derin Analiz</a><a href="makro-analiz.html">Makro Analiz</a><a href="teknik-analiz.html">Teknik Tarama</a><a href="sinyal-karnesi.html">Sinyal Karnesi</a><a href="borsapy-analiz.html">Borsapy Sinyal</a><a href="haberler.html">Haberler</a><a href="sirket-haberleri.html">Şirket Haberleri</a><a href="portfoy.html">Deneme Portföyü</a><a href="haftasonu.html">Hafta Sonu</a><a href="haftasonu-egitimi.html">Borsa Okulu</a><a href="takvim.html">📅 Takvim</a><a href="sozluk.html">Sözlük</a><a href="terimler.html">Terimler</a><a href="muhasebe-terimleri.html">Muhasebe Terimleri</a><a href="robot.html" class="active">İşlem Robotu</a></nav>"""
 # 2026-10-22: dil secici menunun arkasina DEGIL, asagidaki site-widgets satirina
 # tasinir — tum diger sayfalardaki gibi saat/hava solunda, secici sagda durur.
 
@@ -918,7 +919,7 @@ _SITE_ALTBAR = """<nav class="altbar" aria-label="Hızlı menü">
 <a href="index.html"><span class="i" aria-hidden="true">📊</span>Raporlar</a>
 <a href="teknik-analiz.html"><span class="i" aria-hidden="true">📈</span>Teknik</a>
 <a href="hisse/index.html"><span class="i" aria-hidden="true">🏦</span>Hisseler</a>
-<a href="portfolio.html"><span class="i" aria-hidden="true">💼</span>Portföy</a>
+<a href="portfoy.html"><span class="i" aria-hidden="true">💼</span>Portföy</a>
 <a href="robot.html" class="active"><span class="i" aria-hidden="true">🤖</span>Robot</a>
 <a href="haberler.html"><span class="i" aria-hidden="true">📰</span>Haberler</a>
 <a href="takvim.html"><span class="i" aria-hidden="true">📅</span>Takvim</a>
@@ -1232,7 +1233,7 @@ def _iskelet(title, icerik, guncelleme):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
-<meta name="description" content="BIST 30 kâğıt üzerinde işlem (simülasyon) robotunun canlı defteri: piyasa saatlerinde 15 dakikada bir güncellenen simüle AL/SAT emirleri, açık pozisyonlar, gün içi özkaynak eğrisi ve strateji kuralları. Gerçek para kullanılmaz; yatırım tavsiyesi değildir.">
+<meta name="description" content="BIST 30 kâğıt üzerinde işlem (simülasyon) robotunun canlı defteri: piyasa saatlerinde ~30 dakikada bir güncellenen simüle AL/SAT emirleri, açık pozisyonlar, gün içi özkaynak eğrisi ve strateji kuralları. Gerçek para kullanılmaz; yatırım tavsiyesi değildir.">
 <link rel="icon" href="/favicon-120.png" type="image/png" sizes="120x120">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://borsa-raporlari.pages.dev/robot">

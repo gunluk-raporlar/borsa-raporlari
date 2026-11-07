@@ -1,23 +1,28 @@
 name: Islem Robotu (Paper Trading)
 on:
   schedule:
-    # Hafta ici 07:00-15:45 UTC = 10:00-18:45 TSİ, her 15 dakikada bir canli fiyat
-    # kontrolu. Emirler yalnizca BIST oturumunda acilir: robot.py'deki islem_saati_mi
-    # kurali (22.10 kullanici karari) hafta ici 10:00-18:00 TSİ disinda ve resmi
-    # tatillerde emir acmaz; 18:15+ kosulari takip/kapanis fiyati raporu icindir.
-    - cron: '*/15 7-15 * * 1-5'
+    # 2026-11-07: cron slotları GitHub yükünde SESSİZCE düşüyor (6 Kasım'da
+    # */15 deseninin 36 slotunun 35'i düştü; oturum içinde tek koşu 17:41'e
+    # kaldı). Günün ilk koşuları için SAATLİK yedek cron (dakika-07, düşme
+    # penceresinin dışında) + aşağıdaki kendini-tetikleme zinciri: oturum
+    # içinde her koşu, sıradaki yarım-saat sınırına kadar uyuyup kendini
+    # bir kez daha tetikler (~30 dk cadence). Emirler yalnızca BIST oturumunda
+    # açılır: robot.py'deki islem_saati_mi kurali (22.10 kullanici karari)
+    # hafta içi 10:00-18:00 TSİ dışında ve resmi tatillerde emir açmaz.
+    - cron: '7 7-15 * * 1-5'
     # Kapanis kosusu: 16:15 UTC = 19:15 TR — gunun son ozkaynak noktasi/ozeti (emir acilmaz).
     - cron: '15 16 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: robot
   cancel-in-progress: false
 jobs:
   robot:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - name: Depoyu indir
         uses: actions/checkout@v4
@@ -40,7 +45,36 @@ jobs:
           fi
           # Tum robot kosulari [CI Skip]: durum gite yazilir ama Cloudflare
           # Pages build tetiklenmez (aylik kota korunur). Siteyi publish.yml
-          # gunde 2 kez (10:30 / 19:30 TR) yayinlar.
+          # gunde 4 kez yayinlar.
           git commit -m "Islem robotu guncellemesi [CI Skip]"
           git pull --rebase -X theirs origin main
           git push origin main
+      # 2026-11-07 (kullanici onayi): oturum ici zincir — cron düşmelerine
+      # karşı robot kendini tekrar tetikler. !cancelled(): robot/commit adımı
+      # başarısız olsa bile zincir ölmesin; elle iptal ve job-timeout'ta
+      # zincir saatlik cron yedeğine kalır.
+      - name: Oturum icinde kendini tetikle (sonraki yarim saat)
+        if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          GUN=$(TZ=Europe/Istanbul date +%u)
+          SAAT=$(TZ=Europe/Istanbul date +%H%M)
+          if [ "$GUN" -ge 6 ] || [ "$SAAT" -lt 1000 ] || [ "$SAAT" -gt 1755 ]; then
+            echo "Oturum disi (TSİ $SAAT) — zincir tetiklenmedi."
+            exit 0
+          fi
+          BEKLEYEN=$(gh run list --workflow=robot.yml --status queued --limit 1 --json databaseId --jq 'length')
+          if [ "${BEKLEYEN:-0}" -gt 0 ]; then
+            echo "Bekleyen robot kosusu var — tetiklenmedi (kuyruk şişmesin)."
+            exit 0
+          fi
+          UYKU=$(( 1800 - 10#$(TZ=Europe/Istanbul date +%M)*60 - 10#$(TZ=Europe/Istanbul date +%S) ))
+          echo "Sonraki yarim-saat sinirina $UYKU sn uyunacak, sonra tetiklenecek."
+          sleep "$UYKU"
+          if [ "$(TZ=Europe/Istanbul date +%H%M)" -gt 1755 ]; then
+            echo "Uyku sonrası oturum doldu — tetiklenmedi."
+            exit 0
+          fi
+          gh workflow run robot.yml --ref main && echo "Zincir: sonraki kosu tetiklendi."
