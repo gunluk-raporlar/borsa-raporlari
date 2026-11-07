@@ -4683,7 +4683,6 @@ def _kendi_ticker2(kok=""):
 (function() {{
   var kutu = document.getElementById('ticker-bant2');
   if (!kutu) return;
-  var kok = kutu.dataset.kok || '';
   var iz = document.getElementById('ticker-iz2');
 
   function bicim(g) {{
@@ -4707,7 +4706,8 @@ def _kendi_ticker2(kok=""):
       .then(function(r) {{ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }})
       .then(ciz)
       .catch(function() {{
-        if (adres.indexOf('/api/') !== -1) {{ yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }}
+        // JSON yedeği yalnızca site kökünde; göreli kok alt dizinlerde 404 üretiyordu (2026-11-07 denetim)
+        if (adres.indexOf('/api/') !== -1) {{ yukle('/piyasa-serit.json?t=' + Date.now()); return; }}
         if (iz) iz.innerHTML = '<span style="color:#94a3b8">Piyasa verileri geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
       }});
   }}
@@ -4730,7 +4730,6 @@ def _kendi_ticker(kok=""):
 </div>
 <script>
 (function() {{
-  var kok = document.getElementById('ticker-bant').dataset.kok || '';
   function ciz(veri) {{
     var iz = document.getElementById('ticker-iz');
     var ogeler = veri.hisseler.map(function(h) {{
@@ -4749,7 +4748,8 @@ def _kendi_ticker(kok=""):
       .then(function(r) {{ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }})
       .then(ciz)
       .catch(function() {{
-        if (adres.indexOf('/api/') !== -1) {{ yukle(kok + 'ticker.json?t=' + Date.now()); return; }}
+        // JSON yedeği yalnızca site kökünde; göreli kok alt dizinlerde 404 üretiyordu (2026-11-07 denetim)
+        if (adres.indexOf('/api/') !== -1) {{ yukle('/ticker.json?t=' + Date.now()); return; }}
         var iz2 = document.getElementById('ticker-iz');
         if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Fiyatlar geçici olarak yüklenemedi; kısa süre içinde yeniden denenecek.</span>';
       }});
@@ -4925,7 +4925,11 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     if _md_ayna_mi(yol):
         # İşaret dizgileri hreflang_ekle.py ile senkron (head: type="text/markdown",
         # footer: "LLM/ajanlar için Markdown sürümü") — değiştirirsen öbürünü de değiştir.
-        md_href = SITE_URL + "/index.md" if not (yol or "").strip("/") else tam_url + ".md"
+        # Klasör index sayfalarının (yol "/" ile biter, örn. "hisse/") md aynası
+        # <yol>index.md'dir; "<yol>.md" üretirsek bağlantı 404'tü (2026-11-07 denetim).
+        # SITE_URL sonda "/" ile bittiğinden kök dalda ayrı "/" eklenmez (//index.md buydu).
+        md_href = SITE_URL + "index.md" if not (yol or "").strip("/") else (
+            tam_url + "index.md" if (yol or "").endswith("/") else tam_url + ".md")
         md_ek = f'\n<link rel="alternate" type="text/markdown" href="{md_href}">'
     if not aciklama:
         aciklama = "Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi."
@@ -4939,7 +4943,7 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     # footer'da LLM/ajanlar icin .md baglantisi gorunur olsun.
     md_footer = ""
     if yol and _md_ayna_mi(yol):
-        tam_md = tam_url + ".md"
+        tam_md = tam_url + ("index.md" if (yol or "").endswith("/") else ".md")
         md_footer = (f'<br><span style="font-size:11.5px">📄 LLM/ajanlar için Markdown sürümü: '
                      f'<a href="{tam_md}" style="color:inherit">{tam_md.replace("https://", "")}</a></span>')
     return f"""<!DOCTYPE html>
@@ -5100,8 +5104,9 @@ def paylas_html(metin, url):
     ek = ""
     yol = url.removeprefix(SITE_URL).lstrip("/")
     if yol and _md_ayna_mi(yol):
+        md_hedef = url + ("index.md" if yol.endswith("/") else ".md")
         ek = (f'<span style="color:var(--muted)">|</span>'
-              f'<a class="paylas" href="{url}.md" target="_blank" rel="noopener" '
+              f'<a class="paylas" href="{md_hedef}" target="_blank" rel="noopener" '
               f'aria-label="Markdown sürümünü aç" '
               f'title="LLM/ajanlar için Markdown sürümü">MD</a>')
     return (f'<span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px">'
@@ -8854,7 +8859,7 @@ function terimSuz() {{
 
         # --- hub: terimler.html ---
         indis = " ".join(
-            f"<a href='terimler/{_grubu(v)}.html#t{i}' style='white-space:nowrap'>{v['terim']}</a>"
+            f"<a href='terimler/{_grubu(v)}.html#t{i}' style='overflow-wrap:anywhere'>{v['terim']}</a>"
             for i, v in enumerate(veri))
         icerik = f"""
 <div class="hero">
@@ -9001,7 +9006,7 @@ yatırım tavsiyesi değildir.</p>
         # --- hub: muhasebe-terimleri.html ---
         indis = " ".join(
             f"<a href='muhasebe-terimleri/{_harf_slug(v['bolum'] or '#')}.html#t{i}' "
-            f"style='white-space:nowrap'>{_duzelt(v['en'])}</a>"
+            f"style='overflow-wrap:anywhere'>{_duzelt(v['en'])}</a>"
             for i, v in enumerate(ifrs))
         icerik = f"""
 <div class="hero">

@@ -2609,16 +2609,31 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
         # Dil ad eslemesi kaynaktan: en/raporlar degil /en/reports yazilir.
         # Eski hali her /en/... dil blokunu ve hreflang alternatifini KIRIK
         # uretiyordu (dosyalar reports.html gibi adliydi) — 18.10 duzeltme.
+        # Dil kopyası diskte varsa listele (2026-11-07 denetim: çeviri
+        # gecikmesindeki tarihli sayfalar + /{dil}/temettu sitemap'te olmayanı
+        # duyuruyordu; hreflang alternatifleri de aynı süzgece bağlandı).
+        def _dil_dosyasi_var(d):
+            s = slug_degistir(sy, d)
+            p = s.strip("/")
+            if not p:
+                return (kok / d / "index.html").exists()
+            if s.endswith("/"):
+                return (kok / d / p / "index.html").exists()
+            return (kok / d / (p + ".html")).exists()
+
+        mevcut_diller = [k for k in ["tr"] + diller if k == "tr" or _dil_dosyasi_var(k)]
         alternatifler = [
             f'    <xhtml:link rel="alternate" hreflang="{DILLER[k]["hreflang"]}" '
             f'href="{SITE_URL}{k + "/" if k != "tr" else ""}{slug_degistir(sy, k)}"/>'
-            for k in ["tr"] + diller
+            for k in mevcut_diller
         ]
         alternatifler.append(
             f'    <xhtml:link rel="alternate" hreflang="x-default" href="{SITE_URL}{sy}"/>'
         )
         bloklar.append(_url_bloku(f"{SITE_URL}{sy}", attr, alternatifler))
         for d in diller:
+            if not _dil_dosyasi_var(d):
+                continue
             bloklar.append(_url_bloku(f"{SITE_URL}{d}/{slug_degistir(sy, d)}", attr, alternatifler))
             dil_sayisi += 1
 
