@@ -2966,7 +2966,8 @@ def master_cio_agent(state: AgentState):
     en_iyi = {}
     response = _metin_dogrula_ve_kaydet(
         response, " / gunluk rapor", snapshot=snapshot,
-        uydurma_esigi=UYDURMA_ESIGI, en_iyi=en_iyi)
+        uydurma_esigi=UYDURMA_ESIGI, en_iyi=en_iyi,
+        sinyaller=_bugunun_sinyalleri())
     if response is None:
         son_care_esik = UYDURMA_ESIGI * 2
         if en_iyi and en_iyi.get("adet", 10 ** 9) <= son_care_esik:
@@ -3427,7 +3428,8 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
                     icerik = rapor_son_islem(icerik)
                     dogrulanmis = _metin_dogrula_ve_kaydet(
                         icerik, " / derin analiz", snapshot=snapshot,
-                        uydurma_esigi=UYDURMA_ESIGI)
+                        uydurma_esigi=UYDURMA_ESIGI,
+                        sinyaller=_bugunun_sinyalleri())
                     if dogrulanmis is None:
                         son_hata = "uydurma yogun yanit (AMD)"
                         logger.warning("[Derin Analiz] AMD yaniti cok sayida hatali sayi iceriyordu; reddedilip Z.ai yedegine geciliyor.")
@@ -3993,6 +3995,7 @@ def _enflasyon_fakt(snapshot=None):
 DOGRULAMA_IST = {"isim": 0, "enflasyon": 0, "toplam_metin": 0, "endeks": 0,
                  "endeks_uyari": 0, "faiz": 0, "makro": 0, "piyasa": 0,
                  "reel_fisher": 0, "dolar": 0, "cari": 0,
+                 "sinyal": 0, "adx": 0,
                  "son_guncelleme": ""}
 
 
@@ -4028,7 +4031,28 @@ def _endeks_seviyeleri():
     return seviyeler
 
 
-def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None, en_iyi=None):
+def _bugunun_sinyalleri():
+    """Teknik taramanin genel sinyal haritasi: {hisse: 'AL'|'NÖTR'|...}.
+
+    Anlati metnindeki sinyal siniflarini tabloya hizalamak icin (2026-11-07
+    denetim: GARAN tabloda AL, anlatida GÜÇLÜ AL). Bugunun dosyasindan geriye
+    dogru son 7 gune bakar; hicbiri yoksa None (kural devre disi)."""
+    bugun = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).date()
+    for geri in range(7):
+        yol = os.path.join("data", "teknik",
+                           (bugun - timedelta(days=geri)).isoformat() + ".json")
+        try:
+            with open(yol, encoding="utf-8") as f:
+                veri = json.load(f)
+            return {h["hisse"]: h.get("genel") for h in veri
+                    if isinstance(h, dict) and h.get("hisse") and h.get("genel")}
+        except (OSError, ValueError):
+            continue
+    return None
+
+
+def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None, en_iyi=None,
+                             sinyaller=None):
     """Yayin oncesi deterministik dogrulama; ayni snapshot promptla paylasilir.
 
     uydurma_esigi verilirse (derin/makro analiz): dogrulamanin duzeltmek
@@ -4094,6 +4118,14 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
             reel_fisher=turetilmis.get("reel_fisher"),
             usd_getiri=turetilmis.get("usd_getiri_gunluk"),
             cari_denge=turetilmis.get("cari_denge"))
+        # Sinyal sinifi + ADX metin kurallari (2026-11-07 denetim): tabloya
+        # hizalama kosmetik duzeltmedir — uydurma esigine SAYILMAZ.
+        sonuc["sinyal_duzeltme"] = []
+        sonuc["adx_duzeltme"] = []
+        if sinyaller:
+            sonuc["metin"], sonuc["sinyal_duzeltme"] = dogrulama.sinyal_sinif_duzelt(
+                sonuc["metin"], sinyaller)
+        sonuc["metin"], sonuc["adx_duzeltme"] = dogrulama.adx_metin_duzelt(sonuc["metin"])
         if (sonuc["isim_duzeltme"] or sonuc["enflasyon_duzeltme"]
                 or sonuc["endeks_duzeltme"] or sonuc["faiz_duzeltme"]
                 or sonuc["makro_duzeltme"] or sonuc["piyasa_duzeltme"]
@@ -4138,6 +4170,13 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
         for uyari in sonuc.get("endeks_uyari", []):
             DOGRULAMA_IST["endeks_uyari"] += 1
             logger.warning("[Dogrulama%s] seviye mantigi: %s", etiket, uyari)
+        for kod, eski, yeni in sonuc["sinyal_duzeltme"]:
+            logger.warning("[Dogrulama%s] sinyal sinifi tabloya hizalandi (%s): %s -> %s",
+                           etiket, kod, eski, yeni)
+        for eski, yeni in sonuc["adx_duzeltme"]:
+            logger.warning("[Dogrulama%s] ADX ifadesi duzeltildi: %s -> %s", etiket, eski, yeni)
+        DOGRULAMA_IST["sinyal"] += len(sonuc["sinyal_duzeltme"])
+        DOGRULAMA_IST["adx"] += len(sonuc["adx_duzeltme"])
         duzeltme_sayisi = (len(sonuc["isim_duzeltme"]) + len(sonuc["enflasyon_duzeltme"])
                            + len(sonuc["endeks_duzeltme"]) + len(sonuc["faiz_duzeltme"])
                            + len(sonuc["makro_duzeltme"]) + len(sonuc["piyasa_duzeltme"])
@@ -4344,7 +4383,7 @@ def _radyo_kutusu(kok=""):
 _SITE_ARAMA_KUTUSU = """
 <div class="arama-kutusu">
     <div style="display: flex; gap: 8px;">
-        <input type="text" id="site-arama-giris" placeholder="Hisse, konu veya tarih ara…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <input type="text" id="site-arama-giris" aria-label="Site içi arama" placeholder="Hisse, konu veya tarih ara…" style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
         <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Ara</button>
     </div>
     <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
@@ -6131,7 +6170,7 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     icerik = f"""
 <div class="hero">
 <h1>BIST 30 Günlük Piyasa Raporları</h1>
-<p>Hafta içi her sabah 07:00'de üretilmeye başlayan, ~08:00'de siteye düşen yapay zeka destekli BIST 30 analizleri ve sanal portföy takibi. (Hafta sonu yayın yok — piyasa kapalı.)</p>
+<p>Hafta içi her gün, piyasalar açılmadan başlayan yayınlarımız; finans alanına odaklanan yapay zekâ modelleri tarafından profesyonelce yazılan BIST 30 borsa raporları, hisselerin teknik ve temel analizleri ile makroekonomik değerlendirmeler ve sanal portföy takibiyle gün boyunca yayımlanır.</p>
 </div>
 {arsiv_bolumu}
 {derin_bolumu}

@@ -219,7 +219,7 @@ def _ulke_anahtari(cumle, sayi_pos):
 
 
 def enflasyon_duzelt(metin, oran_yuzde, tolerans=0.005, oranlar=None,
-                     oranlar_aylik=None, izinli=None):
+                     oranlar_aylik=None, izinli=None, hedef_disi=None):
     """Enflasyon/TUFE yuzdelerini ulke ve gosterge baglamindan duzeltir.
 
     `oranlar` = {"tr": .., "us": .., "eu": ..}. Verilmedigi ulke icin
@@ -270,7 +270,11 @@ def enflasyon_duzelt(metin, oran_yuzde, tolerans=0.005, oranlar=None,
                     continue
                 # GERCEK DEGER KORUMASI: sayi snapshot'in baska bir satirinda
                 # gercekse (or. ABD enflasyonu %3,4) dokunulmaz (2026-10-07).
-                if _gercek_mi(deger, izinli):
+                # İSTİSNA (2026-11-07 denetim): TURETILMIS metrik değerleri
+                # (reel faiz 4,8 gibi) başka metrik bağlamında gerçek
+                # sayılmaz — "Enflasyonun %4,8'e yükselmesi" düzeltilir;
+                # buna karşılık yuvarlama varyantları (29,7~29,73) korunur.
+                if _gercek_mi(deger, izinli) and not _hedef_disinda(deger, hedef_disi):
                     continue
                 # Ayni ulke icin yalnizca enflasyona en yakin yuzdeyi duzelt.
                 if anahtar not in en_iyi or d_enf < en_iyi[anahtar][0]:
@@ -1404,9 +1408,22 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
     Hicbir durumda istisna yukseltmez; cagiran taraf zaten sarmaladi.
     """
     metin, isim = isim_duzelt(metin, adlar)
+    # Turetilmis metrik degerleri (reel faiz/kur-getirisi/cari denge) baska
+    # metrik baglaminda gercek sayilmaz (2026-11-07, hedefli kural).
+    turev_hedef_disi = set()
+    for blok in (reel_fisher or {}).values():
+        for alan in ("tam", "yaklasik"):
+            v = (blok or {}).get(alan) if isinstance(blok, dict) else None
+            if isinstance(v, (int, float)):
+                turev_hedef_disi.add(float(v))
+    turev_hedef_disi.update(float(v) for v in (usd_getiri or {}).values()
+                            if isinstance(v, (int, float)))
+    cd = (cari_denge or {}).get("deger")
+    if isinstance(cd, (int, float)):
+        turev_hedef_disi.add(float(cd))
     metin, enf = enflasyon_duzelt(metin, enflasyon_yuzde, oranlar=enflasyon_oranlari,
                                   oranlar_aylik=enflasyon_aylik_oranlari,
-                                  izinli=izinli_degerler)
+                                  izinli=izinli_degerler, hedef_disi=turev_hedef_disi)
     metin, faiz = faiz_duzelt(metin, faiz_oranlari, izinli=izinli_degerler)
     metin, makro = makro_gosterge_duzelt(metin, makro_gostergeleri,
                                          izinli=izinli_degerler)
@@ -1425,6 +1442,76 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
             "faiz_duzeltme": faiz, "makro_duzeltme": makro,
             "piyasa_duzeltme": piyasa, "reel_fisher_duzeltme": fisher,
             "dolar_duzeltme": dolar, "cari_duzeltme": cari}
+
+
+# --- Sinyal sinifi hizalama + ADX metin kurallari (2026-11-07 denetim) ----
+# Günlük raporun tablosu sinyal sınıfını veriden üretir; anlatıyı yazan LLM
+# sınıfı kaydırabiliyor (2026-11-06: GARAN tabloda AL, anlatıda GÜÇLÜ AL).
+# Tablo deterministik olduğundan metin tabloya hizalanır.
+
+_SINYAL_SINIFLARI = ("GÜÇLÜ AL", "GÜÇLÜ SAT", "AL", "NÖTR", "SAT")
+_SINYAL_DESEN = re.compile(
+    r'(<a href="[^"]*hisse/([A-Z0-9]{2,6})"[^>]*>\2</a>\')'
+    r'([a-zçğıöşü]{1,4})?\s+'
+    r'(GÜÇLÜ AL|GÜÇLÜ SAT|AL|NÖTR|SAT)\s+sinyal')
+
+
+def _hedef_disinda(deger, hedef_disi, tolerans=0.005):
+    """Deger, türetilmiş metrik değerlerinden birine tolerans penceresi
+    içinde mi? (ham float farkları birebir eşleşmeyebilir — 43.0-38.2
+    hesabının sonucu 4.799999999999997'dir; birebir eşitlik üretimde
+    hiç tutmaz, 2026-11-07 architect bulgusu.)"""
+    if not hedef_disi:
+        return False
+    for h in hedef_disi:
+        if not isinstance(h, (int, float)):
+            continue
+        if abs(deger - h) <= tolerans or (h and abs(deger - h) <= tolerans * abs(h)):
+            return True
+    return False
+
+
+def sinyal_sinif_duzelt(metin, sinyaller):
+    """Anlatidaki sinyal sinifini tablo verisiyle hizalar (2026-11-07).
+
+    `sinyaller` = {"GARAN": "AL", ...} (teknik taramanin 'genel' alani).
+    Desen: <a ...hisse/KOD>KOD</a>'nın <SINIF> sinyal... — sınıf veriyle
+    uyuşmuyorsa metin veriye eşitlenir. Verisi olmayan hisse ve çoğul
+    ifadeler ("güçlü alım sinyalleri") dokunulmaz. Dönüş:
+    (metin, [(kod, eski, yeni), ...]).
+    """
+    if not metin or not sinyaller:
+        return metin, []
+    duzeltmeler = []
+
+    def _onar(m):
+        kod = m.group(2)
+        gercek = sinyaller.get(kod)
+        if gercek not in _SINYAL_SINIFLARI or gercek == m.group(4):
+            return m.group(0)
+        duzeltmeler.append((kod, m.group(4), gercek))
+        return m.group(1) + (m.group(3) or "") + " " + gercek + " sinyal"
+
+    return _SINYAL_DESEN.sub(_onar, metin), duzeltmeler
+
+
+_ADX_DESEN = re.compile(r"\b(?:negatif|eksi)\s+ADX", re.I)
+
+
+def adx_metin_duzelt(metin):
+    """'negatif ADX' ifadesini onarir — ADX (trend gücü) 0-100 aralığındadır
+    ve negatif olamaz (2026-11-06 derin analiz: 'yüksek negatif ADX').
+    Bağlama en yakın anlamlı düzeltme 'yüksek ADX'tir. Dönüş:
+    (metin, [(eski, yeni), ...])."""
+    if not metin:
+        return metin, []
+    duzeltmeler = []
+
+    def _onar(m):
+        duzeltmeler.append((m.group(0), "yüksek ADX"))
+        return "yüksek ADX"
+
+    return _ADX_DESEN.sub(_onar, metin), duzeltmeler
 
 
 if __name__ == "__main__":
