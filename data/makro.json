@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-11-07 22:24",
+ "guncelleme": "2026-11-08 22:32",
  "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + EVDS(5) + Resmi AB/ABD(25)",
  "gostergeler": [
   {
@@ -555,12 +555,12 @@
   {
    "ulke": "ABD",
    "ad": "İmalat PMI",
-   "deger": 47.1,
+   "deger": 54.6,
    "birim": "puan",
-   "donem": "2026-08-28",
-   "tahmin": 58.0,
-   "onceki": 57.6,
-   "kaynak_baslik": "Chicago PMI",
+   "donem": "2026-09-01",
+   "tahmin": 55.2,
+   "onceki": 55.6,
+   "kaynak_baslik": "ISM Manufacturing PMI",
    "kaynak_periyot": "Aug. 2026",
    "frekans": "aylık"
   },
@@ -669,13 +669,13 @@
   {
    "ulke": "ABD",
    "ad": "JOLTs Açık İş Sayısı",
-   "deger": 7.182,
+   "deger": 7.335,
    "birim": "milyon kişi",
-   "donem": "2026-08-04",
-   "tahmin": 7.4,
-   "onceki": 7.537,
+   "donem": "2026-09-01",
+   "tahmin": 7.3,
+   "onceki": 7.182,
    "kaynak_baslik": "JOLTs Job Openings",
-   "kaynak_periyot": "Jun. 2026",
+   "kaynak_periyot": "Jul. 2026",
    "frekans": "aylık"
   },
   {
@@ -1007,28 +1007,28 @@
    "ad": "Politika faizi",
    "deger": 4.0,
    "birim": "%",
-   "donem": "2026-11-07",
+   "donem": "2026-11-08",
    "tahmin": 4.0,
    "onceki": 4.0,
    "kaynak_baslik": "FRED Fed fon ust siniri",
-   "kaynak_periyot": "2026-11-07",
+   "kaynak_periyot": "2026-11-08",
    "frekans": "olay",
    "teyit": "FRED",
    "kaynak_durumu": "FRED resmi verisi"
   },
   {
    "ulke": "ABD",
-   "ad": "Büyüme (yıllık)",
-   "deger": 2.1,
-   "birim": "%",
-   "donem": "2026-09-30",
-   "kaynak_durumu": "FRED resmi verisi",
-   "tahmin": null,
-   "onceki": 2.2,
-   "kaynak_baslik": "FRED reel GSYH (yıllık)",
-   "kaynak_periyot": "2026-09-30",
+   "ad": "Cari denge",
+   "deger": -246.0,
+   "birim": "milyar $",
+   "donem": "2026-06-30",
+   "tahmin": -255.0,
+   "onceki": -212.6,
+   "kaynak_baslik": "BEA ITA cari denge",
+   "kaynak_periyot": "2026-06-30",
    "frekans": "üç aylık",
-   "teyit": "FRED"
+   "teyit": "BEA",
+   "kaynak_durumu": "BEA resmi verisi"
   },
   {
    "ulke": "ABD",
@@ -1046,6 +1046,20 @@
   },
   {
    "ulke": "ABD",
+   "ad": "Büyüme (yıllık)",
+   "deger": 2.1,
+   "birim": "%",
+   "donem": "2026-09-30",
+   "kaynak_durumu": "FRED resmi verisi",
+   "tahmin": null,
+   "onceki": 2.2,
+   "kaynak_baslik": "FRED reel GSYH (yıllık)",
+   "kaynak_periyot": "2026-09-30",
+   "frekans": "üç aylık",
+   "teyit": "FRED"
+  },
+  {
+   "ulke": "ABD",
    "ad": "Enflasyon (yıllık)",
    "deger": 3.7,
    "birim": "%",
@@ -1057,20 +1071,6 @@
    "frekans": "aylık",
    "teyit": "BLS",
    "kaynak_durumu": "BLS resmi verisi"
-  },
-  {
-   "ulke": "ABD",
-   "ad": "Cari denge",
-   "deger": -246.0,
-   "birim": "milyar $",
-   "donem": "2026-06-30",
-   "tahmin": -255.0,
-   "onceki": -212.6,
-   "kaynak_baslik": "BEA ITA cari denge",
-   "kaynak_periyot": "2026-06-30",
-   "frekans": "üç aylık",
-   "teyit": "BEA",
-   "kaynak_durumu": "BEA resmi verisi"
   },
   {
    "ulke": "ABD",
@@ -1091,11 +1091,11 @@
    "ad": "Politika faizi",
    "deger": 2.65,
    "birim": "%",
-   "donem": "2026-11-07",
+   "donem": "2026-11-08",
    "tahmin": 2.65,
    "onceki": 2.65,
    "kaynak_baslik": "ECB MRO ana refinansman faizi",
-   "kaynak_periyot": "2026-11-07",
+   "kaynak_periyot": "2026-11-08",
    "frekans": "olay",
    "teyit": "ECB",
    "kaynak_durumu": "ECB resmi verisi"
