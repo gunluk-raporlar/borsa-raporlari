@@ -26,6 +26,11 @@ jobs:
     steps:
       - name: Depoyu indir
         uses: actions/checkout@v4
+      - name: Son durumla senkron (hub yarisi önlemi)
+        # 2026-11-08 vakasi: bu kosu checkout'u, egitim kosusunun ders commit'inden
+        # ~1 dk ONCE yapildi; hub tazelemesi bayat agactan yapilip bugunun ders
+        # kartini sildi. Üretimden ÖNCE çekmek yarış penceresini kapatır.
+        run: git pull --rebase origin main
       - name: Python kur
         uses: actions/setup-python@v5
         with:
@@ -72,5 +77,7 @@ jobs:
             exit 0
           fi
           git commit -m "Hafta sonu gundemi guncellemesi [CI Skip]"
-          git pull --rebase -X theirs origin main
+          # -X ours: rebase'de "ours" = origin (taze taraf). -X theirs bayat
+          # agactan gelen dosyayi origin'in UZERINE yazardı (2026-11-08 vakasi).
+          git pull --rebase -X ours origin main
           git push origin main

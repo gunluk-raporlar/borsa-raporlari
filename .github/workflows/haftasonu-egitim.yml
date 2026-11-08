@@ -26,6 +26,10 @@ jobs:
     steps:
       - name: Depoyu indir
         uses: actions/checkout@v4
+      - name: Son durumla senkron (hub yarisi önlemi)
+        # 2026-11-08 vakasi: ayni hub'i tazeleyen iki hafta sonu kosusu
+        # yarisiyor; üretimden ÖNCE çekmek bayat agac riskini kapatır.
+        run: git pull --rebase origin main
       - name: Python kur
         uses: actions/setup-python@v5
         with:
@@ -72,5 +76,7 @@ jobs:
             exit 0
           fi
           git commit -m "Borsa okulu dersi guncellemesi [CI Skip]"
-          git pull --rebase -X theirs origin main
+          # -X ours: rebase'de "ours" = origin (taze taraf); -X theirs bayat
+          # hub'i geri yazardı (2026-11-08 vakasi).
+          git pull --rebase -X ours origin main
           git push origin main
