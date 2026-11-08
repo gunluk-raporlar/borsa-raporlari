@@ -3,6 +3,12 @@ on:
   schedule:
     # Hafta ici 07:00-15:30 UTC = 10:00-18:30 Turkiye saati, her 30 dakikada
     - cron: '*/30 7-15 * * 1-5'
+    # Hafta ici 16:00 UTC = 19:00 Turkiye saati — resmi kapanis sonrasi tazelik.
+    # 2026-11-08 bulgusu: piyasa-serit.json endeks verisi (borsapy gun satiri)
+    # oturum icinde donuyor; Cuma 16:15 degerinde kaldi, resmi kapanis (14290,21)
+    # statik dosyaya ancak ertesi sabah koşusuyla yazılacakti. Kapanis sonrasi
+    # bu kosu serit/ticker/teknik/portfoy'u resmi kapanisla kilitler.
+    - cron: '0 16 * * 1-5'
   workflow_dispatch:
 permissions:
   contents: write
