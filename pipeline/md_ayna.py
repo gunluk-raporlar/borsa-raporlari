@@ -44,7 +44,7 @@ eder (embed.py _MetinCikarici ile ayni kume mantigi).
 import os
 import re
 import sys
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from html.parser import HTMLParser
 
 ATLANAN = {"script", "style", "noscript", "svg", "head", "nav", "header",
@@ -611,10 +611,15 @@ def html_md(yol, rel=None, dil="tr", kok=None, planli=None):
     c = _MdCikarici(kok=kok, dil=dil, planli=planli, sayfa_rel=rel_temiz)
     c.yalniz_ana = "<main" in ham
     c.feed(ham)
+    # 2026-11-08: sayfanin gercek <title>'i (titlematchScore baslik isi) front
+    # matter'a seo_title olarak da yazilir — H1 tabanli title aynen kalir,
+    # ajanlar sorgu-uyumlu tam basligi gorur. Eski davranis korunur: H1 yoksa
+    # <title> title'a duser.
+    m_seo = re.search(r"<title>(.*?)</title>", ham, re.S | re.I)
+    seo_title = re.sub(r"\s+", " ", m_seo.group(1)).strip() if m_seo else ""
     baslik = c.baslik
     if not baslik:
-        m = re.search(r"<title>(.*?)</title>", ham, re.S | re.I)
-        baslik = re.sub(r"\s+", " ", m.group(1)).strip() if m else os.path.basename(yol)
+        baslik = seo_title or os.path.basename(yol)
     govde = "\n".join(c.satirlar)
     govde = re.sub(r"\n{3,}", "\n\n", govde).strip()
     if not govde:
@@ -625,6 +630,20 @@ def html_md(yol, rel=None, dil="tr", kok=None, planli=None):
     govde = _baslik_kirp(govde)
     govde = re.sub(r"([+\-−])%(\d[\d,]*)", r"\1\2%", govde)
     govde = re.sub(r"%([+\-−])(\d[\d,]*)", r"\1\2%", govde)
+    # 2026-11-08 (ajan-katman denetimi): UI artıkları md'yi kirletiyor —
+    # salt-arayüz satırları atılır, bağlantı metinlerinin sonundaki "→"
+    # düşürülür, şerit yönlendirme cümlesi çıkarılır.
+    _UI_SATIRLAR = {
+        "↔ Grafiği sağa-sola kaydırabilirsiniz",
+        "Grafiği sağa-sola kaydırabilirsiniz",
+    }
+    govde = "\n".join(
+        satir for satir in govde.split("\n")
+        if satir.strip() not in _UI_SATIRLAR
+    )
+    govde = govde.replace("Canlı fiyatlar için üstteki fiyat şeridine bakınız. ", "")
+    govde = govde.replace("Canlı fiyatlar için üstteki fiyat şeridine bakınız,", "")
+    govde = re.sub(r"\s*→\s*\]", "]", govde)
     # 2026-11-04 (GLM): eski artifact'lerdeki sesli-bülten kartı bugünkü
     # "card" sınıflıydı — oyuncusuz kalan "🔊 Sesli bülten" etiketi satırı
     # md'yi kirletir; yeni üretimde kart zaten ATLA_SINIF'ta.
@@ -682,14 +701,30 @@ def html_md(yol, rel=None, dil="tr", kok=None, planli=None):
     if dil == "tr" and "/" in rel_temiz and rel_temiz.split("/")[0] == "hisse":
         semboller.add(rel_temiz.split("/")[1])
     semboller = sorted(semboller)[:40]
+    # 2026-11-08 (ajan-katman denetimi, kullanıcı kararı): tazelik alanları —
+    # generated_at gerçek üretim anı (TRT, ISO 8601); data_as_of gövdedeki en
+    # yeni ISO tarih (yaklaşık değerdir; canlı fiyat damgası ticker.json'da).
+    _simdi = datetime.now(timezone(timedelta(hours=3)))
+    govde_tarihleri = re.findall(r"\d{4}-\d{2}-\d{2}", govde)
     fm = ["---", 'title: "%s"' % baslik_md.replace('"', "'")]
+    if seo_title and seo_title != baslik_md:
+        fm.append('seo_title: "%s"' % seo_title.replace('"', "'"))
     if m_t:
         fm.append("date: " + m_t.group(0))
     fm += ['canonical: "' + canli + '"',
            'markdown: "' + md_url + '"',
            "language: " + dil,
+           'generated_at: "' + _simdi.strftime("%Y-%m-%dT%H:%M:%S+03:00") + '"',
            'generated_by: "' + gen_by + '"',
+           'update_schedule: "hafta içi günlük üretilir; fiyat şeritleri ~30 dakikada bir ticker.json ile tazelenir"',
+           'number_format: "tr-TR (binlik: nokta, ondalık: virgül); ham değerler ticker.json\'da"',
+           'llms_txt: "' + SITE_URL + '/llms.txt"',
            'disclaimer: "' + feragat + '"']
+    if govde_tarihleri:
+        fm.append("data_as_of: " + max(govde_tarihleri))
+    if rel_temiz == "index":
+        fm.append('translations: {en: "' + SITE_URL + '/en/", de: "' + SITE_URL +
+                  '/de/", ru: "' + SITE_URL + '/ru/", zh: "' + SITE_URL + '/zh/"}')
     if m_dm:
         fm.append('updated: "' + m_dm.group(1) + '"')
     if semboller:

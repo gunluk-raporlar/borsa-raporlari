@@ -1,20 +1,29 @@
-# Borsa Raporları
+# Borsa Raporları — BIST 30 Hisse Analiz Sistemi
 
-> Yapay zeka destekli günlük BIST 30 analiz platformu: teknik tarama ve osilatör sinyalleri, model portföy, makroekonomik değerlendirme, günlük piyasa raporları ve sesli bülten. Raporlar her iş günü sabah güncellenir.
+> BIST 30 endeksindeki 30 hissenin tamamına odaklanan, yapay zekâ destekli günlük borsa analiz sistemi: teknik tarama ve AL/SAT sinyalleri, derin piyasa analizi, makroekonomik değerlendirme, model portföy, hisse başına haber takibi, hafta sonu eğitim dersleri ve sesli bülten. Raporlar her işlem günü üretilir.
 
 İçerik Türkçedir; İngilizce, Almanca, Rusça ve Çince sürümleri de aynı yapıda sunulur. Tüm içerik bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.
 
+Bu dosya el ile yönetilir: veri tazeliği ticker.json / piyasa-serit.json dosyalarının "guncelleme" ve "guncelleme_iso" alanlarındadır; dosyanın derleme zamanı en alttaki "son_derleme" satırıdır.
+
 ## Günlük içerik
 
-- [BIST 30 Günlük Raporlar](https://borsa-raporlari.pages.dev/): günün özeti, endeks durumu ve rapor arşivi
+- [BIST 30 Günlük Borsa Raporu ve Hisse Analizi](https://borsa-raporlari.pages.dev/): günün özeti, endeks durumu ve rapor arşivi
 - [Günlük Raporlar](https://borsa-raporlari.pages.dev/raporlar): tarih bazlı günlük piyasa raporları
 - [Derin Analiz](https://borsa-raporlari.pages.dev/derin-analiz): günlük derin piyasa analizi
 - [Makroekonomik Değerlendirme](https://borsa-raporlari.pages.dev/makro-analiz): makro göstergeler ve yorum
 - [Teknik Tarama](https://borsa-raporlari.pages.dev/teknik-analiz): BIST 30 teknik tarama sonuçları
 - [Borsapy Sinyalleri](https://borsa-raporlari.pages.dev/borsapy-analiz): hisse bazlı sinyal tablosu
-- [Sinyal Karnesi](https://borsa-raporlari.pages.dev/sinyal-karnesi): AL sinyallerinin backtest performansı
-- [Deneme Portföyü](https://borsa-raporlari.pages.dev/portfoy): 100.000 TL sanal model portföy
+- [Sinyal Karnesi](https://borsa-raporlari.pages.dev/sinyal-karnesi): AL sinyallerinin backtest performansı (yöntem sürümü 2: sinyal gününü izleyen ilk işlem günü kapanışından giriş, 5 işlem günü ufku; ham veri `sinyal-karnesi.json`)
+- [Deneme Portföyü](https://borsa-raporlari.pages.dev/portfoy): 100.000 TL sanal model portföy (temettüler net nakit olarak değere eklenir; bedelsiz/bölünme fiyat-çarpanıyla işlenir)
 - [Hafta Sonu Gündemi](https://borsa-raporlari.pages.dev/haftasonu): hafta içi gelişmelerin değerlendirmesi
+- [Borsa Okulu](https://borsa-raporlari.pages.dev/haftasonu-egitimi): hafta sonu borsa eğitimi dersleri (yapay zekâ eğitmeni, gerçek BIST verisiyle)
+
+## BIST 30 Hisse Kapsamı
+
+Sistem şu 30 hisseyi her işlem günü tarar. Her hissenin kendi sayfası `/hisse/<KOD>` adresindedir (son fiyat, teknik sinyaller, 7 günlük haberler, rapor arşivi değerlendirmeleri):
+
+AEFES (Anadolu Efes) · AKBNK (Akbank) · ASELS (Aselsan) · ASTOR (Astor Enerji) · BIMAS (Bim Birleşik Mağazalar) · EKGYO (Emlak Konut GYO) · ENKAI (Enka İnşaat) · EREGL (Ereğli Demir Çelik) · FROTO (Ford Otosan) · GARAN (Garanti BBVA) · GUBRF (Gübre Fabrikaları) · ISCTR (Türkiye İş Bankası) · KCHOL (Koç Holding) · KRDMD (Kardemir) · MGROS (Migros) · PETKM (Petkim) · PGSUS (Pegasus) · SAHOL (Sabancı Holding) · SASA (Sasa Polyester) · SISE (Şişecam) · TAVHL (TAV Holding) · TCELL (Turkcell) · THYAO (Türk Hava Yolları) · TOASO (Tofaş) · TRALT (Türk Altın İşletmeleri) · TRMET (TR Anadolu Metal Madencilik İşletmeleri A.Ş.) · TTKOM (Türk Telekom) · TUPRS (Tüpraş) · VAKBN (VakıfBank) · YKBNK (Yapı Kredi)
 
 ## Hisse ve veri
 
@@ -22,18 +31,20 @@
 - [Ekonomik Takvim](https://borsa-raporlari.pages.dev/takvim): yaklaşan ekonomik veriler ve etkinlikler
 - [Haber Arşivi](https://borsa-raporlari.pages.dev/haberler): piyasa haberleri
 - [Şirket Haberleri](https://borsa-raporlari.pages.dev/sirket-haberleri): şirket bazlı haberler
+- [Temettü Merkezi](https://borsa-raporlari.pages.dev/temettu): temettü takvimi ve ödeme geçmişi
 
 ## Kaynaklar
 
 - [Borsa Sözlüğü](https://borsa-raporlari.pages.dev/sozluk): borsa terimleri sözlüğü
 - [Terimler ve Tanımlar](https://borsa-raporlari.pages.dev/terimler): teknik ve piyasa terimleri
-- [Muhasebe Terimleri](https://borsa-raporlari.pages.dev/muhasebe-terimleri): finansal tablo terimleri (1.691 terim; harf gruplarına bölünmüş 18 sayfada: `/muhasebe-terimleri/A` … `/muhasebe-terimleri/Y` — URL'ler büyük harfle başlar)
-- [Radyo / Podcast](https://borsa-raporlari.pages.dev/radyo/): günlük piyasa bülteninin sesli sürümü
+- [Muhasebe Terimleri Sözlüğü](https://borsa-raporlari.pages.dev/muhasebe-terimleri): finansal tablo terimleri (1.691 terim; harf gruplarına bölünmüş 18 sayfada: `/muhasebe-terimleri/A` … `/muhasebe-terimleri/Y` — URL'ler büyük harfle başlar)
+- [İşlem Robotu](https://borsa-raporlari.pages.dev/robot): sanal işlem robotunun panosu ve işlem günlüğü (eğitim amaçlı)
+- [Radyo / Podcast](https://borsa-raporlari.pages.dev/radyo/): günlük piyasa bülteninin yapay zekâ sunuculu sesli sürümü
 
 ## Diğer diller
 
 - [English](https://borsa-raporlari.pages.dev/en/) · [Deutsch](https://borsa-raporlari.pages.dev/de/) · [Русский](https://borsa-raporlari.pages.dev/ru/) · [中文](https://borsa-raporlari.pages.dev/zh/)
-- [Site Haritası](https://borsa-raporlari.pages.dev/sitemap.xml): tüm sayfaların listesi
+- [Site Haritası](https://borsa-raporlari.pages.dev/sitemap.xml): hreflang'li tüm sayfa URL'leri ve lastmod değerleri
 
 ## Markdown sürümleri (ajanlar için)
 
@@ -44,6 +55,8 @@ sinyalleri, sinyal karnesi, portföy, hafta sonu, haberler, şirket haberleri,
 takvim, sözlükler, temettü merkezi ve tüm tarihli rapor/hisse sayfaları.
 Örnek: `https://borsa-raporlari.pages.dev/sozluk.md`,
 `https://borsa-raporlari.pages.dev/raporlar/2026-11-04.md`.
+Her `.md` dosyasının front matter'ında `generated_at` (üretim anı, ISO 8601 +03:00),
+`data_as_of` (gövdedeki en yeni veri tarihi) ve `update_schedule` alanları vardır.
 Tüm tarihli raporların `.md` bağlantı listesi:
 `https://borsa-raporlari.pages.dev/raporlar.md`.
 
@@ -51,14 +64,17 @@ Tüm tarihli raporların `.md` bağlantı listesi:
 
 Bu dosyalar insan sayfası DEĞİLDİR; yapay zeka ajanlarının ve otomasyonların
 doğrudan JSON çekmesi içindir. Alan adları kararlı tutulur; güncelleme saatleri
-her dosyanın "guncelleme" alanındadır.
+her dosyanın "guncelleme" alanındadır (ISO 8601 sürümü: "guncelleme_iso").
 
-- [ticker.json](https://borsa-raporlari.pages.dev/ticker.json): BIST 30 hisselerinin son fiyatları, günlük değişim yüzde ve sinyalleri — alanlar: `guncelleme, etiket, hisseler[{h, f, d, s}]` (h=kod, f=fiyat TL, d=günlük %, s=sinyal)
-- [piyasa-serit.json](https://borsa-raporlari.pages.dev/piyasa-serit.json): endeksler (BIST 30/100), altın, dolar, euro ve gram altın — alanlar: `guncelleme, etiket, gostergeler[{k, ad, f, d, b, o}]` (o=ondalık basamak)
+- [ticker.json](https://borsa-raporlari.pages.dev/ticker.json): BIST 30 hisselerinin son fiyatları, günlük değişim yüzde ve sinyalleri — alanlar: `guncelleme, guncelleme_iso, etiket, hisseler[{h, f, d, s}]` (h=kod, f=fiyat TL, d=günlük %, s=sinyal). `s` olası değerleri: `GÜÇLÜ AL | AL | NÖTR | SAT | GÜÇLÜ SAT` — otomatik teknik tarama çıktısıdır (çok göstergeli: EMA, Wave Trend, regresyon kanalı); yatırım tavsiyesi değildir, Borsapy sinyallerinden bağımsızdır
+- [piyasa-serit.json](https://borsa-raporlari.pages.dev/piyasa-serit.json): BIST 30 (XU030), BIST 100 (XU100), gram altın (GRAM), dolar (USDTRY) ve dolar bazlı BIST 30 (XU030USD) — alanlar: `guncelleme, guncelleme_iso, etiket, kaynak, gostergeler[{k, ad, f, d, b, o}]` (k=simge, ad=görünen ad, f=fiyat, d=günlük %, b=birim, o=ondalık basamak). Günlük değişim hesaplanamadığında GRAM için `d: null` gelebilir
 - [site-arama.json](https://borsa-raporlari.pages.dev/site-arama.json): sitenin tam arama indeksi — alanlar: `guncelleme, sayfalar[{b, u, t}]` (b=başlık, u=göreceli URL, t=metin alıntıları); site içi arama bu veriyle çalışır
+- [sinyal-karnesi.json](https://borsa-raporlari.pages.dev/sinyal-karnesi.json): teknik tarama AL sinyallerinin tam backtest dökümü — alanlar: `guncelleme, guncelleme_iso, yontem_surumu, giris_kurali, cikis_kurali, maliyet_varsayimi, ozet[{n, ortalama_getiri_yuzde, medyan_getiri_yuzde, isabet_yuzde, net_ortalama_yuzde, net_isabet_yuzde, profit_factor, evren_ortalama_yuzde, alpha_puan, evreni_yenen}], kayitlar[{tarih, hisse, giris_t, giris, cikis_t, cikis, getiri, evren, fark}]`. Varsayımsal testtir; yatırım tavsiyesi değildir
 - [sitemap.xml](https://borsa-raporlari.pages.dev/sitemap.xml): hreflang'li tüm sayfa URL'leri ve lastmod değerleri
 - [raporlar.xml](https://borsa-raporlari.pages.dev/raporlar.xml): günlük raporların RSS beslemesi (item linkleri .md)
 
 Not: Ticker/şerit verileri iş günü ~30 dakikada bir güncellenir; sayfalardaki
 kayan şeritler aynı veriyi görüntüler. Sayfa HTML'inde şerit değerleri
 üretim anında gömülüdür (JS çalıştırmayan okuyucular son bilinen veriyi görür).
+"ozet.n" ve "isabet_yuzde" gibi oranlar küçük örneklemeye dayanır; karnede
+"giris" fiyatı daima sinyal tarihinden sonraki bir seanstan gelir.

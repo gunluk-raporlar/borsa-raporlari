@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Hafta Sonu Borsa Okulu — kurgusal YAPAY ZEKA egitmen ile hafta sonu dersleri.
+"""Hafta Sonu Borsa Okulu — yapay zekâ eğitmeni ile hafta sonu dersleri.
 
 Her Cumartesi ve Pazar bir ders islenir (hafta ici ASLA calismaz):
 - MUFREDAT: onceden tanimli konu listesinden hafta/dogun sayisina gore sirayla secilir
@@ -10,7 +10,9 @@ Her Cumartesi ve Pazar bir ders islenir (hafta ici ASLA calismaz):
   nasil okunur, gercek BIST verisiyle ornek, sik hatalar, mini test, ozet.
 - KAYNAK: guncel data/teknik ve fiyat verisinden somut ornek rakamlar prompta verilir.
 - YAYIN: haftasonu-egitimi.html (guncel ders) + arsiv haftasonu-egitimi/<tarih>.html.
-- KIMLIK: Egitmen kurgusal bir yapay zekadir; gercek kisi/kurum degildir, unvan taklidi yok.
+- KIMLIK: Egitmen yapay zekâdir; gercek kisi/kurum degildir, unvan taklidi yok.
+  "kurgusal" ifadesi kullanıcıya dönük metinlerde kullanılmaz — profesyonel
+  dil tercihi (2026-11-08 kullanıcı kararı); kimlik dürüstlüğü etiketlerle verilir.
 - UYARI: egitim amaclidir, yatirim tavsiyesi degildir.
 
 Test icin: TARIH_SIM=YYYY-MM-DD ve SKIP_LLM=1 ortam degiskenleri.
@@ -395,7 +397,7 @@ def main():
     icerik = f"""
 <div class="hero">
 <h1>Hafta Sonu Borsa Okulu</h1>
-<div class="meta"><span class="badge">{tarih}</span><span>Ders {idx + 1}/{len(MUFREDAT)} &bull; {kategori} &bull; Kurgusal yapay zeka eğitmen</span></div>
+<div class="meta"><span class="badge">{tarih}</span><span>Ders {idx + 1}/{len(MUFREDAT)} &bull; {kategori} &bull; Yapay zekâ eğitmeni</span></div>
 </div>
 <article class="report" id="rapor-ses-metin">{figura}{bot.markdown_to_html(metin)}</article>
 <p style="margin:22px 0 0; color:var(--muted); font-size:13px"><strong>Gerçek veriyle pratik:</strong> Aşağıdaki tablo bugünün teknik taramasından gelir — bir hücreye tıklayıp ad/formül çubuğunu görebilir, sütun başlıklarına tıklayarak sıralayabilirsin.</p>
@@ -409,7 +411,7 @@ def main():
     alt_html = bot._sayfa(
         f"Hafta Sonu Borsa Okulu - {tarih}", icerik, aktif="egitim", yol=f"haftasonu-egitimi/{tarih}.html",
         kok="../",
-        aciklama="Hafta sonu borsa eğitimi: yapay zeka eğitmen her Cumartesi/Pazar bir terim, gösterge veya grafik konusunu gerçek BIST verisiyle anlatır.",
+        aciklama="Hafta sonu borsa eğitimi: yapay zekâ eğitmeni her Cumartesi/Pazar bir terim, gösterge veya grafik konusunu gerçek BIST verisiyle anlatır.",
     )
     with open(os.path.join(ARSIV_DIR, f"{tarih}.html"), "w", encoding="utf-8") as f:
         f.write(alt_html)

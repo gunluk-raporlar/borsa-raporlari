@@ -3021,7 +3021,8 @@ PORTFOY_NOTU = ("Portföy hafta içi her sabah otomatik olarak, bir önceki işl
                 "Karşılaştırma çizgileri (altın/dolar/mevduat/endeks/enflasyon) da aynı 100.000 TL "
                 "tabanına normalize edilmiştir. Getiri dönemi portföyün başlangıç tarihidir (yıl başı değildir); "
                 "ilk gün de aynı kapanış fiyatlarıyla değerlendiği için ilk kayıt 100.000,00 TL'den birkaç lira "
-                "sapabilir (örn. 100.013 TL).")
+                "sapabilir (örn. 100.013 TL). Temettüler ex-tarihinde net (stopaj %10 sonrası) nakit olarak "
+                "portföy değerine eklenir.")
 
 
 def load_portfolio():
@@ -3037,6 +3038,71 @@ def load_portfolio():
 def save_portfolio(data):
     with open(PORTFOLYO_DOSYASI, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+# ---------- Kurumsal aksiyonlar (2026-11-08) ----------
+# Portföy artık temettüyü NET nakit olarak ve bedelsiz/bölünmeyi fiyat-çarpanıyla
+# işler. Veri kaynağı, Temettü Merkezi'nin de kullandığı
+# data/temettu/seriler/<KOD>.json (temettu_cek.py çıktısı) — tek kaynak, iki
+# sayfa tutarlı. Not: temettu_cek, bedelli (RightsIssue) oranını bedelsiz
+# çarpanına karıştırır; bedelli gerçekleşirse ayrıştırılmalı (dönemde yok).
+TEMETTU_STOPAJ = 0.10  # kâr payı stopajı: 2020 ve sonrası %10 (temettu-kaynak/hesap.js: STOPAJ_YENI)
+
+
+def _kurumsal_aksiyonlar(kodlar):
+    """{kod: {"temettu": [(iso_tarih, brut_tutar)], "bedelsiz": [(iso_tarih, carpan)]}} döndürür.
+
+    Kodun veri dosyası yoksa/okunamazsa boş listeler gelir (fail-open):
+    temettu_cek.py koşmadan portföy önceki davranışla devam eder."""
+    aksiyonlar = {}
+    for kod in kodlar:
+        kayit = {"temettu": [], "bedelsiz": []}
+        try:
+            with open(f"data/temettu/seriler/{kod}.json", encoding="utf-8") as f:
+                veri = json.load(f)
+            kayit["temettu"] = [(str(t), float(x)) for t, x in veri.get("temettu", [])]
+            kayit["bedelsiz"] = [(str(t), float(c)) for t, c in veri.get("bedelsiz", [])]
+        except (OSError, ValueError, TypeError):
+            pass
+        aksiyonlar[kod] = kayit
+    return aksiyonlar
+
+
+def _temettu_nakit(aksiyon, adet, tarih_siniri, baslangic):
+    """Ex-tarihi (baslangic, tarih_siniri] aralığında gelen temettülerin NET
+    (stopaj sonrası) nakdini döndürür. baslangic = portföy başlangıç tarihi:
+    ondan önceki temettüler seride 2008'den beri durur ve o periodda hisse
+    henüz portföyde değildir. Lot sayısı adet'tir; ex-tarihinden ÖNCE gelen
+    bedelsiz çarpanları lot sayısını çoğalttığından tutar o çarpanla ölçeklenir
+    (çarpanlar adetlere işlenmez — fiyat-çarpanı düzeni)."""
+    nakit = 0.0
+    for t, tutar in aksiyon.get("temettu", []):
+        if baslangic < str(t) <= tarih_siniri:
+            onceki_carpanlar = 1.0
+            for tb, cb in aksiyon.get("bedelsiz", []):
+                if baslangic < str(tb) < str(t):
+                    onceki_carpanlar *= cb
+            nakit += tutar * (1 - TEMETTU_STOPAJ) * adet * onceki_carpanlar
+    return nakit
+
+
+def _gecmis_carpan(aksiyon, tarih, baslangic):
+    """(baslangic, tarih] aralığındaki bedelsiz/bölünme çarpanlarının çarpımı.
+
+    Adetler portfolio.json'da ASLA güncellenmez; geçmiş fiyat bugünkü lotla
+    değerlenirken olaylarla yukarı taşınır (değer = adet × fiyat × çarpan).
+    Böylece ex-gününde fiyat m oranıyla düşerken portföy değeri süreklilik
+    korur; aralıkta olay yoksa çarpan 1'dir ve davranış eskisi gibidir.
+    baslangic alt sınırı şart: alımdan ÖNCEki bölünmeler zaten alım fiyatına
+    işlenmiştir, tekrar sayılırsa değer şişer.
+    Sınır notu: hisse portföye başlangıçtan SONRA girdiyse (sepet değişimi)
+    başlangıç-çarpanı o hisse için erken başlar — dönemde olay yok; ilk
+    olayda hisse başına katılım tarihiyle sınırlandırılmalı."""
+    carpan = 1.0
+    for t, c in aksiyon.get("bedelsiz", []):
+        if baslangic < str(t) <= tarih:
+            carpan *= c
+    return carpan
 
 
 def _benchmarks_cek():
@@ -3159,8 +3225,16 @@ def portfolio_agent(state: AgentState):
         son_fiyatlar.update({h: v for h, v in g.get("prices", {}).items()})
     guncel_fiyatlar = {h: fiyatlar.get(h, son_fiyatlar[h]) for h in p["shares"] if son_fiyatlar.get(h)}
 
-    # Bugunku toplam hisse degeri ve yuzde
-    toplam = sum(p["shares"][h] * guncel_fiyatlar[h] for h in guncel_fiyatlar)
+    # Kurumsal aksiyonlar (2026-11-08): temettüler net nakit olarak değere
+    # eklenir; bedelsiz/bölünme çarpanları adetlere işlenmez, fiyata yansır
+    # (bkz. _gecmis_carpan). Olay yoksa çarpan 1, nakit 0 — davranış eskisi.
+    aksiyonlar = _kurumsal_aksiyonlar(p["shares"].keys())
+    temettu_nakit = sum(_temettu_nakit(aksiyonlar[h], p["shares"][h], bugun, p["start_date"])
+                        for h in p["shares"])
+
+    # Bugunku toplam (hisse degeri + temettu nakdi) ve yuzde
+    toplam = sum(p["shares"][h] * guncel_fiyatlar[h] * _gecmis_carpan(aksiyonlar[h], bugun, p["start_date"])
+                 for h in guncel_fiyatlar) + temettu_nakit
     yuzde = ((toplam - BASLANGIC_SERMAYE) / BASLANGIC_SERMAYE) * 100
 
     dun = p["history"][-1]["total"] if p["history"] else BASLANGIC_SERMAYE
@@ -3205,6 +3279,7 @@ def portfolio_agent(state: AgentState):
         "total": round(toplam, 2),
         "pct": round(yuzde, 2),
         "daily_pct": round(gunluk_yuzde, 2),
+        "temettu_nakit": round(temettu_nakit, 2),
         "prices": guncel_fiyatlar,
         "rates": {"USD": round(float(guncel_usd), 4), "GOLD": round(float(guncel_gold), 4)},
         "benchmarks": {
@@ -4352,7 +4427,7 @@ def _radyo_kutusu(kok=""):
   <audio id="radyo-ses" preload="none"></audio>
   <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Ses seviyesi" title="Ses">
   <span class="radyo-linkler"><a href="{kok}radyo/index.html">\U0001F4FB T\u00fcm yay\u0131nlar &amp; Podcast sayfas\u0131</a> <span class="ayrac">\u2022</span> <a href="{kok}radyo/podcast.xml">Podcast</a> · <a href="{kok}raporlar.xml">RSS</a></span>
-  <span class="radyo-uyari">Yaln\u0131zca dinlemek i\u00e7indir \u2022 Kurgusal yapay zeka sunucular \u2022 Bilgilendirme ama\u00e7l\u0131d\u0131r, yat\u0131r\u0131m tavsiyesi de\u011fildir.</span>
+  <span class="radyo-uyari">Yaln\u0131zca dinlemek i\u00e7indir \u2022 Yapay zek\u00e2 sunuculu b\u00fclten \u2022 Bilgilendirme ama\u00e7l\u0131d\u0131r, yat\u0131r\u0131m tavsiyesi de\u011fildir.</span>
 </div>
 <script>
 (function(){{
@@ -4620,6 +4695,9 @@ def ticker_json_yaz(satirlar, etiket=None):
         etiket = _piyasa_etiketi()
     veri = {
         "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M"),
+        # 2026-11-08 (ajan-katman denetimi): makine-okunur tazelik damgasi —
+        # eski "guncelleme" alanina dokunulmadi (llms.txt alan adi kararliligi).
+        "guncelleme_iso": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).isoformat(timespec="seconds"),
         "etiket": etiket,
         "hisseler": [
             {"h": s["hisse"], "f": s["son"], "d": s["gunluk"], "s": s.get("genel", "")}
@@ -5729,14 +5807,21 @@ document.addEventListener('DOMContentLoaded', function() {{
 
 def _portfoy_satirlari(p, limit=None, en_iyi=False):
     """Portfoy tablosu satirlari. en_iyi=True ise getirisi en yuksek
-    hisselerden siralar (ana sayfadaki 'en iyi 8' ozeti icin)."""
+    hisselerden siralar (ana sayfadaki 'en iyi 8' ozeti icin).
+    Bedelsiz/bölünme çarpanları güncel fiyata uygulanır (adetler sabittir,
+    _gecmis_carpan düzeni); olay yoksa çarpan 1'dir."""
     son = p["history"][-1]
+    aksiyonlar = _kurumsal_aksiyonlar(p.get("shares", {}).keys()) if p.get("shares") else {}
+    baslangic = p.get("start_date", "")
     satirlar = []
     for h in p.get("shares", {}):
         ilk = p["initial_prices"].get(h)
         guncel = son["prices"].get(h, ilk)
         if ilk and guncel:
-            fark = ((guncel - ilk) / ilk) * 100
+            # Getiri çarpanlı (bedelsiz düzeni); "Son Fiyat" sütunu ham piyasa
+            # fiyatını gösterir — bedelsiz/bölünme döneminde iki değer ayrışır.
+            guncel_ayarli = guncel * _gecmis_carpan(aksiyonlar.get(h, {}), son["date"], baslangic)
+            fark = ((guncel_ayarli - ilk) / ilk) * 100
             satirlar.append((h, fark))
     if en_iyi:
         satirlar.sort(key=lambda x: x[1], reverse=True)
@@ -5794,6 +5879,16 @@ def _portfoy_risk(p):
 def _portfoy_istatistikleri(p):
     son = p["history"][-1]
     risk = _portfoy_risk(p) or {}
+    # Temettü kartı yalnızca kayıtta alan varsa çıkar (göç öncesi eski veriyle
+    # "0,00 TL" yanılgısı olmasın); göç + ajan güncellemesi sonrası hep vardır.
+    temettu_html = ""
+    if "temettu_nakit" in son:
+        temettu_toplam = float(son.get("temettu_nakit") or 0)
+        temettu_html = (
+            f'<div class="stat"><div class="label">Temettü Geliri (net)</div>'
+            f'<div class="value">{_ts(temettu_toplam)} TL</div>'
+            f'<div style="font-size:11px;color:var(--muted)">stopaj %10 sonrası; yeniden yatırılmaz</div></div>'
+        )
     risk_html = ""
     if risk:
         risk_html = (
@@ -5837,6 +5932,7 @@ def _portfoy_istatistikleri(p):
 <div class="stat"><div class="label">Günlük Değişim</div><div class="value {_renk(son['daily_pct'])}">{_ty(son['daily_pct'])}%</div></div>
 <div class="stat"><div class="label">Toplam Getiri</div><div class="value {_renk(son['pct'])}">{_ty(son['pct'])}%</div></div>
 <div class="stat"><div class="label">Başlangıç</div><div class="value" style="font-size:16px">{p['start_date']}</div></div>
+{temettu_html}
 {risk_html}
 </div>
 {kiyas}
@@ -6170,6 +6266,26 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
 <p style="margin:0 0 6px; color:var(--muted); font-size:12.5px">{PORTFOY_NOTU}</p>
 </div>"""
 
+    # 2026-11-08 (kullanıcı kararı): BIST 30 kapsam dizini — 30 hissenin adı
+    # ve bağlantısı ana sayfada; md aynasına ve ajan katmanına (llms.txt) taşınır.
+    _profiller = _sirket_profilleri()
+
+    def _kisa_unvan(_u):
+        _u = re.sub(r"\s*\(eski adı:.*?\)\s*", " ", _u or "").strip()
+        return _u.split("(")[0].strip() or _u
+
+    kapsam_ogeleri = " · ".join(
+        f'<a href="hisse/{_kod}.html">{_kod}{" — " + _kisa_unvan(_profiller[_kod]["unvan"]) if _profiller.get(_kod, {}).get("unvan") else _kod}</a>'
+        for _kod in sorted(_profiller)
+    )
+    # profil dosyası okunamazsa bölüm boş kalmasın diye tümüyle atlanır
+    kapsam_bolumu = f"""
+<h2 class="section-title">BIST 30 Hisse Analiz Kapsamı</h2>
+<div class="card" style="padding:10px 24px 14px">
+<p style="margin:8px 0 0; font-size:13.5px; line-height:2.1">Sistem, BIST 30 endeksindeki 30 hissenin tamamını her işlem günü tarar; her biri için teknik sinyal, fiyat grafiği, 7 günlük haber akışı ve rapor arşivi değerlendirmesi üretir:<br>
+{kapsam_ogeleri}</p>
+</div>""" if _profiller else ""
+
     icerik = f"""
 <div class="hero">
 <h1>BIST 30 Günlük Piyasa Raporları</h1>
@@ -6181,6 +6297,7 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
 {haftasonu_bolumu}
 {egitim_bolumu}
 {teknik_bolumu}
+{kapsam_bolumu}
 {portfoy_bolumu}"""
     return _sayfa(
         "BIST 30 Günlük Borsa Raporu ve Hisse Analizi", icerik, "anasayfa", yol="",
@@ -6212,7 +6329,7 @@ hafta içi her sabah bir önceki işlem gününün kapanış fiyatlarıyla otoma
 <div style="margin-top:10px; font-size:14px; display:grid; gap:6px">
 <p style="margin:0">• {ilk_gun} tarihinde 100.000 TL, BIST 30 hisselerine <strong>eşit dağıtıldı</strong>; adetler fraksiyoneldir, gerçek uygulamada tam lota yuvarlama gerekir.</p>
 <p style="margin:0">• Hafta içi her sabah <strong>bir önceki işlem gününün kapanış fiyatlarıyla</strong> güncellenir; tatil günlerinde değer değişmez, hiç alım-satım yapılmaz.</p>
-<p style="margin:0">• <strong>Temettü, bedelsiz ve bölünmeler şu an hesaba katılmaz</strong>; bu olayların geçtiği günlerde getiri sapması olabilir.</p>
+<p style="margin:0">• <strong>Temettüler</strong> ex-tarihinde net olarak (kâr payı stopajı %10 düşülerek) nakde eklenir ve portföy değerine dahildir; nakit yeniden yatırılmaz. <strong>Bedelsiz/bölünmeler</strong> fiyat-çarpanıyla işlenir: adetler sabit kalır, olaydan sonra fiyata olay çarpanı uygulanır, getiri eğrisi olay gününde süreklilik korur. Temettü verisi Temettü Merkezi ile aynı kaynaktan (data/temettu/seriler) okunur.</p>
 <p style="margin:0">• Karşılaştırma çizgileri (altın, dolar, mevduat, BIST 100, BIST 30, enflasyon) aynı 100.000 TL tabanına normalize edilir; enflasyon değeri TradingView ekonomik takviminden gelen son TÜİK yıllık okumadır ve grafiğe dönem tarihiyle yansır.</p>
 <p style="margin:0">• Toplam getiri, tekil hisse yüzdelerinin ortalaması değil, portföyün toplam değer değişimidir. Sinyal Karnesi sayfasındaki net getiri senaryosu ~%0,10 komisyon+BSMV varsayımı kullanır.</p>
 <p style="margin:0; color:var(--muted)">Bu bir sanal deneme portföyüdür; yatırım tavsiyesi değildir. Geçmiş performans gelecekteki sonuçların garantisi değildir.</p>
@@ -6921,7 +7038,7 @@ def style_css_yaz():
 
 
 def piyasa_serit_yaz():
-    """Ikinci seridin YEDEK verisi (gunluk kosuda bir kez).
+    """Ikinci seridin YEDEK verisi (gunluk kosu + gun ici teknik-tarama kosulari).
 
     /api/piyasa erisilemezse istemci bu dosyaya duser. Endeksler ve USD/TRY
     piyasa_verisi()'nden, gram altin _benchmarks_cek()'ten gelir; ons altin,
@@ -6961,8 +7078,20 @@ def piyasa_serit_yaz():
     if not gostergeler:
         logger.info("[Piyasa] serit yedegi icin veri bulunamadi.")
         return False
+    # Göstergeler değişmediyse dosyayı yeniden yazma: dosya gün içi teknik-tarama
+    # koşularında da tazelendiğinden yalnızca damga değişimiyle her 30 dakikada
+    # bir commit/ping gürültüsü çıkardı. "guncelleme" artık veri DEĞİŞİM
+    # zamanını taşır; tazelik sorgusu için guncelleme_iso aynı kalır.
+    try:
+        with open("piyasa-serit.json", encoding="utf-8") as f:
+            eski = json.load(f)
+        if eski.get("gostergeler") == gostergeler:
+            return True
+    except (OSError, ValueError):
+        pass
     govde = {
         "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M"),
+        "guncelleme_iso": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).isoformat(timespec="seconds"),
         "etiket": "gün sonu / gecikmeli",
         "kaynak": "bot",
         "gostergeler": gostergeler,
@@ -7839,10 +7968,16 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=N
 <p style="margin:6px 0 0"><a href="../raporlar.html">Günlük rapor arşivi &rarr;</a></p>
 <p style="margin:6px 0 0"><a href="../hisse/">📊 BIST 30 hisse merkezi — tüm hisseler, teknik sinyaller ve grafikler &rarr;</a></p>
 </div>"""
+    # 2026-11-08 (kullanıcı kararı): <title> şirket adını (unvan) taşır — GSC'de
+    # "garanti bankası hisse" gibi ad-sorguları gerçek ve zayıf sıralıydı.
+    # ≤60 kr guard: uzun unvanlarda (ör. TRMET) başlıkta yalnız kod kalır.
+    _unvan = (_sirket_profilleri().get(kod) or {}).get("unvan") or ""
+    _ad = (f"{kod} ({_unvan})" if _unvan and len(f"{kod} ({_unvan}) Hisse Yorumu ve Teknik Analizi") <= 60
+           else kod)
     return _sayfa(
-        f"{kod} Hisse Yorumu ve Teknik Analizi", icerik, "hisseler", kok="../",
+        f"{_ad} Hisse Yorumu ve Teknik Analizi", icerik, "hisseler", kok="../",
         yol=f"hisse/{kod}.html",
-        aciklama=f"{kod} ({satir.get('sektor', 'BIST 30')}) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.",
+        aciklama=f"{_ad} ({satir.get('sektor', 'BIST 30')}) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.",
     )
 
 
@@ -8125,15 +8260,49 @@ def hisse_sayfalari_yaz(teknik_satirlar):
 
 
 def sinyal_karnesi_yaz(teknik_satirlar):
-    """data/teknik gecmisindeki AL sinyallerini 5 islem gunu sonraki fiyatlara
-    karsi test eder (basit backtest) ve sinyal-karnesi.html uretir."""
+    """data/teknik gecmisindeki AL sinyallerini fiyatlara karsi test eder (basit
+    backtest); sinyal-karnesi.html + sinyal-karnesi.json uretir.
+
+    Yontem surumu 2 (2026-11-08): giris, sinyal gununu izleyen ilk islem gununun
+    kapanisi (T+1); cikis, girden 5 islem gunu sonraki kapanis. Sinyal gun icinde
+    yayimlandigindan (teknik-tarama, 30 dk) giris fiyati her kosulda sinyalden
+    SONRA bilinen bir fiyattir; ileriye bakis (look-ahead) yok. Surum 1'de giris
+    "sinyal gunu kapanisi" yaziyordu; oysa fiyat dosyasi etiketleri bir seans
+    geriden geldiginden (data/prices/<d>.json = d-1 seans kapanisi) fiilen
+    onceki gunun kapanisi aliniyordu.
+    """
     try:
         t_dosyalar = sorted(f for f in os.listdir("data/teknik") if f.endswith(".json"))
     except OSError:
         t_dosyalar = []
     tarihler, veriler = _fiyat_gecmisi()
+
+    def _is_gunu_etiket(t):
+        try:
+            return datetime.strptime(t, "%Y-%m-%d").weekday() < 5
+        except ValueError:
+            return False
+
+    # Hafta sonu etiketli fiyat dosyalari (nadiren uretilen Cmt/Pazar force
+    # kosulari) Cuma kapanisini tekrar eder ve pencereyi bozar → pencereden çıkar.
+    _is_gunu = [(t, v) for t, v in zip(tarihler, veriler) if _is_gunu_etiket(t)]
+    # Hafta ici TATIL etiketleri de ayni bozuklugu yapar: tatil sabahi kosan bot
+    # son seans kapanisini o gunun etiketiyle tekrar yazar (ör. 2026-10-29
+    # Cumhuriyet Bayrami — 10-29 VE 10-30 etiketleri 10-28 seansini tasir;
+    # 10-30 dosyasi ustelik kismi olabilir). Önceki etiketin alt kümesi olup
+    # değerleri birebir aynı olan etiket pencereden düşülür (fiyat vektörünün
+    # tamamının gün üstü değişmez kalması pratikte imkânsızdır).
+    _ayik = []
+    for _t, _v in _is_gunu:
+        _onceki = _ayik[-1][1] if _ayik else None
+        if (_onceki is not None and len(_v) <= len(_onceki)
+                and all(_onceki.get(_k) == _d for _k, _d in _v.items())):
+            continue
+        _ayik.append((_t, _v))
+    tarihler = [t for t, _ in _ayik]
+    veriler = [v for _, v in _ayik]
     kayitlar = []
-    for td in t_dosyalar[:-1]:  # son günün 5 gün sonrası henüz yok
+    for td in t_dosyalar:
         try:
             with open(os.path.join("data/teknik", td), encoding="utf-8") as f:
                 gunun_satirlari = json.load(f)
@@ -8143,14 +8312,18 @@ def sinyal_karnesi_yaz(teknik_satirlar):
         if d not in tarihler:
             continue
         d_idx = tarihler.index(d)
-        sonraki = tarihler[d_idx + 1:]
-        if len(sonraki) < 5:
-            continue
-        cikis_t = sonraki[4]
-        cikis_veri = veriler[tarihler.index(cikis_t)]
-        giris_veri = veriler[d_idx]
+        # Etiket kaymasi: d_idx+1 etiketi d SEANSININ kapanisini tasir; T+1 seans
+        # kapanisi d_idx+2 etiketindedir. Cikis: girden 5 seans sonra → d_idx+7.
+        if d_idx + 7 >= len(tarihler):
+            continue  # giris/cikis penceresi henuz dolmadi
+        giris_t = tarihler[d_idx + 2]
+        cikis_t = tarihler[d_idx + 7]
+        giris_veri = veriler[d_idx + 2]
+        cikis_veri = veriler[d_idx + 7]
         # Piyasa bazı: aynı pencerede evrenin (fiyat dosyasındaki tüm hisseler)
         # eşit ağırlıklı getirisi; sinyalin alpha'sı buna karşı ölçülür (18.10 onay).
+        # Kısmi fiyat dosyası (ör. 2026-11-06, 6 hisse) sahte evren üretmesin:
+        # en az 20 üye şartı.
         evren_ciftler = []
         for _kod, _g in giris_veri.items():
             _c = cikis_veri.get(_kod)
@@ -8159,34 +8332,47 @@ def sinyal_karnesi_yaz(teknik_satirlar):
                     evren_ciftler.append((float(_c) / float(_g) - 1) * 100)
             except (TypeError, ValueError):
                 continue
-        evren = sum(evren_ciftler) / len(evren_ciftler) if evren_ciftler else None
+        evren = sum(evren_ciftler) / len(evren_ciftler) if len(evren_ciftler) >= 20 else None
         for s in gunun_satirlari:
             if s.get("genel") != "AL":
                 continue
             kod = s.get("hisse")
             if kod in KARA_LISTE:
                 continue  # DSTKF (Tera) vakasi: kara listedeki kagit karnede gosterilmez (17.10 kullanici talebi)
-            giris = giris_veri.get(kod) or s.get("son")
+            giris = giris_veri.get(kod)
             cikis = cikis_veri.get(kod)
+            # Eksik fiyat (kısmi dosya, pencerede sepette olmayan kağıt) → tahminle
+            # doldurma; kayıt atlanır. Eski s.get("son") yedeği sinyal günü
+            # kapanışıydı; T+1 semantiğini bozduğu için kaldırıldı (sürüm 2).
             if not giris or not cikis:
                 continue
             getiri = (float(cikis) / float(giris) - 1) * 100
             kayitlar.append({
-                "tarih": d, "hisse": kod, "giris": float(giris), "cikis": float(cikis),
+                "tarih": d, "hisse": kod, "giris_t": giris_t,
+                "giris": float(giris), "cikis": float(cikis),
                 "cikis_t": cikis_t, "getiri": getiri, "evren": evren,
                 "fark": (getiri - evren) if evren is not None else None,
             })
     if not kayitlar:
         logger.info("[Karne] backtest icin yeterli gecmis yok; sayfa yazilmadi.")
         return
-    ort = sum(k["getiri"] for k in kayitlar) / len(kayitlar)
-    isabet = sum(1 for k in kayitlar if k["getiri"] > 0) / len(kayitlar) * 100
+    n_kayit = len(kayitlar)
+    getiriler = sorted(k["getiri"] for k in kayitlar)
+    ort = sum(getiriler) / n_kayit
+    medyan = (getiriler[n_kayit // 2] if n_kayit % 2
+              else (getiriler[n_kayit // 2 - 1] + getiriler[n_kayit // 2]) / 2.0)
+    isabet = sum(1 for k in kayitlar if k["getiri"] > 0) / n_kayit * 100
     # Masraf senaryosu: giris+cikis komisyon ve BSMV toplam ~%0,10 (varsayim).
     # Not: BIST hisselerinde kazanc stopaji su an yok; masraf buyuk olcude
     # araci kurum komisyonudur. Gercek oran araci kuruma gore degisir.
     ISLEM_MALIYETI = 0.10
     net_ort = ort - ISLEM_MALIYETI
-    net_isabet = sum(1 for k in kayitlar if k["getiri"] - ISLEM_MALIYETI > 0) / len(kayitlar) * 100
+    net_isabet = sum(1 for k in kayitlar if k["getiri"] - ISLEM_MALIYETI > 0) / n_kayit * 100
+    # Profit factor: brüt kazanç toplamı / |brüt kayıp toplamı|; hiç kayıp yoksa
+    # tanımsızdır (None → sayfada ve JSON'da "—"/null).
+    kazanc_top = sum(g for g in getiriler if g > 0)
+    kayip_top = sum(g for g in getiriler if g < 0)
+    profit_factor = (kazanc_top / abs(kayip_top)) if kayip_top else None
     # Piyasa bazı özeti: evrenle aynı pencerelerde kıyas (alpha) (18.10 onay).
     evrenli = [k for k in kayitlar if k["evren"] is not None]
     evren_ort = (sum(k["evren"] for k in evrenli) / len(evrenli)) if evrenli else None
@@ -8241,21 +8427,27 @@ def sinyal_karnesi_yaz(teknik_satirlar):
         f"{_kiyas_hucre(k['evren'])}{_kiyas_hucre(k['fark'], kalin=True)}</tr>"
         for k in sorted(kayitlar, key=lambda k: k["tarih"], reverse=True)[:15]
     )
+    pf_goster = (f"{profit_factor:.2f}".replace(".", ",")
+                 if profit_factor is not None else "—")
     icerik = f"""
 <div class="hero">
 <h1>Sinyal Karnesi</h1>
-<p>Teknik taramanın verdiği <strong>AL</strong> sinyallerini 5 işlem günü sonra fiyata karşı test ediyoruz.
-Sinyal günü kapanışı alıp 5. işlem günü kapanışında satmış olsaydık sonuç: {len(kayitlar)} sinyal,
-ortalama <strong class="{_renk(ort)}">{_ty(ort)}%</strong> (brüt), isabet oranı <strong>{_ts0(isabet)}%</strong>.
+<p>Teknik taramanın verdiği <strong>AL</strong> sinyallerini fiyata karşı test ediyoruz: sinyal gününü izleyen ilk
+işlem gününün kapanışından alıp <strong>5 işlem günü sonra</strong> kapanışta satmış olsaydık sonuç —
+<strong>N={n_kayit}</strong> sinyal, ortalama <strong class="{_renk(ort)}">{_ty(ort)}%</strong> (brüt),
+medyan <strong class="{_renk(medyan)}">{_ty(medyan)}%</strong>, isabet oranı <strong>{_ts0(isabet)}%</strong>,
+profit factor <strong>{pf_goster}</strong>.
 Komisyon+BSMV masrafı (~%0,10) sonrası: ortalama <strong class="{_renk(net_ort)}">{_ty(net_ort)}%</strong>,
 isabet <strong>{_ts0(net_isabet)}%</strong> (varsayımsal masraf senaryosu; gerçek oran aracı kuruma göre değişir).
-(Geçmiş performans gelecek getirinin garantisi değildir; yöntem basit tutulmuştur.)</p>
+(Geçmiş performans gelecek getirinin garantisi değildir; örneklem küçük olduğundan oranlar oynaktır.)</p>
 {kiyas_paragraf}
 <p style="margin:0; color:var(--muted); font-size:12.5px">Son denetim: {_tr_tarih(datetime.now(
     zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%Y-%m-%d"))} {datetime.now(
-    zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%H:%M")} TSİ — {len(kayitlar)} AL sinyali
-yeniden test edildi. Tablo yalnızca yeni bir sinyal 5 işlem gününü doldurduğunda değişir;
-gün içinde değişmemesi "denetlenmedi" anlamına gelmez.</p>
+    zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%H:%M")} TSİ — {n_kayit} AL sinyali
+yeniden test edildi. Yöntem sürümü: 2 — giriş, sinyal gününü izleyen ilk işlem günü kapanışıdır
+(sürüm 1'de giriş "sinyal günü kapanışı"ydı; iki sürümün sayıları karşılaştırılamaz).
+Ham veri: <a href="sinyal-karnesi.json">sinyal-karnesi.json</a>. Tablo yalnızca yeni bir sinyal
+penceresini doldurduğunda değişir; gün içinde değişmemesi "denetlenmedi" anlamına gelmez.</p>
 </div>
 <div class="grid">
 <div class="card"><h3 style="margin:0 0 8px">🏆 En iyi 3</h3>{_mini_liste(en_iyi)}</div>
@@ -8263,17 +8455,52 @@ gün içinde değişmemesi "denetlenmedi" anlamına gelmez.</p>
 </div>
 <h2 class="section-title">Son 15 Sinyal</h2>
 <div class="card" style="padding:8px 24px 16px"><div class="tbl-wrap"><table>
-<tr><th>Sinyal Günü</th><th>Hisse</th><th>Giriş</th><th>Çıkış</th><th>Çıkış Günü</th><th>Getiri</th><th>Evren</th><th>Fark</th></tr>
+<tr><th>Sinyal Günü</th><th>Hisse</th><th>Giriş (T+1)</th><th>Çıkış</th><th>Çıkış Günü</th><th>Getiri</th><th>Evren</th><th>Fark</th></tr>
 {tablo}
 </table></div></div>
-<p style="color:var(--muted); font-size:12.5px">Yöntem: genel sinyali "AL" olan her hisse, sinyal günü kapanışından
-5 işlem günü sonraki kapanışa karşı ölçülür. <strong>Evren</strong> sütunu aynı tarih aralığında fiyat dosyasındaki
-tüm hisselerin eşit ağırlıklı ortalamasıdır; <strong>Fark</strong> (alpha) sinyal getirisinin evrenden fazlasıdır —
-sinyal evreni yendiyse pozitiftir. Sinyaller yatırım tavsiyesi değildir.</p>"""
+<p style="color:var(--muted); font-size:12.5px">Yöntem (sürüm 2): genel sinyali "AL" olan her hisse için giriş fiyatı
+<strong>sinyal gününü izleyen ilk işlem gününün kapanışıdır</strong> (sinyal gün içinde yayımlandığından giriş fiyatı
+daima sinyalden sonra bilinir); çıkış, girişten 5 işlem günü sonraki kapanıştır. <strong>Evren</strong> sütunu aynı
+tarih aralığında fiyat dosyasındaki tüm hisselerin (en az 20 üye) eşit ağırlıklı ortalamasıdır; <strong>Fark</strong>
+(alpha) sinyal getirisinin evrenden fazlasıdır — sinyal evreni yendiyse pozitiftir. Sinyaller yatırım tavsiyesi değildir.</p>"""
     with open("sinyal-karnesi.html", "w", encoding="utf-8") as f:
         f.write(_sayfa("Sinyal Karnesi — AL Sinyalleri Backtest", icerik, "karne",
                        yol="sinyal-karnesi.html"))
-    logger.info("[Karne] %d AL sinyali test edildi; sayfa uretildi.", len(kayitlar))
+    # Makine-okunur tam kopya: HTML son 15 kaydı gösterir; JSON tüm kayıtları,
+    # yöntem sürümünü ve kuralları taşır (ajanlar için; llms.txt'te belgeli).
+    _tz_k = zoneinfo.ZoneInfo("Europe/Istanbul")
+    karne_json = {
+        "guncelleme": datetime.now(_tz_k).strftime("%Y-%m-%d %H:%M"),
+        "guncelleme_iso": datetime.now(_tz_k).isoformat(timespec="seconds"),
+        "yontem_surumu": 2,
+        "giris_kurali": "sinyal gününü izleyen ilk işlem gününün kapanışı (T+1)",
+        "cikis_kurali": "girişten 5 işlem günü sonraki kapanış",
+        "maliyet_varsayimi": {"ad": "giriş+çıkış komisyon ve BSMV", "puan": ISLEM_MALIYETI,
+                              "birim": "yüzde puan"},
+        "ozet": {
+            "n": n_kayit,
+            "ortalama_getiri_yuzde": round(ort, 2),
+            "medyan_getiri_yuzde": round(medyan, 2),
+            "isabet_yuzde": round(isabet, 1),
+            "net_ortalama_yuzde": round(net_ort, 2),
+            "net_isabet_yuzde": round(net_isabet, 1),
+            "profit_factor": round(profit_factor, 2) if profit_factor is not None else None,
+            "evren_ortalama_yuzde": round(evren_ort, 2) if evren_ort is not None else None,
+            "alpha_puan": round(alpha_ort, 2) if alpha_ort is not None else None,
+            "evreni_yenen": yenen,
+        },
+        "kayitlar": [
+            {"tarih": k["tarih"], "hisse": k["hisse"], "giris_t": k["giris_t"],
+             "giris": k["giris"], "cikis_t": k["cikis_t"], "cikis": k["cikis"],
+             "getiri": round(k["getiri"], 2),
+             "evren": round(k["evren"], 2) if k["evren"] is not None else None,
+             "fark": round(k["fark"], 2) if k["fark"] is not None else None}
+            for k in sorted(kayitlar, key=lambda k: k["tarih"], reverse=True)
+        ],
+    }
+    with open("sinyal-karnesi.json", "w", encoding="utf-8") as f:
+        json.dump(karne_json, f, ensure_ascii=False)
+    logger.info("[Karne] %d AL sinyali test edildi; sayfa + JSON uretildi.", n_kayit)
 
 
 def haberler_yaz(gun=14):
@@ -9421,7 +9648,7 @@ def podcast_rss_yaz():
             f"<pubDate>{pub}</pubDate>"
             f"<enclosure url=\"{url}\" type=\"audio/mpeg\" length=\"0\" />"
             f"<link>{SITE_URL}index.html</link>"
-            f"<description>BIST Radyo — kurgusal yapay zeka sunucularla borsa bülteni.</description>"
+            f"<description>BIST Radyo — yapay zekâ sunuculu borsa bülteni.</description>"
             f"<itunes:duration>{max(1, round(b.get('sure_sn', 60) / 60))}</itunes:duration></item>"
         )
     # 23.10: xml-stylesheet PI KALDIRILDI — Chrome XSLT'yi kaldiriyor ve
@@ -9436,7 +9663,7 @@ def podcast_rss_yaz():
         f"<itunes:image href=\"{SITE_URL}og-cover.png\" />\n"
         f"<image><url>{SITE_URL}og-cover.png</url><title>BIST Radyo — Yapay Zeka Borsa Bülteni</title><link>{SITE_URL}</link></image>\n"
         "<description>Borsa İstanbul'da gün başlangıcı, öğle ve kapanış değerlendirmeleri; "
-        "kurgusal yapay zeka sunucular. Yatırım tavsiyesi değildir.</description>\n"
+        "yapay zekâ sunuculu bülten. Yatırım tavsiyesi değildir.</description>\n"
         + "\n".join(ogeler)
         + "\n</channel></rss>"
     )
@@ -9616,11 +9843,14 @@ def site_arama_json_yaz(rapor_dosyalari):
     # HISSE DETAY SAYFALARI (2026-10-15): indekste hic yoklardi — kullanici sirket
     # aradiginda detay sayfasina hicbir zaman ulasamiyordu. Baslik sayfanin
     # <title>'indan alinir; iletide hisse kodu one alinir.
-    # 2026-11-04 (kullanici karari): sayfa <title>'i sirket adini ICERMIYOR
-    # ("ASELS — Hisse Analizi") — "aselsan" diye arayan kullanıcıyı raporlar
-    # eziyordu. Baslik, sirketler.json'daki unvan ile zenginlestirilir:
-    # "ASELS — Aselsan — Hisse Analizi"; +dizinSonuclari'daki hisse başlık primi
-    # böylece tetiklenir (kullanıcı şirketi ADIYLA arasın da koduyla da).
+    # 2026-11-04 site-ici arama duzeltmesi (DURUM satir 255-261): "aselsan"
+    # aramasinda hisse sayfasi cikmiyordu; arama indeksi basliklari sayfa
+    # <title>'indan aliyordu ve sirket adi icermiyordu. Cozum: arama sonucu
+    # etiketi unvan ile zenginlestirilir ("ASELS — Aselsan — Hisse Yorumu ve
+    # Teknik Analizi") + dizinSonuclari hisse baslik primi (+60). Sayfa
+    # <title>'i O GUN bilinçli degistirilmedi ("istenirse ayrı is"); unvan
+    # kurali diye bir kullanıcı kararı kaydi YOK (2026-11-08 duzeltme: eski
+    # yorum bunu "kullanici karari" diye yanlis etiketlemisti).
     # URL bilinçli olarak 'hisse/...' yazilir: os.path.join Windows'ta ters bolu
     # uretir ve JSON'a boyle sinir (yerel kosta bozuk baglanti, CI'da dogru).
     _profiller = _sirket_profilleri()

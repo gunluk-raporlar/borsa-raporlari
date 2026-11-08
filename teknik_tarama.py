@@ -1,8 +1,10 @@
 """Teknik taramayi gunluk bot'tan BAGIMSIZ calistirir.
 
 GitHub Actions kronu tarafindan piyasa saatlerinde (hafta ici 10:00-18:30 TR)
-30 dakikada bir cagrilir; LLM, haber, portfoy veya rapor uretimi YOKTUR.
-Sadece teknik-analiz.html ve anasayfadaki 'One Cikanlar' bolumu guncellenir.
+30 dakikada bir cagrilir; LLM, haber veya rapor uretimi YOKTUR. Guncellenenler:
+teknik-analiz.html, anasayfadaki 'One Cikanlar' bolumu (index.html), ticker.json,
+piyasa-serit.json yedegi ve portfoy.html (gömülü şerit damgası bayat kalmasın —
+8 Kasım bulgusu: canlı portfoy.html "05.11 08:09" şeridi taşıyordu).
 Kron adi saglamasi gerektirmedigi icin hicbir secret'a ihtiyaci yoktur.
 """
 import os
@@ -39,13 +41,34 @@ def _yaz_degistiyse(yol, icerik):
 def main():
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     date_str = datetime.now(tz).strftime("%Y-%m-%d")
+    degisti = False
+
+    # Ikinci serit yedegi (piyasa-serit.json) gun ici de tazelensin: JS'siz
+    # okuyucu (ajan/crawler) sayfalara gömülü şeritte bayat damga görmesin.
+    # piyasa_serit_yaz, gösterge değerleri değişmediyse yazımı atlar (commit
+    # gürültüsü olmasın); ağ hatasında eski yedek yayında kalır.
+    try:
+        bot.piyasa_serit_yaz()
+    except Exception:
+        logger.exception("piyasa-serit.json tazelenemedi; diger adimlar etkilenmez.")
+
+    # portfoy.html yalniz sabah koşusuna mahkumdu; gün içi şerit değişimleri
+    # sayfaya düşsün. Sayfa LLM'siz üretilir (build_portfolio_html).
+    try:
+        _p = bot.load_portfolio()
+        if _p and _p.get("history"):
+            if _yaz_degistiyse("portfoy.html", bot.build_portfolio_html(_p)):
+                degisti = True
+    except Exception:
+        logger.exception("portfoy.html uretilemedi; diger adimlar etkilenmez.")
 
     satirlar = bot.teknik_tarama_yap()
     if not satirlar:
         logger.warning("Tarama veri alamadi; sayfalar degistirilmedi.")
         return
 
-    degisti = _yaz_degistiyse("teknik-analiz.html", bot.build_teknik_html(satirlar, date_str))
+    if _yaz_degistiyse("teknik-analiz.html", bot.build_teknik_html(satirlar, date_str)):
+        degisti = True
     bot.ticker_json_yaz(satirlar)
 
     # Borsapy (TradingView) sinyal sayfasi: hatasi teknik sayfayi etkilemesin.

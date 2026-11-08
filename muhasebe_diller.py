@@ -179,7 +179,7 @@ MENU = [
     ("haftasonu.html",       "Hafta Sonu",       "Weekend",          "Wochenende",             "Выходные",           "周末"),
     ("haftasonu-egitimi.html","Borsa Okulu",     "Market School",    "Börsenschule",           "Школа рынка",        "股市学堂"),
     ("takvim.html",          "📅 Takvim",        "📅 Calendar",      "📅 Kalender",            "📅 Календарь",       "📅 日历"),
-    ("sozluk.html",          "Sözlük",           "Glossary",         "Glossar",                "Глоссарий",          "术语表"),
+    ("sozluk.html",          "Sözlük",           "Glossary",         "Glossar",                "Глоссарий",          "词典"),
     ("terimler.html",        "Terimler",         "Terms",            "Begriffe",               "Термины",            "术语"),
 ]
 MENU_IDX = {"tr": 0, "en": 1, "de": 2, "ru": 3, "zh": 4}

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""BIST Radyo: iki kurgusal YAPAY ZEKA sunucunun (Ela & Mert) piyasa sohbeti.
+"""BIST Radyo: iki yapay zekâ sunucusunun (Ela & Mert) piyasa sohbeti.
 
 radyo.yml (GitHub Actions) tarafindan piyasa gunlerinde TSI ~10:10 / 13:30 / 18:05
 cagrilir. Akis:
@@ -16,7 +16,9 @@ cagrilir. Akis:
   4. YAYIN: radyo/<tarih>-<bolum>.mp3 yazilir, radyo/indeks.json guncellenir,
      7 gunden eski yayinlar temizlenir (repo sismesin).
 
-ONEMLI NOT: Ela ve Mert gercek kisi degil, kurgusal YAPAY ZEKA sunuculardir.
+ONEMLI NOT: Ela ve Mert gercek kisi degil, yapay zekâ sunucularidir. "kurgusal"
+ifadesi kullanıcıya dönük metinlerde kullanılmaz — profesyonel dil tercihi
+(2026-11-08 kullanıcı kararı); kimlik dürüstlüğü etiket/açıklamayla verilir.
 Icerik bilgilendirme amaclidir, yatirim tavsiyesi degildir.
 """
 import os

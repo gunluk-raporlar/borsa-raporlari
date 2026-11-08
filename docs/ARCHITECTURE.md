@@ -176,7 +176,8 @@ flowchart TD
 - **makro_*.py** — makro katman: `makro_veri/katalog` (veri + tanımlar),
   `makro_rejim` (kural tabanlı rejim etiketi, `data/makro-rejim/`),
   `makro_snapshot` (akşam göstergeleri), `makro_analiz` sayfası üretimi.
-- **radyo.py** — BIST Radyo: iki kurgusal sunuculu piyasa sohbeti; Ela'nın sesi
+- **radyo.py** — BIST Radyo: iki yapay zekâ sunucusunun (Ela & Mert) piyasa
+  sohbeti; Ela'nın sesi
   EMA Lightning (`ema_tts.py`) ile MP3, `radyo/<tarih>-<bölüm>.mp3` +
   `indeks.json` günceller. Yedek zinciri (yayını kurtarmak için) edge-tts →
   Qwen3 → EMA; MERT için EMA hiçbir koşulda kullanılmaz (EMA tek sesli kadın,

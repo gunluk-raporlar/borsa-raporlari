@@ -26,6 +26,11 @@ cp *.html *.css *.json *.png *.svg *.xml *.txt _headers _redirects dist/ 2>/dev/
 # Site disi metin dosyalari
 rm -f dist/joblog.txt dist/requirements.txt
 
+# 2026-11-08 (kullanıcı kararı): llms.txt'ye derleme zamanı damgası — ajanlar
+# dosyanın ne kadar taze olduğunu görür; sayfa verisi damgaları
+# ticker.json / piyasa-serit.json "guncelleme" alanlarındadır.
+printf '\nson_derleme: %s (UTC) — içerik güncellik damgaları ticker.json ve piyasa-serit.json dosyalarının "guncelleme" alanlarındadır.\n' "$(date -u '+%Y-%m-%d %H:%M')" >> dist/llms.txt 2>/dev/null || true
+
 # Dil kopyalarinin style.css'ini kokle esitle (2026-10-11): bot koşusu kök
 # style.css'i güncelleyip i18n koşusu dil kopyalarını eski halde birakirsa
 # yayindaki dil sayfalari kökle ayni stili paylasir.

@@ -128,15 +128,11 @@ SOZLUK = {
     # en/de/ru'da 160 karakteri asiydi — yeni TR kaynagina gore boylanmis degerler
     # burada sabitlenir (LLM'e birakilmaz). Baslik zh duzeltmesi asagida
     # mevcut "BIST 30 Günlük Raporlar" girişlerinde yapilir (tek anahtar kurali).
-    "BIST 30'un yapay zeka destekli günlük raporları, teknik tarama ve osilatör sinyalleri, model portföy önerileri ve 100.000 TL'lik sanal portföyün takibi.": {
-        "en": "AI-powered daily reports for BIST 30: technical screening and oscillator signals, model portfolio picks, and tracking of a 100,000 TL virtual portfolio.",
-        "de": "KI-gestützte Tagesberichte zum BIST 30: technische Scans, Oszillatorsignale, Portfoliomodelle und Verfolgung eines virtuellen 100.000-TL-Testportfolios.",
-        "ru": "Ежедневные отчёты по BIST 30 на основе ИИ: технический скрининг, сигналы осцилляторов, модельные портфели и виртуальный портфель 100 000 TL.",
-        "zh": "BIST 30的AI辅助每日报告、技术扫描和振荡器信号、模型投资组合建议以及100.000 TL虚拟投资组合的跟踪。",
-    },
     # 2026-11-08 (Search Console verisi, kullanici karari "duzelt"): ana sayfa
     # 110 gosterim / konum 3,4 / TO %0,91 — baslikta "borsa" kelimesi yoktu.
     # Yeni baslik + aciklama sorgu kelimeleri tasir; Bing kurali (<=160) korunur.
+    # Eski ana sayfa aciklama/baslik anahtarlari bu degisiklikle oksuz kalinca
+    # kaldirildi (marka dizgesi "BIST 30 Günlük Raporlar" SITE_ADI olarak durur).
     "BIST 30 Günlük Borsa Raporu ve Hisse Analizi": {
         "en": "BIST 30 Daily Stock Market Report & Analysis",
         "de": "BIST 30 Tagesbericht: Börsenreport & Aktienanalyse",
@@ -149,15 +145,30 @@ SOZLUK = {
         "ru": "Ежедневный биржевой отчёт по BIST 30: ИИ-скрининг, сигналы осцилляторов, анализ акций и виртуальный портфель — каждый торговый день.",
         "zh": "BIST 30 每日股市报告：AI技术扫描、振荡器信号、个股分析与虚拟投资组合跟踪——每个交易日更新。",
     },
-    "Muhasebe Terimleri Sözlüğü — İngilizce-Türkçe": {
-        "en": "Accounting Terms Glossary — English–Turkish",
-        "de": "Glossar der Bilanzierungsbegriffe — Englisch–Türkisch",
-        "ru": "Глоссарий бухгалтерских терминов — английско-турецкий",
-        "zh": "会计术语词典 — 英土对照",
-    },
     # Sabit SEO aciklamalari (2026-10-31): sozluk + robot sayfalarinin meta
     # aciklamalari LLM kuyrugunda sure bütcesine takilip Turkce kaliyordu
     # (8 sayfa, 4 dil). Sabit metin olduklari icin burada sabitlenir.
+    # 2026-11-08 (kullanıcı kararı): "kurgusal" ifadesi kullanıcıya dönük
+    # metinlerden kaldırıldı (profesyonel dil); kimlik dürüstlüğü "yapay zekâ"
+    # etiketiyle korunur. Ela & Mert kişilikleri ve 23.10 ses kararları aynen durur.
+    "Yalnızca dinlemek içindir • Yapay zekâ sunuculu bülten • Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.": {
+        "en": "For listening purposes only • AI-hosted bulletin • For informational purposes, not investment advice.",
+        "de": "Nur zum Hören • KI-moderierte Sendung • Zu Informationszwecken, keine Anlageberatung.",
+        "ru": "Только для прослушивания • Выпуск с ИИ-ведущими • Носит информационный характер, не является инвестиционной рекомендацией.",
+        "zh": "仅供收听 • 人工智能主播播报 • 仅供参考，不构成投资建议。",
+    },
+    "BIST Radyo: yapay zekâ sunucuları Ela ve Mert ile gün başlangıcı, öğle ve kapanış piyasa bültenleri. Siteden dinle veya podcast uygulamanla abone ol.": {
+        "en": "BIST Radio: AI hosts Ela and Mert with market opening, noon, and closing bulletins. Listen on the site or subscribe via podcast app.",
+        "de": "BIST Radio: KI-Moderatoren Ela und Mert mit Morgen-, Mittags- und Schlussmarkt-Bulletins. Hier online hören oder in Podcast-App abonnieren.",
+        "ru": "BIST Радио: ведущие-ИИ Эла и Мерт — выпуски открытия, середины и закрытия рынка. Слушайте на сайте или подпишитесь в подкаст-приложении.",
+        "zh": "BIST 电台：人工智能主播 Ela 和 Mert 为您带来开盘、午间和收盘市场简报。可在网站收听或通过播客应用订阅。",
+    },
+    "Hafta sonu borsa eğitimi: yapay zekâ eğitmeni her Cumartesi/Pazar bir terim, gösterge veya grafik konusunu gerçek BIST verisiyle anlatır.": {
+        "en": "Weekend stock market education: an AI instructor explains one term, indicator, or chart topic each Saturday/Sunday using real BIST data.",
+        "de": "Wochenend-Börsenbildung: ein KI-Trainer erklärt jeden Samstag/Sonntag einen Begriff, Indikator oder Chart auf Basis echter BIST-Daten.",
+        "ru": "Выходные уроки биржи: ИИ-преподаватель каждую субботу/воскресенье разбирает термин, индикатор или график на реальных данных BIST.",
+        "zh": "周末股市学堂：人工智能讲师每周六/周日结合真实 BIST 数据讲解一个术语、指标或图表主题。",
+    },
     "Temel borsa ve finans kavramlarının sade tanımları: emir tipleri, göstergeler, endeksler ve piyasa mekanizması.": {
         "en": "Plain-language definitions of core stock-market and finance terms: order types, indicators, indexes and market mechanics.",
         "de": "Verständliche Definitionen zentraler Börsen- und Finanzbegriffe: Ordertypen, Indikatoren, Indizes und Marktmechanik.",
@@ -1532,8 +1543,11 @@ def turkce_sayfalar(kok: Path) -> list[Path]:
             continue
         if dosya.name in HARIC_DOSYALAR or HARIC_DESEN_RE.match(dosya.name):
             continue
-        if any(x in ("web", "node_modules", "functions", ".git") for x in parcalar):
+        if any(x in ("web", "node_modules", "functions", ".git", "dist",
+                     "_SILME-KUYRUGU") for x in parcalar):
             continue
+        # dist yerel build ciktisi, _SILME-KUYRUGU takipsiz yedeklerdir (08.11):
+        # CI'da zaten yokturlar; yerel taramalar yanlis kapsam bulmasin.
         if any(p.startswith(("_tmp", "_denetim", "_duzeltme")) for p in parcalar):
             continue  # gecici tani dosyalari dil agacina ve sitemap'e girmez
         try:  # dogrulama dosyalari gibi <html> icermeyen parcalari atla
@@ -1910,6 +1924,27 @@ def baglantilari_onar(html: str, rel: Path, agac: set[str], medya: set[str] | No
     return re.sub(r"(href|src)=([\"'])([^\"']+)\2", onar, html), sayac["n"], sayac["medya"]
 
 
+# 2026-11-08 kullanıcı kararı: Temettü sayfası diğer dillerde OLUŞTURULMAZ.
+# temettu.html zaten HARIC_DOSYALAR'da (dil ağacına kopyalanmaz); bu filtre de
+# dil sayfalarındaki menü öğesini çıkarır ve gövdede kalan temettu
+# bağlantılarını Türkçe sayfaya bağlar — /{dil}/temettu 404'ü hiç oluşmaz.
+_TEMETTU_HREF_RE = re.compile(r'href="(?:\.\./)*temettu(?:\.html)?"')
+
+
+def _temettuyu_dil_sayfasindan_cikar(html: str) -> str:
+    """Dil sayfasından Temettü menü öğesini çıkarır; gövdede kalan temettu
+    bağlantılarını Türkçe sayfaya yönlendirir. (Idempotent; TR sayfalara
+    dokunmaz — yalnızca dil üretiminde çağrılır.)"""
+
+    def _nav_temizle(m):
+        return re.sub(r'<a\b[^>]*href="[^"]*temettu[^"]*"[^>]*>.*?</a>', "",
+                      m.group(0), flags=re.S)
+
+    html = re.sub(r"<nav\b.*?</nav>", _nav_temizle, html, flags=re.S)
+    html = _TEMETTU_HREF_RE.sub(f'href="{SITE_URL}temettu"', html)
+    return html
+
+
 def seo_yol(rel: Path) -> str:
     """Sayfanin site kokune gore SEO yolu: site artik .html'siz canonical kullaniyor.
 
@@ -2133,6 +2168,8 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
                 yeni, onarilan, medya_n = baglantilari_onar(yeni, rel, agac, medya)
                 ozet["onarilan_baglanti"] += onarilan
                 ozet["medya_baglantisi"] += medya_n
+            # Temettü filtresi onarim bayrağından bağımsız uygulanır (kullanıcı kararı).
+            yeni = _temettuyu_dil_sayfasindan_cikar(yeni)
             hedef = kok / dil / rel
             hedef.parent.mkdir(parents=True, exist_ok=True)
             hedef.write_text(yeni, encoding="utf-8")
@@ -2160,8 +2197,8 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
 # 2026-10-22: en'e ozel gecis tum dil agaclarina genellesti (de/ru/zh tablolari
 # kullanici karariyla eklendi); _en_slug_degistir kopyasi kaldirildi — tek
 # mantik dil_yollari.slug_degistir'de.
-from dil_yollari import (_SLUG_ESLEME, SLUG_TANILAR, hedef_url, menu_tazele,
-                         slug_degistir, tr_yolu)
+from dil_yollari import (_SLUG_ESLEME, SLUG_TANILAR, hedef_dosya, hedef_url,
+                         menu_tazele, slug_degistir, tr_yolu)
 import terim_gruplari
 
 
@@ -2702,50 +2739,84 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
 # ----------------------------------------------------------------------------
 
 
+def _dogrula_hedef_var_mi(taban: Path, yol: str) -> bool:
+    """taban dizinine gore yol'un dosya karsiligini arar: yol, yol.html,
+    yol/index.html (yol bos ise taban/index.html). Guzel-URL (uzantisiz)
+    baglanti ve dizin index'leri icin 08.11 kurallari."""
+    yol = yol.strip("/")
+    if not yol:
+        adaylar = [taban / "index.html"]
+    else:
+        adaylar = [taban / yol, taban / f"{yol}.html", taban / yol / "index.html"]
+    return any(a.exists() for a in adaylar)
+
+
 def dogrula(kok: Path, diller: list[str]) -> dict:
     rapor = {"kirik_baglanti": [], "hreflang_eksik": [], "canonical_hatali": [], "canonical_baska_sayfa": [], "uretilmemis": [], "kontrol": 0}
+    # 2026-11-08 iki evren duzeltmesi:
+    # (1) Dil agaclarlari YERELLESIMIS slug kullaniyor (en/reports, zh/baogao,
+    #     ru/portfel...); TR yolu dogrudan {dil}/ altina eklemek butun sayfalari
+    #     "uretilmemis" sayiyordu (yalniz 4 dil-koku index'i eslesiyordu).
+    #     Hedef dosya artik dil_yollari.hedef_dosya ile cozulur; canonical
+    #     beklentisi de bulunmus dosyanin kendi yolundan turetilir.
+    # (2) Evren git-takipli sayfalara sinirlandi: yerel _kap_*/_SILME-KUYRUGU
+    #     taslaklarinin dil kopyasi beklemez (10-22 dist dersinin ailesi).
+    #     Git yoksa/tekelirse fail-open: filtresiz devam.
+    try:
+        import subprocess
+        _g = subprocess.run(["git", "ls-files", "*.html"], cwd=Path(kok).resolve(),
+                            capture_output=True, text=True, timeout=30)
+        takip = set(_g.stdout.splitlines()) if _g.returncode == 0 else None
+    except Exception:
+        takip = None
     # Terim harf-grup TR dosyalari dil kopyasi beklemez: dil kopyalari DIL-YEREL
     # grup adlariyla terimler_gruplari_yeniden_dagit'tan cikar (TR-adli cevrilmis
     # dosyalar o adimda silinir); TR-list dolasiminda yanlis "uretilmemis" uretmesin.
-    tr_sayfalar = {str(r): r for r in turkce_sayfalar(kok)
-                   if not re.match(r"^terimler/[a-z0-9-]+\.html$", str(r))}
+    tr_sayfalar = {r.as_posix(): r for r in turkce_sayfalar(kok)
+                   if not re.match(r"^terimler/[a-z0-9-]+\.html$", r.as_posix())
+                   and (takip is None or r.as_posix() in takip)}
     for dil in diller:
         for rel in tr_sayfalar.values():
-            dosya = kok / dil / rel
-            if not dosya.exists():
-                rapor["uretilmemis"].append(f"{dil}/{rel}")
+            dosya = hedef_dosya(seo_yol(rel), dil, kok, dizin=True)
+            rel_p = rel.as_posix()  # Windows'ta \ terimler-haric tutmayi bozuyordu
+            if dosya is None:
+                rapor["uretilmemis"].append(f"{dil}/{rel_p}")
                 continue
             html = dosya.read_text(encoding="utf-8", errors="replace")
             rapor["kontrol"] += 1
             if 'hreflang="x-default"' not in html or f'hreflang="{DILLER[dil]["hreflang"]}"' not in html:
-                rapor["hreflang_eksik"].append(f"{dil}/{rel}")
-            beklenen = f'{SITE_URL}{dil}/{seo_yol(rel)}'
-            kok_url = f'{SITE_URL}{dil}/'
+                rapor["hreflang_eksik"].append(f"{dil}/{rel_p}")
+            beklenen = f"{SITE_URL}{seo_yol(dosya.relative_to(kok))}"
+            kok_url = f"{SITE_URL}{dil}/"
             mc = re.search(r'rel="canonical" href="([^"]+)"', html)
             if not mc:
-                rapor["canonical_hatali"].append(f"{dil}/{rel}: canonical etiketi yok")
+                rapor["canonical_hatali"].append(f"{dil}/{rel_p}: canonical etiketi yok")
             elif not mc.group(1).startswith(kok_url):
-                rapor["canonical_hatali"].append(f"{dil}/{rel} -> {mc.group(1)}")
+                rapor["canonical_hatali"].append(f"{dil}/{rel_p} -> {mc.group(1)}")
             elif mc.group(1) not in (beklenen, kok_url):
                 # Tur tarafinda bilincli olarak hub sayfaya isaret ediyor olabilir
-                rapor["canonical_baska_sayfa"].append(f"{dil}/{rel} -> {mc.group(1)}")
+                rapor["canonical_baska_sayfa"].append(f"{dil}/{rel_p} -> {mc.group(1)}")
             # ic baglantilar (script/style icerigi haric — JS icindeki "href" metinleri sahte eslesme uretir)
             govde = re.sub(r"<script\b.*?</script>", "", html, flags=re.S | re.I)
             govde = re.sub(r"<style\b.*?</style>", "", govde, flags=re.S | re.I)
             for href in re.findall(r'(?:href|src)="([^"]+)"', govde):
                 if href.startswith(("//", "mailto:", "data:", "#", "javascript:")):
                     continue
+                temiz = href.split("#")[0].split("?")[0]
+                if temiz.endswith((".md", ".xml")):
+                    continue  # CI derleme-urunleri: md aynalari (build.sh) + beslemeler; depoda bulunmazlar
                 if href.startswith(SITE_URL):  # site mutlak adresi -> uretilen dosyaya karsilik gelmeli
-                    kismi = href[len(SITE_URL):].split("#")[0].split("?")[0]
-                    adaylar = [kismi, kismi + ".html", kismi + "index.html"]
-                    if not any((kok / a).exists() for a in adaylar if a):
-                        rapor["kirik_baglanti"].append(f"{dil}/{rel} -> {href}")
+                    if not _dogrula_hedef_var_mi(kok, temiz[len(SITE_URL):]):
+                        rapor["kirik_baglanti"].append(f"{dil}/{rel_p} -> {href}")
                     continue
                 if href.startswith("http"):
                     continue
-                hedef = (dosya.parent / href.split("#")[0].split("?")[0]).resolve()
-                if not hedef.exists() and href.split("#")[0].split("?")[0]:
-                    rapor["kirik_baglanti"].append(f"{dil}/{rel} -> {href}")
+                if temiz.startswith("/"):  # kok-goreli ("/favicon-120.png") kokten cozulur
+                    if not _dogrula_hedef_var_mi(kok, temiz):
+                        rapor["kirik_baglanti"].append(f"{dil}/{rel_p} -> {href}")
+                    continue
+                if not _dogrula_hedef_var_mi(dosya.parent, temiz):
+                    rapor["kirik_baglanti"].append(f"{dil}/{rel_p} -> {href}")
     return rapor
 
 

@@ -17,6 +17,11 @@ on:
     - cron: '37 13 * * *'  # 16:37 Turkiye saati — ikindi yayini (hafta sonu icerigi aksama kalmadan duser)
     - cron: '43 16 * * *'  # 19:43 Turkiye saati — aksam yayini (robot kapanisi 19:15'ten sonra)
   workflow_dispatch:
+    inputs:
+      dogrulamayi_atla:
+        description: 'Veri doğrulama kapısını atla (istisnai durumlar için)'
+        type: boolean
+        default: false
   # Sabah gunluk raporu bittigi an siteye gitsin; 10:30'u beklemesin
   # (2026-09-29: rapor 08:52'de repodaydi, site 10:30'a kadar eski kaldi).
   # Basarisiz kosular yayini tetiklemez (job kosulunda suzulur).
@@ -52,6 +57,16 @@ jobs:
               echo "Yeni icerik yok (HEAD yayin commit'i) — yayin atlandi."
               exit 0;;
           esac
+          # Veri doğrulama kapisi (2026-11-08): yayin cikmadan once makine-okunur
+          # JSON'larin yapisi denetlenir (ticker/piyasa-serit/portfolio/karne).
+          # Bloklayici: hata varsa commit/push yapilmaz, CF build harcanmaz.
+          # Kapinin git pull'dan SONRA ve degisiklik betiklerinden ONCE calismasi,
+          # az once pushlanan taze veriyi dogrulamasini saglar.
+          if [ "${{ inputs.dogrulamayi_atla }}" = "true" ]; then
+            echo "Dogrulama atlandi (workflow_dispatch bayragi)."
+          else
+            python3 pipeline/veri_dogrula.py .
+          fi
           # Dil secici baglantilari (2026-10-30): bolum index'leri ve tarihli
           # arsiv sayfalarindaki eski menuler yayin commit'i icinde tazelenir
           # (ayni sayfanin cevirisi yoksa bolum hub'ina duser, ana sayfaya
