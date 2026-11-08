@@ -7956,8 +7956,37 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=N
     # yakaladığı TR(330)/EN(345,75) karışımı doğuyordu. Üretim damgası hem
     # hero'ya hem teknik kartına yazılır; canlı fiyat şeridi + ticker.json işaret edilir.
     _uretim = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M")
+    _uretim_iso = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).isoformat(timespec="seconds")
     _veri_etiketi = (f"<span style='color:var(--muted); font-size:12px'>Veri: {_uretim} üretimi "
                      f"&middot; canlı fiyat: üstteki şerit ve <a href='/ticker.json'>ticker.json</a></span>")
+    # 2026-11-08 (üç danışmanın ortak bulgusu): ajanın ilk ~200 token'da tek
+    # cümlede fiyat+tarih+nitelik alması (alıntı cümlesi). Yanına finansal
+    # JSON-LD: schema.org'da hisse fiyati için hazır tip yok; Offer/Product
+    # uydurmak yerine Corporation + additionalProperty/PropertyValue dürüst ve
+    # ayrıştırması kolay. ld+json blokları i18n tarafından çevrilmeden taşınır.
+    _profil_ad = _kisa_unvan((_sirket_profilleri().get(kod) or {}).get("unvan") or kod)
+    _alinti = (f"<p style='margin:10px 0 0; font-size:13.5px'>{kod} ({_profil_ad}) fiyatı "
+               f"<strong>{_ts(satir.get('son', 0))} TL</strong> ({_ty(satir.get('gunluk', 0))}% günlük) — "
+               f"{_uretim} TSİ üretimi. Bu değer sayfa üretim anındandır; gün içi en taze fiyat "
+               f"üstteki şeritte, <a href='/api/fiyatlar'>/api/fiyatlar</a> ve "
+               f"<a href='/ticker.json'>ticker.json</a> uçlarındadır.</p>")
+    _ld = {
+        "@context": "https://schema.org",
+        "@type": "Corporation",
+        "name": _profil_ad,
+        "alternateName": kod,
+        "tickerSymbol": kod,
+        "url": f"{SITE_URL}hisse/{kod}",
+        "additionalProperty": [
+            {"@type": "PropertyValue", "name": "son fiyat",
+             "value": round(float(satir.get("son") or 0), 2), "unitText": "TRY"},
+            {"@type": "PropertyValue", "name": "günlük değişim",
+             "value": round(float(satir.get("gunluk") or 0), 2), "unitText": "%"},
+            {"@type": "PropertyValue", "name": "veri zamanı", "value": _uretim_iso},
+            {"@type": "PropertyValue", "name": "veri kapsamı",
+             "value": "sayfa üretim anı; gün içi canlı fiyat /api/fiyatlar ucundadır"},
+        ],
+    }
     icerik = f"""
 <div class="hero">
 <h1>{kod} <span style="font-size:16px; color:var(--muted)">{satir.get('sektor', '')}</span></h1>
@@ -7967,6 +7996,7 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=N
 {degisim_html}
 {_veri_etiketi}</div>
 </div>
+{_alinti}
 {grafik_karti}
 {_sirket_profili_html(kod)}
 {hisse_analiz.bilanco_tablosu_html(kod)}
@@ -8001,6 +8031,7 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=N
         f"{_ad} Hisse Yorumu ve Teknik Analizi", icerik, "hisseler", kok="../",
         yol=f"hisse/{kod}.html",
         aciklama=f"{_ad} ({satir.get('sektor', 'BIST 30')}) son fiyat, teknik sinyaller, 7 günlük haberleri ve rapor arşivinde geçen değerlendirmeler.",
+        ld_ek=json.dumps(_ld, ensure_ascii=False),
     )
 
 

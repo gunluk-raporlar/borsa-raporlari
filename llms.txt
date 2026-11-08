@@ -4,7 +4,7 @@
 
 İçerik Türkçedir; İngilizce, Almanca, Rusça ve Çince sürümleri de aynı yapıda sunulur. Tüm içerik bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.
 
-Bu dosya el ile yönetilir: veri tazeliği ticker.json / piyasa-serit.json dosyalarının "guncelleme" ve "guncelleme_iso" alanlarındadır; dosyanın derleme zamanı en alttaki "son_derleme" satırıdır.
+Bu dosya el ile yönetilir: statik veri dosyalarının (ticker.json, piyasa-serit.json) tazeliği kendi "guncelleme" ve "guncelleme_iso" alanlarındadır; canlı uçların (/api/*) tazeliği yanıttaki "guncelleme" alanındadır; dosyanın derleme zamanı en alttaki "son_derleme" satırıdır.
 
 ## Günlük içerik
 
@@ -77,6 +77,19 @@ tarih/saat tazelik denetimi bu alanlarla yapılır (bu dosyada damga tutulmaz).
 Tarihli günlük raporların .md'leri `/raporlar/<TARIH>.md` biçimindedir
 (örn. `/raporlar/2026-11-06.md`); tam bağlantı listesi `/raporlar.md`'dedir.
 Bir sayfanın .md'si, HTML sayfanın aynının metin sürümüdür; daha güncel değildir.
+Tüm bu .md'lerin (TR + diller) yol sırasıyla birleşik tek dosyası
+[llms-full.txt](https://borsa-raporlari.pages.dev/llms-full.txt)'dir; derleme
+sırasında otomatik üretilir ve tek istekte tüm siteyi metin olarak verir.
+
+## Canlı fiyat uçları (Pages Function — istek anında üretilir)
+
+Bu uçlar statik dosya değildir: her istekte (9 dakikalık kenar önbelleğiyle)
+güncel veri döndürür. Fiyat sorularının İLK tercihi bunlardır; statik
+dosyalar yedektir. Uçlar CORS'a açıktır (Access-Control-Allow-Origin: *).
+
+- [/api/fiyatlar](https://borsa-raporlari.pages.dev/api/fiyatlar): BIST 30 hisselerinin en taze fiyatları (~15 dk gecikmeli canlı; kaynak TradingView) — alanlar: `guncelleme, etiket, kaynak, hisseler[{h, f, d, m}]` (h=kod, f=fiyat TL, d=günlük %, m=piyasa değeri TL). "ASELS fiyatı" sorusu için `hisseler` dizisinde `h == "ASELS"` kaydının `f` değeri; tazelik `guncelleme` ("GG.AA SS:DD", TSİ) ile denetlenir
+- [/api/piyasa](https://borsa-raporlari.pages.dev/api/piyasa): BIST 30 (XU030), BIST 100 (XU100), gram altın, ons altın, dolar, euro, sterlin ve Brent — alanlar: `guncelleme, etiket, kaynak, gostergeler[{k, ad, b, o, f, d}]` (canlı hesap; GRAM ons×dolar çarprazıyla, XU030USD XU030÷USDTRY ile üretilir)
+- [/api/asistan-veri?kod=ASELS](https://borsa-raporlari.pages.dev/api/asistan-veri?kod=ASELS): tek hisse sorgusu — alanlar: `kod, ad, son, gunluk, haftalik, deg60, kisa, orta, uzun, wt, wt1, konum, r, genel` (son=fiyat TL; sayılar tr-TR biçimli "331,75"; kisa/orta/uzun/wt=EMA ve Wave Trend durumları; genel=sinyal). Bilinmeyen kod 400 döndürür. Fiyatı bot üretimidir (gün sonu); en taze fiyat için /api/fiyatlar
 
 ## Makine-okunur veri uç noktaları (ajanlar ve otomasyonlar için)
 
@@ -84,7 +97,7 @@ Bu dosyalar insan sayfası DEĞİLDİR; yapay zeka ajanlarının ve otomasyonlar
 doğrudan JSON çekmesi içindir. Alan adları kararlı tutulur; güncelleme saatleri
 her dosyanın "guncelleme" alanındadır (ISO 8601 sürümü: "guncelleme_iso").
 
-- [ticker.json](https://borsa-raporlari.pages.dev/ticker.json): BIST 30 hisselerinin son fiyatları, günlük değişim yüzde ve sinyalleri — alanlar: `guncelleme, guncelleme_iso, etiket, hisseler[{h, ad, f, d, s}]` (h=kod, ad=kısa şirket adı, f=fiyat TL, d=günlük %, s=sinyal). `s` olası değerleri: `GÜÇLÜ AL | AL | NÖTR | SAT | GÜÇLÜ SAT` — otomatik teknik tarama çıktısıdır (çok göstergeli: EMA, Wave Trend, regresyon kanalı); yatırım tavsiyesi değildir, Borsapy sinyallerinden bağımsızdır. Tek hisse fiyatı tarifi: "ASELS fiyatı" sorusu için `hisseler` dizisinde `h == "ASELS"` (veya `ad` alanında "Aselsan") kaydının `f` değeri TL cinsindendir; tazelik `guncelleme_iso` ile denetlenir
+- [ticker.json](https://borsa-raporlari.pages.dev/ticker.json): BIST 30 hisselerinin son fiyatları, günlük değişim yüzde ve sinyalleri — alanlar: `guncelleme, guncelleme_iso, etiket, hisseler[{h, ad, f, d, s}]` (h=kod, ad=kısa şirket adı, f=fiyat TL, d=günlük %, s=sinyal). `s` olası değerleri: `GÜÇLÜ AL | AL | NÖTR | SAT | GÜÇLÜ SAT` — otomatik teknik tarama çıktısıdır (çok göstergeli: EMA, Wave Trend, regresyon kanalı); yatırım tavsiyesi değildir, Borsapy sinyallerinden bağımsızdır. Tek hisse fiyatı tarifi: "ASELS fiyatı" sorusu için `hisseler` dizisinde `h == "ASELS"` (veya `ad` alanında "Aselsan") kaydının `f` değeri TL cinsindendir; tazelik `guncelleme_iso` ile denetlenir. Fiyat sorularında birincil kaynak yukarıdaki /api/fiyatlar ucudur; bu dosya (30 dakikalık üretim) yedeğidir
 - [piyasa-serit.json](https://borsa-raporlari.pages.dev/piyasa-serit.json): BIST 30 (XU030), BIST 100 (XU100), gram altın (GRAM), dolar (USDTRY) ve dolar bazlı BIST 30 (XU030USD) — alanlar: `guncelleme, guncelleme_iso, etiket, kaynak, gostergeler[{k, ad, f, d, b, o}]` (k=simge, ad=görünen ad, f=fiyat, d=günlük %, b=birim, o=ondalık basamak). Günlük değişim hesaplanamadığında GRAM için `d: null` gelebilir
 - [site-arama.json](https://borsa-raporlari.pages.dev/site-arama.json): sitenin tam arama indeksi — alanlar: `guncelleme, sayfalar[{b, u, t}]` (b=başlık, u=göreceli URL, t=metin alıntıları); site içi arama bu veriyle çalışır
 - [sinyal-karnesi.json](https://borsa-raporlari.pages.dev/sinyal-karnesi.json): teknik tarama AL sinyallerinin tam backtest dökümü — alanlar: `guncelleme, guncelleme_iso, yontem_surumu, giris_kurali, cikis_kurali, maliyet_varsayimi, ozet[{n, ortalama_getiri_yuzde, medyan_getiri_yuzde, isabet_yuzde, net_ortalama_yuzde, net_isabet_yuzde, profit_factor, evren_ortalama_yuzde, alpha_puan, evreni_yenen}], kayitlar[{tarih, hisse, giris_t, giris, cikis_t, cikis, getiri, evren, fark}]`. Varsayımsal testtir; yatırım tavsiyesi değildir
@@ -94,5 +107,8 @@ her dosyanın "guncelleme" alanındadır (ISO 8601 sürümü: "guncelleme_iso").
 Not: Ticker/şerit verileri iş günü ~30 dakikada bir güncellenir; sayfalardaki
 kayan şeritler aynı veriyi görüntüler. Sayfa HTML'inde şerit değerleri
 üretim anında gömülüdür (JS çalıştırmayan okuyucular son bilinen veriyi görür).
+Fiyat tazeliği sıralaması: /api/fiyatlar (canlı, ~15 dk gecikmeli) → ticker.json
+(gün içi ~30 dk) → sayfaya gömülü değerler (günlük üretim; üretim damgası
+sayfada "Veri: … üretimi" yazar).
 "ozet.n" ve "isabet_yuzde" gibi oranlar küçük örneklemeye dayanır; karnede
 "giris" fiyatı daima sinyal tarihinden sonraki bir seanstan gelir.

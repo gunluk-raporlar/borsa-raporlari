@@ -17,6 +17,14 @@
   Cache-Control: public, max-age=60
 /ticker.json
   Cache-Control: public, max-age=60
+  Access-Control-Allow-Origin: *
+/piyasa-serit.json
+  Cache-Control: public, max-age=60
+  Access-Control-Allow-Origin: *
+/sinyal-karnesi.json
+  Access-Control-Allow-Origin: *
+/site-arama.json
+  Access-Control-Allow-Origin: *
 /hisse/isi-haritasi.js
   Cache-Control: public, max-age=300
 /hisse/grafik.js
