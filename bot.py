@@ -4693,6 +4693,11 @@ def ticker_json_yaz(satirlar, etiket=None):
     durumuna gore otomatik secilir."""
     if etiket is None:
         etiket = _piyasa_etiketi()
+    # 2026-11-08 (kullanıcı hedefi: LLM'ler canlı fiyatı kolay çeksin):
+    # "ad" alanı veriyi kendi-kendini-tanımlar yapar — ajan "Aselsan fiyatı"
+    # sorusunu kod bilmese de ad eşleşmesiyle çözer. Ek alan; mevcut h/f/d/s
+    # tüketicileri (şerit JS'i, robot) etkilenmez.
+    _profiller = _sirket_profilleri()
     veri = {
         "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M"),
         # 2026-11-08 (ajan-katman denetimi): makine-okunur tazelik damgasi —
@@ -4700,7 +4705,10 @@ def ticker_json_yaz(satirlar, etiket=None):
         "guncelleme_iso": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).isoformat(timespec="seconds"),
         "etiket": etiket,
         "hisseler": [
-            {"h": s["hisse"], "f": s["son"], "d": s["gunluk"], "s": s.get("genel", "")}
+            {"h": s["hisse"],
+             "ad": (_kisa_unvan(_profiller[s["hisse"]]["unvan"])
+                    if _profiller.get(s["hisse"], {}).get("unvan") else s["hisse"]),
+             "f": s["son"], "d": s["gunluk"], "s": s.get("genel", "")}
             for s in satirlar
         ],
     }
@@ -6270,9 +6278,7 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     # ve bağlantısı ana sayfada; md aynasına ve ajan katmanına (llms.txt) taşınır.
     _profiller = _sirket_profilleri()
 
-    def _kisa_unvan(_u):
-        _u = re.sub(r"\s*\(eski adı:.*?\)\s*", " ", _u or "").strip()
-        return _u.split("(")[0].strip() or _u
+    _profiller = _sirket_profilleri()
 
     kapsam_ogeleri = " · ".join(
         f'<a href="hisse/{_kod}.html">{_kod}{" — " + _kisa_unvan(_profiller[_kod]["unvan"]) if _profiller.get(_kod, {}).get("unvan") else _kod}</a>'
@@ -7192,6 +7198,14 @@ def _sirket_profilleri():
         return {}
 
 
+def _kisa_unvan(_u):
+    """Unvandan kisa ad: '(eski adı: ...)' notunu siler, ilk parantez oncesini
+    alir ('Aselsan Elektronik Sanayi ve Ticaret A.S.' -> 'Aselsan Elektronik
+    Sanayi ve Ticaret' kalir; uzunsa da ajan icin yeterli)."""
+    _u = re.sub(r"\s*\(eski adı:.*?\)\s*", " ", _u or "").strip()
+    return _u.split("(")[0].strip() or _u
+
+
 def _bilanco_ozeti(kod):
     """Hisse profil kartinin bilanço bolumu. Oncelik: data/bilanco (temel
     ajandin zengin ozeti); yoksa eski data/financials tek satiri; o da
@@ -7936,13 +7950,22 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=N
         f"<span class='{_renk(degisim)}' style='font-weight:700'>{degisim:+.1f}% ({seri[0][0]}'ten beri)</span>"
         if degisim is not None else ""
     )
+    # 2026-11-08 (ajan tazeliği): hero'daki fiyat tarihsizdi — ajan (ve Jina gibi
+    # JS'siz okuyucular) sayfayı ne zaman çekse fiyatın hangi üretimden olduğunu
+    # bilemiyordu; dil kopyaları i18n koşusuna kadar bayat kalınca ChatGPT'nin
+    # yakaladığı TR(330)/EN(345,75) karışımı doğuyordu. Üretim damgası hem
+    # hero'ya hem teknik kartına yazılır; canlı fiyat şeridi + ticker.json işaret edilir.
+    _uretim = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M")
+    _veri_etiketi = (f"<span style='color:var(--muted); font-size:12px'>Veri: {_uretim} üretimi "
+                     f"&middot; canlı fiyat: üstteki şerit ve <a href='/ticker.json'>ticker.json</a></span>")
     icerik = f"""
 <div class="hero">
 <h1>{kod} <span style="font-size:16px; color:var(--muted)">{satir.get('sektor', '')}</span></h1>
 <div class="meta"><span class="badge">{satir.get('genel', '—')}</span>
 <span><strong>{_ts(satir.get('son', 0))} TL</strong></span>
 <span class="{_renk(satir.get('gunluk', 0))}">{_ty(satir.get('gunluk', 0))}% (günlük)</span>
-{degisim_html}</div>
+{degisim_html}
+{_veri_etiketi}</div>
 </div>
 {grafik_karti}
 {_sirket_profili_html(kod)}
@@ -7955,7 +7978,7 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=N
 <div class="grid-iki">
 <div class="card"><h3 style="margin:0 0 8px">Teknik Durum</h3>
 <table style="font-size:13.5px">{teknik_ogeler}</table>
-<p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a> &middot; <a href="../hisse/">Hisse merkezi</a></p></div>
+<p style="margin:8px 0 0; color:var(--muted); font-size:12px">EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı. Veri: {_uretim} üretimi. Detay: <a href="../teknik-analiz.html">Teknik Tarama</a> &middot; <a href="../hisse/">Hisse merkezi</a></p></div>
 <div class="card"><h3 style="margin:0 0 8px">Son 7 Gün Haberleri</h3>
 <ul style="margin:0; padding-left:18px; font-size:13.5px">{haber_ogeleri}</ul>
 <p style="margin:8px 0 0; font-size:12.5px"><a href="../sirket-haberleri.html#H-{kod}">Tüm şirket haberleri &rarr;</a></p></div>

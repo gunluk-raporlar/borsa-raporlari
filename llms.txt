@@ -48,17 +48,35 @@ AEFES (Anadolu Efes) · AKBNK (Akbank) · ASELS (Aselsan) · ASTOR (Astor Enerji
 
 ## Markdown sürümleri (ajanlar için)
 
-Aşağıdaki sayfaların `.md` uzantılı Markdown kopyaları vardır; başlıklar ve
-tablolar (boru formatında) korunmuş, gezinme kabuğu arındırılmış sürümlerdir:
-ana sayfa, raporlar, derin analiz, makro analiz, teknik tarama, borsapy
-sinyalleri, sinyal karnesi, portföy, hafta sonu, haberler, şirket haberleri,
-takvim, sözlükler, temettü merkezi ve tüm tarihli rapor/hisse sayfaları.
-Örnek: `https://borsa-raporlari.pages.dev/sozluk.md`,
-`https://borsa-raporlari.pages.dev/raporlar/2026-11-04.md`.
-Her `.md` dosyasının front matter'ında `generated_at` (üretim anı, ISO 8601 +03:00),
-`data_as_of` (gövdedeki en yeni veri tarihi) ve `update_schedule` alanları vardır.
-Tüm tarihli raporların `.md` bağlantı listesi:
-`https://borsa-raporlari.pages.dev/raporlar.md`.
+Aşağıdaki menü sayfalarının her birinin `.md` kopyası vardır; başlıklar ve
+tablolar (boru formatında) korunmuş, gezinme kabuğu arındırılmıştır. Front
+matter'da `generated_at` (üretim anı, ISO 8601 +03:00), `data_as_of` (gövdedeki
+en yeni veri tarihi), `update_schedule` ve `number_format` alanları vardır —
+tarih/saat tazelik denetimi bu alanlarla yapılır (bu dosyada damga tutulmaz).
+
+- [Ana Sayfa](https://borsa-raporlari.pages.dev/index.md): günün özeti, rapor arşivi, piyasa panosu — dosyanın içinde tüm bölümlerin site haritası vardır
+- [Raporlar](https://borsa-raporlari.pages.dev/raporlar.md): tarih bazlı rapor arşivi ve tüm tarihli raporların .md bağlantı listesi
+- [Hisseler](https://borsa-raporlari.pages.dev/hisse/): 30 hisse hub'ı — hisse .md'leri `/hisse/<KOD>.md` biçimindedir (örn. `/hisse/GARAN.md`); teknik ve temel analizler, canlı fiyat şeridi, 7 günlük haberler
+- [Derin Analiz](https://borsa-raporlari.pages.dev/derin-analiz.md): günlük derin piyasa analizi
+- [Makro Analiz](https://borsa-raporlari.pages.dev/makro-analiz.md): makroekonomik göstergeler ve yorum
+- [Teknik Tarama](https://borsa-raporlari.pages.dev/teknik-analiz.md): EMA/Wave Trend/regresyon kanalı taraması
+- [Sinyal Karnesi](https://borsa-raporlari.pages.dev/sinyal-karnesi.md): AL sinyallerinin backtest karnesi (yöntem sürümü 2)
+- [Borsapy Sinyalleri](https://borsa-raporlari.pages.dev/borsapy-analiz.md): osilatör sinyal tablosu
+- [Haberler](https://borsa-raporlari.pages.dev/haberler.md): piyasa haber arşivi — arama ilgisinin en yüksek olduğu bölümlerden
+- [Şirket Haberleri](https://borsa-raporlari.pages.dev/sirket-haberleri.md): hisse bazlı haber akışı
+- [Deneme Portföyü](https://borsa-raporlari.pages.dev/portfoy.md): sanal portföy ve benchmark kıyası (temettüler net nakit işlenir)
+- [Hafta Sonu](https://borsa-raporlari.pages.dev/haftasonu.md): haftalık değerlendirme ve yeni hafta ajandası
+- [Borsa Okulu](https://borsa-raporlari.pages.dev/haftasonu-egitimi.md): hafta sonu dersleri (yapay zekâ eğitmeni)
+- [Takvim](https://borsa-raporlari.pages.dev/takvim.md): ekonomik takvim
+- [Temettü Merkezi](https://borsa-raporlari.pages.dev/temettu.md): temettü takvimi, verimler ve hesaplayıcı
+- [Sözlük](https://borsa-raporlari.pages.dev/sozluk.md): borsa terimleri — arama ilgisinin en yüksek olduğu bölümlerden
+- [Terimler](https://borsa-raporlari.pages.dev/terimler.md): teknik ve piyasa terimleri
+- [Muhasebe Terimleri](https://borsa-raporlari.pages.dev/muhasebe-terimleri.md): 1.691 terim; harf sayfaları `/muhasebe-terimleri/A` … `/Y` (.md'leri de vardır)
+- [İşlem Robotu](https://borsa-raporlari.pages.dev/robot.md): sanal robot panosu ve işlem günlüğü (eğitim amaçlı)
+
+Tarihli günlük raporların .md'leri `/raporlar/<TARIH>.md` biçimindedir
+(örn. `/raporlar/2026-11-06.md`); tam bağlantı listesi `/raporlar.md`'dedir.
+Bir sayfanın .md'si, HTML sayfanın aynının metin sürümüdür; daha güncel değildir.
 
 ## Makine-okunur veri uç noktaları (ajanlar ve otomasyonlar için)
 
@@ -66,7 +84,7 @@ Bu dosyalar insan sayfası DEĞİLDİR; yapay zeka ajanlarının ve otomasyonlar
 doğrudan JSON çekmesi içindir. Alan adları kararlı tutulur; güncelleme saatleri
 her dosyanın "guncelleme" alanındadır (ISO 8601 sürümü: "guncelleme_iso").
 
-- [ticker.json](https://borsa-raporlari.pages.dev/ticker.json): BIST 30 hisselerinin son fiyatları, günlük değişim yüzde ve sinyalleri — alanlar: `guncelleme, guncelleme_iso, etiket, hisseler[{h, f, d, s}]` (h=kod, f=fiyat TL, d=günlük %, s=sinyal). `s` olası değerleri: `GÜÇLÜ AL | AL | NÖTR | SAT | GÜÇLÜ SAT` — otomatik teknik tarama çıktısıdır (çok göstergeli: EMA, Wave Trend, regresyon kanalı); yatırım tavsiyesi değildir, Borsapy sinyallerinden bağımsızdır
+- [ticker.json](https://borsa-raporlari.pages.dev/ticker.json): BIST 30 hisselerinin son fiyatları, günlük değişim yüzde ve sinyalleri — alanlar: `guncelleme, guncelleme_iso, etiket, hisseler[{h, ad, f, d, s}]` (h=kod, ad=kısa şirket adı, f=fiyat TL, d=günlük %, s=sinyal). `s` olası değerleri: `GÜÇLÜ AL | AL | NÖTR | SAT | GÜÇLÜ SAT` — otomatik teknik tarama çıktısıdır (çok göstergeli: EMA, Wave Trend, regresyon kanalı); yatırım tavsiyesi değildir, Borsapy sinyallerinden bağımsızdır. Tek hisse fiyatı tarifi: "ASELS fiyatı" sorusu için `hisseler` dizisinde `h == "ASELS"` (veya `ad` alanında "Aselsan") kaydının `f` değeri TL cinsindendir; tazelik `guncelleme_iso` ile denetlenir
 - [piyasa-serit.json](https://borsa-raporlari.pages.dev/piyasa-serit.json): BIST 30 (XU030), BIST 100 (XU100), gram altın (GRAM), dolar (USDTRY) ve dolar bazlı BIST 30 (XU030USD) — alanlar: `guncelleme, guncelleme_iso, etiket, kaynak, gostergeler[{k, ad, f, d, b, o}]` (k=simge, ad=görünen ad, f=fiyat, d=günlük %, b=birim, o=ondalık basamak). Günlük değişim hesaplanamadığında GRAM için `d: null` gelebilir
 - [site-arama.json](https://borsa-raporlari.pages.dev/site-arama.json): sitenin tam arama indeksi — alanlar: `guncelleme, sayfalar[{b, u, t}]` (b=başlık, u=göreceli URL, t=metin alıntıları); site içi arama bu veriyle çalışır
 - [sinyal-karnesi.json](https://borsa-raporlari.pages.dev/sinyal-karnesi.json): teknik tarama AL sinyallerinin tam backtest dökümü — alanlar: `guncelleme, guncelleme_iso, yontem_surumu, giris_kurali, cikis_kurali, maliyet_varsayimi, ozet[{n, ortalama_getiri_yuzde, medyan_getiri_yuzde, isabet_yuzde, net_ortalama_yuzde, net_isabet_yuzde, profit_factor, evren_ortalama_yuzde, alpha_puan, evreni_yenen}], kayitlar[{tarih, hisse, giris_t, giris, cikis_t, cikis, getiri, evren, fark}]`. Varsayımsal testtir; yatırım tavsiyesi değildir

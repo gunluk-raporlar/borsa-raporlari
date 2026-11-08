@@ -350,12 +350,22 @@ def degerlendirmeler_html(kod):
         govde.append(f'<h4 style="margin:12px 0 0; font-size:14.5px">{baslik}</h4>{_metin_html(metin)}')
     tarih = veri.get("guncelleme") or ""
     tarih_bit = ""
+    uyari = ""
     if re.match(r"^\d{4}-\d{2}-\d{2}$", tarih):
         y, a, g = tarih.split("-")
         tarih_bit = f" &middot; son güncelleme: {g}.{a}.{y}"
+        # 2026-11-08 (ajan tazeliği): değerlendirme prose'ı yazıldığı günün
+        # fiyatıyla konuştuğundan ("... 380,75 TL'den işlem görüyor") ajan onu
+        # güncel fiyat sanabiliyordu — tarih uyarısı metnin hemen üstünde durur.
+        uyari = (f'<p style="margin:6px 0 0; color:var(--muted); font-size:12px">'
+                 f'Aşağıdaki değerlendirme <strong>{g}.{a}.{y}</strong> tarihinde yazılmıştır; '
+                 f'paragraflardaki fiyatlar o günkü veridir ve güncel olmayabilir. '
+                 f'Güncel fiyat: üstteki fiyat şeridi ve '
+                 f'<a href="/ticker.json">ticker.json</a>.</p>')
     return f"""
 <div class="card" style="margin-top:14px">
 <h3 style="margin:0 0 2px">📝 Değerlendirmeler <span style="font-weight:400; color:var(--muted); font-size:12.5px">&middot; elle hazırlanır{tarih_bit}</span></h3>
+{uyari}
 {''.join(govde)}
 <p style="margin:10px 0 0; color:var(--muted); font-size:12px">Bu bölüm elle güncellenir; bilgilendirme amaçlıdır, yatırım tavsiyesi değildir.</p>
 </div>"""

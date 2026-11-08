@@ -64,7 +64,7 @@ KOK_SAYFALAR = [
     "index", "raporlar", "derin-analiz", "makro-analiz", "teknik-analiz",
     "borsapy-analiz", "sinyal-karnesi", "portfoy", "haftasonu",
     "haftasonu-egitimi", "haberler", "sirket-haberleri", "takvim",
-    "sozluk", "terimler", "muhasebe-terimleri", "temettu",
+    "sozluk", "terimler", "muhasebe-terimleri", "temettu", "robot",
 ]
 # Klasör ağaçları (içindeki tüm .html'ler; .md kopyası aynı yere yazılır)
 KLASORLER = [
@@ -733,7 +733,53 @@ def html_md(yol, rel=None, dil="tr", kok=None, planli=None):
     if dil != "tr":
         fm.append("machine_translated: true")
     fm.append("---")
+    # 2026-11-08 (kullanıcı kararı): index.md (yalnız TR kolu) not satırından
+    # hemen sonra tam site haritasını taşır — ajanın ilk bakışta menünün
+    # tamamını görmesi için. Dili kolu md'lerine Türkçe harita enjekte edilmez.
+    if rel_temiz == "index" and dil == "tr":
+        return ("\n".join(fm) + "\n\n" + not_satiri + "\n\n"
+                + _site_haritasi_bolumu() + "\n\n" + govde + kapanis)
     return "\n".join(fm) + "\n\n" + not_satiri + "\n\n" + govde + kapanis
+
+
+# 2026-11-08 (kullanıcı kararı): index.md TAM site haritası taşır — ana menüdeki
+# her başlığın bağlantısı ve kısa açıklaması; sözlük/haber gibi arama ilgisinin
+# en yüksek olduğu bölümler (GSC verisi) böylece ajanlara ilk bakışta görünür.
+# bot.py ana menüsü (bot.py ~5025) ile SENKRON tutulmalı: menüye girdi eklenirse
+# buraya da eklenmeli.
+_SITE_HARITASI = [
+    ("", "Ana Sayfa", "günün özeti, rapor arşivi ve piyasa panosu"),
+    ("raporlar", "Raporlar", "tarih bazlı günlük BIST 30 piyasa raporları"),
+    ("hisse/", "Hisseler", "BIST 30 hisselerinin teknik ve temel analizleri; canlı fiyat şeridi, 7 günlük haber takibi ve rapor değerlendirmeleri"),
+    ("derin-analiz", "Derin Analiz", "günlük derin piyasa değerlendirmesi"),
+    ("makro-analiz", "Makro Analiz", "makroekonomik göstergeler ve yorum (TÜİK, TCMB, resmi AB/ABD kaynakları)"),
+    ("teknik-analiz", "Teknik Tarama", "EMA dizilimi + Wave Trend + 60 günlük regresyon kanalı taraması (GÜÇLÜ AL…GÜÇLÜ SAT)"),
+    ("sinyal-karnesi", "Sinyal Karnesi", "AL sinyallerinin T+1 girişli 5 işlem günlük backtest karnesi (ham veri: sinyal-karnesi.json)"),
+    ("borsapy-analiz", "Borsapy Sinyal", "TradingView osilatör oylarıyla çalışan ayrı sinyal motoru"),
+    ("haberler", "Haberler", "piyasa haber arşivi — sitede arama ilgisinin en yüksek olduğu bölümlerden"),
+    ("sirket-haberleri", "Şirket Haberleri", "hisse bazlı şirket haber akışı"),
+    ("portfoy", "Deneme Portföyü", "100.000 TL sanal portföy; temettüler net nakit olarak işlenir, altın/dolar/mevduat/endeks kıyası"),
+    ("haftasonu", "Hafta Sonu", "hafta içi gelişmelerin değerlendirmesi ve yeni hafta ajandası"),
+    ("haftasonu-egitimi", "Borsa Okulu", "hafta sonu dersleri (yapay zekâ eğitmeni, gerçek BIST verisiyle)"),
+    ("takvim", "Takvim", "yaklaşan ekonomik veriler ve etkinlikler"),
+    ("temettu", "Temettü", "temettü takvimi, verimler ve hesaplayıcı (nakdi temettü + bedelsiz serileri)"),
+    ("sozluk", "Sözlük", "borsa terimleri sözlüğü — sitede arama ilgisinin en yüksek olduğu bölümlerden"),
+    ("terimler", "Terimler", "teknik ve piyasa terimleri sözlüğü"),
+    ("muhasebe-terimleri", "Muhasebe Terimleri", "1.691 muhasebe/finansal tablo terimi; 18 harf sayfası (/muhasebe-terimleri/A … /Y)"),
+    ("robot", "İşlem Robotu", "sanal işlem robotu panosu ve işlem günlüğü (eğitim amaçlı; emir gerçekleşmez)"),
+    ("radyo/", "Radyo / Podcast", "yapay zekâ sunuculu günlük sesli bülten (podcast + mp3 arşivi)"),
+]
+
+
+def _site_haritasi_bolumu():
+    satirlar = ["## Site Haritası — tüm bölümler (ana menü)", ""]
+    for yol, ad, aciklama in _SITE_HARITASI:
+        satirlar.append(f"- [{ad}]({SITE_URL}/{yol}): {aciklama}")
+    satirlar += ["",
+                 "Makine-okunur veri uç noktaları: ticker.json, piyasa-serit.json, "
+                 "site-arama.json, sinyal-karnesi.json, sitemap.xml, raporlar.xml — "
+                 "alan sözlükleri llms.txt'te."]
+    return "\n".join(satirlar)
 
 
 def _yaz(yol, icerik):

@@ -2069,11 +2069,15 @@ def yerelle_meta(html: str, dil: str) -> str:
 
 
 def _oncelik_anahtari(r: Path) -> tuple:
-    """Kuyruk sirasi: once gunluk icerik, sonra diger sayfalar, en sonda terimler.
+    """Kuyruk sirasi: once gunluk icerik, sonra hisse sayfalari, diger sayfalar,
+    en sonda terimler.
 
     2026-10-31: eski siralama duz alfabetikti; 'raporlar/' 175 sayfalik kuyrukta
     ~120. sirada kaliyor ve sure butcesi dolunca gunluk rapor hic cevrilmiyordu.
     Artik tarihli gunluk icerik kuyrugun basinda ve EN YENI TARIH once.
+    2026-11-08: hisse/ sayfalari kuyruga alindi (0.6 katman) — teknik satiri
+    gunluk degistigi halde dil kopyalari i18n sirasina kadar bayat kaliyordu
+    (ChatGPT bulgusu: en/stocks/ASELS 30.10 verisiyle yayindaydi).
     """
     s = r.as_posix()
     m = re.search(r"(\d{4})-(\d{2})-(\d{2})", s)
@@ -2085,6 +2089,8 @@ def _oncelik_anahtari(r: Path) -> tuple:
                               "haftasonu/", "haftasonu-egitimi/")):
         if s.startswith(onek):
             return (0, i, ters_tarih, s)
+    if s == "hisse/index.html" or s.startswith("hisse/"):
+        return (1, 0, -1, s)  # diger sayfalardan once, gunluk icerikten sonra
     return (1, 0, ters_tarih, s)
 
 

@@ -1,4 +1,22 @@
 User-agent: *
 Allow: /
 
+# Yapay zeka ajanlarina acik izin (2026-11-08): keşif + arama + egitim taramasi
+# OAI-SearchBot: ChatGPT aramasi; GPTBot: egitim taramasi; ClaudeBot: Anthropic;
+# PerplexityBot: Perplexity; Googlebot: Google (AI Overviews dahil).
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
 Sitemap: https://borsa-raporlari.pages.dev/sitemap.xml
