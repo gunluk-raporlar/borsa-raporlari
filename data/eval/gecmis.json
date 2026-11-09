@@ -71,6 +71,23 @@
     "rerank_top_k": 0,
     "genisletme": 1
    }
+  },
+  {
+   "tarih": "2026-11-09",
+   "ndcg_normal": 0.9256,
+   "ndcg_ham": 0.9236,
+   "ndcg_rerank": 0.927,
+   "mrr_normal": 0.8958,
+   "bos_normal": 0,
+   "karar": "olcum",
+   "ayarlar": {
+    "min_skor": 0.3,
+    "taze_boost": 0.12,
+    "taze_gun": 60,
+    "rerank_top_k": 0,
+    "genisletme": 1
+   },
+   "kota": 0.0
   }
  ]
 }
