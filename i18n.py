@@ -99,6 +99,20 @@ DIL_SAYFASI_VERIDEN = {"muhasebe-terimleri.html"}
 # _tmp*/_denetim*: gecici tani dosyalari (25.10 bulgusu: sitemap'e sizmisti).
 HARIC_DESEN_RE = re.compile(r"^(google|yandex|baidu|bing|naver|indexnow|site-?verification|onizleme-|_tmp|_denetim|_duzeltme)", re.I)
 
+# 9.11.2026: tarihsiz NAV/veri sayfalari. Kuyrugun EN BASINA alinirlar
+# (_oncelik_anahtari). Sebep: 31.10 oncelik duzenlemesi tarihli icerigi en one
+# alinca hub sayfalari (raporlar.html, derin-analiz.html...) kuyrugun sonuna
+# dustu; 60 dk'lik sure butcesi tarihli sayfalarda bitince hub'lar hic
+# yenilenmiyor ve dil agaclarindaki tum rapor listeleri 30.10'da kaldi
+# (09.11 kullanici bulgusu). Bu sayfalar gunluk degisir ama kucuktur;
+# onbellek sayesinde her kosuda ilk dakikalarda tazelenirler.
+HUB_SAYFALARI = frozenset({
+    "index.html", "raporlar.html", "derin-analiz.html", "makro-analiz.html",
+    "haftasonu.html", "haftasonu-egitimi.html", "haberler.html",
+    "sirket-haberleri.html", "teknik-analiz.html", "sinyal-karnesi.html",
+    "takvim.html", "borsapy-analiz.html", "portfoy.html", "hisse/index.html",
+})
+
 # ----------------------------------------------------------------------------
 # 2) ARAYUZ SOZLUGU (elle yazilmis; makine cevirisine birakilmaz)
 #    Anahtar = Turkce kaynak metin (bastaki emoji/isaret ayiklandiktan sonraki hali)
@@ -2069,8 +2083,8 @@ def yerelle_meta(html: str, dil: str) -> str:
 
 
 def _oncelik_anahtari(r: Path) -> tuple:
-    """Kuyruk sirasi: once gunluk icerik, sonra hisse sayfalari, diger sayfalar,
-    en sonda terimler.
+    """Kuyruk sirasi: once NAV/veri hub'lari, sonra tarihli gunluk icerik (en yeni
+    once), sonra hisse sayfalari, diger sayfalar, en sonda terimler.
 
     2026-10-31: eski siralama duz alfabetikti; 'raporlar/' 175 sayfalik kuyrukta
     ~120. sirada kaliyor ve sure butcesi dolunca gunluk rapor hic cevrilmiyordu.
@@ -2078,8 +2092,13 @@ def _oncelik_anahtari(r: Path) -> tuple:
     2026-11-08: hisse/ sayfalari kuyruga alindi (0.6 katman) — teknik satiri
     gunluk degistigi halde dil kopyalari i18n sirasina kadar bayat kaliyordu
     (ChatGPT bulgusu: en/stocks/ASELS 30.10 verisiyle yayindaydi).
+    2026-11-09: HUB_SAYFALARI en one alindi — 31.10 duzenlemesi hub sayfalarini
+    kuyrugun sonuna itmis, sure butcesi hub'lara ulasmadan bitince dil
+    agaclarindaki tum liste sayfalari 30.10'da kalmisti (kullanici bulgusu).
     """
     s = r.as_posix()
+    if s in HUB_SAYFALARI:
+        return (0, -1, 0, s)  # navigasyon/gunluk veri sayfalari: her kosuda en once
     m = re.search(r"(\d{4})-(\d{2})-(\d{2})", s)
     ters_tarih = -int(m.group(1) + m.group(2) + m.group(3)) if m else 0
     if s in ("terimler.html", "muhasebe-terimleri.html") or \
