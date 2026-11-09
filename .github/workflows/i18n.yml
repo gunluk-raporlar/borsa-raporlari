@@ -21,6 +21,10 @@ on:
         description: "Sadece saglayici testi calistir (ceviri yapmaz)"
         type: boolean
         default: false
+      zincir:
+        description: "Kendi-tetikleme zincir derinligi (cron dusmelerine karsi; elle dokunmayin)"
+        type: number
+        default: 0
 
 permissions:
   contents: write
@@ -170,7 +174,11 @@ jobs:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           OPENCODE_MODELS: "space-bunny-free,ling-3.1-flash-free,cat-jam-free"
           TUIK_API_KEY: ${{ secrets.TUIK_API_KEY }}
-        run: python -u i18n.py --diller en,de,ru,zh --provider ${{ inputs.provider || 'llm' }} --sitemap
+        # Cikti /tmp'ye de yazilir: son adimdaki kendi-tetikleme "kalan N parca"
+        # satirini bu gunlukten okur (/tmp depo disindadir, commit'e sizmez).
+        run: |
+          python -u i18n.py --diller en,de,ru,zh --provider ${{ inputs.provider || 'llm' }} --sitemap 2>&1 | tee /tmp/ceviri-kosu-log.txt
+          exit ${PIPESTATUS[0]}
 
       - name: Degisiklikleri depoya kaydet (hata olsa bile)
         if: always()
@@ -216,4 +224,29 @@ jobs:
             gh workflow run yayin-nobetci.yml --repo "$GITHUB_REPOSITORY" --ref main               && echo "Nobetci zinciri tetiklendi." || echo "Tetikleme atlandi."
           else
             echo "Zincir baslatma penceresi disi (TSI $SAAT, gun $GUN)."
+          fi
+      # 2026-11-09: GitHub bugun 10:00-18:00 UTC arasindaki 5 i18n cron'unu da
+      # sessizce dusurdu; dil agaclari 12:15 TSI'dan sonra tazelenemedi (09.11
+      # kullanici bulgusu: derin-analiz dil kopyalari 6-7 Kasim'da kaldi).
+      # Sure butcesi "kalan N parca" ile bittiyse kosun kendini yeniden
+      # tetiklemesi (nobetcinin kendi-zincir modeli) kuyrugu cron'suz bosaltir.
+      # Sinir: zincir 3'te durur (tek tetiklemeyle en fazla 4 kosu); sonsuz
+      # dongu olusamaz, yeni zincir ancak schedule/dispatch ile baslar. Kosu
+      # CRASH olursa (kalan satiri yoksa) tetikleme YAPILMAZ — yarim kosuyu
+      # zincirleme arizaya donusturmemek icin bilincli tercih.
+      - name: Kalan parcayla kendini tetikle (cron dusmelerine karsi)
+        if: ${{ !inputs.test }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ZINCIR: ${{ inputs.zincir || 0 }}
+        run: |
+          KALAN=$(grep -oE 'kalan [0-9]+ parca' /tmp/ceviri-kosu-log.txt 2>/dev/null | tail -1 | grep -oE '[0-9]+' || true)
+          KALAN=${KALAN:-0}
+          echo "Kalan parca: $KALAN — zincir derinligi: $ZINCIR"
+          if [ "$KALAN" -gt 0 ] && [ "$ZINCIR" -lt 3 ]; then
+            gh workflow run i18n.yml --repo "$GITHUB_REPOSITORY" --ref main -f provider=llm -f zincir=$((ZINCIR+1)) \
+              && echo "Kendi tetikleme: zincir $((ZINCIR+1)) dispatch edildi." \
+              || echo "::warning::kendi tetikleme basarisiz"
+          else
+            echo "Kendi tetikleme yok (kalan=$KALAN, zincir=$ZINCIR)."
           fi
