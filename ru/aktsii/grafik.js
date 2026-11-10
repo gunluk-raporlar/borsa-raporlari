@@ -279,5 +279,29 @@
     aralikKutu.appendChild(btn);
   });
 
+  // 2026-11-09: hisse-canli.js /api/fiyatlar'dan canli fiyati alip #fiyat-serisi
+  // JSON'unun son noktasini guncelleyip "fiyat-serisi-guncel" olayi gonderir.
+  // Olay buradan ONCE geldiysse (onbellekli hizli fetch) dataset isaretiyle
+  // seri yeniden okunur; SONRA geldiyse asagidaki dinleyici yeniden cizer.
+  // T/F var ile tanimlidir; ciz() hem durum'u hem dongusuyle yeniden kurar.
+  function seriyiTazele() {
+    var v2, NT, NF;
+    try { v2 = JSON.parse(veriEl.textContent); } catch (e) { return; }
+    NT = v2.t || []; NF = (v2.f || []).map(Number);
+    if (NT.length !== NF.length || NT.length < 2) return;
+    T = NT; F = NF;
+  }
+  function seciliGun() {
+    var i;
+    for (i = 0; i < ARIALIK.length; i++) if (ARIALIK[i][0] === secili) return ARIALIK[i][1];
+    return 0;
+  }
+  document.addEventListener("fiyat-serisi-guncel", function () {
+    seriyiTazele();
+    ciz(seciliGun());
+    gizle();
+  });
+  if (veriEl.dataset.guncel === "1") seriyiTazele();
+
   ciz(0);
 })();
