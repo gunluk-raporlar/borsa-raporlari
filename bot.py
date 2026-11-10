@@ -7884,6 +7884,7 @@ def _interaktif_fiyat_grafigi(kod, seri):
 <div class="grafik-lejant">%s</div>
 <script type="application/json" id="fiyat-serisi">%s</script>
 <script src="grafik.js?v=1" defer></script>
+<script src="hisse-canli.js?v=1" defer></script>
 <div style="color:var(--muted); font-size:12px">%s tarihinden bugüne %s kapanış fiyatları (TL). Referanslar: dönem başı kapanış (noktalı), SMA20/SMA50 ortalamaları, en düşük/en yüksek/son kapanış.</div>
 </div>""" % (kod, len(seri), _renk(deg), _ty(deg), svg, lejant, veri,
              tarihler[0], kod)
@@ -7957,7 +7958,7 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=N
     # hero'ya hem teknik kartına yazılır; canlı fiyat şeridi + ticker.json işaret edilir.
     _uretim = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M")
     _uretim_iso = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).isoformat(timespec="seconds")
-    _veri_etiketi = (f"<span style='color:var(--muted); font-size:12px'>Veri: {_uretim} üretimi "
+    _veri_etiketi = (f"<span id='hf-veri' style='color:var(--muted); font-size:12px'>Veri: {_uretim} üretimi "
                      f"&middot; canlı fiyat: üstteki şerit ve <a href='/ticker.json'>ticker.json</a></span>")
     # 2026-11-08 (üç danışmanın ortak bulgusu): ajanın ilk ~200 token'da tek
     # cümlede fiyat+tarih+nitelik alması (alıntı cümlesi). Yanına finansal
@@ -7991,8 +7992,8 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=N
 <div class="hero">
 <h1>{kod} <span style="font-size:16px; color:var(--muted)">{satir.get('sektor', '')}</span></h1>
 <div class="meta"><span class="badge">{satir.get('genel', '—')}</span>
-<span><strong>{_ts(satir.get('son', 0))} TL</strong></span>
-<span class="{_renk(satir.get('gunluk', 0))}">{_ty(satir.get('gunluk', 0))}% (günlük)</span>
+<span><strong id="hf-fiyat"><span id="hf-fiyat-sayi">{_ts(satir.get('son', 0))}</span> TL</strong></span>
+<span class="{_renk(satir.get('gunluk', 0))}" id="hf-gunluk"><span id="hf-gunluk-sayi">{_ty(satir.get('gunluk', 0))}%</span> (günlük)</span>
 {degisim_html}
 {_veri_etiketi}</div>
 </div>
@@ -9936,7 +9937,16 @@ def site_arama_json_yaz(rapor_dosyalari):
 def sitemap_ve_robots_yaz(rapor_dosyalari):
     """Arama motorlari icin robots.txt ve sitemap.xml uretir.
     Ana sayfalarin lastmod'u en son bot kosusunun tarihi olur; raporlarin
-    lastmod'u dosyanin son degisiklik zamanindan okunur."""
+    lastmod'u dosyanin son degisiklik zamanindan okunur.
+    2026-11-10 (kullanici karari: dil sayfalarini ne siliyorsa o duzeltilecek):
+    kok sitemap.xml'in iki yazari var — bu islev (yalniz-TR yazan) ve i18n'in
+    kataloglayicisi sitemap_guncelle (tam haritayi yazan). 22-23 Ekim'den
+    beri her sabah BU ISLEVIN yalniz-TR yazimi, gece eklenen ~800 dil
+    kaydini siliyordu. Hata bu islevde duzeltildi: yazim sonunda
+    kataloglayici ayni dosya uzerinde calisir ve bu islevin ciktisi artik
+    TAM haritadir (TR + en/de/ru/zh + hreflang). Silen yazar kaldirilmadi;
+    silen yazarin ciktisi tam haritaya cevrildi — haritayi tam yazmayan
+    hicbir yol kalmadi."""
     statik = [
         ("index.html", "daily"),
         ("raporlar.html", "daily"),
@@ -10017,9 +10027,27 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                 + "\n".join(url_blokleri) + "\n</urlset>\n")
     with open("robots.txt", "w", encoding="utf-8") as f:
+        # 2026-11-10 (kullanici karari: tum sayfalar sitemapte olmali): dil
+        # agaclarinin tam haritalari (dil basina ~1000 URL + hreflang) ayri
+        # dosyalardadir ve Google'a dogrudan bildirilir.
         f.write("User-agent: *\nAllow: /\n\n"
-                f"Sitemap: {SITE_URL}sitemap.xml\n")
+                f"Sitemap: {SITE_URL}sitemap.xml\n"
+                + "".join(f"Sitemap: {SITE_URL}{d}/sitemap.xml\n"
+                          for d in ("en", "de", "ru", "zh")))
     logger.info("[SEO] sitemap.xml (%d URL) ve robots.txt yazildi", len(url_blokleri))
+    # 2026-11-10 (kullanici karari: tum sayfalar sitemapte olmali): yalniz-TR
+    # yaziminin ardindan i18n'in kataloglayicisi calisir; kok sitemap'e dil
+    # <url> bloklari + hreflang alternatifleri EKLENIR. 22-23 Ekim'den beri her
+    # sabah gunluk kosu bu katmani siliyordu (flip-flop); artik her koşuda
+    # kok sitemap tam yazilir. Bu adim hata verirse gunluk kosu zarar görmez:
+    # sitemap onceki (yalniz-TR) haliyle kalir.
+    try:
+        from pathlib import Path
+        import i18n
+        _dil_sonuc = i18n.sitemap_guncelle(Path("."), ["en", "de", "ru", "zh"])
+        logger.info("[SEO] sitemap dil katmani eklendi: %s", _dil_sonuc)
+    except Exception as _hata:
+        logger.warning("[SEO] sitemap dil katmani atlandi: %s", _hata)
 
 
 def chrome_tazele():

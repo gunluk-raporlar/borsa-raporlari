@@ -9,6 +9,7 @@ on:
   schedule:
     - cron: "0 */2 * * *"   # 2 saatte bir: ceviri kuyrugu kendiliginden ilerler
     - cron: "0 7 * * 1-5"
+    - cron: "30 5 * * *"    # 2026-11-10 (kullanici karari): her gun 08:30 TSI sabah cevirisi — gunluk raporun (07:17 TSI) hemen ardindan bugunun icerigi cevrilir
   workflow_dispatch:
     inputs:
       provider:
@@ -185,6 +186,16 @@ jobs:
         run: |
           git config user.name "borsa-bot"
           git config user.email "borsa-bot@users.noreply.github.com"
+          # 2026-11-10 goc-kurtarma: kosu iptal/cokse bile (if: always()) kalan
+          # TR-adli dosyalar yerel adlara cevrilir; if: always() commit'i artik
+          # eski-ad kopyayi yayina sizdiramaz. Basarili kosuda 0 degisiklik
+          # (idempotent); her hatada uyari verip devam eder (fail-open).
+          python - <<'PY' || echo "::warning::goc-kurtarma calistirilamadi"
+          from pathlib import Path
+          import i18n
+          for _d in ("en", "de", "ru", "zh"):
+              print("[kurtarma]", _d, i18n.dil_yollarini_cevir(Path("."), _d), "degisiklik")
+          PY
           git add -A
           if git diff --cached --quiet; then
             echo "Kaydedilecek degisiklik yok."

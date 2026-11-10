@@ -2195,7 +2195,21 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
                 ozet["medya_baglantisi"] += medya_n
             # Temettü filtresi onarim bayrağından bağımsız uygulanır (kullanıcı kararı).
             yeni = _temettuyu_dil_sayfasindan_cikar(yeni)
-            hedef = kok / dil / rel
+            # 2026-11-10: hedef ad KAYNAKTA yerellesir (dil_yollari.slug_degistir).
+            # Eski davranis once TR adla yazip isi kosu sonundaki gocuyle
+            # birakiyordu; kosu iptal olursa `if: always()` commit TR-adli
+            # dosyayi yayina tasiyordu (10.11: 4 dilde 368+68 kalinti). Dizin
+            # adlarina dokunmama karari, _redirects kapsamindadir).
+            # Yazici yalnizca YENI dosya uretir; gocun (1b) en-istisnasi ESKI
+            # kalinti dosya adlarini korur.
+            _parcalar = rel.as_posix().rsplit("/", 1)
+            if len(_parcalar) == 2:
+                _dizin_adi = slug_degistir(_parcalar[0], dil)
+                _dosya_adi = slug_degistir(_parcalar[1], dil)
+            else:
+                _dizin_adi = ""
+                _dosya_adi = slug_degistir(_parcalar[0], dil)
+            hedef = kok / dil / ((_dizin_adi + "/" + _dosya_adi) if _dizin_adi else _dosya_adi)
             hedef.parent.mkdir(parents=True, exist_ok=True)
             hedef.write_text(yeni, encoding="utf-8")
             ozet["dil"][dil] = ozet["dil"].get(dil, 0) + 1
@@ -2262,10 +2276,16 @@ def dil_yollarini_cevir(kok: Path, dil: str) -> int:
     import os as _os
     for eski, yeni_ad in tablo:
         eski_hub, yeni_hub = dil_kok / (eski + ".html"), dil_kok / (yeni_ad + ".html")
-        if eski_hub.exists():
+        # is_file korumasi: "<slug>.html" ADLI dizin patolojik; unlink IsADirectory
+        # firlatip tum dilin gocunu atlatabilir (2026-11-10 mimar notu).
+        if eski_hub.exists() and eski_hub.is_file():
+            # 2026-11-10: yazar artik dogrudan yerel adla yaziyor; hedef varsa
+            # TAZE ya da kalicidir, eski TR-adli kalinti uzerine yazmasin —
+            # kalintiyi sil, hedefi koru (10.11 iptal-kosu kalintilari).
             if yeni_hub.exists():
-                yeni_hub.unlink()
-            eski_hub.rename(yeni_hub)
+                eski_hub.unlink()
+            else:
+                eski_hub.rename(yeni_hub)
             sayi += 1
         eski_dizin, yeni_dizin = dil_kok / eski, dil_kok / yeni_ad
         if eski_dizin.exists() and eski_dizin.is_dir():
@@ -2276,14 +2296,29 @@ def dil_yollarini_cevir(kok: Path, dil: str) -> int:
                 # o durumda hedef dizindeki saglam dosyalari da siliyordu
                 # (30.10 kosusu: zh/gupiao/index.html silindi, commit
                 # rebase'inde modify/delete cakismasi -> kosu bosa gitti).
-                # Artik tasima BIRLESTIRME: yalnizca kaynakta bulunan dosyalar
-                # hedefe tasinir; hedefte olup kaynakta olmayan dosya KORUNUR.
+                # Artik tasima BIRLESTIRME: yalnizca kaynakta bulunup hedefte
+                # OLMAYAN dosyalar tasinir; cakisan ciftte hedef taze/kalicidir,
+                # kaynak kalintisi silinir (2026-11-10 yazici duzeltmesi).
                 for _f in list(eski_dizin.rglob("*")):
                     if not _f.is_file():
                         continue
                     _hedef = yeni_dizin / _f.relative_to(eski_dizin)
-                    _hedef.parent.mkdir(parents=True, exist_ok=True)
-                    _shutil.move(str(_f), str(_hedef))
+                    if _hedef.exists():
+                        if _f.suffix.lower() == ".html":
+                            _f.unlink()  # ceviri icerigi: hedef taze/kalicidir
+                        else:
+                            # 2026-11-10 (mimar bulgusu): varliklar (js/css/xml)
+                            # her kosuda varliklari_kopyala ile TR dizinine TAZE
+                            # kopyalanir; cakismada silinirlerse dil agacindaki
+                            # kopya sonsuza kadar donar. Icerik farkliysa kaynak
+                            # (taze) hedefe gecer.
+                            if _f.read_bytes() != _hedef.read_bytes():
+                                _shutil.move(str(_f), str(_hedef))
+                            else:
+                                _f.unlink()
+                    else:
+                        _hedef.parent.mkdir(parents=True, exist_ok=True)
+                        _shutil.move(str(_f), str(_hedef))
                 _shutil.rmtree(eski_dizin, ignore_errors=True)
             else:
                 eski_dizin.rename(yeni_dizin)
@@ -2559,7 +2594,12 @@ def terimler_gruplari_yeniden_dagit(kok: Path, diller: list[str]) -> dict:
             # dil-yerel dosya yoluna gore secici baglantilarini tazele.
             sayfa, _ = menu_tazele(
                 sayfa, Path(dil) / terimler_ad / f"{slug}.html", kok, SITE_URL)
-            (kok / dil / terimler_ad / f"{slug}.html").write_text(sayfa, encoding="utf-8")
+            _kart = kok / dil / terimler_ad / f"{slug}.html"
+            # 2026-11-10: icerik degismediyse yazma — aksi halde her kosuda
+            # ~160 dosyanin mtime'i tazeleniyor; sitemap en sonda yazildigindan
+            # bu kayitlarin lastmod'u her kosuda bugune cekiliyordu.
+            if not _kart.exists() or _kart.read_text(encoding="utf-8") != sayfa:
+                _kart.write_text(sayfa, encoding="utf-8")
             yazilan += 1
         for dosya in tr_dosyalar:
             # Dil-yerel ad TR adıyla çakışıyorsa (ör. en a-b, ru r-s) dosya
@@ -2669,6 +2709,10 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
     # 3) yeniden yaz
     bloklar: list[str] = []
     dil_sayisi = 0
+    # 2026-11-10: dil-basina ayna haritalar (en/de/ru/zh sitemap.xml) da ayni
+    # veriden uretilir; robots.txt bu dosyalari duyurur. Eski halde bu
+    # dosyalari yazan commitli kod yoktu — yetim artefakt kaliyorlardi.
+    dil_bloklari: dict[str, list[str]] = {d: [] for d in diller}
     for sy in sorted(tr_kayitlar):
         attr = tr_kayitlar[sy]
         if re.match(r"^terimler/[a-z0-9-]+$", sy):
@@ -2717,7 +2761,9 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
         for d in diller:
             if not _dil_dosyasi_var(d):
                 continue
-            bloklar.append(_url_bloku(f"{SITE_URL}{d}/{slug_degistir(sy, d)}", attr, alternatifler))
+            _dil_blok = _url_bloku(f"{SITE_URL}{d}/{slug_degistir(sy, d)}", attr, alternatifler)
+            bloklar.append(_dil_blok)
+            dil_bloklari[d].append(_dil_blok)
             dil_sayisi += 1
 
     # 3b) Dil-yerel terim harf-gruplari: TR grubuyla 1:1 eslesmedikleri icin
@@ -2735,9 +2781,11 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
                                     time.localtime(dosya.stat().st_mtime))
             except OSError:
                 lm = son_lastmod
-            bloklar.append(_url_bloku(
+            _grup_blok = _url_bloku(
                 f"{SITE_URL}{seo_yol(rel)}",
-                {"lastmod": lm, "changefreq": "weekly", "priority": "0.6"}, []))
+                {"lastmod": lm, "changefreq": "weekly", "priority": "0.6"}, [])
+            bloklar.append(_grup_blok)
+            dil_bloklari[d].append(_grup_blok)
             dil_sayisi += 1
 
     bloklar.extend("  " + b.strip() for b in dis_bloklar)
@@ -2750,10 +2798,27 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
         + "\n</urlset>\n"
     )
     yol.write_text(yeni, encoding="utf-8")
+
+    # 2026-11-10: dil aynalarini yaz (kok haritayla ayni veriden; her ayna o
+    # dilin <url> kayitlarini ayni hreflang alternatifleriyle listeler).
+    dil_haritalari: dict[str, int] = {}
+    for d in diller:
+        if not dil_bloklari[d]:
+            continue
+        _ayna = (
+            '<?xml version="1.0" encoding="UTF-8"?>\n'
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+            'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+            + "\n".join(dil_bloklari[d])
+            + "\n</urlset>\n"
+        )
+        (kok / d / "sitemap.xml").write_text(_ayna, encoding="utf-8")
+        dil_haritalari[d] = len(dil_bloklari[d])
     return {
         "durum": "guncellendi",
         "turkce_url": len(tr_kayitlar),
         "dil_url": dil_sayisi,
+        "dil_haritalari": dil_haritalari,
         "toplam_loc": len(bloklar) + len(dis_bloklar),
         "eklenen_turkce": eklenen,
     }
@@ -2968,14 +3033,18 @@ def main() -> int:
 
     cevirmen.kaydet()
 
-    if args.sitemap:
-        print("[i18n] sitemap:", json.dumps(sitemap_guncelle(kok, diller), ensure_ascii=False))
-
     if not args.dogrula:
         for dil in diller:
             if dil not in _SLUG_ESLEME:
                 continue
-            dil_n = dil_yollarini_cevir(kok, dil)
+            try:
+                dil_n = dil_yollarini_cevir(kok, dil)
+            except Exception as _goc_hata:
+                # 2026-11-10: goc hatasi tum kosuyu (ve asagidaki sitemap
+                # tazelemesini) dusurmesin; kalintilar sonraki kosuda yeniden
+                # denenir. Sitemap zaten en sonda yaziliyor.
+                print(f"[i18n] {dil} gocu ATLANDI: {_goc_hata}", file=sys.stderr)
+                continue
             if dil_n:
                 print(f"[i18n] {dil} yollari yerellestirildi: {dil_n} degisiklik "
                       f"({', '.join(e + '->' + y for e, y in _SLUG_ESLEME[dil][:3])} ...)")
@@ -3000,6 +3069,13 @@ def main() -> int:
                 print(f"[i18n] dil menu baglantilari tazelendi: {_menu_n} degisiklik")
         except Exception as _menu_hata:
             print(f"[i18n] dil menu tazeleme ATLANDI: {_menu_hata}")
+
+    # 2026-11-10: sitemap EN SONDA (goc + terimler + menu'den sonra). Eski sira
+    # yazimdan hemen sonra haritayi yazardı; o kosuda yeni yazilan, henuz
+    # yerellesmemis sayfalar varlik kontrolune (_dil_dosyasi_var) takilip
+    # haritaya bir kosu GEC girdi (ChatGPT bulgusu).
+    if args.sitemap:
+        print("[i18n] sitemap:", json.dumps(sitemap_guncelle(kok, diller), ensure_ascii=False))
 
     # --- Turkce koruma kontrolu ---
     tr_sonra = tr_hashleri(kok)

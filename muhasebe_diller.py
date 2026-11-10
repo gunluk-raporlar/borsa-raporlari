@@ -557,10 +557,14 @@ def _bolumle(terimler, dil):
 
 def sayfa_uret(dil, terimler):
     cfg = DIL_CFG[dil]
-    canonical = SITE_URL + ("/%s" % SAYFA if dil == "tr" else "/%s/%s" % (dil, SAYFA))
+    # 2026-11-10: canonical/hreflang dil slug tablosundan — ham SAYFA once
+    # TR adli adres uretiyordu; dosya yerel adla yazildigindan canonical
+    # kendisine es degildi (ChatGPT denetim bulgusu).
+    canonical = SITE_URL + ("/%s" % SAYFA if dil == "tr"
+                            else "/%s/%s" % (dil, slug_degistir(SAYFA, dil)))
     alt = []
     for d in DILLER:
-        yol = ("/%s" % SAYFA) if d == "tr" else ("/%s/%s" % (d, SAYFA))
+        yol = ("/%s" % SAYFA) if d == "tr" else ("/%s/%s" % (d, slug_degistir(SAYFA, d)))
         alt.append('<link rel="alternate" hreflang="%s" href="%s%s">'
                    % (DIL_HREFLANG[d], SITE_URL, yol))
     alt.append('<link rel="alternate" hreflang="x-default" href="%s/%s">' % (SITE_URL, SAYFA))
@@ -649,11 +653,17 @@ def yaz(kok="."):
             print("[muhasebe_diller] veri bos, atlandi: %s" % dil, file=sys.stderr)
             continue
         html = sayfa_uret(dil, terimler)
-        hedef = os.path.join(kok, dil, SAYFA + ".html")
+        # 2026-11-10: dosya adi dil slug tablosundan — ham SAYFA ile eski
+        # davranis her gun TR-adli kopya aciyordu (en/muhasebe-terimleri.html);
+        # i18n gocu onu sonradan yeniden adlandiriyor, iptal kosularda yanlis
+        # ad yayina siziyordu. Artik dogrudan yerel adla yazilir (goc yine de
+        # kalintilari tek seferlik temizler).
+        yerel_ad = slug_degistir(SAYFA, dil)
+        hedef = os.path.join(kok, dil, yerel_ad + ".html")
         degisti = _yaz(hedef, html)
-        yazilan.append((os.path.join(dil, SAYFA + ".html"), len(terimler), degisti))
+        yazilan.append((os.path.join(dil, yerel_ad + ".html"), len(terimler), degisti))
         print("[muhasebe_diller] %-3s %5d terim -> %-30s %s"
-              % (dil, len(terimler), os.path.join(dil, SAYFA + ".html"),
+              % (dil, len(terimler), os.path.join(dil, yerel_ad + ".html"),
                  "yazildi" if degisti else "degismedi"))
     return yazilan
 
