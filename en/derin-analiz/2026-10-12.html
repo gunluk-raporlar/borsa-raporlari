@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>In-Depth Analysis – Monday, 12 October 2026</title>
+<meta name="description" content="In-depth daily analysis of BIST 30: sector evaluation, EMA and Wave Trend technical reading, oscillator-momentum interpretations and risk scenarios.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/en/deep-analysis/2026-10-12">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-12">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/deep-analysis/2026-10-12">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-12">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-12">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-12">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-12">
+<link rel="icon" href="..//favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="..//favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Daily Reports">
+<meta property="og:title" content="In-Depth Analysis – Monday, 12 October 2026">
+<meta property="og:description" content="In-depth daily analysis of BIST 30: sector evaluation, EMA and Wave Trend technical reading, oscillator-momentum interpretations and risk scenarios.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/en/deep-analysis/2026-10-12">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Daily Reports cover image">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="In-Depth Analysis – Monday, 12 October 2026">
+<meta name="twitter:description" content="In-depth daily analysis of BIST 30: sector evaluation, EMA and Wave Trend technical reading, oscillator-momentum interpretations and risk scenarios.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<meta name="yandex-verification" content="2c8df12d0b97a734">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "In-Depth Analysis – Monday, 12 October 2026", "description": "In-depth daily analysis of BIST 30: sector evaluation, EMA and Wave Trend technical reading, oscillator-momentum interpretations and risk scenarios.", "url": "https://borsa-raporlari.pages.dev/en/deep-analysis/2026-10-12", "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "In-Depth Analysis – Monday, 12 October 2026", "datePublished": "2026-10-12", "dateModified": "2026-10-12T12:43:36+03:00", "inLanguage": "en", "description": "In-depth daily analysis of BIST 30: sector evaluation, EMA and Wave Trend technical reading, oscillator-momentum interpretations and risk scenarios.", "author": {"@type": "Organization", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}, "publisher": {"@type": "Organization", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}, "mainEntityOfPage": "https://borsa-raporlari.pages.dev/en/deep-analysis/2026-10-12.html"}</script>
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="../style.css">
+
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="../">BIST 30 Daily Reports</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Light/dark theme" aria-label="Change theme">🌙</button></div>
+<nav><a href="../">Home Page</a><a href="../raporlar">Reports</a><a href="../hisse/">Stocks</a><a href="../derin-analiz">Deep Analysis</a><a href="../makro-analiz">Macro Analysis</a><a href="../teknik-analiz">Technical Scan</a><a href="../sinyal-karnesi">Signal Scorecard</a><a href="../borsapy-analiz">Borsapy Signals</a><a href="../haberler">News</a><a href="../sirket-haberleri">Company News</a><a href="../portfoy">Demo Portfolio</a><a href="../haftasonu">Weekend</a><a href="../haftasonu-egitimi">Market School</a><a href="../takvim">📅 Calendar</a><a href="../sozluk">Glossary</a><a href="../terimler">Terms</a><a href="../muhasebe-terimleri">Accounting Terms</a><a href="../robot">Trading Robot</a></nav>
+</div></header>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span style="color:#94a3b8">Loading prices…</span></div>
+</div>
+<script>
+(function() {
+  var kok = document.getElementById('ticker-bant').dataset.kok || '';
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Prices could not be loaded temporarily; they will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
+
+<div class="ticker-bant" id="ticker-bant2" data-kok="../" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span style="color:#94a3b8">Loading market data...</span></div>
+</div>
+<script>
+(function() {
+  var kutu = document.getElementById('ticker-bant2');
+  if (!kutu) return;
+  var kok = kutu.dataset.kok || '';
+  var iz = document.getElementById('ticker-iz2');
+
+  function bicim(g) {
+    var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
+    var rozet = (typeof g.d === 'number')
+      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+        Number(g.d).toFixed(2) + '%</span>'
+      : '';
+    var birim = g.b || g.birim || '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (birim ? ' ' + birim : '') + rozet + '</span>';
+  }
+  function ciz(veri) {
+    var ogeler = (veri.gostergeler || []).map(bicim).join('');
+    if (!ogeler) throw new Error('bos');
+    var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
+               (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
+    iz.innerHTML = ogeler + saat + ogeler + saat;  // sorunsuz dongu icin kopya
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        if (adres.indexOf('/api/') !== -1) { yukle(kok + 'piyasa-serit.json?t=' + Date.now()); return; }
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Market data could not be loaded temporarily; it will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/piyasa?t=' + Date.now());
+  setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Loading...</span>
+            <span id="istanbul-weather">🌤️ Istanbul Weather...</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Select page language">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/derin-analiz/2026-10-12" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/deep-analysis/2026-10-12" hreflang="en" lang="en" data-dil="en" class="aktif" aria-current="true">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-10-12" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-10-12" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-10-12" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+</nav>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
+
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" placeholder="Search stock, topic or date..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '../';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    s = String(s).toLowerCase();
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      var nDil = normalize(q);
+      var soruMu = /\?\s*$/.test(q) || /^(ne|nasil|neden|kim|hangi|nedir|kac|kac\.|mi|mı|icin)\b/i.test(nDil);
+      html += '<div style="margin-bottom:8px"><a href="javascript:void(0)" onclick="siteAraAI()" style="font-size:13px">🤖 <b>' + q.replace(/</g, '&lt;') + '</b> sorusunu BIST AI asistanına sor &rarr;</a></div>';
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Yukarıdaki bağlantıyla yapay zekâya sorabilirsiniz.</div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + x.s.b + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + kesit.replace(/</g, '&lt;') + '…</div></div>';
+        });
+      }
+      panel.innerHTML = html;
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Search index could not be loaded.</span>';
+    });
+  };
+
+  window.siteAraAI = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var ai = document.getElementById('ai-input');
+    if (ai) { ai.value = giris.value; aiSor(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  };
+})();
+</script>
+
+
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Play / Pause">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Volume level" title="Sound">
+  <span class="radyo-linkler"><a href="../radyo/">📻 All broadcasts &amp; Podcast page</a> <span class="ayrac">•</span> <a href="../radyo/podcast.xml">RSS</a></span>
+  <span class="radyo-uyari">For listening purposes only • AI-hosted bulletin • For informational purposes, not investment advice.</span>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='../';
+  if(!btn||!ses) return;
+  if(ayar){ ses.volume=(parseInt(ayar.value,10)||80)/100; }
+  var hazir=false;
+  function hazirla(geri){
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){return r.json();}).then(function(d){
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){ ses.src=kok+l[0].dosya; }
+      hazir=true; geri();
+    }).catch(function(){ hazir=true; geri(); });
+  }
+  btn.addEventListener('click',function(){
+    if(ses.paused){ hazirla(function(){ var p=ses.play(); if(p&&p.catch){p.catch(function(){});} }); }
+    else { ses.pause(); }
+  });
+  ses.addEventListener('play',function(){ btn.textContent='❚❚'; btn.setAttribute('aria-label','Duraklat'); });
+  ses.addEventListener('pause',function(){ btn.textContent='▶'; btn.setAttribute('aria-label','Oynat'); });
+  if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
+})();
+</script>
+
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>Deep Analysis</h1>
+<div class="meta"><span class="badge">Monday, 12 October 2026</span><span class="badge">Time of writing: 12:43 (TRT)</span><span>BIST 30 • AI-powered in-depth analysis</span>
+<button type="button" class="ses-btn" id="sesli-okuma-btn" onclick="sesliOkuToggle(this,'rapor-govde')" aria-label="Read report aloud">🔊 Read Aloud</button>
+<span class="paylas-kutu" style="display:inline-flex; gap:5px; align-items:center; margin-left:2px"><a class="paylas" href="https://twitter.com/intent/tweet?text=Derin+Analiz+%E2%80%94+12+Ekim+2026%2C+Pazartesi&url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Fderin-analiz%2F2026-10-12.html" target="_blank" rel="noopener" title="Share on X">𝕏</a><a class="paylas" href="https://t.me/share/url?url=https%3A%2F%2Fborsa-raporlari.pages.dev%2Fderin-analiz%2F2026-10-12.html&text=Derin+Analiz+%E2%80%94+12+Ekim+2026%2C+Pazartesi" target="_blank" rel="noopener" title="Share on Telegram">✈</a><a class="paylas" href="https://wa.me/?text=Derin+Analiz+%E2%80%94+12+Ekim+2026%2C+Pazartesi%20https%3A%2F%2Fborsa-raporlari.pages.dev%2Fderin-analiz%2F2026-10-12.html" target="_blank" rel="noopener" title="Share on WhatsApp">💬</a><a class="paylas" href="javascript:void(0)" title="Copy link" onclick="if(navigator.clipboard){navigator.clipboard.writeText('https://borsa-raporlari.pages.dev/en/deep-analysis/2026-10-12.html');this.textContent='✓';}">🔗</a></span></div>
+</div>
+
+<div class="card" style="margin:0 0 18px; padding:14px 18px">
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
+<strong style="font-size:14px">BIST 30 basket — last 23 days</strong>
+<span class="neg" style="font-weight:700">-4.19%</span>
+</div>
+<svg viewBox="0 0 520 90" class="chart" role="img" aria-label="BIST 30 basket price chart (last 23 days)" style="max-width:520px"> <polyline fill="none" stroke="#b91c1c" stroke-width="2.5" points="0.0,48.3 23.6,48.3 47.3,34.7 70.9,11.7 94.5,12.6 118.2,20.7 141.8,8.0 165.5,18.2 189.1,44.2 212.7,83.6 236.4,45.5 260.0,52.1 283.6,40.8 307.3,42.8 330.9,32.7 354.5,49.5 378.2,57.1 401.8,79.8 425.5,68.4 449.1,84.0 472.7,69.2 496.4,72.9 520.0,72.9" /></svg>
+<div style="color:var(--muted); font-size:12px">Equal-weighted basket of 30 stocks, normalized to the first seen price.</div>
+</div>
+
+
+
+<article class="report" id="rapor-govde"><h2>1. Market Summary and Overview</h2>
+<p>As of Monday, 12 October 2026, 12:28, the BIST 30 (XU030) index trades at 15,044.55, recording a value loss of 0.67% versus the previous close; the BIST 100 (XU100) shows a decline of 0.65% at 12,185.97 points. While the USD/TRY rate is almost unchanged at 49.33 (+0.03%), the daily dollar-based performance of XU030 is calculated as 0.69% negative after adjusting for the currency effect. Although selling pressure dominates overall, in the banking subsectors <a href="../hisse/VAKBN">Vakıfbank (bank)</a>' its (<a href="../hisse/VAKBN">VAKBN</a>) stands out with strong buying signals and in Metal &amp; Mining <a href="../hisse/TRMET">TR Anadolu Metal (company)</a>' in (<a href="../hisse/TRMET">TRMET</a>) the non-breaking of its structural trend is one of the striking divergence points. On the macro plane, Türkiye's September 2026 annual consumer inflation has come in at the 29.73% level, the producer inflation (PPI) lagged with 27.38% annually and the policy rate is being held fixed at the 37.0% level; the real rates' staying in the positive zone forms one of the fundamental arguments supporting the domestic stock demand, yet the weakening of the global risk appetite (VIX 14.84, DXY 102.21) and the course of Brent oil at the 104.72 USD/barrel levels keep the import expense pressure alive. Although the portfolio performance has run relatively less lossy since the start on September 6, 2026 with a %-6.77 loss compared to the reference indexes XU100 (-13.32%) and XU030 (-9.47%), the cash-weighted positioning (portfolio 93,234 TL) reflects the market neutrality.</p>
+<h3>Index Structure and Breadth</h3>
+<p>The XU030's 0.67% fall, the weighted stocks in the index (<a href="../hisse/THYAO">THYAO</a>, <a href="../hisse/GARAN">GARAN</a>, <a href="../hisse/AKBNK">AKBNK</a>, <a href="../hisse/KCHOL">KCHOL</a>, <a href="../hisse/SAHOL">SAHOL</a>) can be explained by almost all of them giving "STRONG SELL" or "SELL" signals; the index's one-directional downward movement also marks the weakening of the breadth indicators (the number of advancing/declining stocks). The XU100's relatively less retreat than the XU030 (0.65% vs 0.67%) may be a sign that the selective buying demand continues in the mid and small-cap stocks; however, with the fact that the number of stocks giving a "STRONG BUY" signal in the technical scan data is only two (<a href="../hisse/VAKBN">VAKBN</a>, <a href="../hisse/TRMET">TRMET</a>) signals the market breadth is narrowing.</p>
+<h3>Effects of Foreign Exchange and Commodities</h3>
+<p>The USD/TRY staying fixed at the 49.33 level shows, within the framework of the TCMB's management of FX reserves (60.33 billion USD, October 8 data) and the real effective rate index (105.45, September data), that the rate is being held in a controlled band. Gold's rise to the 4,216 USD per ounce level (+1.43%) and gram gold's rise to 6,653 TL can be explained by the combination of the weakening dollar index (DXY 102.21) and falling oil prices (Brent 104.72, WTI 91.85); this situation is positive for gold mining and precious metal portfolios, <a href="../hisse/TUPRS">Tüpraş (company)</a> ( TUPRS) and petrochemical (<a href="../hisse/PETKM">PETKM</a>, <a href="../hisse/ENKAI">ENKAI</a>) draws, in turn, a mixed picture for the margins.</p>
+<h2>2. Sector-Based Evaluation</h2>
+<h3>Banking: The Leadership Advantage and Selective Differentiation</h3>
+<p>The banking sector <a href="../hisse/VAKBN">VAKBN</a>' its "STRONG BUY" (short/mid/long EMA: BUY, Wave Trend: BUY, Pearson r: 0.76, channel 40%) with <a href="../hisse/GARAN">Garanti BBVA (bank)</a> ( GARAN), <a href="../hisse/YKBNK">Yapı Kredi (bank)</a> ( YKBNK), <a href="../hisse/AKBNK">Akbank (company)</a> ( AKBNK) and <a href="../hisse/ISCTR">İş Bankası (company)</a> ( It is experiencing a sharp divergence from heavyweight banks such as ISCTR) issuing "SELL" / "STRONG SELL" signals. <a href="../hisse/VAKBN">VAKBN</a>' the momentum direction is upward with RSI 54.29, MACD +0.21, Stochastic 66.45% and CCI +87.09; <a href="../hisse/AKBNK">AKBNK</a> ( RSI 45.50, MACD -0.72, CCI -57.02), <a href="../hisse/ISCTR">ISCTR</a> ( RSI 46.88, MACD -0.10, CCI -51.19) and <a href="../hisse/YKBNK">YKBNK</a> ( The momentum indicators RSI 50.70, MACD 0.00, CCI +17.95) are in negative or neutral territory. This shows that, rather than a judgment about the entire sector, a stock picking (stock selection) based on the differentiation of asset quality and credit growth (annually 36.32%, August data) is required.</p>
+<h3>Metals &amp; Mining: Structural Strengthening Under TRMET’s Leadership</h3>
+<p><a href="../hisse/TRMET">TRMET</a>, 60-day +15.8% return, "BUY" overall signal (medium/long-term EMA: BUY, Wave Trend: BUY, channel 41%, r: 0.20) and oscillator confirmation (RSI 50.47, MACD -0.94, Stoch 50%, CCI +39, ADX 17.45) it is the sector's only "strong" share. In contrast <a href="../hisse/EREGL">Ereğli Demir Çelik (company)</a> ( EREGL) gives a technical “SELL” (overall) while the oscillator signals “BUY” (RSI 50.80, MACD -0.31), experiencing a divergence; <a href="../hisse/KRDMD">Kardemir (company)</a> ( KRDMD), meanwhile, remains in the "SELL/NEUTRAL" zone under both methodologies. The critical level for the sector is Chinese demand data and the course of global steel prices; <a href="../hisse/TRMET">TRMET</a>' its 41% position within the regression channel supports the mid-term validity of the trend.</p>
+<h3>Energy &amp; Petrochemicals: Widespread Weakness</h3>
+<p><a href="../hisse/TUPRS">Tüpraş (company)</a> ( TUPRS), <a href="../hisse/PETKM">Petkim (company)</a> ( PETKM), <a href="../hisse/ENKAI">Enka İnşaat (company)</a> ( ENKAI) and <a href="../hisse/ASTOR">Astor Energy</a> ( ASTOR) technical "SELL" signals moving. <a href="../hisse/TUPRS">TUPRS</a>' its Pearson correlation of 0.80 shows a strong downtrend (channel 6%, RSI 44.81, CCI -105, ADX 29.78) while <a href="../hisse/ASTOR">ASTOR</a>' its -32.5% performance in 60 days and the "BUY AT BOTTOM" Wave Trend signal (channel 28%, r: -0.72) can mark an attempt at a technical reaction; however, with MACD -25.76 and ADX 36.09 it is seen the downward trend is still very strong. The course of Brent oil below 105 USD can press these stocks' fundamental valuation models through the refinery crack margins.</p>
+<h3>Aviation, Tourism and Transport: Structural Sales Pressure</h3>
+<p><a href="../hisse/THYAO">THYAO</a>, <a href="../hisse/PGSUS">Pegasus (company)</a> ( PGSUS) and <a href="../hisse/TAVHL">TAV Airports</a> ( TAVHL) with "STRONG SELL" signals (<a href="../hisse/THYAO">THYAO</a>: channel 63%, r: -0.88, RSI 45.22, ADX 30.80; <a href="../hisse/PGSUS">PGSUS</a>: channel 7%, r: -0.82, RSI 33.18, ADX 30.25; <a href="../hisse/TAVHL">TAVHL</a>: channel 36%, r: -0.03, RSI 45.34, ADX 14.05) form the sector's weakest links. <a href="../hisse/THYAO">THYAO</a>' the 60-day return of -12.6% and <a href="../hisse/PGSUS">PGSUS</a>' its -18.8% performance combines with the seasonal weakening period expectations and the fuel cost uncertainty, pushing the seller into the market. <a href="../hisse/TAVHL">TAVHL</a>' can harbor a short-term reaction potential with the Stochastic showing a relatively better momentum at 56.29% in the oscillators, together with the leverage effect; however, the trend filters (EMA alignment SELL) do not support this scenario.</p>
+<h3>Retail, Telecoms and Holding Companies: Broad-Based Diversification</h3>
+<p>BİM (<a href="../hisse/BIMAS">BIMAS</a>) and<a href="../hisse/MGROS">Migros (company)</a> ( MGROS) with "STRONG SELL" signals (<a href="../hisse/MGROS">MGROS</a>: remain, with channel 69%, r: -0.91, RSI 39.52, ADX 35.04), under the pressure of the slowdown in consumer spending (the CPI food sub-group effect, retail sales annually 10.4% July data) and the credit cost pressure in the high interest environment. <a href="../hisse/TCELL">Turkcell (company)</a> ( TCELL) and <a href="../hisse/TTKOM">Turk Telekom</a> ( TTKOM) "STRONG SELL" (<a href="../hisse/TCELL">TCELL</a>: price, with the signals channel 54%, r: -0.69, RSI 45.10, ADX 24.87), the risk of the ARPU growth staying below inflation. <a href="../hisse/KCHOL">Koç Holding (company)</a> ( KCHOL) and <a href="../hisse/SAHOL">Sabancı Holding (company)</a> ( SAHOL) "STRONG SELL" (<a href="../hisse/KCHOL">KCHOL</a>: channel 3%, r: 0.62, RSI 42.83, ADX 28.49; <a href="../hisse/SAHOL">SAHOL</a>: are, with the signals channel 8%, r: 0.06, RSI 39.58, ADX 37.00), the reflection of the weakening of the bank and energy portfolios in the holding structure.</p>
+<h3>Property and Other Items</h3>
+<p><a href="../hisse/EKGYO">Emlak Konut</a> REIT (<a href="../hisse/EKGYO">EKGYO</a>) gives the "NEUTRAL" signal (short BUY, mid/long HOLD, channel 44%, r: 0.40) while receiving the "BUY" confirmation in the oscillators (RSI 52.19, Stoch 76%, CCI +83, ADX 13.59); this supports a short-term relative strength scenario with the inflation-indexed structure of the rental revenues and the low borrowing. <a href="../hisse/AEFES">Anadolu Efes (company)</a> ( AEFES) technically "SELL", oscillator "NEUTRAL" (RSI 50.16, ADX 24.36) in sideways consolidation; <a href="../hisse/SISE">Şişecam (company)</a> ( SISE) and <a href="../hisse/ASELS">Aselsan (company)</a> ( ASELS) is in strong downtrends (<a href="../hisse/SISE">SISE</a>: channel 42%, r: -0.59, ADX 23.84; <a href="../hisse/ASELS">ASELS</a>: channel 18%, r: -0.01, ADX 26.36) continues.</p>
+<h2>3. Technical Visual Analysis</h2>
+<h3>EMA Configurations and Trend Classification</h3>
+<p>The ‘short/medium/long’ EMA status in the scan data was used as the primary filter to classify the direction and strength of the trend. <strong><a href="../hisse/VAKBN">VAKBN</a></strong> By showing a ‘BUY’ pattern across all three levels (assuming EMA5 &gt; EMA20 &gt; EMA50), it indicates a strong upward trend. <strong><a href="../hisse/TRMET">TRMET</a></strong> With a ‘BUY’ recommendation for the medium and long term and a ‘WAIT’ recommendation for the short term, this pattern points to a scenario of trend continuation following a pullback. In banking-heavy sectors <strong><a href="../hisse/GARAN">GARAN</a>, <a href="../hisse/YKBNK">YKBNK</a>, <a href="../hisse/AKBNK">AKBNK</a>, <a href="../hisse/ISCTR">ISCTR</a></strong> and in holding companies <strong><a href="../hisse/KCHOL">KCHOL</a>, <a href="../hisse/SAHOL">SAHOL</a></strong> Almost all of the index-weighted shares show a ‘SELL’ pattern (short/medium/long); this technically confirms that the centre of gravity of the XU030 is shifting downwards. <strong><a href="../hisse/EKGYO">EKGYO</a></strong> By issuing a ‘BUY’ signal only in the short term, it indicates that the long-term trend has not yet been confirmed.</p>
+<h3>Wave Trend (WT) and Reversal Signals</h3>
+<p>The Wave Trend oscillator is an effective tool for identifying overbought and oversold levels and reversals within a trend. <strong><a href="../hisse/VAKBN">VAKBN</a></strong> and<strong><a href="../hisse/TRMET">TRMET</a></strong> " Whilst the ‘AL’ signal indicates momentum in line with the trend direction; <strong><a href="../hisse/EKGYO">EKGYO</a>, <a href="../hisse/PETKM">PETKM</a>, <a href="../hisse/GUBRF">GUBRF</a>, <a href="../hisse/TRALT">TRALT</a>, <a href="../hisse/ENKAI">ENKAI</a>, <a href="../hisse/FROTO">FROTO</a>, <a href="../hisse/SISE">SISE</a>, <a href="../hisse/SASA">SASA</a>, <a href="../hisse/ASTOR">ASTOR</a>, <a href="../hisse/EREGL">EREGL</a>, <a href="../hisse/AEFES">AEFES</a></strong> " Although it is giving an ‘AL’ signal, it is at odds with the general trend filters (EMA sequence: SELL/WAIT) (bearish divergence / risk of a false buy signal). <strong><a href="../hisse/ASTOR">ASTOR</a></strong> Although the “BUY ON DIP” signal was triggered by the price approaching the lower band of the channel (28 per cent) and the WT rebounding from the oversold zone, it should not be forgotten that, with a Pearson r of -0.72 and an ADX of 36.09, the trend remains very strongly bearish. <strong><a href="../hisse/TUPRS">TUPRS</a>, <a href="../hisse/BIMAS">BIMAS</a>, <a href="../hisse/KRDMD">KRDMD</a>, <a href="../hisse/GARAN">GARAN</a>, <a href="../hisse/KCHOL">KCHOL</a>, <a href="../hisse/YKBNK">YKBNK</a>, <a href="../hisse/AKBNK">AKBNK</a>, <a href="../hisse/ISCTR">ISCTR</a>, <a href="../hisse/SAHOL">SAHOL</a>, <a href="../hisse/TOASO">TOASO</a>, <a href="../hisse/ASELS">ASELS</a>, <a href="../hisse/TAVHL">TAVHL</a>, <a href="../hisse/TTKOM">TTKOM</a>, <a href="../hisse/TCELL">TCELL</a>, <a href="../hisse/PGSUS">PGSUS</a>, <a href="../hisse/THYAO">THYAO</a>, <a href="../hisse/MGROS">MGROS</a></strong> " It confirms the trend direction with a ‘SAT’ signal.</p>
+<h3>Regression Channel Positions and Pearson Correlation (r)</h3>
+<p>The percentage position within the regression channel (0% = lower band, 100% = upper band) shows the price's relative location against the trend.<strong><a href="../hisse/VAKBN">VAKBN</a> 40%, <a href="../hisse/TRMET">TRMET</a> 41%, <a href="../hisse/EKGYO">EKGYO</a> 44%</strong> trade above the average band, indicating a trend-supported structure. In contrast,<strong><a href="../hisse/TUPRS">TUPRS</a> 6%, <a href="../hisse/BIMAS">BIMAS</a> %-2, <a href="../hisse/KCHOL">KCHOL</a> 3%, <a href="../hisse/SAHOL">SAHOL</a> 8%, <a href="../hisse/TOASO">TOASO</a> 26%, <a href="../hisse/PGSUS">PGSUS</a> 7%</strong> trade in the lower quartile of the channels or below the lower band (negative value); for these stocks, "bottom fishing" attempts are unconditionally risky unless the channel is retested and the EMA alignment turns to "BUY". The Pearson<strong>r</strong> coefficient gives the direction and strength of the relationship between price and time (linear regression).<strong><a href="../hisse/VAKBN">VAKBN</a> r: 0.76</strong> ( strong positive trend),<strong><a href="../hisse/TUPRS">TUPRS</a> r: 0.80</strong> ( strong negative trend - consistent with the 6% channel position),<strong><a href="../hisse/THYAO">THYAO</a> r: -0.88, <a href="../hisse/MGROS">MGROS</a> r: -0.91, <a href="../hisse/PGSUS">PGSUS</a> r: -0.82, <a href="../hisse/SISE">SISE</a> r: -0.59, <a href="../hisse/SASA">SASA</a> r: -0.62, <a href="../hisse/ASTOR">ASTOR</a> r: -0.72, <a href="../hisse/EREGL">EREGL</a> r: -0.74</strong> values indicate that these stocks are in strong negative correlation with their time series (i.e., in a continuous downtrend). <strong><a href="../hisse/EREGL">EREGL</a></strong> for the channel is 78% (near the upper band) but r: -0.74 (strong negative trend) contradiction shows that the price has fallen from past highs and pulled back to the upper part of the channel, yet the trend is still downward; this is a "lower high" formation.</p>
+<h2>4. Oscillator and Momentum Readings</h2>
+<h3>RSI (14) Dynamics</h3>
+<p>When the RSI 50 level is taken as the trend demarcation line; <strong><a href="../hisse/VAKBN">VAKBN</a> (54.29), <a href="../hisse/TRMET">TRMET</a> (50.47), <a href="../hisse/EKGYO">EKGYO</a> (52.19), <a href="../hisse/EREGL">EREGL</a> (50.80), <a href="../hisse/YKBNK">YKBNK</a> (50.70), <a href="../hisse/AEFES">AEFES</a> (50.16), <a href="../hisse/GARAN">GARAN</a> (50.02)</strong> are trading above or very close to the 50 level, indicating that at least short-term momentum is not negative. <strong><a href="../hisse/KRDMD">KRDMD</a> (48.13), <a href="../hisse/PETKM">PETKM</a> (47.88)</strong> are just below 50. All remaining stocks (especially <strong><a href="../hisse/PGSUS">PGSUS</a> 33.18, <a href="../hisse/SASA">SASA</a> 35.85, <a href="../hisse/ASTOR">ASTOR</a> 36.24, <a href="../hisse/MGROS">MGROS</a> 39.52, <a href="../hisse/SAHOL">SAHOL</a> 39.58, <a href="../hisse/BIMAS">BIMAS</a> 40.78, <a href="../hisse/FROTO">FROTO</a> 41.35</strong>) 40-45 is in the band or below; although these levels fall into the "oversold" definition, the height of ADX values (trend strength) (e.g. <a href="../hisse/SAHOL">SAHOL</a> 37.0, <a href="../hisse/MGROS">MGROS</a> 35.0, <a href="../hisse/ASTOR">ASTOR</a> 36.0) indicates the RSI can stay in these zones for a long time and a "bottom" signal may be premature.</p>
+<h3>MACD (Moving Average Convergence Divergence)</h3>
+<p>The MACD histogram and line measure the acceleration of momentum. <strong><a href="../hisse/VAKBN">VAKBN</a> (+0.21)</strong> stands out as the only stock with a positive MACD value. <strong><a href="../hisse/EKGYO">EKGYO</a> (0.00), <a href="../hisse/YKBNK">YKBNK</a> (0.00), <a href="../hisse/AEFES">AEFES</a> (-0.20), <a href="../hisse/GARAN">GARAN</a> (-0.49), <a href="../hisse/KRDMD">KRDMD</a> (-0.30), <a href="../hisse/PETKM">PETKM</a> (-0.30)</strong> are moving in a narrow band around the zero line, reflecting trend uncertainty. <strong><a href="../hisse/AKBNK">AKBNK</a> (-0.72), <a href="../hisse/TUPRS">TUPRS</a> (-1.31), <a href="../hisse/ENKAI">ENKAI</a> (-1.27), <a href="../hisse/FROTO">FROTO</a> (-1.29), <a href="../hisse/SISE">SISE</a> (-0.88), <a href="../hisse/KCHOL">KCHOL</a> (-1.57), <a href="../hisse/GUBRF">GUBRF</a> (-13.84), <a href="../hisse/ASTOR">ASTOR</a> (-25.76), <a href="../hisse/MGROS">MGROS</a> (-12.40), <a href="../hisse/ASELS">ASELS</a> (-7.62)</strong> stocks with deeply negative MACD values show that sellers are in control and that every rebound will be seen as a selling opportunity.</p>
+<h3>Extreme zone analysis of Stochastic %K and CCI (20)</h3>
+<p>Stochastic%K,<strong><a href="../hisse/EKGYO">EKGYO</a> (76.29%), <a href="../hisse/VAKBN">VAKBN</a> (66.45%), <a href="../hisse/AEFES">AEFES</a> (55.90%), <a href="../hisse/TAVHL">TAVHL</a> (56.29%), <a href="../hisse/TCELL">TCELL</a> (52.96%), <a href="../hisse/TRMET">TRMET</a> (50.08%)</strong> at levels; <strong><a href="../hisse/EKGYO">EKGYO</a></strong> and<strong><a href="../hisse/VAKBN">VAKBN</a></strong> ( or<a href="../hisse/VAKBN">VAKBN</a> the approach to the upper band for ) the others are in the neutral zone. <strong><a href="../hisse/PGSUS">PGSUS</a> (7.38%), <a href="../hisse/MGROS">MGROS</a> (15.73%), <a href="../hisse/BIMAS">BIMAS</a> (13.73%), <a href="../hisse/FROTO">FROTO</a> (16.30%), <a href="../hisse/KCHOL">KCHOL</a> (19.54%), <a href="../hisse/THYAO">THYAO</a> (20.27%), <a href="../hisse/TOASO">TOASO</a> (27.90%), <a href="../hisse/SASA">SASA</a> (24.85%), <a href="../hisse/ISCTR">ISCTR</a> (35.50%), <a href="../hisse/ENKAI">ENKAI</a> (31.84%), <a href="../hisse/SISE">SISE</a> (28.62%), <a href="../hisse/ASELS">ASELS</a> (29.31%), <a href="../hisse/TTKOM">TTKOM</a> (25.51%), <a href="../hisse/SAHOL">SAHOL</a> (24.97%)</strong> % are in the oversold zone, trading below 20 or around 30%; however, as noted above, strong ADX values remind us that these signals may be "sell continuation" (trend following) signals rather than "buy" signals. In CCI (20) values, <strong><a href="../hisse/VAKBN">VAKBN</a> (+87.09), <a href="../hisse/EKGYO">EKGYO</a> (+82.96)</strong> + are approaching the 100 level, creating short-term overbought risk (possibility of a pullback); <strong><a href="../hisse/SAHOL">SAHOL</a> (-159.77), <a href="../hisse/PGSUS">PGSUS</a> (-130.86), <a href="../hisse/KCHOL">KCHOL</a> (-121.30), <a href="../hisse/BIMAS">BIMAS</a> (-119.45), <a href="../hisse/TUPRS">TUPRS</a> (-105.30), <a href="../hisse/ASELS">ASELS</a> (-99.20), <a href="../hisse/MGROS">MGROS</a> (-82.15), <a href="../hisse/TRALT">TRALT</a> (-77.47), <a href="../hisse/TOASO">TOASO</a> (-77.37), <a href="../hisse/FROTO">FROTO</a> (-69.67), <a href="../hisse/TTKOM">TTKOM</a> (-64.42), <a href="../hisse/ENKAI">ENKAI</a> (-63.00), <a href="../hisse/ASTOR">ASTOR</a> (-63.17), <a href="../hisse/SISE">SISE</a> (-52.64), <a href="../hisse/ISCTR">ISCTR</a> (-51.19), <a href="../hisse/SASA">SASA</a> (-57.88), <a href="../hisse/AKBNK">AKBNK</a> (-57.02)</strong> stocks such as these have fallen below -100, confirming strong downward momentum.</p>
+<h3>ADX (Average Directional Index) Trend Strength</h3>
+<p>With the rule that ADX above 25 indicates "trend exists" and below 25 indicates "no trend/flat"; <strong><a href="../hisse/SAHOL">SAHOL</a> (37.0), <a href="../hisse/ASTOR">ASTOR</a> (36.0), <a href="../hisse/GUBRF">GUBRF</a> (35.0), <a href="../hisse/MGROS">MGROS</a> (35.0), <a href="../hisse/TUPRS">TUPRS</a> (29.78), <a href="../hisse/THYAO">THYAO</a> (30.80), <a href="../hisse/PGSUS">PGSUS</a> (30.25), <a href="../hisse/ENKAI">ENKAI</a> (30.30), <a href="../hisse/SISE">SISE</a> ( 23.84 - limit), <a href="../hisse/ASELS">ASELS</a> (26.36), <a href="../hisse/AKBNK">AKBNK</a> (26.03), <a href="../hisse/FROTO">FROTO</a> (26.48), <a href="../hisse/SASA">SASA</a> (26.81), <a href="../hisse/KCHOL">KCHOL</a> (28.49), <a href="../hisse/TCELL">TCELL</a> ( 24.87 - limit), <a href="../hisse/TRALT">TRALT</a> (30.69)</strong> stocks are in a strong trend (mostly downward). <strong><a href="../hisse/VAKBN">VAKBN</a> (12.72), <a href="../hisse/TRMET">TRMET</a> (17.45), <a href="../hisse/EKGYO">EKGYO</a> (13.59), <a href="../hisse/KRDMD">KRDMD</a> (13.43), <a href="../hisse/YKBNK">YKBNK</a> (18.84), <a href="../hisse/GARAN">GARAN</a> (23.60), <a href="../hisse/AEFES">AEFES</a> (24.36), <a href="../hisse/PETKM">PETKM</a> (11.70), <a href="../hisse/TOASO">TOASO</a> (17.33), <a href="../hisse/TTKOM">TTKOM</a> (13.39)</strong> ADX is below 25; in these shares the trend is weak or in formation. <a href="../hisse/VAKBN">VAKBN</a> and<a href="../hisse/TRMET">TRMET</a> this shows the trend is still at an early stage or the momentum is still being built; the stocks with SELL signals (<a href="../hisse/GARAN">GARAN</a>, <a href="../hisse/YKBNK">YKBNK</a>, <a href="../hisse/PETKM">PETKM</a> shows for the etc.) cases the trend can weaken and enter a horizontal consolidation (or the already strong downtrend has not been confirmed with the ADX, the price action being sufficient already).</p>
+<h2>5. Risk Map and Scenarios</h2>
+<h3>Base Scenario (Baseline Scenario): Selective Distribution and Index Flattening</h3>
+<p>XU030 continues to be traded in the 15,000 - 15,200 band. <a href="../hisse/VAKBN">VAKBN</a> and<a href="../hisse/TRMET">TRMET</a> the strong-trend stocks like hold the index's bottom; <a href="../hisse/THYAO">THYAO</a>, <a href="../hisse/PGSUS">PGSUS</a>, Banks (<a href="../hisse/GARAN">GARAN</a>, <a href="../hisse/AKBNK">AKBNK</a>, <a href="../hisse/ISCTR">ISCTR</a>, <a href="../hisse/YKBNK">YKBNK</a>), Holdings (<a href="../hisse/KCHOL">KCHOL</a>, <a href="../hisse/SAHOL">SAHOL</a>) and Retail (<a href="../hisse/BIMAS">BIMAS</a>, <a href="../hisse/MGROS">MGROS</a>) presses the index's top with selling pressure. USD/TRY stays in the 49.00 - 49.50 band. The inflation data (September 29.73%) falling behind and the TCMB policy rate (37%) being held fixed can direct the real return search into the stock, yet this inflow only to the "quality" and "trending" stocks (<a href="../hisse/VAKBN">VAKBN</a>, <a href="../hisse/TRMET">TRMET</a>, maybe <a href="../hisse/EKGYO">EKGYO</a>) focuses. <strong>Invalidation Condition:</strong> If XU030 permanently breaks below 14,900 (on a daily closing basis) or permanently surpasses 15,350.</p>
+<h3>Optimistic Scenario: Technical Reversal with Banking Leadership</h3>
+<p><a href="../hisse/VAKBN">VAKBN</a>' its strong buying momentum (EMA alignment, WT, MACD+, RSI&gt;50) can lead the sector peers (especially <a href="../hisse/YKBNK">YKBNK</a> gives an oscillator BUY signal) pulls. If the XU030 breaks the 15,350 resistance (above the previous close of 15,145) with volume. If the Dolar/TL pulls back below 49.00, the import expense pressure decreases, <a href="../hisse/TUPRS">TUPRS</a>/<a href="../hisse/PETKM">PETKM</a>/<a href="../hisse/ENKAI">ENKAI</a> a technical reaction (oversold bounce) starts. <a href="../hisse/TRMET">TRMET</a> 140 TL tests resistance. <strong>Concrete Condition:</strong> XU030 holds above 15,250 at the daily close and <a href="../hisse/VAKBN">VAKBN</a> 35.50 TL resistance breaks on volume.</p>
+<h3>Bearish Scenario: Global Risk-Off and Bank Selling</h3>
+<p>In the scenario of rising US 10-year bond yields (in the dataset 5Y 5.02%, 30Y 5.60%), DXY rising above 103 and Brent trading above 110 USD; foreign portfolio outflows accelerate (portfolio performance is already worse than the index). In bank shares (<a href="../hisse/AKBNK">AKBNK</a>, <a href="../hisse/ISCTR">ISCTR</a>, <a href="../hisse/GARAN">GARAN</a>) " "STRONG SELL" signals (EMA alignment, MACD-, deeply negative CCI) push prices below 60-day averages (<a href="../hisse/AKBNK">AKBNK</a> 60g +2.3% but trend SELL; <a href="../hisse/ISCTR">ISCTR</a> 60-day -3.3%) pushes down. XU030 tests the 14,800 - 14,500 band. <strong>Concrete Condition:</strong> XU030 breaks below 14,900 at the daily close and <a href="../hisse/VAKBN">VAKBN</a> 33.50 TL below falls (the short-term EMA support breaks).</p>
+<h3>Diversification Strategy (Stock-Picking Focused)</h3>
+<p>While the index direction is uncertain (XU030 sideways without ADX equivalents), alpha generation is only possible through stock-specific selection.<strong>Long Position Candidates:</strong> <a href="../hisse/VAKBN">VAKBN</a> ( trend confirmation), <a href="../hisse/TRMET">TRMET</a> ( momentum continues). <strong>Short-Term Rebound (Counter-trend) Candidates (Risky):</strong> <a href="../hisse/EKGYO">EKGYO</a> ( oscillator BUY, technical NEUTRAL), <a href="../hisse/ASTOR">ASTOR</a> ( WT BUY AT BOTTOM, channel 28% - but trend VERY STRONG DOWN), <a href="../hisse/EREGL">EREGL</a> ( Oscillator BUY, Technical SELL - divergence). <strong>Definite Avoids:</strong> ADX &gt; 30, MACD deeply negative, CCI &lt; -100, EMA alignment SELL stocks (<a href="../hisse/THYAO">THYAO</a>, <a href="../hisse/PGSUS">PGSUS</a>, <a href="../hisse/MGROS">MGROS</a>, <a href="../hisse/SAHOL">SAHOL</a>, <a href="../hisse/KCHOL">KCHOL</a>, <a href="../hisse/ASELS">ASELS</a>, <a href="../hisse/FROTO">FROTO</a>, <a href="../hisse/TUPRS">TUPRS</a>, <a href="../hisse/SISE">SISE</a>, <a href="../hisse/SASA">SASA</a>, <a href="../hisse/TTKOM">TTKOM</a>, <a href="../hisse/TCELL">TCELL</a>, <a href="../hisse/TOASO">TOASO</a>). Stop-loss levels must be defined as the regression channel lower band or the last bottom point.</p>
+<h2>6. Recommended Stocks for the Day</h2>
+<table>
+<thead>
+<tr>
+<th>Stock</th>
+<th>Signal</th>
+<th>Base Scenario</th>
+<th>Optimistic Scenario</th>
+<th>Invalidation Condition</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VAKBN (Vakifbank)</td>
+<td>STRONG BUY</td>
+<td>Price maintains its upward momentum from the 34.38 TL level and targets the 35.50 - 36.00 TL band; on pullbacks, the 33.50 - 34.00 TL range offers a buying opportunity.</td>
+<td>If the 36.00 TL resistance breaks on volume, the 37.50 - 38.00 TL levels (60-day upper trend channel) can be tested; a turn in the banking index (XBANK), led by VAKBN, would also lift index performance.</td>
+<td>If it drops below 33.00 TL at the daily close (if the short-term EMA arrangement turns to SELL) or if XU030 breaks 14,800 and systemic risk rises, the signal is deemed invalid.</td>
+<td>Technical scan: Short/Medium/Long EMA "BUY", Wave Trend "BUY", Regression Channel 40% (within trend), Pearson r=0.76 (strong positive trend). Oscillators: RSI 54.29 (momentum up), MACD +0.21 (positive acceleration), Stoch 66%, CCI +87 (strong momentum, approaching overbought), ADX 12.72 (trend still in strengthening phase). 60d +12.8% return proves the trend is healthy.</td>
+</tr>
+<tr>
+<td>TRMET (TR Anadolu Metal) (stock code)</td>
+<td>BUY</td>
+<td>Price consolidates at the 133.80 TL level and is likely to rise towards the 140.00 - 145.00 TL band; support is in the 128.00 - 130.00 TL range (short EMA / below the channel).</td>
+<td>On a sustained break above 145.00 TL, 155.00 - 160.00 TL (60d highs, previous peaks) could be targeted; a recovery in global steel prices and China's PMI data could act as catalysts.</td>
+<td>If it drops below 125.00 TL at the daily close (if the medium-term EMA turns to SELL) or if Pearson r turns negative (a trend break), the scenario becomes invalid.</td>
+<td>Technical scan: medium/long EMA "BUY", short "HOLD" (pullback), Wave Trend "BUY", channel 41%, r=0.20 (weak but positive trend). Oscillators: RSI 50.47 (moving up from neutral), MACD -0.94 (negative but approaching zero), Stoch 50%, CCI +39, ADX 17.45 (a trend is forming). A 60-day return of +15.8% shows structural strength.</td>
+</tr>
+</tbody>
+</table></article>
+<p style="margin-top:18px"><a href="../derin-analiz">← Back to all deep analyses</a></p>
+<script>
+(function() {
+  if (!('speechSynthesis' in window)) { return; }
+  // Chrome bazi sesleri gec yukler; sayfa acilir acilmaz ses listesini isit.
+  var sesleriIsit = function() { try { window.speechSynthesis.getVoices(); } catch (e) {} };
+  sesleriIsit();
+  if (window.speechSynthesis.onvoiceschanged === null) {
+    window.speechSynthesis.onvoiceschanged = sesleriIsit;
+  }
+  window.sesliOkuToggle = function(btn, kaynakId) {
+    var S = window.speechSynthesis;
+    var durum = btn.getAttribute('data-durum') || 'durdu';
+    if (durum === 'okunuyor') { S.pause(); btn.textContent = '\u25b6 Devam'; btn.setAttribute('data-durum', 'bekliyor'); return; }
+    if (durum === 'bekliyor') { S.resume(); btn.textContent = '\u23f8 Duraklat'; btn.setAttribute('data-durum', 'okunuyor'); return; }
+    S.cancel();
+    var kaynak = document.getElementById(kaynakId);
+    var metin = kaynak ? (kaynak.textContent || '') : '';
+    metin = metin.replace(/\s+/g, ' ').trim();
+    if (!metin) { return; }
+    var u = new SpeechSynthesisUtterance(metin);
+    u.lang = 'tr-TR';
+    var sesListe = S.getVoices() || [];
+    var trSes = sesListe.filter(function(v) { return v.lang && v.lang.toLowerCase().indexOf('tr') === 0; })[0] || null;
+    if (trSes) { u.voice = trSes; }
+    u.rate = 1.0;
+    u.onend = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    u.onerror = function() { btn.textContent = '\ud83d\udd0a Sesli Oku'; btn.setAttribute('data-durum', 'durdu'); };
+    btn.textContent = '\u23f8 Duraklat';
+    btn.setAttribute('data-durum', 'okunuyor');
+    S.speak(u);
+  };
+})();
+</script>
+</main>
+
+<nav class="altbar" aria-label="Quick menu">
+<a href="../raporlar" class="active"><span class="i" aria-hidden="true">📊</span>Reports</a>
+<a href="../teknik-analiz"><span class="i" aria-hidden="true">📈</span>Technical</a>
+<a href="../hisse/"><span class="i" aria-hidden="true">🏦</span>Stocks</a>
+<a href="../portfoy"><span class="i" aria-hidden="true">💼</span>Portfolio</a>
+<a href="../haberler"><span class="i" aria-hidden="true">📰</span>News</a>
+<a href="../takvim"><span class="i" aria-hidden="true">📅</span>Calendar</a>
+</nav>
+
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+
+<footer class="footer">The information, comments and recommendations contained herein are for informational purposes only; they do not constitute investment advisory or investment advice. The accuracy of the data cannot be guaranteed and the user is responsible for any decisions that may arise from the content.<br>Data sources: İş Yatırım, RSS news feeds • Analysis: artificial intelligence (multi-agent system)<br><a href="../gizlilik" style="color:inherit">Privacy &amp; Data Protection</a></footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+</body></html>

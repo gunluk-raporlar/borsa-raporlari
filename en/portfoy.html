@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Portfolio</title>
+<meta name="description" content="Virtual trial portfolio with 100.000 TL capital equally distributed across BIST 30 stocks: daily value tracking, stock performance and gold/dollar/deposit comparison.">
+<link rel="canonical" href="https://borsa-raporlari.pages.dev/en/portfolio">
+<link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/portfoy">
+<link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/portfolio">
+<link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/portfolio">
+<link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/touzizuhe">
+<link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/portfel">
+<link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/portfoy">
+<link rel="alternate" type="text/markdown" href="https://borsa-raporlari.pages.dev/en/portfolio.md">
+<link rel="icon" href="/favicon-120.png" type="image/png" sizes="120x120">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BIST 30 Daily Reports">
+<meta property="og:title" content="Demo Portfolio">
+<meta property="og:description" content="Virtual trial portfolio with 100.000 TL capital equally distributed across BIST 30 stocks: daily value tracking, stock performance and gold/dollar/deposit comparison.">
+<meta property="og:url" content="https://borsa-raporlari.pages.dev/en/portfolio">
+<meta property="og:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BIST 30 Daily Reports cover image">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Demo Portfolio">
+<meta name="twitter:description" content="Virtual trial portfolio with 100.000 TL capital equally distributed across BIST 30 stocks: daily value tracking, stock performance and gold/dollar/deposit comparison.">
+<meta name="twitter:image" content="https://borsa-raporlari.pages.dev/og-cover.png">
+<meta name="google-site-verification" content="M6bvKkbe_v88vv_A9tLmapgiWTO6KBafKoHVWX_qwjY">
+<meta name="yandex-verification" content="2c8df12d0b97a734">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Demo Portfolio", "description": "Virtual trial portfolio with 100.000 TL capital equally distributed across BIST 30 stocks: daily value tracking, stock performance and gold/dollar/deposit comparison.", "url": "https://borsa-raporlari.pages.dev/en/portfolio", "inLanguage": "en", "isPartOf": {"@type": "WebSite", "name": "BIST 30 Daily Reports", "url": "https://borsa-raporlari.pages.dev/en/"}}</script>
+<script>(function(){try{var t=localStorage.getItem('tema');if(t==='dark'||(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="style.css?v=6bc658f2">
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<header class="topbar"><div class="inner">
+<div class="brand-row"><a class="brand" href="./">BIST 30 Daily Reports</a>
+<button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Light/dark theme" aria-label="Change theme">🌙</button></div>
+<nav><a href="./">Home Page</a><a href="raporlar">Reports</a><a href="hisse/">Stocks</a><a href="derin-analiz">Deep Analysis</a><a href="makro-analiz">Macro Analysis</a><a href="teknik-analiz">Technical Scan</a><a href="sinyal-karnesi">Signal Scorecard</a><a href="borsapy-analiz">Borsapy Signals</a><a href="haberler">News</a><a href="sirket-haberleri">Company News</a><a href="portfoy" class="active">Demo Portfolio</a><a href="haftasonu">Weekend</a><a href="haftasonu-egitimi">Market School</a><a href="takvim">📅 Calendar</a><a href="sozluk">Glossary</a><a href="terimler">Terms</a><a href="muhasebe-terimleri">Accounting Terms</a><a href="robot">Trading Robot</a></nav>
+</div></header>
+
+<div class="ticker-bant" id="ticker-bant" data-kok="" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz"><span class="ticker-oge"><b>GARAN</b> 153.10 TL <span class="pos">▲ +6.10%</span></span><span class="ticker-oge"><b>TAVHL</b> 303.75 TL <span class="pos">▲ +3.14%</span></span><span class="ticker-oge"><b>YKBNK</b> 38.74 TL <span class="pos">▲ +4.03%</span></span><span class="ticker-oge"><b>ISCTR</b> 13.70 TL <span class="pos">▲ +3.09%</span></span><span class="ticker-oge"><b>THYAO</b> 310.00 TL <span class="pos">▲ +3.59%</span></span><span class="ticker-oge"><b>KCHOL</b> 212.40 TL <span class="pos">▲ +3.06%</span></span><span class="ticker-oge"><b>PGSUS</b> 146.50 TL <span class="pos">▲ +3.46%</span></span><span class="ticker-oge"><b>VAKBN</b> 33.62 TL <span class="pos">▲ +1.69%</span></span><span class="ticker-oge"><b>PETKM</b> 16.73 TL <span class="pos">▲ +2.45%</span></span><span class="ticker-oge"><b>BIMAS</b> 381.50 TL <span class="pos">▲ +2.62%</span></span><span class="ticker-oge"><b>ENKAI</b> 80.60 TL <span class="neg">▼ -0.31%</span></span><span class="ticker-oge"><b>EKGYO</b> 18.32 TL <span class="pos">▲ +3.74%</span></span><span class="ticker-oge"><b>TTKOM</b> 49.26 TL <span class="pos">▲ +2.28%</span></span><span class="ticker-oge"><b>AKBNK</b> 70.95 TL <span class="pos">▲ +3.35%</span></span><span class="ticker-oge"><b>SISE</b> 35.48 TL <span class="pos">▲ +3.62%</span></span><span class="ticker-oge"><b>SAHOL</b> 88.40 TL <span class="pos">▲ +1.26%</span></span><span class="ticker-oge"><b>AEFES</b> 16.94 TL <span class="pos">▲ +0.53%</span></span><span class="ticker-oge"><b>TOASO</b> 245.60 TL <span class="pos">▲ +1.07%</span></span><span class="ticker-oge"><b>EREGL</b> 32.76 TL <span class="pos">▲ +5.47%</span></span><span class="ticker-oge"><b>TRMET</b> 115.90 TL <span class="pos">▲ +3.57%</span></span><span class="ticker-oge"><b>TCELL</b> 92.10 TL <span class="pos">▲ +2.33%</span></span><span class="ticker-oge"><b>FROTO</b> 74.45 TL <span class="pos">▲ +1.78%</span></span><span class="ticker-oge"><b>SASA</b> 1.63 TL <span class="pos">▲ +3.16%</span></span><span class="ticker-oge"><b>GUBRF</b> 307.00 TL <span class="pos">▲ +6.14%</span></span><span class="ticker-oge"><b>MGROS</b> 480.50 TL <span class="pos">▲ +2.51%</span></span><span class="ticker-oge"><b>TRALT</b> 40.24 TL <span class="pos">▲ +5.51%</span></span><span class="ticker-oge"><b>ASTOR</b> 155.10 TL <span class="neg">▼ -3.96%</span></span><span class="ticker-oge"><b>TUPRS</b> 332.25 TL <span class="neg">▼ -1.56%</span></span><span class="ticker-oge"><b>KRDMD</b> 37.38 TL <span class="pos">▲ +3.37%</span></span><span class="ticker-oge"><b>ASELS</b> 337.75 TL <span class="pos">▲ +1.81%</span></span><span class="ticker-oge ticker-saat">09.11 20:16 · end-of-day close</span><span aria-hidden="true" style="display:inline-block"><span class="ticker-oge"><b>GARAN</b> 153.10 TL <span class="pos">▲ +6.10%</span></span><span class="ticker-oge"><b>TAVHL</b> 303.75 TL <span class="pos">▲ +3.14%</span></span><span class="ticker-oge"><b>YKBNK</b> 38.74 TL <span class="pos">▲ +4.03%</span></span><span class="ticker-oge"><b>ISCTR</b> 13.70 TL <span class="pos">▲ +3.09%</span></span><span class="ticker-oge"><b>THYAO</b> 310.00 TL <span class="pos">▲ +3.59%</span></span><span class="ticker-oge"><b>KCHOL</b> 212.40 TL <span class="pos">▲ +3.06%</span></span><span class="ticker-oge"><b>PGSUS</b> 146.50 TL <span class="pos">▲ +3.46%</span></span><span class="ticker-oge"><b>VAKBN</b> 33.62 TL <span class="pos">▲ +1.69%</span></span><span class="ticker-oge"><b>PETKM</b> 16.73 TL <span class="pos">▲ +2.45%</span></span><span class="ticker-oge"><b>BIMAS</b> 381.50 TL <span class="pos">▲ +2.62%</span></span><span class="ticker-oge"><b>ENKAI</b> 80.60 TL <span class="neg">▼ -0.31%</span></span><span class="ticker-oge"><b>EKGYO</b> 18.32 TL <span class="pos">▲ +3.74%</span></span><span class="ticker-oge"><b>TTKOM</b> 49.26 TL <span class="pos">▲ +2.28%</span></span><span class="ticker-oge"><b>AKBNK</b> 70.95 TL <span class="pos">▲ +3.35%</span></span><span class="ticker-oge"><b>SISE</b> 35.48 TL <span class="pos">▲ +3.62%</span></span><span class="ticker-oge"><b>SAHOL</b> 88.40 TL <span class="pos">▲ +1.26%</span></span><span class="ticker-oge"><b>AEFES</b> 16.94 TL <span class="pos">▲ +0.53%</span></span><span class="ticker-oge"><b>TOASO</b> 245.60 TL <span class="pos">▲ +1.07%</span></span><span class="ticker-oge"><b>EREGL</b> 32.76 TL <span class="pos">▲ +5.47%</span></span><span class="ticker-oge"><b>TRMET</b> 115.90 TL <span class="pos">▲ +3.57%</span></span><span class="ticker-oge"><b>TCELL</b> 92.10 TL <span class="pos">▲ +2.33%</span></span><span class="ticker-oge"><b>FROTO</b> 74.45 TL <span class="pos">▲ +1.78%</span></span><span class="ticker-oge"><b>SASA</b> 1.63 TL <span class="pos">▲ +3.16%</span></span><span class="ticker-oge"><b>GUBRF</b> 307.00 TL <span class="pos">▲ +6.14%</span></span><span class="ticker-oge"><b>MGROS</b> 480.50 TL <span class="pos">▲ +2.51%</span></span><span class="ticker-oge"><b>TRALT</b> 40.24 TL <span class="pos">▲ +5.51%</span></span><span class="ticker-oge"><b>ASTOR</b> 155.10 TL <span class="neg">▼ -3.96%</span></span><span class="ticker-oge"><b>TUPRS</b> 332.25 TL <span class="neg">▼ -1.56%</span></span><span class="ticker-oge"><b>KRDMD</b> 37.38 TL <span class="pos">▲ +3.37%</span></span><span class="ticker-oge"><b>ASELS</b> 337.75 TL <span class="pos">▲ +1.81%</span></span><span class="ticker-oge ticker-saat">09.11 20:16 · end-of-day close</span></span></div>
+</div>
+<script>
+(function() {
+  function ciz(veri) {
+    var iz = document.getElementById('ticker-iz');
+    var ogeler = veri.hisseler.map(function(h) {
+      var sinif = h.d >= 0 ? 'pos' : 'neg';
+      var ok = h.d >= 0 ? '▲' : '▼';
+      return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
+             h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+    }).join('');
+    var etiket = veri.etiket || '~15 dk gecikmeli';
+    var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
+    iz.innerHTML = ogeler + saat + '<span aria-hidden="true" style="display:inline-block">' + ogeler + saat + '</span>';  // sorunsuz dongu icin kopya (ekran okuyucuya kapali)
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        // JSON yedeği yalnızca site kökünde; göreli kok alt dizinlerde 404 üretiyordu (2026-11-07 denetim)
+        if (adres.indexOf('/api/') !== -1) { yukle('/ticker.json?t=' + Date.now()); return; }
+        var iz2 = document.getElementById('ticker-iz');
+        if (iz2) iz2.innerHTML = '<span style="color:#94a3b8">Prices could not be loaded temporarily; they will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, 5 * 60 * 1000);
+})();  // IIFE: tanimlandigi anda calistir
+</script>
+
+<div class="ticker-bant" id="ticker-bant2" data-kok="" style="margin-bottom:16px">
+  <div class="ticker-iz" id="ticker-iz2"><span class="ticker-oge"><b>BIST 30 (TRY)</b> 14,610.96 <span class="pos">▲ +2.24%</span></span><span class="ticker-oge"><b>BIST 100 (TRY)</b> 11,712.67 <span class="pos">▲ +2.00%</span></span><span class="ticker-oge"><b>Gram Gold</b> 6,697.70 TL</span><span class="ticker-oge"><b>Dollar</b> 50.2162 TL <span class="pos">▲ +0.13%</span></span><span class="ticker-oge"><b>BIST 30 ($)</b> 290.96 $ <span class="pos">▲ +2.12%</span></span><span class="ticker-oge ticker-saat">10.11 02:57 · end of day / delayed</span><span aria-hidden="true" style="display:inline-block"><span class="ticker-oge"><b>BIST 30 (TRY)</b> 14,610.96 <span class="pos">▲ +2.24%</span></span><span class="ticker-oge"><b>BIST 100 (TRY)</b> 11,712.67 <span class="pos">▲ +2.00%</span></span><span class="ticker-oge"><b>Gram Gold</b> 6,697.70 TL</span><span class="ticker-oge"><b>Dollar</b> 50.2162 TL <span class="pos">▲ +0.13%</span></span><span class="ticker-oge"><b>BIST 30 ($)</b> 290.96 $ <span class="pos">▲ +2.12%</span></span><span class="ticker-oge ticker-saat">10.11 02:57 · end of day / delayed</span></span></div>
+</div>
+<script>
+(function() {
+  var kutu = document.getElementById('ticker-bant2');
+  if (!kutu) return;
+  var iz = document.getElementById('ticker-iz2');
+
+  function bicim(g) {
+    var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
+    var rozet = (typeof g.d === 'number')
+      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+        Number(g.d).toFixed(2) + '%</span>'
+      : '';
+    var birim = g.b || g.birim || '';
+    return '<span class="ticker-oge"><b>' + g.ad + '</b> ' + deger + (birim ? ' ' + birim : '') + rozet + '</span>';
+  }
+  function ciz(veri) {
+    var ogeler = (veri.gostergeler || []).map(bicim).join('');
+    if (!ogeler) throw new Error('bos');
+    var saat = '<span class="ticker-oge ticker-saat">' + (veri.guncelleme || '') +
+               (veri.etiket ? ' · ' + veri.etiket : '') + '</span>';
+    iz.innerHTML = ogeler + saat + '<span aria-hidden="true" style="display:inline-block">' + ogeler + saat + '</span>';  // sorunsuz dongu icin kopya (ekran okuyucuya kapali)
+  }
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(ciz)
+      .catch(function() {
+        // JSON yedeği yalnızca site kökünde; göreli kok alt dizinlerde 404 üretiyordu (2026-11-07 denetim)
+        if (adres.indexOf('/api/') !== -1) { yukle('/piyasa-serit.json?t=' + Date.now()); return; }
+        if (iz) iz.innerHTML = '<span style="color:#94a3b8">Market data could not be loaded temporarily; it will be retried shortly.</span>';
+      });
+  }
+  yukle('/api/piyasa?t=' + Date.now());
+  setInterval(function() { yukle('/api/piyasa?t=' + Date.now()); }, 5 * 60 * 1000);
+})();
+</script>
+
+<main class="wrap">
+    <!-- Üst Widget Alanı (Canlı Saat, İstanbul Hava Durumu ve GLM Çeviri) -->
+    <div class="site-widgets">
+        <div id="live-clock-weather" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span id="current-date-time">⏳ Loading...</span>
+            <span id="istanbul-weather">🌤️ Istanbul: Partly Cloudy</span>
+        </div>
+<style>.dil-linkler{display:flex;gap:10px;align-items:center;font-size:12.5px;flex-wrap:wrap}.dil-linkler a{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}.dil-linkler a:hover{color:var(--accent);border-bottom-color:var(--accent)}.dil-linkler a.aktif{color:var(--accent);font-weight:600}</style>
+<nav class="dil-linkler" aria-label="Select page language">
+<span aria-hidden="true">🌐</span>
+<a href="https://borsa-raporlari.pages.dev/portfoy" hreflang="tr" lang="tr" data-dil="tr">Türkçe</a>
+<a href="https://borsa-raporlari.pages.dev/en/portfolio" hreflang="en" lang="en" data-dil="en" class="aktif" aria-current="true">English</a>
+<a href="https://borsa-raporlari.pages.dev/de/portfolio" hreflang="de" lang="de" data-dil="de">Deutsch</a>
+<a href="https://borsa-raporlari.pages.dev/ru/portfel" hreflang="ru" lang="ru" data-dil="ru">Русский</a>
+<a href="https://borsa-raporlari.pages.dev/zh/touzizuhe" hreflang="zh-Hans" lang="zh-Hans" data-dil="zh">简体中文</a>
+</nav>
+    </div>
+
+    <!-- Etkileşimli Araçlar (Site İçi Arama ve BIST AI Asistan) -->
+    <div class="interactive-box">
+
+<div class="arama-kutusu">
+    <div style="display: flex; gap: 8px;">
+        <input type="text" id="site-arama-giris" aria-label="Site search" placeholder="Search stock, topic or date..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: var(--card); color: var(--ink);" onkeypress="if(event.key === 'Enter') siteAra();">
+        <button onclick="siteAra()" id="site-arama-btn" style="background: #0f766e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
+    </div>
+    <div id="site-arama-sonuc" style="display: none; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; max-height: 320px; overflow-y: auto;"></div>
+</div>
+<script>
+(function() {
+  var KOK = '';
+  var INDEKS = null;
+
+  function normalize(s) {
+    var harita = { 'ı': 'i', 'İ': 'i', 'I': 'i', 'ğ': 'g', 'Ğ': 'g', 'ü': 'u', 'Ü': 'u',
+                   'ş': 's', 'Ş': 's', 'ö': 'o', 'Ö': 'o', 'ç': 'c', 'Ç': 'c',
+                   'â': 'a', 'î': 'i', 'û': 'u', 'â': 'a' };
+    // toLowerCase, 'İ' harfini 'i' + U+0307 (birlesik nokta) YAPAR ve uzunluk
+    // degisir; nokta temizlenmezse 'is yatirim' aramasi 'İş'i bulamaz (15.10 bulgusu).
+    s = String(s).toLowerCase().replace(/\u0307/g, '');
+    return s.replace(/[ıİIğĞüÜşŞöÖçÇâîû]/g, function(h) { return harita[h] || h; });
+  }
+
+  function indeksYukle() {
+    if (INDEKS) return Promise.resolve(INDEKS);
+    return fetch(KOK + 'site-arama.json?t=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(d) { INDEKS = d; return d; });
+  }
+
+  function kacKez(haystack, needle) {
+    if (!needle) return 0;
+    var sayi = 0, i = 0, h = normalize(haystack), n = normalize(needle);
+    while ((i = h.indexOf(n, i)) !== -1) { sayi++; i += n.length; }
+    return sayi;
+  }
+
+  function kac(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function vurgula(metin, terimler) {
+    // Eslesen terimleri <mark> ile isaretler. Eslesme normalize kopyada bulunur,
+    // ayni indeksler orijinal dizgede dilimlenir; normalize Turkce haritasi
+    // uzunluk koruyucu oldugundan indeksler gecerlidir, degilse null doner
+    // (cagiran kac()'le kacilmis duz metne duser).
+    var h = normalize(metin);
+    if (h.length !== metin.length) return null;
+    var aralik = [];
+    terimler.forEach(function(t) {
+      var n = normalize(t);
+      if (!n) return;
+      var i = 0;
+      while ((i = h.indexOf(n, i)) !== -1) { aralik.push([i, i + n.length]); i += n.length; }
+    });
+    if (!aralik.length) return null;
+    aralik.sort(function(a, b) { return a[0] - b[0]; });
+    var birlesik = [];
+    aralik.forEach(function(r) {
+      var son = birlesik[birlesik.length - 1];
+      if (son && r[0] <= son[1]) son[1] = Math.max(son[1], r[1]);
+      else birlesik.push(r.slice());
+    });
+    var cikti = '', pos = 0;
+    birlesik.forEach(function(r) {
+      cikti += kac(metin.slice(pos, r[0])) + '<mark>' + kac(metin.slice(r[0], r[1])) + '</mark>';
+      pos = r[1];
+    });
+    return cikti + kac(metin.slice(pos));
+  }
+
+  function kacHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function soruMu(q) {
+    // Dogal dilde soru gorunumunde ise asistani otomatik devreye al (2026-11-01
+    // kullanici: "site ici arama kutusuna yapmistim sanmistim" — asistan arama
+    // kutusundan ulasilabilir olmali). normalize sonrasi ASCII desenler.
+    if (/\?\s*$/.test(q)) return true;
+    return /nasil|nedir|neden|ne kadar|kac|ne zaman|yukseldi|dustu|oneri|tavsiye|hangi|kartir|kimdir/i.test(normalize(q));
+  }
+
+  function asistanBagla(panel, q, kok) {
+    var blok = document.createElement('div');
+    blok.style.cssText = 'margin:0 0 10px; padding:8px 10px; border:1px solid #dbeafe; background:#eff6ff; border-radius:6px';
+    blok.innerHTML = '<div style="font-size:12.5px; color:#1d4ed8; font-weight:600">🤖 Sorunuz asistana iletildi&hellip; (10-30 sn)</div>';
+    panel.insertBefore(blok, panel.firstChild);
+    fetch(kok + 'api/asistan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ soru: q }) })
+      .then(function(r) { return r.json().then(function(j) { return { kod: r.status, j: j }; }); })
+      .then(function(o) {
+        var c = '';
+        if (o.kod === 200 && o.j.cevap) {
+          c = '<div style="white-space:pre-wrap; font-size:13px; line-height:1.55">' + kacHtml(o.j.cevap) + '</div>';
+          if (o.j.uyari) c += '<div style="color:#b45309; font-size:12px; margin-top:6px">' + kacHtml(o.j.uyari) + '</div>';
+          var kay = o.j.kaynaklar || [];
+          if (kay.length) {
+            c += '<div style="font-size:12px; margin-top:6px">Kaynaklar: ';
+            kay.forEach(function(kk, i) { c += (i ? ' &middot; ' : '') + '<a href="' + kacHtml(kk.url || '') + '">' + kacHtml(kk.baslik || '') + '</a>'; });
+            c += '</div>';
+          }
+        } else {
+          c = '<span style="color:#b91c1c; font-size:12.5px">' + kacHtml(o.j.hata || 'Asistan şu anda yanıt vermedi.') + '</span>';
+        }
+        blok.innerHTML = '<div style="font-size:12px; color:#1d4ed8; font-weight:600; margin-bottom:4px">🤖 Asistan yanıtı</div>' + c;
+      })
+      .catch(function() {
+        blok.innerHTML = '<span style="color:#b91c1c; font-size:12.5px">Asistan şu anda yanıt vermedi.</span>';
+      });
+  }
+
+  window.siteAra = function() {
+    var giris = document.getElementById('site-arama-giris');
+    var panel = document.getElementById('site-arama-sonuc');
+    var q = (giris.value || '').trim();
+    if (!q) { panel.style.display = 'none'; return; }
+    panel.style.display = 'block';
+    panel.innerHTML = '<span style="color:#94a3b8;font-size:13px">Aranıyor...</span>';
+    // Akıllı (anlam) arama: /api/ara pgvector vekiline paralel istek (2026-11-02).
+    // Yanıt gelirse sonuç listesinin üstüne "ANLAM ARAMASI" bloğu yerleşir;
+    // gelmezse kutu sessizce kalkar — kelime araması tek başına da çalışır.
+    var akilliKutu = '<div id="akilli-blok" style="margin:0 0 10px;padding:8px 9px;background:rgba(15,118,110,0.07);border:1px solid var(--line);border-radius:8px"><span style="color:#94a3b8;font-size:12px">🧠 Anlam araması yapılıyor&hellip;</span></div>';
+    var akilliIcerik = null, akilliBitti = false, yerelSon = null;
+    function ciz() {
+      if (yerelSon === null) return;
+      panel.innerHTML = (akilliBitti ? (akilliIcerik || '') : akilliKutu) + yerelSon;
+    }
+    fetch('/api/ara?q=' + encodeURIComponent(q), { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function(v) {
+        var KA = { 'gunluk-rapor': 'Günlük', 'derin-analiz': 'Derin', 'makro-analiz': 'Makro', 'haftasonu': 'Hafta sonu', 'egitim': 'Okul', 'sozluk': 'Sözlük', 'terimler': 'Terimler', 'muhasebe-terimleri': 'Muhasebe', 'muhasebe-terimleri-grup': 'Muhasebe', 'hisse-detay': 'Hisse', 'temettu': 'Temettü' };
+        var liste = ((v && v.sonuc) || []).slice(0, 3);
+        if (liste.length) {
+          var ik = '<div style="font-size:11.5px;color:#0f766e;font-weight:700;margin-bottom:6px">🧠 ANLAM ARAMASI</div>';
+          liste.forEach(function(s) {
+            var oz = kac(String(s.icerik || '').slice(0, 110));
+            ik += '<div style="margin-bottom:6px"><a href="' + kac(s.url || '#') + '" style="font-weight:600;font-size:13px">' + kac(s.baslik || 'Rapor') + '</a>' +
+                  ' <span style="color:#64748b;font-size:11px">' + kac(KA[s.kaynak] || s.kaynak || '') + (s.tarih ? ' · ' + kac(s.tarih) : '') + ' · %' + (typeof s.gosterim === 'number' ? s.gosterim : Math.round((s.benzerlik || 0) * 100)) + '</span>' +
+                  '<div style="color:#64748b;font-size:12px">' + oz + '…</div></div>';
+          });
+          akilliIcerik = '<div id="akilli-blok" style="margin:0 0 10px;padding:8px 9px;background:rgba(15,118,110,0.07);border:1px solid var(--line);border-radius:8px">' + ik + '</div>';
+        } else {
+          akilliIcerik = '';
+        }
+        akilliBitti = true;
+        ciz();
+      })
+      .catch(function() {
+        akilliIcerik = '';
+        akilliBitti = true;
+        ciz();
+      });
+    indeksYukle().then(function(indeks) {
+      var terimler = q.split(/\s+/).filter(Boolean);
+      var sonuc = (indeks.sayfalar || []).map(function(s) {
+        var puan = 0;
+        terimler.forEach(function(t) {
+          puan += kacKez(s.b, t) * 8 + kacKez(s.t, t);
+          // 2026-11-04 (kullanıcı kararı): şirket adı/kodu bir hisse sayfasının
+          // BAŞLIĞINDA geçiyorsa o sayfa en başta çıksın — rapor metinlerindeki
+          // çok sayıda geçiş (×1) tek başlık eşleşmesini geçebiliyordu.
+          if (kacKez(s.b, t) > 0 && (s.u + '').indexOf('hisse/') === 0) puan += 60;
+        });
+        return { s: s, puan: puan };
+      }).filter(function(x) { return x.puan > 0; })
+        .sort(function(a, b) { return b.puan - a.puan; })
+        .slice(0, 6);
+
+      var html = '';
+      // Puter tabanli AI asistani 2026-09-21'de kaldirildi; sonuclardaki olu
+      // "BIST AI asistanina sor" baglantisi da 15.10'da cikarildi (kullanicinin
+      // yapay zeka kutusu karari sonrasi — baglanti hicbir islem yapmiyordu).
+      if (!sonuc.length) {
+        html += '<div style="color:#64748b;font-size:13px">Site içinde sonuç bulunamadı. Farklı bir terim veya hisse kodu deneyin.</div>';
+        // Dogal dilde sorular dizinde sonuc vermez; kullaniciyi asistana yonlendir
+        // (2026-11-01 kullanicinin "boyle mi?" ekranindaki gurultu vakasi).
+        html += '<div style="margin-top:6px; font-size:13px"><a href="' + KOK + 'ara?q=' + encodeURIComponent(q) + '">🤖 Bu soruyu asistana sor &rarr;</a></div>';
+      } else {
+        sonuc.forEach(function(x) {
+          var metin = normalize(x.s.t);
+          var pos = -1;
+          for (var i = 0; i < terimler.length; i++) { var p = metin.indexOf(normalize(terimler[i])); if (p !== -1 && (pos === -1 || p < pos)) pos = p; }
+          var kesit = x.s.t;
+          if (pos > 60) kesit = '…' + x.s.t.slice(Math.max(0, pos - 40), pos + 90);
+          else kesit = x.s.t.slice(0, 130);
+          var vBaslik = vurgula(x.s.b, terimler);
+          var vKesit = vurgula(kesit, terimler);
+          html += '<div style="margin-bottom:8px"><a href="' + KOK + x.s.u + '" style="font-weight:600;font-size:13.5px">' + (vBaslik || kac(x.s.b)) + '</a>' +
+                  '<div style="color:#64748b;font-size:12.5px">' + (vKesit || kac(kesit)) + '…</div></div>';
+        });
+        html += '<div style="margin-top:6px; font-size:12.5px"><a href="' + KOK + 'ara?q=' + encodeURIComponent(q) + '">Tüm sonuçlar ve 🤖 asistana sor &rarr;</a></div>';
+      }
+      yerelSon = html;
+      ciz();
+      if (soruMu(q)) asistanBagla(panel, q, KOK);
+    }).catch(function() {
+      panel.innerHTML = '<span style="color:#b91c1c;font-size:13px">Search index could not be loaded.</span>';
+    });
+  };
+
+})();
+</script>
+
+
+<div class="radyo-mini">
+  <button type="button" class="radyo-oynat" id="radyo-btn" aria-label="Play / Pause">▶</button>
+  <audio id="radyo-ses" preload="none"></audio>
+  <input type="range" id="radyo-ses-ayar" class="radyo-ses" min="0" max="100" value="80" aria-label="Volume level" title="Sound">
+  <span class="radyo-linkler"><a href="radyo/">📻 All broadcasts &amp; Podcast page</a> <span class="ayrac">•</span> <a href="radyo/podcast.xml">Podcast</a> · <a href="raporlar.xml">RSS</a></span>
+  <span class="radyo-uyari">For listening purposes only • AI-hosted bulletin • For informational purposes, not investment advice.</span>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('radyo-btn'), ses=document.getElementById('radyo-ses'),
+      ayar=document.getElementById('radyo-ses-ayar'), kok='';
+  if(!btn||!ses) return;
+  if(ayar){ ses.volume=(parseInt(ayar.value,10)||80)/100; }
+  var hazir=false;
+  function hazirla(geri){
+    if(hazir) return geri();
+    fetch(kok+'radyo/indeks.json').then(function(r){return r.json();}).then(function(d){
+      var l=(d&&d.bolumler)||[];
+      if(l.length&&l[0].dosya){ ses.src=kok+l[0].dosya; }
+      hazir=true; geri();
+    }).catch(function(){ hazir=true; geri(); });
+  }
+  btn.addEventListener('click',function(){
+    if(ses.paused){ hazirla(function(){ var p=ses.play(); if(p&&p.catch){p.catch(function(){});} }); }
+    else { ses.pause(); }
+  });
+  ses.addEventListener('play',function(){ btn.textContent='❚❚'; btn.setAttribute('aria-label','Duraklat'); });
+  ses.addEventListener('pause',function(){ btn.textContent='▶'; btn.setAttribute('aria-label','Oynat'); });
+  if(ayar){ ayar.addEventListener('input',function(){ ses.volume=(parseInt(ayar.value,10)||0)/100; }); }
+})();
+</script>
+
+    </div>
+
+    <!-- Asıl Sayfa İçeriği -->
+    
+<div class="hero">
+<h1>Demo Portfolio</h1>
+<p>A virtual portfolio of 100.000 TL equally distributed among BIST 30 stocks. No buying or selling is done, only tracked;
+automatically updated every weekday morning with the previous trading day's closing prices.</p>
+</div>
+<details class="card" style="margin-bottom:22px">
+<summary style="cursor:pointer; font-weight:700">📐 Methodology — how is this portfolio calculated?</summary>
+<div style="margin-top:10px; font-size:14px; display:grid; gap:6px">
+<p style="margin:0">• On 2026-09-06, 100.000 TL invested in BIST 30 stocks <strong>evenly distributed</strong>; quantities are fractional; in practice, rounding to whole lots is required.</p>
+<p style="margin:0">• Every weekday morning <strong>compared with the previous trading day's closing prices</strong> updated; on holidays, the value does not change, no buying or selling is done.</p>
+<p style="margin:0">• <strong>Dividends</strong> On the ex-date, net (after 10% dividend withholding tax deduction) is added to cash and included in portfolio value; cash is not reinvested.<strong>Bonus issues/splits</strong> Processed with price multiplier: quantities remain fixed, after the event the price multiplier is applied to the price, the return curve maintains continuity on the event day. Dividend data is read from the same source as the Temettü Merkezi (data/temettu/seriler).</p>
+<p style="margin:0">• Comparison lines (gold, dollar, deposit, BIST 100, BIST 30, inflation) are normalized to the same 100.000 TL base; the inflation value is the latest TÜIK annual reading from the TradingView economic calendar and is reflected on the chart with the period date.</p>
+<p style="margin:0">• Total return is not the average of individual stock percentages, but the total value change of the portfolio. The net return scenario on the Signal Report page uses a ~0.10% commission+BSMV assumption.</p>
+<p style="margin:0; color:var(--muted)">This is a virtual test portfolio; not investment advice. Past performance is not a guarantee of future results.</p>
+</div>
+</details>
+
+<div class="stats">
+<div class="stat"><div class="label">Current value</div><div class="value">87,086 TL</div></div>
+<div class="stat"><div class="label">Daily change</div><div class="value pos">+0.56%</div></div>
+<div class="stat"><div class="label">Total return</div><div class="value neg">-12.91%</div></div>
+<div class="stat"><div class="label">Start</div><div class="value" style="font-size:16px">2026-09-06</div></div>
+<div class="stat"><div class="label">Dividend Income (net)</div><div class="value">197.89 TL</div><div style="font-size:11px;color:var(--muted)">after 10% withholding; not reinvested</div></div>
+<div class="stat"><div class="label">Maximum Decline</div><div class="value neg">-25.15%</div></div><div class="stat"><div class="label">Volatility (annual)</div><div class="value">29.1%</div></div><div class="stat"><div class="label">Annualized Return</div><div class="value neg">-53.93%</div><div style="font-size:11px;color:var(--muted)">short term — should be read cautiously</div></div><div class="stat"><div class="label">Winner / Loser</div><div class="value">4 / 26</div><div style="font-size:11px;color:var(--muted)">45 trading days</div></div>
+</div>
+<h3 class="section-title">Market Comparison<span style="font-size:12px;color:var(--muted);font-weight:400">( same 100.000 TL base; last column is portfolio difference)</span></h3><div class="card" style="padding:8px 24px 16px"><div class="tbl-wrap"><table><tr><th>Comparison</th><th>Return</th><th>Portfolio difference</th></tr><tr><td><strong>This portfolio</strong></td><td class='neg'>-12.91%</td><td>—</td></tr><tr><td>BIST 30 (same period)</td><td class='neg'>-14.59%</td><td class='pos'>+ 1.68 points</td></tr><tr><td>BIST 100 (same period)</td><td class='neg'>-18.86%</td><td class='pos'>+ 5.95 points</td></tr><tr><td>Gram gold (same period)</td><td class='neg'>-4.31%</td><td class='neg'>- 8.60 points</td></tr><tr><td>Dollar (same period)</td><td class='pos'>+4.02%</td><td class='neg'>- 16.93 points</td></tr><tr><td>Deposit (interest) (same period)</td><td class='pos'>+8.20%</td><td class='neg'>- 21.11 points</td></tr></table></div></div>
+<p style="color:var(--muted); font-size:12px; margin:0 0 18px">Return alone is not a success indicator: portfolio is compared with BIST 30/100 and gold/dollar in the same period. If positive return is below the index, it is relatively weak.</p>
+<div class="card" style="margin-bottom:22px">
+<div class="pgrafik-sarmal">
+<div style="position:relative; height:340px; min-width:640px;">
+<canvas id="portfoy-grafik-301677"></canvas>
+</div>
+<p class="pgrafik-ipucu">↔ You can scroll the chart left and right</p>
+</div>
+<style>
+.pgrafik-sarmal{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.pgrafik-ipucu{display:none;margin:6px 0 0;color:var(--muted);font-size:12px;text-align:center}
+@media(max-width:700px){.pgrafik-ipucu{display:block}}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+(function() {
+    var veri = {"labels": ["2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-21", "2026-09-22", "2026-09-23", "2026-09-24", "2026-09-25", "2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02", "2026-10-05", "2026-10-06", "2026-10-07", "2026-10-08", "2026-10-09", "2026-10-11", "2026-10-12", "2026-10-13", "2026-10-14", "2026-10-15", "2026-10-16", "2026-10-19", "2026-10-20", "2026-10-21", "2026-10-22", "2026-10-23", "2026-10-26", "2026-10-27", "2026-10-28", "2026-10-29", "2026-10-30", "2026-11-02", "2026-11-03", "2026-11-04", "2026-11-05", "2026-11-06", "2026-11-09"], "datasets": [{"label": "Deneme Portföyü (Hisseler)", "data": [100013.04, 100013.04, 102352.27, 105135.98, 105721.9, 105320.34, 106949.37, 105257.55, 102330.22, 97541.74, 99907.41, 98925.6, 100517.92, 99942.08, 100836.25, 99504.47, 98334.98, 96682.91, 95726.93, 95497.34, 94983.86, 93678.86, 94274.06, 94285.0, 93686.23, 93503.3, 93503.3, 93381.37, 92609.94, 93354.07, 92615.91, 91776.15, 89256.09, 87857.55, 90389.81, 88315.08, 85452.12, 85322.96, 84031.72, 84003.75, 83632.26, 83632.26, 80050.84, 81369.23, 82630.64, 86897.47, 86605.36, 87086.43], "borderColor": "#047857", "backgroundColor": "#047857"}, {"label": "Altın", "data": [100000.0, 100941.08, 100819.58, 100415.39, 101224.05, 100055.94, 99407.07, 98829.8, 98312.05, 98717.83, 100482.02, 100350.07, 100065.2, 100152.09, 98956.39, 98922.76, 96829.45, 95420.66, 96857.65, 96749.56, 96890.67, 96507.43, 96529.77, 95639.84, 95558.92, 97346.34, 97207.77, 97525.21, 97375.7, 96682.29, 96328.59, 97151.77, 97470.14, 96541.43, 96092.89, 95355.88, 93997.31, 93819.82, 94919.02, 94979.84, 94456.23, 93576.13, 91777.25, 92826.53, 92400.5, 95373.71, 95511.31, 95689.78], "borderColor": "#d97706", "backgroundColor": "#d97706"}, {"label": "Dolar", "data": [100000.0, 100406.16, 100459.02, 100476.65, 100522.88, 100761.11, 100778.93, 100828.28, 100675.68, 100892.96, 101024.82, 101165.4, 101200.64, 101228.42, 101267.61, 101390.14, 101537.55, 101565.33, 101564.71, 101660.74, 101881.5, 101918.83, 101949.72, 101992.22, 102031.2, 102261.13, 102130.09, 102274.4, 102306.53, 102367.07, 102438.18, 102565.07, 102712.69, 102753.33, 102799.56, 102870.67, 103112.62, 103142.69, 103213.8, 103234.32, 103314.15, 103545.49, 103586.16, 103588.03, 103708.28, 103728.59, 103985.48, 104023.84], "borderColor": "#2563eb", "backgroundColor": "#2563eb"}, {"label": "Mevduat", "data": [100123.29, 100123.29, 100246.73, 100370.32, 100494.06, 100617.96, 100990.57, 101115.08, 101239.74, 101364.56, 101489.53, 101865.36, 101990.95, 102116.69, 102242.59, 102368.64, 102747.73, 102874.41, 103001.24, 103128.23, 103255.37, 103637.74, 103765.52, 103893.45, 104021.53, 104149.78, 104406.75, 104535.47, 104664.35, 104793.38, 104922.58, 105051.94, 105440.97, 105570.96, 105701.12, 105831.43, 105961.91, 106354.31, 106485.43, 106616.71, 106748.16, 106879.77, 107275.56, 107407.82, 107540.24, 107672.82, 107805.57, 108204.8], "borderColor": "#94a3b8", "backgroundColor": "#94a3b8", "borderDash": [6, 4]}, {"label": "BIST 100 Endeksi", "data": [100000.0, 100000.0, 99549.87, 101792.45, 102500.71, 101711.89, 102230.56, 100595.27, 98167.77, 92728.66, 95464.61, 93872.28, 94248.7, 93267.54, 93642.13, 91151.24, 91151.24, 88984.77, 85949.42, 84422.88, 86680.65, 87951.18, 87440.78, 86714.07, 85335.99, 86305.36, 86675.63, 86675.63, 85860.81, 86567.52, 85632.0, 85291.97, 82829.7, 80769.3, 83366.6, 81807.91, 77088.58, 78556.47, 78797.01, 78797.01, 78898.84, 77608.1, 76030.75, 77458.93, 77896.19, 81108.41, 80681.53, 81140.0], "borderColor": "#7c3aed", "backgroundColor": "#7c3aed", "borderDash": [2, 2]}, {"label": "BIST 30 Endeksi", "data": [100000.0, 100000.0, 102229.74, 103039.21, 102174.27, 103088.58, 101680.09, 99488.48, 99488.48, 93935.57, 97843.06, 96721.05, 97972.17, 96934.79, 97844.74, 95315.73, 95315.73, 93534.33, 90404.08, 88711.62, 91026.53, 92361.21, 91937.14, 91009.5, 89398.45, 90478.02, 90524.04, 90524.04, 89663.41, 90800.78, 89941.88, 89576.74, 87016.47, 85003.34, 87722.36, 86449.91, 81440.84, 82927.03, 83288.59, 83288.59, 83444.94, 81962.4, 80210.11, 81865.51, 82211.1, 85656.69, 84929.46, 85413.31], "borderColor": "#e11d48", "backgroundColor": "#e11d48", "borderDash": [2, 2]}, {"label": "Enflasyon (TÜİK yıllık %29.8, 2026-11-03)", "data": [100000.0, 100071.42, 100142.89, 100214.42, 100285.99, 100357.62, 100572.8, 100644.63, 100716.51, 100788.44, 100860.43, 101076.69, 101148.88, 101221.12, 101293.41, 101365.76, 101583.1, 101655.65, 101728.26, 101800.91, 101873.62, 102092.05, 102164.97, 102237.93, 102310.95, 102384.02, 102530.32, 102603.55, 102676.83, 102750.17, 102823.55, 102896.99, 103117.62, 103191.26, 103264.96, 103338.72, 103412.52, 103634.25, 103708.27, 103782.34, 103856.46, 103930.64, 104153.48, 104227.87, 104302.31, 104376.8, 104451.35, 104675.31], "borderColor": "#c026d3", "backgroundColor": "#c026d3", "borderDash": [4, 3]}]};
+    var baslangiclar = veri.datasets.map(function(d) { return d.data[0]; });
+    var mobil = window.matchMedia('(max-width: 700px)').matches;
+    var ctx = document.getElementById('portfoy-grafik-301677').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: veri.labels,
+            datasets: veri.datasets.map(function(d) {
+                return Object.assign({}, d, {
+                    borderWidth: mobil ? 2 : 3,
+                    pointRadius: mobil ? 0 : 2,
+                    pointHitRadius: 14,
+                    tension: 0.15,
+                    fill: false,
+                });
+            })
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'nearest', intersect: false },
+            plugins: {
+                legend: { position: 'top', labels: { boxWidth: mobil ? 10 : 12, padding: mobil ? 6 : 10, font: { size: mobil ? 11 : 12, weight: '600' } } },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx2) {
+                            var idx = ctx2.datasetIndex;
+                            var ilk = baslangiclar[idx];
+                            var son = ctx2.parsed.y;
+                            var yuzde = ilk ? ((son - ilk) / ilk * 100) : 0;
+                            var isaret = yuzde >= 0 ? '+' : '';
+                            var sonStr = son.toLocaleString('tr-TR', {maximumFractionDigits: 2});
+                            return ctx2.dataset.label + ': ' + sonStr + ' TL (' + isaret + yuzde.toFixed(2) + '%)';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { ticks: { callback: function(v) { return v.toLocaleString('tr-TR') + (mobil ? '' : ' TL'); } } },
+                x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: mobil ? 6 : 8 } }
+            }
+        }
+    });
+})();
+});
+</script>
+</div>
+<h2 class="section-title">Stock Performance (first purchase vs last price)</h2>
+<div class="card" style="padding:8px 24px 16px">
+<div class="tbl-wrap">
+<table><tr><th>Stock</th><th>Qty</th><th>Entry price</th><th>Last price</th><th>Return</th></tr><tr><td><a href="hisse/AEFES"><strong>AEFES</strong></a></td><td>180.67</td><td>18.45 TL</td><td>16.69 TL</td><td class='neg'>-9.54%</td></tr><tr><td><a href="hisse/AKBNK"><strong>AKBNK</strong></a></td><td>46.39</td><td>71.85 TL</td><td>66.20 TL</td><td class='neg'>-7.86%</td></tr><tr><td><a href="hisse/ASELS"><strong>ASELS</strong></a></td><td>8.59</td><td>388.25 TL</td><td>353.75 TL</td><td class='neg'>-8.89%</td></tr><tr><td><a href="hisse/ASTOR"><strong>ASTOR</strong></a></td><td>11.30</td><td>295.00 TL</td><td>161.50 TL</td><td class='neg'>-45.25%</td></tr><tr><td><a href="hisse/BIMAS"><strong>BIMAS</strong></a></td><td>8.02</td><td>415.75 TL</td><td>371.75 TL</td><td class='neg'>-10.58%</td></tr><tr><td><a href="hisse/EKGYO"><strong>EKGYO</strong></a></td><td>171.47</td><td>19.44 TL</td><td>17.66 TL</td><td class='neg'>-9.16%</td></tr><tr><td><a href="hisse/ENKAI"><strong>ENKAI</strong></a></td><td>38.20</td><td>87.25 TL</td><td>80.85 TL</td><td class='neg'>-7.34%</td></tr><tr><td><a href="hisse/EREGL"><strong>EREGL</strong></a></td><td>89.61</td><td>37.20 TL</td><td>31.06 TL</td><td class='neg'>-16.51%</td></tr><tr><td><a href="hisse/FROTO"><strong>FROTO</strong></a></td><td>43.18</td><td>77.20 TL</td><td>73.15 TL</td><td class='neg'>-5.25%</td></tr><tr><td><a href="hisse/GARAN"><strong>GARAN</strong></a></td><td>25.37</td><td>131.40 TL</td><td>144.30 TL</td><td class='pos'>+9.82%</td></tr><tr><td><a href="hisse/GUBRF"><strong>GUBRF</strong></a></td><td>6.96</td><td>478.75 TL</td><td>289.25 TL</td><td class='neg'>-39.58%</td></tr><tr><td><a href="hisse/ISCTR"><strong>ISCTR</strong></a></td><td>256.21</td><td>13.01 TL</td><td>13.29 TL</td><td class='pos'>+2.15%</td></tr><tr><td><a href="hisse/KCHOL"><strong>KCHOL</strong></a></td><td>15.50</td><td>215.10 TL</td><td>206.10 TL</td><td class='neg'>-4.18%</td></tr><tr><td><a href="hisse/KRDMD"><strong>KRDMD</strong></a></td><td>76.59</td><td>43.52 TL</td><td>36.16 TL</td><td class='neg'>-16.91%</td></tr><tr><td><a href="hisse/MGROS"><strong>MGROS</strong></a></td><td>6.33</td><td>527.00 TL</td><td>468.75 TL</td><td class='neg'>-11.05%</td></tr><tr><td><a href="hisse/PETKM"><strong>PETKM</strong></a></td><td>166.17</td><td>20.06 TL</td><td>17.77 TL</td><td class='neg'>-11.42%</td></tr><tr><td><a href="hisse/PGSUS"><strong>PGSUS</strong></a></td><td>22.42</td><td>148.70 TL</td><td>141.60 TL</td><td class='neg'>-4.77%</td></tr><tr><td><a href="hisse/SAHOL"><strong>SAHOL</strong></a></td><td>36.00</td><td>92.60 TL</td><td>87.30 TL</td><td class='neg'>-5.72%</td></tr><tr><td><a href="hisse/SASA"><strong>SASA</strong></a></td><td>1,455.60</td><td>2.29 TL</td><td>1.58 TL</td><td class='neg'>-31.00%</td></tr><tr><td><a href="hisse/SISE"><strong>SISE</strong></a></td><td>85.30</td><td>39.08 TL</td><td>34.24 TL</td><td class='neg'>-12.38%</td></tr><tr><td><a href="hisse/TAVHL"><strong>TAVHL</strong></a></td><td>12.43</td><td>268.25 TL</td><td>278.75 TL</td><td class='pos'>+3.91%</td></tr><tr><td><a href="hisse/TCELL"><strong>TCELL</strong></a></td><td>33.96</td><td>98.15 TL</td><td>93.95 TL</td><td class='neg'>-4.28%</td></tr><tr><td><a href="hisse/THYAO"><strong>THYAO</strong></a></td><td>11.26</td><td>296.00 TL</td><td>291.25 TL</td><td class='neg'>-1.60%</td></tr><tr><td><a href="hisse/TOASO"><strong>TOASO</strong></a></td><td>12.15</td><td>274.25 TL</td><td>222.70 TL</td><td class='neg'>-18.80%</td></tr><tr><td><a href="hisse/TRALT"><strong>TRALT</strong></a></td><td>65.62</td><td>50.80 TL</td><td>36.74 TL</td><td class='neg'>-27.68%</td></tr><tr><td><a href="hisse/TTKOM"><strong>TTKOM</strong></a></td><td>64.23</td><td>51.90 TL</td><td>48.90 TL</td><td class='neg'>-5.78%</td></tr><tr><td><a href="hisse/TUPRS"><strong>TUPRS</strong></a></td><td>8.58</td><td>388.50 TL</td><td>343.25 TL</td><td class='neg'>-11.65%</td></tr><tr><td><a href="hisse/VAKBN"><strong>VAKBN</strong></a></td><td>99.15</td><td>33.62 TL</td><td>31.50 TL</td><td class='neg'>-6.31%</td></tr><tr><td><a href="hisse/YKBNK"><strong>YKBNK</strong></a></td><td>92.85</td><td>35.90 TL</td><td>36.52 TL</td><td class='pos'>+1.73%</td></tr><tr><td><a href="hisse/TRMET"><strong>TRMET</strong></a></td><td>6.95</td><td>129.50 TL</td><td>107.30 TL</td><td class='neg'>-17.14%</td></tr></table>
+</div>
+</div>
+<h2 class="section-title">Daily History</h2>
+<div class="card" style="padding:8px 24px 16px">
+<div class="tbl-wrap">
+<table><tr><th>Date*</th><th>Total Value</th><th>Total %</th><th>Daily %</th></tr><tr><td>2026-11-09</td><td>87,086.43 TL</td><td class='neg'>-12.91%</td><td class='pos'>+0.56%</td></tr><tr><td>2026-11-06</td><td>86,605.36 TL</td><td class='neg'>-13.39%</td><td class='neg'>-0.34%</td></tr><tr><td>2026-11-05</td><td>86,897.47 TL</td><td class='neg'>-13.10%</td><td class='pos'>+5.16%</td></tr><tr><td>2026-11-04</td><td>82,630.64 TL</td><td class='neg'>-17.37%</td><td class='pos'>+1.55%</td></tr><tr><td>2026-11-03</td><td>81,369.23 TL</td><td class='neg'>-18.63%</td><td class='pos'>+1.65%</td></tr><tr><td>2026-11-02</td><td>80,050.84 TL</td><td class='neg'>-19.95%</td><td class='neg'>-4.28%</td></tr><tr><td>2026-10-30</td><td>83,632.26 TL</td><td class='neg'>-16.37%</td><td class='pos'>+0.00%</td></tr><tr><td>2026-10-29</td><td>83,632.26 TL</td><td class='neg'>-16.37%</td><td class='neg'>-0.44%</td></tr><tr><td>2026-10-28</td><td>84,003.75 TL</td><td class='neg'>-16.00%</td><td class='neg'>-0.03%</td></tr><tr><td>2026-10-27</td><td>84,031.72 TL</td><td class='neg'>-15.97%</td><td class='neg'>-1.51%</td></tr><tr><td>2026-10-26</td><td>85,322.96 TL</td><td class='neg'>-14.68%</td><td class='neg'>-0.15%</td></tr><tr><td>2026-10-23</td><td>85,452.12 TL</td><td class='neg'>-14.55%</td><td class='neg'>-3.24%</td></tr><tr><td>2026-10-22</td><td>88,315.08 TL</td><td class='neg'>-11.68%</td><td class='neg'>-2.30%</td></tr><tr><td>2026-10-21</td><td>90,389.81 TL</td><td class='neg'>-9.61%</td><td class='pos'>+2.88%</td></tr><tr><td>2026-10-20</td><td>87,857.55 TL</td><td class='neg'>-12.14%</td><td class='neg'>-1.57%</td></tr><tr><td>2026-10-19</td><td>89,256.09 TL</td><td class='neg'>-10.74%</td><td class='neg'>-2.75%</td></tr><tr><td>2026-10-16</td><td>91,776.15 TL</td><td class='neg'>-8.22%</td><td class='neg'>-0.91%</td></tr><tr><td>2026-10-15</td><td>92,615.91 TL</td><td class='neg'>-7.38%</td><td class='neg'>-0.79%</td></tr><tr><td>2026-10-14</td><td>93,354.07 TL</td><td class='neg'>-6.65%</td><td class='pos'>+0.80%</td></tr><tr><td>2026-10-13</td><td>92,609.94 TL</td><td class='neg'>-7.39%</td><td class='neg'>-0.83%</td></tr><tr><td>2026-10-12</td><td>93,381.37 TL</td><td class='neg'>-6.62%</td><td class='neg'>-0.13%</td></tr><tr><td>2026-10-11</td><td>93,503.30 TL</td><td class='neg'>-6.50%</td><td class='pos'>+0.00%</td></tr><tr><td>2026-10-09</td><td>93,503.30 TL</td><td class='neg'>-6.50%</td><td class='neg'>-0.20%</td></tr><tr><td>2026-10-08</td><td>93,686.23 TL</td><td class='neg'>-6.31%</td><td class='neg'>-0.64%</td></tr><tr><td>2026-10-07</td><td>94,285.00 TL</td><td class='neg'>-5.71%</td><td class='pos'>+0.01%</td></tr><tr><td>2026-10-06</td><td>94,274.06 TL</td><td class='neg'>-5.73%</td><td class='pos'>+0.64%</td></tr><tr><td>2026-10-05</td><td>93,678.86 TL</td><td class='neg'>-6.32%</td><td class='neg'>-1.37%</td></tr><tr><td>2026-10-02</td><td>94,983.86 TL</td><td class='neg'>-5.02%</td><td class='neg'>-0.54%</td></tr><tr><td>2026-10-01</td><td>95,497.34 TL</td><td class='neg'>-4.50%</td><td class='neg'>-0.24%</td></tr><tr><td>2026-09-30</td><td>95,726.93 TL</td><td class='neg'>-4.27%</td><td class='neg'>-0.99%</td></tr><tr><td>2026-09-29</td><td>96,682.91 TL</td><td class='neg'>-3.32%</td><td class='neg'>-1.68%</td></tr><tr><td>2026-09-28</td><td>98,334.98 TL</td><td class='neg'>-1.67%</td><td class='neg'>-1.18%</td></tr><tr><td>2026-09-25</td><td>99,504.47 TL</td><td class='neg'>-0.50%</td><td class='neg'>-1.32%</td></tr><tr><td>2026-09-24</td><td>100,836.25 TL</td><td class='pos'>+0.84%</td><td class='pos'>+0.89%</td></tr><tr><td>2026-09-23</td><td>99,942.08 TL</td><td class='neg'>-0.06%</td><td class='neg'>-0.57%</td></tr><tr><td>2026-09-22</td><td>100,517.92 TL</td><td class='pos'>+0.52%</td><td class='pos'>+1.61%</td></tr><tr><td>2026-09-21</td><td>98,925.60 TL</td><td class='neg'>-1.07%</td><td class='neg'>-0.98%</td></tr><tr><td>2026-09-18</td><td>99,907.41 TL</td><td class='neg'>-0.09%</td><td class='pos'>+2.43%</td></tr><tr><td>2026-09-17</td><td>97,541.74 TL</td><td class='neg'>-2.46%</td><td class='neg'>-4.68%</td></tr><tr><td>2026-09-16</td><td>102,330.22 TL</td><td class='pos'>+2.33%</td><td class='neg'>-2.78%</td></tr><tr><td>2026-09-15</td><td>105,257.55 TL</td><td class='pos'>+5.26%</td><td class='neg'>-1.58%</td></tr><tr><td>2026-09-14</td><td>106,949.37 TL</td><td class='pos'>+6.95%</td><td class='pos'>+1.55%</td></tr><tr><td>2026-09-11</td><td>105,320.34 TL</td><td class='pos'>+5.32%</td><td class='neg'>-0.38%</td></tr><tr><td>2026-09-10</td><td>105,721.90 TL</td><td class='pos'>+5.72%</td><td class='pos'>+0.56%</td></tr><tr><td>2026-09-09</td><td>105,135.98 TL</td><td class='pos'>+5.14%</td><td class='pos'>+2.72%</td></tr><tr><td>2026-09-08</td><td>102,352.27 TL</td><td class='pos'>+2.35%</td><td class='pos'>+2.34%</td></tr><tr><td>2026-09-07</td><td>100,013.04 TL</td><td class='pos'>+0.01%</td><td class='pos'>+0.00%</td></tr><tr><td>2026-09-06</td><td>100,013.04 TL</td><td class='pos'>+0.01%</td><td class='pos'>+0.01%</td></tr></table>
+</div>
+</div>
+<p style="margin:10px 0 0; color:var(--muted); font-size:12.5px">The portfolio is updated automatically every weekday morning with the previous trading day's closing prices; the value does not change on weekends and holidays. For live prices, check the price bar above. Return is calculated based on the current value of 100.000 TL initially equally distributed; it is not a simple average of the individual stock percentages in the table. Comparison lines (gold/dollar/deposit/index/inflation) are also normalized to the same 100.000 TL base. The return period is the portfolio's start date (not the beginning of the year); since the first day is also valued with the same closing prices, the first record may deviate a few liras from 100.000.00 TL (e.g. 100.013 TL). Dividends are added to the portfolio value as net cash (after 10% withholding) on the ex-date.<br>
+* The date column shows the day the portfolio was updated; prices belong to the previous trading day's closing.
+Value does not change on weekends and holidays.</p>
+</main>
+
+<nav class="altbar" aria-label="Quick menu">
+<a href="raporlar"><span class="i" aria-hidden="true">📊</span>Reports</a>
+<a href="teknik-analiz"><span class="i" aria-hidden="true">📈</span>Technical</a>
+<a href="hisse/"><span class="i" aria-hidden="true">🏦</span>Stocks</a>
+<a href="portfoy" class="active"><span class="i" aria-hidden="true">💼</span>Portfolio</a>
+<a href="haberler"><span class="i" aria-hidden="true">📰</span>News</a>
+<a href="takvim"><span class="i" aria-hidden="true">📅</span>Calendar</a>
+</nav>
+
+<script>
+function temaDegistir() {
+  var kok = document.documentElement;
+  kok.classList.toggle('dark');
+  var koyu = kok.classList.contains('dark');
+  try { localStorage.setItem('tema', koyu ? 'dark' : 'light'); } catch (e) {}
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = koyu ? '☀️' : '🌙';
+}
+(function() {
+  var b = document.getElementById('tema-btn');
+  if (b) b.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+})();
+</script>
+
+<footer class="footer">The information, comments and recommendations contained herein are for informational purposes only; they do not constitute investment advisory or investment advice. The accuracy of the data cannot be guaranteed and the user is responsible for any decisions that may arise from the content.<br>Data sources: İş Yatırım, RSS news feeds • Analysis: artificial intelligence (multi-agent system)<br><a href="gizlilik" style="color:inherit">Privacy &amp; Data Protection</a><br><span style="font-size:11.5px">📄 Markdown version for LLM/agents: <a href="https://borsa-raporlari.pages.dev/en/portfolio.md" style="color:inherit">borsa-raporlari.pages.dev/portfoy.md</a></span></footer>
+
+<!-- Widget'ları Çalıştıran JavaScript Kodları (Sayfanın en altına eklenir) -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'medium' };
+        document.getElementById('current-date-time').innerText = '📅 ' + new Intl.DateTimeFormat('tr-TR', options).format(now);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    fetch('https://wttr.in/Istanbul?format=j1')
+        .then(response => response.json())
+        .then(data => {
+            const current = data.current_condition[0];
+            const temp = current.temp_C;
+            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
+            document.getElementById('istanbul-weather').innerText = `🌤️ İstanbul: ${temp}°C, ${desc}`;
+        })
+        .catch(err => {
+            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
+        });
+</script>
+</body></html>
