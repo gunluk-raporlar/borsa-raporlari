@@ -6,21 +6,13 @@
   "bugun_tarih": "2026-11-10",
   "gerceklesen_kz": -4031.5323749999934,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 1,
+  "kontrol_sayisi": 2,
   "nakit": 66181.04055953451,
   "onceki_kapanis_ozkaynak": 96594.19,
   "ozkayit": [
     [
       "2026-09-25",
       100000.0
-    ],
-    [
-      "2026-10-23T15:17",
-      95366.27
-    ],
-    [
-      "2026-10-26T16:52",
-      95384.39
     ],
     [
       "2026-10-27T15:52",
@@ -49,6 +41,10 @@
     [
       "2026-11-06T17:42",
       96594.19
+    ],
+    [
+      "2026-11-10T18:31",
+      97344.59
     ]
   ],
   "pozisyonlar": {
@@ -61,38 +57,38 @@
     }
   },
   "rejim": "ayi",
-  "son_bar_tarihi": "2026-11-09",
+  "son_bar_tarihi": "2026-11-10",
   "son_fiyatlar": {
-    "AEFES": 16.94,
-    "AKBNK": 70.95,
-    "ASELS": 337.75,
-    "ASTOR": 155.1,
-    "BIMAS": 381.5,
-    "EKGYO": 18.32,
-    "ENKAI": 80.6,
-    "EREGL": 32.76,
-    "FROTO": 74.45,
-    "GARAN": 153.1,
-    "GUBRF": 307.0,
-    "ISCTR": 13.7,
-    "KCHOL": 212.4,
-    "KRDMD": 37.38,
-    "MGROS": 480.5,
-    "PETKM": 16.73,
-    "PGSUS": 146.5,
-    "SAHOL": 88.4,
-    "SASA": 1.63,
-    "SISE": 35.48,
-    "TAVHL": 303.75,
-    "TCELL": 92.1,
-    "THYAO": 310.0,
-    "TOASO": 245.6,
-    "TRALT": 40.24,
-    "TRMET": 115.9,
-    "TTKOM": 49.26,
-    "TUPRS": 332.25,
-    "VAKBN": 33.62,
-    "YKBNK": 38.74
+    "AEFES": 16.62,
+    "AKBNK": 70.7,
+    "ASELS": 337.0,
+    "ASTOR": 157.1,
+    "BIMAS": 381.25,
+    "EKGYO": 18.38,
+    "ENKAI": 81.0,
+    "EREGL": 32.52,
+    "FROTO": 75.9,
+    "GARAN": 155.4,
+    "GUBRF": 288.0,
+    "ISCTR": 13.66,
+    "KCHOL": 206.0,
+    "KRDMD": 37.66,
+    "MGROS": 491.0,
+    "PETKM": 16.58,
+    "PGSUS": 154.4,
+    "SAHOL": 87.3,
+    "SASA": 1.59,
+    "SISE": 35.72,
+    "TAVHL": 302.0,
+    "TCELL": 97.75,
+    "THYAO": 313.75,
+    "TOASO": 240.8,
+    "TRALT": 38.9,
+    "TRMET": 112.2,
+    "TTKOM": 50.45,
+    "TUPRS": 331.25,
+    "VAKBN": 33.48,
+    "YKBNK": 38.48
   },
   "son_repo_tarihi": "2026-11-10",
   "toplam_kesinti": 400.93,
