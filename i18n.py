@@ -1579,7 +1579,9 @@ def tr_hashleri(kok: Path) -> dict[str, str]:
 
 # Dil sayfalarina KOPYALANMAYACAK klasorler (site bunlari cagirmiyor; kopyalanirsa
 # data/ + functions/ her dil dizininde 150+ gereksiz dosya olusturuyordu).
-KOPYALAMA_DISLA = {"data", "pipeline", "web", "functions", ".github", ".git"}
+# "seri": hisse-basi kapanis serisi JSON'lari (/seri/<KOD>.json) — fiyat-canli.js
+# bunlari TR kanonik adresten ceker; dil basina 30 kopya gereksizdir (2026-11-11).
+KOPYALAMA_DISLA = {"data", "pipeline", "web", "functions", ".github", ".git", "seri"}
 
 
 # Dil sayfalarindan kok varliklara (css/js/json/png) kopyalanacak dosya turleri
@@ -1945,6 +1947,37 @@ def baglantilari_onar(html: str, rel: Path, agac: set[str], medya: set[str] | No
 _TEMETTU_HREF_RE = re.compile(r'href="(?:\.\./)*temettu(?:\.html)?"')
 
 
+# Hisse sayfalarinin grafik/canli-fiyat scriptleri (2026-11-10, kullanici talebi:
+# dil hisse sayfalarinda fiyat canli olmali). Dil sayfalari 30.10 kaynakli eski
+# uretimden geldigi icin canli-fiyat script'i hic yoktu ve grafik.js kopyalari
+# dinleyicisizdi; fiyat donuk kaliyordu. Dosya adi "fiyat-canli" olmalı: eski
+# "hisse-canli" adi dil_yollarini_cevir'in slug yaziminda "hisse" token'i
+# stocks/aktien/aktsii/gupiao'ya cevrilip var olmayan dosya adi uretiyordu
+# (mimar bulgusu). "grafik"/"fiyat" token'lari slug tablolarinda olmadigindan
+# bu iki referans yazim fazlarindan dokunulmadan gecer.
+_CANLI_SCRIPT = '<script src="fiyat-canli.js?v=3" defer></script>'
+_GRAFIK_SCRIPT_V2 = '<script src="grafik.js?v=2" defer></script>'
+
+
+def _hisse_canli_scriptleri(html: str, rel: Path) -> str:
+    """Hisse detay sayfalarinda grafik.js referansini v=2'ye ayarlar ve yanina
+    fiyat-canli.js'i ekler. (Idempotent; yalniz hisse/ altindaki .html'e dokunur,
+    dil üretiminde çağrılır. Kaynakta eski hisse-canli satiri kaldiysa temizlenir.)"""
+    p = rel.as_posix()
+    if not (p.startswith("hisse/") and p.endswith(".html")):
+        return html
+    # eski addan kalan satirlar (mutlak ya da goreli, her surum) temizlenir
+    html = re.sub(
+        r'<script src="(?:\./|/hisse/)?hisse-canli\.js\?v=\d+" defer></script>[ \t]*\r?\n?',
+        "", html)
+    html = html.replace('<script src="grafik.js?v=1" defer></script>',
+                        _GRAFIK_SCRIPT_V2)
+    if 'id="fiyat-serisi"' in html and 'src="fiyat-canli.js' not in html:
+        html = html.replace(_GRAFIK_SCRIPT_V2,
+                            _GRAFIK_SCRIPT_V2 + "\n" + _CANLI_SCRIPT, 1)
+    return html
+
+
 def _temettuyu_dil_sayfasindan_cikar(html: str) -> str:
     """Dil sayfasından Temettü menü öğesini çıkarır; gövdede kalan temettu
     bağlantılarını Türkçe sayfaya yönlendirir. (Idempotent; TR sayfalara
@@ -2195,6 +2228,7 @@ def dil_sayfalari_yaz(kok: Path, diller: list[str], sayfa_listesi: list[Path] | 
                 ozet["medya_baglantisi"] += medya_n
             # Temettü filtresi onarim bayrağından bağımsız uygulanır (kullanıcı kararı).
             yeni = _temettuyu_dil_sayfasindan_cikar(yeni)
+            yeni = _hisse_canli_scriptleri(yeni, rel)
             # 2026-11-10: hedef ad KAYNAKTA yerellesir (dil_yollari.slug_degistir).
             # Eski davranis once TR adla yazip isi kosu sonundaki gocuyle
             # birakiyordu; kosu iptal olursa `if: always()` commit TR-adli

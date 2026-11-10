@@ -279,7 +279,7 @@
     aralikKutu.appendChild(btn);
   });
 
-  // 2026-11-09: hisse-canli.js /api/fiyatlar'dan canli fiyati alip #fiyat-serisi
+  // 2026-11-09: fiyat-canli.js /api/fiyatlar'dan canli fiyati alip #fiyat-serisi
   // JSON'unun son noktasini guncelleyip "fiyat-serisi-guncel" olayi gonderir.
   // Olay buradan ONCE geldiysse (onbellekli hizli fetch) dataset isaretiyle
   // seri yeniden okunur; SONRA geldiyse asagidaki dinleyici yeniden cizer.

@@ -29,6 +29,19 @@
   Cache-Control: public, max-age=300
 /hisse/grafik.js
   Cache-Control: public, max-age=300
+/hisse/fiyat-canli.js
+  Cache-Control: public, max-age=300
+/seri/*.json
+  Cache-Control: public, max-age=300
+  Access-Control-Allow-Origin: *
+/en/stocks/fiyat-canli.js
+  Cache-Control: public, max-age=300
+/de/aktien/fiyat-canli.js
+  Cache-Control: public, max-age=300
+/ru/aktsii/fiyat-canli.js
+  Cache-Control: public, max-age=300
+/zh/gupiao/fiyat-canli.js
+  Cache-Control: public, max-age=300
 /de/hisse/grafik.js
   Cache-Control: public, max-age=300
 /ru/hisse/grafik.js

@@ -514,21 +514,26 @@ def risk_ve_oms(durum, sinyaller):
     - Ayni hisse ayni gun satusa tekrar alinmaz (bugun_satilan listesi).
     - Dunku kapanisa gore gunluk %3 zarar varsa yeni alimlar durur.
     Donus: (emir_sayisi, notlar)."""
-    if not islem_saati_mi():
-        return 0, ["Piyasa kapalı (saat kuralı): emirler yalnızca BIST işlem oturumunda "
-                   "yürütülür — hafta içi 10:00–18:00 TSİ, resmi tatil hariç. Sinyaller "
-                   "sonraki seansı bekler; fiyattan bağımsız olarak seans dışında işlem açılmaz."]
-    fiyatlar = {h: s["son_fiyat"] for h, s in sinyaller.items()}
-    oz = ozkaynak(durum, fiyatlar)
-    saat = _simdi().strftime("%H:%M")
-    notlar = []
-    islem_sayisi = 0
+    # 2026-11-10: rejim oturum kapisindan BAGIMSIZ hesaplanir. Eski sira seans-
+    # disi kosularda erken dondugunden durum dosyasinda rejim donuk kaliyordu
+    # (9 Kas BOGA donusu gunlerce hesaplanmadi; kullanici bulgusu). Emir acma
+    # yine yalnizca BIST oturumunda (22.10 kullanici karari).
     rejim = rejim_oku()
     durum["rejim"] = rejim or "belirsiz"
+    notlar = []
     if rejim == "ayi":
         notlar.append("Piyasa rejimi: AYI (XU100 < SMA20) — yeni hisse alımı durduruldu, boşta nakdin bir kısmı altın kolunda.")
     elif rejim == "boga":
         notlar.append("Piyasa rejimi: BOĞA (XU100 ≥ SMA20) — hisse tarafı açık; altın kolu varsa nakde döner.")
+    if not islem_saati_mi():
+        notlar.append("Piyasa kapalı (saat kuralı): emirler yalnızca BIST işlem oturumunda "
+                      "yürütülür — hafta içi 10:00–18:00 TSİ, resmi tatil hariç. Sinyaller "
+                      "sonraki seansı bekler; fiyattan bağımsız olarak seans dışında işlem açılmaz.")
+        return 0, notlar
+    fiyatlar = {h: s["son_fiyat"] for h, s in sinyaller.items()}
+    oz = ozkaynak(durum, fiyatlar)
+    saat = _simdi().strftime("%H:%M")
+    islem_sayisi = 0
 
     onceki = float(durum.get("onceki_kapanis_ozkaynak", KAPITAL0))
     duraklatildi = oz < onceki * (1.0 - GUNLUK_ZARAR_LIMITI)

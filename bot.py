@@ -7883,8 +7883,8 @@ def _interaktif_fiyat_grafigi(kod, seri):
 </div>
 <div class="grafik-lejant">%s</div>
 <script type="application/json" id="fiyat-serisi">%s</script>
-<script src="grafik.js?v=1" defer></script>
-<script src="hisse-canli.js?v=1" defer></script>
+<script src="grafik.js?v=2" defer></script>
+<script src="fiyat-canli.js?v=3" defer></script>
 <div style="color:var(--muted); font-size:12px">%s tarihinden bugüne %s kapanış fiyatları (TL). Referanslar: dönem başı kapanış (noktalı), SMA20/SMA50 ortalamaları, en düşük/en yüksek/son kapanış.</div>
 </div>""" % (kod, len(seri), _renk(deg), _ty(deg), svg, lejant, veri,
              tarihler[0], kod)
@@ -8250,11 +8250,47 @@ def build_sirket_haberleri_html(haber_map, teknik_satirlar=None):
                   yol="sirket-haberleri.html")
 
 
+def hisse_seri_jsonlari_yaz(teknik_satirlar):
+    """Her hisse icin /seri/<KOD>.json yazar — fiyat-canli.js'in "Günlük Teknik
+    <KOD> – <Şirket> İncelemesi" bloğunun kaynağı (2026-11-11 kullanıcı kararı:
+    dil hisse sayfalarında günlük kısa teknik inceleme; blok piyasa açılmadan
+    üretilmiş kapanış serisinden hesaplanır ve gün boyu sabit kalır).
+
+    Dosyalar KÖK seviyede /seri/ altında tutulur: dil ağaçlarına kopyalanmaz
+    (i18n KOPYALAMA_DISLA "seri" girdisi), tüm diller aynı kaynağı çeker;
+    "guncelleme" alanı günlük üretim saatini (08:30 koşusu) taşır ve sayfada
+    başlığın yanında gösterilir. Sayfaya gömülü seriden BAĞIMSIZDIR — dil
+    sayfalarındaki gömülü seri bayat olsa bile inceleme buradan doğru çıkar."""
+    os.makedirs("seri", exist_ok=True)
+    _profiller = _sirket_profilleri()
+    damga = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M")
+    yazilan = 0
+    for s in teknik_satirlar:
+        kod = s["hisse"]
+        seri = _hisse_fiyat_seri(kod)
+        if not seri:
+            logger.warning("[Seri] %s: fiyat serisi bos, JSON yazilmadi.", kod)
+            continue
+        veri = {
+            "kod": kod,
+            "ad": (_kisa_unvan(_profiller[kod]["unvan"])
+                   if _profiller.get(kod, {}).get("unvan") else kod),
+            "guncelleme": damga,
+            "t": [t for t, _ in seri],
+            "f": [round(float(v), 4) for _, v in seri],
+        }
+        with open(os.path.join("seri", f"{kod}.json"), "w", encoding="utf-8") as f:
+            json.dump(veri, f, ensure_ascii=False)
+        yazilan += 1
+    logger.info("[Seri] %d hisse icin /seri/<KOD>.json yazildi.", yazilan)
+
+
 def hisse_sayfalari_yaz(teknik_satirlar):
     """BIST30 hisseleri icin hisse/<KOD>.html + hisse/index.html uretir."""
     if not teknik_satirlar:
         return
     os.makedirs("hisse", exist_ok=True)
+    hisse_seri_jsonlari_yaz(teknik_satirlar)
     # FAVÖK/çarpan verisi (tek istek, 30 hisse). Hata olursa önceki dosya kullanılır.
     try:
         temel_veri_cek()

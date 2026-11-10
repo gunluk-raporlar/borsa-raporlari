@@ -217,6 +217,27 @@ jobs:
             gh workflow run "$WF" --repo "$GITHUB_REPOSITORY" --ref main
             echo "$WF tetiklendi ($HEDEF yayini eksikti)."
           done
+      # 2026-11-10 (kullanici karari): islem robotu seans icinde kendiliginden
+      # islem yapabilsin — GitHub seans-saati cron slotlarini dusurdugu icin
+      # robot gunlerdir seans icinde hic kosmadi, rejim karari donuk kaldi.
+      # Nobetci hafta ici 08:23-17:23 TSİ arasi guvenilir kostugunden robotu
+      # bu pencerede uyandirir (kuyrukta/calisan robot varsa tekrar tetiklemez).
+      - name: Islem robotunu uyandir (seans icinde, hafta ici)
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          GUN=$(TZ=Europe/Istanbul date +%u)
+          SAAT=$(TZ=Europe/Istanbul date +%H%M)
+          if [ "$GUN" -ge 6 ] || [ "$SAAT" -lt 1005 ] || [ "$SAAT" -gt 1725 ]; then
+            echo "Seans disi (TSI $SAAT) — robot tetiklenmedi."; exit 0
+          fi
+          BEKLEYEN=$(gh run list --workflow=robot.yml --status queued --limit 1 --json databaseId --jq 'length')
+          CALISAN=$(gh run list --workflow=robot.yml --status in_progress --limit 1 --json databaseId --jq 'length')
+          if [ "${BEKLEYEN:-0}" -gt 0 ] || [ "${CALISAN:-0}" -gt 0 ]; then
+            echo "Robot zaten kuyrukta/calisiyor — tekrar tetiklenmedi."; exit 0
+          fi
+          gh workflow run robot.yml --repo "$GITHUB_REPOSITORY" --ref main && echo "Robot seans icinde tetiklendi."
       # 2026-10-07: GitHub, 08:00-12:00 UTC yuk penceresinde zamanlanmis
       # (schedule) kosulari gun boyu SESSIZCE dusuruyor (bugun gunluk rapor,
       # nobetci ve derin analiz cronlarinin hicbiri calismadi; ayni dakika
