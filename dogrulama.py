@@ -180,13 +180,23 @@ def _enflasyon_yuzde_temizle(yazi, dogru):
     return dogru + "%"
 
 
+# Kisaltilmis ulke kodlari (2026-11-11 canli vakit: "TR %3,7 vs US %3,7 /
+# EU %4,0" — kodlar ulke haritasinda yoktu; TR sayisi anahtarsiz kaliyor,
+# EU sayisi geriye taramada US'e yapisip yanlis degerle duzeltilebiliyordu).
+# Buyuk harf sart: "tr"/"eu" kucuk yazimlarin yanlis eslesmesi engellenir.
+# AB (Avrupa Birligi) EU yuvasina baglanir (2026-11-11 H2): "AB %3,7"
+# yaziminda anahtar cozulmuyor, sayi yanlislikla US degerine yapisabiliyordu.
+_ULKE_KOD = re.compile(r"\b(TR|US|EU|AB)\b")
+_KOD_ANAHTAR = {"TR": "tr", "US": "us", "EU": "eu", "AB": "eu"}
+
+
 def _ulke_anahtari(cumle, sayi_pos):
     """Yuzdenin ulke ipucunu tr/us/eu olarak dondurur; belirsizse None.
 
     Once sayidan once gelen acik merkez bankasi adi, sonra sayidan once gelen
     en yakin ulke adi kullanilir. Boylece "ECB ... ABD'deki gibi" karsilastirmasi
     Euro kipinda, "ABD enflasyonu %3,4, Euro enflasyonu %3,2" ise iki ayri
-    ulke olarak cozulur.
+    ulke olarak cozulur. TR/US/EU kisaltmalari da ipucudur (_ULKE_KOD).
     """
     merkezler = []
     for desen, anahtar in ((_MERKEZ_EU, "eu"), (_MERKEZ_FED, "us")):
@@ -200,6 +210,8 @@ def _ulke_anahtari(cumle, sayi_pos):
                            (_ULKE_TR, "tr")):
         for m in desen.finditer(cumle, 0, sayi_pos):
             onceki.append((m.start(), anahtar))
+    for m in _ULKE_KOD.finditer(cumle, 0, sayi_pos):
+        onceki.append((m.start(), _KOD_ANAHTAR[m.group(1)]))
     if onceki:
         # 2026-10-07: TR deseni eklendi — "ABD enflasyonu %3,4, Türkiye
         # enflasyonu %28,4" cumlesinde Türkiye sayısı ABD oranına
@@ -211,6 +223,8 @@ def _ulke_anahtari(cumle, sayi_pos):
                            (_ULKE_TR, "tr")):
         if desen.search(cumle, sayi_pos):
             sonraki.add(anahtar)
+    for m in _ULKE_KOD.finditer(cumle, sayi_pos):
+        sonraki.add(_KOD_ANAHTAR[m.group(1)])
     if len(sonraki) == 1:
         return next(iter(sonraki))
     if len(sonraki) > 1:
@@ -219,7 +233,8 @@ def _ulke_anahtari(cumle, sayi_pos):
 
 
 def enflasyon_duzelt(metin, oran_yuzde, tolerans=0.005, oranlar=None,
-                     oranlar_aylik=None, izinli=None, hedef_disi=None):
+                     oranlar_aylik=None, izinli=None, hedef_disi=None,
+                     yuva_kaydi=None):
     """Enflasyon/TUFE yuzdelerini ulke ve gosterge baglamindan duzeltir.
 
     `oranlar` = {"tr": .., "us": .., "eu": ..}. Verilmedigi ulke icin
@@ -274,19 +289,33 @@ def enflasyon_duzelt(metin, oran_yuzde, tolerans=0.005, oranlar=None,
                 # (reel faiz 4,8 gibi) başka metrik bağlamında gerçek
                 # sayılmaz — "Enflasyonun %4,8'e yükselmesi" düzeltilir;
                 # buna karşılık yuvarlama varyantları (29,7~29,73) korunur.
-                if _gercek_mi(deger, izinli) and not _hedef_disinda(deger, hedef_disi):
+                # İSTİSNA 2 (2026-11-11): sayının hemen önünde açık ülke
+                # etiketi varsa ("(TR %3,7 vs US %3,7" — 3,7 ABD'nin gerçek
+                # değeri) sayı yuvasına bağlıdır ve _gercek_mi koruması
+                # devre dışı kalır; TR yuvası TR değeriyle düzeltilir.
+                yuva_asildi = (_gercek_mi(deger, izinli)
+                               and not _hedef_disinda(deger, hedef_disi)
+                               and _yuvaya_bagli(cumle, m.start()))
+                if (_gercek_mi(deger, izinli)
+                        and not _hedef_disinda(deger, hedef_disi)
+                        and not yuva_asildi):
                     continue
                 # Ayni ulke icin yalnizca enflasyona en yakin yuzdeyi duzelt.
+                # 2026-11-11 (H7): yuva kaydi gercekten duzeltilen sayi icin,
+                # eleme SONRASINDA yazilir (elemeden once yazilinca duzelmeyen
+                # adaylar da "duzeltildi" kaydina dusuyordu).
                 if anahtar not in en_iyi or d_enf < en_iyi[anahtar][0]:
-                    en_iyi[anahtar] = (d_enf, m, hedef)
+                    en_iyi[anahtar] = (d_enf, m, hedef, yuva_asildi)
 
-            for _, m, hedef in sorted(en_iyi.values(), key=lambda x: x[1].start(),
-                                      reverse=True):
+            for _, m, hedef, yuva_asildi in sorted(
+                    en_iyi.values(), key=lambda x: x[1].start(), reverse=True):
                 yazi = m.group(0)
                 dogru_yazi = ("%.3f" % hedef).rstrip("0").rstrip(".").replace(".", ",")
                 dogru = _enflasyon_yuzde_temizle(yazi, dogru_yazi)
                 cumle = cumle[:m.start()] + dogru + cumle[m.end():]
                 duzeltmeler.append((yazi, dogru))
+                if yuva_asildi and yuva_kaydi is not None:
+                    yuva_kaydi.append((yazi, "enflasyon"))
             yeni_parcalar.append(cumle)
         cikti.append(" ".join(yeni_parcalar) if len(parcalar) > 1 else yeni_parcalar[0])
     return "\n".join(cikti), duzeltmeler
@@ -316,11 +345,16 @@ _FAIZ_TURU = re.compile(
 _ULKE_BAGLAM = re.compile(r"\b(avrupa|euro bölgesi|ECB)\b", re.IGNORECASE)
 
 
-def faiz_duzelt(metin, oranlar, tolerans=0.005, izinli=None):
+def faiz_duzelt(metin, oranlar, tolerans=0.005, izinli=None, hedef_disi=None,
+                yuva_kaydi=None):
     """Politika faizi cumlelerinde gercek orandan sapan sayiyi duzeltir.
 
     oranlar: {"tr": 37.0, "us": 4.0, "eu": 2.65} biciminde ulke bazli oranlar
-    (None/eksik ulke o denetimi devredisi birakir). Donus: (yeni_metin, duzeltmeler).
+    (None/eksik ulke o denetimi devredisi birakir). `hedef_disi` (2026-11-11):
+    turetilmis metrik degerleri (reel faiz yaklasigi gibi) politika-faizi
+    yuvasina yazilirsa _gercek_mi korumasini asar — canli vakit: "ECB politika
+    faizini -1,35% tutarak" (-1,35 = ECB'nin turetilmis reel faizi; dogru
+    politika orani 2,65). Donus: (yeni_metin, duzeltmeler).
     """
     if not metin or not oranlar:
         return metin, []
@@ -364,20 +398,47 @@ def faiz_duzelt(metin, oranlar, tolerans=0.005, izinli=None):
                     continue
 
                 def _faiz_duzelt_bir(m, oran_deger):
-                    yazi = m.group(0)
+                    # Negatif yazim (2026-11-11 canli vakit: "politika faizini
+                    # --1,35% tutarak"): _SAYI eksiyi yakalamaz, sayi pozitif
+                    # parse edilip isaret-farki korumasi duzeltmeyi
+                    # engelliyordu. Soldaki tire(ler) span'a katilir; politika
+                    # faizi pozitif yazilir.
+                    bas = m.start()
+                    # 2026-11-11 (H1): tirenin onunde rakam varsa emme —
+                    # "4,25-4,5%" araliginda tire emilince iki sayi birlesip
+                    # "4,254,5%" oluyordu. Negatif yazim ("--1,35%") onunde
+                    # rakam olmadigindan korunur.
+                    while bas > 0 and cumle[bas - 1] == "-" and not (
+                            bas > 1 and cumle[bas - 2].isdigit()):
+                        bas -= 1
+                    yazi = cumle[bas:m.end()] if bas < m.start() else m.group(0)
+                    # Cift tire ("--1,35%") _yuzde_degeri tarafindan
+                    # parse edilemez; parse icin tek tireye indirilir
+                    # (negatiflik korunur).
+                    yazi_parse = yazi
+                    while yazi_parse.startswith("--"):
+                        yazi_parse = yazi_parse[1:]
                     # _yuzde_degeri "%43" ve "yüzde 43" yazimlarini cevirir
-                    sayi = _yuzde_degeri(yazi)
+                    sayi = _yuzde_degeri(yazi_parse)
                     if sayi is None:
                         return None
-                    if sayi is None or abs(sayi - oran_deger) <= tolerans:
+                    if abs(sayi - oran_deger) <= tolerans:
                         return None
-                    if _gercek_mi(sayi, izinli):
+                    # _gercek_mi koruması; hedef-dışı türev değerler ve
+                    # yuva-bağlı sayılar istisnadır (üstteki docstring).
+                    yuva = _yuvaya_bagli(cumle, m.start())
+                    if (_gercek_mi(sayi, izinli)
+                            and not _hedef_disinda(sayi, hedef_disi)
+                            and not yuva):
                         return None
+                    if (yuva and yuva_kaydi is not None
+                            and _gercek_mi(sayi, izinli)):
+                        yuva_kaydi.append((yazi, "faiz"))
                     dy = ("%.2f" % oran_deger).rstrip("0").rstrip(".").replace(".", ",")
                     on = yazi.lstrip().lower()
                     dogru = ("%" + dy if (on.startswith("%") or on.startswith("yüzde")
                                           or on.startswith("yuzde")) else dy + "%")
-                    return (m, dogru, yazi)
+                    return (bas, m.end(), dogru, yazi)
 
                 if coklu:
                     adaylar = []
@@ -409,9 +470,9 @@ def faiz_duzelt(metin, oranlar, tolerans=0.005, izinli=None):
                         if r:
                             adaylar.append(r)
                     # Sagdan sola uygula (konum kaymasini onler).
-                    for m, dogru, yazi in sorted(
-                            adaylar, key=lambda x: x[0].start(), reverse=True):
-                        cumle = cumle[: m.start()] + dogru + cumle[m.end():]
+                    for bas, son, dogru, yazi in sorted(
+                            adaylar, key=lambda x: x[0], reverse=True):
+                        cumle = cumle[:bas] + dogru + cumle[son:]
                         duzeltmeler.append((yazi, dogru))
                 else:
                     dogru_yazi = ("%.2f" % oran).rstrip("0").rstrip(".").replace(".", ",")
@@ -447,8 +508,8 @@ def faiz_duzelt(metin, oranlar, tolerans=0.005, izinli=None):
                     if aday is not None:
                         r = _faiz_duzelt_bir(aday, oran)
                         if r:
-                            m, dogru, yazi = r
-                            cumle = cumle[: m.start()] + dogru + cumle[m.end():]
+                            bas, son, dogru, yazi = r
+                            cumle = cumle[:bas] + dogru + cumle[son:]
                             duzeltmeler.append((yazi, dogru))
             yeni_parcalar.append(cumle)
         cikti.append(" ".join(yeni_parcalar) if len(parcalar) > 1 else yeni_parcalar[0])
@@ -754,6 +815,11 @@ _REEL_FAIZ = re.compile(r"\breel\s+faiz", re.IGNORECASE)
 # degistirilemez.
 _REEL_KUR = re.compile(r"\breel\s+kur", re.IGNORECASE)
 _REEL_MEVDUAT = re.compile(r"\breel\s+mevduat", re.IGNORECASE)
+# Politika-faiz yuvasi (2026-11-11): "politika faizini 2,65% tutarak, reel
+# faiz yaklaşık -1,35…" cumlesinde faiz_duzelt politika sayisini duzelttikten
+# sonra fisher duzeltici bu sayiyi isaret uyusmazligi sanip GERI yaziyordu;
+# politika-faiz yuvasina reel-faizden yakin sayilar fisher adayi degildir.
+_POLITIKA_FAIZ = re.compile(r"\bpolitika\s+faiz", re.IGNORECASE)
 _YUZDE_PUAN = re.compile(r"y[üu]zde\s+puan", re.IGNORECASE)
 _DOLAR_BAZ = re.compile(r"dolar\s+baz", re.IGNORECASE)
 _GETIRI_KELIME = re.compile(r"\b(?:getiri|performans)\b", re.IGNORECASE)
@@ -794,7 +860,10 @@ def _hedef_yaz(yazi, hedef, yuzde=True):
     "%x" -> "%y", "x%" -> "y%", "yüzde x" -> "%y" (mevcut dogrultucularin
     normalize bicimi), ciplak sayi (yuzde=False) -> ciplak "y".
     """
-    sayi = ("%.2f" % hedef).rstrip("0").rstrip(".")
+    # Isaret yalniz isaret degiskeninden gelir: hedef negatifse "sayi"
+    # zaten isaretli bicimlenir; ustune isaret eklemek "--1,35" uretir
+    # (2026-11-11 canli vakit: sayfadaki cift tire bu siniftaydi).
+    sayi = ("%.2f" % abs(hedef)).rstrip("0").rstrip(".")
     if not sayi or sayi == "-":
         sayi = "0"
     sayi = sayi.replace(".", ",")
@@ -856,7 +925,7 @@ def reel_fisher_duzelt(metin, fisher, tolerans=0.01, izinli=None):
                 # Sayi "reel kur"/"reel mevduat faizi"ne daha yakinsa o sayi
                 # Fisher tureviyle KIYASLANMAZ (yanlis gosterge korumasi).
                 rakip_yakin = False
-                for rakip in (_REEL_KUR, _REEL_MEVDUAT):
+                for rakip in (_REEL_KUR, _REEL_MEVDUAT, _POLITIKA_FAIZ):
                     d_rakip = _kelime_mesafesi(cumle, m.start(), rakip)
                     if d_rakip is not None and d_rakip < d_faiz:
                         rakip_yakin = True
@@ -1388,6 +1457,115 @@ def _gercek_mi(deger, izinli, tolerans=0.005):
     return False
 
 
+# Yuva-bagli sayi (2026-11-11): sayinin hemen onunde acik ulke etiketi varsa
+# ("(TR %3,7 vs US %3,7" biçimi) sayi o ülkenin yuvasina baglidir; deger
+# baska bir ülkenin gercek snapshot degeri olsa bile (_gercek_mi korumasi)
+# kendi ülkesinin degeriyle degistirilir. 2026-10-07 korumasi yalnizca
+# etiketsiz sayilar icin gecerli kalir ("ABD'de yillik enflasyon %3,4" —
+# etiket sayidan uzakta, koruma devam).
+_YUVA_ETIKETI = re.compile(
+    r"\b(TR|Türkiye|Turkiye|US|ABD|AB|EU|Avrupa|Euro\s+Bölgesi|Euro\s+Bolgesi|"
+    r"ECB|Fed|TCMB)(?:['’]?(?:n[ıi]n|nin|nın|in|ın|un|ün|n[ıi]))?\s*$",
+    re.IGNORECASE)
+
+
+def _yuvaya_bagli(cumle, sayi_bas, bak=40):
+    """Sayinin hemen önünde (1 bosluk izinli) acik ulke etiketi var mi?
+
+    "TR %3,7" → True; "Türkiye enflasyonu %3,4" → False (etiketle sayı
+    arasinda gosterge adi var); "yillik enflasyon %3,4" → False.
+    2026-11-11 (H11): kisaltilmis kodlar BUYUK harf sartli — _ULKE_KOD
+    case-sensitive oldugundan "ab %3,7" yaziminda anahtar cozulmüyor ve
+    koruma atlatilip sayi varsayilan "tr" hedefine yazılabiliyordu; tam
+    kelimeler (Türkiye/Avrupa/ECB/Fed/TCMB/ABD) buyuk-kucuk farketmez."""
+    once = cumle[max(0, sayi_bas - bak):sayi_bas]
+    m = _YUVA_ETIKETI.search(once)
+    if not m:
+        return False
+    etiket = m.group(1)
+    # IGNORECASE eslesmesinde group(1) yazildigi gibi doner ("tr") — kisaltma
+    # kodu buyuk-kucuk bagimsiz tani, yalniz BUYUK yazilmissa yuva say.
+    if etiket.upper() in ("TR", "US", "EU", "AB") and etiket != etiket.upper():
+        return False
+    return True
+
+
+def olasilik_dengesi(metin, aday_degerler=None):
+    """Senaryo olasiliklarini denetler (2026-11-11, canli vakit: ~%55 +
+    ~%20 + ~%29,77 = %104,77 — TÜFE degeri olasilik yuvasina yazilmisti).
+
+    "Olasılık ~%X" biçimindeki butun yuzdeler toplanir. Toplam 100'den
+    1,5 puandan fazla saparsa ve tam BIR deger snapshot enflasyon/faiz
+    adaylarindan birine eslesiyorsa (sizma tespiti) o deger
+    100-(toplam-v) ile dengelenir (sonuc [0,100] icinde olmali).
+    Aday yok, birden fazla aday varsa veya denge [0,100] disina tasiyorsa
+    metne DOKUNULMAZ, yalniz uyari sayilir (veri capasiz yazma yasak —
+    2026-10-07 sinifi hata riski).
+    Donus: (yeni_metin, duzeltmeler, uyari_sayisi).
+    """
+    if not metin:
+        return metin, [], 0
+    degerler = []
+    for m in re.compile(
+            r"Olasılık\s*~?\s*%?\s*(\d+(?:[.,]\d+)?)\s*%?").finditer(metin):
+        try:
+            degerler.append((float(m.group(1).replace(",", ".")), m))
+        except ValueError:
+            continue
+    if len(degerler) < 2:
+        return metin, [], 0
+    toplam = sum(v for v, _ in degerler)
+    if abs(toplam - 100.0) <= 1.5:
+        return metin, [], 0
+    sizanlar = [(v, m) for v, m in degerler if _gercek_mi(v, aday_degerler)]
+    if len(sizanlar) != 1:
+        return metin, [], 1
+    v, m = sizanlar[0]
+    denge = round(100.0 - (toplam - v), 2)
+    if not (0.0 <= denge <= 100.0) or abs(denge - v) <= 0.01:
+        return metin, [], 1
+    yeni_yazi = ("%g" % denge) if denge == int(denge) else \
+        ("%.2f" % denge).rstrip("0").rstrip(".")
+    yeni_yazi = yeni_yazi.replace(".", ",")
+    duzeltmeler = [(m.group(1), yeni_yazi)]
+    basla, bit = m.start(1), m.end(1)
+    return metin[:basla] + yeni_yazi + metin[bit:], duzeltmeler, 0
+
+
+_YILLIKLAS = re.compile(
+    r"aylık\s*%?\s*(\d+(?:[.,]\d+)?)[^.%]{0,80}?"
+    r"yıllıklaştırıldığında\s*~?\s*%?\s*(\d+(?:[.,]\d+)?)",
+    re.IGNORECASE)
+
+
+def yilliklastirma_duzelt(metin):
+    """Aylık oranı "yıllıklaştırıldığında" ayni degerle kopyalayan cumleleri
+    bileşik yıllıklaştırmayla duzeltir (2026-11-11 canli vakit: "aylık %2,58
+    artış (yıllıklaştırıldığında ~%2,58)" — gercek deger ~%35,6).
+    Yalniz yazilan yillik degerin aylik degerle ayni/neredeyse ayni oldugu
+    durum tetikler; farkli bir yillik deger yazilmissa dokunulmaz (yeni
+    hata degil, baska denetimlere birakilir)."""
+    if not metin:
+        return metin, []
+    duzeltmeler = []
+
+    def _degistir(m):
+        aylik = float(m.group(1).replace(",", "."))
+        yillik_yazi = m.group(2)
+        yillik = float(yillik_yazi.replace(",", "."))
+        if abs(yillik - aylik) > max(0.3, 0.05 * aylik):
+            return m.group(0)
+        yeni = ((1 + aylik / 100.0) ** 12 - 1) * 100
+        yeni_yazi = ("%.1f" % yeni).rstrip("0").rstrip(".")
+        yeni_yazi = yeni_yazi[:-1] if yeni_yazi.endswith(".") else yeni_yazi
+        duzeltmeler.append((yillik_yazi, yeni_yazi.replace(".", ",")))
+        on = m.group(0)[:m.start(2) - m.start()]
+        son = m.group(0)[m.end(2) - m.start():]
+        return on + yeni_yazi.replace(".", ",") + son
+
+    return _YILLIKLAS.sub(_degistir, metin), duzeltmeler
+
+
 def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
                    faiz_oranlari=None, enflasyon_oranlari=None,
                    makro_gostergeleri=None, piyasa_serileri=None,
@@ -1399,7 +1577,9 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
      "endeks_duzeltme": [...], "endeks_uyari": [...], "faiz_duzeltme": [...],
      "makro_duzeltme": [...], "piyasa_duzeltme": [...],
      "reel_fisher_duzeltme": [...], "dolar_duzeltme": [...],
-     "cari_duzeltme": [...]}.
+     "cari_duzeltme": [...], "olasilik_duzeltme": [...],
+     "olasilik_uyari": int, "yilliklastirma_duzeltme": [...],
+     "yuva_bagli_duzeltme": [(yazi, tur), ...]}.
     `makro_gostergeleri`: makro snapshot'inin ulke/indikator deger sozlugu.
     `endeks_seviyeleri`: {"30": XU030 seviyesi, "100": XU100 seviyesi} —
     BIST 100 cumleleri gercek XU100 seviyesiyle denetlenir.
@@ -1408,6 +1588,18 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
     Hicbir durumda istisna yukseltmez; cagiran taraf zaten sarmaladi.
     """
     metin, isim = isim_duzelt(metin, adlar)
+    # Senaryo olasiliklari + aylık→yıllık kapıları (2026-11-11): veri çapası
+    # yalnız snapshot enflasyon/faiz değerleri; başka sayı sızması uyari kalır.
+    olasilik_adaylari = set()
+    for harita in (enflasyon_oranlari, faiz_oranlari):
+        for v in (harita or {}).values():
+            if isinstance(v, (int, float)) and not isinstance(v, bool):
+                olasilik_adaylari.add(float(v))
+    if isinstance(enflasyon_yuzde, (int, float)):
+        olasilik_adaylari.add(float(enflasyon_yuzde))
+    metin, olasilik, olasilik_uyari = olasilik_dengesi(
+        metin, sorted(olasilik_adaylari))
+    metin, yillik = yilliklastirma_duzelt(metin)
     # Turetilmis metrik degerleri (reel faiz/kur-getirisi/cari denge) baska
     # metrik baglaminda gercek sayilmaz (2026-11-07, hedefli kural).
     turev_hedef_disi = set()
@@ -1421,10 +1613,14 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
     cd = (cari_denge or {}).get("deger")
     if isinstance(cd, (int, float)):
         turev_hedef_disi.add(float(cd))
+    enf_yuva = []
     metin, enf = enflasyon_duzelt(metin, enflasyon_yuzde, oranlar=enflasyon_oranlari,
                                   oranlar_aylik=enflasyon_aylik_oranlari,
-                                  izinli=izinli_degerler, hedef_disi=turev_hedef_disi)
-    metin, faiz = faiz_duzelt(metin, faiz_oranlari, izinli=izinli_degerler)
+                                  izinli=izinli_degerler, hedef_disi=turev_hedef_disi,
+                                  yuva_kaydi=enf_yuva)
+    faiz_yuva = []
+    metin, faiz = faiz_duzelt(metin, faiz_oranlari, izinli=izinli_degerler,
+                              hedef_disi=turev_hedef_disi, yuva_kaydi=faiz_yuva)
     metin, makro = makro_gosterge_duzelt(metin, makro_gostergeleri,
                                          izinli=izinli_degerler)
     metin, fisher = reel_fisher_duzelt(metin, reel_fisher,
@@ -1441,7 +1637,10 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
             "endeks_duzeltme": endeks, "endeks_uyari": uyari,
             "faiz_duzeltme": faiz, "makro_duzeltme": makro,
             "piyasa_duzeltme": piyasa, "reel_fisher_duzeltme": fisher,
-            "dolar_duzeltme": dolar, "cari_duzeltme": cari}
+            "dolar_duzeltme": dolar, "cari_duzeltme": cari,
+            "olasilik_duzeltme": olasilik, "olasilik_uyari": olasilik_uyari,
+            "yilliklastirma_duzeltme": yillik,
+            "yuva_bagli_duzeltme": enf_yuva + faiz_yuva}
 
 
 # --- Sinyal sinifi hizalama + ADX metin kurallari (2026-11-07 denetim) ----
@@ -2007,5 +2206,68 @@ if __name__ == "__main__":
                         {}, izinli_degerler=T_IZINLI)
     assert st2["reel_fisher_duzeltme"] == [] and st2["cari_duzeltme"] == [] \
         and st2["dolar_duzeltme"] == [], st2
+
+    # 15) Yuva-bagli enflasyon (2026-11-11 canli vakit): "TR %3,7" ABD'nin
+    # gercek degeri olsa bile TR yuvasi TR degeriyle duzeltilir; dogru yuvalar
+    # (US %3,7) dokunulmaz.
+    yv = metin_dogrula(
+        "kurun gerçekleşen enflasyon diferansiyelini (TR %3,7 vs US %3,7 / EU %4,0) karşılaması gerekir.",
+        {}, enflasyon_yuzde=29.77,
+        enflasyon_oranlari={"tr": 29.77, "us": 3.7, "eu": 4.0},
+        izinli_degerler={3.7, 29.77, 4.0})
+    assert "TR %29,77" in yv["metin"], yv["metin"]
+    assert "US %3,7" in yv["metin"], yv["metin"]
+    assert yv["yuva_bagli_duzeltme"], yv
+
+    # 16) ECB politika-faizi yuvasina turetilmis reel faiz yazilmis
+    # (hedef-disi istisnasi): -1,35 ∈ izinli ama turev oldugu icin duzeltilir.
+    yf = metin_dogrula(
+        "ECB politika faizini -1,35% tutarak, reel faiz yaklaşık -1,35 yüzde puan negatif bölgede kalmaktadır.",
+        {}, faiz_oranlari={"eu": 2.65},
+        izinli_degerler={-1.35, 2.65, 4.0},
+        reel_fisher={"eu": {"tam": -1.28, "yaklasik": -1.35}})
+    assert "2,65" in yf["metin"], yf["metin"]
+    assert "reel faiz yaklaşık -1,35 yüzde puan" in yf["metin"], yf["metin"]
+    assert yf["faiz_duzeltme"], yf
+    # 16b) Cift-tire varyanti (canli sayfadaki gerçek biçim "--1,35%").
+    yf2 = metin_dogrula(
+        "ECB politika faizini --1,35% tutarak, reel faiz yaklaşık -1,35 yüzde puan negatif bölgede kalmaktadır.",
+        {}, faiz_oranlari={"eu": 2.65},
+        izinli_degerler={-1.35, 2.65, 4.0},
+        reel_fisher={"eu": {"tam": -1.28, "yaklasik": -1.35}})
+    assert "2,65" in yf2["metin"] and "--" not in yf2["metin"], yf2["metin"]
+    assert yf2["faiz_duzeltme"], yf2
+
+    # 17) Olasilik dengeleme: tek sizma adayi (29,77 = TR TUFE) 25'e cekilir.
+    yo = metin_dogrula(
+        "Baz Senaryo (Olasılık ~%55)\nİyimser Senaryo (Olasılık ~%20)\n"
+        "Kötümser Senaryo (Olasılık ~%29,77)",
+        {}, enflasyon_yuzde=29.77, enflasyon_oranlari={"tr": 29.77},
+        izinli_degerler={29.77})
+    assert "Olasılık ~%25" in yo["metin"], yo["metin"]
+    assert yo["olasilik_duzeltme"], yo
+
+    # 18) Olasilik: guvenli sizma adayi yoksa metne dokunulmaz, uyari sayilir.
+    yo2 = metin_dogrula(
+        "Baz (Olasılık ~%60)\nİyimser (Olasılık ~%25)\nKötümser (Olasılık ~%35)",
+        {}, izinli_degerler={29.77})
+    assert yo2["olasilik_duzeltme"] == [] and yo2["olasilik_uyari"] == 1, yo2
+
+    # 19) Yilliklastirma: ayni deger kopyasi bileşik yıllıkla düzeltilir.
+    yy = yilliklastirma_duzelt(
+        "aylık %2,58 artış (yıllıklaştırıldığında ~%2,58) dayanıklılık gösterir.")
+    assert "35,8" in yy[0], yy
+    # Gerçekten farklı bir yıllık değer yazılmışsa dokunulmaz.
+    yy2 = yilliklastirma_duzelt(
+        "aylık %2,58 artış (yıllıklaştırıldığında ~%31) bekleniyor.")
+    assert yy2[1] == [] and "~%31" in yy2[0], yy2
+
+    # 20) 2026-10-07 regresyon: etiketli ama sayıdan UZAK — koruma sürer.
+    yr = metin_dogrula(
+        "ABD'de yıllık enflasyon %3,4 seviyesindedir.",
+        {}, enflasyon_yuzde=29.77,
+        enflasyon_oranlari={"tr": 29.77, "us": 3.4},
+        izinli_degerler={3.4, 29.77})
+    assert "%3,4" in yr["metin"], yr["metin"]
 
     print("dogrulama.py: tum kendini testler gecti.")

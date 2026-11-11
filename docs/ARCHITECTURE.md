@@ -31,9 +31,16 @@ flowchart TD
         robot["robot.py<br/>kâğıt-üstü işlem robotu sayfası"]
         derin["derin_analiz.py<br/>derin analiz sayfası"]
         makro["makro_*.py<br/>makro veri / rejim / snapshot / katalog"]
+        temettu["temettu.py + temettu-kaynak/<br/>Temettü Merkezi: takvim, verim,<br/>hesap.js hesaplayıcı (gövdeye gömülü)"]
         radyo["radyo.py<br/>BIST Radyo podcast<br/>(ses: ema_tts.py + ffmpeg)"]
         ema_tts["ema_tts.py<br/>EMA Lightning tek ses motoru<br/>(+ metin_uyarla metin katmanı)"]
         i18n["i18n.py<br/>çok dilli katman"]
+    end
+
+    subgraph DOGRULAMA["Yayın-öncesi doğrulama katmanı (deterministik, LLM yok)"]
+        dogrulama["dogrulama.py — metin_dogrula zinciri<br/>isim · enflasyon · faiz · makro göstergeler ·<br/>Fisher reel faiz · dolar getiri · cari yön ·<br/>piyasa serileri · endeks seviye"]
+        kapilar["2026-11-11 kapıları: yuva-bağlı ülke etiketi<br/>(TR %3,7 → TR yuvasına, _gercek_mi aşılır) ·<br/>hedef-dışı türev değerler (ECB -1,35 → 2,65) ·<br/>olasılık dengesi (tek sızma adayı; yoksa uyarı) ·<br/>yıllıklaştırma (aylık %X ≈ ~%X → bileşik) ·<br/>evren-dışı marka sayacı (metin değişmez)"]
+        makroveri["makro_veri.load()<br/>validate → makullük filtresi<br/>(unit='%' ve |değer|>200 kayıt düşer;<br/>coverage güncellenir; frame + izinli evren temiz)"]
     end
 
     subgraph VERI["data/ — kaynak ve ara veri (git'te)"]
@@ -66,6 +73,7 @@ flowchart TD
     cf["Cloudflare Pages"]
 
     daily --> bot
+    daily -- "temettu_cek.py + temettu.py" --> temettu
     teknikw --> bot
     hsegitim --> egitim
     hsgundem --> haftasonu
@@ -83,6 +91,12 @@ flowchart TD
     egitim <--> d
     bot --> trhtml
     bot --> grafikjs
+    temettu -- "temettu.html (hesap.js gömülü)" --> trhtml
+    bot -- "yayın öncesi _metin_dogrula_ve_kaydet:<br/>uydurma eşiği (10) aşılırsa yanıt RED,<br/>sıradaki model; sayaçlar DOGRULAMA_IST" --> dogrulama
+    makro -- "load_for_report (süzülmüş)" --> makroveri
+    makroveri -- "frame_text (kilitli çerçeve, LLM'e) +<br/>rate_maps/deger_evreni/turetilmis (doğrulayıcıya)" --> dogrulama
+    dogrulama -- "doğrulanmış metin" --> bot
+    dogrulama -- "data/metrics/latest.json 'dogrulama'" --> d
     bot -- "ara.html + arama kutusu" --> araui
     egitim --> trhtml
     haftasonu --> trhtml
@@ -153,6 +167,11 @@ flowchart TD
   (i18n.py `MUHASEBE_GRUP_ONEKI` muafiyeti), en/de/ru/zh hub sürümleri veriden
   `muhasebe_diller.yaz` ile ayrı yazılır. `_yaz` değişmeyen dosyayı atlar —
   sözlük sayfalarının hash'i (dolayısıyla embedding maliyeti) sabit kalır.
+  Ekonomik takvim alt sistemi (`ekonomik_takvim_cek`): TradingView UTC zaman
+  damgalarını kayda yazmadan ÖNCE Europe/Istanbul'a (sabit +3) çevirir, gün
+  taşması tarihe yansır; sorgu penceresi dün 21:00Z'den açılır (TR 00:00-03:00
+  olayları için), ayrıştırma başarısızsa eski ham davranış (fail-open);
+  `_ajanda_html`'in "saatler TR zamanıdır" notu böylece doğru olur.
 - **egitim.py** — hafta sonu borsa okulu: Cmt/Paz ders üretir,
   `haftasonu-egitimi.html` + `haftasonu-egitimi/<tarih>.html` yazar; müfredat
   deterministik, içerik LLM.
@@ -173,9 +192,34 @@ flowchart TD
   kapısı" adımı içinde hafta sonu kapısı — üretim anındaki Istanbul günü
   Cmt/Paz ise atlar, force=true ile zorlanır (2026-10-11; betiğin kendisinde
   gün/tatil kontrolü YOK, bkz. Bilinen riskler).
-- **makro_*.py** — makro katman: `makro_veri/katalog` (veri + tanımlar),
+- **makro_*.py** — makro katman: `makro_veri/katalog` (veri + tanımlar; `load()` =
+  validate → makullük filtresi: unit='%' ve |değer|>200 kayıt komple düşer,
+  coverage güncellenir — bozuk kaynak satırı (EU M3 seviyesi yüzde etiketiyle)
+  LLM çerçevesinden de izinli evrenden de çıkar, 2026-11-11),
   `makro_rejim` (kural tabanlı rejim etiketi, `data/makro-rejim/`),
-  `makro_snapshot` (akşam göstergeleri), `makro_analiz` sayfası üretimi.
+  `makro_snapshot` (akşam göstergeleri), `makro_analiz` sayfa üretimi.
+- **dogrulama.py** — yayın-öncesi deterministik doğrulama katmanı (LLM yok,
+  I/O yok, `python dogrulama.py` kendini sınar): `metin_dogrula` zinciri
+  isim/endeks/enflasyon/faiz/makro-gösterge/Fisher/dolar/cari/piyasa
+  düzelticilerini snapshot'tan gelen tek kaynağın (kilitli çerçeve + izinli
+  evren) üzerinden çalıştırır; 2026-11-11 kapıları: yuva-bağlı ülke etiketi
+  ("TR %3,7" gibi — sayı yuvasına bağlıdır, _gercek_mi koruması yalnız o sayı
+  için aşılır), hedef-dışı türev değerler (reel faiz türevi politika-faizi
+  yuvasına yazıldığında düzeltilir), olasılık dengesi (tek sızma adayı + [0,100];
+  aday yoksa metne dokunmaz, yalnız uyarı), yıllıklaştırma (yalnız yazılan
+  yıllık ≈ aylıkken bileşik türev yazar), evren-dışı marka sayacı (metin
+  değişmez). Çağıran tek nokta: bot.py `_metin_dogrula_ve_kaydet` — düzeltme
+  sayısı UYDURMA_ESIGI'ni (10) aşarsa yanıt REDDEDİLİR, sayaçlar
+  `DOGRULAMA_IST` → `data/metrics/latest.json` "dogrulama" anahtarı.
+- **temettu.py** — Temettü Merkezi: `data/temettu/seriler/`'den takvim + verim
+  tablosu + FAQ üretir, `temettu-kaynak/govde.html` gövdesi ve `hesap.js`
+  hesaplayıcıyı SAYFAYA GÖMÜP `temettu.html` yazar (harici JS yok, ?v= gerekmez;
+  hesap.js değişince sayfayı yeniden üretmek yeterli). Stopaj üç kademelidir ve
+  ÖDEME tarihine göredir: 2020 öncesi %15 / 2020-01-01..2024-12-22 %10 (7244
+  sayılı Kanun) / 22.12.2024 sonrası %15 (9286 sayılı CB Kararı, RG 22.12.2024);
+  bot.py tarafındaki `TEMETTU_STOPAJ=0.15` tek sabittir — deneme portföyü
+  2026-09-06'dan beri koştuğundan tüm sayılan dağıtımlar eşik sonrasıdır
+  (portföy başlangıcı 2024 öncesine kayarsa kademe gerekir).
 - **radyo.py** — BIST Radyo: iki yapay zekâ sunucusunun (Ela & Mert) piyasa
   sohbeti; Ela'nın sesi
   EMA Lightning (`ema_tts.py`) ile MP3, `radyo/<tarih>-<bölüm>.mp3` +
@@ -273,6 +317,19 @@ flowchart TD
    → boş string (çevrilmemiş TR kalır, sıradaki koşuda yeniden denenir).
 
 ## Bilinen riskler
+
+- **Doğrulama: yıllıklaştırma kapısı dar tetik** (2026-11-11 inceleme, izleme):
+  kapı yalnızca "aylık" sözcüğü sayının hemen önündeyken ateşler ("aylık %2,58
+  … yıllıklaştırıldığında ~%2,58"); "Aylık enflasyon %2,58 … (yıllıklaştırıldığında
+  ~%2,58)" gibi gösterge adının araya girdiği biçim kapıyı kaçırır (fail-safe
+  yön: hatalı metin kalır, hatalı sayı yazılmaz). Benzer biçimde olasılık
+  dengesi tüm belgedeki "Olasılık" değerlerini toplar; iki ayrı senaryo bloğu
+  varsa toplam iki katına çıkar → düzeltme yerine uyarı yolu.
+- **Ekonomik takvim saat dönüşümü tek noktada** (2026-11-11): UTC→TSİ çevrimi
+  yazıcıdadır (`ekonomik_takvim_cek`); yayındaki eski UTC kayıtlı dosyalar
+  bir sonraki koşuya kadar kalır ve `_ekonomik_takvim_yukle` en yeni dosyayı
+  aldığından karışım görünmez — ama hafta sonu koşusu yoksa Cuma verisi UTC
+  saatle bayatlayabilir.
 
 - **Arama: schema.sql 2026-11-04 bloğu DROP'sız** (2026-11-04 yapısal inceleme):
   PostgreSQL `CREATE OR REPLACE FUNCTION`, mevcut fonksiyonun OUT

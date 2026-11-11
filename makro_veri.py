@@ -86,6 +86,13 @@ def normalize(veri, captured_at=None):
             raise SnapshotError(f"gecersiz makro kaydi: {g!r}") from exc
         if not math.isfinite(deger):
             raise SnapshotError(f"sonlu olmayan makro degeri: {deger}")
+        # Yüzde makullüğü (2026-11-11): '%' birimli kayitta |deger|>200
+        # kaynak hatasıdır (EU m3_yoy seviye-değeri vakası) — kayıt yazılmaz,
+        # tek bozuk satır snapshot koşusunu düşürmesin (fail-open).
+        if str(g.get("birim", "")) == "%" and abs(deger) > 200:
+            logger.warning("[Makro] makul olmayan yüzde kaydi atlandi: %s/%s=%s",
+                           ulke, ad, deger)
+            continue
         kayitlar.append({
             "country_code": ULKE_KOD[ulke], "country": ulke,
             "indicator": GOSTERGE_KOD[ad], "label": ad,
@@ -249,6 +256,54 @@ def write(snapshot):
     return SNAPSHOT_PATH, arsiv
 
 
+def _makul_yuzdeleri_suz(snapshot):
+    """unit=='%' kayitta |value|>200 makul olmayan yüzde — kayit komple
+    düşer (value + previous birlikte).
+
+    Canli vakit (2026-11-11): EU m3_yoy kaydina 17.717.267 seviye değeri
+    '%' birimiyle gelmişti; kayıt validate'ten geçiyor, LLM frame'ine ve
+    izinli-evrene sızıyordu (sayfada "M3 ... 17717267.0%"). Kelepçe
+    load()'ta: frame_text, rate_maps, deger_evreni, turetilmis_degerler
+    hepsi bu filtrelenmiş snapshot'i görür. Fail-open: tek kayıt düşmesi
+    snapshot'ı geçersiz kılmaz (m3_yoy hiçbir ülkede zorunlu değil)."""
+    if not isinstance(snapshot, dict):
+        return snapshot
+    kayitlar = snapshot.get("records")
+    if not isinstance(kayitlar, list):
+        return snapshot
+    # 2026-11-11 (H3): yalniz value degil forecast/previous da taranir —
+    # value makul ama previous/forecast alaninda seviye-degeri olan kayit
+    # frame'e "önceki: 17717267.0%" biçiminde sizabiliyordu.
+    def _makulsuz(r):
+        if not isinstance(r, dict) or str(r.get("unit", "")) != "%":
+            return False
+        for alan in ("value", "forecast", "previous"):
+            v = r.get(alan)
+            if isinstance(v, bool) or not isinstance(v, (int, float)):
+                continue
+            if abs(float(v)) > 200:
+                return True
+        return False
+
+    temiz = [r for r in kayitlar if not _makulsuz(r)]
+    if len(temiz) == len(kayitlar):
+        return snapshot
+    snapshot = dict(snapshot)
+    snapshot["records"] = temiz
+    # Coverage sayaci guncellenmezse downstream validate() cagrilar
+    # (deger_evreni/rate_maps) "coverage sayilari eslesiyor" hatasi
+    # verir (2026-11-11 test bulgusu).
+    coverage = snapshot.get("coverage")
+    if isinstance(coverage, dict) and isinstance(coverage.get("macro_records"), int):
+        yeni_cov = dict(coverage)
+        yeni_cov["macro_records"] = max(
+            0, coverage["macro_records"] - (len(kayitlar) - len(temiz)))
+        snapshot["coverage"] = yeni_cov
+    logger.warning("[Makro] makul olmayan yüzde kaydi dustu: %d -> %d kayit",
+                   len(kayitlar), len(temiz))
+    return snapshot
+
+
 def load(path=SNAPSHOT_PATH, expected_report_date=None):
     yol = Path(path)
     try:
@@ -256,7 +311,11 @@ def load(path=SNAPSHOT_PATH, expected_report_date=None):
             snapshot = json.load(f)
     except (OSError, json.JSONDecodeError) as exc:
         raise SnapshotError(f"snapshot okunamadi: {yol}") from exc
-    return validate(snapshot, expected_report_date=expected_report_date)
+    # Once validate (coverage sayaclari ham kayit sayisiyla eslesir),
+    # sonra makulluk filtresi: dusurulen kayit coverage'i bozmadan
+    # frame/izinli evrenden cikarilir.
+    return _makul_yuzdeleri_suz(
+        validate(snapshot, expected_report_date=expected_report_date))
 
 
 def load_for_report(report_date, max_geri=10):

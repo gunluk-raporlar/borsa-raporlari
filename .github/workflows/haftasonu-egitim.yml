@@ -13,6 +13,10 @@ on:
         description: 'Bugunun dersi varsa bile yeniden uret'
         type: boolean
         default: false
+      tarih:
+        description: 'Geriye-donuk yeniden uretim: YYYY-MM-DD (sayfa tarihi korunur, bos ise bugun)'
+        type: string
+        default: ''
 permissions:
   actions: write
   contents: write
@@ -41,9 +45,19 @@ jobs:
       # ile elle zorlanabilir (daily.yml'deki ayni desen).
       - name: Tazelik kapisi
         id: kapisi
+        # 2026-11-11 (H9): girisler env degiskeni uzerinden alinir; ${{ }}
+        # dogrudan script'e enterpole edilince tirnak kacirma riski var.
+        env:
+          FORCE_GIRDISI: ${{ inputs.force }}
+          TARIH_GIRDISI: ${{ inputs.tarih }}
         run: |
-          if [ "${{ inputs.force }}" = "true" ]; then
+          if [ "$FORCE_GIRDISI" = "true" ]; then
             echo "FORCE — uretim zorlandi."
+            echo "uretim=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          TARIH="${TARIH_GIRDISI}"
+          if [ -n "$TARIH" ]; then
+            echo "Yeniden uretim talebi (${TARIH}) — tazelik kapisi asiliyor; sayfa tarihi korunur."
             echo "uretim=true" >> "$GITHUB_OUTPUT"; exit 0
           fi
           BUGUN=$(TZ=Europe/Istanbul date +%F)
@@ -56,6 +70,7 @@ jobs:
       - name: Borsa okulu dersini uret
         if: steps.kapisi.outputs.uretim != 'false'
         env:
+          TARIH_SIM: ${{ inputs.tarih }}
           AMD_API_KEY: ${{ secrets.AMD_API_KEY }}
           DISCOVERY_API_KEY: ${{ secrets.DISCOVERY_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}

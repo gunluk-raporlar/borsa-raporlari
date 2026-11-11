@@ -419,7 +419,7 @@ def sayfa_uret(ozet, seriler):
             {"@type": "Question", "name": "Temettü verimi nasıl hesaplanır?",
              "acceptedAnswer": {"@type": "Answer", "text": "Hisse başına yıllık brüt temettü tutarının hisse fiyatına bölünmesiyle bulunur. Örneğin 100 TL fiyatlı hisse yılda 8 TL temettü dağıtıyorsa verim %8'dir."}},
             {"@type": "Question", "name": "BIST'te temettü stopajı ne kadar?",
-             "acceptedAnswer": {"@type": "Answer", "text": "Kâr payı dağıtımında stopaj kaynakta kesilir: 2020 öncesi %15, 2020 ve sonrası %10."}},
+             "acceptedAnswer": {"@type": "Answer", "text": "Kâr payı dağıtımında stopaj kaynakta kesilir: 2020 öncesi %15, 2020 ile 21 Aralık 2024 arasındaki ödemelerde %10, 22 Aralık 2024 ve sonrasındaki ödemelerde yeniden %15 (9286 sayılı Cumhurbaşkanı Kararı)."}},
             {"@type": "Question", "name": "Temettü ile lot alımı nedir?",
              "acceptedAnswer": {"@type": "Answer", "text": "Dağıtılan net temettünün aynı gün fiyatından yeniden hisse alımında kullanılmasıdır. Hesaplayıcı bu tercihi gün gün simüle eder."}}
         ]

@@ -16,12 +16,18 @@ Her Cumartesi ve Pazar bir ders islenir (hafta ici ASLA calismaz):
 - UYARI: egitim amaclidir, yatirim tavsiyesi degildir.
 
 Test icin: TARIH_SIM=YYYY-MM-DD ve SKIP_LLM=1 ortam degiskenleri.
+Yeniden üretim: TARIH_SIM ile geçmiş bir hafta sonu tarihine ders yazılabilir
+— sayfa tarihi korunur, içerik güncel veriyle yeniden üretilir (2026-11-11:
+workflow "tarih" input'u buna bağlandı). Üretimde ders_tamamlik denetimi
+kesik LLM çıktısını reddeder (2026-11-08 vakası: 4/8 bölüm yayınlandı);
+sayfa sonunda üretim karnesi (model/çağrı/token/editör düzeltmesi) gösterilir.
 """
 import os
 import re
 import sys
 import json
 import glob
+import html as _htmlesc
 import logging
 from datetime import datetime, timedelta
 import zoneinfo
@@ -313,20 +319,105 @@ def _excel_veri_bolumu(metin=None):
         return ""
 
 
+def ders_tamamlik(metin):
+    """LLM dersinin YARIM kalmadigini dogrular (bot.llm_call'a dogrulama
+    callable'i olarak verilir; False donen yanit siradaki modele devrolur ve
+    son denemede bile kesik metin kabul edilmez).
+    2026-11-08 vakasi: 8 bolum yerine 4 bolum yayina gitti, hesap cumlesi
+    ortadan kesikti ("Araligin orta noktasi: (") — tamamlanma kontrolu yoktu.
+    Kontrol: 8 bolum basligi + kelime sayisi + son satirda kesik parantez +
+    son satir noktalamasi; yarim ders ~722 kelime oldugundan asil yuku
+    baslik/noktalama tasiyor."""
+    if not metin or metin.startswith("(LLM"):
+        return False
+    if not re.search(r"(?m)^#{1,3}\s*Bugünün Dersi", metin):
+        return False
+    for n in range(1, 9):
+        if not re.search(rf"(?m)^#{{2,3}}\s*{n}\.\s", metin):
+            return False
+    if len(re.findall(r"\S+", metin)) < 500:
+        return False
+    # Not: butun metinde parantez dengesi ARANMAZ — ders metninde yazim geregi
+    # tek basina parantez olabilir (gercek 2026-11-07 dersinde 26 acilan /
+    # 30 kapanan vardi). Kesiklik akisin bittigi SON SATIRDA gorunur:
+    # yarim vakada son satir "Araligin orta noktasi: (" idi.
+    satirlar = [s for s in metin.rstrip().split("\n") if s.strip()]
+    son = satirlar[-1].rstrip()
+    if son.count("(") > son.count(")"):
+        return False
+    if not re.search(r"[.!?:…|)\]\"”’_*](?:_|\*)?$", son):
+        return False
+    return True
+
+
+# Bu kosuda dersi KABUL EDILEN zincir ("ZAI" | "YEDEK" | None): istatistik
+# rozeti model adini yalnizca kabul gerceklesmistirse basar — reddedilen bir
+# Z.ai cagrisindan kalma _LLM_SON_BASARI sablon sayfasina model yazmasin.
+_DERS_KAYNAK = {"kaynak": None}
+
+
+def _istatistik_satiri():
+    """Sayfa sonuna yazilan uretim karnesi: hangi model, kac cagri, kac token,
+    editor kac duzeltme. Cagri sayaci bot._ZAI_KOSU_CAGRI + basari denemesi;
+    token toplami bot._LLM_KOSU_TOKEN (reddedilen denemeler dahil GERCEK
+    harcama)."""
+    tok_in = bot._LLM_KOSU_TOKEN["in"]
+    tok_out = bot._LLM_KOSU_TOKEN["out"]
+    tokenler = (f"{tok_in:,}".replace(",", ".") + " girdi + "
+                + f"{tok_out:,}".replace(",", ".") + " çıktı tokeni")
+    kaynak = _DERS_KAYNAK["kaynak"]
+    basari = bot._LLM_SON_BASARI
+    if kaynak == "ZAI":
+        yazar, cagri = str(basari.get("model", "GLM")), bot._ZAI_KOSU_CAGRI["n"]
+    elif kaynak == "YEDEK":
+        yazar = f"{basari.get('saglayici', '?')}/{basari.get('model', '?')}"
+        cagri = bot._ZAI_KOSU_CAGRI["n"] + int(basari.get("deneme", 0) or 0)
+    else:
+        yazar, cagri = "", 0
+    ed = sum(int(v or 0) for v in bot._EDITOR_SON_OZET.values())
+    if yazar:
+        editor_notu = (f"editör denetimi {ed} düzeltmeyle geçti" if ed
+                       else "editör denetimi temiz geçti")
+        yazar = _htmlesc.escape(yazar)
+        return (f'<p style="margin:18px 0 0; color:var(--muted); font-size:12px">'
+                f'Bu dersi <strong>{yazar}</strong> modeli {cagri} çağrıda yazdı '
+                f'({tokenler}); {editor_notu}.</p>')
+    if tok_in or tok_out:
+        return (f'<p style="margin:18px 0 0; color:var(--muted); font-size:12px">'
+                f'Bu ders otomatik şablonla yazıldı (LLM çıktısı tamamlanma '
+                f'denetimini geçemedi); denemelerde {tokenler} harcandı.</p>')
+    return (f'<p style="margin:18px 0 0; color:var(--muted); font-size:12px">'
+            f'Bu ders otomatik şablonla yazıldı (LLM kullanılmadı).</p>')
+
+
 def _ders_uret(konu, tanim, veri, kategori=""):
     prompt = _PROMPT.format(konu=konu, tanim=tanim, veri=veri or "(guncel veri alinamadi)")
     metin = None
+    _DERS_KAYNAK["kaynak"] = None
+    bot._EDITOR_SON_OZET.clear()
+    # 2026-11-11 (H6): cagri sayaci her uretimde sifirdan baslar; ayni
+    # process'te ikinci uretimde onceki kosunun cagrilari binmesin.
+    bot._ZAI_KOSU_CAGRI["n"] = 0
     if not os.environ.get("SKIP_LLM") == "1":
         if os.environ.get("ZAI_API_KEY") and os.environ["ZAI_API_KEY"] not in DUMMY_ANAHTARLAR:
             try:
-                metin = bot._zai_call(prompt)
+                zai_metin = bot._zai_call(prompt)
+                if zai_metin and not zai_metin.startswith("(LLM") and ders_tamamlik(zai_metin):
+                    metin = zai_metin
+                    _DERS_KAYNAK["kaynak"] = "ZAI"
+                elif zai_metin:
+                    logger.warning("Z.ai dersi tamamlanma denetimini gecemedi; yedek zincire devrediliyor.")
             except Exception as e:
                 logger.warning("Z.ai ders denemesi basarisiz: %s", e)
-        if not metin or metin.startswith("(LLM"):
+        if not metin:
             keys = {k: os.environ.get(k, "") for k in ("AMD_API_KEY", "CF_API_KEY", "ALT_API_KEY", "OR_API_KEY")}
             if any(v and v not in DUMMY_ANAHTARLAR for v in keys.values()):
                 try:
-                    metin = bot.llm_call(prompt, sirasi=("DISC", "AMD", "CF", "YEDEK", "OR"))
+                    yedek = bot.llm_call(prompt, sirasi=("DISC", "AMD", "YEDEK", "OR"),
+                                         dogrulama=ders_tamamlik)
+                    if yedek and not yedek.startswith("(LLM") and ders_tamamlik(yedek):
+                        metin = yedek
+                        _DERS_KAYNAK["kaynak"] = "YEDEK"
                 except Exception as e:
                     logger.warning("LLM ders basarisiz: %s", e)
     if not metin or metin.startswith("(LLM"):
@@ -367,6 +458,12 @@ def main():
     gorsel_svg = svg_grafik.gorsel_uret(konu, g=paket)
     logger.info("Ders %d/%d: %s (%s) | grafik verisi: %s", idx + 1, len(MUFREDAT), konu, kategori,
                 (paket or {}).get("ad", "şematik"))
+    _karne = bot._LLM_SON_BASARI
+    logger.info("Ders uretim karnesi: kaynak=%s | model=%s/%s | zai_cagri=%d | token=%d+%d | editor=%d",
+                _DERS_KAYNAK["kaynak"] or "sablon",
+                _karne.get("saglayici", "-"), _karne.get("model", "-"),
+                bot._ZAI_KOSU_CAGRI["n"], bot._LLM_KOSU_TOKEN["in"], bot._LLM_KOSU_TOKEN["out"],
+                sum(int(v or 0) for v in bot._EDITOR_SON_OZET.values()))
 
     # Dersin altina: guncel taramanin Excel gorunumlu gerccek veri tablosu
     excel_bolumu = _excel_veri_bolumu(metin)
@@ -399,7 +496,7 @@ def main():
 <h1>Hafta Sonu Borsa Okulu</h1>
 <div class="meta"><span class="badge">{tarih}</span><span>Ders {idx + 1}/{len(MUFREDAT)} &bull; {kategori} &bull; Yapay zekâ eğitmeni</span></div>
 </div>
-<article class="report" id="rapor-ses-metin">{figura}{bot.markdown_to_html(metin)}</article>
+<article class="report" id="rapor-ses-metin">{figura}{bot.markdown_to_html(metin)}{_istatistik_satiri()}</article>
 <p style="margin:22px 0 0; color:var(--muted); font-size:13px"><strong>Gerçek veriyle pratik:</strong> Aşağıdaki tablo bugünün teknik taramasından gelir — bir hücreye tıklayıp ad/formül çubuğunu görebilir, sütun başlıklarına tıklayarak sıralayabilirsin.</p>
 {excel_bolumu}
 {onceki}

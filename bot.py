@@ -1070,9 +1070,16 @@ def llm_call(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogrulama
 
 
 _LLM_TOKEN_SAYAC = {"in": 0, "out": 0}
+# Kosu-basi Z.ai API cagri sayaci (2026-11-11): basarili + basarisiz her
+# create() burada sayilir; ders rozeti "kac cagrada yazildi" bilgisini
+# ZAI basarisiz olsa bile dogru verebilsin diye.
+_ZAI_KOSU_CAGRI = {"n": 0}
 # Kullanim defteri (2026-10-08): basarili cagrinin saglayici/model/deneme/
 # token bilgisi; kullanim_defteri.kaydet() rapor yazilirken bunu okur.
 _LLM_SON_BASARI = {}
+# Son rapor_son_islem cagrisinin editor ozeti (2026-11-11): ders sayfasinin
+# "editor denetimi" rozeti buradan okur; rapor akisinin geri kalanina etkisi yok.
+_EDITOR_SON_OZET = {}
 # Bolum-bazli raporlarda yazar dagilimi (bolum basina +1; kaydet okur)
 _LLM_YAZARLAR = {}
 # Kosu toplami: kabul EDILMeyen denemelerin token'i dahil GERCEK harcama
@@ -1388,6 +1395,14 @@ def _zai_call_ic(prompt):
                     temperature=0.4,
                     max_tokens=8000,
                 )
+                _ZAI_KOSU_CAGRI["n"] += 1
+                # Harcama defteri yanit geldigi anda tutulur: bos/degenerate
+                # yanitlarda da usage geldi ise GERCEK harcama kaybolmasin
+                # (once degenerate kontrolune kalmisti; 2026-11-11 ders rozeti).
+                _k = getattr(resp, "usage", None)
+                if _k:
+                    _LLM_KOSU_TOKEN["in"] += getattr(_k, "prompt_tokens", 0) or 0
+                    _LLM_KOSU_TOKEN["out"] += getattr(_k, "completion_tokens", 0) or 0
                 icerik = resp.choices[0].message.content or ""
                 if not icerik.strip():
                     son_hata = "bos yanit"
@@ -1397,13 +1412,10 @@ def _zai_call_ic(prompt):
                     logger.warning("[Z.ai] %s bozuk yanit uretti; siradaki deneniyor.", mdl)
                     break
                 logger.info("[Z.ai] rapor alindi (%s): %d karakter", mdl, len(icerik))
-                _k = getattr(resp, "usage", None)
                 _LLM_SON_BASARI.update({
                     "saglayici": "ZAI", "model": mdl, "deneme": deneme + 1,
                     "prompt_tokens": getattr(_k, "prompt_tokens", 0) or 0,
                     "completion_tokens": getattr(_k, "completion_tokens", 0) or 0})
-                _LLM_KOSU_TOKEN["in"] += getattr(_k, "prompt_tokens", 0) or 0
-                _LLM_KOSU_TOKEN["out"] += getattr(_k, "completion_tokens", 0) or 0
                 return _tekrar_satirlarini_temizle(icerik)
             except Exception as e:
                 son_hata = str(e)[:200]
@@ -1499,6 +1511,8 @@ def rapor_son_islem(metin: str) -> str:
     # zinciri daha steril metne calisir (editor sayilara dokunmaz).
     try:
         metin, _editor_ozet = editor.uygula(metin)
+        _EDITOR_SON_OZET.clear()
+        _EDITOR_SON_OZET.update(_editor_ozet)
         if any(_editor_ozet.values()):
             logger.warning("[Editor] imla=%(imla)d yumusatma=%(yumusatma)d uyari=%(uyari)d", _editor_ozet)
     except Exception:
@@ -3021,7 +3035,7 @@ PORTFOY_NOTU = ("Portföy hafta içi her sabah otomatik olarak, bir önceki işl
                 "Karşılaştırma çizgileri (altın/dolar/mevduat/endeks/enflasyon) da aynı 100.000 TL "
                 "tabanına normalize edilmiştir. Getiri dönemi portföyün başlangıç tarihidir (yıl başı değildir); "
                 "ilk gün de aynı kapanış fiyatlarıyla değerlendiği için ilk kayıt 100.000,00 TL'den birkaç lira "
-                "sapabilir (örn. 100.013 TL). Temettüler ex-tarihinde net (stopaj %10 sonrası) nakit olarak "
+                "sapabilir (örn. 100.013 TL). Temettüler ex-tarihinde net (stopaj %15 sonrası) nakit olarak "
                 "portföy değerine eklenir.")
 
 
@@ -3046,7 +3060,11 @@ def save_portfolio(data):
 # data/temettu/seriler/<KOD>.json (temettu_cek.py çıktısı) — tek kaynak, iki
 # sayfa tutarlı. Not: temettu_cek, bedelli (RightsIssue) oranını bedelsiz
 # çarpanına karıştırır; bedelli gerçekleşirse ayrıştırılmalı (dönemde yok).
-TEMETTU_STOPAJ = 0.10  # kâr payı stopajı: 2020 ve sonrası %10 (temettu-kaynak/hesap.js: STOPAJ_YENI)
+TEMETTU_STOPAJ = 0.15  # kâr payı stopajı: 2020 öncesi %15, 2020-2023 %10
+# (7244 sayılı Kanun), 22.12.2024 sonrası dağıtımlarda %15 (9286 sayılı CB
+# Kararı, RG 22.12.2024). Deneme portföyü 2026-09-06'dan beri koştuğu için
+# tüm dağıtımlar eşik sonrasıdır → tek sabit yeterli; üç kademeli geçmiş
+# hesabı temettu-kaynak/hesap.js (STOPAJ_ESKI/ORTA/YENI) yürütür.
 
 
 def _kurumsal_aksiyonlar(kodlar):
@@ -3641,7 +3659,7 @@ def makro_analiz_yap(yedek_amd=False, snapshot=None):
 
     prompt = f"""Sen makroekonomi alanında uzman, akademik derinlikte ama anlaşılır yazan bağımsız bir analist yapay zekâsısın (gerçek bir kişi veya kurum değilsin; kendini öyle tanıtma). Aşağıdaki KESİN verileri kullanarak Türkiye ve küresel makroekonomik görünümü değerlendiren, {("DERİNLEMESİNE ve UZUN (en az 1000 kelime; STORM MODU: sayı kullanımı sınırlı)") if kisa else ("DERİNLEMESİNE ve UZUN (en az 1000 kelime)")} bir "Makroekonomik Değerlendirme" yazısı kaleme al. Yazı Türkçe olacak ve TÜM metinde doğru Türkçe karakterler (ç, ğ, ı, ö, ş, ü) kullanılacak.
 
-Üslup: Bir makroekonomi profesörü gibi yaz — kavramları kısaca açıkla, mekanizmaları (aktarım kanallarını) adım adım kur, tek yönlü kehanet yerine koşullu senaryolar sun. Somut rakam YALNIZCA aşağıdaki veri bloklarından alınır; kendi hafızandan makro sayı (enflasyon, faiz, büyüme, kur, işsizlik vb.) ÜRETME. Veri bloğunda olmayan bir göstergeye ihtiyaç duyarsan sayı vermeden niteliksel konuş.
+Üslup: Bir makroekonomi profesörü gibi yaz — kavramları kısaca açıkla, mekanizmaları (aktarım kanallarını) adım adım kur, tek yönlü kehanet yerine koşullu senaryolar sun. Somut rakam YALNIZCA aşağıdaki veri bloklarından alınır; kendi hafızandan makro sayı (enflasyon, faiz, büyüme, kur, işsizlik vb.) ÜRETME. Veri bloğunda olmayan bir göstergeye ihtiyaç duyarsan sayı vermeden niteliksel konuş. Şirket örnekleri YALNIZCA verilen BIST 30 evreninden seçilsin; evren dışı şirket adı (ör. Arçelik, Vestel) geçmesin. Senaryo olasılıkları yazarsan üçünün toplamı %100 olmalı ve olasılık değerine enflasyon/faiz gibi bir makro gösterge değeri yazma.
 
 Yanıtını şu yapıda oluştur (başlıklar aynen bu şekilde, "## " ile):
 
@@ -4070,8 +4088,17 @@ def _enflasyon_fakt(snapshot=None):
 DOGRULAMA_IST = {"isim": 0, "enflasyon": 0, "toplam_metin": 0, "endeks": 0,
                  "endeks_uyari": 0, "faiz": 0, "makro": 0, "piyasa": 0,
                  "reel_fisher": 0, "dolar": 0, "cari": 0,
+                 "olasilik": 0, "olasilik_uyari": 0, "yilliklastirma": 0,
+                 "yuva_bagli": 0, "evren_disi_isim": 0,
                  "sinyal": 0, "adx": 0,
                  "son_guncelleme": ""}
+
+# Evren disi sirket adlari (2026-11-11): LLM'in BIST 30 evreni disinda
+# sirket anmasi yalnizca UYARIDIR — metin degismez (canli vakit: makro
+# analizde Arçelik/Vestel örnekleri). Liste calisma aninda HISSE_ADLARI
+# ile suzülür; evrene sonradan giren bir ad listeden kendiliginden düşer.
+EVREN_DISI_MARKALAR = [m for m in ("Arçelik", "Vestel", "Beko", "Ülker")
+                       if m not in set(HISSE_ADLARI.values())]
 
 
 def _faiz_oranlari(snapshot=None):
@@ -4205,7 +4232,9 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
                 or sonuc["endeks_duzeltme"] or sonuc["faiz_duzeltme"]
                 or sonuc["makro_duzeltme"] or sonuc["piyasa_duzeltme"]
                 or sonuc["reel_fisher_duzeltme"] or sonuc["dolar_duzeltme"]
-                or sonuc["cari_duzeltme"]):
+                or sonuc["cari_duzeltme"]
+                or sonuc.get("olasilik_duzeltme")
+                or sonuc.get("yilliklastirma_duzeltme")):
             DOGRULAMA_IST["isim"] += len(sonuc["isim_duzeltme"])
             DOGRULAMA_IST["enflasyon"] += len(sonuc["enflasyon_duzeltme"])
             DOGRULAMA_IST["endeks"] += len(sonuc["endeks_duzeltme"])
@@ -4215,6 +4244,9 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
             DOGRULAMA_IST["reel_fisher"] += len(sonuc["reel_fisher_duzeltme"])
             DOGRULAMA_IST["dolar"] += len(sonuc["dolar_duzeltme"])
             DOGRULAMA_IST["cari"] += len(sonuc["cari_duzeltme"])
+            DOGRULAMA_IST["olasilik"] += len(sonuc.get("olasilik_duzeltme", []))
+            DOGRULAMA_IST["yilliklastirma"] += len(
+                sonuc.get("yilliklastirma_duzeltme", []))
             for yanlis, dogru, kod in sonuc["isim_duzeltme"]:
                 logger.warning("[Dogrulama%s] sirket adi duzeltildi: '%s' -> '%s (%s)'",
                                etiket, yanlis, dogru, kod)
@@ -4242,6 +4274,28 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
             for eski, yeni in sonuc["cari_duzeltme"]:
                 logger.warning("[Dogrulama%s] cari denge yonu duzeltildi: %s -> %s",
                                etiket, eski, yeni)
+            for eski, yeni in sonuc.get("olasilik_duzeltme", []):
+                logger.warning("[Dogrulama%s] senaryo olasiligi duzeltildi: ~%s -> ~%s",
+                               etiket, eski, yeni)
+            for eski, yeni in sonuc.get("yilliklastirma_duzeltme", []):
+                logger.warning("[Dogrulama%s] yilliklastirma duzeltildi: %s -> %s",
+                               etiket, eski, yeni)
+        if sonuc.get("yuva_bagli_duzeltme"):
+            DOGRULAMA_IST["yuva_bagli"] += len(sonuc["yuva_bagli_duzeltme"])
+            for yazi, tur in sonuc["yuva_bagli_duzeltme"]:
+                logger.warning("[Dogrulama%s] yuva-bagli sayi ulke degeriyle "
+                               "duzeltildi (%s): %s", etiket, tur, yazi)
+        if sonuc.get("olasilik_uyari"):
+            DOGRULAMA_IST["olasilik_uyari"] += 1
+            logger.warning("[Dogrulama%s] senaryo olasiliklari toplami 100 degil "
+                           "ve guvenli sizma adayi yok — metin dokunulmadi, uyari.",
+                           etiket)
+        # Evren disi sirket adlari: yalnizca izleme — metin degismez.
+        for marka in EVREN_DISI_MARKALAR:
+            if re.search(r"\b" + re.escape(marka) + r"\b", metin):
+                DOGRULAMA_IST["evren_disi_isim"] += 1
+                logger.warning("[Dogrulama%s] evren disi sirket adi gecti: %s",
+                               etiket, marka)
         for uyari in sonuc.get("endeks_uyari", []):
             DOGRULAMA_IST["endeks_uyari"] += 1
             logger.warning("[Dogrulama%s] seviye mantigi: %s", etiket, uyari)
@@ -4256,7 +4310,9 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
                            + len(sonuc["endeks_duzeltme"]) + len(sonuc["faiz_duzeltme"])
                            + len(sonuc["makro_duzeltme"]) + len(sonuc["piyasa_duzeltme"])
                            + len(sonuc["reel_fisher_duzeltme"])
-                           + len(sonuc["dolar_duzeltme"]) + len(sonuc["cari_duzeltme"]))
+                           + len(sonuc["dolar_duzeltme"]) + len(sonuc["cari_duzeltme"])
+                           + len(sonuc.get("olasilik_duzeltme", []))
+                           + len(sonuc.get("yilliklastirma_duzeltme", [])))
         if uydurma_esigi is not None and duzeltme_sayisi > uydurma_esigi:
             # Son çare yayını için en iyi adayı sakla (2026-10-06): düzeltilmiş
             # metin + düzeltme sayısı; çağıran son çareye karar verir.
@@ -5895,7 +5951,7 @@ def _portfoy_istatistikleri(p):
         temettu_html = (
             f'<div class="stat"><div class="label">Temettü Geliri (net)</div>'
             f'<div class="value">{_ts(temettu_toplam)} TL</div>'
-            f'<div style="font-size:11px;color:var(--muted)">stopaj %10 sonrası; yeniden yatırılmaz</div></div>'
+            f'<div style="font-size:11px;color:var(--muted)">stopaj %15 sonrası; yeniden yatırılmaz</div></div>'
         )
     risk_html = ""
     if risk:
@@ -6375,7 +6431,7 @@ hafta içi her sabah bir önceki işlem gününün kapanış fiyatlarıyla otoma
 <div style="margin-top:10px; font-size:14px; display:grid; gap:6px">
 <p style="margin:0">• {ilk_gun} tarihinde 100.000 TL, BIST 30 hisselerine <strong>eşit dağıtıldı</strong>; adetler fraksiyoneldir, gerçek uygulamada tam lota yuvarlama gerekir.</p>
 <p style="margin:0">• Hafta içi her sabah <strong>bir önceki işlem gününün kapanış fiyatlarıyla</strong> güncellenir; tatil günlerinde değer değişmez, hiç alım-satım yapılmaz.</p>
-<p style="margin:0">• <strong>Temettüler</strong> ex-tarihinde net olarak (kâr payı stopajı %10 düşülerek) nakde eklenir ve portföy değerine dahildir; nakit yeniden yatırılmaz. <strong>Bedelsiz/bölünmeler</strong> fiyat-çarpanıyla işlenir: adetler sabit kalır, olaydan sonra fiyata olay çarpanı uygulanır, getiri eğrisi olay gününde süreklilik korur. Temettü verisi Temettü Merkezi ile aynı kaynaktan (data/temettu/seriler) okunur.</p>
+<p style="margin:0">• <strong>Temettüler</strong> ex-tarihinde net olarak (kâr payı stopajı %15 düşülerek) nakde eklenir ve portföy değerine dahildir; nakit yeniden yatırılmaz. <strong>Bedelsiz/bölünmeler</strong> fiyat-çarpanıyla işlenir: adetler sabit kalır, olaydan sonra fiyata olay çarpanı uygulanır, getiri eğrisi olay gününde süreklilik korur. Temettü verisi Temettü Merkezi ile aynı kaynaktan (data/temettu/seriler) okunur.</p>
 <p style="margin:0">• Karşılaştırma çizgileri (altın, dolar, mevduat, BIST 100, BIST 30, enflasyon) aynı 100.000 TL tabanına normalize edilir; enflasyon değeri TradingView ekonomik takviminden gelen son TÜİK yıllık okumadır ve grafiğe dönem tarihiyle yansır.</p>
 <p style="margin:0">• Toplam getiri, tekil hisse yüzdelerinin ortalaması değil, portföyün toplam değer değişimidir. Sinyal Karnesi sayfasındaki net getiri senaryosu ~%0,10 komisyon+BSMV varsayımı kullanır.</p>
 <p style="margin:0; color:var(--muted)">Bu bir sanal deneme portföyüdür; yatırım tavsiyesi değildir. Geçmiş performans gelecekteki sonuçların garantisi değildir.</p>
@@ -9548,13 +9604,20 @@ def _enflasyon_yukle():
 def ekonomik_takvim_cek(gun=14):
     """TradingView'in acik ekonomik takvim ucundan TR/US/EU veri duyurularini
     ceker (onemsizler filtrelenir) ve data/ekonomik-takvim/ altina kaydeder.
+    TradingView saatleri UTC verir; tarih/saat kayda yazilmadan once TR
+    zamanina (Europe/Istanbul, UTC+3 sabit) cevrilir — sayfalardaki
+    "saatler TR zamanıdır" notu bundan sonra dogrudur (2026-11-11: kayit
+    ham UTC olarak yaziliyordu, "13:30 Initial Jobless Claims" gerçekte
+    TSİ 16:30). TR 00:00-03:00 arası olaylar UTC'nin önceki gününe
+    düştüğünden sorgu penceresi bir gün geriye + 21:00Z'den açılır.
     Kaynak erisilemezse bos liste doner; onceki gunun verisi sayfalarda kullanilir."""
     import urllib.request
     tz = zoneinfo.ZoneInfo("Europe/Istanbul")
     bugun = datetime.now(tz).strftime("%Y-%m-%d")
     to = (datetime.now(tz) + timedelta(days=gun)).strftime("%Y-%m-%d")
+    dun = (datetime.now(tz) - timedelta(days=1)).strftime("%Y-%m-%d")
     url = (f"https://economic-calendar.tradingview.com/events"
-           f"?from={bugun}T00%3A00%3A00.000Z&to={to}T23%3A59%3A59.000Z&countries=TR,US,EU")
+           f"?from={dun}T21%3A00%3A00.000Z&to={to}T23%3A59%3A59.000Z&countries=TR,US,EU")
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0",
                                                "Origin": "https://www.tradingview.com"})
     with urllib.request.urlopen(req, timeout=25) as r:
@@ -9570,9 +9633,17 @@ def ekonomik_takvim_cek(gun=14):
             onem = 0
         if onem < 0:
             continue  # otomatik/kucuk veriler: ajandayi sisirmesin
+        ham = str(e.get("date", ""))
+        try:
+            tr_dt = datetime.fromisoformat(
+                ham.replace("Z", "+00:00")).astimezone(tz)
+            tarih = tr_dt.strftime("%Y-%m-%d")
+            saat = tr_dt.strftime("%H:%M")
+        except ValueError:
+            tarih, saat = ham[:10], ham[11:16]  # fail-open: eski davranis
         secili.append({
-            "tarih": str(e.get("date", ""))[:10],
-            "saat": str(e.get("date", ""))[11:16],
+            "tarih": tarih,
+            "saat": saat,
             "ulke": e.get("country", ""),
             "olay": e.get("title", ""),
             "onem": onem,
