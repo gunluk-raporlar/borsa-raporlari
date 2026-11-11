@@ -1,9 +1,9 @@
 {
   "schema": "borsa-raporlari/resmi-veri",
   "schema_version": 1,
-  "snapshot_id": "makro-2026-11-10-evening",
-  "guncelleme": "2026-11-10",
-  "olusturma": "2026-11-10T18:05:00+03:00",
+  "snapshot_id": "makro-2026-11-11-evening",
+  "guncelleme": "2026-11-11",
+  "olusturma": "2026-11-11T18:05:00+03:00",
   "kaynaklar": [
     "BEA",
     "BLS",
@@ -13,7 +13,7 @@
     "TÜİK",
     "TradingView"
   ],
-  "kayit_sayisi": 68,
+  "kayit_sayisi": 67,
   "gostergeler": [
     {
       "country_code": "EU",
@@ -222,33 +222,16 @@
     {
       "country_code": "EU",
       "country": "Euro Bölgesi",
-      "indicator": "m3_yoy",
-      "label": "M3 Para Arzı (yıllık)",
-      "value": 17717267.0,
-      "unit": "%",
-      "period": "2026-10-27",
-      "frequency": "aylık",
-      "forecast": null,
-      "previous": 17646463.0,
-      "source_title": "M3 Money Supply YoY",
-      "source_period": "Sep. 2026",
-      "provenance": "canlı akşam toplaması",
-      "confirmed_by": "",
-      "kaynak_turu": "TV ekonomik takvimi"
-    },
-    {
-      "country_code": "EU",
-      "country": "Euro Bölgesi",
       "indicator": "policy_rate",
       "label": "Politika faizi",
       "value": 2.65,
       "unit": "%",
-      "period": "2026-11-10",
+      "period": "2026-11-11",
       "frequency": "olay",
       "forecast": 2.65,
       "previous": 2.65,
       "source_title": "ECB MRO ana refinansman faizi",
-      "source_period": "2026-11-10",
+      "source_period": "2026-11-11",
       "provenance": "ECB resmi verisi",
       "confirmed_by": "ECB",
       "kaynak_turu": "resmi kanal"
@@ -974,12 +957,12 @@
       "label": "Politika faizi",
       "value": 4.0,
       "unit": "%",
-      "period": "2026-11-10",
+      "period": "2026-11-11",
       "frequency": "olay",
       "forecast": 4.0,
       "previous": 4.0,
       "source_title": "FRED Fed fon ust siniri",
-      "source_period": "2026-11-10",
+      "source_period": "2026-11-11",
       "provenance": "FRED resmi verisi",
       "confirmed_by": "FRED",
       "kaynak_turu": "resmi kanal"
