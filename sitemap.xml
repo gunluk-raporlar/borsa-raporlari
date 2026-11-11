@@ -2641,6 +2641,14 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-11-10"/>
   </url>
   <url>
+    <loc>https://borsa-raporlari.pages.dev/derin-analiz/2026-11-11</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-11-11"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-11-11"/>
+  </url>
+  <url>
     <loc>https://borsa-raporlari.pages.dev/gizlilik</loc>
     <lastmod>2026-11-11</lastmod>
     <changefreq>monthly</changefreq>
@@ -11201,6 +11209,7 @@
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/raporlar/2026-11-11"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/reports/2026-11-11"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/berichte/2026-11-11"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-11-11"/>
   </url>
   <url>
@@ -11210,6 +11219,17 @@
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/raporlar/2026-11-11"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/reports/2026-11-11"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/berichte/2026-11-11"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-11-11"/>
+  </url>
+  <url>
+    <loc>https://borsa-raporlari.pages.dev/de/berichte/2026-11-11</loc>
+    <lastmod>2026-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/raporlar/2026-11-11"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/reports/2026-11-11"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/berichte/2026-11-11"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/raporlar/2026-11-11"/>
   </url>
   <url>
