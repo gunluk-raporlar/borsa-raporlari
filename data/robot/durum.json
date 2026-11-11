@@ -6,17 +6,13 @@
   "bugun_tarih": "2026-11-11",
   "gerceklesen_kz": -4031.5323749999934,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 1,
+  "kontrol_sayisi": 2,
   "nakit": 66245.61009729294,
   "onceki_kapanis_ozkaynak": 97344.59,
   "ozkayit": [
     [
       "2026-09-25",
       100000.0
-    ],
-    [
-      "2026-10-27T15:52",
-      95448.38
     ],
     [
       "2026-10-28T16:46",
@@ -45,6 +41,10 @@
     [
       "2026-11-10T18:31",
       97344.59
+    ],
+    [
+      "2026-11-11T18:04",
+      96740.68
     ]
   ],
   "pozisyonlar": {
@@ -56,39 +56,39 @@
       "stop": null
     }
   },
-  "rejim": "ayi",
-  "son_bar_tarihi": "2026-11-10",
+  "rejim": "boga",
+  "son_bar_tarihi": "2026-11-11",
   "son_fiyatlar": {
-    "AEFES": 16.62,
-    "AKBNK": 70.7,
-    "ASELS": 337.0,
-    "ASTOR": 157.1,
-    "BIMAS": 381.25,
-    "EKGYO": 18.38,
-    "ENKAI": 81.0,
-    "EREGL": 32.52,
-    "FROTO": 75.9,
-    "GARAN": 155.4,
-    "GUBRF": 288.0,
-    "ISCTR": 13.66,
-    "KCHOL": 206.0,
-    "KRDMD": 37.66,
-    "MGROS": 491.0,
-    "PETKM": 16.58,
-    "PGSUS": 154.4,
-    "SAHOL": 87.3,
-    "SASA": 1.59,
-    "SISE": 35.72,
-    "TAVHL": 302.0,
-    "TCELL": 97.75,
-    "THYAO": 313.75,
-    "TOASO": 240.8,
-    "TRALT": 38.9,
-    "TRMET": 112.2,
-    "TTKOM": 50.45,
-    "TUPRS": 331.25,
-    "VAKBN": 33.48,
-    "YKBNK": 38.48
+    "AEFES": 16.35,
+    "AKBNK": 70.6,
+    "ASELS": 343.0,
+    "ASTOR": 161.7,
+    "BIMAS": 377.0,
+    "EKGYO": 18.36,
+    "ENKAI": 81.1,
+    "EREGL": 31.62,
+    "FROTO": 73.55,
+    "GARAN": 154.4,
+    "GUBRF": 282.0,
+    "ISCTR": 13.62,
+    "KCHOL": 203.8,
+    "KRDMD": 38.0,
+    "MGROS": 476.25,
+    "PETKM": 16.65,
+    "PGSUS": 155.2,
+    "SAHOL": 85.85,
+    "SASA": 1.57,
+    "SISE": 35.3,
+    "TAVHL": 299.5,
+    "TCELL": 94.85,
+    "THYAO": 315.0,
+    "TOASO": 231.9,
+    "TRALT": 38.68,
+    "TRMET": 111.6,
+    "TTKOM": 49.34,
+    "TUPRS": 350.0,
+    "VAKBN": 32.76,
+    "YKBNK": 38.36
   },
   "son_repo_tarihi": "2026-11-11",
   "toplam_kesinti": 400.93,
