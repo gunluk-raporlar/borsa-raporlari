@@ -41,7 +41,11 @@
     return tur === 'usd' ? kur[son][1] : kur[son][2];
   }
 
-  var STOPAJ_ESKI = 0.15, STOPAJ_YENI = 0.10, STOPAJ_GECIS = '2020-01-01';
+  // Kâr payı stopajı üç kademe: 2020 öncesi %15; 2020-01-01 ≤ ödeme < 2024-12-22 %10
+  // (7244 sayılı Kanun); 22.12.2024 sonrası dağıtımlarda %15 (9286 sayılı CB
+  // Kararı, RG 22.12.2024). Eşikler ÖDEME tarihine göredir (ex değil).
+  var STOPAJ_ESKI = 0.15, STOPAJ_ORTA = 0.10, STOPAJ_YENI = 0.15;
+  var STOPAJ_GECIS_ORTA = '2020-01-01', STOPAJ_GECIS_YENI = '2024-12-22';
 
   function hesapla(cfg) {
     var seri = cfg.seri, temettu = cfg.temettu || [], bedelsiz = cfg.bedelsiz || [], kur = cfg.kur || [];
@@ -59,7 +63,8 @@
       if (ex < baslangic || ex > bitis) continue;
       var odeme = isGunuArti(ex, 2);
       if (odeme > bitis) continue;
-      var stopaj = odeme < STOPAJ_GECIS ? STOPAJ_ESKI : STOPAJ_YENI;
+      var stopaj = odeme < STOPAJ_GECIS_ORTA ? STOPAJ_ESKI
+        : (odeme < STOPAJ_GECIS_YENI ? STOPAJ_ORTA : STOPAJ_YENI);
       olaylar.push({ ex: ex, odeme: odeme, dps: dps, net: dps * (1 - stopaj), stopaj: stopaj });
     }
     olaylar.sort(function (a, b) { return a.odeme < b.odeme ? -1 : a.odeme > b.odeme ? 1 : 0; });
@@ -446,7 +451,7 @@
     }
 
     html += '<p class="tm-not">Fiyatlar düzeltilmemiş günlük kapanıştır; komisyon ve BSMV hesaba katılmaz. ' +
-      'Temettü, ex-tarihten 2 iş günü sonra ödenir ve stopaj (%15 → %10, 2020) düşülerek lota çevrilir.</p>';
+      'Temettü, ex-tarihten 2 iş günü sonra ödenir ve stopaj (ödeme tarihine göre %15 / %10 / %15) düşülerek lota çevrilir.</p>';
 
     kap.innerHTML = html;
     baglantilar();

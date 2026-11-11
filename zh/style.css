@@ -207,3 +207,15 @@ html.dark .ticker-bant, html.dark .topbar { background:#0b1220; border-bottom:1p
 .report li > strong:first-child { display:block; color:var(--accent); font-size:14.5px;
                                   margin:0 0 3px; letter-spacing:.2px; }
 .report p > strong:first-child { color:var(--accent); }
+
+/* ---- 2026-11-11 (kullanici talebi): ana sayfa BIST 30 kutulari — Gunluk Isi
+   Haritasi ile ayni dil: degisime gore rgba zemin (bot inline yazar, kutular.js
+   canli gunceller), beyaz metin; kutu = kod + fiyat + gunluk %. Tiklanabilir.
+   JS yoksa bot'un yazdigi statik kapanis degerleri gorunur. ---- */
+.hkutu-izgara { display:grid; grid-template-columns:repeat(auto-fill,minmax(104px,1fr)); gap:8px; margin-top:10px; }
+.hkutu { display:block; padding:9px 6px; border-radius:10px; text-align:center;
+         color:#fff; text-decoration:none; cursor:pointer; }
+.hkutu b { display:block; font-size:13.5px; letter-spacing:.4px; }
+.hkutu .hfiyat { display:block; font-size:11.5px; font-weight:600; opacity:.93; white-space:nowrap; }
+.hkutu .hdeg { display:block; font-size:12px; font-weight:700; }
+.hkutu:hover { outline:2px solid var(--accent); outline-offset:1px; }
