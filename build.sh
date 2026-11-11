@@ -16,12 +16,15 @@ mkdir -p dist
 # muhasebe-terimleri/ (2026-11-04): IFRS sozlugunun harf-grup sayfari —
 # terimler ile ayni nedenle listede olmak zorunda.
 # temettu-veri/ (2026-11-01): temettu.html'in tarayicida okudugu JSON verileri.
-for d in hisse raporlar derin-analiz makro-analiz radyo haftasonu haftasonu-egitimi terimler muhasebe-terimleri temettu-veri en de ru zh; do
+# seri/ (2026-11-11): gunluk kapanis serisi JSON'lari — hisse sayfalarinin
+# "Günlük Teknik İnceleme" blogu /seri/<KOD>.json'u tarayicida okur; listede
+# yoksa 404 verir ve blog fail-open ile görünmez.
+for d in hisse raporlar derin-analiz makro-analiz radyo haftasonu haftasonu-egitimi terimler muhasebe-terimleri temettu-veri seri en de ru zh; do
   if [ -d "$d" ]; then cp -r "$d" dist/; fi
 done
 
-# Kok dizindeki site dosyalari
-cp *.html *.css *.json *.png *.svg *.xml *.txt _headers _redirects dist/ 2>/dev/null || true
+# Kok dizindeki site dosyalari (*.js 2026-11-11: ana sayfa kutulari kutular.js)
+cp *.html *.css *.js *.json *.png *.svg *.xml *.txt _headers _redirects dist/ 2>/dev/null || true
 
 # Site disi metin dosyalari
 rm -f dist/joblog.txt dist/requirements.txt

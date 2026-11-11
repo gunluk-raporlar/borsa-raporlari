@@ -4699,7 +4699,7 @@ def ticker_json_yaz(satirlar, etiket=None):
     # tüketicileri (şerit JS'i, robot) etkilenmez.
     _profiller = _sirket_profilleri()
     veri = {
-        "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M"),
+        "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m.%Y %H:%M"),
         # 2026-11-08 (ajan-katman denetimi): makine-okunur tazelik damgasi —
         # eski "guncelleme" alanina dokunulmadi (llms.txt alan adi kararliligi).
         "guncelleme_iso": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).isoformat(timespec="seconds"),
@@ -6133,6 +6133,34 @@ def ana_sayfa_tazele():
         f.write(build_index_html(load_portfolio(), raporlar, teknik_oneriler))
 
 
+def _hkutu_arka(deg):
+    """Gunluk Isi Haritasi ile AYNI olcek (_isi_renk aynasi): |degisim| buyudukce
+    zemin koyulastir. CSS rgba() NOKTA ayirici ister; _tr_sayi kullanilmaz
+    (virgul gecersiz rgba uretir ve hucreler renksiz kalir)."""
+    a = min(0.15 + abs(deg) / 3.0 * 0.80, 0.92)
+    return ("4,120,87" if deg >= 0 else "185,28,28") + f",{a:.2f}"
+
+
+def _hkutu_ogesi(kod, profiller, ticker):
+    """Ana sayfa kapsam kutusu (2026-11-11, kullanici talebi: "teknik taramadaki
+    isi kutusu gibi ama fiyatli"): kod + fiyat + gunluk %, degisime gore rgba
+    zemin. ticker.json STATIK yedektir (JS'siz okuyucu), canlisini kutular.js
+    tarayicida yazar; verisi olmayan kod notral zeminde '—' ile kalir."""
+    s = ticker.get(kod)
+    if isinstance(s, dict) and isinstance(s.get("f"), (int, float)) and s["f"] > 0:
+        d = s.get("d") if isinstance(s.get("d"), (int, float)) else 0.0
+        yuzde = ("+" if d >= 0 else "") + _tr_sayi(d) + "%"
+        fiyat = f'<span class="hfiyat">{_tr_sayi(s["f"])} TL</span>'
+        arka = _hkutu_arka(d)
+    else:
+        yuzde = "—"
+        fiyat = '<span class="hfiyat">—</span>'
+        arka = "100,116,139,0.18"
+    return (f'<a class="hkutu" href="hisse/{kod}.html" data-kod="{kod}" '
+            f'style="background:rgba({arka})" title="{kod} detay sayfası">'
+            f'<b>{kod}</b>{fiyat}<span class="hdeg">{yuzde}</span></a>')
+
+
 def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
     # Derin analiz ve makro analiz arsivleri KENDI dizinlerinde yasar
     # (2026-10-06 agac yapisi): derin-analiz/<tarih>.html, makro-analiz/<tarih>.html
@@ -6276,21 +6304,33 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
 
     # 2026-11-08 (kullanıcı kararı): BIST 30 kapsam dizini — 30 hissenin adı
     # ve bağlantısı ana sayfada; md aynasına ve ajan katmanına (llms.txt) taşınır.
+    # 2026-11-11 (kullanıcı talebi): düz metin liste yerine tıklanabilir kutular —
+    # statik fiyat/günlük % ticker.json'dan (JS'siz okuyucu için), canlıyı
+    # kutular.js tarayıcıda yazar; JS çalışmazsa statik değerler kalır.
     _profiller = _sirket_profilleri()
 
-    _profiller = _sirket_profilleri()
+    try:
+        with open("ticker.json", encoding="utf-8") as _tf:
+            _ticker = {s["h"]: s for s in json.load(_tf).get("hisseler", [])}
+    except (OSError, ValueError):
+        _ticker = {}
+    # isi haritasi gibi degisime gore SIRALI (yuksekten alcaga; verisizler sonda)
+    def _d_anahtar(kod):
+        s = _ticker.get(kod)
+        d = s.get("d") if isinstance(s, dict) and isinstance(s.get("d"), (int, float)) else -999.0
+        return (-d, kod)
 
-    kapsam_ogeleri = " · ".join(
-        f'<a href="hisse/{_kod}.html">{_kod}{" — " + _kisa_unvan(_profiller[_kod]["unvan"]) if _profiller.get(_kod, {}).get("unvan") else _kod}</a>'
-        for _kod in sorted(_profiller)
+    kapsam_kutulari = "".join(
+        _hkutu_ogesi(_kod, _profiller, _ticker) for _kod in sorted(_profiller, key=_d_anahtar)
     )
     # profil dosyası okunamazsa bölüm boş kalmasın diye tümüyle atlanır
     kapsam_bolumu = f"""
 <h2 class="section-title">BIST 30 Hisse Analiz Kapsamı</h2>
-<div class="card" style="padding:10px 24px 14px">
-<p style="margin:8px 0 0; font-size:13.5px; line-height:2.1">Sistem, BIST 30 endeksindeki 30 hissenin tamamını her işlem günü tarar; her biri için teknik sinyal, fiyat grafiği, 7 günlük haber akışı ve rapor arşivi değerlendirmesi üretir:<br>
-{kapsam_ogeleri}</p>
-</div>""" if _profiller else ""
+<div class="card" style="padding:10px 16px 14px">
+<p style="margin:8px 0 0; font-size:13.5px">Sistem, BIST 30 endeksindeki 30 hissenin tamamını her işlem günü tarar; her biri için teknik sinyal, fiyat grafiği, 7 günlük haber akışı ve rapor arşivi değerlendirmesi üretir. Fiyat ve günlük değişim kutularda canlıdır (~15 dk gecikmeli):</p>
+<div class="hkutu-izgara">{kapsam_kutulari}</div>
+</div>
+<script src="/kutular.js?v=1" defer></script>""" if _profiller else ""
 
     icerik = f"""
 <div class="hero">
@@ -6810,7 +6850,7 @@ def build_teknik_html(satirlar, date_str):
         for s in satirlar
     )
     guclu = sum(1 for s in satirlar if s["genel"] == "GÜÇLÜ AL")
-    simdi = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M")
+    simdi = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m.%Y %H:%M")
     icerik = f"""
 <div class="hero">
 <h1>Teknik Tarama</h1>
@@ -7096,7 +7136,7 @@ def piyasa_serit_yaz():
     except (OSError, ValueError):
         pass
     govde = {
-        "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M"),
+        "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m.%Y %H:%M"),
         "guncelleme_iso": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).isoformat(timespec="seconds"),
         "etiket": "gün sonu / gecikmeli",
         "kaynak": "bot",
@@ -7884,7 +7924,7 @@ def _interaktif_fiyat_grafigi(kod, seri):
 <div class="grafik-lejant">%s</div>
 <script type="application/json" id="fiyat-serisi">%s</script>
 <script src="grafik.js?v=2" defer></script>
-<script src="fiyat-canli.js?v=3" defer></script>
+<script src="fiyat-canli.js?v=4" defer></script>
 <div style="color:var(--muted); font-size:12px">%s tarihinden bugüne %s kapanış fiyatları (TL). Referanslar: dönem başı kapanış (noktalı), SMA20/SMA50 ortalamaları, en düşük/en yüksek/son kapanış.</div>
 </div>""" % (kod, len(seri), _renk(deg), _ty(deg), svg, lejant, veri,
              tarihler[0], kod)
@@ -7956,7 +7996,7 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=N
     # bilemiyordu; dil kopyaları i18n koşusuna kadar bayat kalınca ChatGPT'nin
     # yakaladığı TR(330)/EN(345,75) karışımı doğuyordu. Üretim damgası hem
     # hero'ya hem teknik kartına yazılır; canlı fiyat şeridi + ticker.json işaret edilir.
-    _uretim = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M")
+    _uretim = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m.%Y %H:%M")
     _uretim_iso = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).isoformat(timespec="seconds")
     _veri_etiketi = (f"<span id='hf-veri' style='color:var(--muted); font-size:12px'>Veri: {_uretim} üretimi "
                      f"&middot; canlı fiyat: üstteki şerit ve <a href='/ticker.json'>ticker.json</a></span>")
@@ -8263,7 +8303,7 @@ def hisse_seri_jsonlari_yaz(teknik_satirlar):
     sayfalarındaki gömülü seri bayat olsa bile inceleme buradan doğru çıkar."""
     os.makedirs("seri", exist_ok=True)
     _profiller = _sirket_profilleri()
-    damga = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M")
+    damga = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m.%Y %H:%M")
     yazilan = 0
     for s in teknik_satirlar:
         kod = s["hisse"]
@@ -9962,7 +10002,7 @@ def site_arama_json_yaz(rapor_dosyalari):
             baslik = f"{_kod} — {_unvan} — Hisse Yorumu ve Teknik Analizi"
         sayfalar.append({"b": baslik, "u": yol, "t": f"{_kod} {_unvan} " + metin[:3500]})
     veri = {
-        "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m %H:%M"),
+        "guncelleme": datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul")).strftime("%d.%m.%Y %H:%M"),
         "sayfalar": sayfalar,
     }
     with open("site-arama.json", "w", encoding="utf-8") as f:

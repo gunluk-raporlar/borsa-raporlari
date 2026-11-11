@@ -1955,7 +1955,7 @@ _TEMETTU_HREF_RE = re.compile(r'href="(?:\.\./)*temettu(?:\.html)?"')
 # stocks/aktien/aktsii/gupiao'ya cevrilip var olmayan dosya adi uretiyordu
 # (mimar bulgusu). "grafik"/"fiyat" token'lari slug tablolarinda olmadigindan
 # bu iki referans yazim fazlarindan dokunulmadan gecer.
-_CANLI_SCRIPT = '<script src="fiyat-canli.js?v=3" defer></script>'
+_CANLI_SCRIPT = '<script src="fiyat-canli.js?v=4" defer></script>'
 _GRAFIK_SCRIPT_V2 = '<script src="grafik.js?v=2" defer></script>'
 
 
@@ -1970,6 +1970,9 @@ def _hisse_canli_scriptleri(html: str, rel: Path) -> str:
     html = re.sub(
         r'<script src="(?:\./|/hisse/)?hisse-canli\.js\?v=\d+" defer></script>[ \t]*\r?\n?',
         "", html)
+    # mevcut fiyat-canli etiketleri güncel sürüme eşitlenir (v3 sayfa + v4 JS
+    # karismasinin onu; surum degisince tüm sayfalar sonraki kosuda tazelenir)
+    html = re.sub(r'<script src="fiyat-canli\.js\?v=\d+" defer></script>', _CANLI_SCRIPT, html)
     html = html.replace('<script src="grafik.js?v=1" defer></script>',
                         _GRAFIK_SCRIPT_V2)
     if 'id="fiyat-serisi"' in html and 'src="fiyat-canli.js' not in html:

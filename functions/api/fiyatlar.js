@@ -45,13 +45,13 @@ async function tradingViewCek() {
     const harita = new Map((d.data || []).map((k) => [k.s.split(":")[1], k.d]));
 
     const now = new Date();
-    // Biçim ICU sürümüne göre değişebilir; parçaları alip kendimiz "GG.AA SS:DD"
-    // kurariz (ticker.json'daki "18.09 18:24" biçimiyle ayni).
+    // Biçim ICU sürümüne göre değişebilir; parçaları alip kendimiz "GG.AA.YYYY SS:DD"
+    // kurariz (ticker.json'daki "11.11.2026 18:24" biçimiyle ayni; yıl yoksa tarih belirsiz).
     const parcalar = Object.fromEntries(new Intl.DateTimeFormat("tr-TR", {
       timeZone: "Europe/Istanbul",
-      day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false,
+      day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false,
     }).formatToParts(now).map((p) => [p.type, p.value]));
-    const zaman = parcalar.day + "." + parcalar.month + " " + parcalar.hour + ":" + parcalar.minute;
+    const zaman = parcalar.day + "." + parcalar.month + "." + parcalar.year + " " + parcalar.hour + ":" + parcalar.minute;
 
     const hisseler = [];
     for (const h of BIST30) {
