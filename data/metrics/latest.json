@@ -5,14 +5,14 @@
   "sure_sn": 66.8,
   "son_guncelleme": "2026-11-10T13:45:16+03:00"
  },
- "guncelleme": "2026-11-10T13:45:16+03:00",
+ "guncelleme": "2026-11-11T07:50:22+03:00",
  "llm": {
   "adet": 8,
-  "ortalama_sn": 243.025,
-  "p95_sn": 477.567,
-  "maks_sn": 1001.498,
+  "ortalama_sn": 183.864,
+  "p95_sn": 215.121,
+  "maks_sn": 979.641,
   "basari_orani": 1.0,
-  "son_guncelleme": "2026-11-10T07:58:11+03:00"
+  "son_guncelleme": "2026-11-11T07:50:22+03:00"
  },
  "dogrulama": {
   "isim": 0,
@@ -28,6 +28,6 @@
   "cari": 0,
   "sinyal": 0,
   "adx": 0,
-  "son_guncelleme": "2026-11-10T07:58:11+03:00"
+  "son_guncelleme": "2026-11-11T07:50:22+03:00"
  }
 }
