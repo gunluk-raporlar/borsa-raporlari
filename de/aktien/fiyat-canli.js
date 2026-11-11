@@ -1,4 +1,4 @@
-/* Hisse sayfasi canli katman (v3): uc ayri is, tek dosyada.
+/* Hisse sayfasi canli katman (v4): uc ayri is, tek dosyada.
  *
  * 1) CANLI FIYAT (v1'den): /api/fiyatlar ucundan (TradingView, ~15 dk gecikmeli,
  *    kenar onbellek 9 dk) hero'daki fiyat ve gunluk %'yi tazeler, grafik
@@ -17,6 +17,12 @@
  *    rozet verir, ozet olgulari soyler, boylece ikisi asla celismez.
  *    Dil sayfalarindaki gomulu seri bayat olsa bile inceleme dogru cunku
  *    kaynak /seri/ JSON'u; dil agacina kopyalanmaz, herkes ayni dosyayi ceker.
+ *
+ * v4 (2026-11-11, kullanici talebi): canli tarih-saat damgasi artik dil
+ *    sayfalarinda da gorunur (id'siz hero'da uretilir; "● 11.11.2026 08:38
+ *    (live)" biciminde, CANLI_SOZ tablosuyla sayfa dilinde) ve tarihler
+ *    YILLIYAZILIR — "11.11" yerine "11.11.2026" (API ve uretim damgalariyla
+ *    birlikte; yilsiz tarih karisikliga yol aciyordu).
  *
  * JS calismazsa veya bir uc hata verirse sayfa uretim anindaki statik
  * degerlerle kalir; hicbir sey bozulmaz (her adim fail-open).
@@ -50,6 +56,10 @@
     if (kayip === 0) return 100;
     return 100 - 100 / (1 + (kazanc / n) / (kayip / n));
   }
+
+  // sayfa dilinde canli damga sozcugu (v4, kullanici talebi: dil sayfalarinda
+  // da canli tarih-saat gorunsun)
+  var CANLI_SOZ = { tr: "canlı", en: "live", de: "live", ru: "онлайн", zh: "实时" };
 
   /* ---------- 1) canli fiyat (hero + grafik serisi) ---------- */
 
@@ -130,14 +140,29 @@
           if (gunlukEl) gunlukEl.textContent = yuzde;
           if (gunlukKutu) gunlukKutu.className = satir.d >= 0 ? "pos" : "neg";
         }
-        if (veriNotu && zaman) {
-          if (!canliImi) {
-            canliImi = document.createElement("span");
-            canliImi.style.color = "#047857";
-            veriNotu.appendChild(document.createTextNode(" \u00b7 "));
-            veriNotu.appendChild(canliImi);
+        if (zaman) {
+          if (!veriNotu && idsizKip) {
+            // dil sayfalari (id'siz hero): sayfada canli tarih-saat satiri
+            // yoksa gunluk % span'inin kardesi olarak uretilir (v4)
+            veriNotu = (gunlukKutu && gunlukKutu.parentNode)
+              ? gunlukKutu.parentNode
+              : (hero ? hero.querySelector(".meta") : null);
+            if (veriNotu) {
+              canliImi = document.createElement("span");
+              canliImi.style.color = "#047857";
+              veriNotu.appendChild(document.createTextNode(" "));
+              veriNotu.appendChild(canliImi);
+            }
           }
-          canliImi.textContent = "\u25CF " + zaman;
+          if (veriNotu) {
+            if (!canliImi) {
+              canliImi = document.createElement("span");
+              canliImi.style.color = "#047857";
+              veriNotu.appendChild(document.createTextNode(" \u00b7 "));
+              veriNotu.appendChild(canliImi);
+            }
+            canliImi.textContent = "\u25CF " + zaman + " (" + (CANLI_SOZ[LANG] || "canlı") + ")";
+          }
         }
         seriGuncelle(satir.f);
       }
