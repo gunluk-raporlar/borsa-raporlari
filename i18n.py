@@ -1168,7 +1168,13 @@ class Cevirmen:
                 raise
         if usage_kutusu is not None and isinstance(veri.get("usage"), dict):
             usage_kutusu.append(veri["usage"])
-        icerik = veri["choices"][0]["message"]["content"].strip()
+        _icerik = veri["choices"][0]["message"]["content"]
+        if isinstance(_icerik, list):
+            # Parcali content (multimodal modellerde goruldu — Mistral'daki
+            # zai-glm-5-3-flash soyle donduruyor): [{"type": "text", "text": ...},
+            # ...] -> metin parcalari birlestirilir; string'de degisiklik yok.
+            _icerik = "".join(p.get("text") or "" for p in _icerik if isinstance(p, dict))
+        icerik = _icerik.strip()
         sonuc = Cevirmen._json_ayikla(icerik, len(dilim))
         if not isinstance(sonuc, list) or len(sonuc) != len(dilim):
             raise ValueError("LLM ciktisi ayristirilamadi")
