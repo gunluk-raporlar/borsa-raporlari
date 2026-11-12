@@ -785,25 +785,25 @@ class Cevirmen:
         return uclar
 
     # -- harcama muhasebesi (2026-11-12) -----------------------------------
-    def _harcama_ekle(self, uc: str, model: str, kutu: dict) -> None:
+    def _harcama_ekle(self, uc: str, model: str, kutu: list) -> None:
         """Bir istek baglaminin usage kutusunu kosu harcamasina ekler.
 
-        Kutu, yanit icergi islenmeden once _llm_istek icinde doldurulur;
-        JSON bozuk olsa bile (parse hatasi firlatsa da) gercek harcama
+        Kutu, _llm_istek'in usage dict'lerini ekledigi LISTE'dir (bölme
+        tekrarında aynı pencere birden çok usage biriktirebilir); JSON
+        bozuk olsa bile (parse hatasi firlatsa da) gercek harcama
         kutudadir. Saglayici usage donmediyse kutu bos kalir, istek yine
         sayilir.
         """
         self.harcama["istek"] += 1
         _d = self.harcama_uctan.setdefault(f"{uc}/{model}", [0, 0, 0])
         _d[2] += 1
-        if not kutu:
-            return
-        _i = int(kutu.get("prompt_tokens") or 0)
-        _c = int(kutu.get("completion_tokens") or 0)
-        self.harcama["in"] += _i
-        self.harcama["out"] += _c
-        _d[0] += _i
-        _d[1] += _c
+        for _kutu in kutu or ():
+            _i = int(_kutu.get("prompt_tokens") or 0)
+            _c = int(_kutu.get("completion_tokens") or 0)
+            self.harcama["in"] += _i
+            self.harcama["out"] += _c
+            _d[0] += _i
+            _d[1] += _c
 
     def harcama_ozeti(self):
         """Defter 'ceviri' satiri icin (saglayici, model, in, out, istek, dagilim).
@@ -961,7 +961,7 @@ class Cevirmen:
                         continue
                     try:
                         _t0 = time.time()
-                        kutu: dict = {}
+                        kutu: list = []   # usage dict'leri; bolme tekrarinda birden cok eleman birikebilir
                         try:
                             aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, zaman_asimi, kutu)
                         finally:
@@ -1024,7 +1024,7 @@ class Cevirmen:
                             print(f"[i18n] 429 hiz siniri ({ad}/{model}); {bekle:.0f} sn bekleniyor", file=sys.stderr)
                             time.sleep(bekle)
                             try:
-                                kutu2: dict = {}
+                                kutu2: list = []
                                 try:
                                     aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, zaman_asimi, kutu2)
                                 finally:
