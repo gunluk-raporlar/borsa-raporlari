@@ -108,6 +108,18 @@ OLLAMA_MODELS = [m.strip() for m in os.environ.get("OLLAMA_MODELS", "gpt-oss:120
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_MODELS = [m.strip() for m in os.environ.get("GEMINI_MODELS", "gemini-3.8-flash").split(",") if m.strip()]
 
+# Dokuzuncu saglayici: Mistral API (kullanicinin aboneligi, aylik kredi;
+# 2026-11-12 kullanici karari: ZAI haftalik kota tukenirken guvenilir ucretli
+# yedek olarak eklendi). Uzerinde barindirilan GLM 5.3 Flash + DeepSeek V4.1
+# Flash kullanilir; ZAI/Discovery'deki ayni modellerden bagimsiz faturalanir.
+# NOT: Secret 2026-11-12 gecesi "MISRAL_API_KEY" (yazim hatasi) adiyla da
+# eklendi; yanlis adla eklenen anahtar da calissin diye eski ad okunur —
+# secret dogru adla yenilenince bu eski-ad okumasi cikarilebilir.
+MISTRAL_API_KEY = os.environ.get("MISTRAL_API_KEY") or os.environ.get("MISRAL_API_KEY", "")
+MISTRAL_BASE_URL = os.environ.get("MISTRAL_BASE_URL", "https://api.mistral.ai/v1").rstrip("/")
+MISTRAL_MODEL_TERCIH = [m.strip() for m in os.environ.get(
+    "MISTRAL_MODELS", "zai-glm-5-3-flash,deepseek-v4-1-flash-1017").split(",") if m.strip()]
+
 # intern-ai discovery servisi (2026-10-15, kullanici karari): ceviri hattindaki
 # DISCOVERY hesabi bot'un icerik ureticilerine de baglandi. deepseek-v4-flash-0731
 # 2026-10-31'de kalkti; yerine deepseek-v4.1-flash-1017 geldi (kullanici bildirimi).
@@ -191,8 +203,9 @@ KARA_LISTE = {
 }
 
 if not (AMD_API_KEY or ALT_API_KEY or CF_API_KEY or OR_API_KEY or NVID_API_KEY
-        or OPENCODE_API_KEY or OLLAMA_API_KEY or GEMINI_API_KEY or DISC_API_KEY):
-    raise SystemExit("AMD/ALT/CF/OR/NVIDIA/OPENCODE/OLLAMA/GEMINI/DISCOVERY anahtarlarindan en az biri ayarlanmali!")
+        or OPENCODE_API_KEY or OLLAMA_API_KEY or GEMINI_API_KEY or DISC_API_KEY
+        or MISTRAL_API_KEY):
+    raise SystemExit("AMD/ALT/CF/OR/NVIDIA/OPENCODE/OLLAMA/GEMINI/DISCOVERY/MISTRAL anahtarlarindan en az biri ayarlanmali!")
 
 # Varsayilan model: 1B parametrelik MiniCPM5-1B karmasik Turkce promptlarda Ingilizce
 # ic-konusma uretip talimatlari rapora sicrayabilir ve tekrar dongusune girebilir;
@@ -253,6 +266,13 @@ or_client = OpenAI(
     timeout=_LLM_TIMEOUT,
     max_retries=0,
 ) if OR_API_KEY else None
+
+mistral_client = OpenAI(
+    api_key=MISTRAL_API_KEY,
+    base_url=MISTRAL_BASE_URL,
+    timeout=_LLM_TIMEOUT,
+    max_retries=0,
+) if MISTRAL_API_KEY else None
 
 nvid_client = OpenAI(
     api_key=NVID_API_KEY,
@@ -1150,10 +1170,10 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
     # (ust sinir — gercek maliyet uretilen token kadardir, ek bedeli yok).
     max_tokens = int(os.environ.get("AMD_MAX_TOKENS", "24000"))
 
-    # Deneme sirasi: DISCOVERY (bol kotali hesap, 15.10 kullanici karari) ->
-    # AMD (ucretsiz ana) -> ZAI (kullanicinin GLM anahtari) -> NVIDIA ->
-    # OpenRouter -> Groq. sirasi ile oncelik degistirilebilir.
-    sirasi = sirasi or ("DISC", "AMD", "ZAI", "NVID", "OR", "OPENCODE", "OLLAMA", "GEMINI", "YEDEK")
+    # Deneme sirasi: MISTRAL (ucretli abonelik, stabil; 2026-11-12 kullanici
+    # karari) -> DISCOVERY -> AMD (ucretsiz ana) -> ZAI -> NVIDIA ->
+    # OpenRouter -> Gerisi. sirasi ile oncelik degistirilebilir.
+    sirasi = sirasi or ("MISTRAL", "DISC", "AMD", "ZAI", "NVID", "OR", "OPENCODE", "OLLAMA", "GEMINI", "YEDEK")
     havuzlar = {
         "AMD": (client, AMD_MODEL_LIST or [AMD_MODEL]),
         "ZAI": (zai_client, ZAI_MODEL_TERCIH),
@@ -1163,6 +1183,7 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
         "YEDEK": (alt_client, _havuz_modelleri(alt_client, ALT_MODELS, GROQ_MODEL_TERCIH, "Groq") if alt_client else ALT_MODELS),
         "OR": (or_client, _havuz_modelleri(or_client, OR_MODELS, OR_MODEL_TERCIH, "OpenRouter",
                                            suzgec=lambda m: m.endswith(":free") and "small" not in m) if or_client else OR_MODELS),
+        "MISTRAL": (mistral_client, MISTRAL_MODEL_TERCIH),
         "OPENCODE": (opencode_client, OPENCODE_MODELS),
         "OLLAMA": (ollama_client, OLLAMA_MODELS),
         "GEMINI": (gemini_client, GEMINI_MODELS),
@@ -1236,7 +1257,12 @@ def _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=True, sirasi=None, dogru
             # intern-ai discovery'de ise tersi: deepseek ailesi "disabled"i kabul
             # eder ve sureyi 30-90 sn'den 3-20 sn'ye indirir (15.10 ceviri kaniti).
             _ek_govde = {"extra_body": {"thinking": {"type": "disabled"}}} \
-                if (etiket == "DISC" and DISC_DUSUNME_KAPALI) else {}
+                if (etiket == "DISC" and DISC_DUSUNME_KAPALI) else \
+                ({"extra_body": {"prompt_cache_key": "borsa-raporlari-uretim"}}
+                 if etiket == "MISTRAL" else {})
+            # Mistral prompt_cache_key (2026-11-12): cache isabet sansini artirir,
+            # garanti etmez; ozel anahtar gonderilmese de ayni onekiyle gelen
+            # istekler otomatik cache'lenebilir (docs: prompt-caching).
             resp = saglayici.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
@@ -3016,7 +3042,7 @@ def summary_agent(state: AgentState):
     # Ozet kucuk bir cagri oldugu icin once ucretsiz yedekler (Groq ->
     # NVIDIA -> OpenRouter) kullanilir; boylece ana rapor icin AMD'nin
     # gunluk kotasini tuketmez.
-    ozet = llm_call(prompt, sirasi=("YEDEK", "NVID", "OR", "AMD"))
+    ozet = llm_call(prompt, sirasi=("MISTRAL", "YEDEK", "NVID", "OR", "AMD"))
     save_daily("summaries", bugun, {"ozet": ozet})
     return {}
 
@@ -3730,7 +3756,7 @@ kelimeyi aşmasın (aşacaksa alt başlığa böl).
             # cekildi ki AMD tamamen cokerken tum zaman butcesini yemesin
             # (4 deneme x 4 dk timeout + beklemeler ~20 dk suruyordu).
             icerik = _llm_call_ic(prompt, max_deneme=3, fallback_on_fail=False,
-                                  sirasi=("AMD",),
+                                  sirasi=("MISTRAL", "AMD"),
                                   dogrulama=lambda m: _makro_eksik_mi(m) is None)
             if icerik and icerik.strip():
                 if _derin_dongu_var(icerik):
@@ -3839,7 +3865,7 @@ kelimeyi aşmasın (aşacaksa alt başlığa böl).
                 # oldugu icin Groq 8K TPM limitine HER SEFERINDE 413 veriyor ve
                 # firtina gunlerinde garanti bos deneme yaratıyordu.
                 icerik = _llm_call_ic(prompt, max_deneme=6, fallback_on_fail=False,
-                                      sirasi=("NVID", "OR"),
+                                      sirasi=("MISTRAL", "NVID", "OR"),
                                       dogrulama=lambda m: _makro_eksik_mi(m) is None)
                 if icerik and icerik.strip():
                     eksik = _makro_eksik_mi(icerik)
@@ -7980,7 +8006,7 @@ def _interaktif_fiyat_grafigi(kod, seri):
 <div class="grafik-lejant">%s</div>
 <script type="application/json" id="fiyat-serisi">%s</script>
 <script src="grafik.js?v=2" defer></script>
-<script src="fiyat-canli.js?v=4" defer></script>
+<script src="fiyat-canli.js?v=5" defer></script>
 <div style="color:var(--muted); font-size:12px">%s tarihinden bugüne %s kapanış fiyatları (TL). Referanslar: dönem başı kapanış (noktalı), SMA20/SMA50 ortalamaları, en düşük/en yüksek/son kapanış.</div>
 </div>""" % (kod, len(seri), _renk(deg), _ty(deg), svg, lejant, veri,
              tarihler[0], kod)

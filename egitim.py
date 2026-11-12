@@ -410,10 +410,10 @@ def _ders_uret(konu, tanim, veri, kategori=""):
             except Exception as e:
                 logger.warning("Z.ai ders denemesi basarisiz: %s", e)
         if not metin:
-            keys = {k: os.environ.get(k, "") for k in ("AMD_API_KEY", "CF_API_KEY", "ALT_API_KEY", "OR_API_KEY")}
+            keys = {k: os.environ.get(k, "") for k in ("MISTRAL_API_KEY", "MISRAL_API_KEY", "AMD_API_KEY", "CF_API_KEY", "ALT_API_KEY", "OR_API_KEY")}
             if any(v and v not in DUMMY_ANAHTARLAR for v in keys.values()):
                 try:
-                    yedek = bot.llm_call(prompt, sirasi=("DISC", "AMD", "YEDEK", "OR"),
+                    yedek = bot.llm_call(prompt, sirasi=("MISTRAL", "DISC", "AMD", "YEDEK", "OR"),
                                          dogrulama=ders_tamamlik)
                     if yedek and not yedek.startswith("(LLM") and ders_tamamlik(yedek):
                         metin = yedek
@@ -533,6 +533,15 @@ def main():
         _i18n.sitemap_guncelle(_Path("."), ["en", "de", "ru", "zh"])
     except Exception as _e:
         logger.warning("Sitemap tazelenemedi: %s", _e)
+    # Defter (2026-11-12): ders akisinin LLM harcamasi. Kapi: kosuda gercek
+    # harcama yoksa (LLM tumuyle basarisizsa sablonla uretilir) bos satir yazma.
+    try:
+        import kullanim_defteri
+        _kt = getattr(bot, "_LLM_KOSU_TOKEN", {}) or {}
+        if (_kt.get("in") or 0) + (_kt.get("out") or 0) > 0:
+            kullanim_defteri.kaydet("egitim")
+    except Exception as _e:
+        logger.warning("Defter kaydi yazilamadi: %s", _e)
     print(f"BORSA OKULU DERSI HAZIR: {tarih} | {konu} | ders {idx + 1}/{len(MUFREDAT)}", flush=True)
     return 0
 

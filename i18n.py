@@ -538,6 +538,12 @@ class Cevirmen:
         self.sozlukten = 0
         self.kirilli_elle = 0
         self.reddedilen_ceviri = 0
+        # Kosu-bazli harcama sayaci (2026-11-12): ceviri cagrilari bot.llm_call
+        # zincirine girmez; kullanim defterindeki "ceviri" satiri buradan beslenir.
+        # Kutu semantigi bot._LLM_KOSU_TOKEN ile aynidir: kabul edilmeyen
+        # denemelerin token'i dahil GERCEK harcama.
+        self.harcama = {"in": 0, "out": 0, "istek": 0}
+        self.harcama_uctan = {}
 
     # -- RPM korumasi ----------------------------------------------------
     def _rpm_bekle(self, ad: str, katsayi: float = 1.0) -> None:
@@ -655,6 +661,20 @@ class Cevirmen:
         aktif uc yavas uc (NVIDIA ailesi) ise "son pencere" modu yine calisir.
         """
         uclar = []
+        # ZINCIRIN BASI (2026-11-12 kullanici karari): Mistral — kullanicinin
+        # ucretli aboneligi (aylik kredi), stabil; uzerinde barindirilan GLM 5.3
+        # Flash + DeepSeek V4.1 Flash ile ucretsiz katmanlarin kotasini yormadan
+        # cevirir. Secret 2026-11-12 gecesi "MISRAL_API_KEY" (yazim hatasi)
+        # adiyla da eklendi; eski ad da okunur (duzeltilince cikarilir).
+        mistral_taban = os.environ.get("MISTRAL_BASE_URL", "https://api.mistral.ai/v1").rstrip("/")
+        mistral_anahtar = os.environ.get("MISTRAL_API_KEY") or os.environ.get("MISRAL_API_KEY", "")
+        if mistral_anahtar:
+            mistral_modeller = [m.strip() for m in os.environ.get(
+                "MISTRAL_MODELS",
+                "zai-glm-5-3-flash,deepseek-v4-1-flash-1017").split(",") if m.strip()]
+            mistral_modeller = list(dict.fromkeys(mistral_modeller))
+            uclar.append(("MISTRAL", mistral_taban + "/chat/completions",
+                          mistral_anahtar, mistral_modeller))
         # 0) NVIDIA NIM (build.nvidia.com) — ZINCIRIN BASI (2026-10-21 gece karari).
         #    Anahtarlar ayni host'u gosterdiginden devre kesici `ad` ile ayrilir; boylece
         #    biri kotalaninca digeri hizla devreye girer. istek temposu _rpm_bekle +
@@ -764,6 +784,47 @@ class Cevirmen:
         # yok); Gemini uclari 2026-10-21'de cikarildi.
         return uclar
 
+    # -- harcama muhasebesi (2026-11-12) -----------------------------------
+    def _harcama_ekle(self, uc: str, model: str, kutu: dict) -> None:
+        """Bir istek baglaminin usage kutusunu kosu harcamasina ekler.
+
+        Kutu, yanit icergi islenmeden once _llm_istek icinde doldurulur;
+        JSON bozuk olsa bile (parse hatasi firlatsa da) gercek harcama
+        kutudadir. Saglayici usage donmediyse kutu bos kalir, istek yine
+        sayilir.
+        """
+        self.harcama["istek"] += 1
+        _d = self.harcama_uctan.setdefault(f"{uc}/{model}", [0, 0, 0])
+        _d[2] += 1
+        if not kutu:
+            return
+        _i = int(kutu.get("prompt_tokens") or 0)
+        _c = int(kutu.get("completion_tokens") or 0)
+        self.harcama["in"] += _i
+        self.harcama["out"] += _c
+        _d[0] += _i
+        _d[1] += _c
+
+    def harcama_ozeti(self):
+        """Defter 'ceviri' satiri icin (saglayici, model, in, out, istek, dagilim).
+
+        Harcama yoksa None doner (bos satir acilmaz). Baskin uc/model token
+        toplamina, esitlikte istek sayisina gore secilir.
+        """
+        if not self.harcama["istek"]:
+            return None
+        if self.harcama_uctan:
+            _b = max(self.harcama_uctan.items(),
+                     key=lambda kv: (kv[1][0] + kv[1][1], kv[1][2]))
+            _uc, _, _mdl = _b[0].partition("/")
+            _dagilim = ", ".join(
+                f"{ad}x{d[2]}" for ad, d in sorted(
+                    self.harcama_uctan.items(), key=lambda x: -x[1][2]))
+        else:
+            _uc, _mdl, _dagilim = "-", "-", ""
+        return (_uc or "-", _mdl or "-", self.harcama["in"],
+                self.harcama["out"], self.harcama["istek"], _dagilim)
+
     def _llm(self, parcalar: list[str], dil: str) -> list[str]:
         hedef = {
             "en": "English", "de": "German", "ru": "Russian", "zh": "Simplified Chinese",
@@ -780,7 +841,7 @@ class Cevirmen:
         uclar = self._uclari_kur()
         if not uclar:
             raise SystemExit(
-                "[i18n] HATA: --provider llm icin DISCOVERY / TOKENPLAN / OPENROUTER / ORCAROUTER / OPENCODE anahtarlarindan en az biri gerekli."
+                "[i18n] HATA: --provider llm icin MISTRAL / DISCOVERY / TOKENPLAN / OPENROUTER / ORCAROUTER / OPENCODE anahtarlarindan en az biri gerekli."
             )
 
         cikti: list[str] = []
@@ -900,7 +961,11 @@ class Cevirmen:
                         continue
                     try:
                         _t0 = time.time()
-                        aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, zaman_asimi)
+                        kutu: dict = {}
+                        try:
+                            aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, zaman_asimi, kutu)
+                        finally:
+                            self._harcama_ekle(ad, model, kutu)
                         if aday and len(aday) == len(dilim):
                             son = aday
                             son_uc = ad
@@ -959,7 +1024,11 @@ class Cevirmen:
                             print(f"[i18n] 429 hiz siniri ({ad}/{model}); {bekle:.0f} sn bekleniyor", file=sys.stderr)
                             time.sleep(bekle)
                             try:
-                                aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, zaman_asimi)
+                                kutu2: dict = {}
+                                try:
+                                    aday = self._llm_istek_dayanikli(url, anahtar, model, sistem, dilim, zaman_asimi, kutu2)
+                                finally:
+                                    self._harcama_ekle(ad, model, kutu2)
                                 if aday and len(aday) == len(dilim):
                                     son = aday
                                     son_uc = ad
@@ -1955,7 +2024,7 @@ _TEMETTU_HREF_RE = re.compile(r'href="(?:\.\./)*temettu(?:\.html)?"')
 # stocks/aktien/aktsii/gupiao'ya cevrilip var olmayan dosya adi uretiyordu
 # (mimar bulgusu). "grafik"/"fiyat" token'lari slug tablolarinda olmadigindan
 # bu iki referans yazim fazlarindan dokunulmadan gecer.
-_CANLI_SCRIPT = '<script src="fiyat-canli.js?v=4" defer></script>'
+_CANLI_SCRIPT = '<script src="fiyat-canli.js?v=5" defer></script>'
 _GRAFIK_SCRIPT_V2 = '<script src="grafik.js?v=2" defer></script>'
 
 
@@ -3069,6 +3138,18 @@ def main() -> int:
     ozet = dil_sayfalari_yaz(kok, diller, sayfa_listesi, cevirmen)
 
     cevirmen.kaydet()
+
+    # Defter (2026-11-12): ceviri harcamasi bot.llm_call'a girmedigi icin
+    # kendi zincirinden ozetle yazilir; harcama yoksa satir acilmaz.
+    try:
+        import kullanim_defteri
+        _oz = cevirmen.harcama_ozeti()
+        if _oz:
+            kullanim_defteri.kaydet_ozet("ceviri", saglayici=_oz[0], model=_oz[1],
+                                         token_in=_oz[2], token_out=_oz[3],
+                                         deneme=_oz[4], yazan_dagilimi=_oz[5])
+    except Exception as _e:
+        print(f"[i18n] uyari: ceviri defter kaydi yazilamadi: {_e}", file=sys.stderr)
 
     if not args.dogrula:
         for dil in diller:

@@ -194,10 +194,10 @@ def _gundem_uret(kategoriler):
             except Exception as e:
                 logger.warning("Z.ai gundem denemesi basarisiz: %s", e)
         if not metin or metin.startswith("(LLM"):
-            keys = {k: os.environ.get(k, "") for k in ("AMD_API_KEY", "CF_API_KEY", "ALT_API_KEY", "OR_API_KEY")}
+            keys = {k: os.environ.get(k, "") for k in ("MISTRAL_API_KEY", "MISRAL_API_KEY", "AMD_API_KEY", "CF_API_KEY", "ALT_API_KEY", "OR_API_KEY")}
             if any(v and v not in DUMMY_ANAHTARLAR for v in keys.values()):
                 try:
-                    metin = bot.llm_call(prompt, sirasi=("AMD", "CF", "YEDEK", "OR"))
+                    metin = bot.llm_call(prompt, sirasi=("MISTRAL", "AMD", "CF", "YEDEK", "OR"))
                 except Exception as e:
                     logger.warning("LLM gundem basarisiz: %s", e)
     if not metin or metin.startswith("(LLM"):
@@ -294,6 +294,15 @@ def main():
         _i18n.sitemap_guncelle(_Path("."), ["en", "de", "ru", "zh"])
     except Exception as _e:
         print(f"uyari: sitemap tazelenemedi: {_e}", flush=True)
+    # Defter (2026-11-12): gundem akisinin LLM harcamasi. Kapi: kosuda gercek
+    # harcama yoksa (LLM tumuyle basarisizsa sablonla uretilir) bos satir yazma.
+    try:
+        import kullanim_defteri
+        _kt = getattr(bot, "_LLM_KOSU_TOKEN", {}) or {}
+        if (_kt.get("in") or 0) + (_kt.get("out") or 0) > 0:
+            kullanim_defteri.kaydet("haftasonu")
+    except Exception as _e:
+        print(f"uyari: defter kaydi yazilamadi: {_e}", flush=True)
     print(f"HAFTA SONU GUNDEMI HAZIR: {tarih} | {sum(len(v) for v in kategoriler.values())} baslik", flush=True)
     return 0
 

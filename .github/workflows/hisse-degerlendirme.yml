@@ -49,6 +49,7 @@ jobs:
           ALT_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OR_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY || secrets.MISRAL_API_KEY }}
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}

@@ -15,6 +15,13 @@ veya Cloudflare R2 (kayit notu, 2026-10-08).
 Kaynak veriler: bot._LLM_SON_BASARI (basarili cagri kimligi),
 bot._LLM_TOKEN_SAYAC (kosu toplami), bot.DOGRULAMA_IST (dogrulama
 duzeltme sayilari).
+
+KAPSAM (2026-11-12, kullanici istegi: tum LLM harcamalari deftere yazsin):
+gunluk, derin, makro, egitim, haftasonu, radyo, hisse-degerlendirme ve
+ceviri (i18n'in bot.llm_call disindaki kendi zinciri) satirlari yazilir.
+Bilincli kapsam disi: i18n_kalite_testi.py + nvidia_hiz_testi.py
+(zamanlanmis kucuk test harcamalari) ve radyo TTS ses uretimi (sohbet-token
+muhasebesi disidir).
 """
 import csv
 import datetime
@@ -84,6 +91,11 @@ def kaydet(rapor_turu, rozet=False, csv_yol=CSV_YOL, xlsx_yol=XLSX_YOL,
         "kosu_token_in": (getattr(b, "_LLM_KOSU_TOKEN", {}) or {}).get("in", "-"),
         "kosu_token_out": (getattr(b, "_LLM_KOSU_TOKEN", {}) or {}).get("out", "-"),
     }
+    return _satir_yaz(satir, csv_yol, xlsx_yol)
+
+
+def _satir_yaz(satir, csv_yol=CSV_YOL, xlsx_yol=XLSX_YOL):
+    """Satiri CSV'ye ekler ve Excel'i bastan uretir (kaydet + kaydet_ozet ortak)."""
     os.makedirs(os.path.dirname(csv_yol) or ".", exist_ok=True)
     yeni = not os.path.exists(csv_yol)
     with open(csv_yol, "a", encoding="utf-8-sig", newline="") as fh:
@@ -93,6 +105,39 @@ def kaydet(rapor_turu, rozet=False, csv_yol=CSV_YOL, xlsx_yol=XLSX_YOL,
         yazici.writerow(satir)
     _xlsx_yaz(csv_yol, xlsx_yol)
     return satir
+
+
+def kaydet_ozet(rapor_turu, saglayici="-", model="-", token_in=0, token_out=0,
+                deneme="-", sure_sn="-", hata_toplam=0, hata_detay="",
+                yazan_dagilimi="", rozet=False,
+                csv_yol=CSV_YOL, xlsx_yol=XLSX_YOL):
+    """Bot sozluklerine bagli olmayan akislar icin acik-degerli kayit.
+
+    i18n ceviri zinciri bot.llm_call'i kullanmadigindan harcama, saglayici
+    ve model bilgisi cagiran tarafin kendi kosu sayacindan gelir (2026-11-12).
+    token_in/out kabul edilmeyen denemeler dahil kosu toplamidir; her iki
+    token kolonuna da yazilir (basari-bazli ayrim bu akista tutulmuyor).
+    """
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    simdi = datetime.datetime.now(tz)
+    satir = {
+        "tarih": simdi.strftime("%Y-%m-%d"),
+        "saat": simdi.strftime("%H:%M"),
+        "rapor_turu": rapor_turu,
+        "saglayici": saglayici or "-",
+        "model": model or "-",
+        "deneme": deneme if deneme != "-" else "-",
+        "prompt_token": token_in if token_in else "-",
+        "completion_token": token_out if token_out else "-",
+        "sure_sn": sure_sn if sure_sn != "-" else "-",
+        "hata_toplam": hata_toplam or 0,
+        "hata_detay": hata_detay or "",
+        "rozet": "evet" if rozet else "hayir",
+        "yazan_dagilimi": yazan_dagilimi or "",
+        "kosu_token_in": token_in if token_in else "-",
+        "kosu_token_out": token_out if token_out else "-",
+    }
+    return _satir_yaz(satir, csv_yol, xlsx_yol)
 
 
 def _xlsx_yaz(csv_yol, xlsx_yol):

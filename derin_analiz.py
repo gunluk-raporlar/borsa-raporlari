@@ -45,7 +45,7 @@ import bot
 _orijinal_llm_call = bot.llm_call
 
 def _derin_llm_call(prompt, **kwargs):
-    kwargs.setdefault("sirasi", ("NVID", "NVID2", "ZAI", "AMD", "OPENCODE",
+    kwargs.setdefault("sirasi", ("NVID", "NVID2", "MISTRAL", "ZAI", "AMD", "OPENCODE",
                                  "OLLAMA", "GEMINI", "YEDEK", "OR"))
     kwargs.setdefault("max_deneme", 9)
     return _orijinal_llm_call(prompt, **kwargs)

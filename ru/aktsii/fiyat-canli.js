@@ -219,7 +219,7 @@
           rsiAlim: "aşırı alım bölgesinde", rsiSatim: "aşırı satım bölgesinde",
           rsiUst: "nötr bölgenin üst yarısında", rsiAlt: "nötr bölgenin alt yarısında",
           dilimUst: "son 30 günün diliminin üst yarısında", dilimAlt: "son 30 günün diliminin alt yarısında",
-          zirveye: "son 30 günün zirvesine %v mesafede", dibe: "son 30 günün dibine %v mesafede",
+          zirveye: "son 30 günün zirvesine %{v} mesafede", dibe: "son 30 günün dibine %{v} mesafede",
           kaynak: "Kaynak: piyasa açılışı öncesi kapanış serisi; blok gün boyu sabittir." },
     en: { baslik: function (kod, ad) { return "Daily Technical " + kod + " – " + ad + " Review"; },
           kapanis: "last session close",
@@ -227,7 +227,7 @@
           rsiAlim: "overbought", rsiSatim: "oversold",
           rsiUst: "in the upper half of neutral", rsiAlt: "in the lower half of neutral",
           dilimUst: "in the upper half of the 30-day range", dilimAlt: "in the lower half of the 30-day range",
-          zirveye: "%v below the 30-day high", dibe: "%v above the 30-day low",
+          zirveye: "%{v} below the 30-day high", dibe: "%{v} above the 30-day low",
           kaynak: "Source: pre-market closing series; this block stays fixed for the day." },
     de: { baslik: function (kod, ad) { return "Tägliche technische Analyse " + kod + " – " + ad; },
           kapanis: "Schlusskurs der letzten Handelssession",
@@ -235,7 +235,7 @@
           rsiAlim: "im überkauften Bereich", rsiSatim: "im überverkauften Bereich",
           rsiUst: "in der oberen Hälfte des Neutralbereichs", rsiAlt: "in der unteren Hälfte des Neutralbereichs",
           dilimUst: "in der oberen Hälfte des 30-Tage-Bereichs", dilimAlt: "in der unteren Hälfte des 30-Tage-Bereichs",
-          zirveye: "%v unter dem 30-Tage-Hoch", dibe: "%v über dem 30-Tage-Tief",
+          zirveye: "%{v} unter dem 30-Tage-Hoch", dibe: "%{v} über dem 30-Tage-Tief",
           kaynak: "Quelle: Schlusskursreihe vor Markteröffnung; der Block bleibt den Tag über fest." },
     ru: { baslik: function (kod, ad) { return "Ежедневный технический обзор " + kod + " – " + ad; },
           kapanis: "закрытие последней сессии",
@@ -243,7 +243,7 @@
           rsiAlim: "в зоне перекупленности", rsiSatim: "в зоне перепроданности",
           rsiUst: "в верхней половине нейтральной зоны", rsiAlt: "в нижней половине нейтральной зоны",
           dilimUst: "в верхней половине диапазона 30 дней", dilimAlt: "в нижней половине диапазона 30 дней",
-          zirveye: "%v ниже максимума 30 дней", dibe: "%v выше минимума 30 дней",
+          zirveye: "%{v} ниже максимума 30 дней", dibe: "%{v} выше минимума 30 дней",
           kaynak: "Источник: серия закрытий до открытия рынка; блок неизменен в течение дня." },
     zh: { baslik: function (kod, ad) { return kod + " – " + ad + " 每日技术评估"; },
           kapanis: "上一交易日收盘价",
@@ -251,9 +251,16 @@
           rsiAlim: "处于超买区", rsiSatim: "处于超卖区",
           rsiUst: "处于中性区上半部", rsiAlt: "处于中性区下半部",
           dilimUst: "处于30日区间上半部", dilimAlt: "处于30日区间下半部",
-          zirveye: "距30日高点 v%", dibe: "距30日低点 v%",
+          zirveye: "距30日高点 {v}%", dibe: "距30日低点 {v}%",
           kaynak: "来源：开盘前收盘价序列；此板块当日保持不变。" }
   };
+
+  // Yer tutucu belirteci "{v}" — yuzde isareti sablonda belirtecin disinda kalir
+  // ("%{v}" / "{v}%"). Tek harf "v" replace'i kelimelerin icindeki v'yi
+  // degistirdiginden (orn. "zirvesine") tam belirtec kullanilir.
+  function yerlestir(sablon, deger) {
+    return sablon.replace("{v}", deger);
+  }
 
   function incelemeCumlesi(s, veri) {
     var f = veri.f, fiyat = f[f.length - 1];
@@ -267,8 +274,8 @@
     var rsiMetin = r >= 70 ? s.rsiAlim : r <= 30 ? s.rsiSatim :
                    r >= 50 ? s.rsiUst : s.rsiAlt;
     var konumMetin;
-    if (konum >= 0.8) konumMetin = s.zirveye.replace("v", bicim((1 - konum) * 100, LANG));
-    else if (konum <= 0.2) konumMetin = s.dibe.replace("v", bicim(konum * 100, LANG));
+    if (konum >= 0.8) konumMetin = yerlestir(s.zirveye, bicim((1 - konum) * 100, LANG));
+    else if (konum <= 0.2) konumMetin = yerlestir(s.dibe, bicim(konum * 100, LANG));
     else if (konum > 0.5) konumMetin = s.dilimUst;
     else konumMetin = s.dilimAlt;
     var smaDil = LANG === "en" ? "is " + smaMetin + " SMA20 (" + bicim(s20, LANG) + ") and SMA50 (" + bicim(s50, LANG) + ")"

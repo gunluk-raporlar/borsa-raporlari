@@ -270,6 +270,16 @@ def main():
     print(f"Özet: yazilan={len(ozet['yazilan'])} bilanco-korundu={len(ozet['bilanco-atlandi'])} hata={len(ozet['hata'])}")
     if ozet["hata"]:
         print("Hatalar:", "; ".join(ozet["hata"]))
+    # Defter (2026-11-12): kod-basi degerlendirme harcamasi. hisse_yenile.py
+    # LLM cagirmaz ve ayri surecta kosar; kayit onunde yazilir ki subprocess
+    # takilirsa satir kaybolmasin. Kapi: kosuda gercek harcama varsa.
+    try:
+        import kullanim_defteri
+        _kt = getattr(bot, "_LLM_KOSU_TOKEN", {}) or {}
+        if (_kt.get("in") or 0) + (_kt.get("out") or 0) > 0:
+            kullanim_defteri.kaydet("hisse-degerlendirme")
+    except Exception as _e:
+        print(f"uyari: defter kaydi yazilamadi: {_e}")
     if not args.dry and ozet["yazilan"]:
         # Sayfalar güncel verilerle yeniden üretilir; temiz-URL temizliği ve
         # commit iş akışta yapılır.

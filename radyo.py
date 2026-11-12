@@ -415,7 +415,7 @@ def _sohbet_uret(v):
             logger.warning("Z.ai sohbet denemesi basarisiz: %s", e)
     if not metin or metin.startswith("(LLM"):
         try:
-            metin = bot.llm_call(prompt, sirasi=("AMD", "CF", "YEDEK", "OR"))
+            metin = bot.llm_call(prompt, sirasi=("MISTRAL", "AMD", "CF", "YEDEK", "OR"))
         except Exception as e:
             logger.warning("LLM sohbet basarisiz: %s", e)
             metin = None
@@ -802,6 +802,15 @@ def main():
             logger.info("Eski yayin silindi: %s", eski)
     # gecici dosyalari temizle
     shutil.rmtree(TMP_DIR, ignore_errors=True)
+    # Defter (2026-11-12): radyo sohbet metninin LLM harcamasi (TTS ses
+    # uretimi sohbet-token muhasebesi disidir). Kapi: harcama yoksa yazma.
+    try:
+        import kullanim_defteri
+        _kt = getattr(bot, "_LLM_KOSU_TOKEN", {}) or {}
+        if (_kt.get("in") or 0) + (_kt.get("out") or 0) > 0:
+            kullanim_defteri.kaydet("radyo")
+    except Exception as _e:
+        logger.warning("Defter kaydi yazilamadi: %s", _e)
     print(f"BIST RADYO YAYINI HAZIR: {dosya_ad} | {len(satirlar)} replik | {sure // 60} dk {sure % 60} sn", flush=True)
     return 0
 
