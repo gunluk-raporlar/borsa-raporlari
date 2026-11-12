@@ -110,15 +110,17 @@ GEMINI_MODELS = [m.strip() for m in os.environ.get("GEMINI_MODELS", "gemini-3.8-
 
 # Dokuzuncu saglayici: Mistral API (kullanicinin aboneligi, aylik kredi;
 # 2026-11-12 kullanici karari: ZAI haftalik kota tukenirken guvenilir ucretli
-# yedek olarak eklendi). Uzerinde barindirilan GLM 5.3 Flash + DeepSeek V4.1
-# Flash kullanilir; ZAI/Discovery'deki ayni modellerden bagimsiz faturalanir.
+# yedek olarak eklendi). TEK MODEL DeepSeek V4.1 Flash: GLM 5.3 Flash listeden
+# cikarildi (2026-11-12 kullanici karari — "cift para oduyoruz"; i18n
+# kosularinda basarisiz GLM denemeleri de faturalanmisti). ZAI/Discovery'deki
+# ayni modellerden bagimsiz faturalanir.
 # NOT: Secret 2026-11-12 gecesi "MISRAL_API_KEY" (yazim hatasi) adiyla da
 # eklendi; yanlis adla eklenen anahtar da calissin diye eski ad okunur —
 # secret dogru adla yenilenince bu eski-ad okumasi cikarilebilir.
 MISTRAL_API_KEY = os.environ.get("MISTRAL_API_KEY") or os.environ.get("MISRAL_API_KEY", "")
 MISTRAL_BASE_URL = os.environ.get("MISTRAL_BASE_URL", "https://api.mistral.ai/v1").rstrip("/")
 MISTRAL_MODEL_TERCIH = [m.strip() for m in os.environ.get(
-    "MISTRAL_MODELS", "zai-glm-5-3-flash,deepseek-v4-1-flash-1017").split(",") if m.strip()]
+    "MISTRAL_MODELS", "deepseek-v4-1-flash-1017").split(",") if m.strip()]
 
 # intern-ai discovery servisi (2026-10-15, kullanici karari): ceviri hattindaki
 # DISCOVERY hesabi bot'un icerik ureticilerine de baglandi. deepseek-v4-flash-0731

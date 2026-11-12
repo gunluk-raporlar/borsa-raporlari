@@ -544,6 +544,11 @@ class Cevirmen:
         # denemelerin token'i dahil GERCEK harcama.
         self.harcama = {"in": 0, "out": 0, "istek": 0}
         self.harcama_uctan = {}
+        # Ceviriyi URETEN uc/model (basarili pencerede set edilir). Defter
+        # kolonlari bunu yazsin: harcama-baskin secim, basarisiz denemelerin
+        # token'iyla islemeyen modeli gosterebiliyordu (2026-11-12 defter
+        # bulgusu: deepseek cevirdi, defter GLM yazdi).
+        self.harcama_ureten = None
 
     # -- RPM korumasi ----------------------------------------------------
     def _rpm_bekle(self, ad: str, katsayi: float = 1.0) -> None:
@@ -662,16 +667,18 @@ class Cevirmen:
         """
         uclar = []
         # ZINCIRIN BASI (2026-11-12 kullanici karari): Mistral — kullanicinin
-        # ucretli aboneligi (aylik kredi), stabil; uzerinde barindirilan GLM 5.3
-        # Flash + DeepSeek V4.1 Flash ile ucretsiz katmanlarin kotasini yormadan
-        # cevirir. Secret 2026-11-12 gecesi "MISRAL_API_KEY" (yazim hatasi)
-        # adiyla da eklendi; eski ad da okunur (duzeltilince cikarilir).
+        # ucretli aboneligi (aylik kredi), stabil. TEK MODEL DeepSeek V4.1 Flash:
+        # GLM 5.3 Flash listeden cikarildi (2026-11-12 kullanici karari —
+        # "cift para oduyoruz"): multimodal content + read-timeout denemeleri
+        # basarisiz de olsa faturalaniyordu; DeepSeek i18n'de saglam kanitli
+        # (0.9-1.3 sn / 20 dize). Secret 2026-11-12 gecesi "MISRAL_API_KEY"
+        # (yazim hatasi) adiyla da eklendi; eski ad da okunur (duzeltilince cikarilir).
         mistral_taban = os.environ.get("MISTRAL_BASE_URL", "https://api.mistral.ai/v1").rstrip("/")
         mistral_anahtar = os.environ.get("MISTRAL_API_KEY") or os.environ.get("MISRAL_API_KEY", "")
         if mistral_anahtar:
             mistral_modeller = [m.strip() for m in os.environ.get(
                 "MISTRAL_MODELS",
-                "zai-glm-5-3-flash,deepseek-v4-1-flash-1017").split(",") if m.strip()]
+                "deepseek-v4-1-flash-1017").split(",") if m.strip()]
             mistral_modeller = list(dict.fromkeys(mistral_modeller))
             uclar.append(("MISTRAL", mistral_taban + "/chat/completions",
                           mistral_anahtar, mistral_modeller))
@@ -808,20 +815,25 @@ class Cevirmen:
     def harcama_ozeti(self):
         """Defter 'ceviri' satiri icin (saglayici, model, in, out, istek, dagilim).
 
-        Harcama yoksa None doner (bos satir acilmaz). Baskin uc/model token
-        toplamina, esitlikte istek sayisina gore secilir.
+        Saglayici/model kolonlari CEVIRIYI URETEN uc/modelden gelir
+        (harcama_ureten); harcama-baskin secim yalniz hicbir pencere
+        basarili olmadiysa yedege dusar. Harcama yoksa None doner.
+        Dagilim kolonu istek sayisinin yanina uc-bazli in+out token
+        toplamlarini da tasiyor: UÇ/modelxistek(in+out).
         """
         if not self.harcama["istek"]:
             return None
-        if self.harcama_uctan:
+        if self.harcama_ureten:
+            _uc, _mdl = self.harcama_ureten
+        elif self.harcama_uctan:
             _b = max(self.harcama_uctan.items(),
                      key=lambda kv: (kv[1][0] + kv[1][1], kv[1][2]))
             _uc, _, _mdl = _b[0].partition("/")
-            _dagilim = ", ".join(
-                f"{ad}x{d[2]}" for ad, d in sorted(
-                    self.harcama_uctan.items(), key=lambda x: -x[1][2]))
         else:
-            _uc, _mdl, _dagilim = "-", "-", ""
+            _uc, _mdl = "-", "-"
+        _dagilim = ", ".join(
+            f"{ad}x{d[2]}({d[0]}+{d[1]})" for ad, d in sorted(
+                self.harcama_uctan.items(), key=lambda x: -(x[1][0] + x[1][1])))
         return (_uc or "-", _mdl or "-", self.harcama["in"],
                 self.harcama["out"], self.harcama["istek"], _dagilim)
 
@@ -969,6 +981,7 @@ class Cevirmen:
                         if aday and len(aday) == len(dilim):
                             son = aday
                             son_uc = ad
+                            self.harcama_ureten = (ad, model)
                             # BASARILI PENCEREDE KAZANAN UC/MODEL LOGA YAZILIR (2026-10-15):
                             # basarili istekler sessizdi; hangi saglayicinin canli oldugu
                             # yalnizca hata aninda anlasiliyordu (kullanicinin istegi).
@@ -1032,6 +1045,7 @@ class Cevirmen:
                                 if aday and len(aday) == len(dilim):
                                     son = aday
                                     son_uc = ad
+                                    self.harcama_ureten = (ad, model)
                                     print(f"[i18n] {ad}/{model}: {len(dilim)} dize cevrildi (429 sonrasi)", flush=True)
                                     break
                             except Exception:
@@ -1134,6 +1148,11 @@ class Cevirmen:
         # dusunme (kota icin en ucuzu). Diger modellerde dusunme kapali.
         if "z.ai" in url:
             istek_govdesi["thinking"] = {"type": "low" if model.startswith("glm-5.3") else "disabled"}
+        # Mistral prompt-cache ipucu (docs.mistral.ai; bot.py'deki kararla ayni
+        # anahtar): i18n isteklerinin sabit sistem mesaji cache'lenirse cached
+        # input fiyati GLM'de 5x, DeepSeek'te 43x ucuz (2026-11-12 kota hesabi).
+        if "mistral.ai" in url:
+            istek_govdesi["prompt_cache_key"] = "borsa-raporlari-uretim"
         # intern-ai discovery: derin dusunmeyi kapat (yukaridaki stil zinciri; 400'e
         # karsi MODEL bazinda kendini iyilestirir — reddedilen stil bu modelde bir
         # daha denenmez, diger modeller etkilenmez).
