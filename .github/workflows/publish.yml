@@ -27,7 +27,11 @@ on:
   # Basarisiz kosular yayini tetiklemez (job kosulunda suzulur).
   # Aylik tuketim 4 slotla ~120 build (500 limitinin ~%24'u).
   workflow_run:
-    workflows: ["Gunluk BIST 30 Raporu"]
+    # 2026-11-12: "Cok Dilli Sayfa Guncelleme" eklendi — ceviri commit'leri
+    # [CI Skip] tasidigindan CF build tetiklemez; ceviri BITINCE yayin hemen
+    # kalksin (diger slotlara kalmasin). Bos ceviri kosusunda publish yine
+    # "yeni icerik yok" kapisiyla atlanir.
+    workflows: ["Gunluk BIST 30 Raporu", "Cok Dilli Sayfa Guncelleme"]
     types: [completed]
     branches: [main]
 permissions:

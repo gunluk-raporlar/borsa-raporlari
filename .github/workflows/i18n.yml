@@ -15,10 +15,24 @@ on:
     # derin-analiz 12:23 TSI, makro aksam 18:05 TSI. Not: kuyrukta islenmemis
     # parca kalirsa zincir (dispatch, asagida) yine tetiklenebilir — bos
     # kuyrukta kosmaz, en fazla zincir-derinligi kadar izler.
+    # 2026-11-12 (kullanici karari): sabit slot cron'lari (08:30/13:35/19:10 TSI)
+    # KALDIRILDI — ceviri artik uretici workflow'lari BITINCE tetikleniyor
+    # (asagidaki workflow_run; gunluk rapor / derin analiz / makro analiz).
+    # Kalan tek cron kuyruk ilerletme yedegi: GitHub bir workflow_run'i dusurse
+    # bile kuyruk gunduz 2 saatte bir bosaltir (bos kuyrukta API harcamaz).
     - cron: "0 5-19/2 * * *"   # kuyruk ilerletme: 08:00-22:00 TSI, 2 saatte bir
-    - cron: "30 5 * * *"       # 08:30 TSI — gunluk rapordan (07:17 TSI) ~73 dk sonra
-    - cron: "35 10 * * 1-5"    # 13:35 TSI — derin analizden (12:23 TSI) ~72 dk sonra
-    - cron: "10 16 * * *"      # 19:10 TSI — makro aksam snapshot'indan (18:05 TSI) ~65 dk sonra
+  # 2026-11-12 (kullanici karari): sabit slot cron dusunce/ge box cikinca icerik
+  # yokken kosuyordu (12 Kasim sabahi 06:24 koşusu gunluk rapordan ONCE bitti,
+  # 12 Kasim cevirisi hicbir slota dusmedi). Simdi uretici BITINCE tetiklenir:
+  # gunluk rapor / derin analiz / makro analiz SUCCESS olunca ceviri hemen kosar;
+  # kahreden arizada (FAILURE) ceviri kosmaz — kuyruk ilerletme cronu telafi eder.
+  workflow_run:
+    workflows:
+      - "Gunluk BIST 30 Raporu"
+      - "Derin Analiz (Z.ai GLM)"
+      - "Makro Analiz (GLM + DeepSeek yedek)"
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
     inputs:
       provider:
@@ -46,6 +60,9 @@ concurrency:
 
 jobs:
   cevir:
+    # workflow_run ile tetiklendiyseniz yalnizca uretici SUCCESS ile bittiginde cevir;
+    # schedule/dispatch kosulari etkilenmez (publish.yml deseninin ayni).
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 70
     steps:
