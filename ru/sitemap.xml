@@ -2395,6 +2395,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://borsa-raporlari.pages.dev/ru/terminy/c-d</loc>
+    <lastmod>2026-11-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://borsa-raporlari.pages.dev/ru/terminy/d-e</loc>
     <lastmod>2026-11-12</lastmod>
     <changefreq>weekly</changefreq>
@@ -2407,7 +2413,31 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://borsa-raporlari.pages.dev/ru/terminy/e-f</loc>
+    <lastmod>2026-11-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://borsa-raporlari.pages.dev/ru/terminy/g-i</loc>
+    <lastmod>2026-11-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://borsa-raporlari.pages.dev/ru/terminy/j-m</loc>
+    <lastmod>2026-11-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://borsa-raporlari.pages.dev/ru/terminy/m-n</loc>
+    <lastmod>2026-11-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://borsa-raporlari.pages.dev/ru/terminy/n-p</loc>
     <lastmod>2026-11-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -2426,6 +2456,12 @@
   </url>
   <url>
     <loc>https://borsa-raporlari.pages.dev/ru/terminy/t-kh</loc>
+    <lastmod>2026-11-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://borsa-raporlari.pages.dev/ru/terminy/t-z</loc>
     <lastmod>2026-11-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
