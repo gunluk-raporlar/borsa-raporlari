@@ -232,8 +232,8 @@ jobs:
           if [ "$GUN" -ge 6 ] || [ "$SAAT" -lt 1005 ] || [ "$SAAT" -gt 1725 ]; then
             echo "Seans disi (TSI $SAAT) — robot tetiklenmedi."; exit 0
           fi
-          BEKLEYEN=$(gh run list --workflow=robot.yml --status queued --limit 1 --json databaseId --jq 'length')
-          CALISAN=$(gh run list --workflow=robot.yml --status in_progress --limit 1 --json databaseId --jq 'length')
+          BEKLEYEN=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=robot.yml --status queued --limit 1 --json databaseId --jq 'length')
+          CALISAN=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=robot.yml --status in_progress --limit 1 --json databaseId --jq 'length')
           if [ "${BEKLEYEN:-0}" -gt 0 ] || [ "${CALISAN:-0}" -gt 0 ]; then
             echo "Robot zaten kuyrukta/calisiyor — tekrar tetiklenmedi."; exit 0
           fi
