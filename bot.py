@@ -6244,6 +6244,25 @@ def _hkutu_arka(deg):
     return ("4,120,87" if deg >= 0 else "185,28,28") + f",{a:.2f}"
 
 
+def _hkutu_metin(deg):
+    """Acik temada kutunun metin rengi: zemin parlakligina gore siyah/beyaz.
+
+    2026-11-13 (kullanici: "kutuda bicimsizlik var"): metin sabit beyazdi ve
+    acik zeminlerde okunmuyordu — olcum: 30 kutunun 28'i 4.5:1 altinda, en
+    kotu 1.29:1 (TTKOM, alfa 0.18). Zemin beyaz kart uzerine bindirilip WCAG
+    bagil parlakligi hesaplanir; esik 0.18 — altinda beyaz, ustunde siyah.
+    Iki renk de esikte ~4.5:1 verir. Karanlik temada CSS (html.dark .hkutu)
+    daima beyaz yazar; bu deger yalniz acik tema icindir."""
+    a = min(0.15 + abs(deg) / 3.0 * 0.80, 0.92)
+    r, g, b = (4, 120, 87) if deg >= 0 else (185, 28, 28)
+    kanal = []
+    for c in (r, g, b):
+        v = (c * a + 255 * (1 - a)) / 255.0
+        kanal.append(v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4)
+    parlaklik = 0.2126 * kanal[0] + 0.7152 * kanal[1] + 0.0722 * kanal[2]
+    return "#fff" if parlaklik < 0.18 else "#000"
+
+
 def _hkutu_ogesi(kod, profiller, ticker):
     """Ana sayfa kapsam kutusu (2026-11-11, kullanici talebi: "teknik taramadaki
     isi kutusu gibi ama fiyatli"): kod + fiyat + gunluk %, degisime gore rgba
@@ -6255,12 +6274,14 @@ def _hkutu_ogesi(kod, profiller, ticker):
         yuzde = ("+" if d >= 0 else "") + _tr_sayi(d) + "%"
         fiyat = f'<span class="hfiyat">{_tr_sayi(s["f"])} TL</span>'
         arka = _hkutu_arka(d)
+        metin = _hkutu_metin(d)
     else:
         yuzde = "—"
         fiyat = '<span class="hfiyat">—</span>'
         arka = "100,116,139,0.18"
+        metin = "#000"
     return (f'<a class="hkutu" href="hisse/{kod}.html" data-kod="{kod}" '
-            f'style="background:rgba({arka})" title="{kod} detay sayfası">'
+            f'style="background:rgba({arka});--hk-metin:{metin}" title="{kod} detay sayfası">'
             f'<b>{kod}</b>{fiyat}<span class="hdeg">{yuzde}</span></a>')
 
 
@@ -6433,7 +6454,7 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
 <p style="margin:8px 0 0; font-size:13.5px">Sistem, BIST 30 endeksindeki 30 hissenin tamamını her işlem günü tarar; her biri için teknik sinyal, fiyat grafiği, 7 günlük haber akışı ve rapor arşivi değerlendirmesi üretir. Fiyat ve günlük değişim kutularda canlıdır (~15 dk gecikmeli):</p>
 <div class="hkutu-izgara">{kapsam_kutulari}</div>
 </div>
-<script src="/kutular.js?v=1" defer></script>""" if _profiller else ""
+<script src="/kutular.js?v=2" defer></script>""" if _profiller else ""
 
     icerik = f"""
 <div class="hero">

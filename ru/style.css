@@ -210,12 +210,23 @@ html.dark .ticker-bant, html.dark .topbar { background:#0b1220; border-bottom:1p
 
 /* ---- 2026-11-11 (kullanici talebi): ana sayfa BIST 30 kutulari — Gunluk Isi
    Haritasi ile ayni dil: degisime gore rgba zemin (bot inline yazar, kutular.js
-   canli gunceller), beyaz metin; kutu = kod + fiyat + gunluk %. Tiklanabilir.
-   JS yoksa bot'un yazdigi statik kapanis degerleri gorunur. ---- */
-.hkutu-izgara { display:grid; grid-template-columns:repeat(auto-fill,minmax(104px,1fr)); gap:8px; margin-top:10px; }
+   canli gunceller); kutu = kod + fiyat + gunluk %. Tiklanabilir.
+   JS yoksa bot'un yazdigi statik kapanis degerleri gorunur.
+   2026-11-13 (kullanici: "kutuda bicimsizlik var"): iki kusur olculdu —
+   (a) auto-fill 1008px'te 9 kolona dusuyor, 30 kutu 3x9 + 1x3 kaliyordu;
+   kolon sayisi 30'u tam bolen sabit degerlere baglandi (10/6/5/3) — artik
+   her genislikte son satir tam dolu.
+   (b) sabit beyaz metin acik zeminlerde okunmuyordu (olcum: 30 kutunun 28'i
+   4.5:1 altinda, en kotu 1.29:1). Metin rengi zemin parlakligina gore
+   --hk-metin ile verilir; karanlik temada CSS daima beyaza sabitler. ---- */
+.hkutu-izgara { display:grid; grid-template-columns:repeat(10,1fr); gap:8px; margin-top:10px; }
+@media (max-width:979px) { .hkutu-izgara { grid-template-columns:repeat(6,1fr); } }
+@media (max-width:699px) { .hkutu-izgara { grid-template-columns:repeat(5,1fr); } }
+@media (max-width:479px) { .hkutu-izgara { grid-template-columns:repeat(3,1fr); } }
 .hkutu { display:block; padding:9px 6px; border-radius:10px; text-align:center;
-         color:#fff; text-decoration:none; cursor:pointer; }
+         color:var(--hk-metin,#fff); text-decoration:none; cursor:pointer; }
+html.dark .hkutu { color:#fff; }
 .hkutu b { display:block; font-size:13.5px; letter-spacing:.4px; }
-.hkutu .hfiyat { display:block; font-size:11.5px; font-weight:600; opacity:.93; white-space:nowrap; }
+.hkutu .hfiyat { display:block; font-size:11.5px; font-weight:600; white-space:nowrap; }
 .hkutu .hdeg { display:block; font-size:12px; font-weight:700; }
 .hkutu:hover { outline:2px solid var(--accent); outline-offset:1px; }

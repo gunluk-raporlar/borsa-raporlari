@@ -26,6 +26,19 @@
     return (d >= 0 ? "4,120,87" : "185,28,28") + "," + a.toFixed(2);
   }
 
+  // 2026-11-13: metin rengi zemin parlakligina gore (acik temada okunurluk).
+  // Esik 0.18 — altinda beyaz, ustunde siyah; karanlik temada CSS beyaza sabitler.
+  function metin(d) {
+    var a = Math.min(0.15 + Math.abs(d) / 3.0 * 0.80, 0.92);
+    var r = d >= 0 ? 4 : 185, g = d >= 0 ? 120 : 28, b = d >= 0 ? 87 : 28;
+    function lin(c) {
+      c = (c * a + 255 * (1 - a)) / 255;
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    }
+    var L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+    return L < 0.18 ? "#fff" : "#000";
+  }
+
   function uygula(liste) {
     var harita = {};
     var i;
@@ -37,6 +50,7 @@
       if (f) f.textContent = bicim(s.f) + " TL";
       if (d) d.textContent = (s.d >= 0 ? "+" : "") + bicim(s.d) + "%";
       kutu.style.background = "rgba(" + arka(s.d) + ")";
+      kutu.style.setProperty("--hk-metin", metin(s.d));
     });
   }
 
