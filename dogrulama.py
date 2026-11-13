@@ -1481,6 +1481,61 @@ def _gercek_mi(deger, izinli, tolerans=0.005):
     return False
 
 
+# --- Yetim sayi taramasi (2026-11-13, architect S2) -------------------------
+# GOLGE METRIK: hicbir seyi reddetmez, yalnizca sayar. Amac, duzeltme
+# sayisindan BAGIMSIZ bir kalite sinyali uretmek. Duzeltme sayisi dedektorun
+# ciktisidir — tolerans gevsetilerek dusurulebilir (2026-11-13: 0.15 tolerans
+# 12.593-17.038 bandini dokunmadan geciriyordu). Yetim sayi sayisi ise metinde
+# KALAN ve hicbir gercek degere eslesmeyen sayilari olcer; toleranstan
+# bagimsizdir. Esik koymadan once olcum biriktirilmelidir.
+_YETIM_SAYI = re.compile(
+    r"(?<![\w.,])-?\d{1,3}(?:\.\d{3})+(?:,\d+)?(?![\w]|[.,]\d)"
+    r"|(?<![\w.,])-?\d{1,8}(?:,\d+)?(?![\w]|[.,]\d)")
+
+# Endeks adlarindaki sayilar veri degildir ("BIST 100", "S&P 500", "DAX 40").
+# Bunlar metinde sabit gecer ve izinli evrende bulunmalari beklenmez; elenmezse
+# her raporda ayni sahte yetimler birikir ve metrigi gurultuye cevirir.
+_ENDEKS_ADI = re.compile(
+    r"\b(?:BIST|Borsa\s+İstanbul|Borsa\s+Istanbul|S&P|SP|NASDAQ|Nasdaq|FTSE|DAX|"
+    r"CAC|Nikkei|Dow\s+Jones|Russell|Euro\s+Stoxx|Stoxx|MSCI)\s*$",
+    re.IGNORECASE)
+
+
+def yetim_sayi_tara(metin, izinli=None, tolerans=0.005):
+    """Metinde kalan, izinli evrende OLMAYAN sayilari dondurur.
+
+    Golge metrik — reddedici degil. Sayilmayanlar:
+    - yil gorunumlu degerler (1900-2100, tam sayi),
+    - 10'un altindaki tam sayilar (lot, adet, siralama: mesru sayilamaz
+      degerler, gercek evrende bulunmalari beklenmez).
+
+    Donus: {"adet": int, "ornekler": [(yazi, deger), ...]} — ornekler en fazla 10.
+    """
+    if not metin:
+        return {"adet": 0, "ornekler": []}
+    # Markdown tablo satirlari TARANMAZ: fiyat/oran tablolari gercek veridir
+    # ama makro evreninde degildir; tarama prose ile sinirli tutulur. Aksi
+    # halde rapor basina 200-380 sahte yetim cikiyor (2026-11-13 olcumu).
+    taranan = "\n".join(s for s in metin.split("\n")
+                        if not s.lstrip().startswith("|"))
+    ornekler = []
+    for m in _YETIM_SAYI.finditer(taranan):
+        yazi = m.group(0)
+        deger = _yuzde_degeri(yazi)
+        if deger is None:
+            continue
+        if 1900 <= deger <= 2100 and float(deger).is_integer():
+            continue
+        if abs(deger) < 10 and float(deger).is_integer():
+            continue
+        if _ENDEKS_ADI.search(taranan[max(0, m.start() - 20):m.start()]):
+            continue
+        if _gercek_mi(deger, izinli, tolerans=tolerans):
+            continue
+        ornekler.append((yazi, deger))
+    return {"adet": len(ornekler), "ornekler": ornekler[:10]}
+
+
 # Yuva-bagli sayi (2026-11-11): sayinin hemen onunde acik ulke etiketi varsa
 # ("(TR %3,7 vs US %3,7" biçimi) sayi o ülkenin yuvasina baglidir; deger
 # baska bir ülkenin gercek snapshot degeri olsa bile (_gercek_mi korumasi)
@@ -1657,6 +1712,9 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
     metin, endeks, uyari = endeks_seviye_duzelt(metin, endeks_seviyesi,
                                                 endeks_seviyeleri=endeks_seviyeleri,
                                                 izinli=izinli_degerler)
+    # Golge metrik (2026-11-13): duzeltmelerden SONRA kalan, hicbir gercek
+    # degere eslesmeyen sayilar. Reddedici degil — cagiran taraf metrics'e yazar.
+    yetim = yetim_sayi_tara(metin, izinli_degerler)
     return {"metin": metin, "isim_duzeltme": isim, "enflasyon_duzeltme": enf,
             "endeks_duzeltme": endeks, "endeks_uyari": uyari,
             "faiz_duzeltme": faiz, "makro_duzeltme": makro,
@@ -1664,7 +1722,8 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
             "dolar_duzeltme": dolar, "cari_duzeltme": cari,
             "olasilik_duzeltme": olasilik, "olasilik_uyari": olasilik_uyari,
             "yilliklastirma_duzeltme": yillik,
-            "yuva_bagli_duzeltme": enf_yuva + faiz_yuva}
+            "yuva_bagli_duzeltme": enf_yuva + faiz_yuva,
+            "yetim_sayi": yetim}
 
 
 # --- Sinyal sinifi hizalama + ADX metin kurallari (2026-11-07 denetim) ----

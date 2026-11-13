@@ -35,6 +35,12 @@ jobs:
           python-version: '3.12'
       - name: Kutuphaneleri kur
         run: pip install -r requirements.txt
+      # 2026-11-13: dogrulayici regresyon kapisi. Testler gecmezse rapor
+      # URETILMEZ. Gerekce: bozuk dogrulayici canliya metin bozulmasi olarak
+      # yansidi (2026-11-13 makro raporu: "BIST 30" -> "BIST 4,8",
+      # "11.811,48" -> "11.811,4,8"). Bloklayici — "|| echo" ile yutulmaz.
+      - name: Dogrulayici regresyon testleri
+        run: python -m unittest test_makro_veri -v
       # EMA Lightning kur (23.10 kullanici karari: rapor sesli bulteni EMA
       # sesiyle okunur; bot.rapor_sesi_uret EMA'yi birincil, Edge-TTS'i yedek
       # kullanir). pip'in varsayilan torch'u CUDA paketi (~2 GB); runner

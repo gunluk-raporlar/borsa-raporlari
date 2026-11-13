@@ -1374,5 +1374,58 @@ class DogrulamaBozulmaTest(unittest.TestCase):
         self.assertEqual(bir, iki)
 
 
+class YetimSayiTest(unittest.TestCase):
+    """Golge metrik (2026-11-13): yetim sayi taramasi.
+
+    Reddedici DEGIL — yalnizca sayar. Bu testler metrigin dogru saydigini
+    ve gurultu kaynaklarini (tablo, yil, kucuk tam sayi) eledigni dogrular.
+    """
+
+    IZINLI = [37.0, 36.0, 4.8, 29.73, 11811.48]
+
+    def test_uydurma_sayi_yakalanir(self):
+        r = dogrulama.yetim_sayi_tara("Enflasyon %87,3 seviyesinde.", self.IZINLI)
+        self.assertEqual(r["adet"], 1)
+        self.assertEqual(r["ornekler"][0][0], "87,3")
+
+    def test_gercek_deger_yetim_sayilmaz(self):
+        r = dogrulama.yetim_sayi_tara("Politika faizi %37, enflasyon %29,73.", self.IZINLI)
+        self.assertEqual(r["adet"], 0)
+
+    def test_markdown_tablosu_taranmaz(self):
+        # Tablo fiyatlari gercek veridir ama makro evreninde degildir;
+        # taranirsa rapor basina 200-380 sahte yetim cikiyordu.
+        tablo = ("| Hisse | Fiyat |\n| --- | --- |\n| AKBNK | 70,15 |\n"
+                 "| GARAN | 152,50 |")
+        r = dogrulama.yetim_sayi_tara(tablo, self.IZINLI)
+        self.assertEqual(r["adet"], 0)
+
+    def test_yil_ve_kucuk_tam_sayi_elenir(self):
+        r = dogrulama.yetim_sayi_tara("2026 yilinda 3 hisse izlendi.", self.IZINLI)
+        self.assertEqual(r["adet"], 0)
+
+    def test_binlik_ayrac_butun_okunur(self):
+        # "11.811,48" ikiye bolunmemeli; izinli evrende oldugu icin yetim degil.
+        r = dogrulama.yetim_sayi_tara("BIST 100 11.811,48 puana ulasti.", self.IZINLI)
+        self.assertEqual(r["adet"], 0)
+
+    def test_endeks_adi_elenir(self):
+        # "BIST 100" / "S&P 500" sabit endeks adidir, veri degildir.
+        r = dogrulama.yetim_sayi_tara(
+            "BIST 100 ve S&P 500 yukseldi; DAX 40 geriledi.", self.IZINLI)
+        self.assertEqual(r["adet"], 0)
+
+    def test_endeks_adi_olmayan_sayi_yine_yakalanir(self):
+        # Eleme fazla genis olmamali: endeks adi yoksa sayi sayilir.
+        r = dogrulama.yetim_sayi_tara("Endeks 100 puan yukseldi.", self.IZINLI)
+        self.assertEqual(r["adet"], 1)
+
+    def test_metin_dogrula_anahtari_dondurur(self):
+        # Cagiran taraf (bot.py) bu anahtari metrics'e yazar; kaybolmamali.
+        sonuc = dogrulama.metin_dogrula("Politika faizi %37 seviyesinde.", {})
+        self.assertIn("yetim_sayi", sonuc)
+        self.assertIn("adet", sonuc["yetim_sayi"])
+
+
 if __name__ == "__main__":
     unittest.main()

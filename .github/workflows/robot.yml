@@ -70,11 +70,27 @@ jobs:
             echo "Bekleyen robot kosusu var — tetiklenmedi (kuyruk şişmesin)."
             exit 0
           fi
-          UYKU=$(( 1800 - 10#$(TZ=Europe/Istanbul date +%M)*60 - 10#$(TZ=Europe/Istanbul date +%S) ))
+          # 2026-11-13: eski formul (1800 - dk*60 - sn) yalnizca :30 ONCESI
+          # baslayan kosularda pozitifti; :30 sonrasi negatife dusup
+          # "sleep -1" ile adimi aninda olduruyordu (bugun 8 kosunun 6'si
+          # boyle dustu). Modulo bicimi saatten bagimsiz, her zaman 1..1800.
+          SANIYE=$(( 10#$(TZ=Europe/Istanbul date +%M)*60 + 10#$(TZ=Europe/Istanbul date +%S) ))
+          UYKU=$(( 1800 - SANIYE % 1800 ))
           echo "Sonraki yarim-saat sinirina $UYKU sn uyunacak, sonra tetiklenecek."
           sleep "$UYKU"
           if [ "$(TZ=Europe/Istanbul date +%H%M)" -gt 1755 ]; then
             echo "Uyku sonrası oturum doldu — tetiklenmedi."
             exit 0
           fi
-          gh workflow run robot.yml --ref main && echo "Zincir: sonraki kosu tetiklendi."
+          # 2026-11-13: gh workflow run ara sira dusuyordu (#252, UYKU pozitifken
+          # de adim oldu). Tek deneme yerine 3 deneme + 10 sn ara.
+          for DENEME in 1 2 3; do
+            if gh workflow run robot.yml --ref main; then
+              echo "Zincir: sonraki kosu tetiklendi (deneme $DENEME)."
+              exit 0
+            fi
+            echo "Tetikleme denemesi $DENEME basarisiz; 10 sn sonra tekrar."
+            sleep 10
+          done
+          echo "UYARI: zincir 3 denemede tetiklenemedi."
+          exit 1

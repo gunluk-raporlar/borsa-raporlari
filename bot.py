@@ -3015,8 +3015,9 @@ def master_cio_agent(state: AgentState):
         if en_iyi and en_iyi.get("adet", 10 ** 9) <= son_care_esik:
             uyari = ("> ⚠️ **Düşük güvenilirlik sürümü:** Bu sayfa, üretim denemelerinin tamamı "
                      f"kalite eşiğine takıldığı için en az düzeltme gerektiren adaydan "
-                     f"({en_iyi['adet']} düzeltme ile) yayınlanmıştır; sayılar doğrulama katmanında "
-                     "gerçek veriyle düzeltilmiştir, yine de tablolarla çapraz kontrol edin.\n\n")
+                     f"({en_iyi['adet']} düzeltme ile) yayınlanmıştır. Sayılar otomatik düzeltildi "
+                     "ama **doğrulanmadı**: düzeltme sayısı eşiğin üzerinde olduğu için metin kalite "
+                     "kapısından geçemedi. Tablolarla çapraz kontrol edin.\n\n")
             return {"final_report": uyari + en_iyi["metin"]}
         raise RuntimeError("Gunluk rapor dogrulama esigini gecemedi (UYDURMA_ESIGI=%s); "
                            "CI deneme dongusu tekrar uretim yapacak." % UYDURMA_ESIGI)
@@ -3896,9 +3897,9 @@ kelimeyi aşmasın (aşacaksa alt başlığa böl).
     if en_iyi and en_iyi.get("adet", 10 ** 9) <= son_care_esik:
         uyari = ("> ⚠️ **Düşük güvenilirlik sürümü:** Bu sayfa, üretim denemelerinin tamamı "
                  f"kalite eşiğine takıldığı için en az düzeltme gerektiren adaydan ({en_iyi['adet']} "
-                 "sayı/isim otomatik düzeltildi) son çare olarak yayımlanmıştır. Rakamlar anlık "
-                 "snapshot'a göre deterministik doğrulamadan geçirilmiştir; metin akıcılığı standart "
-                 "yayından düşük olabilir.\n\n")
+                 "sayı/isim otomatik düzeltildi) son çare olarak yayımlanmıştır. Düzeltmeler "
+                 "uygulandı ama metin kalite kapısından geçemedi; rakamlar yine de hatalı olabilir. "
+                 "Metin akıcılığı standart yayından düşüktür.\n\n")
         logger.warning("[Makro Analiz] son care yayini: %d duzeltmeli aday rozetle yayimlaniyor.", en_iyi["adet"])
         return uyari + en_iyi["metin"]
     logger.error("[Makro Analiz] metin uretilemedi (GLM/AMD): %s", son_hata)
@@ -4119,6 +4120,10 @@ DOGRULAMA_IST = {"isim": 0, "enflasyon": 0, "toplam_metin": 0, "endeks": 0,
                  "olasilik": 0, "olasilik_uyari": 0, "yilliklastirma": 0,
                  "yuva_bagli": 0, "evren_disi_isim": 0,
                  "sinyal": 0, "adx": 0,
+                 # Golge metrik (2026-11-13): duzeltmelerden sonra kalan,
+                 # hicbir gercek degere eslesmeyen sayilar. REDDEDICI DEGIL —
+                 # once olcum biriktirilir, esik sonra konur.
+                 "yetim_sayi": 0, "yetim_sayi_metin": 0,
                  "son_guncelleme": ""}
 
 # Evren disi sirket adlari (2026-11-11): LLM'in BIST 30 evreni disinda
@@ -4341,6 +4346,20 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
                            + len(sonuc["dolar_duzeltme"]) + len(sonuc["cari_duzeltme"])
                            + len(sonuc.get("olasilik_duzeltme", []))
                            + len(sonuc.get("yilliklastirma_duzeltme", [])))
+        # Golge metrik (2026-11-13, architect S2): yetim sayi sayisi.
+        # REDDEDICI DEGIL — yalnizca metrics'e yazilir ve loglanir. Amac,
+        # duzeltme sayisindan BAGIMSIZ bir kalite sinyali biriktirmek:
+        # duzeltme sayisi dedektorun ciktisidir, tolerans gevsetilerek
+        # dusurulebilir; yetim sayi sayisi toleranstan bagimsizdir.
+        # Esik koymak icin once olcum biriktirilmelidir.
+        yetim = sonuc.get("yetim_sayi") or {}
+        yetim_adet = int(yetim.get("adet") or 0)
+        DOGRULAMA_IST["yetim_sayi"] += yetim_adet
+        DOGRULAMA_IST["yetim_sayi_metin"] += 1
+        if yetim_adet:
+            logger.warning("[Dogrulama%s] %d yetim sayi (golge metrik, reddedici "
+                           "degil): %s", etiket, yetim_adet,
+                           ", ".join(y for y, _ in yetim.get("ornekler", [])[:5]))
         if uydurma_esigi is not None and duzeltme_sayisi > uydurma_esigi:
             # Son çare yayını için en iyi adayı sakla (2026-10-06): düzeltilmiş
             # metin + düzeltme sayısı; çağıran son çareye karar verir.
