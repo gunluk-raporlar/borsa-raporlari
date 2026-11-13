@@ -1306,5 +1306,73 @@ class ResmiVeriTest(unittest.TestCase):
         self.assertTrue(self._arsiv.exists())
 
 
+class DogrulamaBozulmaTest(unittest.TestCase):
+    """2026-11-13 canli makro raporunda kanitlanan bozulmalarin regresyon kilidi.
+
+    Her vaka duzelticinin DOKUNMAMASI gereken bir metni tarif eder; duzeltici
+    metni degistirirse test kirilir. Vakalar yayindaki gercek cumlelerden
+    alinmistir (makro-analiz/2026-11-13.html).
+    """
+
+    FISHER = {"tr": {"tam": 4.8, "yaklasik": 4.8},
+              "eu": {"tam": -1.30, "yaklasik": -1.30},
+              "us": {"tam": 0.30, "yaklasik": 0.30}}
+
+    def test_ulke_ipucu_yoksa_reel_faiz_dokunulmaz(self):
+        # Euro Bolgesi cumlesi: cumlede ulke kelimesi yok -> atif yapilamaz.
+        # Eski davranis "tr" varsayip -1,30'u +4,8 yapiyordu.
+        metin = ("Politika faizi %2,65'te sabit; reel faiz yaklasik -1,30 "
+                 "puan ile derin negatif bolgede.")
+        yeni, duz = dogrulama.reel_fisher_duzelt(metin, self.FISHER)
+        self.assertEqual(yeni, metin)
+        self.assertEqual(duz, [])
+
+    def test_endeks_etiketi_reel_faiz_sanilmaz(self):
+        # "BIST 30" bir endeks etiketidir, reel faiz degeri degil.
+        metin = ("Bu senaryoda BIST 30, pozitif reel faizin korunmasi ve kur "
+                 "istikrariyla desteklenir.")
+        yeni, duz = dogrulama.reel_fisher_duzelt(metin, self.FISHER)
+        self.assertEqual(yeni, metin)
+        self.assertEqual(duz, [])
+
+    def test_binlik_sayi_bolunmez(self):
+        # "11.811,48" tek sayidir; eski desen "11.811" ve "48" diye ikiye
+        # bolup ikincisini 4,8 ile degistiriyordu.
+        metin = ("Ancak BIST 100'un 11.811,48 ile %36 yukselmesi ve dolar "
+                 "bazinda %1,50 getiri saglamasi dikkat cekiyor.")
+        yeni, duz = dogrulama.reel_fisher_duzelt(metin, self.FISHER)
+        self.assertIn("11.811,48", yeni)
+        self.assertNotIn("4,8,4,8", yeni)
+
+    def test_cari_denge_binlik_sayida_cokmez(self):
+        # float("7,182") ValueError atiyor, metin_dogrula istisnayi yukari
+        # tasiyip raporu tamamen reddettiriyordu.
+        metin = "Cari acik 7.182 milyon dolar oldu."
+        yeni, _ = dogrulama.cari_denge_duzelt(metin, {"deger": -4.053})
+        self.assertIsInstance(yeni, str)
+
+    def test_mesru_turkiye_duzeltmesi_calisir(self):
+        # Ulke acikca yaziliysa duzeltme yapilmali (recall korunmali).
+        metin = "Turkiye'de reel faiz yaklasik 9,5 puan ile pozitif."
+        yeni, duz = dogrulama.reel_fisher_duzelt(metin, self.FISHER)
+        self.assertIn("4,8", yeni)
+        self.assertEqual(len(duz), 1)
+
+    def test_isaret_bozuk_turkiye_duzeltilir(self):
+        # Belgelenmis dar tetik: "reel faiz -%36" yazimi yanlistir.
+        metin = "TCMB politika faizi %36 iken reel faiz -%36 seviyesinde."
+        yeni, _ = dogrulama.reel_fisher_duzelt(metin, self.FISHER)
+        self.assertIn("%4,8", yeni)
+
+    def test_dogrulama_idempotent(self):
+        # Ikinci gecis yeni duzeltme uretmemeli; aksi halde duzelticiler
+        # birbirinin ciktisini geri yazar.
+        metin = ("Turkiye'de reel faiz yaklasik 9,5 puan ile pozitif. "
+                 "BIST 30 endeksi 15.000 puan.")
+        bir, _ = dogrulama.reel_fisher_duzelt(metin, self.FISHER)
+        iki, _ = dogrulama.reel_fisher_duzelt(bir, self.FISHER)
+        self.assertEqual(bir, iki)
+
+
 if __name__ == "__main__":
     unittest.main()

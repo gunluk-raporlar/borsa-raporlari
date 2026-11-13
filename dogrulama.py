@@ -229,7 +229,11 @@ def _ulke_anahtari(cumle, sayi_pos):
         return next(iter(sonraki))
     if len(sonraki) > 1:
         return None
-    return "tr"
+    # Ipucu yoksa ULKE BILINMIYOR demektir; "tr" varsaymak 2026-11-13'te
+    # Euro Bolgesi cumlesine Turkiye reel faizini yazdirdi ("reel faiz
+    # yaklasik -1,30 puan" -> "4,8 puan ile derin negatif"). Cagiranlar
+    # None'i "duzeltme yapma" olarak ele alir: atfedemedigin sayiya dokunma.
+    return None
 
 
 def enflasyon_duzelt(metin, oran_yuzde, tolerans=0.005, oranlar=None,
@@ -742,14 +746,17 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005, izinli=None):
                         continue
                     ulke = _ulke_anahtari(cumle, sayi_m.start())
                     hedef = _gosterge_hedef(gostergeler, ulke, gosterge) if ulke else None
-                    if (hedef is None and ulke == "tr"
+                    if (hedef is None
                             and not (_ULKE_TR.search(cumle) or _ULKE_FED.search(cumle)
                                      or _ULKE_EU.search(cumle))):
-                        # Ulke ipucu yok (tr VARSAYILANDI) ve gosterge
-                        # snapshot'ta tek bir ulkede varsa (or. NFP/basvuru/
-                        # JOLTs yalniz ABD) o deger kullanilir; acik ulke
-                        # kelimesi varsa karisma riskine karsi kullanilmaz
-                        # (2026-10-07, ChatGPT denetimi bulgu 8/5).
+                        # Ulke ipucu YOK (ulke None) ya da gosterge o ulkede
+                        # tanimli degil. Gosterge snapshot'ta TEK bir ulkede
+                        # varsa (or. NFP/basvuru/JOLTs yalniz ABD) o deger
+                        # kullanilir; birden fazla ulkede varsa belirsizlik
+                        # surer ve sayi ATLANIR — 2026-11-13'te ulke
+                        # varsayiminin bedeli canli rapor bozulmasiydi.
+                        # Acik ulke kelimesi varsa karisma riskine karsi
+                        # kullanilmaz (2026-10-07, ChatGPT denetimi 8/5).
                         sahipler = [u for u, tablo in gostergeler.items()
                                     if _gosterge_hedef(gostergeler, u, gosterge)
                                     is not None]
@@ -799,7 +806,9 @@ def makro_gosterge_duzelt(metin, gostergeler, tolerans=0.005, izinli=None):
     return "\n".join(cikti), duzeltmeler
 
 
-_SAYI_MARKET = re.compile(r"(?<![\w.])-?\d{1,8}(?:[.,]\d+)?(?![\w])")
+_SAYI_MARKET = re.compile(
+    r"(?<![\w.,])-?\d{1,3}(?:\.\d{3})+(?:,\d+)?(?![\w]|[.,]\d)"
+    r"|(?<![\w.,])-?\d{1,8}(?:,\d+)?(?![\w]|[.,]\d)")
 
 
 # --- Reel faiz (Fisher), dolar-bazli getiri, cari denge duzelticileri -------
@@ -842,12 +851,21 @@ _SAYI_YUZDE_ISARETLI = re.compile(
 # yüzde puan" yazimi); yil korumasi aday dongusunde uygulanir.
 _SAYI_FISHER = re.compile(
     _SAYI_YUZDE_ISARETLI.pattern
-    + r"|(?<![\w.])-?\d{1,4}(?:[.,]\d{1,4})?(?!\w)")
+    + r"|(?<![\w.,])-?\d{1,3}(?:\.\d{3})+(?:,\d{1,4})?(?![\w]|[.,]\d)"
+    + r"|(?<![\w.,])-?\d{1,4}(?:,\d{1,4})?(?![\w]|[.,]\d)")
 # Gri bolge (architect S3): isaret dogruysa hedefe ~2 puana kadar DOKUNULMAZ
 # — "hedefe 0,5-2 puan" sapmalar LLM'in hafifce farkli formül/yuvarlama
 # kullanimi sayilir; yalnizca acik hatalar (isaret bozuklugu ya da iki
 # turevden de belirgin uzaklik) duzeltilir.
 _FISHER_GRI_BOLGE = 2.0
+# Endeks etiketi ("BIST 30", "BIST 100", "XU030", "XU100") bir reel-faiz
+# degeri DEGILDIR. 2026-11-13 canli raporunda "BIST 30" -> "BIST 4,8"
+# bozulmasi buradan geldi: cumlenin sonundaki "reel faiz" sozcugu
+# cumlenin basindaki endeks etiketini aday sayiyordu.
+_ENDEKS_ETIKETI = re.compile(r"(?:BIST|XU0?)\s*$", re.IGNORECASE)
+# Sayi ile "reel faiz" arasindaki en fazla karakter mesafesi. Otesindeki
+# sayi o cumlede reel faizi NITELENDIRMIYOR; eslestirme yanlis olur.
+_FISHER_MAKS_MESAFE = 40
 # Cari denge yon kelimesi yalnizca sayi kayda bu BAGIL yakinsakta degisir.
 _CARI_YAKINLIK = 0.05
 
@@ -919,8 +937,11 @@ def reel_fisher_duzelt(metin, fisher, tolerans=0.01, izinli=None):
                 # Yil korumasi: ciplak dallanan "2026" gibi tarihler aday olamaz.
                 if 1900 <= deger <= 2100 and not re.search(r"[.,]", yazi):
                     continue
+                # Endeks etiketi reel-faiz adayi degildir ("BIST 30").
+                if _ENDEKS_ETIKETI.search(cumle[:m.start()]):
+                    continue
                 d_faiz = _kelime_mesafesi(cumle, m.start(), _REEL_FAIZ)
-                if d_faiz is None:
+                if d_faiz is None or d_faiz > _FISHER_MAKS_MESAFE:
                     continue
                 # Sayi "reel kur"/"reel mevduat faizi"ne daha yakinsa o sayi
                 # Fisher tureviyle KIYASLANMAZ (yanlis gosterge korumasi).
@@ -1084,7 +1105,10 @@ def cari_denge_duzelt(metin, cari, izinli=None):
                 tok = m2.group(0)
                 adaylar_v = [_yuzde_degeri(tok)]
                 if re.fullmatch(r"-?\d\.\d{3}", tok):
-                    adaylar_v.append(float(tok.replace(".", ",")))
+                    # Turkce binlik ayraci: "7.182" -> 7182. Virgule cevirmek
+                    # float("7,182") ValueError'i atiyordu ve metin_dogrula
+                    # istisnayi yukari tasiyip raporu tamamen reddettiriyordu.
+                    adaylar_v.append(float(tok.replace(".", "")))
                 for v in adaylar_v:
                     if v is None:
                         continue
