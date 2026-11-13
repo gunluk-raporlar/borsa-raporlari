@@ -5,14 +5,14 @@
   "sure_sn": 60.8,
   "son_guncelleme": "2026-11-12T13:58:30+03:00"
  },
- "guncelleme": "2026-11-12T13:58:30+03:00",
+ "guncelleme": "2026-11-13T11:34:01+03:00",
  "llm": {
   "adet": 8,
-  "ortalama_sn": 92.219,
-  "p95_sn": 150.21,
-  "maks_sn": 234.842,
+  "ortalama_sn": 4.047,
+  "p95_sn": 5.53,
+  "maks_sn": 5.739,
   "basari_orani": 1.0,
-  "son_guncelleme": "2026-11-12T07:37:33+03:00"
+  "son_guncelleme": "2026-11-13T11:34:01+03:00"
  },
  "dogrulama": {
   "isim": 0,
@@ -20,8 +20,8 @@
   "toplam_metin": 1,
   "endeks": 0,
   "endeks_uyari": 0,
-  "faiz": 0,
-  "makro": 0,
+  "faiz": 1,
+  "makro": 1,
   "piyasa": 0,
   "reel_fisher": 0,
   "dolar": 0,
@@ -33,6 +33,6 @@
   "evren_disi_isim": 0,
   "sinyal": 0,
   "adx": 0,
-  "son_guncelleme": "2026-11-12T07:37:33+03:00"
+  "son_guncelleme": "2026-11-13T11:34:01+03:00"
  }
 }
