@@ -95,4 +95,11 @@ jobs:
           # -X ours: rebase'de "ours" = origin (taze taraf); -X theirs bayat
           # hub'i geri yazardı (2026-11-08 vakasi).
           git pull --rebase -X ours origin main
+          # 2026-11-14: rebase -X ours cakisan index.html'de origin'i tutar ve
+          # bu kosunun ana sayfa tazelemesini SESSIZCE atar (gundem kosusu 1 dk
+          # sonra ayni dosyayi tazeledigi icin iki kart birbirini eziyordu).
+          # Taze agactan yeniden uret ki iki yeni sayi da anasayfada gorunsun.
+          python -u anasayfa_tazele.py || echo "UYARI: ana sayfa tazelenemedi"
+          git add index.html
+          git diff --cached --quiet || git commit --amend --no-edit
           git push origin main

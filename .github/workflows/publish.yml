@@ -47,6 +47,15 @@ jobs:
     steps:
       - name: Depoyu indir
         uses: actions/checkout@v4
+      - name: Ana sayfa tazeleme icin kutuphaneler
+        # Ana sayfa uretimi bot.py'yi import eder; bot.py modul duzeyinde
+        # pandas/openai/langgraph/feedparser/markdown istiyor (diger importlar
+        # stdlib). Tam requirements.txt kurmak yfinance/borsapy/edge-tts gibi
+        # yayinla ilgisiz agir paketleri de indirirdi. Kurulum dusse bile
+        # yayin DURMAZ: asagidaki tazeleme adimi fail-open.
+        continue-on-error: true
+        timeout-minutes: 4
+        run: pip install -q openai pandas langgraph feedparser markdown
       - name: Yayin commit'i (Cloudflare Pages build'ini tetikler)
         run: |
           git config user.name "borsa-bot"
@@ -71,6 +80,16 @@ jobs:
           else
             python3 pipeline/veri_dogrula.py .
           fi
+          # Ana sayfa tazeleme (2026-11-14): index.html'i TAZE agactan yeniden
+          # uretir. Icerik botlari kendi ana sayfa tazelemelerini yapar ama
+          # commit adimindaki "git pull --rebase -X ours" cakisan index.html'de
+          # origin'i tutar ve o tazelemeyi SESSIZCE atar (14.11: egitim kosusu
+          # 07:49'da index.html'i degistirdi, gundem kosusu 07:50'de ayni dosyayi
+          # tazeledi; rebase gundem kartini dusurdu, hafta sonu sayisi anasayfada
+          # hic gorunmedi). Yayin kapisinda tazelemek tum icerik turlerini
+          # (gunluk/derin/makro/hafta sonu/okul) tek noktadan kapatir.
+          # Fail-open: betik dusse yayin eskisi gibi devam eder.
+          python3 anasayfa_tazele.py || echo "UYARI: ana sayfa tazeleme atlandi"
           # Dil secici baglantilari (2026-10-30): bolum index'leri ve tarihli
           # arsiv sayfalarindaki eski menuler yayin commit'i icinde tazelenir
           # (ayni sayfanin cevirisi yoksa bolum hub'ina duser, ana sayfaya

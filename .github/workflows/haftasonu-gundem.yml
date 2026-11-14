@@ -81,4 +81,11 @@ jobs:
           # -X ours: rebase'de "ours" = origin (taze taraf). -X theirs bayat
           # agactan gelen dosyayi origin'in UZERINE yazardı (2026-11-08 vakasi).
           git pull --rebase -X ours origin main
+          # 2026-11-14: rebase -X ours cakisan index.html'de origin'i tutar ve
+          # bu kosunun ana sayfa tazelemesini SESSIZCE atar. Okul kosusu 1 dk
+          # once index.html'i degistirdigi icin bugun tam bu oldu: gundem sayisi
+          # hub'da vardi, anasayfada hic gorunmedi. Taze agactan yeniden uret.
+          python -u anasayfa_tazele.py || echo "UYARI: ana sayfa tazelenemedi"
+          git add index.html
+          git diff --cached --quiet || git commit --amend --no-edit
           git push origin main
