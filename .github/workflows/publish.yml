@@ -47,6 +47,13 @@ jobs:
     steps:
       - name: Depoyu indir
         uses: actions/checkout@v4
+      - name: Python kur
+        # Depodaki diger 24 akis gibi setup-python kullanilir: ubuntu kosucunun
+        # sistem Python'u PEP 668 ile korumali, dogrudan "pip install" orada
+        # "externally-managed-environment" hatasi verir.
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Ana sayfa tazeleme icin kutuphaneler
         # Ana sayfa uretimi bot.py'yi import eder; bot.py modul duzeyinde
         # pandas/openai/langgraph/feedparser/markdown istiyor (diger importlar
