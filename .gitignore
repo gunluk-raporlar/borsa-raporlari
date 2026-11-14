@@ -20,3 +20,9 @@ web/out/
 # Yerel Cloudflare Pages build ciktisi
 /dist/
 _SILME-KUYRUGU/
+
+# _kap_sirket_topla.py'nin calisma aninda yazdigi gecici dosyalar
+_kap_oid.json
+_kap_sirket.html
+_kap_on.html
+_kap_kuresel_fresh.html

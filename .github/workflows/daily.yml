@@ -81,6 +81,14 @@ jobs:
           else
             echo "uretim=true" >> "$GITHUB_OUTPUT"
           fi
+      # KAP bildirim akisi (2026-11-14): _kap_sirket_topla.py hicbir workflow'a
+      # bagli degildi; data/kap/kap-akisi.json 26 Ekim'de donmustu ve hisse
+      # sayfalarindaki "KAP Bildirimleri" karti 19-24 gun bayat veri gosteriyordu
+      # (THYAO 21 Ekim, GARAN 23 Ekim). Bot'tan ONCE kosar ki hisse sayfalari
+      # taze akisla uretilsin. Fail-open: cekim patlarsa onceki akis kullanilir,
+      # gunluk rapor uretimi durmaz.
+      - name: KAP bildirim akisini tazele
+        run: python -u _kap_sirket_topla.py || echo "::warning::KAP akisi tazelenemedi — onceki veri kullanilacak."
       - name: Botu calistir
         if: steps.kapisi.outputs.uretim != 'false'
         env:

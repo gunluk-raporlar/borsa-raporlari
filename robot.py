@@ -947,17 +947,39 @@ _SITE_SAAT = """    <!-- Üst Widget Alanı (Canlı Saat ve İstanbul Hava Durum
     setInterval(updateClock, 1000);
     updateClock();
 
-    fetch('https://wttr.in/Istanbul?format=j1')
-        .then(response => response.json())
-        .then(data => {
-            const current = data.current_condition[0];
-            const temp = current.temp_C;
-            const desc = current.lang_tr ? current.lang_tr[0].value : current.weatherDesc[0].value;
-            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: ' + temp + '°C, ' + desc;
-        })
-        .catch(err => {
-            document.getElementById('istanbul-weather').innerText = '🌤️ İstanbul: Parçalı Bulutlu';
-        });
+    // Hava durumu: Open-Meteo (anahtarsiz, CORS acik). 5 sn zaman asimi + 10 dk
+    // oturum onbellegi. Hata halinde "—" yazilir; 14.11'e kadar burada SAHTE
+    // "Parçalı Bulutlu" yaziyordu.
+    (function () {
+        var el = document.getElementById('istanbul-weather');
+        if (!el) return;
+        var WMO = { 0: 'Açık', 1: 'Az bulutlu', 2: 'Parçalı bulutlu', 3: 'Çok bulutlu',
+            45: 'Sisli', 48: 'Kırağılı sis', 51: 'Hafif çisenti', 53: 'Çisenti',
+            55: 'Yoğun çisenti', 56: 'Dondurucu çisenti', 57: 'Yoğun dondurucu çisenti',
+            61: 'Hafif yağmurlu', 63: 'Yağmurlu', 65: 'Şiddetli yağmurlu',
+            66: 'Dondurucu yağmur', 67: 'Şiddetli dondurucu yağmur', 71: 'Hafif kar',
+            73: 'Kar', 75: 'Yoğun kar', 77: 'Kar taneleri', 80: 'Hafif sağanak',
+            81: 'Sağanak', 82: 'Şiddetli sağanak', 85: 'Hafif kar sağanağı',
+            86: 'Yoğun kar sağanağı', 95: 'Gök gürültülü sağanak',
+            96: 'Dolulu gök gürültülü sağanak', 99: 'Şiddetli dolulu gök gürültülü sağanak' };
+        var ANAHTAR = 'hava-istanbul';
+        try {
+            var onb = JSON.parse(sessionStorage.getItem(ANAHTAR) || 'null');
+            if (onb && Date.now() - onb.t < 600000) { el.innerText = onb.m; return; }
+        } catch (e) {}
+        var ctrl = new AbortController();
+        var zamanAsimi = setTimeout(function () { ctrl.abort(); }, 5000);
+        fetch('https://api.open-meteo.com/v1/forecast?latitude=41.01&longitude=28.98&current=temperature_2m,weather_code&timezone=Europe/Istanbul', { signal: ctrl.signal })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+                var c = d.current;
+                var m = '🌤️ İstanbul: ' + Math.round(c.temperature_2m) + '°C, ' + (WMO[c.weather_code] || '—');
+                el.innerText = m;
+                try { sessionStorage.setItem(ANAHTAR, JSON.stringify({ t: Date.now(), m: m })); } catch (e) {}
+            })
+            .catch(function () { el.innerText = '🌤️ İstanbul: —'; })
+            .then(function () { clearTimeout(zamanAsimi); });
+    })();
 </script>"""
 
 _SITE_TICKER1 = """
