@@ -1,6 +1,6 @@
 {
- "guncelleme": "2026-11-14 00:26",
- "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + Resmi AB/ABD(25)",
+ "guncelleme": "2026-11-14 22:55",
+ "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + EVDS(5) + Resmi AB/ABD(25)",
  "gostergeler": [
   {
    "ulke": "Türkiye",
@@ -441,7 +441,7 @@
   {
    "ulke": "ABD",
    "ad": "ÜFE (aylık)",
-   "deger": 0.2,
+   "deger": 0.1,
    "birim": "%",
    "donem": "2026-08-13",
    "tahmin": 0.2,
@@ -1004,34 +1004,6 @@
   },
   {
    "ulke": "ABD",
-   "ad": "Büyüme (yıllık)",
-   "deger": 2.1,
-   "birim": "%",
-   "donem": "2026-09-30",
-   "kaynak_durumu": "FRED resmi verisi",
-   "tahmin": null,
-   "onceki": 2.2,
-   "kaynak_baslik": "FRED reel GSYH (yıllık)",
-   "kaynak_periyot": "2026-09-30",
-   "frekans": "üç aylık",
-   "teyit": "FRED"
-  },
-  {
-   "ulke": "ABD",
-   "ad": "Cari denge",
-   "deger": -246.0,
-   "birim": "milyar $",
-   "donem": "2026-06-30",
-   "tahmin": -255.0,
-   "onceki": -212.6,
-   "kaynak_baslik": "BEA ITA cari denge",
-   "kaynak_periyot": "2026-06-30",
-   "frekans": "üç aylık",
-   "teyit": "BEA",
-   "kaynak_durumu": "BEA resmi verisi"
-  },
-  {
-   "ulke": "ABD",
    "ad": "Enflasyon (yıllık)",
    "deger": 3.7,
    "birim": "%",
@@ -1043,6 +1015,20 @@
    "frekans": "aylık",
    "teyit": "BLS",
    "kaynak_durumu": "BLS resmi verisi"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "Büyüme (yıllık)",
+   "deger": 2.1,
+   "birim": "%",
+   "donem": "2026-09-30",
+   "kaynak_durumu": "FRED resmi verisi",
+   "tahmin": null,
+   "onceki": 2.2,
+   "kaynak_baslik": "FRED reel GSYH (yıllık)",
+   "kaynak_periyot": "2026-09-30",
+   "frekans": "üç aylık",
+   "teyit": "FRED"
   },
   {
    "ulke": "ABD",
@@ -1060,14 +1046,28 @@
   },
   {
    "ulke": "ABD",
+   "ad": "Cari denge",
+   "deger": -246.0,
+   "birim": "milyar $",
+   "donem": "2026-06-30",
+   "tahmin": -255.0,
+   "onceki": -212.6,
+   "kaynak_baslik": "BEA ITA cari denge",
+   "kaynak_periyot": "2026-06-30",
+   "frekans": "üç aylık",
+   "teyit": "BEA",
+   "kaynak_durumu": "BEA resmi verisi"
+  },
+  {
+   "ulke": "ABD",
    "ad": "Politika faizi",
    "deger": 4.0,
    "birim": "%",
-   "donem": "2026-11-13",
+   "donem": "2026-11-14",
    "tahmin": 4.0,
    "onceki": 4.0,
    "kaynak_baslik": "FRED Fed fon ust siniri",
-   "kaynak_periyot": "2026-11-13",
+   "kaynak_periyot": "2026-11-14",
    "frekans": "olay",
    "teyit": "FRED",
    "kaynak_durumu": "FRED resmi verisi"
@@ -1091,14 +1091,74 @@
    "ad": "Politika faizi",
    "deger": 2.65,
    "birim": "%",
-   "donem": "2026-11-13",
+   "donem": "2026-11-14",
    "tahmin": 2.65,
    "onceki": 2.65,
    "kaynak_baslik": "ECB MRO ana refinansman faizi",
-   "kaynak_periyot": "2026-11-13",
+   "kaynak_periyot": "2026-11-14",
    "frekans": "olay",
    "teyit": "ECB",
    "kaynak_durumu": "ECB resmi verisi"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "Mevduat Faizi",
+   "deger": 42.04,
+   "birim": "%",
+   "donem": "2026-11-01",
+   "frekans": "aylık",
+   "onceki": 42.752,
+   "kaynak_baslik": "TCMB EVDS TP.TRY.MT06 (Toplam (TL Mevduat, Akım, %))",
+   "kaynak_periyot": "2026-11-01",
+   "kaynak_durumu": "TCMB EVDS (akşam snapshot)"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "Tüketici Kredisi Faizi",
+   "deger": 66.46,
+   "birim": "%",
+   "donem": "2026-09-01",
+   "frekans": "aylık",
+   "onceki": 64.74,
+   "kaynak_baslik": "TCMB EVDS TP.FKF.TRY.15 (Tüketici Kredisi (TL, Stok, %))",
+   "kaynak_periyot": "2026-09-01",
+   "kaynak_durumu": "TCMB EVDS (akşam snapshot)"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "Kredi Büyümesi (yıllık)",
+   "deger": 35.2891,
+   "birim": "%",
+   "donem": "2026-09-01",
+   "frekans": "aylık",
+   "onceki": 36.3222,
+   "kaynak_baslik": "TCMB EVDS TP.KM.B33 (6.TOPLAM)",
+   "kaynak_periyot": "2026-09-01",
+   "kaynak_durumu": "TCMB EVDS (akşam snapshot)"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "M3 Para Arzı (yıllık)",
+   "deger": 26.8688,
+   "birim": "%",
+   "donem": "2026-11-01",
+   "frekans": "aylık",
+   "onceki": 28.8454,
+   "kaynak_baslik": "TCMB EVDS TP.HPBITABLO1.18 (3.M3)",
+   "kaynak_periyot": "2026-11-01",
+   "kaynak_durumu": "TCMB EVDS (akşam snapshot)"
+  },
+  {
+   "ulke": "Türkiye",
+   "ad": "Reel Efektif Döviz Kuru",
+   "deger": 107.76,
+   "birim": "endeks",
+   "donem": "2026-10-01",
+   "frekans": "aylık",
+   "onceki": 105.1,
+   "kaynak_baslik": "TCMB EVDS TP.RK.T1.Y (TÜFE Bazlı Reel Efektif Döviz Kuru (2025=100))",
+   "kaynak_periyot": "2026-10-01",
+   "kaynak_durumu": "TCMB EVDS (akşam snapshot)"
   }
  ]
 }

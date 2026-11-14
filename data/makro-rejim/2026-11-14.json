@@ -4,8 +4,6 @@
  "eksik_kanallar": [
   "çekirdek enflasyon",
   "enflasyon beklentisi",
-  "kredi büyümesi / M3",
-  "REER",
   "CDS",
   "yabancı takas oranı / forward P/E"
  ],
@@ -14,10 +12,10 @@
  "enflasyon_yonu": "yatay",
  "etiket": "yüksek enflasyon + sıkı para politikası (6.23 puan reel faiz) · ılımlı iç talep",
  "global_risk": {
-  "brent": 96.309998,
-  "dxy": 103.401001,
+  "brent": 95.839996,
+  "dxy": 103.410004,
   "ust10y": null,
-  "vix": 19.27
+  "vix": 19.299999
  },
  "globall": {
   "ABD": {
@@ -31,11 +29,11 @@
  },
  "ic_talep": "ılımlı",
  "issizlik": 8.5,
- "olusturma": "2026-11-14T00:28:37+03:00",
+ "olusturma": "2026-11-14T22:57:29+03:00",
  "para_durusu": "sıkı",
  "piyasa_sinyalleri": {
-  "emtia": 1,
-  "kur": 1
+  "emtia": 0,
+  "kur": 0
  },
  "politika_faizi": 36.0,
  "reel_faiz": 6.23,
