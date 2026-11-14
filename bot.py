@@ -9912,7 +9912,7 @@ def _ajanda_html(olaylar, limit=None, kok=""):
 </tbody>
 </table>
 </div>
-<p class="pano-not">🔴 = yüksek etkili veri. Kaynak: TradingView ekonomik takvimi; saatler TR zamanıdır. <a href="{kok}takvim.html">Tam liste: Ekonomik Takvim &rarr;</a></p>
+<p class="pano-not">🔴 = yüksek etkili veri. Kaynak: <a href="https://www.tradingview.com/economic-calendar/" target="_blank" rel="noopener">TradingView ekonomik takvimi</a>; saatler TR zamanıdır. <a href="{kok}takvim.html">Tam liste: Ekonomik Takvim &rarr;</a></p>
 </div>"""
 
 

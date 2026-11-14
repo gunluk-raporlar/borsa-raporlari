@@ -18,8 +18,10 @@ _GERCEK_AMD = bool(os.environ.get("AMD_API_KEY", "").strip())
 os.environ.setdefault("AMD_API_KEY", "makro-analiz")
 
 import logging
+import re
 import sys
 from datetime import datetime
+import html as _html
 import zoneinfo
 
 import bot
@@ -27,6 +29,46 @@ import makro_veri
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 logger = logging.getLogger("makro-analiz")
+
+# Kaynak adi -> resmi adres. Tablodaki "Kaynak" sutunu ve alt kaynak satiri
+# duz metin basiliyordu (kullanici 14.11: "verilerin kaynagi yaziyor, link
+# yok ama kaynaklari var"). Eslesmeyen adlar duz metin kalir — uydurma adres
+# yazilmaz. Adreslerin tamami 14.11'de HTTP ile dogrulandi.
+KAYNAK_ADRES = {
+    "TradingView ekonomik takvimi": "https://www.tradingview.com/economic-calendar/",
+    "TradingView": "https://www.tradingview.com/economic-calendar/",
+    "TÜİK SDMX": "https://data.tuik.gov.tr/",
+    "TÜİK": "https://data.tuik.gov.tr/",
+    "TCMB EVDS": "https://evds2.tcmb.gov.tr/",
+    "EVDS": "https://evds2.tcmb.gov.tr/",
+    "TCMB": "https://www.tcmb.gov.tr/",
+    "Yahoo Finance": "https://finance.yahoo.com/",
+    "FRED": "https://fred.stlouisfed.org/",
+    "BLS": "https://www.bls.gov/",
+    "BEA": "https://www.bea.gov/",
+    "Eurostat": "https://ec.europa.eu/eurostat",
+    "ECB": "https://www.ecb.europa.eu/",
+    "Borsapy": "https://pypi.org/project/borsapy/",
+    "KAP": "https://www.kap.org.tr/",
+    "İş Yatırım": "https://www.isyatirim.com.tr/",
+}
+
+# Uzun ad once denenmeli: "TCMB EVDS" -> "TCMB"den once eslesmeli. re.sub
+# soldan saga tarar ve yerine koydugu metni yeniden taramaz, bu yuzden
+# baglanti icinde baglanti olusmaz.
+_KAYNAK_RE = re.compile(
+    "|".join(re.escape(a) for a in sorted(KAYNAK_ADRES, key=len, reverse=True))
+)
+
+
+def _kaynak_baglantili(metin):
+    """Kaynak adlarini resmi adreslerine baglar; bilinmeyen adlar duz kalir."""
+    guvenli = _html.escape(str(metin or ""))
+    return _KAYNAK_RE.sub(
+        lambda m: (f'<a href="{KAYNAK_ADRES[m.group(0)]}" target="_blank" '
+                   f'rel="noopener">{m.group(0)}</a>'),
+        guvenli,
+    )
 
 
 def _birlestir(deger, birim):
@@ -58,7 +100,7 @@ def _veri_tablosu(makro):
             f"<td>{_birlestir(g.get('tahmin'), g['birim'])}</td>"
             f"<td>{_birlestir(g.get('onceki'), g['birim'])}</td>"
             f"<td>{g['donem']}</td><td>{g.get('frekans') or '—'}</td>"
-            f"<td>{g.get('kaynak', 'TradingView')}</td>"
+            f"<td>{_kaynak_baglantili(g.get('kaynak', 'TradingView'))}</td>"
             "</tr>"
             for g in uye)
         return ('<div class="tbl-wrap"><table>'
@@ -76,7 +118,7 @@ def _veri_tablosu(makro):
         '<h2 class="section-title">Veri Tabanı (analizde kullanılan kilitli göstergeler)</h2>'
         '<div class="card" style="padding:8px 24px 16px">'
         f"{bolumler}"
-        f'<p style="color:var(--muted);font-size:12.5px">Kaynak: {makro.get("kaynak", "")}'
+        f'<p style="color:var(--muted);font-size:12.5px">Kaynak: {_kaynak_baglantili(makro.get("kaynak", ""))}'
         f' &bull; snapshot: {makro.get("guncelleme", "")}. Analiz metni yalnızca bu '
         "tablodaki rakamlarla üretilir; yoksa sayı yazılmaz ve yayın öncesi "
         "deterministik doğrulamadan geçirilir.</p></div>"
