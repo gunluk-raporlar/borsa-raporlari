@@ -27,10 +27,15 @@ on:
   # gunluk rapor / derin analiz / makro analiz SUCCESS olunca ceviri hemen kosar;
   # kahreden arizada (FAILURE) ceviri kosmaz — kuyruk ilerletme cronu telafi eder.
   workflow_run:
+    # 2026-11-15: hafta sonu akislari eklendi — hafta sonu sayfalari da dil
+    # agaclarina cevriliyor (en/weekend/, en/market-school/ ...); uretici
+    # bitince ceviri kosmazsa ceviriler bir sonraki tetikleyiciye kaliyordu.
     workflows:
       - "Gunluk BIST 30 Raporu"
       - "Derin Analiz (Z.ai GLM)"
       - "Makro Analiz (GLM + DeepSeek yedek)"
+      - "Hafta Sonu Gundem Ajani"
+      - "Borsa Okulu (Hafta Sonu Dersi)"
     types: [completed]
     branches: [main]
   workflow_dispatch:

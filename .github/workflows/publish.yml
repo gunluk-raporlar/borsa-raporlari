@@ -31,7 +31,15 @@ on:
     # [CI Skip] tasidigindan CF build tetiklemez; ceviri BITINCE yayin hemen
     # kalksin (diger slotlara kalmasin). Bos ceviri kosusunda publish yine
     # "yeni icerik yok" kapisiyla atlanir.
-    workflows: ["Gunluk BIST 30 Raporu", "Cok Dilli Sayfa Guncelleme"]
+    # 2026-11-15: hafta sonu akislari eklendi — commit'leri [CI Skip] tasiyor ve
+    # kendi yayin tetikleyicileri yoktu; icerik bir sonraki planli slota (en kotu
+    # ~6 saat) kaliyordu. 15.11: gundem+okul 10:56'da uretildi, site 16:37'ye
+    # kadar 404 verdi (kullanici bulgusu). Artik uretim biter bitmez yayinlanir.
+    workflows:
+      - "Gunluk BIST 30 Raporu"
+      - "Cok Dilli Sayfa Guncelleme"
+      - "Hafta Sonu Gundem Ajani"
+      - "Borsa Okulu (Hafta Sonu Dersi)"
     types: [completed]
     branches: [main]
 permissions:
