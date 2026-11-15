@@ -25,6 +25,9 @@ from dil_yollari import hedef_url, menu_tazele, slug_degistir
 import editor
 import makro_veri
 import makro_katalog
+# Resmi tatil takvimi (2025-2028): hafta sonu kapisina ek olarak tatil
+# gunlerinde de gunluk rapor uretilmesin (2026-11-15).
+import resmi_tatil
 
 # Elle eklenen hisse analiz bolumleri: aciklanan bilancolar + degerlendirmeler
 # (bkz. hisse_analiz.py; veri: data/hisse-analiz/<KOD>.json)
@@ -10493,11 +10496,21 @@ if __name__ == "__main__":
     # tazelenmeye devam eder; kod degisiklikleri hafta sonunda da sayfalara
     # duser.
     hafta_sonu = datetime.now(tz).weekday() >= 5
+    # 2026-11-15: resmi tatillerde de gunluk rapor uretilmez. Hafta sonu
+    # kontrolu tatilleri kapsamaz (29 Ekim, 1 Ocak gibi hafta ici gunler);
+    # resmi_tatil.py 2025-2028 takvimini bilir. Tatil kontrolu dusse bile
+    # uretim devam eder — fail-open.
+    tatil = False
+    if not hafta_sonu:
+        try:
+            tatil = resmi_tatil.tatil_mi(date_str)
+        except Exception:
+            logger.exception("[Gunluk rapor] tatil kontrolu yapilamadi; uretim devam ediyor.")
     os.makedirs("raporlar", exist_ok=True)
-    if hafta_sonu:
-        logger.info("[Gunluk rapor] Hafta sonu (TSI %s): gunluk rapor uretilmedi "
+    if hafta_sonu or tatil:
+        logger.info("[Gunluk rapor] %s (TSI %s): gunluk rapor uretilmedi "
                     "(piyasa kapali, LLM cagrisi yapilmadi); LLM'siz sayfalar "
-                    "tazelenecek.", date_str)
+                    "tazelenecek.", "Hafta sonu" if hafta_sonu else "Resmi tatil", date_str)
     else:
         # Uretim baslamadan once onceki aksam snapshot'ini zorunlu dogrula.
         guncel_snapshot = makro_snapshot_cek(expected_report_date=date_str)
