@@ -5193,11 +5193,27 @@ def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_
     if not aciklama:
         aciklama = "Yapay zeka destekli günlük BIST 30 analizleri: teknik tarama, osilatör sinyalleri, model portföy ve sanal portföy takibi."
     ld_ek_html = f'<script type="application/ld+json">{ld_ek}</script>' if ld_ek else ""
-    ld_json = json.dumps({
-        "@context": "https://schema.org", "@type": "WebPage", "name": title,
-        "description": aciklama, "url": tam_url, "inLanguage": "tr",
-        "isPartOf": {"@type": "WebSite", "name": SITE_ADI, "url": SITE_URL},
-    }, ensure_ascii=False)
+    # 2026-11-15: Google site adi. WebSite dugumu WebPage'in isPartOf'u icine
+    # gomulunce Google site adini okuyamiyor ve alan adi duzeyindeki ada
+    # dusuyordu (pages.dev -> "Cloudflare"). Google WebSite'i UST DUZEY ve
+    # yalnizca ana sayfada istiyor; diger sayfalar gomulu bicimde kalir.
+    if not (yol or "").strip("/"):
+        ld_json = json.dumps({
+            "@context": "https://schema.org",
+            "@graph": [
+                {"@type": "WebSite", "@id": SITE_URL + "#website",
+                 "name": SITE_ADI, "url": SITE_URL},
+                {"@type": "WebPage", "@id": tam_url + "#webpage", "name": title,
+                 "description": aciklama, "url": tam_url, "inLanguage": "tr",
+                 "isPartOf": {"@id": SITE_URL + "#website"}},
+            ],
+        }, ensure_ascii=False)
+    else:
+        ld_json = json.dumps({
+            "@context": "https://schema.org", "@type": "WebPage", "name": title,
+            "description": aciklama, "url": tam_url, "inLanguage": "tr",
+            "isPartOf": {"@type": "WebSite", "name": SITE_ADI, "url": SITE_URL},
+        }, ensure_ascii=False)
     # 2026-11-04 (kullanici istegi): md aynasi kapsamindaki sayfalarda
     # footer'da LLM/ajanlar icin .md baglantisi gorunur olsun.
     md_footer = ""
