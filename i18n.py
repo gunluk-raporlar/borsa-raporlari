@@ -2827,14 +2827,33 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
         else:
             dis_bloklar.append(blok)
 
+    # 1b) Tarihli sayfalarda dosya adindaki tarih esastir (2026-11-15): hafta
+    # sonu bot.py kosmadigi icin statik kayitlarin lastmod'u cuma gununde
+    # kaliyor, yeni hafta sonu sayfalari da o eski degeri miras aliyordu
+    # (15.11 gundem/okul sayfalari 13.11 gorundu). Kayitli deger dosya
+    # adindaki tarihten ESKI ise dosya adi kazanir; daha yeni ise korunur
+    # (sayfa sonradan duzenlenmis olabilir).
+    for _sy, _attr in tr_kayitlar.items():
+        _m = re.search(r"(\d{4}-\d{2}-\d{2})", _sy)
+        if _m and (_attr.get("lastmod") or "") < _m.group(1):
+            _attr["lastmod"] = _m.group(1)
+
     # 2) eksik Turkce sayfalari ekle
     son_lastmod = max((a.get("lastmod") or "" for a in tr_kayitlar.values()), default="") \
         or time.strftime("%Y-%m-%d")
+    bugun = time.strftime("%Y-%m-%d")
     eklenen: list[str] = []
     for rel in turkce_sayfalar(kok):
         sy = seo_yol(rel)
         if sy not in tr_kayitlar:
-            tr_kayitlar[sy] = {"lastmod": son_lastmod, "changefreq": "weekly", "priority": "0.6"}
+            # 2026-11-15: yeni sayfa mevcut kayitlarin EN BUYUK lastmod'unu
+            # aliyordu; hafta sonu uretilen sayfa 2 gun geriye tarihleniyordu
+            # (15.11 gundem/okul sayfalari 13.11 gorundu, cunku hafta sonu
+            # bot.py kosmuyor ve statik kayitlarin lastmod'u cuma gununde
+            # kaliyor). Dosya adindaki tarih esastir; tarih yoksa bugun.
+            _m = re.search(r"(\d{4}-\d{2}-\d{2})", rel.name)
+            _lm = _m.group(1) if _m else bugun
+            tr_kayitlar[sy] = {"lastmod": _lm, "changefreq": "weekly", "priority": "0.6"}
             eklenen.append(sy or "/")
 
     # 3) yeniden yaz
