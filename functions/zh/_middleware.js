@@ -52,7 +52,10 @@ function segmentDegistir(seg) {
 export async function onRequest(context) {
   try {
     const url = new URL(context.request.url);
-    const seg = url.pathname.split("/");
+    // Sonda egik cizgi + .html birlesimi gecersiz hedef uretiyordu:
+    // /zh/haberler.html/ -> /zh/xinwen.html/ -> 404. Cizgiyi at.
+    const yol = /\.html\/$/.test(url.pathname) ? url.pathname.slice(0, -1) : url.pathname;
+    const seg = yol.split("/");
     if (seg[1] !== "zh") return context.next();
     let degisti = false;
     for (let i = 2; i < seg.length; i++) {
