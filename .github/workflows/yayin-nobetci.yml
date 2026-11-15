@@ -14,23 +14,12 @@ on:
     - cron: '23 5,6,7,8 * * 1-5'
     - cron: '23 9,10,11,12 * * 1-5'
     - cron: '23 13 * * 1-5'
-    # Hafta sonu: 10:43-16:43 TSİ — hafta sonu gundem (haftasonu.html),
+    # Hafta sonu: 06:43-16:43 TSİ — hafta sonu gundem (haftasonu.html),
     # borsa okulu (haftasonu-egitimi.html) + yayin akisi/tazeligi
-    # (publish.yml). Uretim cronlari: gundem 08:23, egitim 09:47 TSİ; ilk
-    # pencere 10:43 telafi payi ~1-2 saat; 7 pencere ~6 saat kapsar.
-    - cron: '43 7,8,9,10,11,12,13 * * 6,0'
-    # 2026-10-11 (Pazar): yukaridaki 5 hafta sonu penceresinin TAMAMI dustu
-    # ve zincir ilk halkasini atamadi — hafta sonu icerigi hic uretilmedi.
-    # Erken pencere: 09:43 TSİ, uretim cronlari duserse telafiyi ~1 saat
-    # one alir; cift tetikleme zaten 'suruyor/bekliyor' kontrolu + uretici
-    # tazelik kapilariyla korunur. Zincir bu kosudan sonra kendini 40 dk'da
-    # bir tekrar tetikler.
-    - cron: '43 6 * * 6,0'
-    # 2026-10-31 (Cumartesi): 6 hafta sonu penceresinin TAMAMI yine dustu,
-    # zincir baslayamadi, publish edilmemis icerik ogleden sonraya kaldi.
-    # 07:43 TSİ penceresi yuk penceresinin (08-12 UTC) DISINDA — en az bir
-    # pencerenin yasama sansini yukseltir.
-    - cron: '43 4 * * 6,0'
+    # (publish.yml). 2026-11-15: uretim 06:02/06:17'ye alindigi icin ilk
+    # pencere 06:43'e cekildi; ayrica tekrarlanan "43 4" ve "43 6" satirlari
+    # bu listeye katildi (ayni saatler iki kez yaziliyordu).
+    - cron: '43 3,4,5,6,7,8,9,10,11,12,13 * * 6,0'
   workflow_dispatch:
     inputs:
       kontrol:
@@ -75,11 +64,11 @@ jobs:
                 HEDEF="yayin"
               fi
             else
-              # Hafta sonu (cumartesi/pazar): 09-14 => gundem egitim yayin
-              # (uretim: gundem 08:23, egitim 09:47; erken pencere 09:43,
-              # asil pencereler 10:43-16:43). 15-19 => yalniz yayin tazeligi
-              # (icerik ogleden sonra dustuyse aksama kalmadan yayinlansin).
-              if [ "$SAAT" -ge 9 ] && [ "$SAAT" -le 14 ]; then
+              # Hafta sonu (cumartesi/pazar): 06-14 => gundem egitim yayin
+              # (uretim: gundem 06:02, egitim 06:17; ilk pencere 06:43).
+              # 15-19 => yalniz yayin tazeligi (icerik ogleden sonra dustuyse
+              # aksama kalmadan yayinlansin).
+              if [ "$SAAT" -ge 6 ] && [ "$SAAT" -le 14 ]; then
                 HEDEF="gundem egitim yayin"
               elif [ "$SAAT" -ge 15 ] && [ "$SAAT" -le 19 ]; then
                 HEDEF="yayin"
