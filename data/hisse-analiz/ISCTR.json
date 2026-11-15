@@ -1,92 +1,100 @@
 {
-  "kod": "ISCTR",
-  "guncelleme": "2026-09-23",
-  "teknik_analiz": "İş Bankası (C), 23 Eylül 2026 gün içinde %0,89 primle 13,63 TL'den işlem görüyor. Kısa vade EMA ve Wave Trend AL konumunda; orta ve uzun vade BEKLE'de — tablo 2/4 NÖTR düzeyinde. Kanal konumu %79 ile bandın üst bölgesinde, trend gücü (r) -0,25 ile toparlanma emaresi gösteren bir yapı hakim. Hisse 60 günlük 12,97 TL dip bölgesinin %5 üzerinde, 16,94 TL zirvesinin %20 altında fiyatlanıyor; kamu ve özel bankalar arasında görece geride kalmış değerleme duruşunu koruyor.",
-  "makro_degerlendirme": "İş Bankası'nın makro hassasiyeti iki kanallı: bankacılık faaliyetleri dezenflasyon ve faiz indirim döngüsünden destek bulurken, sanayi iştirakleri portföyü iç talep ve ihracat koşullarına duyarlı. TÜFE'nin %31,5'e gerilemesiyle TÜFE-endeksli tahvil gelirleri azalıyor; buna karşılık faiz indirimleri net faiz marjını onarma potansiyeli taşıyor. Kamu bankalarıyla rekabet baskısı ve mevduat maliyetlerinin seyri marjları belirleyen ana değişkenler. USD/TL'nin 48,83 seviyesinde seyri ve CDS primindeki düşüş eğilimi, yabancı yatırımcının Türk bankalarına dönüşünü destekliyor; İş Bankası bu rotasyonda tarihsel iskontosu nedeniyle ilgi çekebilecek adaylar arasında. Gram altının 6.786 TL ile güçlü seyrettiği ortamda mevduat tabanının istikrarı izleniyor. Ana riskler; enflasyonda katılık, iştirak değerlemelerinde gerileme ve düzenleyici yüklerin artması.",
-  "bilanco_degerlendirmesi": "İş Bankası, 2026 ilk yarısında net kârını yıllık %0,7 artışla yatay tuttu; ikinci çeyrekte 9,7 milyar TL net kâr (-%44,4) ile bir önceki yılın yüksek bazına karşı baskı altında kaldı. Son dört çeyrekte toplam 67,7 milyar TL net kâr üreten banka, ~341 milyar TL piyasa değeriyle ~5,0x F/K ve ~0,8x PD/DD çarpanlarında; defter değerinin altında fiyatlanması, holding iştirak yapısının yarattığı kalıcı iskontoyu yansıtıyor. Bankacılıkta FD/FAVÖK anlamlı olmadığından değerlendirme F/K, PD/DD ve ROE ekseninde yürütülüyor. Son dört çeyrek ROE %14,9 ile enflasyonun altında; net faiz marjındaki sıkışma ve bir önceki yılın yüksek menkul kıymet kazanç bazı kârlılığı baskılıyor. Bir önceki yıl ilk yarısındaki %91,4'lük kâr/gelir oranının %48,5'e inmesi normalleşmenin en sert hissedildiği büyük bankalardan biri olduğunu gösteriyor. Aktif kalitesi ve karşılık oranları sağlam; iştirak portföyünün (Şişecam başta) değeri defter değerine ek opsiyon sunuyor. %4,0 civarındaki temettü verimi destekleyici. Genel değerlendirmede İş Bankası derin iskontolu fakat katalisti zayıf bir değer hikayesi; faiz indirim döngüsünün marjları onarması ve iştirak değerlemelerindeki iyileşme iskontonun kapanması için gerekiyor.",
-  "bilanco": [
-    {
-      "donem": "2024/3",
-      "satis": 15998906801.0,
-      "net_kar": 14047782143.0,
-      "toplam_varlik": 2666033172756.0,
-      "ozsermaye": 274991775009.0,
-      "odenmis_sermaye": 24999970000.0
-    },
-    {
-      "donem": "2024/6",
-      "satis": 24578585506.0,
-      "net_kar": 29150823019.0,
-      "toplam_varlik": 2886227281523.0,
-      "ozsermaye": 285498026402.0,
-      "odenmis_sermaye": 24999970000.0
-    },
-    {
-      "donem": "2024/9",
-      "satis": 25638118234.0,
-      "net_kar": 34684755378.0,
-      "toplam_varlik": 3197227266323.0,
-      "ozsermaye": 290553226336.0,
-      "odenmis_sermaye": 24999970000.0
-    },
-    {
-      "donem": "2024/12",
-      "satis": 34450660659.0,
-      "net_kar": 45517390379.0,
-      "toplam_varlik": 3323772448468.0,
-      "ozsermaye": 318337389995.0,
-      "odenmis_sermaye": 24999970000.0
-    },
-    {
-      "donem": "2025/3",
-      "satis": 17703519756.0,
-      "net_kar": 12417600099.0,
-      "toplam_varlik": 3676738527908.0,
-      "ozsermaye": 326438282274.0,
-      "odenmis_sermaye": 24999970000.0
-    },
-    {
-      "donem": "2025/6",
-      "satis": 32594960886.0,
-      "net_kar": 29789964252.0,
-      "toplam_varlik": 3975553726330.0,
-      "ozsermaye": 360537592354.0,
-      "odenmis_sermaye": 24999970000.0
-    },
-    {
-      "donem": "2025/9",
-      "satis": 58196638164.0,
-      "net_kar": 44002316197.0,
-      "toplam_varlik": 4220635810231.0,
-      "ozsermaye": 380644298226.0,
-      "odenmis_sermaye": 24999970000.0
-    },
-    {
-      "donem": "2025/12",
-      "satis": 96921412694.0,
-      "net_kar": 67440594071.0,
-      "toplam_varlik": 4624934612072.0,
-      "ozsermaye": 427634753838.0,
-      "odenmis_sermaye": 24999970000.0
-    },
-    {
-      "donem": "2026/3",
-      "satis": 41759449889.0,
-      "net_kar": 20357274571.0,
-      "toplam_varlik": 4935540690344.0,
-      "ozsermaye": 420574096310.0,
-      "odenmis_sermaye": 24999970000.0
-    },
-    {
-      "donem": "2026/6",
-      "satis": 75129909844.0,
-      "net_kar": 30012963984.0,
-      "toplam_varlik": 5091164890595.0,
-      "ozsermaye": 453171456194.0,
-      "odenmis_sermaye": 24999970000.0
-    }
-  ],
-  "tip": "banka",
-  "kaynak": "İş Yatırım mali tabloları (KAP bildirimleri esas alınır)",
-  "bilanco_guncelleme": "2026-09-23"
+ "kod": "ISCTR",
+ "guncelleme": "2026-11-15",
+ "teknik_analiz": "İş Bankası (ISCTR) hissesi 13,55 TL seviyesinde işlem görüyor ve günlük değişim %-0,59 olarak gerçekleşti. 60 günlük getiri %9,45 düzeyinde. EMA diziliminde kısa vadeli ortalama AL sinyali verirken, orta ve uzun vadeli ortalamalar BEKLE konumunda. Wave Trend göstergesi AL yönünde ve 25,1 değerinde. Fiyatın kanal içindeki konumu %81,00 ile üst bölgeye yakınlığı gösteriyor. Trend gücü (r) -0.08 olarak ölçülüyor ve zayıf bir eğilime işaret ediyor. Genel teknik puan 2 seviyesinde ve özet görünüm NÖTR olarak şekilleniyor. Kısa vadeli göstergelerin olumlu, orta-uzun vadeli ortalamaların temkinli kalması nedeniyle teknik tablo karışık bir yapı sergiliyor; kanal konumunun yüksekliği ve zayıf trend gücü birlikte değerlendirildiğinde yön teyidi için ek sinyal takibi öne çıkıyor.",
+ "makro_degerlendirme": "Türkiye makro görünümünde yıllık enflasyon %29,77 ile önceki %29,73 seviyesinin hafif üzerinde. Aylık enflasyon %2,58 olurken önceki %1,84 düzeyindeydi. Çekirdek enflasyon yıllık %28,30 ile önceki %28,70'in altında seyrediyor. ÜFE yıllık %27,41, aylık %1,65 olarak açıklandı; önceki aylık ÜFE %2,07 idi. Politika faizi %36,00 seviyesinde ve önceki %37,00'den indirilmiş durumda. İşsizlik oranı %8,50, ekonomik katılım oranı %52,70 ile önceki %52,60'ın üzerinde. Sanayi üretimi yıllık %2,61 artarken aylık %2,10 ile önceki %-1,00'e kıyasla toparlanma gösteriyor. Bankacılık sektörü açısından faiz indirimi ve sanayi üretimindeki aylık iyileşme destekleyici unsurlar olarak öne çıkarken, aylık enflasyondaki yükseliş ve çekirdek enflasyonun yüksek seyri temkinli bir çerçeve çiziyor.",
+ "bilanco_degerlendirmesi": "İş Bankası'nın son dönem mali tablolarında 2026/9 döneminde satış 111,43 mlr TL, net kâr 40,43 mlr TL ve özkaynak 457,13 mlr TL olarak gerçekleşti. Önceki dönem 2026/6'da satış 75,13 mlr TL, net kâr 30,01 mlr TL ve özkaynak 453,17 mlr TL düzeyindeydi. 2026/3 döneminde satış 41,76 mlr TL, net kâr 20,36 mlr TL ve özkaynak 420,57 mlr TL idi. 2025/12 döneminde ise satış 96,92 mlr TL, net kâr 67,44 mlr TL ve özkaynak 427,63 mlr TL seviyesindeydi. Son dönem net kâr yıllık değişimi %-8,11, çeyrek değişimi ise %34,72 olarak hesaplandı. Çeyreklik bazda net kârın belirgin artışı ve özkaynakların 457,13 mlr TL'ye yükselmesi dikkat çekerken, yıllık net kâr değişiminin negatif olması tablonun iki yönlü okunmasını gerektiriyor. Satış tarafında dönemler arası artış sürüyor; kârlılık ve özkaynak büyüklüğü birlikte değerlendirildiğinde son dönem görünümü çeyreklik toparlanmaya işaret ediyor.",
+ "bilanco": [
+  {
+   "donem": "2024/3",
+   "satis": 15998906801.0,
+   "net_kar": 14047782143.0,
+   "toplam_varlik": 2666033172756.0,
+   "ozsermaye": 274991775009.0,
+   "odenmis_sermaye": 24999970000.0
+  },
+  {
+   "donem": "2024/6",
+   "satis": 24578585506.0,
+   "net_kar": 29150823019.0,
+   "toplam_varlik": 2886227281523.0,
+   "ozsermaye": 285498026402.0,
+   "odenmis_sermaye": 24999970000.0
+  },
+  {
+   "donem": "2024/9",
+   "satis": 25638118234.0,
+   "net_kar": 34684755378.0,
+   "toplam_varlik": 3197227266323.0,
+   "ozsermaye": 290553226336.0,
+   "odenmis_sermaye": 24999970000.0
+  },
+  {
+   "donem": "2024/12",
+   "satis": 34450660659.0,
+   "net_kar": 45517390379.0,
+   "toplam_varlik": 3323772448468.0,
+   "ozsermaye": 318337389995.0,
+   "odenmis_sermaye": 24999970000.0
+  },
+  {
+   "donem": "2025/3",
+   "satis": 17703519756.0,
+   "net_kar": 12417600099.0,
+   "toplam_varlik": 3676738527908.0,
+   "ozsermaye": 326438282274.0,
+   "odenmis_sermaye": 24999970000.0
+  },
+  {
+   "donem": "2025/6",
+   "satis": 32594960886.0,
+   "net_kar": 29789964252.0,
+   "toplam_varlik": 3975553726330.0,
+   "ozsermaye": 360537592354.0,
+   "odenmis_sermaye": 24999970000.0
+  },
+  {
+   "donem": "2025/9",
+   "satis": 58196930164.0,
+   "net_kar": 44001947198.0,
+   "toplam_varlik": 4220635810231.0,
+   "ozsermaye": 380644298226.0,
+   "odenmis_sermaye": 24999970000.0
+  },
+  {
+   "donem": "2025/12",
+   "satis": 96921412694.0,
+   "net_kar": 67440594071.0,
+   "toplam_varlik": 4624934612072.0,
+   "ozsermaye": 427634753838.0,
+   "odenmis_sermaye": 24999970000.0
+  },
+  {
+   "donem": "2026/3",
+   "satis": 41759449889.0,
+   "net_kar": 20357274571.0,
+   "toplam_varlik": 4935540690344.0,
+   "ozsermaye": 420574096310.0,
+   "odenmis_sermaye": 24999970000.0
+  },
+  {
+   "donem": "2026/6",
+   "satis": 75129909844.0,
+   "net_kar": 30012963984.0,
+   "toplam_varlik": 5091164890595.0,
+   "ozsermaye": 453171456194.0,
+   "odenmis_sermaye": 24999970000.0
+  },
+  {
+   "donem": "2026/9",
+   "satis": 111431866282.0,
+   "net_kar": 40433951479.0,
+   "toplam_varlik": 5299202640949.0,
+   "ozsermaye": 457133451439.0,
+   "odenmis_sermaye": 24999970000.0
+  }
+ ],
+ "tip": "banka",
+ "kaynak": "İş Yatırım mali tabloları (KAP bildirimleri esas alınır)",
+ "bilanco_guncelleme": "2026-11-15"
 }

@@ -1,92 +1,100 @@
 {
-  "kod": "VAKBN",
-  "guncelleme": "2026-09-23",
-  "teknik_analiz": "Vakıfbank, 23 Eylül 2026 gün içinde %1,18 primle 34,44 TL'ye yükselerek 60 günlük zirvesini yeniledi. Tüm ufuklarda AL sinyaliyle 4/4 GÜÇLÜ AL tablosuna yükseldi; kanal konumu %61 ve trend gücü (r) 0,56 ile sağlıklı bir yükseliş yapısı oluştu. Hisse 24,28 TL'deki 60 günlük dip bölgesinin %42 üzerinde fiyatlanıyor; 60 günlük getiri %5,26 ile banka endeksindeki rotasyonun öncü isimleri arasında yer alıyor.",
-  "makro_degerlendirme": "Kamu bankaları, faiz indirim döngüsünde iki yönlü etkileniyor: menkul kıymet portföylerindeki değerleme kazançları ve kredi hacim artışı destekleyici çalışırken, politika kredilendirmesindeki rol net faiz marjını sınırlayabiliyor. Enflasyonun %31,5'e gerilemesi ve TCMB'nin ölçülü gevşemesi, bankacılık sektörü genelinde kârlılık beklentilerini yukarı revize ettiriyor; Vakıfbank'ın 2Ç ivmesi bu eğilimin erken yansıması. USD/TL'nin 48,83 seviyesinde dengeli seyri ve CDS primindeki düşüş, yabancı yatırımcının Türk bankalarına dönüşünü besliyor; düşük serbest dolaşım nedeniyle sınırlı yabancı ağırlığı, hisseyi yerli kurumsal talebe duyarlı kılıyor. Mevduat maliyetlerindeki gerileme ve KGF mekanizmaları fonlama tarafını destekliyor. Gram altının 6.786 TL'de olduğu ortamda mevduat tabanının istikrarı izleniyor. Ana riskler; enflasyonda katılık, düzenleyici yükler ve kamu bankası rolüne bağlı marj sınırlamaları.",
-  "bilanco_degerlendirmesi": "Vakıfbank, 2026 ilk yarısında net kârını yıllık %0,1 artışla yatay tutarken, ikinci çeyrekte 15,1 milyar TL net kâr (+%50,3) ile güçlü bir çeyreklik ivme yakaladı. Son dört çeyrekte toplam 70,1 milyar TL net kâr üreten bankanın piyasa değeri ~342 milyar TL; ~4,9x F/K ve ~1,0x PD/DD çarpanlarıyla özel banka eşiklerine yakın, kamu bankası iskontosunu kısmen kapatmış bir değerlemede. Bankacılıkta FD/FAVÖK anlamlı olmadığından değerlendirme F/K, PD/DD ve ROE ekseninde yürütülüyor. Son dört çeyrek ROE %19,9 ile güçlü; net faiz marjındaki normalleşme ve menkul kıymet değerleme kazançları 2Ç kârlılığını destekledi. Bir önceki yıl ilk yarısındaki %61,4'lük kâr/gelir oranının %30,2'ye inmesi, enflasyon muhasebesi bazının arınmasını ve kâr kompozisyonunun çekirdek bankacılığa dönmesini yansıtıyor. Kamu bankası kimliği, kredi büyümesinde politika yönlendirmesine duyarlılık yaratırken, mevduat tabanı ve fonlama erişimi açısından avantaj sağlıyor. Temettü dağıtımı sınırlı; kârın özkaynağa eklenmesi sermaye yeterliliğini destekliyor. Özetle Vakıfbank; güçlü ROE, makul çarpanlar ve teknik görünümdeki iyileşmeyle banka rotasyonunun takip edilmesi gereken isimlerinden; ana risk kamu bankalarına özgü düşük serbest dolaşım ve politika duyarlılığı.",
-  "bilanco": [
-    {
-      "donem": "2024/3",
-      "satis": 17701893000.0,
-      "net_kar": 12022969000.0,
-      "toplam_varlik": 3026349135000.0,
-      "ozsermaye": 184479639000.0,
-      "odenmis_sermaye": 9915922000.0
-    },
-    {
-      "donem": "2024/6",
-      "satis": 36327630000.0,
-      "net_kar": 19191709000.0,
-      "toplam_varlik": 3237503013000.0,
-      "ozsermaye": 191259204000.0,
-      "odenmis_sermaye": 9915922000.0
-    },
-    {
-      "donem": "2024/9",
-      "satis": 56116929000.0,
-      "net_kar": 27214250000.0,
-      "toplam_varlik": 3568979460000.0,
-      "ozsermaye": 201165939000.0,
-      "odenmis_sermaye": 9915922000.0
-    },
-    {
-      "donem": "2024/12",
-      "satis": 98976466000.0,
-      "net_kar": 40375301000.0,
-      "toplam_varlik": 4021485697000.0,
-      "ozsermaye": 219194449000.0,
-      "odenmis_sermaye": 9915922000.0
-    },
-    {
-      "donem": "2025/3",
-      "satis": 21017161000.0,
-      "net_kar": 20033654000.0,
-      "toplam_varlik": 4189765672000.0,
-      "ozsermaye": 232989885000.0,
-      "odenmis_sermaye": 9915922000.0
-    },
-    {
-      "donem": "2025/6",
-      "satis": 48978000000.0,
-      "net_kar": 30063000000.0,
-      "toplam_varlik": 4555224002000.0,
-      "ozsermaye": 246456471000.0,
-      "odenmis_sermaye": 9915922000.0
-    },
-    {
-      "donem": "2025/9",
-      "satis": 86058758000.0,
-      "net_kar": 41956457000.0,
-      "toplam_varlik": 4994269891000.0,
-      "ozsermaye": 263628282000.0,
-      "odenmis_sermaye": 9915922000.0
-    },
-    {
-      "donem": "2025/12",
-      "satis": 152384040000.0,
-      "net_kar": 70050312000.0,
-      "toplam_varlik": 5388289819000.0,
-      "ozsermaye": 322380656000.0,
-      "odenmis_sermaye": 9915922000.0
-    },
-    {
-      "donem": "2026/3",
-      "satis": 53848669000.0,
-      "net_kar": 15031078000.0,
-      "toplam_varlik": 5550109551000.0,
-      "ozsermaye": 331454835000.0,
-      "odenmis_sermaye": 9915922000.0
-    },
-    {
-      "donem": "2026/6",
-      "satis": 103701000000.0,
-      "net_kar": 30108000000.0,
-      "toplam_varlik": 5810756000000.0,
-      "ozsermaye": 353008000000.0,
-      "odenmis_sermaye": 9916000000.0
-    }
-  ],
-  "tip": "banka",
-  "kaynak": "İş Yatırım mali tabloları (KAP bildirimleri esas alınır)",
-  "bilanco_guncelleme": "2026-09-23"
+ "kod": "VAKBN",
+ "guncelleme": "2026-11-15",
+ "teknik_analiz": "Vakıfbank hissesi 33,24 TL seviyesinde işlem görüyor ve günlük değişim %-1,13 olarak gerçekleşti. 60 günlük getiri %10,65 düzeyinde. EMA diziliminde kısa vadeli ortalama AL sinyali verirken, orta ve uzun vadeli ortalamalar BEKLE konumunda. Wave Trend göstergesi AL yönünde ve 7,6 değerinde. Fiyatın kanal içindeki konumu %66,00 olarak ölçülüyor; bu, kanalın üst bölgesine yakın bir yerleşime işaret ediyor. Trend gücü r değeri -0,28 ile zayıf bir eğilime işaret ederken, genel teknik puan 2 seviyesinde ve özet görünüm NÖTR olarak şekilleniyor. Kısa vadeli momentumun pozitif, ancak trend gücünün sınırlı olduğu bir tablo öne çıkıyor. Teknik göstergelerin bir kısmı alım yönünde, bir kısmı bekle sinyali veriyor; bu dağılım hissenin yönsüz bir seyir izlediğini gösteriyor.",
+ "makro_degerlendirme": "Türkiye ekonomisinde yıllık enflasyon %29,77 ile önceki %29,73 seviyesinin hafif üzerinde. Aylık enflasyon %2,58 olurken önceki %1,84 düzeyindeydi. Çekirdek enflasyon yıllık %28,30 ile önceki %28,70'in altında. ÜFE yıllık %27,41, aylık %1,65 seviyesinde; önceki aylık ÜFE %2,07 idi. Politika faizi %36,00 düzeyinde ve önceki %37,00'den indirilmiş durumda. İşsizlik oranı %8,50, ekonomik katılım oranı %52,70 ile önceki %52,60'ın üzerinde. Sanayi üretimi yıllık %2,61 artarken aylık %2,10 ile önceki %-1,00'e göre toparlanma gösteriyor. Enflasyonun yatay seyri, faiz indirimi ve sanayi üretimindeki aylık toparlanma bankacılık sektörü açısından karışık bir makro tablo oluşturuyor; politika faizindeki düşüş kredi talebi kanalıyla sektörü destekleyebilecek bir unsur olarak öne çıkıyor.",
+ "bilanco_degerlendirmesi": "Vakıfbank'ın son dönem mali tablolarında 2025/12 döneminde satış 152,38 milyar TL, net kâr 70,05 milyar TL ve özkaynak 322,38 milyar TL olarak gerçekleşti. 2026/3 döneminde satış 53,85 milyar TL, net kâr 15,03 milyar TL, özkaynak 331,45 milyar TL seviyesinde. 2026/6 döneminde satış 103,70 milyar TL, net kâr 30,11 milyar TL ve özkaynak 353,01 milyar TL oldu. Son dönem olan 2026/9'da satış 169,85 milyar TL, net kâr 45,54 milyar TL ve özkaynak 357,02 milyar TL düzeyinde. Son dönem net kârında yıllık değişim %8,54, çeyrek değişim ise %51,26 olarak hesaplanıyor. Özkaynak kalemi dönemler boyunca kademeli artış gösterirken, net kârın çeyreklik bazda belirgin yükselişi dikkat çekiyor. Satış ve kârlılık kalemlerinin son dönemdeki seyri, bankanın faaliyet performansında toparlanmaya işaret eden bir tablo sunuyor.",
+ "bilanco": [
+  {
+   "donem": "2024/3",
+   "satis": 17701893000.0,
+   "net_kar": 12022969000.0,
+   "toplam_varlik": 3026349135000.0,
+   "ozsermaye": 184479639000.0,
+   "odenmis_sermaye": 9915922000.0
+  },
+  {
+   "donem": "2024/6",
+   "satis": 36327630000.0,
+   "net_kar": 19191709000.0,
+   "toplam_varlik": 3237503013000.0,
+   "ozsermaye": 191259204000.0,
+   "odenmis_sermaye": 9915922000.0
+  },
+  {
+   "donem": "2024/9",
+   "satis": 56116929000.0,
+   "net_kar": 27214250000.0,
+   "toplam_varlik": 3568979460000.0,
+   "ozsermaye": 201165939000.0,
+   "odenmis_sermaye": 9915922000.0
+  },
+  {
+   "donem": "2024/12",
+   "satis": 98976466000.0,
+   "net_kar": 40375301000.0,
+   "toplam_varlik": 4021485697000.0,
+   "ozsermaye": 219194449000.0,
+   "odenmis_sermaye": 9915922000.0
+  },
+  {
+   "donem": "2025/3",
+   "satis": 21017161000.0,
+   "net_kar": 20033654000.0,
+   "toplam_varlik": 4189765672000.0,
+   "ozsermaye": 232989885000.0,
+   "odenmis_sermaye": 9915922000.0
+  },
+  {
+   "donem": "2025/6",
+   "satis": 48978000000.0,
+   "net_kar": 30063000000.0,
+   "toplam_varlik": 4555224002000.0,
+   "ozsermaye": 246456471000.0,
+   "odenmis_sermaye": 9915922000.0
+  },
+  {
+   "donem": "2025/9",
+   "satis": 86061000000.0,
+   "net_kar": 41956000000.0,
+   "toplam_varlik": 4994269891000.0,
+   "ozsermaye": 263628282000.0,
+   "odenmis_sermaye": 9915922000.0
+  },
+  {
+   "donem": "2025/12",
+   "satis": 152384040000.0,
+   "net_kar": 70050312000.0,
+   "toplam_varlik": 5388289819000.0,
+   "ozsermaye": 322380656000.0,
+   "odenmis_sermaye": 9915922000.0
+  },
+  {
+   "donem": "2026/3",
+   "satis": 53848669000.0,
+   "net_kar": 15031078000.0,
+   "toplam_varlik": 5550109551000.0,
+   "ozsermaye": 331454835000.0,
+   "odenmis_sermaye": 9915922000.0
+  },
+  {
+   "donem": "2026/6",
+   "satis": 103701000000.0,
+   "net_kar": 30108000000.0,
+   "toplam_varlik": 5810756000000.0,
+   "ozsermaye": 353008000000.0,
+   "odenmis_sermaye": 9916000000.0
+  },
+  {
+   "donem": "2026/9",
+   "satis": 169853000000.0,
+   "net_kar": 45540000000.0,
+   "toplam_varlik": 6235114000000.0,
+   "ozsermaye": 357016000000.0,
+   "odenmis_sermaye": 9916000000.0
+  }
+ ],
+ "tip": "banka",
+ "kaynak": "İş Yatırım mali tabloları (KAP bildirimleri esas alınır)",
+ "bilanco_guncelleme": "2026-11-15"
 }

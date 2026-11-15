@@ -85,8 +85,8 @@
     },
     {
       "donem": "2025/9",
-      "satis": 36829623771.0,
-      "net_kar": 3831461768.0,
+      "satis": 47772240262.0,
+      "net_kar": 4969844745.0,
       "toplam_varlik": 61478448291.0,
       "donen_varlik": 38874304209.0,
       "duran_varlik": 22604144082.0,
@@ -98,16 +98,16 @@
     },
     {
       "donem": "2025/12",
-      "satis": 61818674493.0,
-      "net_kar": 5839589979.0,
-      "toplam_varlik": 75908591535.0,
-      "donen_varlik": 46743877303.0,
-      "duran_varlik": 29164714232.0,
-      "kisa_borc": 31684865474.0,
-      "uzun_borc": 1868638482.0,
-      "ozsermaye": 42355087579.0,
+      "satis": 65261763988.0,
+      "net_kar": 6164835240.0,
+      "toplam_varlik": 80136441391.0,
+      "donen_varlik": 49347351968.0,
+      "duran_varlik": 30789089423.0,
+      "kisa_borc": 33449604501.0,
+      "uzun_borc": 1972715277.0,
+      "ozsermaye": 44714121613.0,
       "odenmis_sermaye": 334000000.0,
-      "finansal_borc": 11373576325.0
+      "finansal_borc": 12007045766.0
     },
     {
       "donem": "2026/3",
@@ -134,9 +134,22 @@
       "ozsermaye": 46062447166.0,
       "odenmis_sermaye": 334000000.0,
       "finansal_borc": 9736848726.0
+    },
+    {
+      "donem": "2026/9",
+      "satis": 58062424941.0,
+      "net_kar": 7152115308.0,
+      "toplam_varlik": 85524130680.0,
+      "donen_varlik": 52519159245.0,
+      "duran_varlik": 33004971435.0,
+      "kisa_borc": 34639090226.0,
+      "uzun_borc": 2380480044.0,
+      "ozsermaye": 48504560410.0,
+      "odenmis_sermaye": 334000000.0,
+      "finansal_borc": 13965003950.0
     }
   ],
   "tip": "sinai",
   "kaynak": "İş Yatırım mali tabloları (KAP bildirimleri esas alınır)",
-  "bilanco_guncelleme": "2026-09-23"
+  "bilanco_guncelleme": "2026-11-15"
 }

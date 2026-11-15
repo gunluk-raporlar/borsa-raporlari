@@ -1,92 +1,92 @@
 {
-  "kod": "GARAN",
-  "guncelleme": "2026-09-23",
-  "teknik_analiz": "Garanti BBVA, 23 Eylül 2026 gün içinde %0,15 geri çekilmeyle 133,70 TL'den işlem görüyor. Kısa ve orta vade EMA dizilimi ile Wave Trend AL konumunda; uzun vade EMA BEKLE'de kaldığı için tablo 3/4 AL olarak özetleniyor. Kanal konumu %64 ve trend gücü (r) 0,23 ile yukarı yönlü fakat düşük ivmeli bir yapı hakim. Hisse 60 günlük 150,00 TL zirvesinin %11 altında, 112,55 TL dip bölgesinin %19 üzerinde fiyatlanıyor; bankacılık endeksindeki güçlü görünümle uyumlu seyrediyor.",
-  "makro_degerlendirme": "Dezenflasyon programının derinleşmesi Garanti gibi kaliteli bankalar için çift yönlü pozitif: TÜFE'nin %31,5'e gerilemesi TÜFE-endeksli menkul kıymet getirilerini azaltırken, faiz indirimleri kredi hacmini ve net faiz marjını destekliyor, menkul kıymet portföyünde değerleme kazançları oluşuyor. Yabancı yatırımcı girişinin hızlandığı dönemlerde Garanti tarihsel olarak endeks üzeri getiri üretiyor; CDS risk primindeki düşüş eğilimi bu kanalı güçlendiriyor. USD/TL'nin 48,83 seviyesinde dengeli seyri, bankanın döviz pozisyon yönetimini kolaylaştırıyor. Dijital bankacılıktaki ölçek avantajı, şubenin maliyet enflasyonuna karşı koruma sağlıyor. Gram altının 6.786 TL'de seyrettiği ortamda mevduat davranışı istikrarlı kaldıkça fonlama tabanı güçlü kalıyor. Ana riskler; enflasyonda yavaş düşüş, düzenleyici müdahaleler ve kredi büyümesine makroihtiyati sınırlar.",
-  "bilanco_degerlendirmesi": "Garanti BBVA, 2026 ilk yarısında net kârını yıllık %18,8 artırdı; ikinci çeyrekte 30,4 milyar TL net kâr (+%7,3) ile istikrarlı kâr üretimini sürdürdü. Son dört çeyrekte toplam 120,7 milyar TL net kâr üreten banka, ~562 milyar TL piyasa değeriyle ~4,7x F/K ve ~1,2x PD/DD çarpanlarında fiyatlanıyor; bankacılıkta FD/FAVÖK anlamlı olmadığından değerlendirme bu iki çarpan ve kârlılık üzerinden yürütülüyor. Son dört çeyrek ROE %24,8 ile sektör ortalamasının üzerinde ve enflasyona yakın bir özkaynak getirisi sunuyor; ücret-komisyon gelirlerindeki güçlü artış kâr kalitesini destekliyor. Bir önceki yıl ilk yarısındaki %84,8'lik kâr/gelir oranının %52,9'a normalleşmesi, enflasyon muhasebesinin yarattığı olağanüstü baz etkisinin arındığını ve kârlılığın sürdürülebilir bir zemine oturduğunu gösteriyor. Aktif kalitesi ve karşılık tamponları sağlam; çekirdek sermaye rasyosu yüksek. %3,9 civarındaki temettü verimi sektör ortalamasının üzerinde. BBVA'nın çoğunluk ortaklığı, yabancı yatırımcı nezdinde kurumsal yönetim primi sağlıyor. Genel değerlendirmede Garanti, BIST bankaları arasında kârlılık-kalite dengesi en güçlü isimlerden; makro normalleşme senaryosunda çarpan genişlemesi potansiyeli taşıyor.",
-  "bilanco": [
-    {
-      "donem": "2024/3",
-      "satis": 19662041000.0,
-      "net_kar": 22316490000.0,
-      "toplam_varlik": 2164981179000.0,
-      "ozsermaye": 255334649000.0,
-      "odenmis_sermaye": 4200000000.0
-    },
-    {
-      "donem": "2024/6",
-      "satis": 45857368000.0,
-      "net_kar": 44838802000.0,
-      "toplam_varlik": 2313106065000.0,
-      "ozsermaye": 279319084000.0,
-      "odenmis_sermaye": 4200000000.0
-    },
-    {
-      "donem": "2024/9",
-      "satis": 70737588000.0,
-      "net_kar": 66933770000.0,
-      "toplam_varlik": 2496244207000.0,
-      "ozsermaye": 302647610000.0,
-      "odenmis_sermaye": 4200000000.0
-    },
-    {
-      "donem": "2024/12",
-      "satis": 100349247000.0,
-      "net_kar": 92174994000.0,
-      "toplam_varlik": 2607672475000.0,
-      "ozsermaye": 329926317000.0,
-      "odenmis_sermaye": 4200000000.0
-    },
-    {
-      "donem": "2025/3",
-      "satis": 30427350000.0,
-      "net_kar": 25284346000.0,
-      "toplam_varlik": 3035025457000.0,
-      "ozsermaye": 339526876000.0,
-      "odenmis_sermaye": 4200000000.0
-    },
-    {
-      "donem": "2025/6",
-      "satis": 63187000000.0,
-      "net_kar": 53610000000.0,
-      "toplam_varlik": 3246037748000.0,
-      "ozsermaye": 377603837000.0,
-      "odenmis_sermaye": 4200000000.0
-    },
-    {
-      "donem": "2025/9",
-      "satis": 108599213000.0,
-      "net_kar": 84042047000.0,
-      "toplam_varlik": 3498971972000.0,
-      "ozsermaye": 410433117000.0,
-      "odenmis_sermaye": 4200000000.0
-    },
-    {
-      "donem": "2025/12",
-      "satis": 165311594000.0,
-      "net_kar": 110604633000.0,
-      "toplam_varlik": 3820941956000.0,
-      "ozsermaye": 444369537000.0,
-      "odenmis_sermaye": 4200000000.0
-    },
-    {
-      "donem": "2026/3",
-      "satis": 60815632000.0,
-      "net_kar": 33316462000.0,
-      "toplam_varlik": 4016807351000.0,
-      "ozsermaye": 451315838000.0,
-      "odenmis_sermaye": 4200000000.0
-    },
-    {
-      "donem": "2026/6",
-      "satis": 118208000000.0,
-      "net_kar": 63704000000.0,
-      "toplam_varlik": 4412331000000.0,
-      "ozsermaye": 487168000000.0,
-      "odenmis_sermaye": 4200000000.0
-    }
-  ],
-  "tip": "banka",
-  "kaynak": "İş Yatırım mali tabloları (KAP bildirimleri esas alınır)",
-  "bilanco_guncelleme": "2026-09-23"
+ "kod": "GARAN",
+ "guncelleme": "2026-11-15",
+ "teknik_analiz": "GARAN hissesi son işlem gününde 150,30 TL seviyesinden işlem görürken günlük değişim %-1,51 olarak gerçekleşti. 60 günlük getiri %16,24 seviyesinde bulunuyor. EMA dizilimi kısa vadede BEKLE, orta vadede AL, uzun vadede BEKLE sinyali veriyor. Wave Trend göstergesi AL yönünde ve 49,9 değerinde. Fiyatın kanal konumu %97,00 ile üst banda yakın seyrediyor. Trend gücü r değeri 0,39 olarak ölçülüyor. Genel teknik puan 2 seviyesinde ve özet görünüm NÖTR. Bu tablo, kısa vadeli göstergelerin kararsız, orta vadeli göstergenin olumlu olduğu, fiyatın ise kanalın üst sınırına yakın konumlandığı bir teknik görünüme işaret ediyor.",
+ "makro_degerlendirme": "Türkiye ekonomisinde yıllık enflasyon %29,77 ile önceki %29,73 seviyesinin hafif üzerinde. Aylık enflasyon %2,58 olurken önceki %1,84 idi. Çekirdek enflasyon yıllık %28,30 ile önceki %28,70'in altında. ÜFE yıllık %27,41, aylık %1,65 seviyesinde; önceki aylık %2,07 idi. Politika faizi %36,00 ile önceki %37,00'nin altına indi. İşsizlik oranı %8,50, ekonomik katılım oranı %52,70 ile önceki %52,60'ın üzerinde. Sanayi üretimi yıllık %2,61, aylık %2,10 ile önceki %-1,00'e göre toparlanma gösteriyor. Bu göstergeler, enflasyonda sınırlı bir seyir ve faiz indiriminin sürdüğü bir makro ortama işaret ediyor.",
+ "bilanco_degerlendirmesi": "GARAN'ın son dönem mali tablolarında 2026/9 döneminde satış 192,82 mlr TL, net kâr 97,19 mlr TL ve özkaynak 520,12 mlr TL olarak gerçekleşti. Bir önceki 2026/6 döneminde satış 118,21 mlr TL, net kâr 63,70 mlr TL, özkaynak 487,17 mlr TL idi. 2026/3 döneminde satış 60,82 mlr TL, net kâr 33,32 mlr TL, özkaynak 451,32 mlr TL; 2025/12 döneminde ise satış 165,31 mlr TL, net kâr 110,60 mlr TL, özkaynak 444,37 mlr TL seviyesindeydi. Son dönem net kâr çeyrek değişimi %52,57 olarak hesaplanıyor. Bu tablo, satış, net kâr ve özkaynak kalemlerinin son dönemlerde artış eğiliminde olduğu bir bilanço görünümüne işaret ediyor.",
+ "bilanco": [
+  {
+   "donem": "2024/3",
+   "satis": 19662041000.0,
+   "net_kar": 22316490000.0,
+   "toplam_varlik": 2164981179000.0,
+   "ozsermaye": 255334649000.0,
+   "odenmis_sermaye": 4200000000.0
+  },
+  {
+   "donem": "2024/6",
+   "satis": 45857368000.0,
+   "net_kar": 44838802000.0,
+   "toplam_varlik": 2313106065000.0,
+   "ozsermaye": 279319084000.0,
+   "odenmis_sermaye": 4200000000.0
+  },
+  {
+   "donem": "2024/9",
+   "satis": 70737588000.0,
+   "net_kar": 66933770000.0,
+   "toplam_varlik": 2496244207000.0,
+   "ozsermaye": 302647610000.0,
+   "odenmis_sermaye": 4200000000.0
+  },
+  {
+   "donem": "2024/12",
+   "satis": 100349247000.0,
+   "net_kar": 92174994000.0,
+   "toplam_varlik": 2607672475000.0,
+   "ozsermaye": 329926317000.0,
+   "odenmis_sermaye": 4200000000.0
+  },
+  {
+   "donem": "2025/3",
+   "satis": 30427350000.0,
+   "net_kar": 25284346000.0,
+   "toplam_varlik": 3035025457000.0,
+   "ozsermaye": 339526876000.0,
+   "odenmis_sermaye": 4200000000.0
+  },
+  {
+   "donem": "2025/6",
+   "satis": 63187000000.0,
+   "net_kar": 53610000000.0,
+   "toplam_varlik": 3246037748000.0,
+   "ozsermaye": 377603837000.0,
+   "odenmis_sermaye": 4200000000.0
+  },
+  {
+   "donem": "2025/12",
+   "satis": 165311594000.0,
+   "net_kar": 110604633000.0,
+   "toplam_varlik": 3820941956000.0,
+   "ozsermaye": 444369537000.0,
+   "odenmis_sermaye": 4200000000.0
+  },
+  {
+   "donem": "2026/3",
+   "satis": 60815632000.0,
+   "net_kar": 33316462000.0,
+   "toplam_varlik": 4016807351000.0,
+   "ozsermaye": 451315838000.0,
+   "odenmis_sermaye": 4200000000.0
+  },
+  {
+   "donem": "2026/6",
+   "satis": 118208000000.0,
+   "net_kar": 63704000000.0,
+   "toplam_varlik": 4412331000000.0,
+   "ozsermaye": 487168000000.0,
+   "odenmis_sermaye": 4200000000.0
+  },
+  {
+   "donem": "2026/9",
+   "satis": 192819000000.0,
+   "net_kar": 97193000000.0,
+   "toplam_varlik": 4643961000000.0,
+   "ozsermaye": 520116000000.0,
+   "odenmis_sermaye": 4200000000.0
+  }
+ ],
+ "tip": "banka",
+ "kaynak": "İş Yatırım mali tabloları (KAP bildirimleri esas alınır)",
+ "bilanco_guncelleme": "2026-11-15"
 }
