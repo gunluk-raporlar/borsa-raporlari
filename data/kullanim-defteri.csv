@@ -111,3 +111,4 @@
 2026-11-15,15:39,ceviri,MISTRAL,deepseek-v4-1-flash-1017,443,122651,27367,-,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x443(122651+27367),122651,27367
 2026-11-15,17:28,hisse-degerlendirme,MISTRAL,deepseek-v4-1-flash-1017,1,940,1003,3.1,0,,hayir,"MISTRAL/deepseek-v4-1-flash-1017x23, AMD/DeepSeek-V4-Flashx6",33763,32570
 2026-11-15,22:40,ceviri,MISTRAL,deepseek-v4-1-flash-1017,521,274888,125062,-,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x521(274888+125062),274888,125062
+2026-11-16,07:28,gunluk,MISTRAL,deepseek-v4-1-flash-1017,1,2696,860,2.4,1,toplam_metin=1,hayir,MISTRAL/deepseek-v4-1-flash-1017x8,82955,9277
