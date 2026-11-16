@@ -222,6 +222,13 @@
   "ASELS": [
    {
     "kaynak": "KAP",
+    "tarih": "16 Kasım 11:35",
+    "baslik": "Yeni İş İlişkisi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1698328",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "5 Kasım 17:41",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1693194",
@@ -316,13 +323,6 @@
     "tarih": "23 Ekim 11:07",
     "baslik": "Yeni İş İlişkisi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1686331",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "23 Ekim 10:19",
-    "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1686216",
     "genis": false
    }
   ],
@@ -650,6 +650,13 @@
   "ENKAI": [
    {
     "kaynak": "KAP",
+    "tarih": "16 Kasım 08:32",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1698236",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "13 Kasım 08:49",
     "baslik": "Pay Alım Satım Bildirimi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1697833",
@@ -744,13 +751,6 @@
     "tarih": "4 Kasım 15:43",
     "baslik": "Kurumsal Yönetim İlkelerine Uyum Derecelendirmesi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1692278",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "4 Kasım 15:06",
-    "baslik": "Kurumsal Yönetim İlkelerine Uyum Derecelendirmesi",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1692260",
     "genis": false
    }
   ],
@@ -1399,6 +1399,13 @@
   "KRDMD": [
    {
     "kaynak": "KAP",
+    "tarih": "16 Kasım 08:40",
+    "baslik": "Kamuyu Aydınlatma Platformu Duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1698246",
+    "genis": true
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "15 Kasım 16:32",
     "baslik": "Özel Durum Açıklaması (Genel)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1698231",
@@ -1494,13 +1501,6 @@
     "baslik": "Temerrüt İşlemi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1692064",
     "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "4 Kasım 09:09",
-    "baslik": "Pay Alım Satım Bildirimi",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1692004",
-    "genis": true
    }
   ],
   "MGROS": [
@@ -1613,6 +1613,13 @@
   "PETKM": [
    {
     "kaynak": "KAP",
+    "tarih": "16 Kasım 08:40",
+    "baslik": "Kamuyu Aydınlatma Platformu Duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1698246",
+    "genis": true
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "12 Kasım 08:50",
     "baslik": "Pay Alım Satım Bildirimi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1697430",
@@ -1707,13 +1714,6 @@
     "tarih": "2 Kasım 10:31",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1690623",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "30 Ekim 17:03",
-    "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1689714",
     "genis": false
    }
   ],
@@ -2541,6 +2541,13 @@
   "TRALT": [
    {
     "kaynak": "KAP",
+    "tarih": "16 Kasım 08:33",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1698242",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "12 Kasım 18:17",
     "baslik": "Pay Alım Satım Bildirimi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1697746",
@@ -2636,13 +2643,6 @@
     "baslik": "Pay Alım Satım Bildirimi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1688643",
     "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "28 Ekim 08:54",
-    "baslik": "Kamuyu Aydınlatma Platformu Duyurusu",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1688634",
-    "genis": true
    }
   ],
   "TRMET": [
@@ -3076,6 +3076,13 @@
   "YKBNK": [
    {
     "kaynak": "KAP",
+    "tarih": "16 Kasım 11:08",
+    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1698308",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "13 Kasım 16:21",
     "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1698037",
@@ -3170,13 +3177,6 @@
     "tarih": "3 Kasım 08:02",
     "baslik": "Sorumluluk Beyanı (Konsolide Olmayan)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1691275",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "3 Kasım 08:01",
-    "baslik": "Sorumluluk Beyanı (Konsolide)",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1691274",
     "genis": false
    }
   ]
