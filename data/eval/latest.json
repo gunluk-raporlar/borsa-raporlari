@@ -1,18 +1,18 @@
 {
- "tarih": "2026-11-09",
+ "tarih": "2026-11-16",
  "sorgu_sayisi": 16,
  "metrikler": {
   "normal": {
-   "ndcg": 0.9256,
-   "mrr": 0.8958
+   "ndcg": 0.9509,
+   "mrr": 0.95
   },
   "ham": {
-   "ndcg": 0.9236,
-   "mrr": 0.8958
+   "ndcg": 0.9504,
+   "mrr": 0.95
   },
   "rerank": {
-   "ndcg": 0.927,
-   "mrr": 0.8958
+   "ndcg": 0.9509,
+   "mrr": 0.95
   }
  },
  "bos": {
@@ -24,7 +24,7 @@
  "yargic_yok": false,
  "yargic_atlandi": "",
  "kota": {
-  "bugun": 0.0,
+  "bugun": 0.023640934,
   "kaynak": "ok",
   "limit": 9000,
   "maliyet": 4000
@@ -32,8 +32,8 @@
  "karar": "olcum",
  "degisen": null,
  "geriye": {
-  "kayit_islenen": 5,
-  "parca_etiketlenen": 40,
+  "kayit_islenen": 9,
+  "parca_etiketlenen": 72,
   "yargic_hata": 0,
   "atlandi": null
  }
