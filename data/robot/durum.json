@@ -1,21 +1,14 @@
 {
   "baslangic": "2026-09-25",
   "braket_versiyonu": 2,
-  "bugun_alinan": [
-    "VAKBN",
-    "KCHOL"
-  ],
-  "bugun_satilan": [
-    "GARAN",
-    "ISCTR",
-    "YKBNK"
-  ],
-  "bugun_tarih": "2026-11-16",
+  "bugun_alinan": [],
+  "bugun_satilan": [],
+  "bugun_tarih": "2026-11-17",
   "gerceklesen_kz": -6512.95457107999,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 16,
-  "nakit": 26348.241936443024,
-  "onceki_kapanis_ozkaynak": 95212.29,
+  "kontrol_sayisi": 1,
+  "nakit": 26373.587305498568,
+  "onceki_kapanis_ozkaynak": 95215.82,
   "ozkayit": [
     [
       "2026-09-25",
@@ -272,8 +265,8 @@
     "VAKBN": 33.2,
     "YKBNK": 37.48
   },
-  "son_repo_tarihi": "2026-11-16",
+  "son_repo_tarihi": "2026-11-17",
   "toplam_kesinti": 586.06,
-  "toplam_repo_kazanci": 1621.6,
+  "toplam_repo_kazanci": 1646.95,
   "versiyon": 1
 }
