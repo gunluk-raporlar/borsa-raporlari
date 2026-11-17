@@ -5145,6 +5145,12 @@ def _md_ayna_mi(yol):
     return y.split("/", 1)[0] in _MD_AYNA_KLASOR
 
 
+# Yatay kaydirilabilir alanlar icin "tut-sur" (drag-to-pan) betigi: TEK KAYNAK
+# site_js.py (robot.py'nin bagimsiz iskeleti de ayni sabiti kullanir).
+# _sayfa() f-string oldugu icin sabit disaridan gelir; suslu parantez kacisi gerekmez.
+from site_js import TABLO_KAYDIR_JS as _TABLO_KAYDIR_JS
+
+
 def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_ek=None, grafik=False, robots=None):
     """Tum sayfalar icin ortak iskelet (ust menu + govde + altbilgi).
 
@@ -5350,6 +5356,7 @@ function temaDegistir() {{
             .then(function () {{ clearTimeout(zamanAsimi); }});
     }})();
 </script>
+{_TABLO_KAYDIR_JS}
 </body></html>"""
 
 
@@ -10311,13 +10318,12 @@ def sitemap_ve_robots_yaz(rapor_dosyalari):
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                 + "\n".join(url_blokleri) + "\n</urlset>\n")
     with open("robots.txt", "w", encoding="utf-8") as f:
-        # 2026-11-10 (kullanici karari: tum sayfalar sitemapte olmali): dil
-        # agaclarinin tam haritalari (dil basina ~1000 URL + hreflang) ayri
-        # dosyalardadir ve Google'a dogrudan bildirilir.
+        # 2026-11-16: kok sitemap tum dilleri hreflang alternatifleriyle
+        # tasiyor. Dil basina ayri sitemap dosyalari kokun birebir alt kumesi
+        # (en 217 / de 221 / ru 224 / zh 225, hepsi kokte de var) oldugu icin
+        # robots.txt'te bildirilmiyor: mukerrer URL, bosa tarama butcesi.
         f.write("User-agent: *\nAllow: /\n\n"
-                f"Sitemap: {SITE_URL}sitemap.xml\n"
-                + "".join(f"Sitemap: {SITE_URL}{d}/sitemap.xml\n"
-                          for d in ("en", "de", "ru", "zh")))
+                f"Sitemap: {SITE_URL}sitemap.xml\n")
     logger.info("[SEO] sitemap.xml (%d URL) ve robots.txt yazildi", len(url_blokleri))
     # 2026-11-10 (kullanici karari: tum sayfalar sitemapte olmali): yalniz-TR
     # yaziminin ardindan i18n'in kataloglayicisi calisir; kok sitemap'e dil

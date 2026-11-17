@@ -33,6 +33,8 @@ import urllib.request
 from dil_yollari import slug_degistir
 # BIST resmi tatil takvimi (2025-2028; disinda tatil sayilmaz -> fail-safe acik davranis)
 from resmi_tatil import tatil_mi
+# Yatay kaydirilabilir alanlar icin "tut-sur" betigi (tek kaynak; bot.py ile ayni)
+from site_js import TABLO_KAYDIR_JS
 from datetime import datetime, timedelta, timezone as dt_timezone
 
 try:
@@ -1307,6 +1309,7 @@ function temaDegistir() {{
 }})();
 </script>
 {_ROBOT_CANLI_JS}
+{TABLO_KAYDIR_JS}
 </body></html>"""
 
 
