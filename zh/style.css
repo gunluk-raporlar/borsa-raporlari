@@ -132,6 +132,20 @@ body { overflow-x: hidden; }
 .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .tbl-wrap table { min-width: 760px; }   /* genis tablolar kart icinde yatay kayar */
 .report table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/* ---- 2026-11-17 (kullanici bildirimi): yatay kaydirilabilir alanlar masaustunde
+   fare ile kullanissizdi — kaydirma cubugu alanin EN ALTINDA oldugu icin once
+   asagi inmek, sonra cubugu tutup suruklemek gerekiyordu. Cozum: alani fare ile
+   tut-sur (drag-to-pan). .tbl-kaydir sinifini JS ekler; sabit bir secici listesi
+   yok — gercekten tasan ve overflow-x'i auto/scroll olan her kapsayiciya gelir
+   (tablolar, .pgrafik-sarmal grafigi, robot sayfasindaki satir ici kutular).
+   Dokunmatikte native kaydirma bozulmaz. ---- */
+.tbl-kaydir { cursor: grab; scrollbar-width: thin; scrollbar-color: var(--muted) transparent; }
+.tbl-kaydir.tbl-surukle { cursor: grabbing; user-select: none; -webkit-user-select: none; }
+.tbl-kaydir a { -webkit-user-drag: none; }
+.tbl-kaydir::-webkit-scrollbar { height: 10px; }
+.tbl-kaydir::-webkit-scrollbar-track { background: transparent; }
+.tbl-kaydir::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 999px; }
+.tbl-kaydir::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 .ticker-bant { background: var(--ink); overflow: hidden; white-space: nowrap; }
 .ticker-iz { display: inline-block; padding: 8px 0; animation: ticker-kaydir 75s linear infinite; }
 .ticker-bant:hover .ticker-iz { animation-play-state: paused; }
