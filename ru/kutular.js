@@ -7,6 +7,15 @@
  * bozulmaz (fail-open). Dosya adi bilinclisiz token'sizdir ("hisse" vb. yok):
  * i18n faz-3 slug yazicisi dil agaclarinda src yolunu degistiremez, mutlak
  * /kutular.js her agactan kok dosyaya ulasir.
+ *
+ * 2026-11-17 (kullanici bildirimi: "renkler degisiyor ama yerler degismiyor"):
+ * kutular artik canli veriye gore de SIRALANIR — gunluk degisim yuksekten alcaga,
+ * verisi olmayanlar sonda. Statik HTML zaten bu sirada uretiliyor (bot.py
+ * _d_anahtar); boylece ilk boyamadan sonra renk ile konum tutarli kalir.
+ * Siralama FLIP ile animasyonlanir (once konum olculur, DOM yeniden dizilir,
+ * fark transform ile geri alinip sifira gecirilir). Imlec kutularin uzerindeyken
+ * siralama ERTELENIR: tam tiklanacak kutunun yerinden kaymasi engellenir.
+ * prefers-reduced-motion acikken animasyon atlanir, siralama yine yapilir.
  */
 (function () {
   "use strict";
@@ -14,6 +23,7 @@
   var LANG = (document.documentElement.lang || "tr").slice(0, 2);
   var kutular = document.querySelectorAll(".hkutu[data-kod]");
   if (!kutular.length) return;
+  var izgara = document.querySelector(".hkutu-izgara");
 
   function bicim(v) {
     return Number(v).toLocaleString(LANG === "tr" ? "tr-TR" : "en-US",
@@ -39,6 +49,71 @@
     return L < 0.18 ? "#fff" : "#000";
   }
 
+  // ---- canli siralama (2026-11-17) ----
+  var sonHarita = null;
+  var uzerinde = false;   // imlec kutularin uzerinde mi
+  var bekleyen = false;   // imlec kalkinca uygulanacak siralama var mi
+
+  function anahtar(el, harita) {
+    var s = harita[el.getAttribute("data-kod")];
+    return s && typeof s.d === "number" && isFinite(s.d) ? s.d : -Infinity;
+  }
+
+  function sirala(harita) {
+    if (!izgara) return;
+    var mevcut = Array.prototype.slice.call(izgara.children);
+    if (mevcut.length < 2) return;
+
+    var sirali = mevcut.slice().sort(function (a, b) {
+      var da = anahtar(a, harita), db = anahtar(b, harita);
+      if (da === db) return 0;
+      return db - da;   // yuksekten alcaga; verisizler (-Infinity) sonda
+    });
+
+    var ayni = true, i;
+    for (i = 0; i < sirali.length; i++) {
+      if (sirali[i] !== mevcut[i]) { ayni = false; break; }
+    }
+    if (ayni) return;   // sira degismediyse DOM'a hic dokunma
+
+    var azHareket = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // FLIP: once eski konumlar
+    var once = null;
+    if (!azHareket) {
+      once = {};
+      for (i = 0; i < mevcut.length; i++) {
+        once[mevcut[i].getAttribute("data-kod")] = mevcut[i].getBoundingClientRect();
+      }
+    }
+
+    for (i = 0; i < sirali.length; i++) izgara.appendChild(sirali[i]);
+    if (azHareket || !once) return;
+
+    // yeni konumdan eski konuma isinla, sonra sifira gecir
+    var tasinan = [], el, a, b, dx, dy;
+    for (i = 0; i < sirali.length; i++) {
+      el = sirali[i];
+      a = once[el.getAttribute("data-kod")];
+      if (!a) continue;
+      b = el.getBoundingClientRect();
+      dx = a.left - b.left;
+      dy = a.top - b.top;
+      if (!dx && !dy) continue;
+      el.style.transition = "none";
+      el.style.transform = "translate(" + dx + "px," + dy + "px)";
+      tasinan.push(el);
+    }
+    if (!tasinan.length) return;
+
+    void izgara.offsetWidth;   // tek yeniden akis: baslangic konumu sabitlensin
+    for (i = 0; i < tasinan.length; i++) {
+      tasinan[i].style.transition = "transform .5s cubic-bezier(.2,.7,.3,1)";
+      tasinan[i].style.transform = "";
+    }
+  }
+
   function uygula(liste) {
     var harita = {};
     var i;
@@ -51,6 +126,20 @@
       if (d) d.textContent = (s.d >= 0 ? "+" : "") + bicim(s.d) + "%";
       kutu.style.background = "rgba(" + arka(s.d) + ")";
       kutu.style.setProperty("--hk-metin", metin(s.d));
+    });
+    sonHarita = harita;
+    if (uzerinde) { bekleyen = true; return; }   // imlec uzerindeyken yer degistirme
+    sirala(harita);
+  }
+
+  if (izgara) {
+    izgara.addEventListener("pointerenter", function (e) {
+      if (e.pointerType === "mouse" || e.pointerType === "pen") uzerinde = true;
+    });
+    izgara.addEventListener("pointerleave", function (e) {
+      if (e.pointerType && e.pointerType !== "mouse" && e.pointerType !== "pen") return;
+      uzerinde = false;
+      if (bekleyen && sonHarita) { bekleyen = false; sirala(sonHarita); }
     });
   }
 

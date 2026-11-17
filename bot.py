@@ -6530,7 +6530,7 @@ def build_index_html(p, rapor_dosyalari, teknik_oneriler=None):
 <p style="margin:8px 0 0; font-size:13.5px">Sistem, BIST 30 endeksindeki 30 hissenin tamamını her işlem günü tarar; her biri için teknik sinyal, fiyat grafiği, 7 günlük haber akışı ve rapor arşivi değerlendirmesi üretir. Fiyat ve günlük değişim kutularda canlıdır (~15 dk gecikmeli):</p>
 <div class="hkutu-izgara">{kapsam_kutulari}</div>
 </div>
-<script src="/kutular.js?v=2" defer></script>""" if _profiller else ""
+<script src="/kutular.js?v=3" defer></script>""" if _profiller else ""
 
     icerik = f"""
 <div class="hero">
