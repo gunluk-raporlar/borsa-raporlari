@@ -329,6 +329,13 @@
   "ASTOR": [
    {
     "kaynak": "KAP",
+    "tarih": "18 Kasım 16:00",
+    "baslik": "Pay Bazında Devre Kesici Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1699685",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "13 Kasım 10:57",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1697885",
@@ -423,13 +430,6 @@
     "tarih": "2 Kasım 10:50",
     "baslik": "Pay Bazında Devre Kesici Bildirimi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1690711",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "2 Kasım 09:16",
-    "baslik": "Pay Alım Satım Bildirimi",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1690390",
     "genis": false
    }
   ],
@@ -650,6 +650,13 @@
   "ENKAI": [
    {
     "kaynak": "KAP",
+    "tarih": "18 Kasım 08:40",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1699310",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "17 Kasım 08:57",
     "baslik": "Pay Alım Satım Bildirimi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1698693",
@@ -744,13 +751,6 @@
     "tarih": "6 Kasım 09:01",
     "baslik": "Pay Alım Satım Bildirimi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1693515",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "5 Kasım 08:51",
-    "baslik": "Pay Alım Satım Bildirimi",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1692868",
     "genis": false
    }
   ],
@@ -1827,6 +1827,13 @@
   "SAHOL": [
    {
     "kaynak": "KAP",
+    "tarih": "18 Kasım 08:53",
+    "baslik": "Kamuyu Aydınlatma Platformu Duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1699318",
+    "genis": true
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "11 Kasım 18:10",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
     "url": "https://www.kap.org.tr/tr/Bildirim/1697234",
@@ -1922,13 +1929,6 @@
     "baslik": "Kamuyu Aydınlatma Platformu Duyurusu",
     "url": "https://www.kap.org.tr/tr/Bildirim/1687059",
     "genis": true
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "23 Ekim 18:33",
-    "baslik": "Payların Geri Alınmasına İlişkin Bildirim",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1686979",
-    "genis": false
    }
   ],
   "SASA": [
@@ -2541,6 +2541,13 @@
   "TRALT": [
    {
     "kaynak": "KAP",
+    "tarih": "18 Kasım 08:53",
+    "baslik": "Kamuyu Aydınlatma Platformu Duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1699318",
+    "genis": true
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "17 Kasım 12:14",
     "baslik": "Endekslerde Kullanılan Fiili Dolaşımdaki Pay Oranı Değişiklikleri",
     "url": "https://www.kap.org.tr/tr/Bildirim/1698956",
@@ -2635,13 +2642,6 @@
     "tarih": "6 Kasım 09:07",
     "baslik": "Özel Durum Açıklaması (Genel)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1693525",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "6 Kasım 09:06",
-    "baslik": "Özel Durum Açıklaması (Genel)",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1693524",
     "genis": false
    }
   ],
