@@ -1,22 +1,22 @@
 {
   "baslangic": "2026-09-25",
   "braket_versiyonu": 2,
-  "bugun_alinan": [],
-  "bugun_satilan": [],
+  "bugun_alinan": [
+    "BIMAS"
+  ],
+  "bugun_satilan": [
+    "AKBNK"
+  ],
   "bugun_tarih": "2026-11-18",
-  "gerceklesen_kz": -6172.676021079989,
+  "gerceklesen_kz": -6584.128171079987,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 1,
-  "nakit": 3862.90365741978,
+  "kontrol_sayisi": 2,
+  "nakit": 3929.878907419783,
   "onceki_kapanis_ozkaynak": 94992.67,
   "ozkayit": [
     [
       "2026-09-25",
       100000.0
-    ],
-    [
-      "2026-11-03T17:45",
-      95598.74
     ],
     [
       "2026-11-04T17:58",
@@ -229,15 +229,19 @@
     [
       "2026-11-17T17:30",
       94992.67
+    ],
+    [
+      "2026-11-18T12:44",
+      94710.14
     ]
   ],
   "pozisyonlar": {
-    "AKBNK": {
-      "giris": "2026-11-12",
-      "hedef": 73.31,
-      "lot": 162,
-      "maliyet": 71.1707,
-      "stop": 69.04
+    "BIMAS": {
+      "giris": "2026-11-18",
+      "hedef": 406.53,
+      "lot": 28,
+      "maliyet": 394.6866,
+      "stop": 382.85
     },
     "GARAN": {
       "giris": "2026-11-17",
@@ -290,41 +294,41 @@
     }
   },
   "rejim": "boga",
-  "son_bar_tarihi": "2026-11-17",
+  "son_bar_tarihi": "2026-11-18",
   "son_fiyatlar": {
-    "AEFES": 16.26,
-    "AKBNK": 69.05,
-    "ASELS": 341.5,
-    "ASTOR": 160.0,
-    "BIMAS": 393.25,
-    "EKGYO": 18.35,
-    "ENKAI": 81.9,
+    "AEFES": 16.29,
+    "AKBNK": 68.75,
+    "ASELS": 349.75,
+    "ASTOR": 158.2,
+    "BIMAS": 394.0,
+    "EKGYO": 18.39,
+    "ENKAI": 82.6,
     "EREGL": 31.86,
-    "FROTO": 71.7,
-    "GARAN": 148.7,
-    "GUBRF": 282.75,
-    "ISCTR": 13.05,
-    "KCHOL": 202.0,
-    "KRDMD": 38.52,
-    "MGROS": 466.75,
-    "PETKM": 16.18,
-    "PGSUS": 158.8,
-    "SAHOL": 83.0,
-    "SASA": 1.56,
-    "SISE": 34.3,
-    "TAVHL": 302.75,
-    "TCELL": 96.3,
-    "THYAO": 322.25,
-    "TOASO": 245.4,
-    "TRALT": 37.84,
-    "TRMET": 113.5,
+    "FROTO": 73.8,
+    "GARAN": 149.2,
+    "GUBRF": 280.75,
+    "ISCTR": 12.96,
+    "KCHOL": 200.6,
+    "KRDMD": 38.42,
+    "MGROS": 461.5,
+    "PETKM": 16.06,
+    "PGSUS": 157.7,
+    "SAHOL": 83.3,
+    "SASA": 1.54,
+    "SISE": 34.42,
+    "TAVHL": 299.5,
+    "TCELL": 97.6,
+    "THYAO": 327.0,
+    "TOASO": 246.8,
+    "TRALT": 37.22,
+    "TRMET": 112.6,
     "TTKOM": 51.1,
-    "TUPRS": 345.25,
-    "VAKBN": 33.04,
-    "YKBNK": 37.36
+    "TUPRS": 344.5,
+    "VAKBN": 33.56,
+    "YKBNK": 37.38
   },
   "son_repo_tarihi": "2026-11-18",
-  "toplam_kesinti": 641.29,
+  "toplam_kesinti": 668.73,
   "toplam_repo_kazanci": 1650.66,
   "versiyon": 1
 }
