@@ -589,6 +589,18 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-11-17"/>
   </url>
   <url>
+    <loc>https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-11-18</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-11-18"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/deep-analysis/2026-11-18"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/tiefenanalyse/2026-11-18"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/glubokiy-analiz/2026-11-18"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/shendu-fenxi/2026-11-18"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/derin-analiz/2026-11-18"/>
+  </url>
+  <url>
     <loc>https://borsa-raporlari.pages.dev/de/datenschutz</loc>
     <lastmod>2026-11-18</lastmod>
     <changefreq>monthly</changefreq>
@@ -1751,6 +1763,18 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/makroanaliz/2026-11-16"/>
     <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/hongguan-fenxi/2026-11-16"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-11-16"/>
+  </url>
+  <url>
+    <loc>https://borsa-raporlari.pages.dev/de/makroanalyse/2026-11-18</loc>
+    <lastmod>2026-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-11-18"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://borsa-raporlari.pages.dev/en/macro-analysis/2026-11-18"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://borsa-raporlari.pages.dev/de/makroanalyse/2026-11-18"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://borsa-raporlari.pages.dev/ru/makroanaliz/2026-11-18"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://borsa-raporlari.pages.dev/zh/hongguan-fenxi/2026-11-18"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/makro-analiz/2026-11-18"/>
   </url>
   <url>
     <loc>https://borsa-raporlari.pages.dev/de/rechnungslegungsbegriffe</loc>
