@@ -139,3 +139,4 @@
 2026-11-18,12:29,derin,NVID,nvidia/nemotron-3-ultra-550b-a55b,1,17135,10321,238.1,3,toplam_metin=1;faiz=1;piyasa=1,hayir,NVID/nvidia/nemotron-3-ultra-550b-a55bx1,17135,10321
 2026-11-18,12:43,ceviri,MISTRAL,deepseek-v4-1-flash-1017,512,190633,64507,-,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x512(190633+64507),190633,64507
 2026-11-18,16:25,ceviri,MISTRAL,deepseek-v4-1-flash-1017,474,133753,31146,-,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x474(133753+31146),133753,31146
+2026-11-18,16:51,ceviri,MISTRAL,deepseek-v4-1-flash-1017,469,130781,29532,-,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x469(130781+29532),130781,29532
