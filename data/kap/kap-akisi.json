@@ -636,6 +636,13 @@
   "ENKAI": [
    {
     "kaynak": "KAP",
+    "tarih": "19 Kasım 08:41",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1700094",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "18 Kasım 08:40",
     "baslik": "Pay Alım Satım Bildirimi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1699310",
@@ -730,13 +737,6 @@
     "tarih": "6 Kasım 18:30",
     "baslik": "Finansal Rapor",
     "url": "https://www.kap.org.tr/tr/Bildirim/1694275",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "6 Kasım 09:01",
-    "baslik": "Pay Alım Satım Bildirimi",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1693515",
     "genis": false
    }
   ],
@@ -1813,6 +1813,13 @@
   "SAHOL": [
    {
     "kaynak": "KAP",
+    "tarih": "19 Kasım 09:06",
+    "baslik": "Kamuyu Aydınlatma Platformu Duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1700110",
+    "genis": true
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "18 Kasım 08:53",
     "baslik": "Kamuyu Aydınlatma Platformu Duyurusu",
     "url": "https://www.kap.org.tr/tr/Bildirim/1699318",
@@ -1907,13 +1914,6 @@
     "tarih": "27 Ekim 19:04",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
     "url": "https://www.kap.org.tr/tr/Bildirim/1688483",
-    "genis": true
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "26 Ekim 09:02",
-    "baslik": "Kamuyu Aydınlatma Platformu Duyurusu",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1687059",
     "genis": true
    }
   ],
@@ -2118,6 +2118,13 @@
    }
   ],
   "TAVHL": [
+   {
+    "kaynak": "KAP",
+    "tarih": "19 Kasım 09:06",
+    "baslik": "Kamuyu Aydınlatma Platformu Duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1700110",
+    "genis": true
+   },
    {
     "kaynak": "KAP",
     "tarih": "13 Kasım 20:04",
