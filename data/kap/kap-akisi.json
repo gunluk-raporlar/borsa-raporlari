@@ -529,6 +529,27 @@
   "EKGYO": [
    {
     "kaynak": "KAP",
+    "tarih": "20 Kasım 13:27",
+    "baslik": "Özel Durum Açıklaması (Genel)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1700641",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
+    "tarih": "20 Kasım 12:16",
+    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faizsiz)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1700623",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
+    "tarih": "20 Kasım 12:15",
+    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faizsiz)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1700621",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "19 Kasım 18:18",
     "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faizsiz)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1700388",
@@ -609,27 +630,6 @@
     "tarih": "7 Kasım 01:02",
     "baslik": "Özel Durum Açıklaması (Genel)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1694503",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "7 Kasım 01:01",
-    "baslik": "Faaliyet Raporu (Konsolide)",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1694502",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "7 Kasım 01:01",
-    "baslik": "Portföy Sınırlamalarına Uyumun Kontrolü",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1694501",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "7 Kasım 01:01",
-    "baslik": "Finansal Rapor",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1694500",
     "genis": false
    }
   ],
@@ -2962,6 +2962,20 @@
   "VAKBN": [
    {
     "kaynak": "KAP",
+    "tarih": "20 Kasım 15:45",
+    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1700685",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
+    "tarih": "20 Kasım 12:00",
+    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1700619",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "19 Kasım 23:33",
     "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
     "url": "https://www.kap.org.tr/tr/Bildirim/1700461",
@@ -3049,20 +3063,6 @@
     "tarih": "5 Kasım 18:46",
     "baslik": "Faaliyet Raporu (Konsolide Olmayan)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1693411",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "5 Kasım 18:46",
-    "baslik": "Finansal Rapor",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1693410",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "4 Kasım 12:48",
-    "baslik": "Temerrüt İşlemi",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1692142",
     "genis": false
    }
   ],
