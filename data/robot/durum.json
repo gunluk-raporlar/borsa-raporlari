@@ -1,20 +1,14 @@
 {
   "baslangic": "2026-09-25",
   "braket_versiyonu": 2,
-  "bugun_alinan": [
-    "TAVHL"
-  ],
-  "bugun_satilan": [
-    "BIMAS",
-    "GARAN",
-    "YKBNK"
-  ],
-  "bugun_tarih": "2026-11-20",
+  "bugun_alinan": [],
+  "bugun_satilan": [],
+  "bugun_tarih": "2026-11-21",
   "gerceklesen_kz": -9170.564371079985,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 17,
-  "nakit": 47366.11361112629,
-  "onceki_kapanis_ozkaynak": 93602.84,
+  "kontrol_sayisi": 1,
+  "nakit": 47411.51215138783,
+  "onceki_kapanis_ozkaynak": 92645.29,
   "ozkayit": [
     [
       "2026-09-25",
@@ -404,7 +398,7 @@
     }
   },
   "rejim": "boga",
-  "son_bar_tarihi": "2026-11-19",
+  "son_bar_tarihi": "2026-11-20",
   "son_fiyatlar": {
     "AEFES": 16.04,
     "AKBNK": 65.15,
@@ -437,8 +431,8 @@
     "VAKBN": 33.0,
     "YKBNK": 36.16
   },
-  "son_repo_tarihi": "2026-11-20",
+  "son_repo_tarihi": "2026-11-21",
   "toplam_kesinti": 778.32,
-  "toplam_repo_kazanci": 1689.44,
+  "toplam_repo_kazanci": 1734.84,
   "versiyon": 1
 }
