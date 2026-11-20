@@ -156,4 +156,5 @@
 2026-11-20,01:44,radyo,MISTRAL,deepseek-v4-1-flash-1017,1,3562,2916,9.6,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x1,9948,18916
 2026-11-20,10:51,gunluk,MISTRAL,deepseek-v4-1-flash-1017,1,2649,1039,4.3,3,isim=1;toplam_metin=1;endeks=1,hayir,MISTRAL/deepseek-v4-1-flash-1017x8,83736,9237
 2026-11-20,11:14,ceviri,MISTRAL,deepseek-v4-1-flash-1017,608,243550,89644,-,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x608(243550+89644),243550,89644
-2026-11-20,17:36,makro,ZAI,deepseek-v4.1-flash-1017,1,12006,24582,-,7,toplam_metin=1;makro=6,hayir,,12006,24582
+2026-11-20,17:25,ceviri,NVIDIA,nvidia/nemotron-3-ultra-550b-a55b,217,60121,143993,-,0,,hayir,"NVIDIA/nvidia/nemotron-3-ultra-550b-a55bx200(55373+127927), NVIDIA/nvidia/nemotron-3.5-super-vl-120b-a12bx8(2459+10243), NVIDIA2/nvidia/nemotron-3-ultra-550b-a55bx8(2289+5823), MISTRAL/deepseek-v4-1-flash-1017x1(0+0)",60121,143993
+2026-11-20,18:25,ceviri,NVIDIA,nvidia/nemotron-3-ultra-550b-a55b,206,56406,131623,-,0,,hayir,"NVIDIA/nvidia/nemotron-3-ultra-550b-a55bx189(52342+119768), NVIDIA/nvidia/nemotron-3.5-super-vl-120b-a12bx7(1987+8051), NVIDIA2/nvidia/nemotron-3-ultra-550b-a55bx6(1381+3567), AMD/DeepSeek-V4-Flashx2(696+237), MISTRAL/deepseek-v4-1-flash-1017x1(0+0), NVIDIA2/nvidia/nemotron-3.5-super-vl-120b-a12bx1(0+0)",56406,131623
