@@ -125,6 +125,17 @@ print("[raporlar.xml] %d item yazildi" % len(kalemler))
 PY
 echo "raporlar.xml: $(wc -c < dist/raporlar.xml 2>/dev/null || echo 0) bayt, $(grep -c '<item>' dist/raporlar.xml 2>/dev/null || echo 0) item"
 
+# Dil RSS'leri (2026-11-21 denetim): arayuzdeki RSS baglantisi de/berichte.xml,
+# en/reports.xml, ru/otchety.xml, zh/baogao.xml adreslerini gosteriyordu ama
+# hicbiri uretilmiyordu (404). Kok besleme yerel adla kopyalanir.
+for _cift in "de:berichte" "en:reports" "ru:otchety" "zh:baogao"; do
+  _dil="${_cift%%:*}"
+  _ad="${_cift##*:}"
+  if [ -f "dist/raporlar.xml" ] && [ -d "dist/$_dil" ]; then
+    cp "dist/raporlar.xml" "dist/$_dil/$_ad.xml"
+  fi
+done
+
 # MD link denetimi (2026-11-05): dist'teki .md aynalarindaki
 # https://borsa-raporlari.pages.dev/... baglantilari karsiliksiz mi diye
 # denetler; hedef .md'sizlestirilir, dist'te <yol>.html YA DA <yol>.md

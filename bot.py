@@ -10155,49 +10155,6 @@ def rapor_podcast_yaz():
     logger.info("[Podcast] %d bolumluk rapor RSS'i yazildi.", len(ogeler))
 
 
-def rapor_rss_yaz(rapor_dosyalari, adet=30):
-    """raporlar/*.html -> raporlar.xml (sitenin rapor akisi).
-
-    Arayuzdeki "RSS" baglantisi bu dosyayi gosteriyordu ama hicbir adim onu
-    uretmiyordu; 4 dilde de 404 donuyordu (21.11 denetim bulgusu). Basliklar
-    sayfadan okunur, okunamazsa tarihten uretilir.
-    """
-    if not rapor_dosyalari:
-        return
-    ogeler = []
-    for ad in rapor_dosyalari[:adet]:
-        tarih = ad[:10]
-        try:
-            with open(os.path.join("raporlar", ad), encoding="utf-8") as f:
-                src = f.read()
-        except OSError:
-            continue
-        m = re.search(r"<title>(.*?)</title>", src, re.S)
-        baslik = re.sub(r"\s+", " ", html.unescape(m.group(1))).strip() if m else ""
-        if not baslik:
-            baslik = f"{tarih} Günlük Rapor"
-        link = f"{SITE_URL}raporlar/{tarih}.html"
-        ogeler.append(
-            f"<item><title>{html.escape(baslik)}</title><link>{link}</link>"
-            f'<guid isPermaLink="true">{link}</guid>'
-            f"<pubDate>{_rss_pubdate(tarih)}</pubDate>"
-            f"<description>{tarih} tarihli BIST 30 günlük raporu. "
-            "Yatırım tavsiyesi değildir.</description></item>")
-    xml = (
-        '<?xml version="1.0" encoding="UTF-8"?>\n'
-        '<rss version="2.0"><channel>\n'
-        "<title>BIST 30 Günlük Raporlar</title>\n"
-        f"<link>{SITE_URL}</link>\n<language>tr</language>\n"
-        "<description>Her işlem günü otomatik üretilen BIST 30 günlük raporları. "
-        "Yatırım tavsiyesi değildir.</description>\n"
-        + "\n".join(ogeler)
-        + "\n</channel></rss>"
-    )
-    with open("raporlar.xml", "w", encoding="utf-8") as f:
-        f.write(xml)
-    logger.info("[RSS] raporlar.xml yazildi (%d oge).", len(ogeler))
-
-
 def site_arama_json_yaz(rapor_dosyalari):
     """Site ici arama kutusunun indeksini (site-arama.json) uretir.
     Statik sayfalar anahtar kelime + hisse kodlariyla; rapor ve derin analiz
@@ -10815,10 +10772,6 @@ if __name__ == "__main__":
         rapor_podcast_yaz()
     except Exception:
         logger.exception("[Podcast] rapor RSS'i yazilamadi.")
-    try:
-        rapor_rss_yaz(raporlar)
-    except Exception:
-        logger.exception("[RSS] raporlar.xml yazilamadi.")
 
     # Eski tarihli sayfalarin ust menusu/dil secicisi guncel sablona cekilir (18.10)
     try:
