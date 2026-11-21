@@ -17,7 +17,23 @@ import sys
 
 import editor
 
-TARIH = "06.10.2026"
+
+def _kaynak_damgasi(son_donem, temel_veri):
+    """Kaynak notunun tarih damgasi — sabit yazilmaz, veriden turetilir.
+
+    22.11'e kadar `TARIH = "06.10.2026"` sabitti; betik gunluk akisa
+    baglandiginda not her gun ayni tarihi gosterirdi.
+    """
+    parcalar = []
+    if son_donem:
+        parcalar.append(f"İş Yatırım {son_donem}")
+    g = str(temel_veri.get("guncelleme") or "")
+    try:
+        y, a, gun = g.split(" ")[0].split("-")
+        parcalar.append(f"TradingView {gun}.{a}.{y}")
+    except ValueError:
+        pass
+    return " + ".join(parcalar) if parcalar else "kaynak tarihi bilinmiyor"
 
 
 def _yukle(yol):
@@ -177,7 +193,7 @@ def uret(kod, temel_veri):
 
     if not madde:
         return None
-    madde.append(f"Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM ({TARIH}); "
+    madde.append(f"Kaynak: {_kaynak_damgasi(son.get('donem'), temel_veri)}; "
                  "yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir.")
     # Yazim sozlugu (editor.YAZIM) bu betikte uygulanmiyordu; "bilanso" gibi
     # hatalar JSON'a ve sayfalara boylece siziyordu (21.11 denetim bulgusu).
@@ -201,8 +217,12 @@ def main():
             yazilan += 1
         else:
             atlanan += 1
+    # Bicim dosyanin MEVCUT bicimiyle ayni olmali: indent=1 + sondaki satir
+    # sonu. indent=2 ile yazildiginda 1678 satirin tamami degisiyor ve gunluk
+    # commit okunamaz hale geliyordu (22.11 on-kontrolu).
     with open("data/sirketler.json", "w", encoding="utf-8") as f_:
-        json.dump(sirketler, f_, ensure_ascii=False, indent=2)
+        json.dump(sirketler, f_, ensure_ascii=False, indent=1)
+        f_.write("\n")
     print(f"Temel analiz ozetleri: {yazilan} hisseye yazildi, {atlanan} atlandi (korunan/veri yok).")
 
 

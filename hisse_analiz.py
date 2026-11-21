@@ -188,7 +188,12 @@ def _listeye_cevir(ham, tip):
     liste = []
     for donem in sorted(ham, key=_donem_sirala):
         h = ham[donem]
-        if not (h.get("toplam_varlik") or h.get("ozsermaye")):
+        # 22.11: yalnizca bilanco toplamlari yoksa donemi ATMA. Is Yatirim bazi
+        # bankalarda (AKBNK/GARAN 2025/9) bilanco sutununu sifir gonderip gelir
+        # tablosunu dolu birakiyor; eski kapi bu donemi tamamen dusuruyor ve
+        # YoY satirlari kayboluyordu.
+        if not any(h.get(k) for k in ("toplam_varlik", "ozsermaye",
+                                      "satis", "net_kar")):
             continue
         kayit = {"donem": donem}
         for k in _KALEM_SIRA:
@@ -205,10 +210,18 @@ def _listeye_cevir(ham, tip):
 
 def _cek_tek(kod, baslangic, bitis):
     """Tek hisse icin mali tablo ceker. Once genel sablon (grup 1), bulunamazsa
-    banka/faktoring sablonu (grup 2) denenir. Donus: (bilanco_listesi, tip)."""
+    banka sablonu KONSOLIDE (grup 3 = UFRS_K), o da olmazsa solo (grup 2 = UFRS)
+    denenir. Donus: (bilanco_listesi, tip).
+
+    22.11: bankalarda grup 2 (UFRS) SOLO bilanco donuyor ve AKBNK/GARAN'in
+    2025/9 sutununu sifir gonderiyor; grup 3 (UFRS_K) konsolide ve eksiksiz
+    (yfinance'in konsolide rakamiyla birebir: AKBNK 2026/9 4.197.902.000.000).
+    Sayfadaki TradingView carpanlari da konsolide oldugu icin tek taban artik
+    konsolide.
+    """
     from isyatirimhisse import fetch_financials
 
-    for tip, grup in (("sinai", "1"), ("banka", "2")):
+    for tip, grup in (("sinai", "1"), ("banka", "3"), ("banka", "2")):
         for _deneme in (1, 2):
             try:
                 df = fetch_financials(symbols=[kod], start_year=baslangic,

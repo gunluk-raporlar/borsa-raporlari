@@ -2054,16 +2054,23 @@ if __name__ == "__main__":
     assert "%4,5" in vt1 and len(vt1d) == 1, f"varsayilan yillik/dedupe: {vt1} {vt1d}"
 
     # --- Enflasyon frekans kirilimi ---
+    # 2026-11-22: cumlelere ULKE IPUCU eklendi. `_ulke_anahtari` 13.11'den
+    # beri ipucu yoksa None donuyor (Euro cumlesine TR reel faizi yazilmasini
+    # engelleyen duzeltme); ipucusuz cumle bilincli olarak dokunulmaz.
     AYLIK, YILLIK = {"tr": 0.22}, {"tr": 31.51}
-    e1, e1d = enflasyon_duzelt("Aylık enflasyon %1,84 olarak açıklandı.",
+    e1, e1d = enflasyon_duzelt("Türkiye'de aylık enflasyon %1,84 olarak açıklandı.",
                                31.51, oranlar=YILLIK, oranlar_aylik=AYLIK)
     assert "%0,22" in e1 and len(e1d) == 1, f"aylik enflasyon kirilimi: {e1}"
-    e2, e2d = enflasyon_duzelt("Aylık enflasyon %1,84 olarak açıklandı.",
+    e2, e2d = enflasyon_duzelt("Türkiye'de aylık enflasyon %1,84 olarak açıklandı.",
                                31.51, oranlar=YILLIK)
     assert "%1,84" in e2 and e2d == [], f"aylik veri yokken dokunuldu: {e2}"
-    e3, e3d = enflasyon_duzelt("Yıllık enflasyon %28,4 seviyesinde.",
+    e3, e3d = enflasyon_duzelt("Türkiye'de yıllık enflasyon %28,4 seviyesinde.",
                                31.51, oranlar=YILLIK, oranlar_aylik=AYLIK)
     assert "%31,51" in e3 and len(e3d) == 1, f"yillik enflasyon kirilimi: {e3}"
+    # Ipucu yoksa sayiya DOKUNULMAZ (13.11 davranisi kilitlenir).
+    e4, e4d = enflasyon_duzelt("Aylık enflasyon %1,84 olarak açıklandı.",
+                               31.51, oranlar=YILLIK, oranlar_aylik=AYLIK)
+    assert e4d == [] and "%1,84" in e4, f"ipucusuz sayi degistirildi: {e4}"
 
     # --- 2026-10-02 canli hata regresyonlari (2 Ekim raporu yayindi) ---
     # 1) "pozitif bolgede" kelimesi cumleyi Euro baglamina sokuyordu; TR
@@ -2098,7 +2105,8 @@ if __name__ == "__main__":
     # 1) "euro bazindaki" cumleyi Euro baglamina sokup TR enflasyonunu EU
     #    degeriyle degistirtiyordu.
     s1 = metin_dogrula(
-        "Endeksin euro bazındaki performansı %0,48 oldu; yıllık enflasyon %28,4 seviyesinde.",
+        "Endeksin euro bazındaki performansı %0,48 oldu; Türkiye'de yıllık "
+        "enflasyon %28,4 seviyesinde.",
         {}, 31.51, enflasyon_oranlari=CANLI)
     assert "%31,51" in s1["metin"] and "%3,8" not in s1["metin"], \
         f"euro-bazindaki saldirisi acik: {s1['metin']}"
@@ -2258,7 +2266,7 @@ if __name__ == "__main__":
     # 9) "yüzde 43" yazimi: % isareti yerine yazilan yuzde sozcugu de denetlenir.
     f9 = faiz_duzelt("TCMB politika faizi yüzde 43.", ORAN)
     assert "%37" in f9[0], f9
-    e9 = enflasyon_duzelt("Enflasyon yüzde 28,4 seviyesinde.", 31.51,
+    e9 = enflasyon_duzelt("Türkiye'de enflasyon yüzde 28,4 seviyesinde.", 31.51,
                           oranlar={"tr": 31.51})
     assert "%31,51" in e9[0], e9
     # 10) PCE dogal dil sirasi ("çekirdek PCE yıllık").
@@ -2301,19 +2309,24 @@ if __name__ == "__main__":
     # 1) Fisher: isaret bozmasi yakalanir; "-%36" -> tam turev +4,83 (eski
     #    isaret metinde kalintı olarak KALMAZ).
     f1 = reel_fisher_duzelt(
-        "Faiz korumaya ragmen reel faiz -%36 seviyesine gerilemistir.",
+        "Türkiye'de faiz korumaya ragmen reel faiz -%36 seviyesine gerilemistir.",
         FISHER, izinli=T_IZINLI)
     assert "reel faiz %4,83" in f1[0] and "-%36" not in f1[0], f1
     assert f1[1] == [("-%36", "%4,83")], f1
+    # Ipucu yoksa reel faiz sayisina da DOKUNULMAZ (13.11 davranisi).
+    f1b = reel_fisher_duzelt(
+        "Faiz korumaya ragmen reel faiz -%36 seviyesine gerilemistir.",
+        FISHER, izinli=T_IZINLI)
+    assert f1b[1] == [] and "-%36" in f1b[0], f"ipucusuz reel faiz degistirildi: {f1b}"
     # 2) Gri bolge: isaret dogru, hedefe 0,67 puan -> DOKUNMA.
     f2 = reel_fisher_duzelt("Reel faiz %5,5 seviyesinde seyrediyor.", FISHER,
                             izinli=T_IZINLI)
     assert f2[1] == [], f2
     # 3) Turevden belirgin uzak + isaret dogru -> duzeltilir; cümle "yüzde
     #    puan" dedigi için YAKLASIK türev esas alinir; ciplak yazim korunur.
-    f3 = reel_fisher_duzelt("Reel faiz 12 yüzde puan seviyesindedir.", FISHER,
-                            izinli=T_IZINLI)
-    assert "Reel faiz 6,27 yüzde puan" in f3[0] and f3[1], f3
+    f3 = reel_fisher_duzelt("Türkiye'de reel faiz 12 yüzde puan seviyesindedir.",
+                            FISHER, izinli=T_IZINLI)
+    assert "reel faiz 6,27 yüzde puan" in f3[0] and f3[1], f3
     # 4) "reel kur" ve "reel mevduat faizi" duzeltilmez.
     f4 = reel_fisher_duzelt(
         "Reel kur %10 seviyesindedir. Reel mevduat faizi %43,8 seviyesindedir.",
@@ -2370,7 +2383,7 @@ if __name__ == "__main__":
 
     # 13) Zincir entegrasyonu: uc duzeltici metin_dogrula icinden calisir.
     st = metin_dogrula(
-        "Politika faizi %43 kaldi; reel faiz -%36 seviyesindedir. "
+        "Politika faizi %43 kaldi; Türkiye'de reel faiz -%36 seviyesindedir. "
         "Dolar bazında günlük performans %0,35 gerçekleşti. "
         "Cari açık 4,05 milyar dolar oldu.",
         {}, faiz_oranlari={"tr": 36.0}, izinli_degerler=T_IZINLI,

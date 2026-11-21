@@ -1,100 +1,100 @@
 {
- "kod": "VAKBN",
- "guncelleme": "2026-11-15",
- "teknik_analiz": "Vakıfbank hissesi 33,24 TL seviyesinde işlem görüyor ve günlük değişim %-1,13 olarak gerçekleşti. 60 günlük getiri %10,65 düzeyinde. EMA diziliminde kısa vadeli ortalama AL sinyali verirken, orta ve uzun vadeli ortalamalar BEKLE konumunda. Wave Trend göstergesi AL yönünde ve 7,6 değerinde. Fiyatın kanal içindeki konumu %66,00 olarak ölçülüyor; bu, kanalın üst bölgesine yakın bir yerleşime işaret ediyor. Trend gücü r değeri -0,28 ile zayıf bir eğilime işaret ederken, genel teknik puan 2 seviyesinde ve özet görünüm NÖTR olarak şekilleniyor. Kısa vadeli momentumun pozitif, ancak trend gücünün sınırlı olduğu bir tablo öne çıkıyor. Teknik göstergelerin bir kısmı alım yönünde, bir kısmı bekle sinyali veriyor; bu dağılım hissenin yönsüz bir seyir izlediğini gösteriyor.",
- "makro_degerlendirme": "Türkiye ekonomisinde yıllık enflasyon %29,77 ile önceki %29,73 seviyesinin hafif üzerinde. Aylık enflasyon %2,58 olurken önceki %1,84 düzeyindeydi. Çekirdek enflasyon yıllık %28,30 ile önceki %28,70'in altında. ÜFE yıllık %27,41, aylık %1,65 seviyesinde; önceki aylık ÜFE %2,07 idi. Politika faizi %36,00 düzeyinde ve önceki %37,00'den indirilmiş durumda. İşsizlik oranı %8,50, ekonomik katılım oranı %52,70 ile önceki %52,60'ın üzerinde. Sanayi üretimi yıllık %2,61 artarken aylık %2,10 ile önceki %-1,00'e göre toparlanma gösteriyor. Enflasyonun yatay seyri, faiz indirimi ve sanayi üretimindeki aylık toparlanma bankacılık sektörü açısından karışık bir makro tablo oluşturuyor; politika faizindeki düşüş kredi talebi kanalıyla sektörü destekleyebilecek bir unsur olarak öne çıkıyor.",
- "bilanco_degerlendirmesi": "Vakıfbank'ın son dönem mali tablolarında 2025/12 döneminde satış 152,38 milyar TL, net kâr 70,05 milyar TL ve özkaynak 322,38 milyar TL olarak gerçekleşti. 2026/3 döneminde satış 53,85 milyar TL, net kâr 15,03 milyar TL, özkaynak 331,45 milyar TL seviyesinde. 2026/6 döneminde satış 103,70 milyar TL, net kâr 30,11 milyar TL ve özkaynak 353,01 milyar TL oldu. Son dönem olan 2026/9'da satış 169,85 milyar TL, net kâr 45,54 milyar TL ve özkaynak 357,02 milyar TL düzeyinde. Son dönem net kârında yıllık değişim %8,54, çeyrek değişim ise %51,26 olarak hesaplanıyor. Özkaynak kalemi dönemler boyunca kademeli artış gösterirken, net kârın çeyreklik bazda belirgin yükselişi dikkat çekiyor. Satış ve kârlılık kalemlerinin son dönemdeki seyri, bankanın faaliyet performansında toparlanmaya işaret eden bir tablo sunuyor.",
- "bilanco": [
-  {
-   "donem": "2024/3",
-   "satis": 17701893000.0,
-   "net_kar": 12022969000.0,
-   "toplam_varlik": 3026349135000.0,
-   "ozsermaye": 184479639000.0,
-   "odenmis_sermaye": 9915922000.0
-  },
-  {
-   "donem": "2024/6",
-   "satis": 36327630000.0,
-   "net_kar": 19191709000.0,
-   "toplam_varlik": 3237503013000.0,
-   "ozsermaye": 191259204000.0,
-   "odenmis_sermaye": 9915922000.0
-  },
-  {
-   "donem": "2024/9",
-   "satis": 56116929000.0,
-   "net_kar": 27214250000.0,
-   "toplam_varlik": 3568979460000.0,
-   "ozsermaye": 201165939000.0,
-   "odenmis_sermaye": 9915922000.0
-  },
-  {
-   "donem": "2024/12",
-   "satis": 98976466000.0,
-   "net_kar": 40375301000.0,
-   "toplam_varlik": 4021485697000.0,
-   "ozsermaye": 219194449000.0,
-   "odenmis_sermaye": 9915922000.0
-  },
-  {
-   "donem": "2025/3",
-   "satis": 21017161000.0,
-   "net_kar": 20033654000.0,
-   "toplam_varlik": 4189765672000.0,
-   "ozsermaye": 232989885000.0,
-   "odenmis_sermaye": 9915922000.0
-  },
-  {
-   "donem": "2025/6",
-   "satis": 48978000000.0,
-   "net_kar": 30063000000.0,
-   "toplam_varlik": 4555224002000.0,
-   "ozsermaye": 246456471000.0,
-   "odenmis_sermaye": 9915922000.0
-  },
-  {
-   "donem": "2025/9",
-   "satis": 86061000000.0,
-   "net_kar": 41956000000.0,
-   "toplam_varlik": 4994269891000.0,
-   "ozsermaye": 263628282000.0,
-   "odenmis_sermaye": 9915922000.0
-  },
-  {
-   "donem": "2025/12",
-   "satis": 152384040000.0,
-   "net_kar": 70050312000.0,
-   "toplam_varlik": 5388289819000.0,
-   "ozsermaye": 322380656000.0,
-   "odenmis_sermaye": 9915922000.0
-  },
-  {
-   "donem": "2026/3",
-   "satis": 53848669000.0,
-   "net_kar": 15031078000.0,
-   "toplam_varlik": 5550109551000.0,
-   "ozsermaye": 331454835000.0,
-   "odenmis_sermaye": 9915922000.0
-  },
-  {
-   "donem": "2026/6",
-   "satis": 103701000000.0,
-   "net_kar": 30108000000.0,
-   "toplam_varlik": 5810756000000.0,
-   "ozsermaye": 353008000000.0,
-   "odenmis_sermaye": 9916000000.0
-  },
-  {
-   "donem": "2026/9",
-   "satis": 169853000000.0,
-   "net_kar": 45540000000.0,
-   "toplam_varlik": 6235114000000.0,
-   "ozsermaye": 357016000000.0,
-   "odenmis_sermaye": 9916000000.0
-  }
- ],
- "tip": "banka",
- "kaynak": "İş Yatırım mali tabloları (KAP bildirimleri esas alınır)",
- "bilanco_guncelleme": "2026-11-15"
+  "kod": "VAKBN",
+  "guncelleme": "2026-11-15",
+  "teknik_analiz": "Vakıfbank hissesi 33,24 TL seviyesinde işlem görüyor ve günlük değişim %-1,13 olarak gerçekleşti. 60 günlük getiri %10,65 düzeyinde. EMA diziliminde kısa vadeli ortalama AL sinyali verirken, orta ve uzun vadeli ortalamalar BEKLE konumunda. Wave Trend göstergesi AL yönünde ve 7,6 değerinde. Fiyatın kanal içindeki konumu %66,00 olarak ölçülüyor; bu, kanalın üst bölgesine yakın bir yerleşime işaret ediyor. Trend gücü r değeri -0,28 ile zayıf bir eğilime işaret ederken, genel teknik puan 2 seviyesinde ve özet görünüm NÖTR olarak şekilleniyor. Kısa vadeli momentumun pozitif, ancak trend gücünün sınırlı olduğu bir tablo öne çıkıyor. Teknik göstergelerin bir kısmı alım yönünde, bir kısmı bekle sinyali veriyor; bu dağılım hissenin yönsüz bir seyir izlediğini gösteriyor.",
+  "makro_degerlendirme": "Türkiye ekonomisinde yıllık enflasyon %29,77 ile önceki %29,73 seviyesinin hafif üzerinde. Aylık enflasyon %2,58 olurken önceki %1,84 düzeyindeydi. Çekirdek enflasyon yıllık %28,30 ile önceki %28,70'in altında. ÜFE yıllık %27,41, aylık %1,65 seviyesinde; önceki aylık ÜFE %2,07 idi. Politika faizi %36,00 düzeyinde ve önceki %37,00'den indirilmiş durumda. İşsizlik oranı %8,50, ekonomik katılım oranı %52,70 ile önceki %52,60'ın üzerinde. Sanayi üretimi yıllık %2,61 artarken aylık %2,10 ile önceki %-1,00'e göre toparlanma gösteriyor. Enflasyonun yatay seyri, faiz indirimi ve sanayi üretimindeki aylık toparlanma bankacılık sektörü açısından karışık bir makro tablo oluşturuyor; politika faizindeki düşüş kredi talebi kanalıyla sektörü destekleyebilecek bir unsur olarak öne çıkıyor.",
+  "bilanco_degerlendirmesi": "Vakıfbank'ın son dönem mali tablolarında 2025/12 döneminde satış 152,38 milyar TL, net kâr 70,05 milyar TL ve özkaynak 322,38 milyar TL olarak gerçekleşti. 2026/3 döneminde satış 53,85 milyar TL, net kâr 15,03 milyar TL, özkaynak 331,45 milyar TL seviyesinde. 2026/6 döneminde satış 103,70 milyar TL, net kâr 30,11 milyar TL ve özkaynak 353,01 milyar TL oldu. Son dönem olan 2026/9'da satış 169,85 milyar TL, net kâr 45,54 milyar TL ve özkaynak 357,02 milyar TL düzeyinde. Son dönem net kârında yıllık değişim %8,54, çeyrek değişim ise %51,26 olarak hesaplanıyor. Özkaynak kalemi dönemler boyunca kademeli artış gösterirken, net kârın çeyreklik bazda belirgin yükselişi dikkat çekiyor. Satış ve kârlılık kalemlerinin son dönemdeki seyri, bankanın faaliyet performansında toparlanmaya işaret eden bir tablo sunuyor.",
+  "bilanco": [
+    {
+      "donem": "2024/3",
+      "satis": 19396125000.0,
+      "net_kar": 13317087000.0,
+      "toplam_varlik": 3087077835000.0,
+      "ozsermaye": 194459381000.0,
+      "odenmis_sermaye": 9915922000.0
+    },
+    {
+      "donem": "2024/6",
+      "satis": 40219652000.0,
+      "net_kar": 26828941000.0,
+      "toplam_varlik": 3304440161000.0,
+      "ozsermaye": 206278391000.0,
+      "odenmis_sermaye": 9915922000.0
+    },
+    {
+      "donem": "2024/9",
+      "satis": 62317930000.0,
+      "net_kar": 38667864000.0,
+      "toplam_varlik": 3632057104000.0,
+      "ozsermaye": 220525443000.0,
+      "odenmis_sermaye": 9915922000.0
+    },
+    {
+      "donem": "2024/12",
+      "satis": 107355802000.0,
+      "net_kar": 53316801000.0,
+      "toplam_varlik": 4093575481000.0,
+      "ozsermaye": 236198727000.0,
+      "odenmis_sermaye": 9915922000.0
+    },
+    {
+      "donem": "2025/3",
+      "satis": 23208499000.0,
+      "net_kar": 21979780000.0,
+      "toplam_varlik": 4270860666000.0,
+      "ozsermaye": 251647303000.0,
+      "odenmis_sermaye": 9915922000.0
+    },
+    {
+      "donem": "2025/6",
+      "satis": 53530000000.0,
+      "net_kar": 36136000000.0,
+      "toplam_varlik": 4662933069000.0,
+      "ozsermaye": 269143722000.0,
+      "odenmis_sermaye": 9915922000.0
+    },
+    {
+      "donem": "2025/9",
+      "satis": 93102000000.0,
+      "net_kar": 50562000000.0,
+      "toplam_varlik": 5105150923000.0,
+      "ozsermaye": 287297951000.0,
+      "odenmis_sermaye": 9915922000.0
+    },
+    {
+      "donem": "2025/12",
+      "satis": 162495773000.0,
+      "net_kar": 80757876000.0,
+      "toplam_varlik": 5493133789000.0,
+      "ozsermaye": 344626969000.0,
+      "odenmis_sermaye": 9915922000.0
+    },
+    {
+      "donem": "2026/3",
+      "satis": 56509844000.0,
+      "net_kar": 17502009000.0,
+      "toplam_varlik": 5652090514000.0,
+      "ozsermaye": 355956160000.0,
+      "odenmis_sermaye": 9915922000.0
+    },
+    {
+      "donem": "2026/6",
+      "satis": 109420000000.0,
+      "net_kar": 35990000000.0,
+      "toplam_varlik": 5944492000000.0,
+      "ozsermaye": 382212000000.0,
+      "odenmis_sermaye": 9916000000.0
+    },
+    {
+      "donem": "2026/9",
+      "satis": 178792000000.0,
+      "net_kar": 54763000000.0,
+      "toplam_varlik": 6395258000000.0,
+      "ozsermaye": 394893000000.0,
+      "odenmis_sermaye": 9916000000.0
+    }
+  ],
+  "tip": "banka",
+  "kaynak": "İş Yatırım mali tabloları (KAP bildirimleri esas alınır)",
+  "bilanco_guncelleme": "2026-11-22"
 }

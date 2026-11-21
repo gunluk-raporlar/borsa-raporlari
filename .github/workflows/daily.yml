@@ -41,6 +41,15 @@ jobs:
       # "11.811,48" -> "11.811,4,8"). Bloklayici — "|| echo" ile yutulmaz.
       - name: Dogrulayici regresyon testleri
         run: python -m unittest test_makro_veri -v
+      # 2026-11-22: dogrulama.py kendini testleri de bloklayici. 13.11'den
+      # beri 9 test kirikti (ulke ipucu davranisi degisti, testler eski
+      # beklentiyi tasiyordu) ve bu yuzden akisa alinamamisti; testler
+      # guncel davranisa cekildi. PYTHONIOENCODING: Turkce cikti Ubuntu
+      # runner'da UnicodeEncodeError vermesin.
+      - name: Dogrulayici kendini testleri (dogrulama.py)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python dogrulama.py
       # EMA Lightning kur (23.10 kullanici karari: rapor sesli bulteni EMA
       # sesiyle okunur; bot.rapor_sesi_uret EMA'yi birincil, Edge-TTS'i yedek
       # kullanir). pip'in varsayilan torch'u CUDA paketi (~2 GB); runner
@@ -89,6 +98,13 @@ jobs:
       # gunluk rapor uretimi durmaz.
       - name: KAP bildirim akisini tazele
         run: python -u _kap_sirket_topla.py || echo "::warning::KAP akisi tazelenemedi — onceki veri kullanilacak."
+      # Temel analiz ozetleri (2026-11-22): data/sirketler.json 'temel'
+      # listeleri 2026/6'da kalmisti; betik yerel veriden (data/hisse-analiz +
+      # data/temel-veri) yeniden uretir, ag yok. Bot'tan ONCE kosar ki hisse
+      # sayfalari taze listelerle uretilsin. Fail-open: hata olursa onceki
+      # listeler kalir, sayfa uretimi durmaz.
+      - name: Temel analiz ozetlerini tazele
+        run: python -u temel_ozet_uret.py || echo "::warning::Temel ozet tazelenemedi — onceki listeler kullanilacak."
       - name: Botu calistir
         if: steps.kapisi.outputs.uretim != 'false'
         env:
