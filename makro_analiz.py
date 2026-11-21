@@ -71,14 +71,31 @@ def _kaynak_baglantili(metin):
     )
 
 
+def _tr_sayi(deger):
+    """Ham float'ı Türkçe biçime çevirir: 2.6144 -> '2,61', 74.5 -> '74,5'.
+
+    2026-11-21: tablo ham float basıyordu (canlıda '2.6144%', '74.5%',
+    '84.8 puan' — Türkçe sayfada İngiliz ondalık ayırıcı). Tek biçim burada.
+    """
+    try:
+        d = float(deger)
+    except (TypeError, ValueError):
+        return str(deger)
+    s = f"{d:,.2f}"
+    if "." in s:
+        s = s.rstrip("0").rstrip(".")
+    return s.replace(",", "@").replace(".", ",").replace("@", ".")
+
+
 def _birlestir(deger, birim):
     if deger is None:
         return "—"
+    sayi = _tr_sayi(deger)
     if birim == "%":
-        return f"{deger}%"
+        return f"%{sayi}"
     if birim:
-        return f"{deger} {birim}"
-    return str(deger)
+        return f"{sayi} {birim}"
+    return sayi
 
 
 def _veri_tablosu(makro):

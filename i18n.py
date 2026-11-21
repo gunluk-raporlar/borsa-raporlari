@@ -2477,6 +2477,14 @@ def dil_yollarini_cevir(kok: Path, dil: str) -> int:
         if podcast.exists():
             podcast.rename(dil_kok / esle["radyo"] / f"podcast-{esle['raporlar']}.xml")
             sayi += 1
+    # (2b) Site RSS'i: raporlar.xml -> <dil>/<raporlar-yeni>.xml
+    # Arayuzdeki "RSS" baglantisi bu dosyayi gosteriyordu; hicbir adim
+    # uretmedigi icin 4 dilde de 404 donuyordu (21.11 denetim bulgusu).
+    if esle.get("raporlar"):
+        rss = kok / "raporlar.xml"
+        if rss.exists():
+            (dil_kok / f"{esle['raporlar']}.xml").write_bytes(rss.read_bytes())
+            sayi += 1
     # (3) Icerik yeniden yazimi (baglantilar, JSON-LD, site-arama "u", hreflang)
     hedefler = list(dil_kok.rglob("*.html")) + list(dil_kok.rglob("*.xml")) + [kok / "sitemap.xml"] + [dil_kok / "site-arama.json"]
     for dosya in hedefler:

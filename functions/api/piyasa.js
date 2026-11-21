@@ -72,6 +72,16 @@ async function piyasaCek() {
 
   const liste = ham.filter(Boolean);
   if (!liste.length) throw new Error("hiçbir gösterge alınamadı");
+  // Kısmi liste şeridi sessizce kısaltıyordu: içerik küçülünce CSS yüzde
+  // animasyonu (translateX(-50%)) eski genişliğe göre çözülüp içeriği ekran
+  // dışına taşıyor, şerit tamamen kararıyordu (2026-11-18 telefon bildirimi).
+  // Eksik veriyle 200 dönmek yerine 502 dönüyoruz; istemci piyasa-serit.json
+  // yedeğine düşüyor.
+  const ZORUNLU = ["XU030", "XU100", "USDTRY"];
+  const eksik = ZORUNLU.filter((k) => !liste.some((g) => g.k === k));
+  if (eksik.length || liste.length < 5) {
+    throw new Error("eksik gösterge: " + (eksik.join(",") || liste.length + "/7"));
+  }
 
   // Gram altın = ons altın (USD) / 31,1034768 × USDTRY; günlük değişim iki
   // bileşenin yüzde değişimlerinin toplamına yakınsar.

@@ -73,6 +73,16 @@ YAZIM = {
     "ylık": "yıllık", "stoç": "stok", "Stoç": "Stok",
     "hissedede": "hissede", "ödüsüz": "risksiz",
     "dib yapma": "dip yapma",
+    # 21.11 denetim bulgulari: canli sayfalarda gorulen cumle bozulmalari
+    "med ve trend": "trend",
+    "cevabını adım öğreneceğiz": "cevabını adım adım öğreneceğiz",
+    "Cevabını adım öğreneceğiz": "Cevabını adım adım öğreneceğiz",
+    "pay oranlarıyla oranında": "pay oranları oranında",
+    "Pay oranlarıyla oranında": "Pay oranları oranında",
+    "endeksi yeniyken iyi": "endeksi yenerken iyi",
+    "altında gramın": "altının gram fiyatı",
+    "Altında gramın": "Altının gram fiyatı",
+    "CEO: AHMET OLMUŞTUR": "Ahmet Olmuştur",
 }
 
 # Noktalama temizliginde sayi-ondalik virgulu bozmamak icin: virgul/nokta

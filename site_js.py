@@ -122,3 +122,124 @@ TABLO_KAYDIR_JS = """<script>
   window.addEventListener('load', tazele);
 })();
 </script>"""
+
+
+# Kayan serit surucusu. CSS animasyonu translateX(-50%) kullaniyor; yuzde
+# cozumu icerik genisligine bagli oldugu icin serit iki durumda bosaliyor ya da
+# kayiyor (2026-11-18 telefon gozlemi: 2. serit karardi, icerik sag kenarda
+# birikti):
+#   1) Icerik bant genisligini doldurmuyor -> her turda bosluk.
+#   2) Tarayici yuzdeyi eski/yanlis genislige gore cozuyor -> konum kaymasi.
+# Cozum: mesafe piksel olarak hesaplanir, icerik bant + bir periyot dolana kadar
+# cogaltilir ve konum her karede acikca yazilir. Yuzde cozumune bagimlilik
+# kalmaz; serit hicbir fazda bos kalmaz. Yedek metinde (.ticker-oge yok)
+# cogaltma yapilmaz, ayni cumle tekrarlanmasin diye animasyon durdurulur.
+TICKER_DONGU_JS = """<script>
+(function () {
+  var SURE = 150;      // sn: bir periyotluk icerik 150 sn'de akar (eski 75 sn / %50 ile ayni hiz)
+  var EN_FAZLA = 12;   // guvenlik: tek seritte en fazla 12 kopya
+  var kayitlar = [];
+  var kilit = 0;       // kendi yazimlarimiz gozcuya yakalanmasin
+  var bantlar = document.querySelectorAll('.ticker-bant');
+  if (!bantlar.length) return;
+
+  function kur(bant) {
+    var iz = bant.querySelector('.ticker-iz');
+    if (!iz) return null;
+    kilit++;   // kendi DOM yazimlarimiz gozcuya yakalanmasin
+    try {
+      // Onceki cogaltmalarimizi at; periyot her zaman sunucudan gelen icerik olsun.
+      var ekler = iz.querySelectorAll('.ticker-ek');
+      for (var i = 0; i < ekler.length; i++) ekler[i].parentNode.removeChild(ekler[i]);
+      var tek = iz.innerHTML;
+      if (!iz.textContent || !iz.textContent.replace(/\\s/g, '')) return null;
+
+      iz.style.animation = 'none';
+      iz.style.transform = 'none';
+      if (!iz.querySelector('.ticker-oge')) return null;  // yedek metin: sabit kalsin
+      var periyot = iz.getBoundingClientRect().width;
+      if (!periyot) return null;
+
+      var bantW = bant.clientWidth || 1;
+      var n = Math.ceil((bantW + periyot) / periyot);
+      if (n < 2) n = 2;
+      if (n > EN_FAZLA) n = EN_FAZLA;
+      var html = tek;
+      for (var k = 1; k < n; k++) {
+        html += '<span class="ticker-ek" aria-hidden="true" style="display:inline-block">' + tek + '</span>';
+      }
+      iz.innerHTML = html;
+
+      if (!bant._tickerFare) {
+        bant._tickerFare = true;
+        bant.addEventListener('mouseenter', function () { bant._tickerDurdu = true; });
+        bant.addEventListener('mouseleave', function () { bant._tickerDurdu = false; });
+      }
+      var x = bant._tickerX || 0;
+      return { bant: bant, iz: iz, periyot: periyot, hiz: periyot / SURE, x: x % periyot };
+    } finally {
+      setTimeout(function () { kilit--; }, 0);
+    }
+  }
+
+  function kurHepsi() {
+    kayitlar = [];
+    for (var i = 0; i < bantlar.length; i++) {
+      var k = kur(bantlar[i]);
+      if (k) kayitlar.push(k);
+    }
+  }
+
+  var son = 0;
+  function adim(t) {
+    if (!son) son = t;
+    var dt = (t - son) / 1000;
+    son = t;
+    if (dt > 0.5) dt = 0.5;   // sekme arka plandan donunce sicrama olmasin
+    for (var i = 0; i < kayitlar.length; i++) {
+      var k = kayitlar[i];
+      if (k.bant._tickerDurdu) continue;
+      k.x = (k.x + k.hiz * dt) % k.periyot;
+      k.bant._tickerX = k.x;
+      k.iz.style.transform = 'translate3d(' + (-k.x).toFixed(2) + 'px,0,0)';
+    }
+    requestAnimationFrame(adim);
+  }
+
+  // Guvenlik agi: konum her karede yazildigi icin normalde tetiklenmez. Yine de
+  // serit bandi kapatmiyorsa (tarayici kaymasi) yeniden kurulur.
+  var sonKur = 0;
+  function denetle() {
+    for (var i = 0; i < kayitlar.length; i++) {
+      var k = kayitlar[i];
+      if (k.bant.scrollLeft) k.bant.scrollLeft = 0;
+      var r = k.iz.getBoundingClientRect(), rb = k.bant.getBoundingClientRect();
+      if (r.right < rb.right - 8 || r.left > rb.left + 8) {
+        if (Date.now() - sonKur > 10000) { sonKur = Date.now(); kurHepsi(); }
+        return;
+      }
+    }
+  }
+
+  kurHepsi();
+  requestAnimationFrame(adim);
+  setInterval(denetle, 2000);
+
+  var zaman = null;
+  function yeniden() { clearTimeout(zaman); zaman = setTimeout(kurHepsi, 250); }
+  window.addEventListener('resize', yeniden);
+  window.addEventListener('orientationchange', yeniden);
+  window.addEventListener('load', yeniden);
+
+  // Serit icerigi fetch ile sonradan yenileniyor (5 dk). Icerik degisince
+  // periyot yeniden olculmeli.
+  if (window.MutationObserver) {
+    var gozcu = new window.MutationObserver(function () {
+      if (kilit) return;
+      yeniden();
+    });
+    var izler = document.querySelectorAll('.ticker-iz');
+    for (var j = 0; j < izler.length; j++) gozcu.observe(izler[j], { childList: true });
+  }
+})();
+</script>"""

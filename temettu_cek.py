@@ -118,6 +118,25 @@ def hisse_cek(kod):
                 carpan *= r
         fiyat.append([g, round(p * carpan, 4)])
 
+    # Fail-safe (2026-11-21): borsapy'nin temettü/bedelsiz ucu geçici olarak boş
+    # dönebiliyor (20.11 vakası: 30/30 hissede temettu=[] yazıldı ve önceki iyi
+    # veri ezildi; sayfa 0/30'a düştü). Boş dizi, mevcut dosyadaki dolu dizinin
+    # üzerine YAZILMAZ.
+    eski = {}
+    eski_yol = os.path.join(SERI, kod + ".json")
+    if os.path.exists(eski_yol):
+        try:
+            with open(eski_yol, encoding="utf-8") as f:
+                eski = json.load(f)
+        except Exception:
+            eski = {}
+    if not temettu and eski.get("temettu"):
+        temettu = eski["temettu"]
+        print(f"  ! {kod} temettü boş geldi — önceki {len(temettu)} kayıt korundu")
+    if not bedelsiz and eski.get("bedelsiz"):
+        bedelsiz = eski["bedelsiz"]
+        print(f"  ! {kod} bedelsiz boş geldi — önceki {len(bedelsiz)} kayıt korundu")
+
     kayit = {
         "kod": kod,
         "guncelleme": datetime.now().strftime("%Y-%m-%d %H:%M"),

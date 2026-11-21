@@ -440,6 +440,15 @@ def sayfa_uret(ozet, seriler):
 
 def main():
     seriler = _tum_seriler()
+    # Fail-safe (2026-11-21): temettü serisi tamamen boşsa sayfayı 0/30 ile EZME.
+    # 20.11'de borsapy ucu boş döndü ve canlı sayfa "0/30 ödeyen"e düştü; oysa
+    # 17.11'de 21/30'du. Eşik: en az 5 hissede temettü kaydı olmalı.
+    dolu = sum(1 for s in seriler.values() if s.get("temettu"))
+    if dolu < 5:
+        raise SystemExit(
+            f"Temettü verisi eksik ({dolu}/{len(seriler)} hissede kayıt var). "
+            "Sayfa üretilmedi; önceki temettu.html ve temettu-veri/ yayında kalır. "
+            "Önce: python temettu_cek.py")
     with open(os.path.join(VERI, "kur.json"), encoding="utf-8") as f:
         kur = json.load(f)
     takvim = takvim_olustur(seriler)

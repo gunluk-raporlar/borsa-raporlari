@@ -34,7 +34,7 @@ from dil_yollari import slug_degistir
 # BIST resmi tatil takvimi (2025-2028; disinda tatil sayilmaz -> fail-safe acik davranis)
 from resmi_tatil import tatil_mi
 # Yatay kaydirilabilir alanlar icin "tut-sur" betigi (tek kaynak; bot.py ile ayni)
-from site_js import TABLO_KAYDIR_JS
+from site_js import TABLO_KAYDIR_JS, TICKER_DONGU_JS
 from datetime import datetime, timedelta, timezone as dt_timezone
 
 try:
@@ -993,11 +993,11 @@ _SITE_TICKER1 = """
   function ciz(veri) {
     var iz = document.getElementById('ticker-iz');
     var ogeler = veri.hisseler.map(function(h) {
-      var sinif = h.d >= 0 ? 'pos' : 'neg';
-      var ok = h.d >= 0 ? '▲' : '▼';
+      var sinif = h.d > 0 ? 'pos' : h.d < 0 ? 'neg' : 'muted';
+      var ok = h.d > 0 ? '▲' : h.d < 0 ? '▼' : '▬';
       return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
              h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
-             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d > 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
     }).join('');
     var etiket = veri.etiket || '~15 dk gecikmeli';
     var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
@@ -1029,7 +1029,7 @@ _SITE_TICKER2 = """
   function bicim(g) {
     var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
     var rozet = (typeof g.d === 'number')
-      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+      ? ' <span class="' + (g.d > 0 ? 'pos' : g.d < 0 ? 'neg' : 'muted') + '">' + (g.d > 0 ? '▲ +' : g.d < 0 ? '▼ ' : '▬ ') +
         Number(g.d).toFixed(2) + '%</span>'
       : '';
     var birim = g.b || g.birim || '';
@@ -1310,6 +1310,7 @@ function temaDegistir() {{
 </script>
 {_ROBOT_CANLI_JS}
 {TABLO_KAYDIR_JS}
+{TICKER_DONGU_JS}
 </body></html>"""
 
 

@@ -15,6 +15,8 @@ import json
 import os
 import sys
 
+import editor
+
 TARIH = "06.10.2026"
 
 
@@ -177,7 +179,9 @@ def uret(kod, temel_veri):
         return None
     madde.append(f"Kaynak: İş Yatırım çeyreklik mali tablolar + TradingView TTM ({TARIH}); "
                  "yorumlar sabit eşik kurallarıyla üretilmiştir, yatırım tavsiyesi değildir.")
-    return madde
+    # Yazim sozlugu (editor.YAZIM) bu betikte uygulanmiyordu; "bilanso" gibi
+    # hatalar JSON'a ve sayfalara boylece siziyordu (21.11 denetim bulgusu).
+    return [editor.imla(m)[0] for m in madde]
 
 
 def main():

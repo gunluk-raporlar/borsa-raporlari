@@ -2464,6 +2464,21 @@ def piyasa_verisi():
     return veri or None
 
 
+def _seans_kapali_mi(simdi=None):
+    """BIST seansı kapalı mı? (hafta sonu veya 10:00–18:10 dışı)
+
+    2026-11-21: günlük rapor 10:51'de üretildiğinde veri bloğu hâlâ
+    "son kapanis" diyordu; LLM bu etiketi kopyalayıp seans içi değeri
+    "son kapanış" diye yazıyordu (canlı 20.11 bulgusu).
+    """
+    tz = zoneinfo.ZoneInfo("Europe/Istanbul")
+    s = simdi or datetime.now(tz)
+    if s.weekday() >= 5:
+        return True
+    dk = s.hour * 60 + s.minute
+    return not (10 * 60 <= dk < 18 * 60 + 10)
+
+
 def piyasa_verisi_metni(snapshot=None):
     """Prompt'a piyasa verisini enjekte eder.
 
@@ -2488,13 +2503,14 @@ def piyasa_verisi_metni(snapshot=None):
     satirlar = [f"Bugunun tarihi: {bugun.day} {_AYLAR[bugun.month - 1]} "
                 f"{bugun.year}, {_GUN_ADLARI[bugun.weekday()]}, "
                 f"saat {bugun.strftime('%H:%M')} (Turkiye saati)"]
+    _son_etiket = "son kapanis" if _seans_kapali_mi(bugun) else "son islem degeri"
     if "XU030" in pv:
         v = pv["XU030"]
-        satirlar.append(f"XU030 (BIST 30): son kapanis {_ts(v['son'])} | "
+        satirlar.append(f"XU030 (BIST 30): {_son_etiket} {_ts(v['son'])} | "
                         f"onceki kapanis {_ts(v['onceki'])} | gunluk {_ty(v['deg'])}%")
     if "XU100" in pv:
         v = pv["XU100"]
-        satirlar.append(f"XU100 (BIST 100): son kapanis {_ts(v['son'])} | "
+        satirlar.append(f"XU100 (BIST 100): {_son_etiket} {_ts(v['son'])} | "
                         f"onceki kapanis {_ts(v['onceki'])} | gunluk {_ty(v['deg'])}%")
     if "USDTRY" in pv:
         v = pv["USDTRY"]
@@ -4127,6 +4143,9 @@ DOGRULAMA_IST = {"isim": 0, "enflasyon": 0, "toplam_metin": 0, "endeks": 0,
                  # hicbir gercek degere eslesmeyen sayilar. REDDEDICI DEGIL —
                  # once olcum biriktirilir, esik sonra konur.
                  "yetim_sayi": 0, "yetim_sayi_metin": 0,
+                 # Sayi bicim kapisi (2026-11-21 denetim D-1/D-2/D-3/D-19):
+                 # onarilamayan bozuk sayi bicimi sayisi. REDDEDICI.
+                 "sayi_bicim": 0,
                  "son_guncelleme": ""}
 
 # Evren disi sirket adlari (2026-11-11): LLM'in BIST 30 evreni disinda
@@ -4342,13 +4361,26 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
             logger.warning("[Dogrulama%s] ADX ifadesi duzeltildi: %s -> %s", etiket, eski, yeni)
         DOGRULAMA_IST["sinyal"] += len(sonuc["sinyal_duzeltme"])
         DOGRULAMA_IST["adx"] += len(sonuc["adx_duzeltme"])
+        # Sayi bicim kapisi (2026-11-21 denetim D-1/D-2/D-3/D-19): bicimi
+        # bozuk sayi ("%35,289,2891", "USD/TRY 50,13.997") deger
+        # dogrulayicilarina gorunmez; yayin durdurucu sayilir.
+        bicim = sonuc.get("sayi_bicim") or {}
+        bicim_adet = int(bicim.get("adet") or 0)
+        DOGRULAMA_IST["sayi_bicim"] += bicim_adet
+        for eski, yeni in sonuc.get("sayi_bicim_onarim", []):
+            logger.warning("[Dogrulama%s] sayi bicimi onarildi: %s -> %s",
+                           etiket, eski, yeni)
+        for yazi, tur in bicim.get("ornekler", [])[:5]:
+            logger.warning("[Dogrulama%s] bozuk sayi bicimi (%s): %s",
+                           etiket, tur, yazi)
         duzeltme_sayisi = (len(sonuc["isim_duzeltme"]) + len(sonuc["enflasyon_duzeltme"])
                            + len(sonuc["endeks_duzeltme"]) + len(sonuc["faiz_duzeltme"])
                            + len(sonuc["makro_duzeltme"]) + len(sonuc["piyasa_duzeltme"])
                            + len(sonuc["reel_fisher_duzeltme"])
                            + len(sonuc["dolar_duzeltme"]) + len(sonuc["cari_duzeltme"])
                            + len(sonuc.get("olasilik_duzeltme", []))
-                           + len(sonuc.get("yilliklastirma_duzeltme", [])))
+                           + len(sonuc.get("yilliklastirma_duzeltme", []))
+                           + bicim_adet)
         # Golge metrik (2026-11-13, architect S2): yetim sayi sayisi.
         # REDDEDICI DEGIL — yalnizca metrics'e yazilir ve loglanir. Amac,
         # duzeltme sayisindan BAGIMSIZ bir kalite sinyali biriktirmek:
@@ -4363,6 +4395,16 @@ def _metin_dogrula_ve_kaydet(metin, etiket="", snapshot=None, uydurma_esigi=None
             logger.warning("[Dogrulama%s] %d yetim sayi (golge metrik, reddedici "
                            "degil): %s", etiket, yetim_adet,
                            ", ".join(y for y, _ in yetim.get("ornekler", [])[:5]))
+        # Bicim hatasi tek basina yayin durdurucudur: onarilamayan bozuk sayi
+        # ("%35,289,2891", "50,13.997") metnin bozuldugunun kanitidir; esik
+        # beklenmeden reddedilir (2026-11-21 denetim D-1/D-2/D-3).
+        if bicim_adet and uydurma_esigi is not None:
+            logger.warning("[Dogrulama%s] %d bozuk sayi bicimi: metin REDDEDILDI "
+                           "(bicim hatasi tek basina yayin durdurucu).",
+                           etiket, bicim_adet)
+            print(f"[Uyari] {bicim_adet} bozuk sayi bicimi: yanit reddedildi, "
+                  "siradaki model deneniyor...", flush=True)
+            return None
         if uydurma_esigi is not None and duzeltme_sayisi > uydurma_esigi:
             # Son çare yayını için en iyi adayı sakla (2026-10-06): düzeltilmiş
             # metin + düzeltme sayısı; çağıran son çareye karar verir.
@@ -4883,6 +4925,23 @@ def _hava_pisir():
     return _HAVA_ONBELLEK
 
 
+def _degisim_rozet(d):
+    """Değişim rozeti: (sınıf, ok, işaret). Sıfırda nötr '▬' kullanılır.
+
+    2026-11-21: d == 0 iken '▲ +0.00%' yeşil gösteriliyordu (canlı PGSUS
+    bulgusu). Sıfır ne yükseliş ne düşüştür.
+    """
+    try:
+        d = float(d)
+    except (TypeError, ValueError):
+        return "muted", "▬", ""
+    if d > 0:
+        return "pos", "▲", "+"
+    if d < 0:
+        return "neg", "▼", ""
+    return "muted", "▬", ""
+
+
 def _ticker_iz_pisir(json_yolu: str, tur: str) -> str:
     """Serit icerigini JSON'dan URETIM ANINDA HTML'e pisirir (bicim, JS ciz()
     fonksiyonlariyla birebir). JS basarili yuklemede icerigi tazeler; JS
@@ -4895,11 +4954,13 @@ def _ticker_iz_pisir(json_yolu: str, tur: str) -> str:
         return ""
     try:
         if tur == "hisse":
-            ogeler = "".join(
-                f'<span class="ticker-oge"><b>{h["h"]}</b> {_tr_sayi(h["f"])} TL '
-                f'<span class="{"pos" if h["d"] >= 0 else "neg"}">'
-                f'{"▲" if h["d"] >= 0 else "▼"} {"+" if h["d"] >= 0 else ""}{h["d"]:.2f}%</span></span>'
-                for h in veri.get("hisseler", []))
+            parcalar = []
+            for h in veri.get("hisseler", []):
+                sinif, ok, isaret = _degisim_rozet(h["d"])
+                parcalar.append(
+                    f'<span class="ticker-oge"><b>{h["h"]}</b> {_tr_sayi(h["f"])} TL '
+                    f'<span class="{sinif}">{ok} {isaret}{h["d"]:.2f}%</span></span>')
+            ogeler = "".join(parcalar)
             etiket = veri.get("etiket") or "~15 dk gecikmeli"
             saat = f'<span class="ticker-oge ticker-saat">{veri.get("guncelleme", "")} · {etiket}</span>'
         else:
@@ -4907,9 +4968,8 @@ def _ticker_iz_pisir(json_yolu: str, tur: str) -> str:
             for g in veri.get("gostergeler", []):
                 rozet = ""
                 if isinstance(g.get("d"), (int, float)):
-                    ok = "▲ +" if g["d"] >= 0 else "▼ "
-                    rozet = (f' <span class="{"pos" if g["d"] >= 0 else "neg"}">'
-                             f'{ok}{g["d"]:.2f}%</span>')
+                    sinif, ok, isaret = _degisim_rozet(g["d"])
+                    rozet = f' <span class="{sinif}">{ok} {isaret}{g["d"]:.2f}%</span>'
                 birim = g.get("b") or g.get("birim") or ""
                 ogeler += (f'<span class="ticker-oge"><b>{g["ad"]}</b> '
                            f'{_tr_sayi(g["f"], g.get("o", 2))}'
@@ -4947,7 +5007,7 @@ def _kendi_ticker2(kok=""):
   function bicim(g) {{
     var deger = Number(g.f).toLocaleString('tr-TR', {{minimumFractionDigits: g.o, maximumFractionDigits: g.o}});
     var rozet = (typeof g.d === 'number')
-      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+      ? ' <span class="' + (g.d > 0 ? 'pos' : g.d < 0 ? 'neg' : 'muted') + '">' + (g.d > 0 ? '▲ +' : g.d < 0 ? '▼ ' : '▬ ') +
         Number(g.d).toFixed(2) + '%</span>'
       : '';
     var birim = g.b || g.birim || '';
@@ -4992,11 +5052,11 @@ def _kendi_ticker(kok=""):
   function ciz(veri) {{
     var iz = document.getElementById('ticker-iz');
     var ogeler = veri.hisseler.map(function(h) {{
-      var sinif = h.d >= 0 ? 'pos' : 'neg';
-      var ok = h.d >= 0 ? '▲' : '▼';
+      var sinif = h.d > 0 ? 'pos' : h.d < 0 ? 'neg' : 'muted';
+      var ok = h.d > 0 ? '▲' : h.d < 0 ? '▼' : '▬';
       return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
              h.f.toLocaleString('tr-TR', {{minimumFractionDigits: 2}}) + ' TL ' +
-             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d > 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
     }}).join('');
     var etiket = veri.etiket || '~15 dk gecikmeli';
     var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
@@ -5148,7 +5208,7 @@ def _md_ayna_mi(yol):
 # Yatay kaydirilabilir alanlar icin "tut-sur" (drag-to-pan) betigi: TEK KAYNAK
 # site_js.py (robot.py'nin bagimsiz iskeleti de ayni sabiti kullanir).
 # _sayfa() f-string oldugu icin sabit disaridan gelir; suslu parantez kacisi gerekmez.
-from site_js import TABLO_KAYDIR_JS as _TABLO_KAYDIR_JS
+from site_js import TABLO_KAYDIR_JS as _TABLO_KAYDIR_JS, TICKER_DONGU_JS as _TICKER_DONGU_JS
 
 
 def _sayfa(title, icerik, aktif="raporlar", kok="", aciklama=None, yol=None, ld_ek=None, grafik=False, robots=None):
@@ -5357,6 +5417,7 @@ function temaDegistir() {{
     }})();
 </script>
 {_TABLO_KAYDIR_JS}
+{_TICKER_DONGU_JS}
 </body></html>"""
 
 
@@ -5422,6 +5483,16 @@ def paylas_html(metin, url):
             f'{ek}</span>')
 
 
+def _hisse_linki(kod, kok="", stil=None):
+    """Hisse sayfasina baglanti. Kara listedeki kagidin sayfasi uretilmez;
+    baglanti verilirse 404 olur (21.11 denetim: DSTKF olu baglantilari)."""
+    if kod in KARA_LISTE:
+        return f"<strong>{kod}</strong>" if stil is None else kod
+    if stil is None:
+        return f"<a href='{kok}hisse/{kod}.html'><strong>{kod}</strong></a>"
+    return f"<a style='{stil}' href='{kok}hisse/{kod}.html'>{kod}</a>"
+
+
 def _pano_html(satirlar, kok=""):
     """Gunluk BIST30 panosu (arastirma evi bulteni tarzi): piyasa verileri
     kutusu + manset satirlari + 30 hisselik gunluk degisim tablosu +
@@ -5442,6 +5513,18 @@ def _pano_html(satirlar, kok=""):
     sat_s = sum(1 for s in satirlar if s.get("genel") == "SAT")
     guclu_sat = sum(1 for s in satirlar if s.get("genel") == "GÜÇLÜ SAT")
     notr = len(satirlar) - guclu_al - al - sat_s - guclu_sat
+
+    # 2026-11-21: "Yükselen 0 / Düşen 30" gününde başlık hâlâ "En çok yükselenler"
+    # diyordu ve altında negatif hisseler listeleniyordu (canlı 20.11 bulgusu).
+    # Yükselen yoksa başlık "En az düşenler" olur; renk de nötre döner.
+    if yukselen:
+        yuk_baslik, yuk_sinif = "▲ En çok yükselenler:", "pos"
+    else:
+        yuk_baslik, yuk_sinif = "▲ En az düşenler:", "muted"
+    if dusen:
+        dus_baslik, dus_sinif = "▼ En çok düşenler:", "neg"
+    else:
+        dus_baslik, dus_sinif = "▼ En az yükselenler:", "muted"
 
     usd = altin = ""
     try:
@@ -5502,7 +5585,7 @@ def _pano_html(satirlar, kok=""):
 
     satir_html = "\n".join(
         f"<tr><td>{i}</td>"
-        f"<td><a href='{kok}hisse/{s['hisse']}.html'><strong>{s['hisse']}</strong></a></td>"
+        f"<td>{_hisse_linki(s['hisse'], kok)}</td>"
         f"<td>{_ts(s.get('son', 0))}</td>"
         f"<td class='{_renk(s.get('gunluk', 0))}'><strong>{_fmt(s.get('gunluk', 0) or 0)}</strong></td>"
         f"<td class='{_renk(s.get('deg60', 0))}'>{_ty1((s.get('deg60', 0) or 0))}%</td>"
@@ -5531,8 +5614,8 @@ def _pano_html(satirlar, kok=""):
   <div class="pano-hucre"><div class="pano-etiket">Sinyal (AL / SAT)</div><div class="pano-deger">{guclu_al + al} / {sat_s + guclu_sat}</div></div>
 </div>
 <div class="pano-man">
-<div><span class="pos">▲ En çok yükselenler:</span> {" &bull; ".join(f"<b>{s['hisse']}</b> {_fmt(s.get('gunluk') or 0)}" for s in en_yuk)}</div>
-<div><span class="neg">▼ En çok düşenler:</span> {" &bull; ".join(f"<b>{s['hisse']}</b> {_fmt(s.get('gunluk') or 0)}" for s in en_dus)}</div>
+<div><span class="{yuk_sinif}">{yuk_baslik}</span> {" &bull; ".join(f"<b>{s['hisse']}</b> {_fmt(s.get('gunluk') or 0)}" for s in en_yuk)}</div>
+<div><span class="{dus_sinif}">{dus_baslik}</span> {" &bull; ".join(f"<b>{s['hisse']}</b> {_fmt(s.get('gunluk') or 0)}" for s in en_dus)}</div>
 <div>📣 Sinyal dağılımı: GÜÇLÜ AL {guclu_al} &middot; AL {al} &middot; NÖTR {notr} &middot; SAT {sat_s} &middot; GÜÇLÜ SAT {guclu_sat}</div>
 <div>🏷️ Sektör ortalamaları: {sektor_html}</div>
 </div>
@@ -7039,7 +7122,7 @@ def build_teknik_html(satirlar, date_str):
 <p style="color:var(--muted); font-size:12px; margin:8px 0 0">Renk koyuluğu değişim büyüklüğünü gösterir — yeşil yükselenler, kırmızı düşenler. Isı haritası görsel bir özettir; sayısal değerlerin tamamı aşağıdaki tabloda satır satır yer alır. Hisse adına tıklayın: detay sayfası (fiyat grafiği, teknik durum, haberler).</p>"""
 
     satir_html = "".join(
-        f"<tr style='cursor:pointer' onclick=\"tvAc('{s['hisse']}')\"><td><a style='color:inherit; text-decoration:none; font-weight:700' href='hisse/{s['hisse']}.html'>{s['hisse']}</a></td>"
+        f"<tr style='cursor:pointer' onclick=\"tvAc('{s['hisse']}')\"><td>{_hisse_linki(s['hisse'], stil='color:inherit; text-decoration:none; font-weight:700')}</td>"
         f"<td>{_ts(s['son'])} TL</td>"
         f"<td class='{_renk(s['gunluk'])}'>{_ty(s['gunluk'])}%</td>"
         f"<td class='{_renk(s['deg60'])}'>{_ty1(s['deg60'])}%</td>"
@@ -7914,11 +7997,9 @@ def _temel_analiz_oto(kod):
             mc = (net / (tv.get("market_cap_basic") or 0) * 100)
             ek = f" (piyasa değerinin %{duz(mc, 0)})" if mc else ""
             madde.append(f"Net finansal borç {mil(net)}{ek}.")
-    cari = tv.get("current_ratio_fq")
-    if cari:
-        yorum = ("güçlü likidite" if cari > 2 else "dengeli likidite" if cari >= 1
-                 else "kısa vadeli yükümlülük baskısı altında")
-        madde.append(f"Cari oran {duz(cari)} — {yorum}.")
+    # Cari oran tek kaynaktan yazilir: sirketler.json 'temel' listesindeki
+    # Is Yatirim (donen varlik / kisa borc) satiri. TradingView current_ratio_fq
+    # ayni olcutu ikinci kez ekliyordu (21.11 denetim bulgusu).
     tem = tv.get("dividends_yield")
     if tem and tem > 0:
         madde.append(f"Temettü verimi %{duz(tem, 1)}.")
@@ -10074,6 +10155,49 @@ def rapor_podcast_yaz():
     logger.info("[Podcast] %d bolumluk rapor RSS'i yazildi.", len(ogeler))
 
 
+def rapor_rss_yaz(rapor_dosyalari, adet=30):
+    """raporlar/*.html -> raporlar.xml (sitenin rapor akisi).
+
+    Arayuzdeki "RSS" baglantisi bu dosyayi gosteriyordu ama hicbir adim onu
+    uretmiyordu; 4 dilde de 404 donuyordu (21.11 denetim bulgusu). Basliklar
+    sayfadan okunur, okunamazsa tarihten uretilir.
+    """
+    if not rapor_dosyalari:
+        return
+    ogeler = []
+    for ad in rapor_dosyalari[:adet]:
+        tarih = ad[:10]
+        try:
+            with open(os.path.join("raporlar", ad), encoding="utf-8") as f:
+                src = f.read()
+        except OSError:
+            continue
+        m = re.search(r"<title>(.*?)</title>", src, re.S)
+        baslik = re.sub(r"\s+", " ", html.unescape(m.group(1))).strip() if m else ""
+        if not baslik:
+            baslik = f"{tarih} Günlük Rapor"
+        link = f"{SITE_URL}raporlar/{tarih}.html"
+        ogeler.append(
+            f"<item><title>{html.escape(baslik)}</title><link>{link}</link>"
+            f'<guid isPermaLink="true">{link}</guid>'
+            f"<pubDate>{_rss_pubdate(tarih)}</pubDate>"
+            f"<description>{tarih} tarihli BIST 30 günlük raporu. "
+            "Yatırım tavsiyesi değildir.</description></item>")
+    xml = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<rss version="2.0"><channel>\n'
+        "<title>BIST 30 Günlük Raporlar</title>\n"
+        f"<link>{SITE_URL}</link>\n<language>tr</language>\n"
+        "<description>Her işlem günü otomatik üretilen BIST 30 günlük raporları. "
+        "Yatırım tavsiyesi değildir.</description>\n"
+        + "\n".join(ogeler)
+        + "\n</channel></rss>"
+    )
+    with open("raporlar.xml", "w", encoding="utf-8") as f:
+        f.write(xml)
+    logger.info("[RSS] raporlar.xml yazildi (%d oge).", len(ogeler))
+
+
 def site_arama_json_yaz(rapor_dosyalari):
     """Site ici arama kutusunun indeksini (site-arama.json) uretir.
     Statik sayfalar anahtar kelime + hisse kodlariyla; rapor ve derin analiz
@@ -10691,6 +10815,10 @@ if __name__ == "__main__":
         rapor_podcast_yaz()
     except Exception:
         logger.exception("[Podcast] rapor RSS'i yazilamadi.")
+    try:
+        rapor_rss_yaz(raporlar)
+    except Exception:
+        logger.exception("[RSS] raporlar.xml yazilamadi.")
 
     # Eski tarihli sayfalarin ust menusu/dil secicisi guncel sablona cekilir (18.10)
     try:

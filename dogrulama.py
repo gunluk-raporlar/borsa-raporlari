@@ -1645,6 +1645,75 @@ def yilliklastirma_duzelt(metin):
     return _YILLIKLAS.sub(_degistir, metin), duzeltmeler
 
 
+# --- Sayi bicim kapisi (2026-11-21 denetim: D-1, D-2, D-3, D-19) -------------
+# Deger dogrulayicilari yalnizca ayristirilabilen sayilara bakar; bicimi bozuk
+# bir sayi ("%35,289,2891", "USD/TRY 50,13.997", "M3 %28,1681") hicbir kalibe
+# uymadigi icin sessizce geciyordu. Bu kapi yayin oncesi Turkce sayi bicimini
+# tarar: binlik ayirici nokta, ondalik ayirici virgul, en fazla 3 ondalik.
+# Guvenli onarim (4+ ondalik -> 2 ondalik) yapilir; yapisal olarak imkansiz
+# kaliplar (coklu virgul, virgul-nokta karisikligi) onarilmaz, cagirana
+# bildirilir ve yayin kapisinda reddedilir.
+_BICIM_KALIPLARI = (
+    ("coklu_virgul", re.compile(r"(?<![\d.])\d{1,3}(?:\.\d{3})*(?:,\d+){2,}(?!\d)")),
+    ("virgul_nokta", re.compile(r"(?<![\d.])\d{1,3}(?:\.\d{3})*,\d+\.\d+(?!\d)")),
+    ("uzun_ondalik", re.compile(r"(?<![\d.])\d{1,3}(?:\.\d{3})*,\d{4,}(?!\d)")),
+    ("nokta_ondalik", re.compile(r"(?<![\d.])\d{1,3}(?:\.\d{3})*\.\d{4,}(?!\d)")),
+)
+def _bicim_yuvarla(yazi, ayirici):
+    """4+ ondalikli sayiyi Turkce 2 ondaliga yuvarlar (deger korunur)."""
+    tam, kesir = yazi.rsplit(ayirici, 1)
+    try:
+        deger = float(tam.replace(".", "") + "." + kesir)
+    except ValueError:
+        return yazi
+    yeni = f"{deger:,.2f}"
+    return yeni.replace(",", "\x00").replace(".", ",").replace("\x00", ".")
+
+
+def _bicim_tara_konumlu(metin):
+    """Bozuk sayilari soldan saga, cakismadan uretir: (eslesme, tur)."""
+    konum = 0
+    while konum < len(metin):
+        bulundu = None
+        for tur, kalip in _BICIM_KALIPLARI:
+            m = kalip.search(metin, konum)
+            if m and (bulundu is None or m.start() < bulundu[0].start()):
+                bulundu = (m, tur)
+        if bulundu is None:
+            return
+        yield bulundu
+        konum = bulundu[0].end()
+
+
+def sayi_bicim_duzelt(metin):
+    """Yalnizca guvenli onarim: 4+ ondalik -> 2 ondalik. Donus: (metin, kayit)."""
+    if not metin:
+        return metin, []
+    kayit = []
+    parcalar = []
+    konum = 0
+    for m, tur in _bicim_tara_konumlu(metin):
+        parcalar.append(metin[konum:m.start()])
+        eski = m.group(0)
+        yeni = eski
+        if tur in ("uzun_ondalik", "nokta_ondalik"):
+            yeni = _bicim_yuvarla(eski, "," if tur == "uzun_ondalik" else ".")
+            if yeni != eski:
+                kayit.append((eski, yeni))
+        parcalar.append(yeni)
+        konum = m.end()
+    parcalar.append(metin[konum:])
+    return "".join(parcalar), kayit
+
+
+def sayi_bicim_tara(metin):
+    """Bicimi bozuk sayilari listeler. Donus: {"adet": n, "ornekler": [(yazi, tur)]}."""
+    if not metin:
+        return {"adet": 0, "ornekler": []}
+    ornekler = [(m.group(0), tur) for m, tur in _bicim_tara_konumlu(metin)]
+    return {"adet": len(ornekler), "ornekler": ornekler}
+
+
 def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
                    faiz_oranlari=None, enflasyon_oranlari=None,
                    makro_gostergeleri=None, piyasa_serileri=None,
@@ -1658,7 +1727,9 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
      "reel_fisher_duzeltme": [...], "dolar_duzeltme": [...],
      "cari_duzeltme": [...], "olasilik_duzeltme": [...],
      "olasilik_uyari": int, "yilliklastirma_duzeltme": [...],
-     "yuva_bagli_duzeltme": [(yazi, tur), ...]}.
+     "yuva_bagli_duzeltme": [(yazi, tur), ...],
+     "sayi_bicim": {"adet": int, "ornekler": [(yazi, tur), ...]},
+     "sayi_bicim_onarim": [(eski, yeni), ...]}.
     `makro_gostergeleri`: makro snapshot'inin ulke/indikator deger sozlugu.
     `endeks_seviyeleri`: {"30": XU030 seviyesi, "100": XU100 seviyesi} —
     BIST 100 cumleleri gercek XU100 seviyesiyle denetlenir.
@@ -1666,6 +1737,7 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
     degerler(...) ciktisinin ayni adli bolumleri (2026-11-04, architect S1-S4).
     Hicbir durumda istisna yukseltmez; cagiran taraf zaten sarmaladi.
     """
+    metin, bicim_onarim = sayi_bicim_duzelt(metin)
     metin, isim = isim_duzelt(metin, adlar)
     # Senaryo olasiliklari + aylık→yıllık kapıları (2026-11-11): veri çapası
     # yalnız snapshot enflasyon/faiz değerleri; başka sayı sızması uyari kalır.
@@ -1715,6 +1787,8 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
     # Golge metrik (2026-11-13): duzeltmelerden SONRA kalan, hicbir gercek
     # degere eslesmeyen sayilar. Reddedici degil — cagiran taraf metrics'e yazar.
     yetim = yetim_sayi_tara(metin, izinli_degerler)
+    # Bicim taramasi EN SON: duzelticilerin urettigi metin de denetlenir.
+    bicim = sayi_bicim_tara(metin)
     return {"metin": metin, "isim_duzeltme": isim, "enflasyon_duzeltme": enf,
             "endeks_duzeltme": endeks, "endeks_uyari": uyari,
             "faiz_duzeltme": faiz, "makro_duzeltme": makro,
@@ -1723,7 +1797,8 @@ def metin_dogrula(metin, adlar, enflasyon_yuzde=None, endeks_seviyesi=None,
             "olasilik_duzeltme": olasilik, "olasilik_uyari": olasilik_uyari,
             "yilliklastirma_duzeltme": yillik,
             "yuva_bagli_duzeltme": enf_yuva + faiz_yuva,
-            "yetim_sayi": yetim}
+            "yetim_sayi": yetim, "sayi_bicim": bicim,
+            "sayi_bicim_onarim": bicim_onarim}
 
 
 # --- Sinyal sinifi hizalama + ADX metin kurallari (2026-11-07 denetim) ----
@@ -1838,9 +1913,31 @@ if __name__ == "__main__":
         "Bu bağlamda Federal Reserve politika faizi %37 seviyesindedir.")
     ahf = faiz_duzelt(ayri_hedefli_faiz, ORAN)
     assert "%2" in ahf[0] and "%4" in ahf[0] and "%37" not in ahf[0], "ayri hedef/faiz ayrimi basarisiz!"
+    # 21) Sayi bicim kapisi (2026-11-21 denetim D-1/D-2/D-3): bozuk sayilar
+    #     yakalanir; gecerli Turkce bicim, tarih ve binlik ayirici yakalanmaz.
+    sb = sayi_bicim_tara(
+        "Makro %35,289,2891 artti; USD/TRY 50,13.997; M3 %28,1681.")
+    assert sb["adet"] == 3, sb
+    assert [t for _, t in sb["ornekler"]] == ["coklu_virgul", "virgul_nokta",
+                                              "uzun_ondalik"], sb
+    temiz = sayi_bicim_tara(
+        "BIST 100 14.300,01 puan; enflasyon %28,17; tarih 06.10.2026; "
+        "1.234.567 TL; F/K 3,6; 2026/9 ceyregi.")
+    assert temiz["adet"] == 0, temiz
+
+    # 22) Guvenli onarim: 4+ ondalik 2 ondaliga yuvarlanir, deger korunur.
+    so, kayit = sayi_bicim_duzelt("M3 %28,1681 ve oran 2.6144 ve 1.234,5678")
+    assert "28,17" in so and "2,61" in so and "1.234,57" in so, so
+    assert len(kayit) == 3, kayit
+
+    # 23) metin_dogrula bicim raporunu dondurur; onarim sonrasi bulgu kalmaz.
+    sm = metin_dogrula("M3 %28,1681 artti.", {}, izinli_degerler={28.17})
+    assert sm["sayi_bicim"]["adet"] == 0, sm["sayi_bicim"]
+    assert sm["sayi_bicim_onarim"], sm
+
     print("dogrulama.py: tum kendini testler gecti.")
 
-    ornek2 = "Enflasyon %28,4 seviyesinde yatay seyrediyor."
+    ornek2 = "Türkiye'de yıllık enflasyon %28,4 seviyesinde yatay seyrediyor."
     sonuc2 = metin_dogrula(ornek2, ADLAR, enflasyon_yuzde=31.51,
                            enflasyon_oranlari={"tr": 31.51})
     print(sonuc2["metin"])
@@ -1888,7 +1985,7 @@ if __name__ == "__main__":
     korumalar = (
         "Yıl sonu enflasyon beklentisi %24 olarak korunmalı. "
         "Enerji enflasyonu %25 seviyesinde. "
-        "Enflasyon %28,4. Büyüme %2,3.")
+        "Türkiye'de enflasyon %28,4. Büyüme %2,3.")
     sp = metin_dogrula(korumalar, ADLAR, enflasyon_yuzde=31.51,
                        enflasyon_oranlari=ENF_ORAN)
     assert "%24" in sp["metin"] and "%25" in sp["metin"], "beklenti/alt enflasyon bozuldu!"
