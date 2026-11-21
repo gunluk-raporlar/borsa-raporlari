@@ -61,30 +61,6 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/"/>
   </url>
   <url>
-    <loc>https://borsa-raporlari.pages.dev/_kap_kuresel_fresh</loc>
-    <lastmod>2026-11-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/_kap_kuresel_fresh"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/_kap_kuresel_fresh"/>
-  </url>
-  <url>
-    <loc>https://borsa-raporlari.pages.dev/_kap_on</loc>
-    <lastmod>2026-11-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/_kap_on"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/_kap_on"/>
-  </url>
-  <url>
-    <loc>https://borsa-raporlari.pages.dev/_kap_sirket</loc>
-    <lastmod>2026-11-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/_kap_sirket"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/_kap_sirket"/>
-  </url>
-  <url>
     <loc>https://borsa-raporlari.pages.dev/borsapy-analiz</loc>
     <lastmod>2026-11-20</lastmod>
     <changefreq>hourly</changefreq>

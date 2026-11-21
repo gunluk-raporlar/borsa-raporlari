@@ -96,8 +96,9 @@ MUHASEBE_GRUP_ONEKI = "muhasebe-terimleri/"
 # sitemap'te dil alternatifleri ve ayri <url> kayitlari gecerlidir.
 DIL_SAYFASI_VERIDEN = {"muhasebe-terimleri.html"}
 # Arama motoru dogrulama dosyalari (google/yandex/bing/baidu...) ve gecici onizleme sayfalari cevrilmez.
-# _tmp*/_denetim*: gecici tani dosyalari (25.10 bulgusu: sitemap'e sizmisti).
-HARIC_DESEN_RE = re.compile(r"^(google|yandex|baidu|bing|naver|indexnow|site-?verification|onizleme-|_tmp|_denetim|_duzeltme)", re.I)
+# "_" ile baslayan her ad gecicidir: 25.10'da _tmp/_denetim sizmisti, 17.11'de
+# _kap_* (gunluk.yml'in calistirdigi _kap_sirket_topla.py'nin biraktigi ham HTML).
+HARIC_DESEN_RE = re.compile(r"^(google|yandex|baidu|bing|naver|indexnow|site-?verification|onizleme-|_)", re.I)
 
 # 9.11.2026: tarihsiz NAV/veri sayfalari. Kuyrugun EN BASINA alinirlar
 # (_oncelik_anahtari). Sebep: 31.10 oncelik duzenlemesi tarihli icerigi en one
@@ -1656,8 +1657,8 @@ def turkce_sayfalar(kok: Path) -> list[Path]:
             continue
         # dist yerel build ciktisi, _SILME-KUYRUGU takipsiz yedeklerdir (08.11):
         # CI'da zaten yokturlar; yerel taramalar yanlis kapsam bulmasin.
-        if any(p.startswith(("_tmp", "_denetim", "_duzeltme")) for p in parcalar):
-            continue  # gecici tani dosyalari dil agacina ve sitemap'e girmez
+        if any(p.startswith("_") for p in parcalar):
+            continue  # "_" ile baslayan her yol gecicidir: dil agacina ve sitemap'e girmez
         try:  # dogrulama dosyalari gibi <html> icermeyen parcalari atla
             if "<html" not in dosya.read_text(encoding="utf-8", errors="replace")[:4000].lower():
                 continue
@@ -2821,8 +2822,8 @@ def sitemap_guncelle(kok: Path, diller: list[str]) -> dict:
             kismi = loc.split(SITE_URL, 1)[1]
             if kismi.split("/")[0] in DILLER:
                 continue  # dil kaydi; yeniden uretilecek
-            if kismi.split("/")[0].startswith(("_tmp", "_denetim", "_duzeltme")):
-                continue  # gecici tani dosyalari sitemap'te dusurulur
+            if kismi.split("/")[0].startswith("_"):
+                continue  # "_" ile baslayan kayitlar sitemap'ten dusurulur
             tr_kayitlar[kismi] = attr
         else:
             dis_bloklar.append(blok)
