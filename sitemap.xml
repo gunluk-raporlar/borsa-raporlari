@@ -5793,6 +5793,14 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-11-15"/>
   </url>
   <url>
+    <loc>https://borsa-raporlari.pages.dev/haftasonu/2026-11-21</loc>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://borsa-raporlari.pages.dev/haftasonu/2026-11-21"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://borsa-raporlari.pages.dev/haftasonu/2026-11-21"/>
+  </url>
+  <url>
     <loc>https://borsa-raporlari.pages.dev/hisse/</loc>
     <lastmod>2026-11-20</lastmod>
     <changefreq>daily</changefreq>
