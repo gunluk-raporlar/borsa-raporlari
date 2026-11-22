@@ -1,8 +1,8 @@
 {
  "kod": "BIMAS",
- "guncelleme": "2026-11-15",
- "teknik_analiz": "BİM hissesi son işlemde 395,50 TL seviyesinde olup günlük bazda %1,93 değer kazanmıştır. Son 60 günlük getiri ise %-3,19 ile negatif bölgede seyretmektedir. Kısa ve orta vadeli EMA dizilimi BEKLE sinyali verirken, uzun vadeli EMA AL yönündedir. Wave Trend göstergesi 2,9 değeriyle AL sinyali üretmekte, fiyat kanalının %88,00 seviyesinde konumlanmıştır. Trend gücü (r) -0,74 ile zayıf ve negatif bir momentumu işaret etmektedir. Genel puan 2 olarak hesaplanmış olup özet görünüm NÖTR seviyesindedir. Teknik açıdan hisse, karışık sinyaller veren bir yapıdadır; ne güçlü bir alım ne de satım baskısı öne çıkmaktadır.",
- "makro_degerlendirme": "Türkiye'de yıllık enflasyon %29,77 ile bir önceki döneme göre hafif artış göstermiştir (önceki: %29,73). Aylık enflasyon %2,58 olarak gerçekleşmiş, önceki ayın %1,84 seviyesine göre hızlanmıştır. Çekirdek enflasyon yıllık %28,30 ile önceki %28,70'ten gerilemiştir. ÜFE yıllık %27,41, aylık %1,65 olarak kaydedilmiştir. Politika faizi %36,00'a indirilmiş olup önceki %37,00 seviyesinden bir düşüşü yansıtmaktadır. İşsizlik oranı %8,50, ekonomik katılım oranı ise %52,70 olarak açıklanmıştır. Sanayi üretimi yıllık %2,61 artarken, aylık bazda %2,10 ile önceki ayın negatif değerinden pozitife dönmüştür. Bu veriler, enflasyondaki yavaşlama ve üretimdeki toparlanma sinyalleriyle birlikte karmaşık bir makro görünüm sunmaktadır.",
+ "guncelleme": "2026-11-22",
+ "teknik_analiz": "BİM hissesi son işlemde 374,25 TL seviyesinde olup günlük bazda %-2,54 değer kaybetmiştir. Son 60 günlük getiri ise %-9,00 olarak gerçekleşmiştir. Kısa ve uzun vadeli EMA dizilimleri BEKLE sinyali verirken, orta vadeli EMA SAT yönündedir. Wave Trend göstergesi SAT konumunda ve 5,3 değerindedir. Fiyat, kanalın orta noktasına yakın bir konumda, %56,00 seviyesinde bulunmaktadır. Trend gücünü ölçen r değeri -0,74 ile negatif bölgede yer almakta ve zayıf bir momentumu işaret etmektedir. Genel teknik puanlama 0 olarak hesaplanmış olup özet GÜÇLÜ SAT şeklindedir. Bu veriler, hissede kısa vadede satıcılı bir seyrin hakim olduğunu ve alıcıların temkinli yaklaşması gerektiğini göstermektedir.",
+ "makro_degerlendirme": "Türkiye'de yıllık enflasyon %29,77 ile bir önceki döneme göre hafif artış göstermiştir (önceki: %29,73). Aylık enflasyon %2,58 olarak gerçekleşmiş, önceki ayın %1,84 seviyesine göre ivmelenmiştir. Çekirdek enflasyon yıllık bazda %28,30 ile gerilerken, ÜFE yıllık %27,41 ve aylık %1,65 olmuştur. Politika faizi %36,00'a indirilmiş olup bir önceki dönemde %37,00 idi. İşsizlik oranı %8,50, ekonomik katılım oranı ise %52,70 olarak kaydedilmiştir. Sanayi üretimi yıllık %2,61 artarken, aylık bazda %2,10 ile güçlü bir toparlanma sinyali vermiştir (önceki aylık: %-1,00). Bu makro tablo, enflasyondaki yukarı yönlü baskıya rağmen sanayi üretimindeki canlanmanın dikkat çektiği bir ortama işaret etmektedir.",
  "bilanco_degerlendirmesi": "Son dönem (2026/9) itibarıyla BİM'in satışları 720,48 milyar TL, net kârı 26,39 milyar TL ve özkaynakları 223,58 milyar TL olarak gerçekleşmiştir. Bir önceki dönem olan 2026/6'da satışlar 449,70 milyar TL, net kâr 15,09 milyar TL ve özkaynaklar 203,14 milyar TL idi. Son dönem net kârı yıllık bazda %78,98, çeyreklik bazda ise %74,85 oranında artış göstermiştir. Özkaynaklar da 2026/6'dan 2026/9'a yaklaşık 20 milyar TL artmıştır. 2025/12 dönemine göre satışlar ve kârlılıkta belirgin bir ivmelenme görülmektedir. Şirketin kâr marjı ve özkaynak yapısı güçlü bir görünüm sergilemektedir.",
  "bilanco": [
   {
@@ -151,5 +151,5 @@
  ],
  "tip": "sinai",
  "kaynak": "İş Yatırım mali tabloları (KAP bildirimleri esas alınır)",
- "bilanco_guncelleme": "2026-11-15"
+ "bilanco_guncelleme": "2026-11-22"
 }

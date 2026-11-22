@@ -1,100 +1,100 @@
 {
-  "kod": "YKBNK",
-  "guncelleme": "2026-11-15",
-  "teknik_analiz": "YKBNK hissesi 37,78 TL seviyesinde işlem görüyor ve günlük değişim %-0,32 olarak gerçekleşti. 60 günlük getiri %8,56 seviyesinde bulunuyor. EMA dizilimi kısa vadede BEKLE, orta vadede AL, uzun vadede BEKLE sinyali veriyor. Wave Trend göstergesi AL konumunda ve 31,5 değerinde. Fiyatın kanal konumu %84,00 ile kanalın üst bölgesine yakınlığa işaret ediyor. Trend gücü (r) 0,08 seviyesinde ölçülüyor. Genel puan 2 olarak hesaplanırken özet görünüm NÖTR şeklinde. Teknik göstergeler kısa vadede kararsız, orta vadede pozitif bir eğilime işaret ediyor; kanal konumunun yüksekliği ve düşük trend gücü, mevcut seviyelerde temkinli bir izleme gerektiriyor. Günlük sınırlı geri çekilme, 60 günlük pozitif getirinin korunduğunu gösteriyor.",
-  "makro_degerlendirme": "Türkiye ekonomisinde yıllık enflasyon %29,77 ile önceki %29,73 seviyesinin hafif üzerinde; aylık enflasyon %2,58 olurken önceki %1,84 idi. Çekirdek enflasyon yıllık %28,30 ile önceki %28,70'in altında. ÜFE yıllık %27,41, aylık %1,65 seviyesinde; önceki aylık %2,07 idi. Politika faizi %36,00 ile önceki %37,00'nin altına indi. İşsizlik oranı %8,50, ekonomik katılım oranı %52,70 ile önceki %52,60'ın üzerinde. Sanayi üretimi yıllık %2,61, aylık %2,10 artışla önceki %-1,00'e göre toparlanma gösteriyor. Bankacılık sektörü açısından faiz indirimi ve sanayi üretimindeki aylık toparlanma olumlu sinyaller; enflasyondaki sınırlı yükseliş ise temkinli bir tablo çiziyor. Makro görünüm, sektör kârlılığı üzerinde karışık etkiler barındırıyor.",
-  "bilanco_degerlendirmesi": "YKBNK'nın 2026/9 döneminde satışları 167,86 mlr TL, net kârı 41,67 mlr TL ve özkaynakları 296,20 mlr TL olarak gerçekleşti. Önceki dönemlerde satışlar 2026/6'da 107,77 mlr TL, 2026/3'te 53,57 mlr TL, 2025/12'de 144,63 mlr TL; net kâr sırasıyla 31,01 mlr TL, 20,29 mlr TL ve 47,09 mlr TL; özkaynaklar 286,49 mlr TL, 271,12 mlr TL ve 255,61 mlr TL düzeyindeydi. Son dönem net kâr yıllık değişimi %10,22, çeyrek değişimi %34,39 olarak hesaplandı. Özkaynaklar dönemler boyunca istikrarlı artış gösteriyor. Son dönemde net kârın hem yıllık hem çeyrek bazda artması, kârlılık görünümünün güçlendiğine işaret ediyor. Satış ve özkaynak büyüklükleri, bankanın bilanço kapasitesini koruduğunu yansıtıyor.",
-  "bilanco": [
-    {
-      "donem": "2024/3",
-      "satis": 25356306000.0,
-      "net_kar": 10302380000.0,
-      "toplam_varlik": 2144066425000.0,
-      "ozsermaye": 180591882000.0,
-      "odenmis_sermaye": 8447051000.0
-    },
-    {
-      "donem": "2024/6",
-      "satis": 45472838000.0,
-      "net_kar": 17405579000.0,
-      "toplam_varlik": 2319970040000.0,
-      "ozsermaye": 183101701000.0,
-      "odenmis_sermaye": 8447051000.0
-    },
-    {
-      "donem": "2024/9",
-      "satis": 63180478000.0,
-      "net_kar": 22407012000.0,
-      "toplam_varlik": 2489714963000.0,
-      "ozsermaye": 190979933000.0,
-      "odenmis_sermaye": 8447051000.0
-    },
-    {
-      "donem": "2024/12",
-      "satis": 88646632000.0,
-      "net_kar": 29018992000.0,
-      "toplam_varlik": 2553880784000.0,
-      "ozsermaye": 192813546000.0,
-      "odenmis_sermaye": 8447051000.0
-    },
-    {
-      "donem": "2025/3",
-      "satis": 29754040000.0,
-      "net_kar": 11418997000.0,
-      "toplam_varlik": 2735408764000.0,
-      "ozsermaye": 205681227000.0,
-      "odenmis_sermaye": 8447051000.0
-    },
-    {
-      "donem": "2025/6",
-      "satis": 64955000000.0,
-      "net_kar": 22750000000.0,
-      "toplam_varlik": 3032656762000.0,
-      "ozsermaye": 221704036000.0,
-      "odenmis_sermaye": 8447051000.0
-    },
-    {
-      "donem": "2025/9",
-      "satis": 108778000000.0,
-      "net_kar": 37812000000.0,
-      "toplam_varlik": 3347559532000.0,
-      "ozsermaye": 241294654000.0,
-      "odenmis_sermaye": 8447051000.0
-    },
-    {
-      "donem": "2025/12",
-      "satis": 161083211000.0,
-      "net_kar": 47093418000.0,
-      "toplam_varlik": 3522932086000.0,
-      "ozsermaye": 255617115000.0,
-      "odenmis_sermaye": 8447051000.0
-    },
-    {
-      "donem": "2026/3",
-      "satis": 58099186000.0,
-      "net_kar": 20296028000.0,
-      "toplam_varlik": 3759650829000.0,
-      "ozsermaye": 271134773000.0,
-      "odenmis_sermaye": 8447051000.0
-    },
-    {
-      "donem": "2026/6",
-      "satis": 117356000000.0,
-      "net_kar": 31012000000.0,
-      "toplam_varlik": 3990532000000.0,
-      "ozsermaye": 286499000000.0,
-      "odenmis_sermaye": 8447000000.0
-    },
-    {
-      "donem": "2026/9",
-      "satis": 183073000000.0,
-      "net_kar": 41676000000.0,
-      "toplam_varlik": 4404287000000.0,
-      "ozsermaye": 296214000000.0,
-      "odenmis_sermaye": 8447000000.0
-    }
-  ],
-  "tip": "banka",
-  "kaynak": "İş Yatırım mali tabloları (KAP bildirimleri esas alınır)",
-  "bilanco_guncelleme": "2026-11-22"
+ "kod": "YKBNK",
+ "guncelleme": "2026-11-22",
+ "teknik_analiz": "YKBNK son fiyat 36,16 TL seviyesinde işlem görüyor ve günlük değişim %-1,63 olarak gerçekleşti. 60 günlük getiri %-1,90 ile sınırlı bir geri çekilmeye işaret ediyor. EMA dizilimi kısa ve orta vadede BEKLE, uzun vadede SAT sinyali üretiyor; bu da kısa vadeli toparlanma çabasının henüz trend teyidine dönüşmediğini gösteriyor. Wave Trend göstergesi SAT yönünde ve 5,2 seviyesinde bulunuyor. Fiyatın kanal konumu %41,00 olup orta-alt bölgeye yakın bir yerleşime işaret ediyor. Trend gücü r değeri 0,21 ile zayıf bir eğilim olduğunu teyit ediyor. Genel puan 0 ve özet GÜÇLÜ SAT olarak hesaplanmış durumda. Bu tablo, kısa vadeli göstergelerin kararsız kaldığı, uzun vadeli eğilimin ise aşağı yönlü baskı altında olduğu nötr bir teknik görünüm sunuyor; göstergeler arasındaki uyumsuzluk dikkat çekiyor.",
+ "makro_degerlendirme": "Türkiye makro tablosunda yıllık enflasyon %29,77 ile önceki %29,73 seviyesinin hafif üzerinde seyrediyor; aylık enflasyon ise %2,58 ile önceki %1,84'ten yükselmiş durumda. Çekirdek enflasyon yıllık %28,30 ile önceki %28,70'in altında kalarak kısmi bir iyileşmeye işaret ediyor. ÜFE yıllık %27,41 ile önceki %27,38'e yakın seyrederken aylık ÜFE %1,65 ile önceki %2,07'den gerilemiş. Politika faizi %36,00 seviyesinde ve önceki %37,00'nin altında. İşsizlik oranı %8,50, ekonomik katılım oranı %52,70 ile önceki %52,60'ın hafif üzerinde. Sanayi üretimi yıllık %2,61 artarken aylık %2,10 ile önceki %-1,00'den belirgin toparlanma gösteriyor. Banka hisseleri açısından faiz indirimi ve sanayi üretimindeki aylık toparlanma destekleyici unsurlar olarak öne çıkarken, aylık enflasyondaki yükseliş ve çekirdek enflasyonun yüksek seyri temkinli bir makro çerçeve çiziyor.",
+ "bilanco_degerlendirmesi": "YKBNK'nın 2026/9 döneminde satışları 167,86 mlr TL, net kârı 41,67 mlr TL ve özkaynakları 296,20 mlr TL olarak gerçekleşti. Önceki dönemlerde satışlar 2026/6'da 107,77 mlr TL, 2026/3'te 53,57 mlr TL, 2025/12'de 144,63 mlr TL; net kâr sırasıyla 31,01 mlr TL, 20,29 mlr TL ve 47,09 mlr TL; özkaynaklar 286,49 mlr TL, 271,12 mlr TL ve 255,61 mlr TL düzeyindeydi. Son dönem net kâr yıllık değişimi %10,22, çeyrek değişimi %34,39 olarak hesaplandı. Özkaynaklar dönemler boyunca istikrarlı artış gösteriyor. Son dönemde net kârın hem yıllık hem çeyrek bazda artması, kârlılık görünümünün güçlendiğine işaret ediyor. Satış ve özkaynak büyüklükleri, bankanın bilanço kapasitesini koruduğunu yansıtıyor.",
+ "bilanco": [
+  {
+   "donem": "2024/3",
+   "satis": 25356306000.0,
+   "net_kar": 10302380000.0,
+   "toplam_varlik": 2144066425000.0,
+   "ozsermaye": 180591882000.0,
+   "odenmis_sermaye": 8447051000.0
+  },
+  {
+   "donem": "2024/6",
+   "satis": 45472838000.0,
+   "net_kar": 17405579000.0,
+   "toplam_varlik": 2319970040000.0,
+   "ozsermaye": 183101701000.0,
+   "odenmis_sermaye": 8447051000.0
+  },
+  {
+   "donem": "2024/9",
+   "satis": 63180478000.0,
+   "net_kar": 22407012000.0,
+   "toplam_varlik": 2489714963000.0,
+   "ozsermaye": 190979933000.0,
+   "odenmis_sermaye": 8447051000.0
+  },
+  {
+   "donem": "2024/12",
+   "satis": 88646632000.0,
+   "net_kar": 29018992000.0,
+   "toplam_varlik": 2553880784000.0,
+   "ozsermaye": 192813546000.0,
+   "odenmis_sermaye": 8447051000.0
+  },
+  {
+   "donem": "2025/3",
+   "satis": 29754040000.0,
+   "net_kar": 11418997000.0,
+   "toplam_varlik": 2735408764000.0,
+   "ozsermaye": 205681227000.0,
+   "odenmis_sermaye": 8447051000.0
+  },
+  {
+   "donem": "2025/6",
+   "satis": 64955000000.0,
+   "net_kar": 22750000000.0,
+   "toplam_varlik": 3032656762000.0,
+   "ozsermaye": 221704036000.0,
+   "odenmis_sermaye": 8447051000.0
+  },
+  {
+   "donem": "2025/9",
+   "satis": 108778000000.0,
+   "net_kar": 37812000000.0,
+   "toplam_varlik": 3347559532000.0,
+   "ozsermaye": 241294654000.0,
+   "odenmis_sermaye": 8447051000.0
+  },
+  {
+   "donem": "2025/12",
+   "satis": 161083211000.0,
+   "net_kar": 47093418000.0,
+   "toplam_varlik": 3522932086000.0,
+   "ozsermaye": 255617115000.0,
+   "odenmis_sermaye": 8447051000.0
+  },
+  {
+   "donem": "2026/3",
+   "satis": 58099186000.0,
+   "net_kar": 20296028000.0,
+   "toplam_varlik": 3759650829000.0,
+   "ozsermaye": 271134773000.0,
+   "odenmis_sermaye": 8447051000.0
+  },
+  {
+   "donem": "2026/6",
+   "satis": 117356000000.0,
+   "net_kar": 31012000000.0,
+   "toplam_varlik": 3990532000000.0,
+   "ozsermaye": 286499000000.0,
+   "odenmis_sermaye": 8447000000.0
+  },
+  {
+   "donem": "2026/9",
+   "satis": 183073000000.0,
+   "net_kar": 41676000000.0,
+   "toplam_varlik": 4404287000000.0,
+   "ozsermaye": 296214000000.0,
+   "odenmis_sermaye": 8447000000.0
+  }
+ ],
+ "tip": "banka",
+ "kaynak": "İş Yatırım mali tabloları (KAP bildirimleri esas alınır)",
+ "bilanco_guncelleme": "2026-11-22"
 }
