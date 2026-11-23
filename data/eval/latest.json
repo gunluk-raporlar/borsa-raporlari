@@ -1,18 +1,18 @@
 {
- "tarih": "2026-11-16",
+ "tarih": "2026-11-23",
  "sorgu_sayisi": 16,
  "metrikler": {
   "normal": {
-   "ndcg": 0.9509,
-   "mrr": 0.95
+   "ndcg": 0.9404,
+   "mrr": 0.9167
   },
   "ham": {
-   "ndcg": 0.9504,
-   "mrr": 0.95
+   "ndcg": 0.9361,
+   "mrr": 0.9167
   },
   "rerank": {
-   "ndcg": 0.9509,
-   "mrr": 0.95
+   "ndcg": 0.9366,
+   "mrr": 0.9167
   }
  },
  "bos": {
@@ -24,7 +24,7 @@
  "yargic_yok": false,
  "yargic_atlandi": "",
  "kota": {
-  "bugun": 0.023640934,
+  "bugun": 0.0,
   "kaynak": "ok",
   "limit": 9000,
   "maliyet": 4000
