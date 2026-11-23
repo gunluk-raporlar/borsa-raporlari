@@ -22,9 +22,9 @@
 </head>
 <body>
 <header class="topbar"><div class="inner">
-<div class="brand-row"><a class="brand" href="./">Ежедневные отчёты BIST 30</a>
+<div class="brand-row"><a class="brand" href="index.html">Ежедневные отчёты BIST 30</a>
 <button type="button" class="theme-btn" id="tema-btn" onclick="temaDegistir()" title="Светлая/тёмная тема" aria-label="Сменить тему">🌙</button></div>
-<nav><a href="./">Главная страница</a><a href="otchety">Отчёты</a><a href="aktsii/">Акции</a><a href="glubokiy-analiz">Глубокий анализ</a><a href="makroanaliz">Макроанализ</a><a href="tekhnicheskiy-analiz">Технический анализ</a><a href="svodka-signalov">Сводка сигналов</a><a href="borsapy-signaly">Сигналы Borsapy</a><a href="novosti">Новости</a><a href="korporativnye-novosti">Новости компаний</a><a href="portfel">Демо-портфель</a><a href="vykhodnye">Выходные</a><a href="shkola-rinka">Школа рынка</a><a href="kalendar">📅 Календарь</a><a href="glossariy">Глоссарий</a><a href="terminy">Термины</a><a href="bukhgalterskie-terminy">Бухгалтерские термины</a><a href="torgovyy-robot">Торговый робот</a></nav>
+<nav><a href="index.html">Главная страница</a><a href="otchety.html">Отчёты</a><a href="aktsii/index.html">Акции</a><a href="glubokiy-analiz.html">Глубокий анализ</a><a href="makroanaliz.html">Макроанализ</a><a href="tekhnicheskiy-analiz.html">Технический анализ</a><a href="svodka-signalov.html">Сводка сигналов</a><a href="borsapy-signaly.html">Сигналы Borsapy</a><a href="novosti.html">Новости</a><a href="korporativnye-novosti.html">Новости компаний</a><a href="portfel.html">Демо-портфель</a><a href="vykhodnye.html">Выходные</a><a href="shkola-rinka.html">Школа рынка</a><a href="kalendar.html">📅 Календарь</a><a href="glossariy.html">Глоссарий</a><a href="terminy.html">Термины</a><a href="bukhgalterskie-terminy.html">Бухгалтерские термины</a><a href="torgovyy-robot.html" class="active">Торговый робот</a></nav>
 </div></header>
 
 <div class="ticker-bant" id="ticker-bant" style="margin-bottom:16px">
@@ -35,11 +35,11 @@
   function ciz(veri) {
     var iz = document.getElementById('ticker-iz');
     var ogeler = veri.hisseler.map(function(h) {
-      var sinif = h.d >= 0 ? 'pos' : 'neg';
-      var ok = h.d >= 0 ? '▲' : '▼';
+      var sinif = h.d > 0 ? 'pos' : h.d < 0 ? 'neg' : 'muted';
+      var ok = h.d > 0 ? '▲' : h.d < 0 ? '▼' : '▬';
       return '<span class="ticker-oge"><b>' + h.h + '</b> ' +
              h.f.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL ' +
-             '<span class="' + sinif + '">' + ok + ' ' + (h.d >= 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
+             '<span class="' + sinif + '">' + ok + ' ' + (h.d > 0 ? '+' : '') + h.d.toFixed(2) + '%</span></span>';
     }).join('');
     var etiket = veri.etiket || '~15 dk gecikmeli';
     var saat = '<span class="ticker-oge ticker-saat">' + veri.guncelleme + ' · ' + etiket + '</span>';
@@ -70,7 +70,7 @@
   function bicim(g) {
     var deger = Number(g.f).toLocaleString('tr-TR', {minimumFractionDigits: g.o, maximumFractionDigits: g.o});
     var rozet = (typeof g.d === 'number')
-      ? ' <span class="' + (g.d >= 0 ? 'pos' : 'neg') + '">' + (g.d >= 0 ? '▲ +' : '▼ ') +
+      ? ' <span class="' + (g.d > 0 ? 'pos' : g.d < 0 ? 'neg' : 'muted') + '">' + (g.d > 0 ? '▲ +' : g.d < 0 ? '▼ ' : '▬ ') +
         Number(g.d).toFixed(2) + '%</span>'
       : '';
     var birim = g.b || g.birim || '';
@@ -234,38 +234,38 @@
 Робот <b>примерно каждые 30 минут в торговые часы</b> проверяется по живой цене (TradingView, ~15 мин задержка):
 стоп-лосс и цель могут сработать внутри дня, сигналы пересечения оцениваются по внутридневной цене, а
 кривая капитала получает один балл при каждой проверке. <u>Реальные деньги не используются</u>; все ордера публикуются здесь с обоснованием.
-<strong>Не является инвестиционной рекомендацией.</strong> Последнее обновление: 21.11.2026 01:41 (Стамбул).</p>
+<strong>Не является инвестиционной рекомендацией.</strong> Последнее обновление: 23.11.2026 17:30 (Стамбул).</p>
 </div>
-<div class='grid' style='grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0'><div class='stat' id='kpi-toplam' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Общая стоимость</div><div style='font-size:21px;font-weight:700' class=''>92,769.21 ₺</div></div><div class='stat' id='kpi-getiri' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Общая доходность</div><div style='font-size:21px;font-weight:700' class='neg'>-7.23%</div></div><div class='stat' id='kpi-nakit' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Наличные</div><div style='font-size:21px;font-weight:700' class=''>47,411.51 ₺</div></div><div class='stat' id='kpi-poz' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Открытая позиция</div><div style='font-size:21px;font-weight:700' class=''>4 / 8</div></div><div class='stat' id='kpi-kz' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Реализованная П/У</div><div style='font-size:21px;font-weight:700' class='neg'>-9,170.56 ₺</div></div><div class='stat' id='kpi-oran' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Доля прибыльных сделок</div><div style='font-size:21px;font-weight:700' class=''>18%</div></div><div class='stat' id='kpi-kesinti' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Удержанный сбор</div><div style='font-size:21px;font-weight:700' class='neg'>778.32 ₺</div></div></div>
-<h2 class='section-title'>Сегодня (21.11.2026)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'>Проверка цены</div><span id='bugun-kontrol'>1</span> раз · примерно каждые 30 минут в торговые часы · 🔴 рынок закрыт — данные последнего закрытия</div><div class='pano-hucre'>Сегодня сделок еще нет — ожидается сигнал.</div></div>
+<div class='grid' style='grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0'><div class='stat' id='kpi-toplam' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Общая стоимость</div><div style='font-size:21px;font-weight:700' class=''>92,602.88 ₺</div></div><div class='stat' id='kpi-getiri' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Общая доходность</div><div style='font-size:21px;font-weight:700' class='neg'>-7.40%</div></div><div class='stat' id='kpi-nakit' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Наличные</div><div style='font-size:21px;font-weight:700' class=''>34,669.36 ₺</div></div><div class='stat' id='kpi-poz' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Открытая позиция</div><div style='font-size:21px;font-weight:700' class=''>4 / 8</div></div><div class='stat' id='kpi-kz' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Реализованная П/У</div><div style='font-size:21px;font-weight:700' class='neg'>-9,540.35 ₺</div></div><div class='stat' id='kpi-oran' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Доля прибыльных сделок</div><div style='font-size:21px;font-weight:700' class=''>17%</div></div><div class='stat' id='kpi-kesinti' style='background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px'><div class='label'>Удержанный сбор</div><div style='font-size:21px;font-weight:700' class='neg'>792.01 ₺</div></div></div>
+<h2 class='section-title'>Сегодня (23.11.2026)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'>Проверка цены</div><span id='bugun-kontrol'>11</span> раз · примерно каждые 30 минут в часы работы рынка · 🟢 рынок открыт — живое отслеживание</div><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>ПОКУПКА</span> · ALTIN · 4,039 лот · 5,880.51 ₺ · 12:48</div>медвежий режим: 50% свободных средств вложено в грамм золота (ветвь режима)</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>ПРОДАЖА</span> · PGSUS · 72 лот · 152.30 ₺ · 13:00</div>stop-loss: уровень 152.45 пробит по текущей цене (правило -3%)</div></div>
 <h2 class="section-title">Кривая капитала<span style="font-size:13px;color:var(--muted);font-weight:400">— одна точка при каждой проверке цены</span></h2>
 <div class="card" id='sec-egri'><svg viewBox="0 0 720 160" style="width:100%;height:auto" role="img" aria-label="Кривая капитала">
-<polyline points="14.0,14.0,706.0,141.2" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
-<polyline points="14.0,14.0 21.9,72.9 29.7,59.9 37.6,70.4 45.5,81.5 53.3,84.0 61.2,83.8 69.0,84.9 76.9,77.7 84.8,74.6 92.6,75.9 100.5,94.4 108.4,95.2 116.2,89.4 124.1,90.0 132.0,84.1 139.8,88.8 147.7,88.2 155.5,90.8 163.4,90.4 171.3,86.8 179.1,88.8 187.0,89.0 194.9,87.4 202.7,94.3 210.6,96.8 218.5,107.3 226.3,103.8 234.2,100.9 242.0,100.8 249.9,99.3 257.8,102.8 265.6,105.2 273.5,102.0 281.4,98.5 289.2,99.0 297.1,94.9 305.0,93.9 312.8,99.9 320.7,95.8 328.5,96.8 336.4,92.9 344.3,93.1 352.1,97.5 360.0,93.8 367.9,92.3 375.7,90.5 383.6,95.3 391.5,89.4 399.3,97.5 407.2,99.8 415.0,100.6 422.9,105.5 430.8,105.7 438.6,111.1 446.5,108.4 454.4,108.1 462.2,111.3 470.1,108.8 478.0,118.0 485.8,123.9 493.7,126.0 501.5,132.4 509.4,133.3 517.3,128.9 525.1,126.9 533.0,129.2 540.9,127.5 548.7,121.0 556.6,123.0 564.5,125.3 572.3,125.4 580.2,127.7 588.0,124.7 595.9,146.0 603.8,145.9 611.6,142.7 619.5,140.4 627.4,135.1 635.2,136.5 643.1,134.3 651.0,132.4 658.8,135.1 666.7,133.4 674.5,137.2 682.4,140.1 690.3,140.0 698.1,143.0 706.0,141.2" fill="none" stroke="#b91c1c" stroke-width="2.5" stroke-linejoin="round"/>
+<polyline points="14.0,14.0,706.0,138.0" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 4"/>
+<polyline points="14.0,14.0 21.1,58.5 28.1,68.6 35.2,79.4 42.2,81.8 49.3,81.6 56.4,82.7 63.4,75.8 70.5,72.7 77.6,74.0 84.6,91.9 91.7,92.7 98.7,87.1 105.8,87.6 112.9,82.0 119.9,86.4 127.0,85.9 134.0,88.4 141.1,88.0 148.2,84.6 155.2,86.5 162.3,86.7 169.3,85.1 176.4,91.8 183.5,94.2 190.5,104.4 197.6,101.0 204.7,98.2 211.7,98.1 218.8,96.7 225.8,100.0 232.9,102.4 240.0,99.2 247.0,95.9 254.1,96.4 261.1,92.4 268.2,91.5 275.3,97.3 282.3,93.3 289.4,94.2 296.4,90.4 303.5,90.6 310.6,94.9 317.6,91.3 324.7,89.9 331.8,88.1 338.8,92.8 345.9,87.1 352.9,94.9 360.0,97.1 367.1,97.9 374.1,102.7 381.2,102.8 388.2,108.1 395.3,105.5 402.4,105.2 409.4,108.2 416.5,105.8 423.6,114.8 430.6,120.5 437.7,122.5 444.7,128.8 451.8,129.6 458.9,125.3 465.9,123.4 473.0,125.6 480.0,124.0 487.1,117.6 494.2,119.7 501.2,121.8 508.3,121.9 515.3,124.2 522.4,121.2 529.5,141.9 536.5,141.8 543.6,138.7 550.7,136.5 557.7,131.4 564.8,132.7 571.8,130.6 578.9,128.7 586.0,131.4 593.0,129.7 600.1,133.4 607.1,136.2 614.2,136.1 621.3,138.9 628.3,137.3 635.4,138.6 642.4,139.0 649.5,141.0 656.6,143.9 663.6,143.1 670.7,143.1 677.8,144.0 684.8,143.4 691.9,145.0 698.9,146.0 706.0,138.0" fill="none" stroke="#b91c1c" stroke-width="2.5" stroke-linejoin="round"/>
 <text x="14" y="158" font-size="10" fill="#64748b">25.09.2026</text>
-<text x="706" y="158" font-size="10" fill="#64748b" text-anchor="end">20.11 17:30</text>
-<text x="706" y="16" font-size="11" fill="#b91c1c" text-anchor="end">92,645.29 TL</text>
+<text x="706" y="158" font-size="10" fill="#64748b" text-anchor="end">23.11 17:30</text>
+<text x="706" y="16" font-size="11" fill="#b91c1c" text-anchor="end">92,602.88 TL</text>
 <text x="14" y="16" font-size="11" fill="#64748b">100 000.00 TL (старт)</text>
 </svg></div>
-<h2 class='section-title'>Открытые позиции</h2><div class='card' style='padding:8px 24px 16px' id='sec-poz'><div style='overflow-x:auto'><table><tr><th>Акция</th><th>Лот</th><th>Стоимость</th><th>Последние</th><th>Значение ₺</th><th>П/З ₺</th><th>П/З %</th><th>Стоп</th><th>Цель</th><th>Вход</th></tr><tr><td><b>PGSUS</b></td><td>72</td><td>157.17</td><td>156.60</td><td>11,275.20</td><td class='neg'>-41.01</td><td class='neg'>-0.36%</td><td>152.45</td><td>161.88</td><td>2026-11-18</td></tr><tr><td><b>TAVHL</b></td><td>38</td><td>287.00</td><td>284.75</td><td>10,820.50</td><td class='neg'>-85.62</td><td class='neg'>-0.79%</td><td>278.39</td><td>295.61</td><td>2026-11-20</td></tr><tr><td><b>THYAO</b></td><td>36</td><td>320.79</td><td>329.00</td><td>11,844.00</td><td class='pos'>295.43</td><td class='pos'>2.56%</td><td>311.17</td><td>330.42</td><td>2026-11-12</td></tr><tr><td><b>VAKBN</b></td><td>346</td><td>32.84</td><td>33.00</td><td>11,418.00</td><td class='pos'>56.67</td><td class='pos'>0.50%</td><td>31.85</td><td>33.82</td><td>2026-11-16</td></tr></table></div></div>
-<h2 class='section-title'>Последние сделки</h2><div class='card' style='padding:8px 24px 16px' id='sec-islem'><div style='overflow-x:auto'><table><tr><th>Время</th><th>Акция</th><th>Направление</th><th>Лот</th><th>"Цена"</th><th>Сумма ₺</th><th>Сбор</th><th>П/З ₺</th><th>Обоснование</th></tr><tr><td>2026-11-20 10:58</td><td><b>TAVHL</b></td><td class='pos'>ПОКУПКА</td><td>38</td><td>286.50</td><td>10,906.12</td><td>13.68</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 51 · цена выше SMA100</td></tr><tr><td>2026-11-20 10:58</td><td><b>YKBNK</b></td><td class='neg'>ПРОДАЖА</td><td>305</td><td>36.18</td><td>11,015.67</td><td>13.71</td><td class='neg'>-435.25</td><td style='max-width:340px'>stop-loss: уровень 36.42 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-20 10:58</td><td><b>GARAN</b></td><td class='neg'>ПРОДАЖА</td><td>76</td><td>144.50</td><td>10,962.81</td><td>13.70</td><td class='neg'>-456.67</td><td style='max-width:340px'>stop-loss: уровень 145.75 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-20 10:58</td><td><b>BIMAS</b></td><td class='neg'>ПРОДАЖА</td><td>28</td><td>377.50</td><td>10,551.10</td><td>13.61</td><td class='neg'>-500.12</td><td style='max-width:340px'>stop-loss: уровень 382.85 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-19 12:41</td><td><b>TAVHL</b></td><td class='neg'>ПРОДАЖА</td><td>38</td><td>290.25</td><td>11,010.28</td><td>13.71</td><td class='neg'>-447.23</td><td style='max-width:340px'>stop-loss: уровень 292.47 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-18 15:00</td><td><b>ISCTR</b></td><td class='neg'>ПРОДАЖА</td><td>865</td><td>12.86</td><td>11,104.62</td><td>13.72</td><td class='neg'>-367.53</td><td style='max-width:340px'>stop-loss: уровень 12.86 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-18 13:30</td><td><b>PGSUS</b></td><td class='pos'>ПОКУПКА</td><td>72</td><td>156.90</td><td>11,316.21</td><td>13.76</td><td>—</td><td style='max-width:340px'>расположение SMA10 &gt; SMA30 · RSI 67 · цена выше SMA100</td></tr><tr><td>2026-11-18 13:30</td><td><b>KCHOL</b></td><td class='neg'>ПРОДАЖА</td><td>55</td><td>199.90</td><td>10,975.30</td><td>13.70</td><td class='neg'>-379.63</td><td style='max-width:340px'>stop-loss: уровень 200.26 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-18 12:44</td><td><b>BIMAS</b></td><td class='pos'>ПОКУПКА</td><td>28</td><td>394.00</td><td>11,051.23</td><td>13.71</td><td>—</td><td style='max-width:340px'>Раскладка SMA10 &gt; SMA30 · RSI 56 · цена выше SMA100</td></tr><tr><td>2026-11-18 12:44</td><td><b>AKBNK</b></td><td class='neg'>ПРОДАЖА</td><td>162</td><td>68.75</td><td>11,118.20</td><td>13.73</td><td class='neg'>-411.45</td><td style='max-width:340px'>stop-loss: уровень 69.04 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-17 12:41</td><td><b>GARAN</b></td><td class='pos'>ПОКУПКА</td><td>76</td><td>150.00</td><td>11,419.48</td><td>13.78</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 66 · цена выше SMA100</td></tr><tr><td>2026-11-17 12:41</td><td><b>YKBNK</b></td><td class='pos'>ПОКУПКА</td><td>305</td><td>37.48</td><td>11,450.91</td><td>13.79</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 55 · цена выше SMA100</td></tr><tr><td>2026-11-17 12:41</td><td><b>ISCTR</b></td><td class='pos'>ПОКУПКА</td><td>865</td><td>13.24</td><td>11,472.12</td><td>13.79</td><td>—</td><td style='max-width:340px'>расположение SMA10 &gt; SMA30 · RSI 54 · цена выше SMA100</td></tr><tr><td>2026-11-17 12:41</td><td><b>PGSUS</b></td><td class='neg'>ПРОДАЖА</td><td>73</td><td>162.30</td><td>11,828.11</td><td>13.87</td><td class='pos'>340.28</td><td style='max-width:340px'>целевая цена: уровень 162.09 достигнут по текущей цене (правило +3%)</td></tr><tr><td>2026-11-16 11:30</td><td><b>KCHOL</b></td><td class='pos'>ПОКУПКА</td><td>55</td><td>206.10</td><td>11,354.94</td><td>13.77</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 51 · цена выше SMA100</td></tr><tr><td>2026-11-16 10:39</td><td><b>VAKBN</b></td><td class='pos'>ПОКУПКА</td><td>346</td><td>32.78</td><td>11,361.32</td><td>13.77</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 52 · цена выше SMA100</td></tr><tr><td>2026-11-16 10:39</td><td><b>YKBNK</b></td><td class='neg'>ПРОДАЖА</td><td>300</td><td>37.20</td><td>11,140.69</td><td>13.73</td><td class='neg'>-422.90</td><td style='max-width:340px'>stop-loss: уровень 37.39 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-16 10:39</td><td><b>ISCTR</b></td><td class='neg'>ПРОДАЖА</td><td>841</td><td>13.34</td><td>11,199.59</td><td>13.74</td><td class='neg'>-366.93</td><td style='max-width:340px'>stop-loss: уровень 13.34 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-16 10:39</td><td><b>GARAN</b></td><td class='neg'>ПРОДАЖА</td><td>75</td><td>149.00</td><td>11,155.68</td><td>13.73</td><td class='neg'>-413.90</td><td style='max-width:340px'>stop-loss: уровень 149.63 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-12 13:09</td><td><b>GARAN</b></td><td class='pos'>ПОКУПКА</td><td>75</td><td>154.00</td><td>11,569.58</td><td>13.81</td><td>—</td><td style='max-width:340px'>расположение SMA10 &gt; SMA30 · RSI 74 · цена выше SMA100</td></tr><tr><td>2026-11-12 13:09</td><td><b>PGSUS</b></td><td class='pos'>ПОКУПКА</td><td>73</td><td>157.10</td><td>11,487.82</td><td>13.79</td><td>—</td><td style='max-width:340px'>расположение SMA10 &gt; SMA30 · RSI 72 · цена выше SMA100</td></tr><tr><td>2026-11-12 13:09</td><td><b>THYAO</b></td><td class='pos'>ПОКУПКА</td><td>36</td><td>320.25</td><td>11,548.57</td><td>13.81</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 71 · цена выше SMA100</td></tr><tr><td>2026-11-12 13:09</td><td><b>TAVHL</b></td><td class='pos'>ПОКУПКА</td><td>38</td><td>301.00</td><td>11,457.51</td><td>13.79</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 65 · цена выше SMA100</td></tr><tr><td>2026-11-12 13:09</td><td><b>ISCTR</b></td><td class='pos'>ПОКУПКА</td><td>841</td><td>13.73</td><td>11,566.51</td><td>13.81</td><td>—</td><td style='max-width:340px'>расположение SMA10 &gt; SMA30 · RSI 63 · цена выше SMA100</td></tr><tr><td>2026-11-12 13:09</td><td><b>YKBNK</b></td><td class='pos'>ПОКУПКА</td><td>300</td><td>38.48</td><td>11,563.58</td><td>13.81</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 62 · цена выше SMA100</td></tr></table></div></div>
-<h2 class='section-title'>Панель сигналов (последняя проверка: 2026-11-20)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>ПОКУПКА</span> · GARAN · 144.20 ₺ · кандидат на покупку</div>Расположение SMA10 &gt; SMA30 · RSI 55 · цена выше SMA100</div><div class='pano-hucre'><div class='pano-etiket'><span class='neg'>ПРОДАЖА</span> · KCHOL · 187.20 ₺ · позиций к продаже нет</div>SMA10 пересекла SMA30 снизу вверх</div><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>ПОКУПКА</span> · YKBNK · 36.16 ₺ · кандидат на покупку</div>Расположение SMA10 &gt; SMA30 · RSI 47 · цена выше SMA100</div></div>
-<div class='grid-iki'><div class='card'><div class='pano-baslik'>Правила стратегии</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li><b>ПОКУПАТЬ:</b> SMA10 расположена над SMA30 + RSI14 в диапазоне 45–75 + цена выше SMA100 (новое пересечение не ожидается; вход при наличии расстановки).</li><li><b>ПРОДАЖА:</b> Цена пересекает SMA10/SMA30 снизу вверх не нужен — падает ниже <b>3%</b> опускается ниже неё (стоп), или <b>3%</b> поднимается выше неё (цель).</li><li><b>Boyut: (Бойут:)</b> не более 12% собственного капитала на одну акцию, не более 8 позиций.</li><li><b>Günlük fren: (Гюнлюк френ:)</b> если капитал падает на 3% ниже закрытия предыдущего дня, новые покупки в этот день приостанавливаются.</li><li><b>Правило времени:</b> ордера исполняются только во время торговой сессии BIST — в будние дни 10:00–18:00 TSİ; в официальные праздники и вне сессии (включая ручной запуск) сделки не открываются, сигналы ждут следующей сессии.</li><li><b>Издержки:</b> комиссия 0.04% (минимум 10 ₺) + BSMV 15% + юридические сборы ~0,020% + проскальзывание 0.05%. Итоговые издержки сделки на 12,000 ₺ ~35–40 ₺ (~0.3%) — реальная цена скальпинга.</li><li><b>Свободные денежные средства:</b> приносит доход в овернайт-обратном репо каждый торговый день — годовая ставка берётся из последнего объявленного депозитного; доход репо относится на собственный капитал.</li><li><b>Налог:</b> при продаже акций BIST налог у источника (stopaj) на прибыль составляет 0%; прибыль, превышающая ежегодный лимон декларирования, подлежит декларированию.</li></ul></div><div class='card'><div class='pano-baslik'>Performans Özeti (Перформанс Өзети)</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li>Старт: 2026-09-25 · 100,000.00 ₺</li><li>Всего сделок: 60 (28 ПРОДАЖ / 32 ПОКУПКИ)</li><li>Доля прибыльных ПРОДАЖ: 18%</li><li>Реализованный P/L: -9,170.56 ₺ · Уплаченные комиссии: 778.32 ₺</li><li>Н/Р по открытой позиции (нереализованный): 1,939.78 ₺</li></ul></div></div>
+<h2 class='section-title'>Открытые позиции</h2><div class='card' style='padding:8px 24px 16px' id='sec-poz'><div style='overflow-x:auto'><table><tr><th>Акция</th><th>Лот</th><th>Стоимость</th><th>Последние</th><th>Значение ₺</th><th>П/З ₺</th><th>П/З %</th><th>Стоп</th><th>Цель</th><th>Вход</th></tr><tr><td><b>ALTIN</b></td><td>4,039</td><td>5,883.45</td><td>5,880.51</td><td>23,751.38</td><td class='neg'>-11.87</td><td class='neg'>-0.05%</td><td>режим</td><td>режим</td><td>2026-11-23</td></tr><tr><td><b>TAVHL</b></td><td>38</td><td>287.00</td><td>289.25</td><td>10,991.50</td><td class='pos'>85.38</td><td class='pos'>0.78%</td><td>278.39</td><td>295.61</td><td>2026-11-20</td></tr><tr><td><b>THYAO</b></td><td>36</td><td>320.79</td><td>323.75</td><td>11,655.00</td><td class='pos'>106.43</td><td class='pos'>0.92%</td><td>311.17</td><td>330.42</td><td>2026-11-12</td></tr><tr><td><b>VAKBN</b></td><td>346</td><td>32.84</td><td>33.34</td><td>11,535.64</td><td class='pos'>174.31</td><td class='pos'>1.53%</td><td>31.85</td><td>33.82</td><td>2026-11-16</td></tr></table></div></div>
+<h2 class='section-title'>Последние сделки</h2><div class='card' style='padding:8px 24px 16px' id='sec-islem'><div style='overflow-x:auto'><table><tr><th>Время</th><th>Акция</th><th>Направление</th><th>Лот</th><th>"Цена"</th><th>Сумма ₺</th><th>Сбор</th><th>П/З ₺</th><th>Обоснование</th></tr><tr><td>2026-11-23 13:00</td><td><b>PGSUS</b></td><td class='neg'>ПРОДАЖА</td><td>72</td><td>152.30</td><td>10,946.43</td><td>13.69</td><td class='neg'>-369.78</td><td style='max-width:340px'>stop-loss: уровень 152.45 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-23 12:48</td><td><b>ALTIN</b></td><td class='pos'>ПОКУПКА</td><td>4,039</td><td>5,880.51</td><td>23,779.51</td><td>16.25</td><td>—</td><td style='max-width:340px'>медвежий режим: 50% свободных средств вложено в грамм золота (ветвь режима)</td></tr><tr><td>2026-11-20 10:58</td><td><b>TAVHL</b></td><td class='pos'>ПОКУПКА</td><td>38</td><td>286.50</td><td>10,906.12</td><td>13.68</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 51 · цена выше SMA100</td></tr><tr><td>2026-11-20 10:58</td><td><b>YKBNK</b></td><td class='neg'>ПРОДАЖА</td><td>305</td><td>36.18</td><td>11,015.67</td><td>13.71</td><td class='neg'>-435.25</td><td style='max-width:340px'>stop-loss: уровень 36.42 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-20 10:58</td><td><b>GARAN</b></td><td class='neg'>ПРОДАЖА</td><td>76</td><td>144.50</td><td>10,962.81</td><td>13.70</td><td class='neg'>-456.67</td><td style='max-width:340px'>stop-loss: уровень 145.75 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-20 10:58</td><td><b>BIMAS</b></td><td class='neg'>ПРОДАЖА</td><td>28</td><td>377.50</td><td>10,551.10</td><td>13.61</td><td class='neg'>-500.12</td><td style='max-width:340px'>stop-loss: уровень 382.85 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-19 12:41</td><td><b>TAVHL</b></td><td class='neg'>ПРОДАЖА</td><td>38</td><td>290.25</td><td>11,010.28</td><td>13.71</td><td class='neg'>-447.23</td><td style='max-width:340px'>stop-loss: уровень 292.47 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-18 15:00</td><td><b>ISCTR</b></td><td class='neg'>ПРОДАЖА</td><td>865</td><td>12.86</td><td>11,104.62</td><td>13.72</td><td class='neg'>-367.53</td><td style='max-width:340px'>stop-loss: уровень 12.86 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-18 13:30</td><td><b>PGSUS</b></td><td class='pos'>ПОКУПКА</td><td>72</td><td>156.90</td><td>11,316.21</td><td>13.76</td><td>—</td><td style='max-width:340px'>расположение SMA10 &gt; SMA30 · RSI 67 · цена выше SMA100</td></tr><tr><td>2026-11-18 13:30</td><td><b>KCHOL</b></td><td class='neg'>ПРОДАЖА</td><td>55</td><td>199.90</td><td>10,975.30</td><td>13.70</td><td class='neg'>-379.63</td><td style='max-width:340px'>stop-loss: уровень 200.26 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-18 12:44</td><td><b>BIMAS</b></td><td class='pos'>ПОКУПКА</td><td>28</td><td>394.00</td><td>11,051.23</td><td>13.71</td><td>—</td><td style='max-width:340px'>Раскладка SMA10 &gt; SMA30 · RSI 56 · цена выше SMA100</td></tr><tr><td>2026-11-18 12:44</td><td><b>AKBNK</b></td><td class='neg'>ПРОДАЖА</td><td>162</td><td>68.75</td><td>11,118.20</td><td>13.73</td><td class='neg'>-411.45</td><td style='max-width:340px'>stop-loss: уровень 69.04 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-17 12:41</td><td><b>GARAN</b></td><td class='pos'>ПОКУПКА</td><td>76</td><td>150.00</td><td>11,419.48</td><td>13.78</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 66 · цена выше SMA100</td></tr><tr><td>2026-11-17 12:41</td><td><b>YKBNK</b></td><td class='pos'>ПОКУПКА</td><td>305</td><td>37.48</td><td>11,450.91</td><td>13.79</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 55 · цена выше SMA100</td></tr><tr><td>2026-11-17 12:41</td><td><b>ISCTR</b></td><td class='pos'>ПОКУПКА</td><td>865</td><td>13.24</td><td>11,472.12</td><td>13.79</td><td>—</td><td style='max-width:340px'>расположение SMA10 &gt; SMA30 · RSI 54 · цена выше SMA100</td></tr><tr><td>2026-11-17 12:41</td><td><b>PGSUS</b></td><td class='neg'>ПРОДАЖА</td><td>73</td><td>162.30</td><td>11,828.11</td><td>13.87</td><td class='pos'>340.28</td><td style='max-width:340px'>целевая цена: уровень 162.09 достигнут по текущей цене (правило +3%)</td></tr><tr><td>2026-11-16 11:30</td><td><b>KCHOL</b></td><td class='pos'>ПОКУПКА</td><td>55</td><td>206.10</td><td>11,354.94</td><td>13.77</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 51 · цена выше SMA100</td></tr><tr><td>2026-11-16 10:39</td><td><b>VAKBN</b></td><td class='pos'>ПОКУПКА</td><td>346</td><td>32.78</td><td>11,361.32</td><td>13.77</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 52 · цена выше SMA100</td></tr><tr><td>2026-11-16 10:39</td><td><b>YKBNK</b></td><td class='neg'>ПРОДАЖА</td><td>300</td><td>37.20</td><td>11,140.69</td><td>13.73</td><td class='neg'>-422.90</td><td style='max-width:340px'>stop-loss: уровень 37.39 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-16 10:39</td><td><b>ISCTR</b></td><td class='neg'>ПРОДАЖА</td><td>841</td><td>13.34</td><td>11,199.59</td><td>13.74</td><td class='neg'>-366.93</td><td style='max-width:340px'>stop-loss: уровень 13.34 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-16 10:39</td><td><b>GARAN</b></td><td class='neg'>ПРОДАЖА</td><td>75</td><td>149.00</td><td>11,155.68</td><td>13.73</td><td class='neg'>-413.90</td><td style='max-width:340px'>stop-loss: уровень 149.63 пробит по текущей цене (правило -3%)</td></tr><tr><td>2026-11-12 13:09</td><td><b>GARAN</b></td><td class='pos'>ПОКУПКА</td><td>75</td><td>154.00</td><td>11,569.58</td><td>13.81</td><td>—</td><td style='max-width:340px'>расположение SMA10 &gt; SMA30 · RSI 74 · цена выше SMA100</td></tr><tr><td>2026-11-12 13:09</td><td><b>PGSUS</b></td><td class='pos'>ПОКУПКА</td><td>73</td><td>157.10</td><td>11,487.82</td><td>13.79</td><td>—</td><td style='max-width:340px'>расположение SMA10 &gt; SMA30 · RSI 72 · цена выше SMA100</td></tr><tr><td>2026-11-12 13:09</td><td><b>THYAO</b></td><td class='pos'>ПОКУПКА</td><td>36</td><td>320.25</td><td>11,548.57</td><td>13.81</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 71 · цена выше SMA100</td></tr><tr><td>2026-11-12 13:09</td><td><b>TAVHL</b></td><td class='pos'>ПОКУПКА</td><td>38</td><td>301.00</td><td>11,457.51</td><td>13.79</td><td>—</td><td style='max-width:340px'>Расположение SMA10 &gt; SMA30 · RSI 65 · цена выше SMA100</td></tr></table></div></div>
+<h2 class='section-title'>Панель сигналов (последняя проверка: 2026-11-23)</h2><div class='grid' style='gap:10px'><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>ПОКУПКА</span> · GARAN · 144.90 ₺ · кандидат на покупку</div>Раскладка SMA10 &gt; SMA30 · RSI 56 · цена выше SMA100</div><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>ПОКУПКА</span> · PGSUS · 153.60 ₺ · кандидат на покупку</div>расположение SMA10 &gt; SMA30 · RSI 61 · цена выше SMA100</div><div class='pano-hucre'><div class='pano-etiket'><span class='pos'>ПОКУПКА</span> · YKBNK · 36.80 ₺ · кандидат на покупку</div>Расположение SMA10 &gt; SMA30 · RSI 51 · цена выше SMA100</div><div class='pano-hucre'>ℹ️ Рыночный режим: МЕДВЕДЬ (XU100&lt; SMA20) — покупка новых акций приостановлена, часть свободных средств направлена в золотую ветвь.</div><div class='pano-hucre'>ℹ️ Медвежий режим: покупки новых акций в этом режиме не тестируются.</div></div>
+<div class='grid-iki'><div class='card'><div class='pano-baslik'>Правила стратегии</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li><b>ПОКУПАТЬ:</b> SMA10 расположена над SMA30 + RSI14 в диапазоне 45–75 + цена выше SMA100 (новое пересечение не ожидается; вход при наличии расстановки).</li><li><b>ПРОДАЖА:</b> Цена пересекает SMA10/SMA30 снизу вверх не нужен — падает ниже <b>3%</b> опускается ниже неё (стоп), или <b>3%</b> поднимается выше неё (цель).</li><li><b>Boyut: (Бойут:)</b> не более 12% собственного капитала на одну акцию, не более 8 позиций.</li><li><b>Günlük fren: (Гюнлюк френ:)</b> если капитал падает на 3% ниже закрытия предыдущего дня, новые покупки в этот день приостанавливаются.</li><li><b>Правило времени:</b> ордера исполняются только во время торговой сессии BIST — в будние дни 10:00–18:00 TSİ; в официальные праздники и вне сессии (включая ручной запуск) сделки не открываются, сигналы ждут следующей сессии.</li><li><b>Издержки:</b> комиссия 0.04% (минимум 10 ₺) + BSMV 15% + юридические сборы ~0,020% + проскальзывание 0.05%. Итоговые издержки сделки на 12,000 ₺ ~35–40 ₺ (~0.3%) — реальная цена скальпинга.</li><li><b>Свободные денежные средства:</b> приносит доход в овернайт-обратном репо каждый торговый день — годовая ставка берётся из последнего объявленного депозитного; доход репо относится на собственный капитал.</li><li><b>Налог:</b> при продаже акций BIST налог у источника (stopaj) на прибыль составляет 0%; прибыль, превышающая ежегодный лимон декларирования, подлежит декларированию.</li></ul></div><div class='card'><div class='pano-baslik'>Performans Özeti (Перформанс Өзети)</div><ul style='margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.7'><li>Старт: 2026-09-25 · 100,000.00 ₺</li><li>Всего сделок: 62 (29 ПРОДАЖ / 33 ПОКУПКИ)</li><li>Доля прибыльных ПРОДАЖ: 17%</li><li>Реализованный P/L: -9,540.35 ₺ · Уплаченные издержки: 792.01 ₺</li><li>P/L открытой позиции (нереализованный): 2,143.23 ₺</li></ul></div></div>
 <p style="color:var(--muted);font-size:12px;margin:26px 0 4px">Эта страница — независимая симуляция: никакие реальные ордера не отправляются, никакие реальные деньги не подвергаются риску.
 Данные: İş Yatırım (Иш Ятырым) (EOD) + TradingView (внутридневные, с задержкой ~15 мин) · Комиссия и проскальзывание являются гипотетическими.
-Последнее обновление: 21.11.2026 01:41 (Стамбул) · Никакой контент на этой странице не является инвестиционной рекомендацией.</p>
+Последнее обновление: 23.11.2026 17:30 (Стамбул) · Никакой контент на этой странице не является инвестиционной рекомендацией.</p>
 </main>
 <nav class="altbar" aria-label="Быстрое меню">
-<a href="./"><span class="i" aria-hidden="true">📊</span>Отчёты</a>
-<a href="tekhnicheskiy-analiz"><span class="i" aria-hidden="true">📈</span>Технический</a>
-<a href="aktsii/"><span class="i" aria-hidden="true">🏦</span>Акции</a>
-<a href="portfel"><span class="i" aria-hidden="true">💼</span>Портфель</a>
-<a href="torgovyy-robot" class="active"><span class="i" aria-hidden="true">🤖</span>Робот</a>
-<a href="novosti"><span class="i" aria-hidden="true">📰</span>Новости</a>
-<a href="kalendar"><span class="i" aria-hidden="true">📅</span>Календарь</a>
+<a href="index.html"><span class="i" aria-hidden="true">📊</span>Отчёты</a>
+<a href="tekhnicheskiy-analiz.html"><span class="i" aria-hidden="true">📈</span>Технический</a>
+<a href="aktsii/index.html"><span class="i" aria-hidden="true">🏦</span>Акции</a>
+<a href="portfel.html"><span class="i" aria-hidden="true">💼</span>Портфель</a>
+<a href="torgovyy-robot.html" class="active"><span class="i" aria-hidden="true">🤖</span>Робот</a>
+<a href="novosti.html"><span class="i" aria-hidden="true">📰</span>Новости</a>
+<a href="kalendar.html"><span class="i" aria-hidden="true">📅</span>Календарь</a>
 </nav>
 <footer class="footer">Информация, комментарии и рекомендации здесь представлены в информационных целях; это не инвестиционное консультирование, не инвестиционная рекомендация.
-Результаты симуляции не являются индикатором будущей доходности по прошлой динамике. Источники данных: İş Yatırım (Иш Ятырым), RSS-новости • Анализ: искусственный интеллект (мультиагентная система)<br><a href="konfidencialnost" style="color:inherit">Конфиденциальность</a></footer>
+Результаты симуляции не являются индикатором будущей доходности по прошлой динамике. Источники данных: İş Yatırım (Иш Ятырым), RSS-новости • Анализ: искусственный интеллект (мультиагентная система)<br><a href="konfidencialnost.html" style="color:inherit">Конфиденциальность</a></footer>
 <script>
 function temaDegistir() {
   var kok = document.documentElement;
@@ -495,6 +495,115 @@ function temaDegistir() {
   function tazele() { onbellek = new WeakMap(); }
   window.addEventListener('resize', tazele);
   window.addEventListener('load', tazele);
+})();
+</script>
+<script>
+(function () {
+  var SURE = 150;      // sn: bir periyotluk icerik 150 sn'de akar (eski 75 sn / %50 ile ayni hiz)
+  var EN_FAZLA = 12;   // guvenlik: tek seritte en fazla 12 kopya
+  var kayitlar = [];
+  var kilit = 0;       // kendi yazimlarimiz gozcuya yakalanmasin
+  var bantlar = document.querySelectorAll('.ticker-bant');
+  if (!bantlar.length) return;
+
+  function kur(bant) {
+    var iz = bant.querySelector('.ticker-iz');
+    if (!iz) return null;
+    kilit++;   // kendi DOM yazimlarimiz gozcuya yakalanmasin
+    try {
+      // Onceki cogaltmalarimizi at; periyot her zaman sunucudan gelen icerik olsun.
+      var ekler = iz.querySelectorAll('.ticker-ek');
+      for (var i = 0; i < ekler.length; i++) ekler[i].parentNode.removeChild(ekler[i]);
+      var tek = iz.innerHTML;
+      if (!iz.textContent || !iz.textContent.replace(/\s/g, '')) return null;
+
+      iz.style.animation = 'none';
+      iz.style.transform = 'none';
+      if (!iz.querySelector('.ticker-oge')) return null;  // yedek metin: sabit kalsin
+      var periyot = iz.getBoundingClientRect().width;
+      if (!periyot) return null;
+
+      var bantW = bant.clientWidth || 1;
+      var n = Math.ceil((bantW + periyot) / periyot);
+      if (n < 2) n = 2;
+      if (n > EN_FAZLA) n = EN_FAZLA;
+      var html = tek;
+      for (var k = 1; k < n; k++) {
+        html += '<span class="ticker-ek" aria-hidden="true" style="display:inline-block">' + tek + '</span>';
+      }
+      iz.innerHTML = html;
+
+      if (!bant._tickerFare) {
+        bant._tickerFare = true;
+        bant.addEventListener('mouseenter', function () { bant._tickerDurdu = true; });
+        bant.addEventListener('mouseleave', function () { bant._tickerDurdu = false; });
+      }
+      var x = bant._tickerX || 0;
+      return { bant: bant, iz: iz, periyot: periyot, hiz: periyot / SURE, x: x % periyot };
+    } finally {
+      setTimeout(function () { kilit--; }, 0);
+    }
+  }
+
+  function kurHepsi() {
+    kayitlar = [];
+    for (var i = 0; i < bantlar.length; i++) {
+      var k = kur(bantlar[i]);
+      if (k) kayitlar.push(k);
+    }
+  }
+
+  var son = 0;
+  function adim(t) {
+    if (!son) son = t;
+    var dt = (t - son) / 1000;
+    son = t;
+    if (dt > 0.5) dt = 0.5;   // sekme arka plandan donunce sicrama olmasin
+    for (var i = 0; i < kayitlar.length; i++) {
+      var k = kayitlar[i];
+      if (k.bant._tickerDurdu) continue;
+      k.x = (k.x + k.hiz * dt) % k.periyot;
+      k.bant._tickerX = k.x;
+      k.iz.style.transform = 'translate3d(' + (-k.x).toFixed(2) + 'px,0,0)';
+    }
+    requestAnimationFrame(adim);
+  }
+
+  // Guvenlik agi: konum her karede yazildigi icin normalde tetiklenmez. Yine de
+  // serit bandi kapatmiyorsa (tarayici kaymasi) yeniden kurulur.
+  var sonKur = 0;
+  function denetle() {
+    for (var i = 0; i < kayitlar.length; i++) {
+      var k = kayitlar[i];
+      if (k.bant.scrollLeft) k.bant.scrollLeft = 0;
+      var r = k.iz.getBoundingClientRect(), rb = k.bant.getBoundingClientRect();
+      if (r.right < rb.right - 8 || r.left > rb.left + 8) {
+        if (Date.now() - sonKur > 10000) { sonKur = Date.now(); kurHepsi(); }
+        return;
+      }
+    }
+  }
+
+  kurHepsi();
+  requestAnimationFrame(adim);
+  setInterval(denetle, 2000);
+
+  var zaman = null;
+  function yeniden() { clearTimeout(zaman); zaman = setTimeout(kurHepsi, 250); }
+  window.addEventListener('resize', yeniden);
+  window.addEventListener('orientationchange', yeniden);
+  window.addEventListener('load', yeniden);
+
+  // Serit icerigi fetch ile sonradan yenileniyor (5 dk). Icerik degisince
+  // periyot yeniden olculmeli.
+  if (window.MutationObserver) {
+    var gozcu = new window.MutationObserver(function () {
+      if (kilit) return;
+      yeniden();
+    });
+    var izler = document.querySelectorAll('.ticker-iz');
+    for (var j = 0; j < izler.length; j++) gozcu.observe(izler[j], { childList: true });
+  }
 })();
 </script>
 </body></html>
