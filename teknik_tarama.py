@@ -62,7 +62,11 @@ def main():
     except Exception:
         logger.exception("portfoy.html uretilemedi; diger adimlar etkilenmez.")
 
-    satirlar = bot.teknik_tarama_yap()
+    try:
+        satirlar = bot.teknik_tarama_yap()
+    except Exception:
+        logger.exception("Teknik tarama coktu; sayfalar degistirilmedi.")
+        return
     if not satirlar:
         logger.warning("Tarama veri alamadi; sayfalar degistirilmedi.")
         return

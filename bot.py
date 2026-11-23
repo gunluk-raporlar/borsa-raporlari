@@ -6734,6 +6734,47 @@ def _wave_trend(kapanis):
     return wt1, wt2
 
 
+def _teknik_seri_yaz(seriler):
+    """Taramanin kullandigi kapanis serilerini /seri/teknik.json'a yazar.
+
+    teknik-analiz.html istemci tarafinda sinyalleri canli fiyatla yeniden
+    hesaplarken bu dosyayi kullanir; boylece tarayicidaki hesap sunucudakiyle
+    birebir ayni girdiye dayanir. Yazim basarisiz olursa sayfa uretimi durmaz
+    (fail-open): istemci canli sinyal guncellemesini atlar, tablo son uretim
+    degerleriyle kalir.
+    """
+    if not seriler:
+        return
+    yol = os.path.join("seri", "teknik.json")
+    try:
+        os.makedirs("seri", exist_ok=True)
+        # Seri degismediyse dosyayi yeniden yazma: damga her kosuda degistigi
+        # icin 30 dakikalik is akisi her turda commit uretiyordu; seri ise
+        # gunde bir kez (kapanistan sonra) degisir.
+        try:
+            with open(yol, encoding="utf-8") as f:
+                eski = json.load(f)
+        except Exception:
+            eski = None
+        if (isinstance(eski, dict) and eski.get("seriler") == seriler
+                and "guncelleme_iso" in eski):
+            return
+        simdi = datetime.now(zoneinfo.ZoneInfo("Europe/Istanbul"))
+        icerik = {"guncelleme": simdi.strftime("%d.%m.%Y %H:%M"),
+                  "guncelleme_iso": simdi.isoformat(timespec="minutes"),
+                  "seriler": seriler}
+        # Gecici dosyaya yazip tasi: yarim dosya yayinlanirsa istemci JSON'u
+        # okuyamaz ve sessizce eski degerlerde kalirdi.
+        gecici = yol + ".tmp"
+        with open(gecici, "w", encoding="utf-8") as f:
+            json.dump(icerik, f, ensure_ascii=False, separators=(",", ":"))
+        os.replace(gecici, yol)
+        logger.info("[Teknik Tarama] /seri/teknik.json yazildi (%d hisse).", len(seriler))
+    except Exception:
+        logger.warning("[Teknik Tarama] /seri/teknik.json yazilamadi; "
+                       "istemci canli sinyal guncellemesi devre disi kalir.")
+
+
 _SON_TEKNIK = []
 _SON_BORSPY = []
 
@@ -6910,6 +6951,13 @@ def teknik_tarama_yap():
 
     satirlar = []
     atlanan = []
+    # Istemci tarafi canli sinyal icin taramanin KULLANDIGI seri yayinlanir.
+    # seri/<KOD>.json gunluk kosuda yazilir ve 252 gunluk depodan gelir; tarama
+    # ise isyatirimhisse'nin ~205 gunluk penceresini kullanir. EMA geriye donuk
+    # hesaplandigi icin iki pencere sinyali kaydiriyordu (2026-11-23 olcumu:
+    # 4/30 hisse farkli, 2'sinde genel sinyal degisiyor). Bu dosya taramanin
+    # gordugu seriyi birebir tasir; istemci ayni girdiyle ayni sinyali uretir.
+    seri_dosyasi = {}
     for sira, hisse in enumerate(HISSELER, 1):
         seri = df[df[kod_kolonu] == hisse][kapanis_kolonu].astype(float).dropna()
         if len(seri) < 145:  # EMA144 anlamlı olsun
@@ -6928,6 +6976,10 @@ def teknik_tarama_yap():
         # boylece EMA/WT/regresyon tum gostergeler gun ici hareketle hesaplanir.
         iy_son = float(seri.iloc[-1])
         tv = canli.get(hisse)
+        # Canli fiyat EKLENMEDEN onceki seri yayinlanir; istemci ayni ekleme
+        # kuralini (yerel seride ekleme yok, 0.005 esigi) kendisi uygular.
+        seri_dosyasi[hisse] = {"f": [round(float(v), 4) for v in seri.tolist()],
+                               "y": bool(yerel)}
         if (not yerel) and tv and abs(tv - iy_son) > 0.005:
             seri = pd.concat([seri, pd.Series([tv])], ignore_index=True)
         son = float(seri.iloc[-1])
@@ -6998,6 +7050,8 @@ def teknik_tarama_yap():
             "puan": puansay, "genel": genel, "stale": yerel,
         })
 
+    _teknik_seri_yaz(seri_dosyasi)
+
     # Guclu AL'ler one, iclerinde trend gucu (Pearson) yuksek olanlar basta
     satirlar.sort(key=lambda s: (s["puan"], s["r"]), reverse=True)
     save_daily("teknik", bugun, satirlar)
@@ -7012,9 +7066,9 @@ def teknik_tarama_yap():
     return satirlar
 
 
-def _teknik_sinyal_hucre(sinyal):
+def _teknik_sinyal_hucre(sinyal, ek=""):
     sinif = "pos" if sinyal in ("AL", "GÜÇLÜ AL", "DİPTE AL") else ("neg" if sinyal in ("SAT", "GÜÇLÜ SAT", "TEPEDE SAT") else "")
-    return f"<td class='{sinif}'>{sinyal}</td>"
+    return f"<td class='{(ek + ' ' + sinif).strip()}'>{sinyal}</td>"
 
 
 def _isi_renk(deg):
@@ -7038,9 +7092,10 @@ def _sektor_isi_haritasi(satirlar):
         veriler.append((sektor, ortalama, len(listeler)))
     veriler.sort(key=lambda x: x[1], reverse=True)
     hucre = "".join(
-        f"<div style='background:{_isi_renk(d)}; border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'>"
+        f"<div class='sektor-kutu' data-sektor-ad=\"{html.escape(ad, quote=True)}\" "
+        f"style='background:{_isi_renk(d)}; border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'>"
         f"<div style='font-weight:700; font-size:13px;'>{ad}</div>"
-        f"<div style='font-size:17px; font-weight:800; margin-top:4px;'>{d:+.2f}%</div>"
+        f"<div class='sektor-yuzde' style='font-size:17px; font-weight:800; margin-top:4px;'>{d:+.2f}%</div>"
         f"<div style='font-size:11px; opacity:.75;'>{n} hisse</div></div>"
         for ad, d, n in veriler
     )
@@ -7095,6 +7150,249 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') tvKap
 </script>"""
 
 
+def _teknik_canli_js():
+    """Isı haritalarını, tablo fiyatlarını ve AL/SAT sinyallerini canlı tutar.
+
+    Kayan şeritteki desenin aynısı: /api/fiyatlar 5 dakikada bir çekilir.
+    Sinyaller tarayıcıda yeniden hesaplanır — EMA(5..144), Wave Trend ve
+    60 günlük regresyon/Pearson, bot.py'deki formüllerin birebir kopyası.
+    Girdi, taramanın KENDİ kullandığı seridir (/seri/teknik.json); böylece
+    tarayıcıdaki sonuç sunucudakiyle aynı olur. Canlı fiyat, sunucudaki
+    kuralla aynı şekilde serinin sonuna eklenir (yerel seride eklenmez,
+    0.005 eşiği). Veri gelmezse tablo son üretim değerleriyle kalır.
+    """
+    return """
+<script>
+(function() {
+  var PERIYOT = 5 * 60 * 1000;
+  var sonZaman = 0;
+  var seriler = null;    // /seri/teknik.json
+  var sonFiyat = null;   // son /api/fiyatlar yaniti
+  var seriHata = false;  // seri yuklenemedi -> durum satirinda kalici uyari
+  var seriBayat = 0;     // seri kac gun eski (0 = taze)
+  var seriDeneme = 0;    // artan bekleme icin deneme sayaci
+
+  /* ---- gostergeler: bot.py'deki _ema / _wave_trend / regresyon ile birebir ---- */
+  function ema(degerler, periyot) {
+    // pandas ewm(span, adjust=False) ile ayni davranis: basta kalan NaN'lar
+    // NaN kalir, ilk gecerli deger EMA'yi baslatir, sonraki NaN'lar onceki
+    // degeri tasir. (Wave Trend'de d[0]=0 oldugu icin ci[0] NaN cikar; NaN
+    // zinciri zehirlemesin diye bu kural sart.)
+    var a = 2 / (periyot + 1), out = [], e = NaN, basladi = false;
+    for (var i = 0; i < degerler.length; i++) {
+      var v = degerler[i];
+      if (!isFinite(v)) { out.push(e); continue; }
+      if (!basladi) { e = v; basladi = true; }
+      else { e = a * v + (1 - a) * e; }
+      out.push(e);
+    }
+    return out;
+  }
+  function sma(degerler, pencere) {
+    var out = [];
+    for (var i = 0; i < degerler.length; i++) {
+      if (i < pencere - 1) { out.push(NaN); continue; }
+      var t = 0;
+      for (var j = i - pencere + 1; j <= i; j++) t += degerler[j];
+      out.push(t / pencere);
+    }
+    return out;
+  }
+  function sinyalHesapla(kapanis) {
+    var n = kapanis.length, i;
+    if (n < 145) return null;
+    var son = kapanis[n - 1], e = {};
+    [5, 8, 13, 21, 34, 55, 89, 144].forEach(function(p) {
+      var s = ema(kapanis, p);
+      e[p] = s[s.length - 1];
+    });
+    var kisa = (son > e[5] && e[5] > e[8] && e[8] > e[13] && e[13] > e[21]) ? 'AL'
+             : (son < e[5] && e[5] < e[8] && e[8] < e[13] && e[13] < e[21]) ? 'SAT' : 'BEKLE';
+    var orta = (e[34] > e[55] && son > e[34]) ? 'AL' : ((e[34] < e[55] && son < e[34]) ? 'SAT' : 'BEKLE');
+    var uzun = (e[89] > e[144] && son > e[89]) ? 'AL' : ((e[89] < e[144] && son < e[89]) ? 'SAT' : 'BEKLE');
+
+    var esa = ema(kapanis, 10);
+    var sapma = kapanis.map(function(v, k) { return Math.abs(v - esa[k]); });
+    var d = ema(sapma, 10);
+    var ci = kapanis.map(function(v, k) { return (v - esa[k]) / (0.015 * d[k]); });
+    var wt1 = ema(ci, 21), wt2 = sma(wt1, 4);
+    var w1 = wt1[wt1.length - 1], w2 = wt2[wt2.length - 1], wt;
+    if (!isFinite(w1) || !isFinite(w2)) wt = 'BEKLE';
+    else if (w1 < -53 && w1 > w2) wt = 'DİPTE AL';
+    else if (w1 > 53 && w1 < w2) wt = 'TEPEDE SAT';
+    else if (w1 > w2) wt = 'AL';
+    else wt = 'SAT';
+
+    var son60 = kapanis.slice(-60), m = son60.length;
+    var sx = 0, sy = 0, sxy = 0, sxx = 0;
+    for (i = 0; i < m; i++) { sx += i; sy += son60[i]; sxy += i * son60[i]; sxx += i * i; }
+    var bolum = m * sxx - sx * sx;
+    var egim = bolum !== 0 ? (m * sxy - sx * sy) / bolum : 0;
+    var kesim = (sy - egim * sx) / m;
+    var kareler = 0;
+    for (i = 0; i < m; i++) { var f = son60[i] - (egim * i + kesim); kareler += f * f; }
+    var std = Math.sqrt(kareler / m);
+    var ortaSon = egim * (m - 1) + kesim;
+    var ust = ortaSon + 2 * std, alt = ortaSon - 2 * std;
+    var konum = (ust > alt) ? ((son - alt) / (ust - alt) * 100) : 50;
+    var mx = (m - 1) / 2, my = sy / m, num = 0, dx = 0, dy = 0;
+    for (i = 0; i < m; i++) { var a1 = i - mx, b1 = son60[i] - my; num += a1 * b1; dx += a1 * a1; dy += b1 * b1; }
+    var r = (dx > 0 && dy > 0) ? num / Math.sqrt(dx * dy) : 0;
+
+    var deg60 = n >= 61 ? (son / kapanis[n - 61] - 1) * 100 : 0;
+    var gunluk = (n >= 2 && kapanis[n - 2] > 0) ? (son / kapanis[n - 2] - 1) * 100 : 0;
+    var puan = (kisa === 'AL' ? 1 : 0) + (orta === 'AL' ? 1 : 0) + (uzun === 'AL' ? 1 : 0)
+             + ((wt === 'AL' || wt === 'DİPTE AL') ? 1 : 0);
+    var genel = puan >= 4 ? 'GÜÇLÜ AL' : puan === 3 ? 'AL' : puan === 2 ? 'NÖTR'
+              : puan === 1 ? 'SAT' : 'GÜÇLÜ SAT';
+    return {son: son, gunluk: gunluk, deg60: deg60, kisa: kisa, orta: orta, uzun: uzun,
+            wt: wt, konum: konum, r: r, genel: genel};
+  }
+
+  /* ---- bicimlendirme: _ts / _ty / _ts0 ile ayni ---- */
+  function sayi(x, hane) {
+    return x.toLocaleString('tr-TR', {minimumFractionDigits: hane, maximumFractionDigits: hane});
+  }
+  function yuzde(d) { return (d >= 0 ? '+' : '') + d.toFixed(2).replace('.', ',') + '%'; }
+  function yuzde1(d) { return (d >= 0 ? '+' : '') + d.toFixed(1).replace('.', ',') + '%'; }
+  function fiyat(f) { return sayi(f, 2) + ' TL'; }
+  function renkSinifi(d) { return d >= 0 ? 'pos' : 'neg'; }
+  function sinyalSinifi(s) {
+    return (s === 'AL' || s === 'GÜÇLÜ AL' || s === 'DİPTE AL') ? 'pos'
+         : (s === 'SAT' || s === 'GÜÇLÜ SAT' || s === 'TEPEDE SAT') ? 'neg' : '';
+  }
+
+  /* ---- isi haritasi + sektor ---- */
+  function hucreRengi(d) {
+    var a = Math.min(0.15 + Math.abs(d) / 3.0 * 0.80, 0.92);
+    return 'rgba(' + (d >= 0 ? '4,120,87' : '185,28,28') + ',' + a.toFixed(2) + ')';
+  }
+  function sektorRengi(d) {
+    var y = Math.min(Math.abs(d) / 4.0, 1.0);
+    return 'rgba(' + (d >= 0 ? '4,120,87' : '185,28,28') + ',' + (0.15 + 0.75 * y).toFixed(2) + ')';
+  }
+  function yaz(el, metin) { if (el) el.textContent = metin; }
+  function sinifliYaz(tr, sec, metin, sinif) {
+    var el = tr.querySelector(sec);
+    if (!el) return;
+    el.textContent = metin;
+    el.className = sec.slice(1) + (sinif ? ' ' + sinif : '');
+  }
+
+  function tabloGuncelle(veri) {
+    if (!seriler || !seriler.seriler) return;
+    var harita = {};
+    (veri.hisseler || []).forEach(function(h) { harita[h.h] = h; });
+    Array.prototype.forEach.call(document.querySelectorAll('tr[data-kod]'), function(tr) {
+      var kod = tr.getAttribute('data-kod');
+      var kayit = seriler.seriler[kod];
+      if (!kayit || !kayit.f || kayit.f.length < 145) return;
+      var kapanis = kayit.f.slice();
+      var h = harita[kod];
+      var tv = h ? Number(h.f) : null;
+      // Sunucuyla ayni kural: yerel seride canli fiyat eklenmez; aksi halde
+      // son kapanistan 0.005'ten fazla farkliysa serinin sonuna eklenir.
+      if (!kayit.y && tv && isFinite(tv) && Math.abs(tv - kapanis[kapanis.length - 1]) > 0.005) {
+        kapanis.push(tv);
+      }
+      var s = sinyalHesapla(kapanis);
+      if (!s) return;
+      yaz(tr.querySelector('.canli-son'), fiyat(s.son));
+      sinifliYaz(tr, '.canli-gun', yuzde(s.gunluk), renkSinifi(s.gunluk));
+      sinifliYaz(tr, '.canli-deg60', yuzde1(s.deg60), renkSinifi(s.deg60));
+      sinifliYaz(tr, '.canli-kisa', s.kisa, sinyalSinifi(s.kisa));
+      sinifliYaz(tr, '.canli-orta', s.orta, sinyalSinifi(s.orta));
+      sinifliYaz(tr, '.canli-uzun', s.uzun, sinyalSinifi(s.uzun));
+      sinifliYaz(tr, '.canli-wt', s.wt, sinyalSinifi(s.wt));
+      yaz(tr.querySelector('.canli-konum'), sayi(s.konum, 0) + '%');
+      yaz(tr.querySelector('.canli-r'), sayi(s.r, 2));
+      sinifliYaz(tr, '.canli-genel', s.genel, sinyalSinifi(s.genel));
+    });
+  }
+
+  function ciz(veri) {
+    sonFiyat = veri;
+    var harita = {};
+    (veri.hisseler || []).forEach(function(h) { harita[h.h] = h; });
+    var toplam = {}, adet = {};
+    Array.prototype.forEach.call(document.querySelectorAll('.isi-hucre[data-sektor]'), function(a) {
+      var b = a.querySelector('b');
+      var h = b ? harita[b.textContent.trim()] : null;
+      if (!h) return;
+      var d = Number(h.d);
+      if (!isFinite(d)) return;
+      a.style.background = hucreRengi(d);
+      var span = a.querySelector('span');
+      if (span) span.textContent = yuzde(d);
+      var s = a.getAttribute('data-sektor');
+      if (s) { toplam[s] = (toplam[s] || 0) + d; adet[s] = (adet[s] || 0) + 1; }
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.sektor-kutu[data-sektor-ad]'), function(k) {
+      var ad = k.getAttribute('data-sektor-ad');
+      if (!adet[ad]) return;
+      var ort = toplam[ad] / adet[ad];
+      k.style.background = sektorRengi(ort);
+      var y = k.querySelector('.sektor-yuzde');
+      if (y) y.textContent = (ort >= 0 ? '+' : '') + ort.toFixed(2) + '%';
+    });
+    tabloGuncelle(veri);
+    var durum = document.getElementById('teknik-canli-durum');
+    if (durum) {
+      var ek = (seriler && seriler.guncelleme) ? ' · sinyal serisi: ' + seriler.guncelleme : '';
+      durum.textContent = 'Canlı fiyat: ' + (veri.guncelleme || '--:--') + ' · '
+        + (veri.etiket || 'TradingView') + ek + ' · 5 dakikada bir otomatik yenilenir.'
+        + (seriHata ? ' · Sinyal serisi yüklenemedi; sinyaller son üretim değerleriyle.' : '')
+        + (seriBayat ? ' · Sinyal serisi ' + seriBayat + ' günden eski; ihtiyatla okunmalı.' : '');
+    }
+  }
+
+  function yukle(adres) {
+    fetch(adres, { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(v) { sonZaman = Date.now(); ciz(v); })
+      .catch(function() {
+        // JSON yedegi yalnizca site kokunde; goreli kok alt dizinlerde 404 uretiyordu (2026-11-07 denetim)
+        if (adres.indexOf('/api/') !== -1) { yukle('/ticker.json?t=' + Date.now()); return; }
+        var d = document.getElementById('teknik-canli-durum');
+        if (d) d.textContent = 'Canlı fiyat şu anda alınamıyor; son üretim değerleri gösteriliyor.';
+      });
+  }
+
+  function seriYukle() {
+    fetch('/seri/teknik.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(v) {
+        if (!v || !v.seriler) throw new Error('bos veri');
+        seriler = v;
+        seriHata = false;
+        seriDeneme = 0;
+        // Seri gunde bir kez (kapanistan sonra) degisir; 10 gunden eskiyse
+        // tarama uzun suredir calismiyor demektir.
+        var t = v.guncelleme_iso ? Date.parse(v.guncelleme_iso) : NaN;
+        seriBayat = isFinite(t) ? Math.floor((Date.now() - t) / 86400000) : 0;
+        if (seriBayat < 10) seriBayat = 0;
+        if (sonFiyat) ciz(sonFiyat);
+      })
+      .catch(function() {
+        // Tek denemeyle birakma: 30 sn, 60 sn, 120 sn ... en fazla 10 dk.
+        seriHata = true;
+        seriDeneme++;
+        setTimeout(seriYukle, Math.min(30000 * Math.pow(2, seriDeneme - 1), 600000));
+        if (sonFiyat) { ciz(sonFiyat); return; }
+        var d = document.getElementById('teknik-canli-durum');
+        if (d) d.textContent = 'Canlı sinyal serisi yüklenemedi; tablo son üretim değerleriyle gösteriliyor.';
+      });
+  }
+
+  seriYukle();
+  yukle('/api/fiyatlar?t=' + Date.now());
+  setInterval(function() { yukle('/api/fiyatlar?t=' + Date.now()); }, PERIYOT);
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden && Date.now() - sonZaman >= PERIYOT) yukle('/api/fiyatlar?t=' + Date.now());
+  });
+})();
+</script>"""
+
 def build_teknik_html(satirlar, date_str):
     # Günlük ısı haritası: değişime göre renk derinliği (yeşil yükselen, kırmızı düşen)
     def _isi_renk(deg):
@@ -7111,6 +7409,7 @@ def build_teknik_html(satirlar, date_str):
     # satırlarındaki gibi göreli 'hisse/<KOD>.html' adresine gider.
     isi = "".join(
         f"<a class='isi-hucre' href='hisse/{s['hisse']}.html' "
+        f"data-sektor=\"{html.escape(s.get('sektor', 'Diğer'), quote=True)}\" "
         f"style=\"background:rgba({_isi_renk(s.get('gunluk', 0))}); text-decoration:none; cursor:pointer\" "
         f"title=\"{s['hisse']} detay sayfası\">"
         f"<b>{s['hisse']}</b><span>{_ty(s.get('gunluk', 0))}%</span></a>"
@@ -7119,17 +7418,18 @@ def build_teknik_html(satirlar, date_str):
     isi_bolumu = f"""
 <h2 class="section-title">Günlük Isı Haritası</h2>
 <div class="isi-harita">{isi}</div>
-<p style="color:var(--muted); font-size:12px; margin:8px 0 0">Renk koyuluğu değişim büyüklüğünü gösterir — yeşil yükselenler, kırmızı düşenler. Isı haritası görsel bir özettir; sayısal değerlerin tamamı aşağıdaki tabloda satır satır yer alır. Hisse adına tıklayın: detay sayfası (fiyat grafiği, teknik durum, haberler).</p>"""
+<p style="color:var(--muted); font-size:12px; margin:8px 0 0">Renk koyuluğu değişim büyüklüğünü gösterir — yeşil yükselenler, kırmızı düşenler. Isı haritası görsel bir özettir; sayısal değerlerin tamamı aşağıdaki tabloda satır satır yer alır. Hisse adına tıklayın: detay sayfası (fiyat grafiği, teknik durum, haberler).</p>
+<p id="teknik-canli-durum" style="color:var(--muted); font-size:12px; margin:4px 0 0"></p>"""
 
     satir_html = "".join(
-        f"<tr style='cursor:pointer' onclick=\"tvAc('{s['hisse']}')\"><td>{_hisse_linki(s['hisse'], stil='color:inherit; text-decoration:none; font-weight:700')}</td>"
-        f"<td>{_ts(s['son'])} TL</td>"
-        f"<td class='{_renk(s['gunluk'])}'>{_ty(s['gunluk'])}%</td>"
-        f"<td class='{_renk(s['deg60'])}'>{_ty1(s['deg60'])}%</td>"
-        f"{_teknik_sinyal_hucre(s['kisa'])}{_teknik_sinyal_hucre(s['orta'])}{_teknik_sinyal_hucre(s['uzun'])}"
-        f"{_teknik_sinyal_hucre(s['wt'])}"
-        f"<td>{_ts0(s['konum'])}%</td><td>{_ts(s['r'])}</td>"
-        f"{_teknik_sinyal_hucre(s['genel'])}</tr>"
+        f"<tr style='cursor:pointer' data-kod=\"{s['hisse']}\" onclick=\"tvAc('{s['hisse']}')\"><td>{_hisse_linki(s['hisse'], stil='color:inherit; text-decoration:none; font-weight:700')}</td>"
+        f"<td class='canli-son'>{_ts(s['son'])} TL</td>"
+        f"<td class='canli-gun {_renk(s['gunluk'])}'>{_ty(s['gunluk'])}%</td>"
+        f"<td class='canli-deg60 {_renk(s['deg60'])}'>{_ty1(s['deg60'])}%</td>"
+        f"{_teknik_sinyal_hucre(s['kisa'], 'canli-kisa')}{_teknik_sinyal_hucre(s['orta'], 'canli-orta')}{_teknik_sinyal_hucre(s['uzun'], 'canli-uzun')}"
+        f"{_teknik_sinyal_hucre(s['wt'], 'canli-wt')}"
+        f"<td class='canli-konum'>{_ts0(s['konum'])}%</td><td class='canli-r'>{_ts(s['r'])}</td>"
+        f"{_teknik_sinyal_hucre(s['genel'], 'canli-genel')}</tr>"
         for s in satirlar
     )
     guclu = sum(1 for s in satirlar if s["genel"] == "GÜÇLÜ AL")
@@ -7166,6 +7466,7 @@ değişim, kısa/orta/uzun vade EMA dizilimi, Wave Trend, regresyon kanalı konu
 <p style="margin:0 0 6px"><a href="sinyal-karnesi.html">📊 <strong>Sinyal Karnesi</strong> — geçmiş AL sinyalleri 5 işlem günü sonra ne yapmış? &rarr;</a></p>
 </div>
 {_tv_modal_js()}
+{_teknik_canli_js()}
 {_sesli_okuma_js()}"""
     return _sayfa(
         f"Teknik Tarama - {date_str}", icerik, "teknik", yol="teknik-analiz.html",
