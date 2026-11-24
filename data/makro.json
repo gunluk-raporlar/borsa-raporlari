@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-11-24 05:10",
+ "guncelleme": "2026-11-25 02:54",
  "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + EVDS(5) + Resmi AB/ABD(25)",
  "gostergeler": [
   {
@@ -1018,34 +1018,6 @@
   },
   {
    "ulke": "ABD",
-   "ad": "Politika faizi",
-   "deger": 4.0,
-   "birim": "%",
-   "donem": "2026-11-23",
-   "tahmin": 4.0,
-   "onceki": 4.0,
-   "kaynak_baslik": "FRED Fed fon ust siniri",
-   "kaynak_periyot": "2026-11-23",
-   "frekans": "olay",
-   "teyit": "FRED",
-   "kaynak_durumu": "FRED resmi verisi"
-  },
-  {
-   "ulke": "ABD",
-   "ad": "Büyüme (yıllık)",
-   "deger": 2.1,
-   "birim": "%",
-   "donem": "2026-09-30",
-   "kaynak_durumu": "FRED resmi verisi",
-   "tahmin": null,
-   "onceki": 2.2,
-   "kaynak_baslik": "FRED reel GSYH (yıllık)",
-   "kaynak_periyot": "2026-09-30",
-   "frekans": "üç aylık",
-   "teyit": "FRED"
-  },
-  {
-   "ulke": "ABD",
    "ad": "Cari denge",
    "deger": -246.0,
    "birim": "milyar $",
@@ -1071,6 +1043,34 @@
    "frekans": "aylık",
    "teyit": "BLS",
    "kaynak_durumu": "BLS resmi verisi"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "Büyüme (yıllık)",
+   "deger": 2.1,
+   "birim": "%",
+   "donem": "2026-09-30",
+   "kaynak_durumu": "FRED resmi verisi",
+   "tahmin": null,
+   "onceki": 2.2,
+   "kaynak_baslik": "FRED reel GSYH (yıllık)",
+   "kaynak_periyot": "2026-09-30",
+   "frekans": "üç aylık",
+   "teyit": "FRED"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "Politika faizi",
+   "deger": 4.0,
+   "birim": "%",
+   "donem": "2026-11-24",
+   "tahmin": 4.0,
+   "onceki": 4.0,
+   "kaynak_baslik": "FRED Fed fon ust siniri",
+   "kaynak_periyot": "2026-11-24",
+   "frekans": "olay",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
   },
   {
    "ulke": "ABD",
