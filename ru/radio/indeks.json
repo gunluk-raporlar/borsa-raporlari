@@ -1,6 +1,22 @@
 {
- "guncelleme": "20.11 21:46",
+ "guncelleme": "24.11 05:03",
  "bolumler": [
+  {
+   "id": "2026-11-24-acilis",
+   "tarih": "2026-11-24",
+   "bolum": "acilis",
+   "baslik": "2026-11-24 — Açılış Yayını",
+   "dosya": "radyo/2026-11-24-acilis.mp3",
+   "sure_sn": 550
+  },
+  {
+   "id": "2026-11-23-kapanis",
+   "tarih": "2026-11-23",
+   "bolum": "kapanis",
+   "baslik": "2026-11-23 — Kapanış Yayını",
+   "dosya": "radyo/2026-11-23-kapanis.mp3",
+   "sure_sn": 597
+  },
   {
    "id": "2026-11-20-acilis",
    "tarih": "2026-11-20",
@@ -144,22 +160,6 @@
    "baslik": "2026-11-09 — Kapanış Yayını",
    "dosya": "radyo/2026-11-09-kapanis.mp3",
    "sure_sn": 722
-  },
-  {
-   "id": "2026-11-06-acilis",
-   "tarih": "2026-11-06",
-   "bolum": "acilis",
-   "baslik": "2026-11-06 — Açılış Yayını",
-   "dosya": "radyo/2026-11-06-acilis.mp3",
-   "sure_sn": 675
-  },
-  {
-   "id": "2026-11-06-kapanis",
-   "tarih": "2026-11-06",
-   "bolum": "kapanis",
-   "baslik": "2026-11-06 — Kapanış Yayını",
-   "dosya": "radyo/2026-11-06-kapanis.mp3",
-   "sure_sn": 495
   }
  ]
 }
