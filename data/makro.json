@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-11-23 00:03",
+ "guncelleme": "2026-11-24 05:10",
  "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + EVDS(5) + Resmi AB/ABD(25)",
  "gostergeler": [
   {
@@ -297,13 +297,13 @@
   {
    "ulke": "Türkiye",
    "ad": "Turist Sayısı (yıllık)",
-   "deger": 0.4,
+   "deger": -5.23,
    "birim": "%",
-   "donem": "2026-10-30",
+   "donem": "2026-11-23",
    "tahmin": null,
-   "onceki": -0.03,
+   "onceki": 0.4,
    "kaynak_baslik": "Tourist Arrivals YoY",
-   "kaynak_periyot": "Sep. 2026",
+   "kaynak_periyot": "Oct. 2026",
    "frekans": "aylık"
   },
   {
@@ -1018,6 +1018,34 @@
   },
   {
    "ulke": "ABD",
+   "ad": "Politika faizi",
+   "deger": 4.0,
+   "birim": "%",
+   "donem": "2026-11-23",
+   "tahmin": 4.0,
+   "onceki": 4.0,
+   "kaynak_baslik": "FRED Fed fon ust siniri",
+   "kaynak_periyot": "2026-11-23",
+   "frekans": "olay",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "Büyüme (yıllık)",
+   "deger": 2.1,
+   "birim": "%",
+   "donem": "2026-09-30",
+   "kaynak_durumu": "FRED resmi verisi",
+   "tahmin": null,
+   "onceki": 2.2,
+   "kaynak_baslik": "FRED reel GSYH (yıllık)",
+   "kaynak_periyot": "2026-09-30",
+   "frekans": "üç aylık",
+   "teyit": "FRED"
+  },
+  {
+   "ulke": "ABD",
    "ad": "Cari denge",
    "deger": -246.0,
    "birim": "milyar $",
@@ -1046,34 +1074,6 @@
   },
   {
    "ulke": "ABD",
-   "ad": "Politika faizi",
-   "deger": 4.0,
-   "birim": "%",
-   "donem": "2026-11-22",
-   "tahmin": 4.0,
-   "onceki": 4.0,
-   "kaynak_baslik": "FRED Fed fon ust siniri",
-   "kaynak_periyot": "2026-11-22",
-   "frekans": "olay",
-   "teyit": "FRED",
-   "kaynak_durumu": "FRED resmi verisi"
-  },
-  {
-   "ulke": "ABD",
-   "ad": "Büyüme (yıllık)",
-   "deger": 2.1,
-   "birim": "%",
-   "donem": "2026-09-30",
-   "kaynak_durumu": "FRED resmi verisi",
-   "tahmin": null,
-   "onceki": 2.2,
-   "kaynak_baslik": "FRED reel GSYH (yıllık)",
-   "kaynak_periyot": "2026-09-30",
-   "frekans": "üç aylık",
-   "teyit": "FRED"
-  },
-  {
-   "ulke": "ABD",
    "ad": "Genişletilmiş İşsizlik (U-6)",
    "deger": 7.9,
    "birim": "%",
@@ -1091,11 +1091,11 @@
    "ad": "Politika faizi",
    "deger": 2.65,
    "birim": "%",
-   "donem": "2026-11-22",
+   "donem": "2026-11-24",
    "tahmin": 2.65,
    "onceki": 2.65,
    "kaynak_baslik": "ECB MRO ana refinansman faizi",
-   "kaynak_periyot": "2026-11-22",
+   "kaynak_periyot": "2026-11-24",
    "frekans": "olay",
    "teyit": "ECB",
    "kaynak_durumu": "ECB resmi verisi"
