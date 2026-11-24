@@ -2969,6 +2969,56 @@
         "XU100": 78657.73,
         "XU030": 83422.47
       }
+    },
+    {
+      "date": "2026-11-24",
+      "total": 85104.55,
+      "pct": -14.9,
+      "daily_pct": 0.06,
+      "temettu_nakit": 224.94,
+      "prices": {
+        "AEFES": 15.96,
+        "AKBNK": 65.2,
+        "ASELS": 325.5,
+        "ASTOR": 145.9,
+        "BIMAS": 370.25,
+        "EKGYO": 17.58,
+        "ENKAI": 77.7,
+        "EREGL": 30.24,
+        "FROTO": 71.15,
+        "GARAN": 145.7,
+        "GUBRF": 277.0,
+        "ISCTR": 12.53,
+        "KCHOL": 190.9,
+        "KRDMD": 36.9,
+        "MGROS": 427.5,
+        "PETKM": 14.76,
+        "PGSUS": 152.4,
+        "SAHOL": 78.2,
+        "SASA": 1.45,
+        "SISE": 31.84,
+        "TAVHL": 288.0,
+        "TCELL": 91.1,
+        "THYAO": 321.0,
+        "TOASO": 251.75,
+        "TRALT": 35.74,
+        "TTKOM": 47.32,
+        "TUPRS": 324.0,
+        "VAKBN": 33.14,
+        "YKBNK": 36.8,
+        "TRMET": 106.7
+      },
+      "rates": {
+        "USD": 50.61,
+        "GOLD": 5908.8254
+      },
+      "benchmarks": {
+        "USD": 104929.03,
+        "GOLD": 86017.24,
+        "DEPOSIT": 110223.21,
+        "XU100": 78467.37,
+        "XU030": 83309.92
+      }
     }
   ]
 }

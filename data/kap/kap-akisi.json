@@ -1,7 +1,7 @@
 {
  "meta": {
   "kaynak": "KAP bildirim-sorgu-sonuc (www.kap.org.tr resmi; kuresel sayfa ~son 6 gun + sirket sayfalari gecerli ay)",
-  "tarih": "23.11.2026",
+  "tarih": "24.11.2026",
   "not": "Akis sayfasi basina en fazla 15 oge; tum url'ler resmi kap.org.tr"
  },
  "hisseler": {
@@ -957,6 +957,13 @@
   "GARAN": [
    {
     "kaynak": "KAP",
+    "tarih": "23 Kasım 19:11",
+    "baslik": "Payların Geri Alınmasına İlişkin Bildirim",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1701557",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "20 Kasım 19:02",
     "baslik": "Payların Geri Alınmasına İlişkin Bildirim",
     "url": "https://www.kap.org.tr/tr/Bildirim/1700856",
@@ -1052,16 +1059,16 @@
     "baslik": "Borçlanma Araçları, Yatırım Fonları ve Varant İtfa/Kupon/Getiri/ Nakdi Uzlaşı Ödeme İşlemleri",
     "url": "https://www.kap.org.tr/tr/Bildirim/1692518",
     "genis": true
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "4 Kasım 13:53",
-    "baslik": "Temerrüt İşlemi",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1692175",
-    "genis": false
    }
   ],
   "GUBRF": [
+   {
+    "kaynak": "KAP",
+    "tarih": "23 Kasım 19:28",
+    "baslik": "Payların Geri Alınmasına İlişkin Bildirim",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1701563",
+    "genis": false
+   },
    {
     "kaynak": "KAP",
     "tarih": "20 Kasım 18:28",
@@ -1158,13 +1165,6 @@
     "tarih": "2 Kasım 18:47",
     "baslik": "Payların Geri Alınmasına İlişkin Bildirim",
     "url": "https://www.kap.org.tr/tr/Bildirim/1691189",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "2 Kasım 17:31",
-    "baslik": "Özel Durum Açıklaması (Genel)",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1691046",
     "genis": false
    }
   ],
@@ -1706,6 +1706,13 @@
   "PGSUS": [
    {
     "kaynak": "KAP",
+    "tarih": "23 Kasım 19:46",
+    "baslik": "Payların Geri Alınmasına İlişkin Bildirim",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1701568",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "20 Kasım 18:57",
     "baslik": "Kredi Derecelendirmesi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1700854",
@@ -1800,13 +1807,6 @@
     "tarih": "26 Ekim 15:26",
     "baslik": "Finansal Takvim",
     "url": "https://www.kap.org.tr/tr/Bildirim/1687384",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "23 Ekim 15:41",
-    "baslik": "Pay Bazında Devre Kesici Bildirimi",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1686717",
     "genis": false
    }
   ],
@@ -2962,6 +2962,13 @@
   "VAKBN": [
    {
     "kaynak": "KAP",
+    "tarih": "23 Kasım 17:47",
+    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1701431",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "23 Kasım 17:11",
     "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1701396",
@@ -3057,16 +3064,30 @@
     "baslik": "Faaliyet Raporu (Konsolide)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1693415",
     "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "5 Kasım 18:55",
-    "baslik": "Finansal Rapor",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1693414",
-    "genis": false
    }
   ],
   "YKBNK": [
+   {
+    "kaynak": "KAP",
+    "tarih": "23 Kasım 18:20",
+    "baslik": "Şirket Genel Bilgi Formu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1701491",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
+    "tarih": "23 Kasım 18:20",
+    "baslik": "Ortaklık Aleyhine Dava Açılması veya Davaya İlişkin Gelişmeler",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1701489",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
+    "tarih": "23 Kasım 17:48",
+    "baslik": "Borçlanma Araçları, Yatırım Fonları ve Varant İtfa/Kupon/Getiri/ Nakdi Uzlaşı Ödeme İşlemleri",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1701432",
+    "genis": true
+   },
    {
     "kaynak": "KAP",
     "tarih": "23 Kasım 17:40",
@@ -3149,27 +3170,6 @@
     "tarih": "13 Kasım 16:21",
     "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1698037",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "10 Kasım 19:35",
-    "baslik": "Özel Durum Açıklaması (Genel)",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1696737",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "10 Kasım 17:55",
-    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1696567",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "10 Kasım 17:55",
-    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1696566",
     "genis": false
    }
   ]

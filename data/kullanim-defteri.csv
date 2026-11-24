@@ -193,3 +193,4 @@
 2026-11-24,01:19,radyo,MISTRAL,deepseek-v4-1-flash-1017,1,3537,3544,14.9,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x1,9849,19544
 2026-11-24,05:10,radyo,MISTRAL,deepseek-v4-1-flash-1017,1,3505,3344,13.9,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x1,9761,19344
 2026-11-24,06:21,ceviri,MISTRAL,deepseek-v4-1-flash-1017,504,143293,33930,-,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x504(143293+33930),143293,33930
+2026-11-24,07:27,gunluk,MISTRAL,deepseek-v4-1-flash-1017,1,2670,1114,3.4,1,toplam_metin=1,hayir,MISTRAL/deepseek-v4-1-flash-1017x8,84007,9160
