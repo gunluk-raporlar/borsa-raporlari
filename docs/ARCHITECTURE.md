@@ -2,7 +2,21 @@
 
 Türkçe BIST 30 finans sitesi: Python botları statik HTML üretir, git'e commit edilir,
 Cloudflare Pages yayımlar. Çok dillilik (en/de/ru/zh) ayrı bir çeviri katmanıdır;
-TR sayfalar asla bot dışından değiştirilmez.
+TR sayfalar kural olarak bot dışından değiştirilmez.
+
+**İstisna — toplu metin onarımı (2026-11-24/25).** Yayımlanmış sayfalardaki Türkçe
+bozulmalar (LLM çıktısından gelen yanlış yazımlar, `%50-65` gibi hatalı yüzde
+biçimleri) bot yeniden üretmeden onarıldı: `_tmp_derin24/toplu_duzelt2.py` ile
+`<body>` metin düğümleri `editor.imla()` + `editor.yuzde_bicimle()` üzerinden
+geçirildi (3 tur, 3075 düğüm, 132 dosya). Bu tür onarımın değişmezleri:
+
+1. Yalnız metin düğümü değişir; etiket, öznitelik, script/style içeriği dokunulmaz.
+2. Sayı tokeni değişmez — her turda "sayı tokeni değişen düğüm = 0" doğrulanır.
+3. Tablo hücresinde `tablo_disi=False` kullanılır (veri biçimi korunur).
+4. Onarım sonrası `python sayfa_denetle.py` 0 bulgu vermeli; CI bu kapıyı koşar.
+
+Kalıcı çözüm onarım değil üretim kapısıdır: `bot._yumusak_kalite_dogrulama()`
+ve CI'daki `test_imla` + `sayfa_denetle` adımları.
 
 ## Modül haritası ve veri akışı
 
@@ -41,6 +55,12 @@ flowchart TD
         dogrulama["dogrulama.py — metin_dogrula zinciri<br/>isim · enflasyon · faiz · makro göstergeler ·<br/>Fisher reel faiz · dolar getiri · cari yön ·<br/>piyasa serileri · endeks seviye"]
         kapilar["2026-11-11 kapıları: yuva-bağlı ülke etiketi<br/>(TR %3,7 → TR yuvasına, _gercek_mi aşılır) ·<br/>hedef-dışı türev değerler (ECB -1,35 → 2,65) ·<br/>olasılık dengesi (tek sızma adayı; yoksa uyarı) ·<br/>yıllıklaştırma (aylık %X ≈ ~%X → bileşik) ·<br/>evren-dışı marka sayacı (metin değişmez)"]
         makroveri["makro_veri.load()<br/>validate → makullük filtresi<br/>(unit='%' ve |değer|>200 kayıt düşer;<br/>coverage güncellenir; frame + izinli evren temiz)"]
+    end
+
+    subgraph EDITOR["Türkçe metin katmanı (editor.py — deterministik, LLM yok, I/O yok)"]
+        imla["imla(metin) → (metin, düzeltmeler)<br/>YAZIM sözlüğü (174 girdi) + noktalama<br/>+ sıralı regex zinciri:<br/>yüzde kayması → yüzde aralığı → ters yüzde<br/>→ vb. → yüzde sonda → kısaltma/cümle başı"]
+        kalite["kalite_tara(metin) → [(kural, açıklama, örnek)]<br/>KALITE_KALIPLARI (23 kural) · KALITE_ESIK=2<br/>eşik aşılırsa yanıt RED, sıradaki model"]
+        imlatest["test_imla.py (32 test)<br/>daily + derin-analiz + makro-analiz<br/>BLOKLAYICI adım"]
     end
 
     subgraph VERI["data/ — kaynak ve ara veri (git'te)"]
@@ -97,6 +117,17 @@ flowchart TD
     makroveri -- "frame_text (kilitli çerçeve, LLM'e) +<br/>rate_maps/deger_evreni/turetilmis (doğrulayıcıya)" --> dogrulama
     dogrulama -- "doğrulanmış metin" --> bot
     dogrulama -- "data/metrics/latest.json 'dogrulama'" --> d
+
+    bot -- "rapor_son_islem → editor.uygula<br/>(zincirin BAŞI: imla + muğlaklık)" --> imla
+    egitim -- "bot.rapor_son_islem" --> imla
+    haftasonu -- "bot.rapor_son_islem" --> imla
+    derin -- "bot.derin_analiz_yap" --> imla
+    makro -- "bot.makro_analiz_yap" --> imla
+    imla -- "düzeltilmiş metin (sayılara dokunmaz)" --> bot
+    bot -- "_turkce_kalite_eksik_mi<br/>5 nokta: günlük bölüm + derin AMD/GLM + makro AMD/GLM" --> kalite
+    kalite -- "eşik (2) aşıldı → yanıt RED, sıradaki model" --> bot
+    imlatest -.-> imla
+    mdayna -. "yüzde biçimini BAĞIMSIZ normalize eder<br/>(kopya kural — bkz. Bilinen riskler)" .-> imla
     bot -- "ara.html + arama kutusu" --> araui
     egitim --> trhtml
     haftasonu --> trhtml
@@ -198,6 +229,23 @@ flowchart TD
   LLM çerçevesinden de izinli evrenden de çıkar, 2026-11-11),
   `makro_rejim` (kural tabanlı rejim etiketi, `data/makro-rejim/`),
   `makro_snapshot` (akşam göstergeleri), `makro_analiz` sayfa üretimi.
+- **editor.py** — Türkçe metin katmanı; yayın zincirinin BAŞINDA çalışır
+  (`bot.rapor_son_islem` → `editor.uygula`), LLM ve I/O yok. `imla(metin)` →
+  `(metin, düzeltmeler)`: 174 girdili `YAZIM` sözlüğü + noktalama temizliği +
+  sıralı regex zinciri. **Kural sırası sözleşmedir** (2026-11-25): yüzde kayması
+  onarımı → yüzde aralığı → ters yüzde → `vb.` → yüzde sonda → kısaltma/cümle
+  başı; sıra bozulursa aralık kuralı tek-sayı kuralına yem olur. Yüzde
+  konvansiyonu: `%` sayının solunda, aralıkta HER İKİ sayı da işaret alır
+  (`%50-%65`), `+` düşer, `-` korunur, ayırıcı tire (U+2011 dahil) korunur.
+  `_satir_disi` markdown tablo satırlarını (`|` ile başlayan) muaf tutar —
+  hücredeki `3.6%` veri sözleşmesidir. `kalite_tara(metin)` → `[(kural,
+  açıklama, örnek)]`: `KALITE_KALIPLARI` (23 kural) üzerinden düzeltme
+  SONRASI kalanı arar; `KALITE_ESIK=2` aşılırsa `bot._turkce_kalite_eksik_mi`
+  yanıtı REDDEDER. Kapı 5 noktada: günlük rapor bölümü (`_bolum_dogrula`,
+  YUMUŞAK — 4. denemeden sonra bölüm kabul edilir) + derin AMD/GLM + makro
+  AMD/GLM. `tts_telaffuz` yalnız ses metnine uygulanır, yayın HTML'ine girmez.
+  Gerileme testleri `test_imla.py` (32 test) — daily/derin-analiz/makro-analiz
+  iş akışlarında BLOKLAYICI.
 - **dogrulama.py** — yayın-öncesi deterministik doğrulama katmanı (LLM yok,
   I/O yok, `python dogrulama.py` kendini sınar): `metin_dogrula` zinciri
   isim/endeks/enflasyon/faiz/makro-gösterge/Fisher/dolar/cari/piyasa
@@ -318,6 +366,57 @@ flowchart TD
 
 ## Bilinen riskler
 
+- **Yüzde biçimi kuralı TEK yerde değil** (2026-11-25 yapısal inceleme): aynı
+  konvansiyon dört modülde bağımsız tanımlı — `editor.py` düzeltici
+  (`_TERS_YUZDE`, `_YUZDE_KAYMA1/2`, `_YUZDE_ARALIK`, `_YUZDE_SONRA`,
+  `_YUZDE_BOSLUK`), `editor.py` kapısı (`KALITE_KALIPLARI` 4 desen),
+  `rapor_denetle.py:64-65` (kopya, elle senkron) ve `pipeline/md_ayna.py:633-641`
+  (bağımsız yeniden yazım). Ölçüm: 13 ortak girdinin 6'sında `md_ayna` ile
+  `editor.imla()` farklı sonuç veriyor (`+%4,09`, `4,09%`, `%50-65`, `50-65%`,
+  `% -0,06`, `%+0,06`) — arama dizini metni ile sayfa metni ayrışır. `md_ayna`
+  için test ve CI adımı YOK. Birleştirme önerisi: tek `yuzde_bicimle(metin)`
+  fonksiyonu `editor.py`'de; `rapor_denetle` ve `md_ayna` onu import etsin.
+- **`KALITE_KALIPLARI`'nın 15/23 kuralı ölü** (2026-11-25): `imla()` bu hataları
+  zaten düzelttiği için `kalite_tara()` onları hiç göremez (kapı düzeltme
+  SONRASI metne bakar). Fiilen canlı 8 kural var. Ölü kurallar yanılsama
+  yaratıyor: "ikinci savunma hattı" sanılan şey birinci hattın kopyası.
+  Öneri: `duzeltilir=True/False` alanlı tek kural tablosu; kapı yalnız
+  `duzeltilir=False` olanları saysın, sayfa denetimi hepsini saysın.
+- **Sayfa düzeyi tarama CI'da YOK** (2026-11-25): `kalite_tara` markdown
+  girdisi için tasarlandı; `tablo_haric` bayrağı yalnız `|` ile başlayan
+  satırları atlar, HTML `<td>` hücresini atlamaz. 222 sayfa düğüm bazlı
+  tarandığında 19.088 bulgu üretiyor — tamamı şablon kaynaklı `+5.13%`
+  (nokta-ondalık, `%` sonda) yanlış pozitifi. Bu yüzden yayın sonrası sayfa
+  kapısı olarak kullanılamaz. `rapor_denetle.py` CI'da var ama BLOKLAYICI
+  DEĞİL (`daily.yml:167`, `makro-analiz.yml:119` — `|| echo`).
+- **`_YUZDE_ARALIK` aşırı eşleşme** (2026-11-25, latent): desen sağ tarafı
+  `(\d+(?:,\d+)?)` ile alır ve `(?![\d%])` kontrolü nokta-ayraçlı binliği
+  korumaz. `"getiri %5 - 10.000 TL"` → `"%5-%10.000 TL"`,
+  `"XU030 %2,24 - 15.327 puan"` → `"%2,24-%15.327 puan"`. Korpus'ta şu an
+  tetikleyici yok (0 vaka) ama üretimde ilk yazımda veri bozar. Öneri: sağ
+  sayıdan sonra `(?!\.\d{3})` veya binlik ayraçlı sayıyı desenden dışla.
+- **İşaret yeri iki farklı biçimde normalize ediliyor** (2026-11-25):
+  `_ters_yuzde` `-%15` üretir (işaret önce), `_yuzde_basa` `%-15` üretir
+  (yüzde önce). Aynı girdi ailesi iki farklı "doğru" sonuç veriyor; korpusta
+  her iki biçim de canlı (`-%X` 4.389, `%-X` 875). `test_imla.py` eksi
+  işaretli `_TERS_YUZDE` vakasını sınamıyor.
+- **`editor.py` içindeki `__main__` self-test çift kayıt** (2026-11-25):
+  `editor.py:778-860` hâlâ `assert` tabanlı self-test taşıyor; `test_imla.py`
+  aynı kapsamı unittest ile veriyor. `python -O editor.py` assert'leri
+  soyduğu için "tüm testler geçti" YANLIŞ YEŞİL basıyor. Öneri: blok silinsin,
+  tek kaynak `test_imla.py` olsun.
+- **Toplu HTML düzeltici depo dışında** (2026-11-25): 143/222 sayfa
+  düzeltildi, 79 sayfaya hiç dokunulmadı; düzeltici betik repoda değil,
+  testi ve kuru-çalıştırma kaydı yok. Aynı yetenek depoda üç kez yazılmış
+  (`_duzeltme_2026-10-25.py`, `_duzeltme2_2026-10-25.py`,
+  `_dil_hisse_canli_yamala.py`). Kalan hatalar bu kapsam boşluğunda:
+  `%54-80`, `%20-30`, `%3-5` gibi 33 aralık hatası ve `kisa` (11),
+  `bantına` (2) hâlâ yayında — `imla()` bunları düzeltiyor ama sayfaya
+  uygulanmamış.
+- **haftasonu / haftasonu-egitimi kalite kapısı yok** (2026-11-25):
+  `haftasonu.py:229` ve `egitim.py:442` yalnız `bot.rapor_son_islem`
+  çağırıyor (imla uygulanır), `_turkce_kalite_eksik_mi` çağrılmıyor. Bu iki
+  sayfa türü tamamen `imla()`'nın doğruluğuna bağlı.
 - **Doğrulama: yıllıklaştırma kapısı dar tetik** (2026-11-11 inceleme, izleme):
   kapı yalnızca "aylık" sözcüğü sayının hemen önündeyken ateşler ("aylık %2,58
   … yıllıklaştırıldığında ~%2,58"); "Aylık enflasyon %2,58 … (yıllıklaştırıldığında
