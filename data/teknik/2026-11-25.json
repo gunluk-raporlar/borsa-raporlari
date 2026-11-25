@@ -48,7 +48,7 @@
     "r": 0.61,
     "puan": 1,
     "genel": "SAT",
-    "stale": true
+    "stale": false
   },
   {
     "hisse": "THYAO",
@@ -99,7 +99,7 @@
     "r": -0.14,
     "puan": 0,
     "genel": "GÜÇLÜ SAT",
-    "stale": true
+    "stale": false
   },
   {
     "hisse": "ISCTR",
@@ -116,7 +116,7 @@
     "r": -0.3,
     "puan": 0,
     "genel": "GÜÇLÜ SAT",
-    "stale": true
+    "stale": false
   },
   {
     "hisse": "VAKBN",
@@ -286,7 +286,7 @@
     "r": -0.82,
     "puan": 0,
     "genel": "GÜÇLÜ SAT",
-    "stale": true
+    "stale": false
   },
   {
     "hisse": "SAHOL",
@@ -303,7 +303,7 @@
     "r": -0.82,
     "puan": 0,
     "genel": "GÜÇLÜ SAT",
-    "stale": true
+    "stale": false
   },
   {
     "hisse": "ASELS",
