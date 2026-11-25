@@ -75,7 +75,7 @@
       var idsizKip = false;
 
       var FIYAT_RE = /^\s*([0-9][0-9.,]*)\s*TL\s*$/;
-      var YUZDE_RE = /^(\s*[-+]?\s*[0-9][0-9.,]*)\s*%/;
+      var YUZDE_RE = /^(?:[-+]?\s*%\s*[0-9][0-9.,]*|%[-+]?\s*[0-9][0-9.,]*|\s*[-+]?\s*[0-9][0-9.,]*\s*%)$/;
 
       (function idsizHero() {
         if (fiyatEl || !hero) return;
@@ -128,7 +128,10 @@
       }
 
       function fiyatUygula(satir, zaman) {
-        var yuzde = (satir.d >= 0 ? "+" : "") + bicim(satir.d, LANG) + "%";
+        var yuzdeSayi = bicim(Math.abs(satir.d), LANG);
+        var yuzde = LANG === "tr"
+          ? (satir.d < 0 ? "-" : "") + "%" + yuzdeSayi
+          : (satir.d >= 0 ? "+" : "-") + yuzdeSayi + "%";
         if (idsizKip) {
           fiyatEl.textContent = bicim(satir.f, LANG) + " TL";
           if (gunlukEl) {

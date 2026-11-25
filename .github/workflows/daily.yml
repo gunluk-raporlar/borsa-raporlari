@@ -41,6 +41,14 @@ jobs:
       # "11.811,48" -> "11.811,4,8"). Bloklayici — "|| echo" ile yutulmaz.
       - name: Dogrulayici regresyon testleri
         run: python -m unittest test_makro_veri -v
+      # 2026-11-25: imla() gerileme kapisi. Gerekce: canli sayfalarda
+      # "%50-65" yerine "50-%65", "15 %" -> "1%5" (tek hane kaymasi) ve
+      # "vb. Portfoy" gibi kisaltma sonrasi yanlis buyuk harf goruldu.
+      # Testler gecmezse rapor URETILMEZ. Bloklayici — "|| echo" ile yutulmaz.
+      - name: Imla regresyon testleri (editor.imla)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python -m unittest test_imla -v
       # 2026-11-22: dogrulama.py kendini testleri de bloklayici. 13.11'den
       # beri 9 test kirikti (ulke ipucu davranisi degisti, testler eski
       # beklentiyi tasiyordu) ve bu yuzden akisa alinamamisti; testler
@@ -160,6 +168,14 @@ jobs:
           else
             echo "Gunluk rapor dosyasi yok (uretim basarisiz olabilir)."
           fi
+      # 2026-11-25: yayin oncesi Turkce kalinti taramasi. editor.imla()
+      # bilinen hatalari duzeltir; bu adim YAYINA CIKACAK sayfalari bagimsiz
+      # denetler. Tolerans 2: tek tuk imla kalintisi yayini durdurmaz, ama
+      # sistemik bir kural gerilemesi (onlarca bulgu) yayini BLOKLAR.
+      - name: Sayfa denetimi (Turkce kalinti)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python sayfa_denetle.py --tolerans 2
       - name: Degisiklikleri depoya geri kaydet
         run: |
           git config user.name "borsa-bot"

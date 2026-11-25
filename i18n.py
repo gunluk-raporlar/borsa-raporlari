@@ -370,10 +370,13 @@ def sayilari_cevir(metin: str, dil: str) -> str:
             return s.replace(",", ".")      # 21,44 -> 21.44
         return s.replace(".", ",")          # 98.908 -> 98,908
 
-    metin = SAYI_BICIM_RE.sub(degistir, metin)
-    # %100 -> 100% (TAM sayiyi yakala; '%(\d)' tek rakami alip '%100'ü '1%00'a
-    # bozuyordu — 22.09 hata kaydi)
-    return re.sub(r"%(\d+(?:[.,]\d+)?)", r"\1%", metin)
+    # Yuzde isareti ONCE tasinir, ayirici cevrimi SONRA yapilir.
+    # 2026-11-25: TR bicimi artik `%`-onde (`%1.234,57`). Ters sirada
+    # `SAYI_BICIM_RE` once kosup `1.234,57` -> `1,234.57` yapiyor, ardindan
+    # `%(\d+)` deseni `%1,234`i yakalayip `1,234%.57` uretiyordu.
+    # Desen binlik ayracini da kapsar: `%1.234,57` -> `1.234,57%`.
+    metin = re.sub(r"%(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?)", r"\1%", metin)
+    return SAYI_BICIM_RE.sub(degistir, metin)
 
 
 # Tercume edilecek ozellikler

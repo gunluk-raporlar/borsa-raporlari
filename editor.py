@@ -83,6 +83,64 @@ YAZIM = {
     "altında gramın": "altının gram fiyatı",
     "Altında gramın": "Altının gram fiyatı",
     "CEO: AHMET OLMUŞTUR": "Ahmet Olmuştur",
+    # 25.11 denetim bulgulari: 24 Kasim derin analizinde yayina giren hatalar.
+    # Her satir canli sayfada gorulmus somut bir hatadir; sozluk buyudukce
+    # ayni hata sinifi tekrar yayina giremez.
+    "elimmizde": "elimizde", "Elimmizde": "Elimizde",
+    "sinyol": "sinyal", "Sinyol": "Sinyal",
+    "teknikta": "teknikte", "Teknikta": "Teknikte",
+    "bantına": "bandına", "Bantına": "Bandına",
+    "dışardaki": "dışarıdaki", "Dışardaki": "Dışarıdaki",
+    "ağırlıkta hisseler": "ağırlıklı hisseler",
+    "Ağırlıkta hisseler": "Ağırlıklı hisseler",
+    "aşağıladığını": "aşağı çektiğini", "Aşağıladığını": "Aşağı çektiğini",
+    "aşağıladı": "aşağı çekti", "Aşağıladı": "Aşağı çekti",
+    "korunabilirlik için tutulan": "ihtiyat amaçlı tutulan",
+    "Korunabilirlik için tutulan": "İhtiyat amaçlı tutulan",
+    "korunabilirlik": "ihtiyat", "Korunabilirlik": "İhtiyat",
+    "kisa": "kısa", "Kisa": "Kısa",
+    "yüzde puan": "puan", "Yüzde puan": "Puan",
+    # Ingilizce karsiligi hazir terimlerin ham birakilmasi (2026-11-24)
+    "magnet": "hedef", "Magnet": "Hedef",
+    "futures": "vadeli işlem", "Futures": "Vadeli işlem",
+    # "ralli" Turkce sozlukte yerlesik; ek alirken apostrof KULLANILMAZ
+    # ("rallinin", "rallisi"). Bu satirlar asagidaki "rally" girdisinden
+    # ONCE gelmeli, yoksa "rally'nin" -> "ralli'nin" gibi yanlis bicim cikar.
+    # Ingilizce tamlamalar once gelir; yoksa yalniz "rally" cevrilip
+    # "(relief ralli)" gibi yari Turkce bicim kalir.
+    "bear market rally": "ayı piyasası rallisi",
+    "bearish rally": "ayı rallisi",
+    "rate cut rally": "faiz indirimi rallisi",
+    "relief rally": "rahatlama rallisi",
+    "narrow rally": "dar ralli",
+    "seçici rally": "seçici ralli",
+    "rally'nin": "rallinin", "Rally'nin": "Rallinin",
+    "rally'ye": "ralliye", "Rally'ye": "Ralliye",
+    "rally'yi": "ralliyi", "Rally'yi": "Ralliyi",
+    "rally'de": "rallide", "Rally'de": "Rallide",
+    "rally'si": "rallisi", "Rally'si": "Rallisi",
+    "rally": "ralli", "Rally": "Ralli",
+    # Cift ceviri onarimi: '"falling knife" (dusen bicak)' -> '"dusen bicak"'
+    '"falling knife" (düşen bıçak)': '"düşen bıçak"',
+    '"Falling Knife" (Düşen Bıçak)': '"Düşen Bıçak"',
+    "Falling Knife": "Düşen Bıçak", "falling knife": "düşen bıçak",
+    "mean reversion": "ortalamaya dönüş", "Mean reversion": "Ortalamaya dönüş",
+    "bir birikim (consolidation)": "bir konsolidasyon (yatay birikim)",
+    "consolidation": "konsolidasyon", "Consolidation": "Konsolidasyon",
+    "Bölünme Stratejisi": "Dağıtım Stratejisi",
+    "bölünme stratejisi": "dağıtım stratejisi",
+    # 25.11 toplu tarama: kurala sigmayan, tek tek gorulen uzun kuyruk.
+    "kar realizasyonu": "kâr realizasyonu",
+    "Kar realizasyonu": "Kâr realizasyonu",
+    "ons başı": "ons başına", "Ons başı": "Ons başına",
+    "disenflasyon": "dezenflasyon", "Disenflasyon": "Dezenflasyon",
+    "regression": "regresyon", "Regression": "Regresyon",
+    "doviz": "döviz", "Doviz": "Döviz",
+    "kananın": "kanalın", "Kananın": "Kanalın",
+    "yatan trend": "yatay trend", "Yatan trend": "Yatay trend",
+    "trendingin": "trendin", "Trendingin": "Trendin",
+    "seyir defterini sürdürüyor": "seyretmeyi sürdürüyor",
+    "Seyir defterini sürdürüyor": "Seyretmeyi sürdürüyor",
 }
 
 # Noktalama temizliginde sayi-ondalik virgulu bozmamak icin: virgul/nokta
@@ -94,6 +152,13 @@ _NOKTALAMA_ONCESI = re.compile(r"\s+([,.;:!?])")
 _CIFT_NOKTALAMA = re.compile(r"(?<=[,;:])(?<!\.\.)\s*[,;:]+\s*")
 _EKSIK_NOKTA = re.compile(r"\.(?=[A-Za-zÇĞİÖŞÜçğıöşü])")
 _CUMLE_BASI = re.compile(r"(^|[.!?]\s+|\n)([a-zçğıöşü])")
+# Kisaltmadan sonra cumle basi SAYILMAZ: "vb. gibi", "orn. bu", "vs. ile".
+# Bu kume olmadan _CUMLE_BASI "vb. Gibi" uretiyordu (2026-11-25 architect
+# bulgusu; canli sayfalarda "vb. Portfoy", "vs. Temel" olarak goruldu).
+_KISALTMA = {
+    "vb", "örn", "bkz", "yy", "vs", "dr", "prof", "no",
+    "m.ö", "m.s", "sf", "age", "çev",
+}
 # Markdown yapisal satirlari: baslik, liste, tablo, numarali madde, ayraç
 _MD_SATIR = re.compile(r"^\s*(?:#|\||[-*+]\s|\d+[.)]\s|>|---|\*\*)")
 
@@ -105,14 +170,106 @@ _YINELENI_KELIME = re.compile(r"\b(\w+)(\s+\1)+\b", re.IGNORECASE)
 _BITISIK_BIRIM = re.compile(r"(\d)(TL|USD|EUR|GBP|TRY)\b")
 # "15 %" -> "%15": yalnizca yuzde sonrasi bosluk/noktalama/cumle sonu geldiginde;
 # "5 %3" gibi iki ayri sayi yan yanaysa dokunulmaz (veri bozmasini onler).
-_TERS_YUZDE = re.compile(r"(\d)\s+%(?=\s|[.,;:!?)]|$)")
-# Kisa yazim: "vb" -> "vb."
-_VB_KISA = re.compile(r"\bvb(?=[\s.,;:!?)]|$)")
+# 25.11 DUZELTME: eski desen tek haneyi yakaliyordu ("15 %" -> "1%5",
+# "0,49 %" -> "0,4%9"). Canli sayfalardaki bozuk yuzdelerin kok nedeni buydu;
+# sayinin TAMAMI ve ondalik kismi desene dahil edildi.
+_TERS_YUZDE = re.compile(r"(?<![\d.,])([+-]?)(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?)\s+%(?=\s|[.,;:!?)]|$)")
+
+
+def _ters_yuzde(m) -> str:
+    """'15 %' -> '%15'. Arti isareti dusurulur (varsayilan pozitif), eksi korunur."""
+    isaret = "" if m.group(1) == "+" else m.group(1)
+    return isaret + "%" + m.group(2)
+
+
+def _yuzde_basa(m) -> str:
+    """'-0,13%' -> '-%0,13'. Isaret yuzdenin SOLUNDA (tek bicim).
+
+    2026-11-25: _ters_yuzde() ile ayni bicimi uretir; korpusta baskin yazim
+    bu (HEAD: -%X 2770, %-X 646). "yüzde 5%" kalibi korunur.
+    """
+    onceki = m.string[max(0, m.start() - 7):m.start()]
+    if onceki.rstrip().endswith("yüzde"):
+        return m.group(0)          # "yüzde 5%" zaten dogru bicim
+    sayi = m.group(1)
+    if sayi.startswith("+"):
+        sayi = sayi[1:]
+    if sayi.startswith("-"):
+        return "-%" + sayi[1:]
+    return "%" + sayi
+# Kisa yazim: "vb" -> "vb." (zaten noktaliysa dokunma; "vb.." uretmesin)
+_VB_KISA = re.compile(r"\bvb(?!\.)(?=[\s.,;:!?)]|$)")
 # 25.10 denetim: LLM bazi yuzdeleri kaydirik yaziyor ('-0,38%' -> '-0,3%8',
 # '43,04%' -> '43,0%4', '%24,6' -> '%24,%6'). Rakamlar DEGISTIRILMEZ; yalnizca
 # yanlis yere dusen '%' sayinin sonuna tasinir (dogrulama desenlerini bozmaz).
 _YUZDE_KAYMA1 = re.compile(r"(\d),(\d)%(\d)(?!\d)")
 _YUZDE_KAYMA2 = re.compile(r"(\d),%(?=\d)")
+# 25.11 denetim: yuzde isareti sayidan SONRA yazilmis ("-0,13%", "+4,3%").
+# TR raporunda '%' sayinin basindadir; isaret korunur, '+' dusurulur.
+# SINIRLAR (gerileme testi 2026-11-25): (a) '%' sayiya BITISIK olmali —
+# "U-6 %7,9" gibi tablo ayracli diziler eslesmesin; (b) '%'den sonra rakam
+# gelmemeli; (c) NOKTAli ondalik ("3.6%") hic ele alinmaz — veri tablolarinda
+# bicim sozlesmesi farkli, cevirmek veriyi bozar; (d) tablo satirlarina
+# uygulanmaz (bkz. _satir_disi).
+_YUZDE_SONRA = re.compile(r"(?<![\w.,%])([+-]?(?:\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?))%(?!\d)")
+# 2026-11-25: isaret yeri tek bicime indirilir — "-%15". Korpusta baskin
+# yazim bu (HEAD: -%X 2770, %-X 646); _ters_yuzde() ve _yuzde_basa() de
+# ayni bicimi uretir. "%50-%65" araligina dokunmaz (orada '%' tireye bitisik
+# degil).
+_YUZDE_EKSI = re.compile(r"%-(\d)")
+# 2026-11-25: "+%4,09" bicimi hic ele alinmiyordu (architect bulgusu).
+# Arti isareti varsayilan pozitiftir, dusurulur.
+_YUZDE_ARTI = re.compile(r"\+%(\d)")
+# 25.11 denetim: ARALIK ifadesinde yuzde sonda ("50-65%"). Tek sayi kurali
+# (_YUZDE_SONRA) bunu "50-%65" yapiyordu — yanlis. Dogrusu "%50-%65":
+# aralikta HER IKI sayi da yuzde isareti alir (kullanici duzeltmesi 25.11).
+# (?!\d) korumasi URL kodlamasi icin: "2026-09-16%20" bozulmaz.
+_YUZDE_ARALIK = re.compile(
+    r"(?<![\w.,%])(%?)(\d+(?:,\d+)?)[ \t]*([-\u2011\u2013])[ \t]*"
+    r"(\d+(?:,\d+)?)(?!\.\d{3})([ \t]*)(%?)(?![\d%])")
+# Ayni kuralin ikinci yonu ("%50-65" -> "%50-%65") ve bosluklu yazim
+# ("50-65 %", "40 - 60 %") ayni desende toplandi; yuzde hic yoksa dokunulmaz.
+
+
+def _yuzde_aralik(m) -> str:
+    """Aralikta her iki sayiya '%' koyar; AYIRICI KORUNUR.
+
+    Sayfalarda aralik tiresi cogu yerde bolunmez tire (U+2011). Duz '-' ile
+    degistirmek sessiz bir tipografi gerilemesi olurdu (2026-11-25).
+    Yuzde isareti hic yoksa (tarih araligi, "16-20 Ekim") dokunulmaz.
+    """
+    if not (m.group(1) or m.group(6)):
+        return m.group(0)
+    kuyruk = "" if m.group(6) else m.group(5)
+    return "%" + m.group(2) + m.group(3) + "%" + m.group(4) + kuyruk
+# 25.11 denetim: "stop-zarar (mental)" ceviri kalibi -> "zihinsel stop".
+_STOP_ZARAR = re.compile(r"stop[- ]zarar\s*\((?:mental|zihinsel)\)", re.I)
+# 25.11 denetim: "işaret etmek" yanlis kullanimi. "X olduğunu işaret ediyor"
+# Ingilizce "indicates" kalibidir; TR karsiligi "gösteriyor".
+_ISARET_EDIYOR = re.compile(
+    r"(\w+(?:dığını|diğini|duğunu|düğünü|tığını|tiğini|tuğunu|tüğünü))"
+    r"\s+işaret ediyor\b")
+_ISARET_ETTIGINI = re.compile(r"\bişaret ettiğini gösteriyor\b")
+# 25.11 denetim: XU030 "otuz" diye okunur; eki -u'dur ("XU030'u").
+# Yalnizca YANLIS bicim eslesir; dogru bicim sayilmaz (log gurultusu olmasin).
+_ENDEKS_EKI = re.compile(r"\bXU030'ü\b")
+# 25.11 denetim: "ağırlıkta hisseler" / "ağırlık hisseler" -> "ağırlıklı
+# hisseler" (cekimli haller dahil). Kelime sonu \b ile sinirlanamadigi icin
+# ayri desen.
+_AGIRLIKTA = re.compile(r"\bağırlık(?:ta)?\s+(hisse)")
+# 25.11 denetim: "% -0,06" -> "%-0,06" (isaretle yuzde arasinda bosluk).
+# Yalnizca BOSLUK (satir sonu degil) ve yalnizca isaretli sayi: "%\n2026"
+# gibi tablo gecisleri bozulmasin (2026-11-25 gerileme testi).
+_YUZDE_BOSLUK = re.compile(r"%[ \t]+([-+]\d)")
+# 25.11 denetim: ASCII ok ("%62 -> %70") yerine gercek ok isareti.
+_OK_ISARETI = re.compile(r"[ \t]*->[ \t]*")
+# 25.11 denetim: Turkce terim zaten yaziliyken parantezli Ingilizce karsiligi
+# cevrilirse tekrar olusur ("ortalama dönüş (ortalamaya dönüş)"). Bu durumda
+# parantez SILINIR; ceviri yalnizca Turkce karsiligi olmayan yerlerde yapilir.
+_MEAN_REVERSION_TEK = re.compile(
+    r"\b(ortalama dönüş|ortalamaya dönüş|ortalama dönüşün|ortalamaya dönüşün|"
+    r"ortalama dönüşe|ortalamaya dönüşe)"
+    r"\s*\((?:mean[ -]reversion)\)", re.I)
 # 25.10 denetim: LLM ara sira baska alfabeden sozcuk birakiyor (Korece
 # '심리적 지원', '경쟁'). Turkce raporda bu alfabeler meşru degildir; koşu
 # sessizce SOKULUR ve kayda gecer (ceviri hattinda KULLANILMAZ — o hatta
@@ -146,6 +303,110 @@ def _buyuk(harf: str) -> str:
     return "İ" if harf == "i" else ("I" if harf == "ı" else harf.upper())
 
 
+def _cumle_basi(m) -> str:
+    """Cumle basi buyuk harf; ama kisaltmadan ve gosterimden sonra dokunmaz.
+
+    "vb. gibi" -> "vb. Gibi" hatasini onler. Onceki sozcuk noktali bir
+    kisaltmaysa (vb., orn., vs., bkz. ...) cumle bitmemistir.
+    2026-11-25: tek harfli gosterim + "=" de korunur — "r=0.88" Pearson
+    katsayisidir, gelenekte kucuk yazilir; "R=0.88" gosterim hatasiydi.
+    """
+    onceki = m.string[:m.start(2)]
+    son = re.search(r"(\S+)\s*$", onceki)
+    if son and son.group(1).lower().rstrip(".") in _KISALTMA:
+        return m.group(0)
+    if m.string[m.start(2) + 1:m.start(2) + 2] == "=":
+        return m.group(0)
+    return m.group(1) + _buyuk(m.group(2))
+
+
+def _satir_disi(desen, yeni, metin: str) -> tuple:
+    """Deseni yalnizca tablo satirlari DISINDA uygular.
+
+    Markdown tablo satiri '|' ile baslar; hucrelerde sayi/% bicimi veri
+    sozlesmesidir, imla kurali oraya uygulanmaz (2026-11-25 gerileme testi:
+    "U-6 %7,9" -> "U-%67,9" bozulmasi bu yuzden olmustu).
+    Donus: (yeni_metin, degisiklik_sayisi).
+    """
+    satirlar = metin.split("\n")
+    toplam = 0
+    for i, satir in enumerate(satirlar):
+        if satir.lstrip().startswith("|"):
+            continue
+        yeni_satir, n = desen.subn(yeni, satir)
+        if n:
+            satirlar[i] = yeni_satir
+            toplam += n
+    return "\n".join(satirlar), toplam
+
+
+def yuzde_bicimle(metin: str, tablo_disi: bool = True) -> tuple:
+    """Yuzde bicimini TR konvansiyonuna getirir — TEK giris noktasi.
+
+    Kural: '%' sayinin basinda ("%50", "-%15"); ARALIKTA her iki sayi da
+    isaret alir ("%50-%65"). '+' dusurulur, ayirici tire (U+2011) korunur,
+    binlik ayracli sayi aralik sanilmaz ("%5 - 10.000 TL" dokunulmaz).
+
+    2026-11-25 (architect bulgusu): ayni kural editor.imla(), rapor_denetle
+    ve pipeline/md_ayna icinde ayri ayri yazilmisti ve 13 ortak girdinin
+    6'sinda farkli sonuc veriyordu. Artik tek uygulama; digerleri bunu
+    cagirmali.
+
+    Donus: (yeni_metin, degisiklik_sayisi).
+    """
+    toplam = 0
+    # Kurallar birbirinin ciktisini besliyor ("% -0,06" -> BOSLUK -> "%-0,06"
+    # -> EKSI -> "-%0,06"). Tek gecis yetmedigi icin sabitlenene kadar
+    # tekrarlanir; boylece fonksiyon kendi kendinin sabit noktasidir.
+    for _ in range(3):
+        yeni, n = _yuzde_bicimle_gecis(metin, tablo_disi)
+        toplam += n
+        if yeni == metin:
+            break
+        metin = yeni
+    return metin, toplam
+
+
+def _yuzde_bicimle_gecis(metin: str, tablo_disi: bool) -> tuple:
+    """yuzde_bicimle()'nin tek gecisi — disaridan cagrilmaz."""
+    toplam = 0
+    metin, n = _YUZDE_KAYMA1.subn(r"\1,\2\3%", metin)
+    toplam += n
+    metin, n = _YUZDE_KAYMA2.subn(r"\1,", metin)
+    toplam += n
+    metin, n = _satir_disi(_YUZDE_ARALIK, _yuzde_aralik, metin)
+    toplam += n
+    metin, n = _TERS_YUZDE.subn(_ters_yuzde, metin)
+    toplam += n
+    if not tablo_disi:
+        # Tablo hucresi: yalniz kelime ve aralik kurallari. Hucredeki
+        # "+5,13%" bir VERI bicimidir; isaret yerini degistirmek veri
+        # sozlesmesini bozar (2026-11-25).
+        return metin, toplam
+    metin, n = _satir_disi(_YUZDE_SONRA, _yuzde_basa, metin)
+    toplam += n
+    metin, n = _satir_disi(_YUZDE_EKSI, r"-%\1", metin)
+    toplam += n
+    metin, n = _YUZDE_ARTI.subn(r"%\1", metin)
+    toplam += n
+    metin, n = _YUZDE_BOSLUK.subn(r"%\1", metin)
+    toplam += n
+    return metin, toplam
+
+
+def _sinirli_desen(yanlis: str) -> str:
+    """Sozluk anahtarini kelime sinirli desene cevirir.
+
+    Sinir yalnizca kenar karakteri HARF/RAKAM ise konur. Kosulsuz "\\b"
+    kullanildiginda tirnak veya parantezle baslayan/biten anahtarlar hic
+    eslesmiyordu: '"falling knife" (dusen bicak)' ve 'bir birikim
+    (consolidation)' girdileri bu yuzden olu durumdaydi (2026-11-25).
+    """
+    sol = r"\b" if re.match(r"\w", yanlis) else ""
+    sag = r"\b" if re.search(r"\w$", yanlis) else ""
+    return sol + re.escape(yanlis) + sag
+
+
 def imla(metin: str) -> tuple:
     """Yazim sozlugu + noktalama temizligi. Sayilara dokunmaz.
     Donus: (yeni_metin, duzeltmeler) — duzeltme = (eski, yeni)."""
@@ -153,11 +414,17 @@ def imla(metin: str) -> tuple:
         return metin, []
     duzeltmeler = []
 
+    # 0) cift ceviri onarimi — sozlukten ONCE calismali, yoksa "mean reversion"
+    #    cevrilip tekrar uretilir.
+    metin, n = _MEAN_REVERSION_TEK.subn(r"\1", metin)
+    if n:
+        duzeltmeler.append(("mean-reversion-tekrar", "parantezli karşılık silindi", n))
+
     # 1) yazim sozlugu (kelime sinirli, buyuk/kucuk ayri)
     for yanlis, dogru in YAZIM.items():
         if yanlis == dogru:
             continue
-        yeni, n = re.subn(r"\b" + re.escape(yanlis) + r"\b", dogru, metin)
+        yeni, n = re.subn(_sinirli_desen(yanlis), dogru, metin)
         if n:
             duzeltmeler.append((yanlis, dogru, n))
             metin = yeni
@@ -180,19 +447,34 @@ def imla(metin: str) -> tuple:
     temiz, n = _BITISIK_BIRIM.subn(r"\1 \2", temiz)
     if n:
         duzeltmeler.append(("bitişik-birim", "15TL -> 15 TL", n))
-    # Word tarzi: ters yüzde ("15 %" -> "%15"; sinirli kosul, "5 %3" korunur)
-    temiz, n = _TERS_YUZDE.subn(r"%\1", temiz)
+    # yuzde bicimi: TEK giris noktasi (yuzde_bicimle). Kayma onarimi, aralik,
+    # ters yuzde, sonda yuzde ve isaret yeri ayni fonksiyonda ve DOGRU sirada.
+    temiz, n = yuzde_bicimle(temiz)
     if n:
-        duzeltmeler.append(("ters-yüzde", "15 % -> %15", n))
+        duzeltmeler.append(("yüzde-biçimi", "TR yüzde konvansiyonu", n))
     # kisa yazim: "vb" -> "vb."
     temiz, n = _VB_KISA.subn("vb.", temiz)
     if n:
         duzeltmeler.append(("vb", "vb.", n))
-    # yuzde kaymasi onarimi: rakamlar ayni kalir, '%' dogru konuma döner
-    onarim = _YUZDE_KAYMA2.sub(r"\1,", _YUZDE_KAYMA1.sub(r"\1,\2\3%", temiz))
-    if onarim != temiz:
-        duzeltmeler.append(("yüzde-biçimi", "kaymis '%' konumlandirildi", 1))
-        temiz = onarim
+    # 25.11: ceviri kalibi ve yanlis fiil kullanimi
+    temiz, n = _STOP_ZARAR.subn("zihinsel stop", temiz)
+    if n:
+        duzeltmeler.append(("stop-zarar", "zihinsel stop", n))
+    temiz, n = _ISARET_EDIYOR.subn(r"\1 gösteriyor", temiz)
+    if n:
+        duzeltmeler.append(("işaret-ediyor", "gösteriyor", n))
+    temiz, n = _ISARET_ETTIGINI.subn("gösterdiğini gösteriyor", temiz)
+    if n:
+        duzeltmeler.append(("işaret-ettiğini", "gösterdiğini", n))
+    temiz, n = _ENDEKS_EKI.subn("XU030'u", temiz)
+    if n:
+        duzeltmeler.append(("endeks-eki", "XU030'u", n))
+    temiz, n = _AGIRLIKTA.subn(r"ağırlıklı \1", temiz)
+    if n:
+        duzeltmeler.append(("ağırlıkta", "ağırlıklı", n))
+    temiz, n = _OK_ISARETI.subn(" → ", temiz)
+    if n:
+        duzeltmeler.append(("ok-işareti", "-> -> →", n))
     # yabanci yazi kaliintisi: baska alfabeden run'lar silinir, artan cift
     # bosluklar toplanir (Korece '경쟁' vakasi — 25.10 denetim)
     temiz, n = _YABANCI_YAZI_RE.subn(" ", temiz)
@@ -221,8 +503,7 @@ def imla(metin: str) -> tuple:
     for i, satir in enumerate(satirlar):
         if _MD_SATIR.match(satir) or not satir:
             continue
-        yeni_satir = _CUMLE_BASI.sub(
-            lambda m: m.group(1) + _buyuk(m.group(2)), satir)
+        yeni_satir = _CUMLE_BASI.sub(_cumle_basi, satir)
         if yeni_satir != satir:
             satirlar[i] = yeni_satir
     metin = "\n".join(satirlar)
@@ -357,6 +638,93 @@ def uygula(metin: str, rapor: str = "genel", kok: str = "") -> tuple:
 
 
 # ---------------------------------------------------------------------------
+# 3b) KALITE TARAMASI (yayin kapisi)
+# ---------------------------------------------------------------------------
+# `imla()` bilinen hatalari duzeltir; bu tarama DUZELTMEDEN SONRA kalanlari
+# bulur ve cagiran taraf (bot.py) esigi asarsa yaniti REDDEDER. Amac: yeni bir
+# model yeni bir hata uretirse sayfaya ulasmasin, siradaki model densin.
+#
+# Desenler YUKSEK KESINLIKLI tutulur: Turkce bir raporda mesru kullanimi
+# olmayan bicimler. Supheli ama mesru olabilecek kaliplar (orn. parantezle
+# verilen Ingilizce terim) buraya GIRMEZ — yanlis pozitif yayini bloke eder.
+KALITE_KALIPLARI = [
+    (re.compile(r"\bkisa\b"), "yazım: 'kısa'"),
+    (re.compile(r"\bsinyol\b"), "yazım: 'sinyal'"),
+    (re.compile(r"\belimmizde\b"), "yazım: 'elimizde'"),
+    (re.compile(r"\bteknikta\b"), "yazım: 'teknikte'"),
+    (re.compile(r"\bbantına\b"), "yazım: 'bandına'"),
+    (re.compile(r"\bdışardaki\b"), "yazım: 'dışarıdaki'"),
+    (re.compile(r"\bağırlık(?:ta)?\s+hisse"), "yazım: 'ağırlıklı hisse'"),
+    (re.compile(r"\bkorunabilirlik\b"), "uydurma sözcük: 'ihtiyat'"),
+    (re.compile(r"\başağıladı"), "anlam hatası: 'aşağı çekti'"),
+    (re.compile(r"\byüzde puan\b"), "yazım: 'puan'"),
+    (re.compile(r"\bXU030'ü\b"), "ek uyumu: \"XU030'u\""),
+    (re.compile(r"\bvb\.\."), "noktalama: 'vb.'"),
+    # Yuzde bicimi yalnizca tablo DISI satirlarda aranir: tablo hucresinde
+    # "3.6%" veri sozlesmesidir, imla kurali oraya uygulanmaz.
+    # (?![-+±]?\d) sarti: "XU030 %2,24" ve "XU100 %-13,3" gibi DOGRU
+    # bicimleri yakalamasin; isaretli sayi da yuzdeden SONRA gelir.
+    (re.compile(r"\d\s*%(?![-+±]?\d)"), "yüzde biçimi: '%' sayının başında", True),
+    # '%' iki rakamin ARASINA dusmus ("29,73%4", "43,79%5") — her zaman hata.
+    (re.compile(r"\d%\d"), "yüzde biçimi: '%' rakamların arasında", True),
+    # ARALIKTA tek yuzde: "%50-65" ve "50-65%" hatali, dogrusu "%50-%65"
+    # (kullanici kurali 2026-11-25). Iki desen de yalnizca TEK yuzde tasiyan
+    # bicimi yakalar; "%50-%65" her ikisine de uymaz.
+    (re.compile(r"\d[ \t]*[-‑–][ \t]*\d+[ \t]*%"), "yüzde biçimi: aralıkta tek '%' (sonda)", True),
+    (re.compile(r"%\d+[ \t]*[-‑–][ \t]*\d+(?![ \t]*%)"), "yüzde biçimi: aralıkta tek '%' (başta)", True),
+    (re.compile(r"\bmagnet\b", re.I), "çeviri: 'hedef'"),
+    (re.compile(r"\brally\b", re.I), "çeviri: 'ralli'"),
+    (re.compile(r"\bFalling Knife\b", re.I), "çeviri: 'Düşen Bıçak'"),
+    (re.compile(r"\bstop[- ]zarar\b", re.I), "çeviri: 'zihinsel stop'"),
+    (re.compile(r"\bBölünme Stratejisi\b"), "çeviri: 'Dağıtım Stratejisi'"),
+    # 2026-11-25: yabanci dil kalintisi. Canli sayfada "principalement"
+    # (Fransizca) yayina girmisti; sozluk bunu yakalayamiyordu. Liste dar
+    # tutuldu: yalnizca Turkce duz metinde mesru OLMAYAN baglaclar.
+    (re.compile(r"\b(?:principalement|notamment|également|egalement|cependant|"
+                r"toutefois|néanmoins|neanmoins|davantage|actuellement)\b", re.I),
+     "yabancı sözcük: Fransızca kalıntı"),
+    (re.compile(r"\b(?:therefore|however|moreover|furthermore|nevertheless|"
+                r"whereas|thereby|hence|thus)\b", re.I),
+     "yabancı sözcük: İngilizce bağlaç kalıntısı"),
+    (re.compile(r"\w+(?:dığını|diğini|duğunu|düğünü|tığını|tiğini|tuğunu|tüğünü)"
+                r"\s+işaret ediyor\b"), "kullanım: 'gösteriyor'"),
+    # ASCII'ye dusmus Turkce: bu sozcukler Turkce metinde mesru degildir.
+    # DIKKAT: yalnizca Turkce karsiligi OLMAYAN bicimler; "bekleniyor",
+    # "hisselerin", "endekste", "nedeniyle" gibi dogru sozcukler GIRMEZ.
+    (re.compile(r"\b(?:icin|gore|cunku|oldugunu|oldugu|olmadigi|degil|yuzde|"
+                r"artis|dusus|yukselis|uzerinde|altinda|uzerine|altina|donem|"
+                r"donemde|gosteriyor|sektor|sektorde)\b"),
+     "ASCII Türkçe: eksik harf"),
+]
+# Esik: bu sayidan fazla BULGU varsa yanit yayina alinmaz.
+KALITE_ESIK = 2
+
+
+def kalite_tara(metin: str) -> list:
+    """Duzeltme sonrasi kalan Turkce hatalarini tarar.
+
+    Donus: [(kural, aciklama, ornek)] — bos liste metin temiz demektir.
+    Yalnizca desen eslesmesi aranir; dil modeli cagrilmaz, ag yok.
+    Ucuncu elemani True olan kurallar tablo satirlarinda aranmaz.
+    """
+    if not metin:
+        return []
+    bulgular = []
+    for kural in KALITE_KALIPLARI:
+        desen, aciklama = kural[0], kural[1]
+        tablo_haric = len(kural) > 2 and kural[2]
+        kaynak = metin
+        if tablo_haric:
+            kaynak = "\n".join(s for s in metin.split("\n")
+                               if not s.lstrip().startswith("|"))
+        m = desen.search(kaynak)
+        if m:
+            bas = max(0, m.start() - 40)
+            bulgular.append((desen.pattern, aciklama, kaynak[bas:m.end() + 40]))
+    return bulgular
+
+
+# ---------------------------------------------------------------------------
 # 4) TTS TELAFFUZ (yalnizca sesli rapor girdisi; yayin HTML'ine uygulanmaz)
 # ---------------------------------------------------------------------------
 
@@ -476,6 +844,13 @@ def tts_telaffuz(metin: str) -> str:
 # Self-test
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
+    # 2026-11-25 (architect bulgusu): "python -O editor.py" assert'leri
+    # soydugu icin hicbir test kosmadan "tum kendini testler gecti" basiyordu.
+    # Yanlis yesil yerine acik hata. Kalici testler: test_imla.py.
+    if not __debug__:
+        raise SystemExit(
+            "editor.py self-test: -O ile assert'ler kaldirilir, test kosmaz. "
+            "Kalici testler icin: python -m unittest test_imla -v")
     # --- imla ---
     m = "borsa istanbul verilerine gore sinyiller guclü; olcul hareket , kesinlikle devam ediyor.."
     yeni, dz = imla(m)

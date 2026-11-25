@@ -156,12 +156,12 @@ def _guncel_veri_ornekleri(konu=""):
                 hareketli = sorted(satirlar, key=lambda s: abs(s.get("gunluk", 0) or 0), reverse=True)[:3]
                 if guclu:
                     parcalar.append("Güçlü al sinyali örnekleri: " + "; ".join(
-                        f"{s['hisse']} son {bot._tl_okunus(s['son'])} TL, günlük {s.get('gunluk', 0):+.2f}%, "
+                        f"{s['hisse']} son {bot._tl_okunus(s['son'])} TL, günlük {bot._tyy(s.get('gunluk', 0))}, "
                         f"kanal %{s.get('konum', 0):.0f}, r={s.get('r', 0):.2f}"
                         for s in guclu) + ".")
                 if hareketli:
                     parcalar.append("En hareketli hisseler: " + "; ".join(
-                        f"{s['hisse']} son {bot._tl_okunus(s['son'])} TL, günlük {s.get('gunluk', 0):+.2f}%, "
+                        f"{s['hisse']} son {bot._tl_okunus(s['son'])} TL, günlük {bot._tyy(s.get('gunluk', 0))}, "
                         f"kanal %{s.get('konum', 0):.0f}, r={s.get('r', 0):.2f}"
                         for s in hareketli) + ".")
         except Exception:
@@ -173,7 +173,7 @@ def _guncel_veri_ornekleri(konu=""):
             seri30 = paket["seri"][-31:]
             deg = (seri30[-1] / seri30[0] - 1) * 100
             parcalar.append(f"Ders grafiği örnek hissesi {paket['ad']}: grafik son {len(paket['seri'])} "
-                            f"işlem gününü gösterir; son 30 işlem günündeki değişim {deg:+.1f}%, "
+                            f"işlem gününü gösterir; son 30 işlem günündeki değişim {bot._tyy1(deg)}, "
                             f"aralık {min(seri30):.2f}-{max(seri30):.2f} TL; bu seriyi örnekle olarak kullan.")
     except Exception:
         pass
@@ -413,8 +413,13 @@ def _ders_uret(konu, tanim, veri, kategori=""):
             keys = {k: os.environ.get(k, "") for k in ("MISTRAL_API_KEY", "MISRAL_API_KEY", "AMD_API_KEY", "CF_API_KEY", "ALT_API_KEY", "OR_API_KEY")}
             if any(v and v not in DUMMY_ANAHTARLAR for v in keys.values()):
                 try:
-                    yedek = bot.llm_call(prompt, sirasi=("MISTRAL", "DISC", "AMD", "YEDEK", "OR"),
-                                         dogrulama=ders_tamamlik)
+                    # 2026-11-25: tamamlik denetimine Turkce kalite kapisi eklendi
+                    # (yumusak: 3. denemeden sonra uyariyla kabul).
+                    _kalite = bot._yumusak_kalite_dogrulama(
+                        "hafta sonu dersi", tolerans=3)
+                    yedek = bot.llm_call(
+                        prompt, sirasi=("MISTRAL", "DISC", "AMD", "YEDEK", "OR"),
+                        dogrulama=lambda m: ders_tamamlik(m) and _kalite(m))
                     if yedek and not yedek.startswith("(LLM") and ders_tamamlik(yedek):
                         metin = yedek
                         _DERS_KAYNAK["kaynak"] = "YEDEK"

@@ -99,7 +99,11 @@
     var el = document.getElementById("grafik-donem");
     if (!el) return;
     el.className = deg >= 0 ? "pos" : "neg";
-    el.textContent = sayi(deg, 1) + "%";
+    var dil = (document.documentElement.lang || "tr").slice(0, 2);
+    var sayiMetni = sayi(Math.abs(deg), 2);
+    el.textContent = dil === "tr"
+      ? (deg < 0 ? "-" : "") + "%" + sayiMetni
+      : (deg >= 0 ? "+" : "-") + sayiMetni + "%";
   }
 
   function gunYaz(adet) {

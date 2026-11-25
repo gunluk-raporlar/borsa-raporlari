@@ -43,6 +43,13 @@ jobs:
           python-version: '3.12'
       - name: Kutuphaneleri kur
         run: pip install -r requirements.txt
+      # 2026-11-25: imla() gerileme kapisi (daily.yml'deki ayni ad).
+      # Gerekce: canli makro analiz sayfalarinda "%50-65" yerine "50-%65",
+      # "15 %" -> "1%5" ve "vb. Portfoy" turu hatalar goruldu. Bloklayici.
+      - name: Imla regresyon testleri (editor.imla)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python -m unittest test_imla -v
       - name: Makro analizi uret
         env:
           ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
@@ -113,6 +120,13 @@ jobs:
           else
             echo "Denetlenecek rapor yok (uretim basarisiz olabilir)."
           fi
+      # 2026-11-25: yayin oncesi Turkce kalinti taramasi (daily.yml'deki ayni
+      # ad). Tolerans 2: tek tuk kalinti yayini durdurmaz, sistemik kural
+      # gerilemesi yayini BLOKLAR.
+      - name: Sayfa denetimi (Turkce kalinti)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python sayfa_denetle.py --tolerans 2
       - name: Degisiklikleri yayinla
         run: |
           git config user.name "borsa-bot"

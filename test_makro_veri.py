@@ -1427,5 +1427,44 @@ class YetimSayiTest(unittest.TestCase):
         self.assertIn("adet", sonuc["yetim_sayi"])
 
 
+class YuzdeBicimTest(unittest.TestCase):
+    """`_tyy()` yuzde bicimi TR konvansiyonunda olmali.
+
+    `_ty()` isaretli sayi uretir (`+1,25`); sonuna `%` eklenince
+    `+1,25%` gibi Ingilizce bicim cikiyordu ve yayindaki sayfalarda
+    `(+2,8% YoY)` olarak goruluyordu. `_tyy()` `%1,25` / `-%1,25` uretir.
+    """
+
+    def test_isaret_ve_yer(self):
+        self.assertEqual(bot._tyy(0.08), "%0,08")
+        self.assertEqual(bot._tyy(-0.5), "-%0,50")
+        self.assertEqual(bot._tyy(4.09), "%4,09")
+        self.assertEqual(bot._tyy(-4.09), "-%4,09")
+        self.assertEqual(bot._tyy(0), "%0,00")
+
+    def test_hane_ve_binlik(self):
+        self.assertEqual(bot._tyy1(-10.3), "-%10,3")
+        self.assertEqual(bot._tyy(1234.567), "%1.234,57")
+        self.assertEqual(bot._tyy(-1234.567), "-%1.234,57")
+
+    def test_makro_veri_ayni_bicim(self):
+        import makro_veri
+        for deger in (0.08, -0.5, 4.09, -4.09, 1234.567):
+            self.assertEqual(makro_veri._tyy(deger), bot._tyy(deger))
+
+    def test_arti_isareti_yok(self):
+        # Arti isareti dusurulur; yonu `_renk()` sinifi tasir.
+        for deger in (0.08, 4.09, 77.48):
+            self.assertNotIn("+", bot._tyy(deger))
+
+    def test_sayisal_olmayan_girdi_birimi_korur(self):
+        # Eski `{_ty(X)}%` sablonu birimi dusurmuyordu; `_tyy` de dusurmemeli.
+        self.assertEqual(bot._tyy(None), "%None")
+        self.assertEqual(bot._tyy("abc"), "%abc")
+        # Sayi gibi gorunen string sayiya cevrilir.
+        self.assertEqual(bot._tyy("0.08"), "%0,08")
+        self.assertEqual(bot._tyy("-0.5"), "-%0,50")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -389,6 +389,19 @@ def _ty(x, hane=2):
         return str(x)
 
 
+def _tyy(x, hane=2):
+    """Yuzde bicimi, TR konvansiyonu: 4.83 -> '%4,83', -4.83 -> '-%4,83'.
+
+    `_ty()` isaretli sayi uretir; sonuna `%` eklenince `+4,83%` gibi
+    Ingilizce bicim cikiyordu (bot.py `_tyy` ile ayni davranis).
+    """
+    try:
+        x = float(x)
+    except (TypeError, ValueError):
+        return "%" + str(x)
+    return ("-" if x < 0 else "") + "%" + _tsayi(abs(x), hane)
+
+
 def _tsayi(x, hane=3):
     """Isaretsiz Turkce sayi: 4.053 -> '4,053' (cari denge kayit yazimi)."""
     try:
@@ -540,26 +553,26 @@ def frame_text(snapshot):
             ad = {k.lower(): v for v, k in ULKE_KOD.items()}.get(
                 ulke.lower(), ulke.upper())
             satirlar.append(
-                f"- {ad} reel faizi: tam {_ty(f['tam'])}% "
+                f"- {ad} reel faizi: tam {_tyy(f['tam'])} "
                 f"| yaklaşık {_ty(f['yaklasik'])} yüzde puan "
                 f"(politika faizi − enflasyon)")
         usd = turetilmis.get("usd_getiri_gunluk") or {}
         if "tl_getiri" in usd or "xu100" in usd:
             parcalar = []
             if "tl_getiri" in usd:
-                parcalar.append(f"XU100 günlük TL getirisi: {_ty(usd['tl_getiri'])}%")
+                parcalar.append(f"XU100 günlük TL getirisi: {_tyy(usd['tl_getiri'])}")
             if "xu100" in usd:
                 parcalar.append("dolar bazında günlük getiri (kur düzeltmeli): "
-                                f"{_ty(usd['xu100'])}%")
+                                f"{_tyy(usd['xu100'])}")
             satirlar.append("- " + " | ".join(parcalar))
         if "tl_getiri_xu30" in usd or "xu30" in usd:
             parcalar = []
             if "tl_getiri_xu30" in usd:
                 parcalar.append(
-                    f"XU030 günlük TL getirisi: {_ty(usd['tl_getiri_xu30'])}%")
+                    f"XU030 günlük TL getirisi: {_tyy(usd['tl_getiri_xu30'])}")
             if "xu30" in usd:
                 parcalar.append("dolar bazında günlük getiri (kur düzeltmeli): "
-                                f"{_ty(usd['xu30'])}%")
+                                f"{_tyy(usd['xu30'])}")
             satirlar.append("- " + " | ".join(parcalar))
         cari = turetilmis.get("cari_denge")
         if cari:

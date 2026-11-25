@@ -47,6 +47,12 @@ import sys
 from datetime import date, datetime, timedelta, timezone
 from html.parser import HTMLParser
 
+# 2026-11-25 (architect bulgusu): yuzde bicimi kurali burada KOPYALANMISTI
+# ve editor.imla() ile 13 ortak girdinin 6'sinda farkli sonuc veriyordu.
+# Tek uygulama editor.yuzde_bicimle(); burada desen tutulmaz.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import editor  # noqa: E402
+
 ATLANAN = {"script", "style", "noscript", "svg", "head", "nav", "header",
            "footer", "aside", "button", "form", "select", "option",
            "label", "template"}
@@ -624,12 +630,16 @@ def html_md(yol, rel=None, dil="tr", kok=None, planli=None):
     govde = re.sub(r"\n{3,}", "\n\n", govde).strip()
     if not govde:
         return ""
-    # 2026-11-04: başlık kırpma + işaretli yüzde biçimi normalize
-    # ("+%4,09" ve "+4,09%" karışıklığı — çoğunluk biçimi kazanır;
-    # işaretsiz "%X,Y" biçimlerine dokunulmaz).
+    # 2026-11-04: başlık kırpma + işaretli yüzde biçimi normalize.
+    # 2026-11-25: TR konvansiyonu '%' sayının BAŞINDA ("%4,09", "%-4,09").
+    # Eski kural sondaki biçime çeviriyordu ("-4,09%") ve editor.imla() ile
+    # çelişiyordu; artık aynı yöne normalize edilir, '+' düşürülür.
+    # (?<![\d,.]) koruması: "%50-%65" aralığındaki ayırıcı tire işaret sanılmaz.
     govde = _baslik_kirp(govde)
-    govde = re.sub(r"([+\-−])%(\d[\d,]*)", r"\1\2%", govde)
-    govde = re.sub(r"%([+\-−])(\d[\d,]*)", r"\1\2%", govde)
+    # 2026-11-25: kural artik TEK yerde — editor.yuzde_bicimle(). Burada
+    # kopya desen tutulmaz; "%50-%65", "-%4,09", "+%4,09" ve "+4,09%" ayni
+    # fonksiyondan gecer ve sayfa metniyle ayni bicimi uretir.
+    govde, _n = editor.yuzde_bicimle(govde)
     # 2026-11-08 (ajan-katman denetimi): UI artıkları md'yi kirletiyor —
     # salt-arayüz satırları atılır, bağlantı metinlerinin sonundaki "→"
     # düşürülür, şerit yönlendirme cümlesi çıkarılır.

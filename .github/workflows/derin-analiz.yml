@@ -30,6 +30,13 @@ jobs:
           python-version: '3.12'
       - name: Kutuphaneleri kur
         run: pip install -r requirements.txt
+      # 2026-11-25: imla() gerileme kapisi (daily.yml'deki ayni ad).
+      # Gerekce: canli derin analiz sayfalarinda "%50-65" yerine "50-%65",
+      # "15 %" -> "1%5" ve "vb. Portfoy" turu hatalar goruldu. Bloklayici.
+      - name: Imla regresyon testleri (editor.imla)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python -m unittest test_imla -v
       # Tazelik kapisi (2026-10-09): gecikmis GitHub cron'lari ayni gunun
       # raporunu IKINCI kez uretip eziyordu (8 Ekim: derin analiz 2 kez
       # uretildi). Bugunun dosyasi varsa uretim atlanir; force=true ile
@@ -84,6 +91,13 @@ jobs:
           ZAI_MODEL: ${{ vars.ZAI_MODEL }}
         if: steps.kapisi.outputs.uretim != 'false'
         run: python -u derin_analiz.py
+      # 2026-11-25: yayin oncesi Turkce kalinti taramasi (daily.yml'deki ayni
+      # ad). Tolerans 2: tek tuk kalinti yayini durdurmaz, sistemik kural
+      # gerilemesi yayini BLOKLAR.
+      - name: Sayfa denetimi (Turkce kalinti)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python sayfa_denetle.py --tolerans 2
       - name: Degisiklikleri yayinla
         run: |
           git config user.name "borsa-bot"

@@ -197,7 +197,11 @@ def _gundem_uret(kategoriler):
             keys = {k: os.environ.get(k, "") for k in ("MISTRAL_API_KEY", "MISRAL_API_KEY", "AMD_API_KEY", "CF_API_KEY", "ALT_API_KEY", "OR_API_KEY")}
             if any(v and v not in DUMMY_ANAHTARLAR for v in keys.values()):
                 try:
-                    metin = bot.llm_call(prompt, sirasi=("MISTRAL", "AMD", "CF", "YEDEK", "OR"))
+                    metin = bot.llm_call(
+                        prompt, sirasi=("MISTRAL", "AMD", "CF", "YEDEK", "OR"),
+                        # 2026-11-25: Turkce kalite kapisi (yumusak).
+                        dogrulama=bot._yumusak_kalite_dogrulama(
+                            "hafta sonu gundem", tolerans=3))
                 except Exception as e:
                     logger.warning("LLM gundem basarisiz: %s", e)
     if not metin or metin.startswith("(LLM"):

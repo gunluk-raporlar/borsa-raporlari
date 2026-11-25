@@ -2402,6 +2402,36 @@ PROFESYONEL_YAZIM_KURALLARI = (
     "yalnizca yon degil, oneri hangi somut kosulda gecersizlesir de yaz."
 )
 
+# 2026-11-25: 24 Kasim derin analizinde yayina giren Turkce hatalar (elimmizde,
+# sinyol, teknikta, bantına, dışardaki, korunabilirlik, "Bölünme Stratejisi",
+# "magnet", "-0,13%" bicimi) uzerine eklendi. Editor katmani bunlari duzeltir ve
+# bot._turkce_kalite_eksik_mi() kapi olarak denetler; bu blok ise hatayi
+# KAYNAGINDA onler: model kurali bastan bilir.
+TURKCE_DIL_KURALLARI = (
+    "[TÜRKÇE DİL KURALLARI - İHLALİ RAPORU REDDETTİRİR]\n"
+    "  - Çıktı YALNIZCA Türkçe ve Türkçe karakterler (ç, ğ, ı, İ, ö, ş, ü) eksiksiz. "
+    "ASCII'ye düşmüş biçimler YASAK: kisa, sinyol, teknikta, bantına, dışardaki, "
+    "elimmizde, icin, gore, cunku, degil, yuzde, artis, dusus, yukselis, uzerinde, "
+    "altinda, donem, sektor, gosteriyor.\n"
+    "  - Sık hata listesi (yanlış → doğru): kisa→kısa, sinyol→sinyal, teknikta→teknikte, "
+    "bantına→bandına, dışardaki→dışarıdaki, elimmizde→elimizde, "
+    "ağırlıkta hisseler→ağırlıklı hisseler, korunabilirlik→ihtiyat, "
+    "yüzde puan→puan, aşağılamak→aşağı çekmek.\n"
+    "  - Ek uyumu: endeks kodları okunuşuna göre ek alır (XU030 'otuz' → XU030'u, "
+    "XU100 'yüz' → XU100'ün); kod ve kısaltmalardan sonra kesme işareti kullanılır.\n"
+    "  - Yüzde biçimi: işaret sayının BAŞINDA, ondalık ayırıcı virgül ('%0,54', '%-0,13'). "
+    "'0,54%', '-0,13%', '0.54' YASAK.\n"
+    "  - 'İşaret etmek' yalnızca 'bir ihtimale/riske işaret etmek' anlamında kullanılır; "
+    "'X olduğunu işaret ediyor' yerine 'X olduğunu gösteriyor' yazılır.\n"
+    "  - İngilizce terim ancak Türkçesiyle birlikte parantez içinde verilir: "
+    "'konsolidasyon (consolidation)', 'ortalamaya dönüş (mean reversion)'. "
+    "Türkçesi olan terim İngilizce bırakılmaz: magnet→hedef, futures→vadeli işlem, "
+    "rally→ralli, falling knife→düşen bıçak, stop-zarar (mental)→zihinsel stop, "
+    "allocation→dağıtım.\n"
+    "  - Cümle tam olsun: özne ve yüklem eksik bırakılmaz; 'X, Y olduğunu düşündürüyor' "
+    "gibi sarkan öge kurma. Her cümleyi yazmadan önce bir kez oku."
+)
+
 
 def makro_metni(veri=None):
     """Snapshot verisini promptlara gomulecek kilitli cerceveye cevirir.
@@ -2492,7 +2522,7 @@ def piyasa_verisi_metni(snapshot=None):
             degisim = r.get("change")
             parcalar = [f"{r['label']}: {_ts(r['value'])}{r.get('unit', '')}",
                         f"önceki: {_ts(onceki)}{r.get('unit', '')}" if onceki is not None else None,
-                        f"değişim: {_ty(degisim)}%" if degisim is not None else None,
+                        f"değişim: {_tyy(degisim)}" if degisim is not None else None,
                         f"kaynak: {r.get('source', '')} ({r.get('period', '')})"]
             satirlar.append("- " + " | ".join(p for p in parcalar if p))
         return "\n".join(satirlar) if len(satirlar) > 1 else ""
@@ -2507,17 +2537,17 @@ def piyasa_verisi_metni(snapshot=None):
     if "XU030" in pv:
         v = pv["XU030"]
         satirlar.append(f"XU030 (BIST 30): {_son_etiket} {_ts(v['son'])} | "
-                        f"onceki kapanis {_ts(v['onceki'])} | gunluk {_ty(v['deg'])}%")
+                        f"onceki kapanis {_ts(v['onceki'])} | gunluk {_tyy(v['deg'])}")
     if "XU100" in pv:
         v = pv["XU100"]
         satirlar.append(f"XU100 (BIST 100): {_son_etiket} {_ts(v['son'])} | "
-                        f"onceki kapanis {_ts(v['onceki'])} | gunluk {_ty(v['deg'])}%")
+                        f"onceki kapanis {_ts(v['onceki'])} | gunluk {_tyy(v['deg'])}")
     if "USDTRY" in pv:
         v = pv["USDTRY"]
         satirlar.append(f"USD/TRY: {_ts(v['son'])} | onceki {_ts(v['onceki'])} | "
-                        f"gunluk {_ty(v['deg'])}%")
+                        f"gunluk {_tyy(v['deg'])}")
     if "XU030USD" in pv:
-        satirlar.append(f"XU030 dolar bazinda gunluk performans: {_ty(pv['XU030USD']['deg'])}% "
+        satirlar.append(f"XU030 dolar bazinda gunluk performans: {_tyy(pv['XU030USD']['deg'])} "
                         "(TL getirisi kur hareketine gore duzeltilmis)")
     return "\n".join(satirlar)
 
@@ -2736,7 +2766,7 @@ def master_cio_agent(state: AgentState):
     sinyaller = ""
     if t_satirlar:
         sinyaller += "\n[TEKNIK TARAMA SINYALLERI - BUGUN]\n" + "\n".join(
-            f"{s['hisse']} ({HISSE_ADLARI.get(s['hisse'], s['hisse'])}, {s['sektor']}): son {s['son']} TL, gunluk {s['gunluk']:+.2f}%, 60g {s['deg60']:+.1f}%, "
+            f"{s['hisse']} ({HISSE_ADLARI.get(s['hisse'], s['hisse'])}, {s['sektor']}): son {s['son']} TL, gunluk {_tyy(s['gunluk'])}, 60g {_tyy1(s['deg60'])}, "
             f"kisa={s['kisa']} orta={s['orta']} uzun={s['uzun']}, WT={s['wt']}, kanal %{s['konum']:.0f}, "
             f"r={s['r']:.2f}, genel={s['genel']}"
             for s in t_satirlar
@@ -2776,13 +2806,15 @@ def master_cio_agent(state: AgentState):
         "- Tarih, gün adı, endeks seviyeleri ve yüzdeleri YALNIZCA sana verilen "
         "[BUGUNUN TARIHI VE PIYASA VERILERI] bloğundan AYNEN alınır; kendi hafızandan tarih, "
         "gün adı veya rakam üretme.\n"
-        "- TÜM metinde doğru Türkçe karakterler kullan (ç, ğ, ı, i, ö, ş, ü).\n"
+        "- TÜM metinde doğru Türkçe karakterler kullan (ç, ğ, ı, i, ö, ş, ü); "
+        "aşağıdaki [TÜRKÇE DİL KURALLARI] bloğuna uy.\n"
         '- Şirket adlarını YALNIZCA verilerde hisse kodunun yanında verilen resmi adla kullan '
         '(örn. YKBNK kodunun adı "Yapı Kredi"dir).\n'
         "- Makro göstergeleri yalnızca [MAKRO GEREKLER] bloğu verilmişse oradaki değerlerle an; "
         "blok yoksa makro sayısı YAZMA.\n"
         '- Tablodan sonra "(Not: ...)" biçiminde dipnot/uyarı cümlesi EKLEME.\n\n'
         + VERI_DAYANAK_ENVANTERI + "\n\n" + PROFESYONEL_YAZIM_KURALLARI
+        + "\n\n" + TURKCE_DIL_KURALLARI
     )
 
     iskelet_prompt = (
@@ -2979,10 +3011,36 @@ def master_cio_agent(state: AgentState):
         # gecilir — yumusak kuralin "4+ denemede tolerans"i icin yeterli
         # deneme butcesi garanti olsun (architect S5).
         _portfoy_deneme = {"n": 0}
-        metin = llm_call(
-            bolum_prompt, max_deneme=6,
-            dogrulama=(_portfoy_kontrol
-                       if "| Hisse |" in bolum.get("talimat", "") else None))
+        _bolum_deneme = {"n": 0}
+        _tablo_bolumu = "| Hisse |" in bolum.get("talimat", "")
+
+        def _bolum_dogrula(icerik):
+            """Bolum denemesi: portfoy tablosu + Turkce kalite kapisi.
+
+            2026-11-25: gunluk rapor yolu Turkce kalite kapisindan gecmiyordu
+            (derin analiz ve makro geciyordu); "elimmizde", "sinyol" gibi
+            hatalar bu yuzden gunluk sayfalara ulasabiliyordu. Kalite kapisi
+            YUMUSAK: 4. denemeden sonra hata olsa da bolum kabul edilir —
+            eksik bolum, kucuk bir imla hatasindan daha agir bir kayiptir.
+            """
+            _bolum_deneme["n"] += 1
+            if _tablo_bolumu and not _portfoy_kontrol(icerik):
+                return False
+            kalite = _turkce_kalite_eksik_mi(icerik)
+            if not kalite:
+                return True
+            if _bolum_deneme["n"] >= 4:
+                logger.warning(
+                    "[Bas Analist] %d. bolum %d. denemede hala %s; "
+                    "uyariyla kabul ediliyor.", bolum["no"],
+                    _bolum_deneme["n"], kalite)
+                return True
+            logger.warning(
+                "[Bas Analist] %d. bolum %s; siradaki model denenecek.",
+                bolum["no"], kalite)
+            return False
+
+        metin = llm_call(bolum_prompt, max_deneme=6, dogrulama=_bolum_dogrula)
         if not metin or metin.startswith("(LLM hizmetine ulaşılamadı"):
             logger.warning("[Bas Analist] %d. bolum uretilemedi; atlandi.", bolum["no"])
             basarisiz_bolumler.append(bolum["baslik"])
@@ -3420,6 +3478,57 @@ def _derin_eksik_mi(metin: str):
     return _yapisal_eksik_mi(metin, 6, True)
 
 
+def _turkce_kalite_eksik_mi(metin: str, esik=None):
+    """Editor duzeltmesinden SONRA kalan Turkce hatalarini denetler.
+
+    2026-11-24 derin analizinde "elimmizde", "sinyol", "teknikta", "bantına",
+    "dışardaki", "korunabilirlik" gibi hatalar yayina girdi. editor.imla()
+    bunlari artik duzeltiyor; bu kapi ise DUZELTMEDEN SONRA kalanlari arar.
+    Esik asilirsa yanit reddedilir ve siradaki model denenir — dil karismasi
+    denetimiyle (_dil_karismis) ayni davranis. Amac: yeni bir modelin yeni
+    hatasi sayfaya ulasmasin.
+    """
+    try:
+        # 2026-11-25: kapi "imla() uygulandiktan sonra ne kaliyor?" sorusunu
+        # sorar. Boylece imla()'nin zaten duzeltecegi bir hata yuzunden model
+        # bosuna reddedilmez; kapi yalnizca DUZELTILEMEYEN kalintiyi yakalar.
+        bulgular = editor.kalite_tara(editor.imla(metin)[0])
+    except Exception:
+        logger.exception("[Turkce] kalite taramasi hata verdi; denetim atlandi.")
+        return None
+    if len(bulgular) >= (editor.KALITE_ESIK if esik is None else esik):
+        ozet = "; ".join(sorted({b[1] for b in bulgular}))
+        return f"turkce kalite ({len(bulgular)} bulgu): {ozet[:160]}"
+    return None
+
+
+def _yumusak_kalite_dogrulama(etiket="", tolerans=3):
+    """llm_call dogrulama callback'i: Turkce kalite kapisi, YUMUSAK.
+
+    2026-11-25: haftasonu ve hafta sonu egitimi yollari bu kapidan hic
+    gecmiyordu; yalniz editor.imla()'nin dogruluguna bagliydilar.
+    Ilk `tolerans` denemede kalite hatasi varsa reddeder (siradaki model
+    denenir); sonrasinda uyariyla kabul eder — icerigin tamamen kaybolmasi
+    kucuk bir imla hatasindan daha agir bir kayiptir.
+    """
+    sayac = {"n": 0}
+
+    def _kontrol(icerik):
+        sayac["n"] += 1
+        kalite = _turkce_kalite_eksik_mi(icerik, esik=1)
+        if not kalite:
+            return True
+        if sayac["n"] >= tolerans:
+            logger.warning("[Turkce] %s %d. denemede hala %s; uyariyla kabul ediliyor.",
+                           etiket or "yanit", sayac["n"], kalite)
+            return True
+        logger.warning("[Turkce] %s %s; siradaki model denenecek.",
+                       etiket or "yanit", kalite)
+        return False
+
+    return _kontrol
+
+
 def _makro_eksik_mi(metin: str):
     """Makro analiz promptu: 10 bolum, kapanis tablosu yok
     (son bolum "## 10. Sonuc ve Degerlendirme").
@@ -3460,7 +3569,7 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
                     timeout=600.0, max_retries=0)
 
     teknik_ozet = "\n".join(
-        f"{s['hisse']} ({HISSE_ADLARI.get(s['hisse'], s['hisse'])}): son {s['son']} TL, gunluk {s['gunluk']:+.2f}%, 60g {s['deg60']:+.1f}%, "
+        f"{s['hisse']} ({HISSE_ADLARI.get(s['hisse'], s['hisse'])}): son {s['son']} TL, gunluk {_tyy(s['gunluk'])}, 60g {_tyy1(s['deg60'])}, "
         f"kisa={s['kisa']} orta={s['orta']} uzun={s['uzun']}, WT={s['wt']}, "
         f"kanal %{s['konum']:.0f}, r={s['r']:.2f}, genel={s['genel']} ({s['sektor']})"
         for s in teknik_satirlar
@@ -3495,7 +3604,7 @@ def derin_analiz_yap(rapor_state, teknik_satirlar, borsapy_satirlar):
     else:
         tarih_kurali = ('Metinde köşeli parantezli [...] yer tutucu kullanma; rapor doğrudan "## 1." başlığıyla başlasın. Kimlik satırı EKLEME: "Hedge-Fund", "Direktör", "Portföy Yöneticisi", "Analist:", "Yayıncı:", "Hazırlayan:", "Tarih:" gibi kişi/kurum/unvan ifadeleri ve tarih ya da haftanın gün adı raporda GEÇMEYECEK (tarih-gün eşleştirmesinde sık hata yapıyorsun).')
 
-    prompt = f"""Sen Türkiye piyasalarında uzmanlaşmış bağımsız bir finansal analist yapay zekâsısın (gerçek bir kişi veya kurum değilsin; kendini öyle tanıtma). Aşağıdaki BIST 30 verilerini kullanarak profesyonel okuyucuya hitap eden, DERİNLEMESİNE ve UZUN (en az 1200 kelime) bir günlük analiz raporu yaz. Rapor Türkçe olacak ve TÜM metinde doğru Türkçe karakterler (ç, ğ, ı, ö, ş, ü) kullanılacak; "sinyal" gibi kelimeler yanlış yazılmayacak.
+    prompt = f"""Sen Türkiye piyasalarında uzmanlaşmış bağımsız bir finansal analist yapay zekâsısın (gerçek bir kişi veya kurum değilsin; kendini öyle tanıtma). Aşağıdaki BIST 30 verilerini kullanarak profesyonel okuyucuya hitap eden, DERİNLEMESİNE ve UZUN (en az 1200 kelime) bir günlük analiz raporu yaz. Rapor Türkçe olacak; aşağıdaki [TÜRKÇE DİL KURALLARI] bloğuna harfiyen uy.
 
 Yanıtını şu yapıda oluştur (başlıklar aynen bu şekilde, "## " ile):
 
@@ -3526,6 +3635,8 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
 {VERI_DAYANAK_ENVANTERI}
 
 {PROFESYONEL_YAZIM_KURALLARI}
+
+{TURKCE_DIL_KURALLARI}
 
 ### VERİLER
 
@@ -3567,15 +3678,20 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
                     logger.warning("[Derin Analiz] AMD yaniti yarim (%s); Z.ai yedegine geciliyor.", eksik)
                 else:
                     icerik = rapor_son_islem(icerik)
-                    dogrulanmis = _metin_dogrula_ve_kaydet(
-                        icerik, " / derin analiz", snapshot=snapshot,
-                        uydurma_esigi=UYDURMA_ESIGI,
-                        sinyaller=_bugunun_sinyalleri())
-                    if dogrulanmis is None:
-                        son_hata = "uydurma yogun yanit (AMD)"
-                        logger.warning("[Derin Analiz] AMD yaniti cok sayida hatali sayi iceriyordu; reddedilip Z.ai yedegine geciliyor.")
+                    kalite = _turkce_kalite_eksik_mi(icerik)
+                    if kalite:
+                        son_hata = f"{kalite} (AMD)"
+                        logger.warning("[Derin Analiz] AMD yaniti %s; Z.ai yedegine geciliyor.", kalite)
                     else:
-                        return dogrulanmis
+                        dogrulanmis = _metin_dogrula_ve_kaydet(
+                            icerik, " / derin analiz", snapshot=snapshot,
+                            uydurma_esigi=UYDURMA_ESIGI,
+                            sinyaller=_bugunun_sinyalleri())
+                        if dogrulanmis is None:
+                            son_hata = "uydurma yogun yanit (AMD)"
+                            logger.warning("[Derin Analiz] AMD yaniti cok sayida hatali sayi iceriyordu; reddedilip Z.ai yedegine geciliyor.")
+                        else:
+                            return dogrulanmis
         else:
             son_hata = "bos yanit (AMD)"
     except Exception as e:
@@ -3624,6 +3740,12 @@ Tabloda SADECE teknik ve osilatör verilerine göre AL/GÜÇLÜ AL sinyali veren
                     time.sleep(3)
                     continue
                 icerik = rapor_son_islem(icerik)
+                kalite = _turkce_kalite_eksik_mi(icerik)
+                if kalite:
+                    son_hata = f"{kalite} ({mdl})"
+                    logger.warning("[Derin Analiz] %s yaniti %s; rapor yayinlanmayip siradaki model deneniyor.", mdl, kalite)
+                    time.sleep(3)
+                    continue
                 dogrulanmis = _metin_dogrula_ve_kaydet(
                     icerik, " / derin analiz", snapshot=snapshot,
                     uydurma_esigi=UYDURMA_ESIGI)
@@ -3794,14 +3916,19 @@ kelimeyi aşmasın (aşacaksa alt başlığa böl).
                         logger.warning("[Makro Analiz] AMD yaniti yarim (%s); GLM yedegine geciliyor.", eksik)
                     else:
                         icerik = rapor_son_islem(icerik)
-                        dogrulanmis = _metin_dogrula_ve_kaydet(
-                            icerik, " / makro analiz", snapshot=snapshot,
-                            uydurma_esigi=UYDURMA_ESIGI, en_iyi=en_iyi)
-                        if dogrulanmis is None:
-                            son_hata = "uydurma yogun yanit (AMD)"
-                            logger.warning("[Makro Analiz] AMD yaniti cok sayida hatali sayi iceriyordu; reddedilip GLM yedegine geciliyor.")
+                        kalite = _turkce_kalite_eksik_mi(icerik)
+                        if kalite:
+                            son_hata = f"{kalite} (AMD)"
+                            logger.warning("[Makro Analiz] AMD yaniti %s; GLM yedegine geciliyor.", kalite)
                         else:
-                            return dogrulanmis
+                            dogrulanmis = _metin_dogrula_ve_kaydet(
+                                icerik, " / makro analiz", snapshot=snapshot,
+                                uydurma_esigi=UYDURMA_ESIGI, en_iyi=en_iyi)
+                            if dogrulanmis is None:
+                                son_hata = "uydurma yogun yanit (AMD)"
+                                logger.warning("[Makro Analiz] AMD yaniti cok sayida hatali sayi iceriyordu; reddedilip GLM yedegine geciliyor.")
+                            else:
+                                return dogrulanmis
             else:
                 son_hata = "bos yanit (AMD)"
         except Exception as e:
@@ -3850,6 +3977,12 @@ kelimeyi aşmasın (aşacaksa alt başlığa böl).
                     time.sleep(3)
                     continue
                 icerik = rapor_son_islem(icerik)
+                kalite = _turkce_kalite_eksik_mi(icerik)
+                if kalite:
+                    son_hata = f"{kalite} ({mdl})"
+                    logger.warning("[Makro Analiz] %s yaniti %s; siradaki model deneniyor.", mdl, kalite)
+                    time.sleep(3)
+                    continue
                 dogrulanmis = _metin_dogrula_ve_kaydet(
                     icerik, " / makro analiz", snapshot=snapshot,
                     uydurma_esigi=UYDURMA_ESIGI, en_iyi=en_iyi)
@@ -3974,6 +4107,25 @@ def _ty(x, hane=2):
         return _tr_bicim(f"{x:+,.{hane}f}")
     except Exception:
         return str(x)
+
+
+def _tyy(x, hane=2):
+    """Yuzde bicimi, TR konvansiyonu: 1.25 -> %1,25 | -1.25 -> -%1,25
+
+    `%` isaretin sagina, sayinin soluna yazilir; arti isareti dusurulur
+    (yonu `_renk()` sinifi tasir). `_ty()` isaretli sayi uretir ve `%`
+    sonuna eklendiginde `+1,25%` gibi Ingilizce bicim cikiyordu.
+    """
+    try:
+        x = float(x)
+    except (TypeError, ValueError):
+        # Birim yine de yazilir: eski `{_ty(X)}%` sablonu da dusurmuyordu.
+        return "%" + str(x)
+    return ("-" if x < 0 else "") + "%" + _tr_bicim(f"{abs(x):,.{hane}f}")
+
+
+def _tyy1(x):
+    return _tyy(x, 1)
 
 
 def _ty1(x):
@@ -5550,7 +5702,7 @@ def _pano_html(satirlar, kok=""):
         endeks_hucreleri += (
             f'<div class="pano-hucre"><div class="pano-etiket">XU030 Endeks</div>'
             f'<div class="pano-deger">{_ts(v["son"])} '
-            f'<span class="{_renk(v["deg"])}">{_ty(v["deg"])}%</span></div></div>'
+            f'<span class="{_renk(v["deg"])}">{_tyy(v["deg"])}</span></div></div>'
             f'<div class="pano-hucre"><div class="pano-etiket">XU030 Önceki Kapanış</div>'
             f'<div class="pano-deger">{_ts(v["onceki"])}</div></div>'
         )
@@ -5559,17 +5711,17 @@ def _pano_html(satirlar, kok=""):
         endeks_hucreleri += (
             f'<div class="pano-hucre"><div class="pano-etiket">XU100</div>'
             f'<div class="pano-deger">{_ts(v["son"])} '
-            f'<span class="{_renk(v["deg"])}">{_ty(v["deg"])}%</span></div></div>'
+            f'<span class="{_renk(v["deg"])}">{_tyy(v["deg"])}</span></div></div>'
         )
     if pv and "XU030USD" in pv:
         d = pv["XU030USD"]["deg"]
         endeks_hucreleri += (
             f'<div class="pano-hucre"><div class="pano-etiket">XU030 Dolar Bazında</div>'
-            f'<div class="pano-deger {_renk(d)}">{_ty(d)}%</div></div>'
+            f'<div class="pano-deger {_renk(d)}">{_tyy(d)}</div></div>'
         )
 
     def _fmt(v):
-        return f"{_ty(v)}%".replace(".", ",")
+        return _tyy(v)
 
     sektor_ort = {}
     for s in satirlar:
@@ -5588,7 +5740,7 @@ def _pano_html(satirlar, kok=""):
         f"<td>{_hisse_linki(s['hisse'], kok)}</td>"
         f"<td>{_ts(s.get('son', 0))}</td>"
         f"<td class='{_renk(s.get('gunluk', 0))}'><strong>{_fmt(s.get('gunluk', 0) or 0)}</strong></td>"
-        f"<td class='{_renk(s.get('deg60', 0))}'>{_ty1((s.get('deg60', 0) or 0))}%</td>"
+        f"<td class='{_renk(s.get('deg60', 0))}'>{_tyy1((s.get('deg60', 0) or 0))}</td>"
         f"<td>%{_ts0((s.get('konum', 0) or 0))}</td>"
         f"<td class='{_sinyal(s.get('genel', ''))}'><strong>{s.get('genel', '')}</strong></td></tr>"
         for i, s in enumerate(sirali, 1))
@@ -5655,7 +5807,7 @@ def gunun_verileri_tablosu_html(teknik_satirlar=None):
         if deg is None:
             return ""
         sinif = "pos" if deg > 0 else ("neg" if deg < 0 else "")
-        deger = f"{_ty(deg)}%"
+        deger = f"{_tyy(deg)}"
         return f"<span class='{sinif}'>{deger}</span>" if sinif else deger
 
     pv = piyasa_verisi()
@@ -5831,7 +5983,7 @@ def _ozet_html(teknik_satirlar, html_icerik):
 
     def _f(v):
         v = v or 0
-        return ("+" if v >= 0 else "-") + "%" + f"{abs(v):.2f}".replace(".", ",")
+        return _tyy(v)
 
     yuk = sum(1 for s in veri if (s.get("gunluk") or 0) > 0)
     dus = sum(1 for s in veri if (s.get("gunluk") or 0) < 0)
@@ -6101,7 +6253,7 @@ def _portfoy_satirlari(p, limit=None, en_iyi=False):
         f"<tr><td><a href=\"hisse/{h}\"><strong>{h}</strong></a></td><td>{_ts(p['shares'][h])}</td>"
         f"<td>{_ts(p['initial_prices'].get(h, 0))} TL</td>"
         f"<td>{_ts(son['prices'].get(h, p['initial_prices'].get(h, 0)))} TL</td>"
-        f"<td class='{_renk(fark)}'>{_ty(fark)}%</td></tr>"
+        f"<td class='{_renk(fark)}'>{_tyy(fark)}</td></tr>"
         for h, fark in satirlar
     )
 
@@ -6163,11 +6315,11 @@ def _portfoy_istatistikleri(p):
     if risk:
         risk_html = (
             f'<div class="stat"><div class="label">Maksimum Düşüş</div>'
-            f'<div class="value neg">{_ty(risk["dd"])}%</div></div>'
+            f'<div class="value neg">{_tyy(risk["dd"])}</div></div>'
             f'<div class="stat"><div class="label">Volatilite (yıllık)</div>'
             f'<div class="value">{_ts1(risk["vol"])}%</div></div>'
             f'<div class="stat"><div class="label">Yıllıklandırılmış Getiri</div>'
-            f'<div class="value {_renk(risk["yillik"])}">{_ty(risk["yillik"])}%</div>'
+            f'<div class="value {_renk(risk["yillik"])}">{_tyy(risk["yillik"])}</div>'
             f'<div style="font-size:11px;color:var(--muted)">kısa dönem — ihtiyatlı okunmalı</div></div>'
             f'<div class="stat"><div class="label">Kazanan / Kaybeden</div>'
             f'<div class="value">{risk["kazanan"]} / {risk["kaybeden"]}</div>'
@@ -6179,7 +6331,7 @@ def _portfoy_istatistikleri(p):
              "USD": "Dolar", "DEPOSIT": "Mevduat (faiz)"}
     if bm:
         satir = [f"<tr><td><strong>Bu portföy</strong></td>"
-                 f"<td class='{_renk(son['pct'])}'>{_ty(son['pct'])}%</td><td>—</td></tr>"]
+                 f"<td class='{_renk(son['pct'])}'>{_tyy(son['pct'])}</td><td>—</td></tr>"]
         for anahtar in ("XU030", "XU100", "GOLD", "USD", "DEPOSIT"):
             deger = bm.get(anahtar)
             if not deger:
@@ -6188,7 +6340,7 @@ def _portfoy_istatistikleri(p):
             fark = son["pct"] - yuzde
             satir.append(
                 f"<tr><td>{adlar.get(anahtar, anahtar)} (aynı dönem)</td>"
-                f"<td class='{_renk(yuzde)}'>{_ty(yuzde)}%</td>"
+                f"<td class='{_renk(yuzde)}'>{_tyy(yuzde)}</td>"
                 f"<td class='{_renk(fark)}'>{_ty(fark)} puan</td></tr>")
         kiyas = ("<h3 class=\"section-title\">Piyasa Karşılaştırması"
                  "<span style=\"font-size:12px;color:var(--muted);font-weight:400\">"
@@ -6199,8 +6351,8 @@ def _portfoy_istatistikleri(p):
     return f"""
 <div class="stats">
 <div class="stat"><div class="label">Güncel Değer</div><div class="value">{_ts0(son['total'])} TL</div></div>
-<div class="stat"><div class="label">Günlük Değişim</div><div class="value {_renk(son['daily_pct'])}">{_ty(son['daily_pct'])}%</div></div>
-<div class="stat"><div class="label">Toplam Getiri</div><div class="value {_renk(son['pct'])}">{_ty(son['pct'])}%</div></div>
+<div class="stat"><div class="label">Günlük Değişim</div><div class="value {_renk(son['daily_pct'])}">{_tyy(son['daily_pct'])}</div></div>
+<div class="stat"><div class="label">Toplam Getiri</div><div class="value {_renk(son['pct'])}">{_tyy(son['pct'])}</div></div>
 <div class="stat"><div class="label">Başlangıç</div><div class="value" style="font-size:16px">{p['start_date']}</div></div>
 {temettu_html}
 {risk_html}
@@ -6643,8 +6795,8 @@ def build_portfolio_html(p):
     grafik_html = f'<div class="card" style="margin-bottom:22px">{grafik}</div>' if grafik else ""
     gecmis = "".join(
         f"<tr><td>{g['date']}</td><td>{_ts(g['total'])} TL</td>"
-        f"<td class='{_renk(g['pct'])}'>{_ty(g['pct'])}%</td>"
-        f"<td class='{_renk(g['daily_pct'])}'>{_ty(g['daily_pct'])}%</td></tr>"
+        f"<td class='{_renk(g['pct'])}'>{_tyy(g['pct'])}</td>"
+        f"<td class='{_renk(g['daily_pct'])}'>{_tyy(g['daily_pct'])}</td></tr>"
         for g in reversed(p["history"])
     )
     icerik = f"""
@@ -7095,7 +7247,7 @@ def _sektor_isi_haritasi(satirlar):
         f"<div class='sektor-kutu' data-sektor-ad=\"{html.escape(ad, quote=True)}\" "
         f"style='background:{_isi_renk(d)}; border-radius:10px; padding:14px 10px; text-align:center; color:#0f172a;'>"
         f"<div style='font-weight:700; font-size:13px;'>{ad}</div>"
-        f"<div class='sektor-yuzde' style='font-size:17px; font-weight:800; margin-top:4px;'>{d:+.2f}%</div>"
+        f"<div class='sektor-yuzde' style='font-size:17px; font-weight:800; margin-top:4px;'>{_tyy(d)}</div>"
         f"<div style='font-size:11px; opacity:.75;'>{n} hisse</div></div>"
         for ad, d, n in veriler
     )
@@ -7412,7 +7564,7 @@ def build_teknik_html(satirlar, date_str):
         f"data-sektor=\"{html.escape(s.get('sektor', 'Diğer'), quote=True)}\" "
         f"style=\"background:rgba({_isi_renk(s.get('gunluk', 0))}); text-decoration:none; cursor:pointer\" "
         f"title=\"{s['hisse']} detay sayfası\">"
-        f"<b>{s['hisse']}</b><span>{_ty(s.get('gunluk', 0))}%</span></a>"
+        f"<b>{s['hisse']}</b><span>{_tyy(s.get('gunluk', 0))}</span></a>"
         for s in sirali
     )
     isi_bolumu = f"""
@@ -7424,8 +7576,8 @@ def build_teknik_html(satirlar, date_str):
     satir_html = "".join(
         f"<tr style='cursor:pointer' data-kod=\"{s['hisse']}\" onclick=\"tvAc('{s['hisse']}')\"><td>{_hisse_linki(s['hisse'], stil='color:inherit; text-decoration:none; font-weight:700')}</td>"
         f"<td class='canli-son'>{_ts(s['son'])} TL</td>"
-        f"<td class='canli-gun {_renk(s['gunluk'])}'>{_ty(s['gunluk'])}%</td>"
-        f"<td class='canli-deg60 {_renk(s['deg60'])}'>{_ty1(s['deg60'])}%</td>"
+        f"<td class='canli-gun {_renk(s['gunluk'])}'>{_tyy(s['gunluk'])}</td>"
+        f"<td class='canli-deg60 {_renk(s['deg60'])}'>{_tyy1(s['deg60'])}</td>"
         f"{_teknik_sinyal_hucre(s['kisa'], 'canli-kisa')}{_teknik_sinyal_hucre(s['orta'], 'canli-orta')}{_teknik_sinyal_hucre(s['uzun'], 'canli-uzun')}"
         f"{_teknik_sinyal_hucre(s['wt'], 'canli-wt')}"
         f"<td class='canli-konum'>{_ts0(s['konum'])}%</td><td class='canli-r'>{_ts(s['r'])}</td>"
@@ -7798,7 +7950,7 @@ def _bist30_sepeti_sparkline(gun=30):
         sinif = "pos" if deg >= 0 else "neg"
         # 2026-11-04: .md aynasinda sepet grafigi karti atlanir (sepet-grafik);
         # yuzde bicimi turkce sablonla ayni: isaret + % + virgullu sayi.
-        deg_str = ("+" if deg >= 0 else "-") + "%" + f"{abs(deg):.2f}".replace(".", ",")
+        deg_str = _tyy(deg)
         return f"""
 <div class="card sepet-grafik" style="margin:0 0 18px; padding:14px 18px">
 <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
@@ -8496,7 +8648,7 @@ def _interaktif_fiyat_grafigi(kod, seri):
     return """<div class="card" style="margin-bottom:16px">
 <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px">
 <strong style="font-size:14px">📊 %s fiyat grafiği</strong>
-<span style="color:var(--muted); font-size:12px"><span id="grafik-gun">son %d gün</span> &bull; kapanış fiyatları &bull; dönem: <span id="grafik-donem" class="%s" style="font-weight:700">%s%%</span></span>
+<span style="color:var(--muted); font-size:12px"><span id="grafik-gun">son %d gün</span> &bull; kapanış fiyatları &bull; dönem: <span id="grafik-donem" class="%s" style="font-weight:700">%s</span></span>
 </div>
 <div class="grafik-aralik" id="grafik-aralik"></div>
 <div class="grafik-kutu" id="grafik-kutu">
@@ -8508,7 +8660,7 @@ def _interaktif_fiyat_grafigi(kod, seri):
 <script src="grafik.js?v=2" defer></script>
 <script src="fiyat-canli.js?v=5" defer></script>
 <div style="color:var(--muted); font-size:12px">%s tarihinden bugüne %s kapanış fiyatları (TL). Referanslar: dönem başı kapanış (noktalı), SMA20/SMA50 ortalamaları, en düşük/en yüksek/son kapanış.</div>
-</div>""" % (kod, len(seri), _renk(deg), _ty(deg), svg, lejant, veri,
+</div>""" % (kod, len(seri), _renk(deg), _tyy(deg), svg, lejant, veri,
              tarihler[0], kod)
 
 
@@ -8570,7 +8722,7 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=N
         ]
     )
     degisim_html = (
-        f"<span class='{_renk(degisim)}' style='font-weight:700'>{degisim:+.1f}% ({seri[0][0]}'ten beri)</span>"
+        f"<span class='{_renk(degisim)}' style='font-weight:700'>{_tyy1(degisim)} ({seri[0][0]}'ten beri)</span>"
         if degisim is not None else ""
     )
     # 2026-11-08 (ajan tazeliği): hero'daki fiyat tarihsizdi — ajan (ve Jina gibi
@@ -8589,7 +8741,7 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=N
     # ayrıştırması kolay. ld+json blokları i18n tarafından çevrilmeden taşınır.
     _profil_ad = _kisa_unvan((_sirket_profilleri().get(kod) or {}).get("unvan") or kod)
     _alinti = (f"<p style='margin:10px 0 0; font-size:13.5px'>{kod} ({_profil_ad}) fiyatı "
-               f"<strong>{_ts(satir.get('son', 0))} TL</strong> ({_ty(satir.get('gunluk', 0))}% günlük) — "
+               f"<strong>{_ts(satir.get('son', 0))} TL</strong> ({_tyy(satir.get('gunluk', 0))} günlük) — "
                f"{_uretim} TSİ üretimi. Bu değer sayfa üretim anındandır; gün içi en taze fiyat "
                f"üstteki şeritte, <a href='/api/fiyatlar'>/api/fiyatlar</a> ve "
                f"<a href='/ticker.json'>ticker.json</a> uçlarındadır.</p>")
@@ -8615,7 +8767,7 @@ def build_hisse_html(kod, satir, haberler, sirket_haberleri=None, kap_uyarlari=N
 <h1>{kod} <span style="font-size:16px; color:var(--muted)">{satir.get('sektor', '')}</span></h1>
 <div class="meta"><span class="badge">{satir.get('genel', '—')}</span>
 <span><strong id="hf-fiyat"><span id="hf-fiyat-sayi">{_ts(satir.get('son', 0))}</span> TL</strong></span>
-<span class="{_renk(satir.get('gunluk', 0))}" id="hf-gunluk"><span id="hf-gunluk-sayi">{_ty(satir.get('gunluk', 0))}%</span> (günlük)</span>
+<span class="{_renk(satir.get('gunluk', 0))}" id="hf-gunluk"><span id="hf-gunluk-sayi">{_tyy(satir.get('gunluk', 0))}</span> (günlük)</span>
 {degisim_html}
 {_veri_etiketi}</div>
 </div>
@@ -8953,7 +9105,7 @@ def hisse_sayfalari_yaz(teknik_satirlar):
     kartlar = "".join(
         f'<a class="rcard" data-kod="{s["hisse"]}" href="{s["hisse"]}.html"><span class="date">{s["hisse"]}</span>'
         f'<span class="sub">{s.get("genel", "")} &bull; {_ts(s.get("son", 0))} TL</span>'
-        f'<span class="sub {_renk(s.get("gunluk", 0))}">{_ty(s.get("gunluk", 0))}%</span></a>'
+        f'<span class="sub {_renk(s.get("gunluk", 0))}">{_tyy(s.get("gunluk", 0))}</span></a>'
         for s in teknik_satirlar
     )
     icerik = f"""
@@ -9102,7 +9254,7 @@ def sinyal_karnesi_yaz(teknik_satirlar):
             alpha_goster, alpha_sinif = _ty(alpha_ort), _renk(alpha_ort)
         kiyas_paragraf = (
             f'<p style="margin:6px 0 0">Aynı sinyal günlerinde eşit ağırlıklı BIST 30 sepeti ortalama '
-            f'<strong class="{_renk(evren_ort)}">{_ty(evren_ort)}%</strong> hareket etti; sinyallerin fazlası '
+            f'<strong class="{_renk(evren_ort)}">{_tyy(evren_ort)}</strong> hareket etti; sinyallerin fazlası '
             f'(alpha) <strong class="{alpha_sinif}">{alpha_goster} puan</strong> — '
             f'{len(evrenli)} sinyalin <strong>{yenen}</strong> tanesi evreni yendi.</p>'
         )
@@ -9120,7 +9272,7 @@ def sinyal_karnesi_yaz(teknik_satirlar):
             f"<div style='margin:8px 0'>"
             f"<div style='display:flex; justify-content:space-between; align-items:baseline; gap:8px'>"
             f"<strong>{k['hisse']}</strong>"
-            f"<span class='{_renk(k['getiri'])}' style='font-weight:700; white-space:nowrap'>{k['getiri']:+.2f}%</span></div>"
+            f"<span class='{_renk(k['getiri'])}' style='font-weight:700; white-space:nowrap'>{_tyy(k['getiri'])}</span></div>"
             f"<div style='color:var(--muted); font-size:12px'>Sinyal: {_tr_tarih(k['tarih'])}</div></div>"
             for k in liste
         )
@@ -9131,12 +9283,12 @@ def sinyal_karnesi_yaz(teknik_satirlar):
         if abs(v) < 0.005:  # sifir: isaretsiz ve notr goster
             return '<td style="color:var(--muted)">0,00%</td>'
         stil = " style='font-weight:700'" if kalin else ""
-        return f"<td class='{_renk(v)}'{stil}>{v:+.2f}%</td>"
+        return f"<td class='{_renk(v)}'{stil}>{_tyy(v)}</td>"
 
     tablo = "".join(
         f"<tr><td>{k['tarih']}</td><td><strong>{k['hisse']}</strong></td>"
         f"<td>{_ts(k['giris'])} TL</td><td>{_ts(k['cikis'])} TL</td><td>{k['cikis_t']}</td>"
-        f"<td class='{_renk(k['getiri'])}' style='font-weight:700'>{k['getiri']:+.2f}%</td>"
+        f"<td class='{_renk(k['getiri'])}' style='font-weight:700'>{_tyy(k['getiri'])}</td>"
         f"{_kiyas_hucre(k['evren'])}{_kiyas_hucre(k['fark'], kalin=True)}</tr>"
         for k in sorted(kayitlar, key=lambda k: k["tarih"], reverse=True)[:15]
     )
@@ -9147,10 +9299,10 @@ def sinyal_karnesi_yaz(teknik_satirlar):
 <h1>Sinyal Karnesi</h1>
 <p>Teknik taramanın verdiği <strong>AL</strong> sinyallerini fiyata karşı test ediyoruz: sinyal gününü izleyen ilk
 işlem gününün kapanışından alıp <strong>5 işlem günü sonra</strong> kapanışta satmış olsaydık sonuç —
-<strong>N={n_kayit}</strong> sinyal, ortalama <strong class="{_renk(ort)}">{_ty(ort)}%</strong> (brüt),
-medyan <strong class="{_renk(medyan)}">{_ty(medyan)}%</strong>, isabet oranı <strong>{_ts0(isabet)}%</strong>,
+<strong>N={n_kayit}</strong> sinyal, ortalama <strong class="{_renk(ort)}">{_tyy(ort)}</strong> (brüt),
+medyan <strong class="{_renk(medyan)}">{_tyy(medyan)}</strong>, isabet oranı <strong>{_ts0(isabet)}%</strong>,
 profit factor <strong>{pf_goster}</strong>.
-Komisyon+BSMV masrafı (~%0,10) sonrası: ortalama <strong class="{_renk(net_ort)}">{_ty(net_ort)}%</strong>,
+Komisyon+BSMV masrafı (~%0,10) sonrası: ortalama <strong class="{_renk(net_ort)}">{_tyy(net_ort)}</strong>,
 isabet <strong>{_ts0(net_isabet)}%</strong> (varsayımsal masraf senaryosu; gerçek oran aracı kuruma göre değişir).
 (Geçmiş performans gelecek getirinin garantisi değildir; örneklem küçük olduğundan oranlar oynaktır.)</p>
 {kiyas_paragraf}

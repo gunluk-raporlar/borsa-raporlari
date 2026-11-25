@@ -46,6 +46,33 @@ BANNED = [
     (r"finansal kural dönüşü", "çeviri hatası (fiscal rules reform)"),
     (r"%\s?\d+\+\s?bp", "'%100+ bp' yerine '100+ bp'"),
     (r"[Ee]ğim eğrisi", "'getiri eğrisi' denmeli"),
+    # 2026-11-25: 24 Kasim derin analizinde yayina giren Turkce hatalar.
+    # editor.py ayni kaliplari duzeltir; burada BAGIMSIZ denetim yapilir ki
+    # duzeltme katmani atlansa bile sayfa sessizce gecmesin.
+    (r"\bkisa\b", "yazım: 'kısa'"),
+    (r"\bsinyol\b", "yazım: 'sinyal'"),
+    (r"\belimmizde\b", "yazım: 'elimizde'"),
+    (r"\bteknikta\b", "yazım: 'teknikte'"),
+    (r"\bbantına\b", "yazım: 'bandına'"),
+    (r"\bdışardaki\b", "yazım: 'dışarıdaki'"),
+    (r"\bağırlıkta\s+hisse", "yazım: 'ağırlıklı hisse'"),
+    (r"\bkorunabilirlik\b", "uydurma sözcük: 'ihtiyat'"),
+    (r"\başağıladı", "anlam hatası: 'aşağı çekti'"),
+    (r"\byüzde puan\b", "yazım: 'puan'"),
+    (r"\bXU030'ü\b", "ek uyumu: \"XU030'u\""),
+    (r"\bvb\.\.", "noktalama: 'vb.'"),
+    (r"\d\s*%(?![-+±]?\d)", "yüzde biçimi: '%' sayının başında"),
+    (r"\d%\d", "yüzde biçimi: kaymış '%'"),
+    (r"\bmagnet\b", "çeviri: 'hedef'"),
+    (r"\brally\b", "çeviri: 'ralli'"),
+    (r"\bFalling Knife\b", "çeviri: 'Düşen Bıçak'"),
+    (r"\bstop[- ]zarar\b", "çeviri: 'zihinsel stop'"),
+    (r"\bBölünme Stratejisi\b", "çeviri: 'Dağıtım Stratejisi'"),
+    (r"\w+(?:dığını|diğini|duğunu|düğünü|tığını|tiğini|tuğunu|tüğünü)\s+işaret ediyor\b",
+     "kullanım: 'gösteriyor'"),
+    (r"\b(?:icin|gore|cunku|oldugunu|oldugu|olmadigi|degil|yuzde|artis|dusus|"
+     r"yukselis|uzerinde|altinda|uzerine|altina|donem|donemde|gosteriyor|"
+     r"sektor|sektorde)\b", "ASCII Türkçe: eksik harf"),
 ]
 
 findings = []

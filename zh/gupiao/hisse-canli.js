@@ -53,7 +53,11 @@
   function uygula(satir, zaman) {
     fiyatEl.textContent = sayi(satir.f);
     if (gunlukEl && typeof satir.d === "number") {
-      gunlukEl.textContent = (satir.d >= 0 ? "+" : "") + sayi(satir.d) + "%";
+      var dil = (document.documentElement.lang || "tr").slice(0, 2);
+      var sayiMetni = sayi(Math.abs(satir.d));
+      gunlukEl.textContent = dil === "tr"
+        ? (satir.d < 0 ? "-" : "") + "%" + sayiMetni
+        : (satir.d >= 0 ? "+" : "-") + sayiMetni + "%";
       if (gunlukKutu) gunlukKutu.className = satir.d >= 0 ? "pos" : "neg";
     }
     if (veriNotu && zaman) {
