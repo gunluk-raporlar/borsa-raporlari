@@ -3,12 +3,12 @@
   "braket_versiyonu": 2,
   "bugun_alinan": [],
   "bugun_satilan": [],
-  "bugun_tarih": "2026-11-24",
+  "bugun_tarih": "2026-11-25",
   "gerceklesen_kz": -9540.348371079985,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 13,
-  "nakit": 34702.59063891323,
-  "onceki_kapanis_ozkaynak": 92602.88,
+  "kontrol_sayisi": 1,
+  "nakit": 34735.85169493389,
+  "onceki_kapanis_ozkaynak": 92271.1,
   "ozkayit": [
     [
       "2026-09-25",
@@ -482,7 +482,7 @@
     }
   },
   "rejim": "ayi",
-  "son_bar_tarihi": "2026-11-23",
+  "son_bar_tarihi": "2026-11-24",
   "son_fiyatlar": {
     "AEFES": 15.52,
     "AKBNK": 63.95,
@@ -515,8 +515,8 @@
     "VAKBN": 32.4,
     "YKBNK": 35.72
   },
-  "son_repo_tarihi": "2026-11-24",
+  "son_repo_tarihi": "2026-11-25",
   "toplam_kesinti": 792.01,
-  "toplam_repo_kazanci": 1859.0,
+  "toplam_repo_kazanci": 1892.26,
   "versiyon": 1
 }
