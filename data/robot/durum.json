@@ -2,12 +2,14 @@
   "baslangic": "2026-09-25",
   "braket_versiyonu": 2,
   "bugun_alinan": [],
-  "bugun_satilan": [],
+  "bugun_satilan": [
+    "VAKBN"
+  ],
   "bugun_tarih": "2026-11-25",
-  "gerceklesen_kz": -9540.348371079985,
+  "gerceklesen_kz": -9938.824591079985,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 5,
-  "nakit": 34735.85169493389,
+  "kontrol_sayisi": 6,
+  "nakit": 45698.70067493389,
   "onceki_kapanis_ozkaynak": 92271.1,
   "ozkayit": [
     [
@@ -461,6 +463,10 @@
     [
       "2026-11-25T11:30",
       92234.69
+    ],
+    [
+      "2026-11-25T12:00",
+      92077.78
     ]
   ],
   "pozisyonlar": {
@@ -484,51 +490,44 @@
       "lot": 36,
       "maliyet": 320.7937,
       "stop": 311.17
-    },
-    "VAKBN": {
-      "giris": "2026-11-16",
-      "hedef": 33.82,
-      "lot": 346,
-      "maliyet": 32.8362,
-      "stop": 31.85
     }
   },
   "rejim": "ayi",
   "son_bar_tarihi": "2026-11-25",
   "son_fiyatlar": {
-    "AEFES": 15.43,
-    "AKBNK": 62.75,
-    "ASELS": 323.5,
-    "ASTOR": 155.1,
-    "BIMAS": 367.0,
-    "EKGYO": 16.97,
-    "ENKAI": 77.0,
-    "EREGL": 29.42,
-    "FROTO": 68.75,
-    "GARAN": 142.7,
+    "AEFES": 15.35,
+    "AKBNK": 62.25,
+    "ASELS": 323.25,
+    "ASTOR": 153.3,
+    "BIMAS": 365.75,
+    "EKGYO": 16.78,
+    "ENKAI": 76.8,
+    "EREGL": 29.3,
+    "FROTO": 68.35,
+    "GARAN": 141.9,
     "GUBRF": 269.5,
-    "ISCTR": 12.22,
-    "KCHOL": 186.0,
-    "KRDMD": 35.32,
-    "MGROS": 411.75,
+    "ISCTR": 12.14,
+    "KCHOL": 185.6,
+    "KRDMD": 35.2,
+    "MGROS": 409.5,
     "PETKM": 15.06,
-    "PGSUS": 156.6,
-    "SAHOL": 76.0,
-    "SASA": 1.43,
-    "SISE": 31.0,
+    "PGSUS": 155.9,
+    "SAHOL": 74.7,
+    "SASA": 1.42,
+    "SISE": 30.92,
     "TAVHL": 286.5,
-    "TCELL": 89.15,
-    "THYAO": 320.5,
-    "TOASO": 240.0,
-    "TRALT": 33.48,
-    "TRMET": 99.35,
-    "TTKOM": 45.72,
-    "TUPRS": 318.25,
-    "VAKBN": 32.06,
-    "YKBNK": 35.22
+    "TCELL": 88.5,
+    "THYAO": 319.75,
+    "TOASO": 237.3,
+    "TRALT": 33.4,
+    "TRMET": 98.8,
+    "TTKOM": 45.36,
+    "TUPRS": 320.75,
+    "VAKBN": 31.74,
+    "YKBNK": 34.96
   },
   "son_repo_tarihi": "2026-11-25",
-  "toplam_kesinti": 792.01,
+  "toplam_kesinti": 805.71,
   "toplam_repo_kazanci": 1892.26,
   "versiyon": 1
 }
