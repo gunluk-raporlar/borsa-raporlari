@@ -414,16 +414,12 @@
 <ol>
 <li>
 <p><strong>Eşit Ağırlıklı (Price‑Weighted) Endeks</strong> – Örneğin BIST 30 (verilen örnek eşit ağırlıklı). <br />
- [<br />
- \text{Endeks Değeri} = \frac{\sum_{i=1}^{N} P_i}{\text{Baz Değeri}} \times 100<br />
- ] <br />
+ Endeks Değeri = (Σ(i=1..N) P_i) / (Baz Değeri) × 100 <br />
 <em>(P_i)</em> = i‑inci hissenin kapanış fiyatı, <em>N</em> = endekste yer alan hisse sayısı (30). Baz değer, endeksin başlangıçtaki toplam fiyatının 100'e eşitlenmesi için kullanılan sabittir. </p>
 </li>
 <li>
 <p><strong>Piyasa Değeri Ağırlıklı (Market‑Cap Weighted) Endeks</strong> – BIST 100 ve XU100. <br />
- [<br />
- \text{Endeks Değeri} = \frac{\sum_{i=1}^{N} (P_i \times Q_i)}{\text{Baz Değeri}} \times 100<br />
- ] <br />
+ Endeks Değeri = (Σ(i=1..N) (P_i × Q_i)) / (Baz Değeri) × 100 <br />
 <em>(Q_i)</em> = i‑inci hissenin serbest dolaşımdaki hisse adedi. Büyük şirketlerin fiyat hareketleri endeks üzerinde daha fazla etki eder. </p>
 </li>
 </ol>
@@ -454,7 +450,7 @@
 </tr>
 <tr>
 <td>4. <strong>Yüzde değişimi hesapla</strong></td>
-<td>(\frac{\text{Bugünkü Değer} - \text{Dünkü Değer}}{\text{Dünkü Değer}} \times 100)</td>
+<td>((Bugünkü Değer - Dünkü Değer) / (Dünkü Değer) × 100)</td>
 <td>Günlük borsa raporları.</td>
 </tr>
 <tr>
@@ -468,9 +464,7 @@
 <h3>4. Gerçek Örnek</h3>
 <p><strong>Veri:</strong> BIST 30 eşit ağırlıklı, 100 baz değerli bir endeks. Son 30 işlem gününde endeks <strong>‑%14,2</strong> değişmiş, fiyat aralığı <strong>102,32 TL – 127,79 TL</strong>. </p>
 <h4>4.1 Formül</h4>
-<p>[<br />
-\text{Endeks Değişimi (\%)} = \frac{\text{Son Değer} - \text{Başlangıç Değeri}}{\text{Başlangıç Değeri}} \times 100<br />
-]</p>
+<p>Endeks Değişimi (%) = (Son Değer - Başlangıç Değeri) / (Başlangıç Değeri) × 100</p>
 <h4>4.2 Sayıları Yerine Koyma</h4>
 <ul>
 <li>
@@ -480,9 +474,7 @@
 <p><strong>Son Değer</strong> = 100 × (1 − 0,142) = 85,8 </p>
 </li>
 </ul>
-<p>[<br />
-\frac{85,8 - 100}{100} \times 100 = -14,2\%<br />
-]</p>
+<p>(85,8 - 100) / (100) × 100 = -14,2%</p>
 <h4>4.3 Yorum</h4>
 <ul>
 <li>

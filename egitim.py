@@ -35,6 +35,7 @@ import zoneinfo
 os.environ.setdefault("AMD_API_KEY", "egitim")
 
 import bot  # noqa: E402
+import editor  # noqa: E402  LaTeX kalintisi temizligi (2026-11-26)
 import svg_grafik  # noqa: E402
 import excel_tablo  # noqa: E402  Excel gorunumlu gerccek teknik tarama tablosu
 
@@ -458,6 +459,13 @@ def main():
     veri = _guncel_veri_ornekleri(konu)
     metin = _ders_uret(konu, tanim, veri, kategori)
     metin = bot._tarih_gun_duzelt(metin)
+    # 2026-11-26: LLM ders metninde ham LaTeX birakabiliyor ("\frac{...}",
+    # "\text{...}"). Site matematik motoru yuklemiyor; kalinti yayina girmeden
+    # okunur duz metne cevrilir (2026-10-25 ve 2026-11-07 sayfalari boyle
+    # bozulmustu).
+    metin, _latex_n = editor.latex_temizle(metin)
+    if _latex_n:
+        logger.info("Ders metninde %d LaTeX komutu duz metne cevrildi.", _latex_n)
     # Grafik: GERCEK kapanis serisiyle (ders metninde gecen hisse oncelidir)
     paket = _gercek_grafik_paketi(metin, konu)
     gorsel_svg = svg_grafik.gorsel_uret(konu, g=paket)

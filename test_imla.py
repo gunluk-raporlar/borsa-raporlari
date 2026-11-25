@@ -348,5 +348,80 @@ class I18nSayiCevrimiTest(unittest.TestCase):
         self.assertEqual(i18n.sayilari_cevir("%0,08", "tr"), "%0,08")
 
 
+class LatexTemizleTest(unittest.TestCase):
+    """Ham LaTeX kalintisi duz metne cevrilir (2026-11-26).
+
+    Neden var: haftasonu-egitimi/2026-10-25 ve 2026-11-07 sayfalarinda LLM
+    cikisi ham LaTeX olarak yayina girdi; okuyucu sayfada "\\frac{...}" ve
+    "\\text{...}" harflerini gordu. Site matematik motoru yuklemiyor
+    (KaTeX/MathJax yok), bu yuzden kalinti okunur duz metne cevrilir.
+    """
+
+    def test_metin_komutu(self):
+        y, n = editor.latex_temizle(
+            r"\text{Tavan Fiyat} = \text{Kapanış} \times (1 + 0,10)")
+        self.assertEqual(y, "Tavan Fiyat = Kapanış × (1 + 0,10)")
+        self.assertGreaterEqual(n, 3)
+
+    def test_kesir(self):
+        y, _ = editor.latex_temizle(r"\frac{31,60}{0,9003}")
+        self.assertEqual(y, "(31,60) / (0,9003)")
+
+    def test_toplam(self):
+        y, _ = editor.latex_temizle(
+            r"\frac{\sum_{i=1}^{N} P_i}{\text{Baz Değeri}}")
+        self.assertEqual(y, "(Σ(i=1..N) P_i) / (Baz Değeri)")
+
+    def test_yuzde_kacisi(self):
+        y, _ = editor.latex_temizle(r"\text{Endeks Değişimi (\%)}")
+        self.assertEqual(y, "Endeks Değişimi (%)")
+
+    def test_html_gosterim_blogu(self):
+        girdi = ("<p>[<br />\n\\text{Tavan} = 350 \\times 1,10 = 385\\ "
+                 "\\text{TL}<br />\n] </p>")
+        y, _ = editor.latex_temizle(girdi)
+        self.assertIn("Tavan = 350 × 1,10 = 385 TL", y)
+        self.assertNotIn("[", y)
+        self.assertNotIn("\\", y)
+
+    def test_markdown_gosterim(self):
+        y, _ = editor.latex_temizle("\\[\n\\text{Tavan} = 350 \\times 1,10\n\\]")
+        self.assertEqual(y, "Tavan = 350 × 1,10")
+
+    def test_tablo_hucreleri(self):
+        girdi = (r"<td>(\frac{\text{Bugünkü} - \text{Dünkü}}{\text{Dünkü}}"
+                 r" \times 100)</td>")
+        y, _ = editor.latex_temizle(girdi)
+        self.assertIn("(Bugünkü - Dünkü) / (Dünkü) × 100", y)
+
+    def test_script_korunur(self):
+        girdi = "<script>var s = String(s).replace(/\\u0307/g, '');</script>"
+        y, n = editor.latex_temizle(girdi)
+        self.assertEqual(y, girdi)
+        self.assertEqual(n, 0)
+
+    def test_kod_bloku_korunur(self):
+        girdi = "```\nprint('a\\tb')\n```"
+        y, n = editor.latex_temizle(girdi)
+        self.assertEqual(y, girdi)
+        self.assertEqual(n, 0)
+
+    def test_latex_yoksa_dokunulmaz(self):
+        girdi = "<p>Normal Türkçe metin, %50-%65 aralığı.</p>"
+        y, n = editor.latex_temizle(girdi)
+        self.assertEqual(y, girdi)
+        self.assertEqual(n, 0)
+
+    def test_kalite_kapisi_yakalar(self):
+        bulgular = editor.kalite_tara(r"Formül: \frac{a}{b} \times 100")
+        self.assertTrue(any("LaTeX" in b[1] for b in bulgular), bulgular)
+
+    def test_uygula_zincirinde_calisir(self):
+        y, ozet = editor.uygula(
+            r"Formül: \text{Tavan} = \text{Kapanış} \times 1,10", "test")
+        self.assertIn("Tavan = Kapanış × 1,10", y)
+        self.assertGreaterEqual(ozet["latex"], 1)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

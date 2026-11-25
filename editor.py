@@ -394,6 +394,171 @@ def _yuzde_bicimle_gecis(metin: str, tablo_disi: bool) -> tuple:
     return metin, toplam
 
 
+# ---------------------------------------------------------------------------
+# 2b) LaTeX KALINTISI: ham matematik isaretlerini okunur duz metne cevir
+# ---------------------------------------------------------------------------
+# 2026-11-26: haftasonu-egitimi/2026-10-25 ve 2026-11-07 sayfalarinda LLM
+# cikisi ham LaTeX olarak yayina girdi ("\frac{\sum_{i=1}^{N} P_i}{\text{Baz
+# Değeri}} \times 100"). Markdown ters boluleri kacisladi; okuyucu sayfada
+# "\text{...}" ve "\frac{...}" harflerini gordu. Site matematik motoru
+# yuklemiyor (KaTeX/MathJax yok) ve sitedeki yerlesik gelenek duz metin
+# ("Formül: Gelecek Değer = Anapara × (1 + Dönemsel Getiri)^Dönem Sayısı"),
+# bu yuzden kalinti okunur duz metne cevrilir.
+_LATEX_SEMBOL = {
+    "times": "×", "approx": "≈", "cdot": "·", "pm": "±", "div": "÷",
+    "le": "≤", "leq": "≤", "ge": "≥", "geq": "≥", "ne": "≠", "neq": "≠",
+    "infty": "∞", "to": "→", "rightarrow": "→", "leftarrow": "←",
+    "alpha": "α", "beta": "β", "gamma": "γ", "delta": "δ", "mu": "μ",
+    "sigma": "σ", "pi": "π", "left": "", "right": "",
+}
+# Argumani duz metin olarak gecirilen komutlar ("\text{Kapanış}" -> "Kapanış")
+_LATEX_METIN_KOMUT = {"text", "mathrm", "mathbf", "mathit", "operatorname",
+                      "textrm", "textbf", "textit"}
+_LATEX_KOMUT = re.compile(r"\\[a-zA-Z]+")
+# Gosterim matematigi sinirlayicilari: \[ ... \], \( ... \), $$ ... $$
+_LATEX_GOSTERIM = re.compile(r"\\\[(.*?)\\\]|\\\((.*?)\\\)|\$\$(.*?)\$\$", re.S)
+# HTML'e donusmus gosterim blogu: "\[ ... \]" -> "[<br /> ... <br />]"
+_LATEX_HTML_BLOK = re.compile(
+    r"\[\s*(?:<br\s*/?>\s*)?(.*?)(?:\s*<br\s*/?>\s*)?\]", re.S)
+# Blok icinde <br> disinda etiket varsa dokunulmaz (duz metin blogu degil)
+_LATEX_BLOK_YABANCI = re.compile(r"<(?!/?br\b)")
+
+
+def _latex_grup(s: str, i: int) -> tuple:
+    """i, '{' konumunda. Dengeli grubu dondurur: (icerik, sonraki_indeks)."""
+    derinlik = 0
+    for j in range(i, len(s)):
+        if s[j] == "{":
+            derinlik += 1
+        elif s[j] == "}":
+            derinlik -= 1
+            if derinlik == 0:
+                return s[i + 1:j], j + 1
+    return s[i + 1:], len(s)
+
+
+def _latex_metin(s: str) -> str:
+    """LaTeX parcasini okunur duz metne cevirir (matematik motoru yok)."""
+    cikti = []
+    i = 0
+    while i < len(s):
+        if s[i] != "\\":
+            if s[i] not in "{}":
+                cikti.append(s[i])
+            i += 1
+            continue
+        m = _LATEX_KOMUT.match(s, i)
+        if not m:
+            # \{ \} \% \& \_ \$ \# ve bosluk komutlari
+            nxt = s[i + 1] if i + 1 < len(s) else ""
+            if nxt in "{}%&_$#":
+                cikti.append(nxt)
+                i += 2
+            elif nxt in " ,;:!" or nxt == "\\":
+                cikti.append(" ")
+                i += 2
+            else:
+                i += 1
+            continue
+        ad = m.group(0)[1:]
+        i = m.end()
+        if ad in _LATEX_METIN_KOMUT:
+            if i < len(s) and s[i] == "{":
+                ic, i = _latex_grup(s, i)
+                cikti.append(_latex_metin(ic))
+            continue
+        if ad == "frac":
+            if i < len(s) and s[i] == "{":
+                ust, i = _latex_grup(s, i)
+                alt = ""
+                if i < len(s) and s[i] == "{":
+                    alt, i = _latex_grup(s, i)
+                cikti.append(f"({_latex_metin(ust)}) / ({_latex_metin(alt)})")
+            continue
+        if ad == "sqrt":
+            if i < len(s) and s[i] == "{":
+                ic, i = _latex_grup(s, i)
+                cikti.append(f"√({_latex_metin(ic)})")
+            continue
+        if ad == "sum":
+            alt = ust = ""
+            if i < len(s) and s[i] == "_":
+                i += 1
+                if i < len(s) and s[i] == "{":
+                    alt, i = _latex_grup(s, i)
+            if i < len(s) and s[i] == "^":
+                i += 1
+                if i < len(s) and s[i] == "{":
+                    ust, i = _latex_grup(s, i)
+            cikti.append(f"Σ({alt}..{ust})" if alt and ust else "Σ")
+            continue
+        if ad in _LATEX_SEMBOL:
+            cikti.append(_LATEX_SEMBOL[ad])
+            continue
+        if len(ad) == 1:
+            # "\n", "\t" gibi kacis dizileri LaTeX degildir; ters bolu korunur
+            cikti.append("\\" + ad)
+            continue
+        # Bilinmeyen komut: adi korunur (sessiz veri kaybi olmasin)
+        cikti.append(ad)
+    return re.sub(r"[ \t]+", " ", "".join(cikti)).strip()
+
+
+def latex_temizle(metin: str) -> tuple:
+    """Ham LaTeX kalintilarini okunur duz metne cevirir.
+
+    script/style ve kod bloklari korunur: oradaki ters bolu LaTeX degildir
+    (sayfa ici arama betiginde "\\u0307", "\\s+" gibi diziler var).
+    Yalnizca metin dugumleri islenir; HTML etiketleri oldugu gibi kalir.
+    Donus: (yeni_metin, cevrilen_komut_sayisi).
+    """
+    if not metin:
+        return metin, 0
+    if "\\" not in metin and "$$" not in metin:
+        return metin, 0
+    korunan = []
+
+    def _koru(m):
+        korunan.append(m.group(0))
+        return f"\x00{len(korunan) - 1}\x00"
+
+    calisma = re.sub(r"(?is)<(script|style)\b.*?</\1>", _koru, metin)
+    calisma = re.sub(r"(?ms)^[ \t]*```.*?^[ \t]*```", _koru, calisma)
+    calisma = re.sub(r"`[^`\n]*`", _koru, calisma)
+    n = len(_LATEX_KOMUT.findall(calisma))
+    if not n and not _LATEX_GOSTERIM.search(calisma):
+        return metin, 0
+
+    def _gosterim(m):
+        ic = next(g for g in m.groups() if g is not None)
+        return _latex_metin(ic)
+
+    calisma = _LATEX_GOSTERIM.sub(_gosterim, calisma)
+
+    def _html_blok(m):
+        ic = m.group(1)
+        if not _LATEX_KOMUT.search(ic) or len(ic) > 600:
+            return m.group(0)
+        if _LATEX_BLOK_YABANCI.search(ic):
+            return m.group(0)
+        return _latex_metin(ic)
+
+    calisma = _LATEX_HTML_BLOK.sub(_html_blok, calisma)
+
+    # Kalan komutlar: yalnizca metin dugumlerinde (etiketler korunur)
+    parcalar = re.split(r"(<[^>]*>)", calisma)
+    for idx, parca in enumerate(parcalar):
+        if parca.startswith("<") and parca.endswith(">"):
+            continue
+        if _LATEX_KOMUT.search(parca):
+            parcalar[idx] = _latex_metin(parca)
+    calisma = "".join(parcalar)
+
+    for i, parca in enumerate(korunan):
+        calisma = calisma.replace(f"\x00{i}\x00", parca)
+    return calisma, n or (0 if calisma == metin else 1)
+
+
 def _sinirli_desen(yanlis: str) -> str:
     """Sozluk anahtarini kelime sinirli desene cevirir.
 
@@ -624,7 +789,10 @@ def uygula(metin: str, rapor: str = "genel", kok: str = "") -> tuple:
     """Imla + muglak'i uygular ve JSONL loga yazar.
     Donus: (metin, ozet_sozlugu). Zincirin BASINDA cagrilir."""
     if not metin:
-        return metin, {"imla": 0, "yumusatma": 0, "uyari": 0}
+        return metin, {"imla": 0, "yumusatma": 0, "uyari": 0, "latex": 0}
+    # 2026-11-26: ham LaTeX kalintisi imla'dan ONCE temizlenir; aksi halde
+    # "\text{...}" icindeki kelimeler sozluk taramasina takilir.
+    metin, latex_n = latex_temizle(metin)
     metin, imla_d = imla(metin)
     metin, yum, uyari = muglak(metin)
     for eski, yeni, _n in imla_d:
@@ -633,7 +801,8 @@ def uygula(metin: str, rapor: str = "genel", kok: str = "") -> tuple:
         log_kaydi(rapor, "muglak", "yumusatma", eski, yeni, eski, True, kok)
     for kalip, aciklama, baglam in uyari:
         log_kaydi(rapor, "uyari", aciklama, kalip, "", baglam, False, kok)
-    ozet = {"imla": sum(n for _, _, n in imla_d), "yumusatma": len(yum), "uyari": len(uyari)}
+    ozet = {"imla": sum(n for _, _, n in imla_d), "yumusatma": len(yum),
+            "uyari": len(uyari), "latex": latex_n}
     return metin, ozet
 
 
@@ -695,6 +864,12 @@ KALITE_KALIPLARI = [
                 r"artis|dusus|yukselis|uzerinde|altinda|uzerine|altina|donem|"
                 r"donemde|gosteriyor|sektor|sektorde)\b"),
      "ASCII Türkçe: eksik harf"),
+    # 2026-11-26: ham LaTeX kalintisi. Site matematik motoru yuklemiyor
+    # (KaTeX/MathJax yok); "\frac{...}", "\text{...}", "\times" gibi diziler
+    # sayfada harf olarak gorunur. haftasonu-egitimi/2026-10-25 ve 2026-11-07
+    # sayfalari boyle bozulmustu. Iki harften uzun komutlar aranir: "\n",
+    # "\t", "\s" gibi tek harfli kacis dizileri LaTeX degildir.
+    (re.compile(r"\\[a-zA-Z]{2,}"), "LaTeX kalıntısı: düz metne çevrilmeli"),
 ]
 # Esik: bu sayidan fazla BULGU varsa yanit yayina alinmaz.
 KALITE_ESIK = 2
