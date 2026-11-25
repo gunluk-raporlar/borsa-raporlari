@@ -206,3 +206,4 @@
 2026-11-25,04:27,ceviri,MISTRAL,deepseek-v4-1-flash-1017,505,142023,32850,-,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x505(142023+32850),142023,32850
 2026-11-25,07:30,gunluk,MISTRAL,deepseek-v4-1-flash-1017,1,2652,935,3.9,2,isim=1;toplam_metin=1,hayir,MISTRAL/deepseek-v4-1-flash-1017x8,86897,8052
 2026-11-25,08:31,ceviri,MISTRAL,deepseek-v4-1-flash-1017,1007,1049313,584555,-,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x1007(1049313+584555),1049313,584555
+2026-11-25,08:43,makro,MISTRAL,deepseek-v4-1-flash-1017,1,11953,5284,18.7,3,enflasyon=2;toplam_metin=1,hayir,MISTRAL/deepseek-v4-1-flash-1017x1,11953,5284
