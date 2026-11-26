@@ -122,6 +122,23 @@
     "genisletme": 1
    },
    "kota": 0.0
+  },
+  {
+   "tarih": "2026-11-26",
+   "ndcg_normal": 0.9184,
+   "ndcg_ham": 0.924,
+   "ndcg_rerank": 0.9152,
+   "mrr_normal": 0.9036,
+   "bos_normal": 0,
+   "karar": "olcum",
+   "ayarlar": {
+    "min_skor": 0.3,
+    "taze_boost": 0.12,
+    "taze_gun": 60,
+    "rerank_top_k": 0,
+    "genisletme": 1
+   },
+   "kota": 436.96623623720006
   }
  ]
 }
