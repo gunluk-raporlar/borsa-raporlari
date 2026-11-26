@@ -226,4 +226,4 @@
 2026-11-26,20:51,radyo,MISTRAL,deepseek-v4-1-flash-1017,1,3635,3819,15.9,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x1,10173,19819
 2026-11-26,23:10,ceviri,NVIDIA,nvidia/nemotron-3.5-super-vl-120b-a12b,293,78085,111048,-,0,,hayir,"NVIDIA/nvidia/nemotron-3-ultra-550b-a55bx174(45386+95895), MISTRAL/deepseek-v4-1-flash-1017x102(30345+7839), NVIDIA/nvidia/nemotron-3.5-super-vl-120b-a12bx6(1646+4929), NVIDIA2/nvidia/nemotron-3-ultra-550b-a55bx3(480+1898), NVIDIA2/nvidia/nemotron-3.5-super-vl-120b-a12bx1(228+487), AMD/DeepSeek-V4-Flashx1(0+0), OrcaRouter/tencent/hy4-preview-freex1(0+0), OrcaRouter/deepseek/deepseek-v4-flash-freex2(0+0), OrcaRouter2/tencent/hy4-preview-freex1(0+0), OrcaRouter2/deepseek/deepseek-v4-flash-freex2(0+0)",78085,111048
 2026-11-26,23:21,ceviri,MISTRAL,deepseek-v4-1-flash-1017,504,141342,31970,-,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x504(141342+31970),141342,31970
-2026-11-27,02:40,radyo,MISTRAL,deepseek-v4-1-flash-1017,1,3709,3823,13.5,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x1,10361,19823
+2026-11-27,02:41,ceviri,MISTRAL,deepseek-v4-1-flash-1017,501,139477,31037,-,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x501(139477+31037),139477,31037
