@@ -508,6 +508,13 @@
   "EKGYO": [
    {
     "kaynak": "KAP",
+    "tarih": "26 Kasım 13:24",
+    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1702930",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "25 Kasım 20:07",
     "baslik": "Özel Durum Açıklaması (Genel)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1702780",
@@ -603,16 +610,16 @@
     "baslik": "Özel Durum Açıklaması (Genel)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1698562",
     "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "11 Kasım 13:50",
-    "baslik": "Özel Durum Açıklaması (Genel)",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1696930",
-    "genis": false
    }
   ],
   "ENKAI": [
+   {
+    "kaynak": "KAP",
+    "tarih": "26 Kasım 08:57",
+    "baslik": "Pay Alım Satım Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1702828",
+    "genis": false
+   },
    {
     "kaynak": "KAP",
     "tarih": "24 Kasım 09:02",
@@ -710,13 +717,6 @@
     "baslik": "Pay Alım Satım Bildirimi",
     "url": "https://www.kap.org.tr/tr/Bildirim/1696195",
     "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "9 Kasım 16:27",
-    "baslik": "Borsada İşlem Gören Tipe Dönüşüm Duyurusu",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1695077",
-    "genis": true
    }
   ],
   "EREGL": [
@@ -829,6 +829,20 @@
   "FROTO": [
    {
     "kaynak": "KAP",
+    "tarih": "26 Kasım 11:16",
+    "baslik": "Pay Bazında Devre Kesici Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1702898",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
+    "tarih": "26 Kasım 09:13",
+    "baslik": "BISTECH Pay Piyasası Alım Satım Sistemi Duyurusu",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1702840",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "25 Kasım 16:49",
     "baslik": "Hak Kullanımı",
     "url": "https://www.kap.org.tr/tr/Bildirim/1702526",
@@ -916,20 +930,6 @@
     "tarih": "27 Ekim 18:20",
     "baslik": "Genel Kurul İşlemlerine İlişkin Bildirim",
     "url": "https://www.kap.org.tr/tr/Bildirim/1688368",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "27 Ekim 18:20",
-    "baslik": "Kar Payı Dağıtım İşlemlerine İlişkin Bildirim",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1688363",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "26 Ekim 18:18",
-    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1687556",
     "genis": false
    }
   ],
@@ -1150,6 +1150,13 @@
   "ISCTR": [
    {
     "kaynak": "KAP",
+    "tarih": "26 Kasım 10:20",
+    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1702878",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "23 Kasım 12:05",
     "baslik": "Özel Durum Açıklaması (Genel)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1701110",
@@ -1244,13 +1251,6 @@
     "tarih": "30 Ekim 18:12",
     "baslik": "İhraç Tavanına İlişkin Bildirim",
     "url": "https://www.kap.org.tr/tr/Bildirim/1689883",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "30 Ekim 18:12",
-    "baslik": "İhraç Tavanına İlişkin Bildirim",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1689879",
     "genis": false
    }
   ],
@@ -2927,6 +2927,13 @@
   "VAKBN": [
    {
     "kaynak": "KAP",
+    "tarih": "26 Kasım 16:41",
+    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1702986",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "25 Kasım 15:39",
     "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1702461",
@@ -3022,16 +3029,16 @@
     "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1700619",
     "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "19 Kasım 23:33",
-    "baslik": "SPK İşlem Yasağı Nedeniyle Pay Duyurusu",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1700461",
-    "genis": true
    }
   ],
   "YKBNK": [
+   {
+    "kaynak": "KAP",
+    "tarih": "26 Kasım 08:30",
+    "baslik": "Özel Durum Açıklaması (Genel)",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1702823",
+    "genis": true
+   },
    {
     "kaynak": "KAP",
     "tarih": "25 Kasım 18:57",
@@ -3129,13 +3136,6 @@
     "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1699990",
     "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "18 Kasım 17:38",
-    "baslik": "Borçlanma Araçları, Yatırım Fonları ve Varant İtfa/Kupon/Getiri/ Nakdi Uzlaşı Ödeme İşlemleri",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1699884",
-    "genis": true
    }
   ]
  }
