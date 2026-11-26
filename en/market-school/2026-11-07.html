@@ -420,16 +420,12 @@
 <ol>
 <li>
 <p><strong>Equal-Weighted (Price-Weighted) Index</strong> – For example BIST 30 (given example is equal-weighted). <br />
- [<br />
- \ text{Index Value} = \frac{\sum_{i=1}^{N} P_i}{\text{Base Value}} \times 100<br />
- ] <br />
+ Index Value = (Σ(i=1..N) P_i) / (Base Value) × 100 <br />
 <em>(P_i)</em> = closing price of the i‑th stock, <em>N</em> = number of stocks in the index (30). The base value is the constant used to equate the index's initial total price to 100. </p>
 </li>
 <li>
 <p><strong>Market Value Weighted (Market‑Cap Weighted) Index</strong> – BIST 100 and XU100. <br />
- [<br />
- \ text{Index Value} = \frac{\sum_{i=1}^{N} (P_i \times Q_i)}{\text{Base Value}} \times 100<br />
- ] <br />
+ Index Value = (Σ(i=1..N) (P_i × Q_i)) / (Base Value) × 100 <br />
 <em>(Q_i)</em> = number of shares of the i‑th stock in free float. Large companies' price movements have a greater impact on the index. </p>
 </li>
 </ol>
@@ -460,7 +456,7 @@
 </tr>
 <tr>
 <td>4. <strong>Calculate the percentage change</strong></td>
-<td>(\ frac{\text{Today's Value} - \text{Yesterday's Value}}{\text{Yesterday's Value}} \times 100)</td>
+<td>(( Today's Value - Yesterday's Value) / (Yesterday's Value) × 100)</td>
 <td>Daily stock market reports.</td>
 </tr>
 <tr>
@@ -474,9 +470,7 @@
 <h3>4. Real Example</h3>
 <p><strong>Data:</strong> BIST 30 equal-weighted, a 100 base-valued index. In the last 30 trading days the index <strong>‑14.2%</strong> changed, price range <strong>102.32 TL – 127.79 TL</strong>. </p>
 <h4>4.1 Formula</h4>
-<p>[<br />
-\ text{Index Change (\%)} = \frac{\text{Current Value} - \text{Initial Value}}{\text{Initial Value}} \times 100<br />
-]</p>
+<p>Index Change (%) = (Latest Value - Starting Value) / (Starting Value) × 100</p>
 <h4>4.2 Substituting the Numbers</h4>
 <ul>
 <li>
@@ -486,9 +480,7 @@
 <p><strong>Last Value</strong> = 100 × (1 − 0.142) = 85.8 </p>
 </li>
 </ul>
-<p>[<br />
-\ frac{85.8 - 100}{100} \times 100 = -14.2\%<br />
-]</p>
+<p>(85.8 - 100) / (100) × 100 = -14.2%</p>
 <h4>4.3 Interpretation</h4>
 <ul>
 <li>

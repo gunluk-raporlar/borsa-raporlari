@@ -420,16 +420,12 @@
 <ol>
 <li>
 <p><strong>Gleichgewichtet (Preisgewichtet) Index</strong> – Beispielsweise BIST 30 (angegebenes Beispiel gleichgewichtet).<br />
- [<br />
- \ text{Indexwert} = \frac{\sum_{i=1}^{N} P_i}{\text{Basiswert}} \times 100<br />
- ] <br />
+ Indexwert = (Σ(i=1..N) P_i) / (Basiswert) × 100 <br />
 <em>(P_i)</em> = Schlusskurs der i-ten Aktie,<em>N</em> = Anzahl der im Index enthaltenen Aktien (30). Der Basiswert ist die Konstante, die verwendet wird, um den Gesamtpreis zu Beginn auf 100 festzulegen.</p>
 </li>
 <li>
 <p><strong>Marktkapitalisierungsgewichteter (Market-Cap Weighted) Index</strong> – BIST 100 und XU100.<br />
- [<br />
- \ text{Indexwert} = \frac{\sum_{i=1}^{N} (P_i \times Q_i)}{\text{Basiswert}} \times 100<br />
- ] <br />
+ Indexwert = (Σ(i=1..N) (P_i × Q_i)) / (Basiswert) × 100 <br />
 <em>(Q_i)</em> = Anzahl der Aktien der i-ten Aktie im Streubesitz. Die Kursbewegungen großer Unternehmen haben einen stärkeren Einfluss auf den Index.</p>
 </li>
 </ol>
@@ -460,7 +456,7 @@
 </tr>
 <tr>
 <td>4. <strong>Prozentuale Veränderung berechnen</strong></td>
-<td>(\ frac{\\text{Heutiger Wert} - \\text{Gestriger Wert}}{\\text{Gestriger Wert}} \\times 100)</td>
+<td>(( Heutiger Wert - gestriger Wert) / (gestriger Wert) × 100)</td>
 <td>Tägliche Börsenberichte.</td>
 </tr>
 <tr>
@@ -474,9 +470,7 @@
 <h3>4. Reales Beispiel</h3>
 <p><strong>Daten:</strong> BIST 30 gleichgewichtet, ein Index mit Basiswert 100. In den letzten 30 Handelstagen der Index <strong>‑14.2%</strong> hat sich verändert, Preisspanne <strong>102.32 TL – 127.79 TL</strong>. </p>
 <h4>4.1 Formel</h4>
-<p>[<br />
-\ text{Indexveränderung (\\%)} = \\frac{\\text{Endwert} - \\text{Anfangswert}}{\\text{Anfangswert}} \\times 100<br />
-]</p>
+<p>Indexänderung (%) = (Letzter Wert - Anfangswert) / (Anfangswert) × 100</p>
 <h4>4.2 Zahlen einsetzen</h4>
 <ul>
 <li>
@@ -486,9 +480,7 @@
 <p><strong>Letzter Wert</strong> = 100 × (1 − 0.142) = 85.8 </p>
 </li>
 </ul>
-<p>[<br />
-\ frac{85.8 - 100}{100} \\times 100 = -14.2\\%<br />
-]</p>
+<p>(85.8 - 100) / (100) × 100 = -14.2%</p>
 <h4>4.3 Kommentar</h4>
 <ul>
 <li>
