@@ -1,0 +1,1372 @@
+[
+  {
+    "tarih": "2026-11-26",
+    "saat": "12:00",
+    "ulke": "EU",
+    "olay": "M3 Money Supply Annual Growth",
+    "onem": 0,
+    "tahmin": 3.5,
+    "gercek": null,
+    "onceki": 3.5
+  },
+  {
+    "tarih": "2026-11-26",
+    "saat": "14:30",
+    "ulke": "TR",
+    "olay": "Net Foreign Exchange Reserves",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 41.26
+  },
+  {
+    "tarih": "2026-11-27",
+    "saat": "13:00",
+    "ulke": "EU",
+    "olay": "Business Confidence Index",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.09
+  },
+  {
+    "tarih": "2026-11-27",
+    "saat": "13:00",
+    "ulke": "EU",
+    "olay": "Economic Sentiment",
+    "onem": 0,
+    "tahmin": 97.2,
+    "gercek": null,
+    "onceki": 96.9
+  },
+  {
+    "tarih": "2026-11-27",
+    "saat": "13:00",
+    "ulke": "EU",
+    "olay": "Selling Price Expectations",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 24.8
+  },
+  {
+    "tarih": "2026-11-27",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Retail Inventories Ex Autos MoM Adv",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.4
+  },
+  {
+    "tarih": "2026-11-27",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Wholesale Inventories MoM Adv",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.6
+  },
+  {
+    "tarih": "2026-11-27",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Goods Trade Balance Adv",
+    "onem": 0,
+    "tahmin": -133,
+    "gercek": null,
+    "onceki": -134.9
+  },
+  {
+    "tarih": "2026-11-27",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "USDA Pork Net Export Sales",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 32.1
+  },
+  {
+    "tarih": "2026-11-27",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "USDA Pork Gross Export Sales",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 36.2
+  },
+  {
+    "tarih": "2026-11-27",
+    "saat": "22:00",
+    "ulke": "US",
+    "olay": "Baker Hughes Gas Rig Count",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": 127,
+    "onceki": 128
+  },
+  {
+    "tarih": "2026-11-30",
+    "saat": "10:00",
+    "ulke": "TR",
+    "olay": "Labour Underutilization Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 31.2
+  },
+  {
+    "tarih": "2026-11-30",
+    "saat": "10:00",
+    "ulke": "TR",
+    "olay": "Unemployment Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 8.4
+  },
+  {
+    "tarih": "2026-11-30",
+    "saat": "10:00",
+    "ulke": "TR",
+    "olay": "Balance of Trade Final",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -5.16
+  },
+  {
+    "tarih": "2026-11-30",
+    "saat": "14:00",
+    "ulke": "TR",
+    "olay": "Non-Performing Loans Ratio",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 3.05
+  },
+  {
+    "tarih": "2026-11-30",
+    "saat": "17:45",
+    "ulke": "US",
+    "olay": "Chicago PMI",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 55.3
+  },
+  {
+    "tarih": "2026-11-30",
+    "saat": "18:30",
+    "ulke": "US",
+    "olay": "Dallas Fed Manufacturing Index",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 13.4
+  },
+  {
+    "tarih": "2026-11-30",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "3-Month Bill Auction Allotted at High",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-11-30",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "3-Month Bill Auction Bid-to-Cover",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-11-30",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "3-Month Bill Auction Total Accepted",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-11-30",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "6-Month Bill Auction Allotted at High",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-11-30",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "6-Month Bill Auction Bid-to-Cover",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-11-30",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "6-Month Bill Auction Total Accepted",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-01",
+    "saat": "10:00",
+    "ulke": "TR",
+    "olay": "GDP Growth Rate YoY",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 2.3
+  },
+  {
+    "tarih": "2026-12-01",
+    "saat": "10:00",
+    "ulke": "TR",
+    "olay": "GDP Growth Rate QoQ",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 1.1
+  },
+  {
+    "tarih": "2026-12-01",
+    "saat": "12:00",
+    "ulke": "TR",
+    "olay": "Istanbul Inflation Rate MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 2.47
+  },
+  {
+    "tarih": "2026-12-01",
+    "saat": "13:00",
+    "ulke": "EU",
+    "olay": "Core Inflation Rate YoY Flash",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 2.5
+  },
+  {
+    "tarih": "2026-12-01",
+    "saat": "13:00",
+    "ulke": "EU",
+    "olay": "Core Inflation Rate MoM Flash",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-01",
+    "saat": "13:00",
+    "ulke": "EU",
+    "olay": "Inflation Rate YoY Flash",
+    "onem": 1,
+    "tahmin": 3.9,
+    "gercek": null,
+    "onceki": 4
+  },
+  {
+    "tarih": "2026-12-01",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "ISM Manufacturing Employment",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 52.4
+  },
+  {
+    "tarih": "2026-12-01",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "ISM Manufacturing PMI",
+    "onem": 1,
+    "tahmin": 55.2,
+    "gercek": null,
+    "onceki": 55.5
+  },
+  {
+    "tarih": "2026-12-01",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "JOLTs Job Openings",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 7.523
+  },
+  {
+    "tarih": "2026-12-01",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "Truck Sales",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 13.1
+  },
+  {
+    "tarih": "2026-12-01",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "Car Sales",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 2.45
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "00:30",
+    "ulke": "US",
+    "olay": "API Crude Oil Stock Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.126
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "11:00",
+    "ulke": "TR",
+    "olay": "Balance of Trade Prel",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -6.7
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "13:00",
+    "ulke": "EU",
+    "olay": "Unemployment Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 6.5
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "15:00",
+    "ulke": "US",
+    "olay": "MBA 5/1 ARM Contract Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 6.39
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "15:00",
+    "ulke": "US",
+    "olay": "MBA 5/1 ARM Effective Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 6.72
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "15:00",
+    "ulke": "US",
+    "olay": "MBA 15-Year Mortgage Contract Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 6.79
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "15:00",
+    "ulke": "US",
+    "olay": "MBA 15-Year Mortgage Effective Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 7.05
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "15:00",
+    "ulke": "US",
+    "olay": "MBA 15-Year Mortgage Points",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 1.05
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "15:00",
+    "ulke": "US",
+    "olay": "MBA 30-Year Mortgage Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 7.38
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "15:00",
+    "ulke": "US",
+    "olay": "MBA 5/1 ARM Points",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.89
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "16:15",
+    "ulke": "US",
+    "olay": "ADP Employment Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 86
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "18:30",
+    "ulke": "US",
+    "olay": "EIA Ethanol Production",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 1129
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "18:30",
+    "ulke": "US",
+    "olay": "EIA Ethanol Stocks",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 25253
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "18:30",
+    "ulke": "US",
+    "olay": "EIA Crude Oil Stocks Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 1.109
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "18:30",
+    "ulke": "US",
+    "olay": "EIA Gasoline Stocks Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 1.733
+  },
+  {
+    "tarih": "2026-12-02",
+    "saat": "18:30",
+    "ulke": "US",
+    "olay": "EIA Crude Oil Exports Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -1.219
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "10:00",
+    "ulke": "TR",
+    "olay": "Core Inflation Rate MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 2.1
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "10:00",
+    "ulke": "TR",
+    "olay": "Core Consumer Prices",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 139.01
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "10:00",
+    "ulke": "TR",
+    "olay": "Inflation Rate MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 2.58
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "10:00",
+    "ulke": "TR",
+    "olay": "Consumer Price Index",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 140.77
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "10:00",
+    "ulke": "TR",
+    "olay": "Inflation Rate YoY",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 29.77
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "14:30",
+    "ulke": "TR",
+    "olay": "Net Foreign Exchange Reserves",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "USDA Pork Net Export Sales",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "USDA Pork Gross Export Sales",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Initial Jobless Claims",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 189
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "ISM Services PMI",
+    "onem": 1,
+    "tahmin": 54.5,
+    "gercek": null,
+    "onceki": 54.5
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "Durable Goods Orders Ex Transp MoM Final",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.5
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "Factory Orders MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 1.8
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "4-Week Bill Auction Allotted at High",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "4-Week Bill Auction Bid-to-Cover",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-03",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "4-Week Bill Auction Total Accepted",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-04",
+    "saat": "11:30",
+    "ulke": "EU",
+    "olay": "S&P Global Construction PMI",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-04",
+    "saat": "13:00",
+    "ulke": "EU",
+    "olay": "Retail Sales MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -0.7
+  },
+  {
+    "tarih": "2026-12-04",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Average Hourly Earnings MoM",
+    "onem": 0,
+    "tahmin": 0.3,
+    "gercek": null,
+    "onceki": 0.4
+  },
+  {
+    "tarih": "2026-12-04",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Average Hourly Earnings YoY",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 3.1
+  },
+  {
+    "tarih": "2026-12-04",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Participation Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 61.9
+  },
+  {
+    "tarih": "2026-12-04",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Non Farm Payrolls",
+    "onem": 1,
+    "tahmin": 90,
+    "gercek": null,
+    "onceki": 165
+  },
+  {
+    "tarih": "2026-12-04",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Unemployment Rate",
+    "onem": 1,
+    "tahmin": 4.1,
+    "gercek": null,
+    "onceki": 4.1
+  },
+  {
+    "tarih": "2026-12-04",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "Michigan Consumer Sentiment Prel",
+    "onem": 1,
+    "tahmin": 51.8,
+    "gercek": null,
+    "onceki": 51
+  },
+  {
+    "tarih": "2026-12-04",
+    "saat": "22:00",
+    "ulke": "US",
+    "olay": "Baker Hughes Gas Rig Count",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 127
+  },
+  {
+    "tarih": "2026-12-07",
+    "saat": "12:30",
+    "ulke": "EU",
+    "olay": "Sentix Investor Confidence",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 2.4
+  },
+  {
+    "tarih": "2026-12-07",
+    "saat": "13:00",
+    "ulke": "EU",
+    "olay": "Employed Persons Final",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 176535.7
+  },
+  {
+    "tarih": "2026-12-07",
+    "saat": "19:00",
+    "ulke": "US",
+    "olay": "United States-NY Fed Consumer Expectation-NY Fed Inflation Expectation 1yr *",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 3.9
+  },
+  {
+    "tarih": "2026-12-07",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "3-Month Bill Auction Allotted at High",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-07",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "3-Month Bill Auction Bid-to-Cover",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-07",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "3-Month Bill Auction Total Accepted",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-07",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "6-Month Bill Auction Allotted at High",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-07",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "6-Month Bill Auction Bid-to-Cover",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-07",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "6-Month Bill Auction Total Accepted",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-07",
+    "saat": "21:00",
+    "ulke": "US",
+    "olay": "3-Year Note Auction Allotted at High",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-07",
+    "saat": "21:00",
+    "ulke": "US",
+    "olay": "3-Year Note Auction Bid-to-Cover",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-07",
+    "saat": "21:00",
+    "ulke": "US",
+    "olay": "3-Year Note Auction Total Accepted",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-08",
+    "saat": "16:15",
+    "ulke": "US",
+    "olay": "ADP Employment Change Weekly",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 21000
+  },
+  {
+    "tarih": "2026-12-08",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Unit Labour Costs QoQ Revised",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 1.9
+  },
+  {
+    "tarih": "2026-12-08",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Goods Trade Balance",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -135.08
+  },
+  {
+    "tarih": "2026-12-08",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Balance of Trade",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -105
+  },
+  {
+    "tarih": "2026-12-08",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Exports",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 321.511
+  },
+  {
+    "tarih": "2026-12-08",
+    "saat": "21:00",
+    "ulke": "US",
+    "olay": "10-Year Note Auction Allotted at High",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-08",
+    "saat": "21:00",
+    "ulke": "US",
+    "olay": "10-Year Note Auction Bid-to-Cover",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-08",
+    "saat": "21:00",
+    "ulke": "US",
+    "olay": "10-Year Note Auction Total Accepted",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "00:30",
+    "ulke": "US",
+    "olay": "API Crude Oil Stock Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "15:00",
+    "ulke": "US",
+    "olay": "MBA 5/1 ARM Contract Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "15:00",
+    "ulke": "US",
+    "olay": "MBA 5/1 ARM Effective Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "15:00",
+    "ulke": "US",
+    "olay": "MBA 15-Year Mortgage Contract Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "15:00",
+    "ulke": "US",
+    "olay": "MBA 15-Year Mortgage Effective Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "15:00",
+    "ulke": "US",
+    "olay": "MBA 15-Year Mortgage Points",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "15:00",
+    "ulke": "US",
+    "olay": "MBA 30-Year Mortgage Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "15:00",
+    "ulke": "US",
+    "olay": "MBA 5/1 ARM Points",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "Existing Home Sales",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 3.75
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "18:00",
+    "ulke": "US",
+    "olay": "Existing Home Sales MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -5.5
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "18:30",
+    "ulke": "US",
+    "olay": "EIA Ethanol Production",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "18:30",
+    "ulke": "US",
+    "olay": "EIA Ethanol Stocks",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "18:30",
+    "ulke": "US",
+    "olay": "EIA Crude Oil Stocks Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "18:30",
+    "ulke": "US",
+    "olay": "EIA Gasoline Stocks Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "18:30",
+    "ulke": "US",
+    "olay": "EIA Crude Oil Exports Change",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "22:00",
+    "ulke": "US",
+    "olay": "Interest Rate",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "22:00",
+    "ulke": "US",
+    "olay": "Interest Rate on Reserve Balances",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-09",
+    "saat": "22:00",
+    "ulke": "US",
+    "olay": "Interest Rate Projection - 3rd Yr",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 3.6
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "10:00",
+    "ulke": "TR",
+    "olay": "Industrial Production YoY",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 2.6
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "10:00",
+    "ulke": "TR",
+    "olay": "Industrial Production MoM NSA",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 8.1
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "14:00",
+    "ulke": "TR",
+    "olay": "TCMB Interest Rate Decision",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "14:00",
+    "ulke": "TR",
+    "olay": "Late Liquidity Window Rate",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "14:30",
+    "ulke": "TR",
+    "olay": "Net Foreign Exchange Reserves",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Core Inflation Rate MoM",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.3
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Core Inflation Rate YoY",
+    "onem": 1,
+    "tahmin": 2.7,
+    "gercek": null,
+    "onceki": 2.6
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Inflation Rate MoM",
+    "onem": 1,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.4
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Inflation Rate MoM NSA",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0.17
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "CPI-W",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 331.147
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "CPI",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 337.511
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Inflation Rate YoY",
+    "onem": 1,
+    "tahmin": 3.9,
+    "gercek": null,
+    "onceki": 3.7
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "CPI seasonally adjusted",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 337.48
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Real Average Weekly Earnings MoM",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 0
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "USDA Pork Net Export Sales",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "USDA Pork Gross Export Sales",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "16:30",
+    "ulke": "US",
+    "olay": "Initial Jobless Claims",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "4-Week Bill Auction Allotted at High",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "4-Week Bill Auction Bid-to-Cover",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "19:30",
+    "ulke": "US",
+    "olay": "4-Week Bill Auction Total Accepted",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "20:00",
+    "ulke": "US",
+    "olay": "WASDE Poultry Production",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": 55.264
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "21:00",
+    "ulke": "US",
+    "olay": "30-Year Bond Auction Allotted at High",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "21:00",
+    "ulke": "US",
+    "olay": "30-Year Bond Auction Bid-to-Cover",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "21:00",
+    "ulke": "US",
+    "olay": "30-Year Bond Auction Total Accepted",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": null
+  },
+  {
+    "tarih": "2026-12-10",
+    "saat": "22:00",
+    "ulke": "US",
+    "olay": "Monthly Budget Statement",
+    "onem": 0,
+    "tahmin": null,
+    "gercek": null,
+    "onceki": -404
+  }
+]
