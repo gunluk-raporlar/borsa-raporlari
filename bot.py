@@ -4638,8 +4638,55 @@ def rapor_sesi_uret(html, date_str):
         return False
 
 
+# Ses oynaticisi blogu: eski sayfalarda class="card", yenilerde
+# class="card sesli-bulten"; <strong> metni dile gore cevrilir, bu yuzden
+# eslesme metne degil <audio ...mp3> ogesine dayanir.
+_SES_BLOGU = re.compile(
+    r'(?:\r?\n)?<div class="card[^"]*"[^>]*>\s*(?:<strong[^>]*>[^<]*</strong>\s*)?'
+    r'<audio[^>]*src="[^"]*\.mp3"[^>]*></audio>\s*</div>',
+    re.S)
+
+# Rapor sayfalarinin dil agacindaki kopyalari (ses oynaticisi eslestirmesi).
+_SES_SAYFA_DIZINLERI = ("raporlar", "en/reports", "de/berichte", "ru/otchety", "zh/baogao")
+
+
+def _ses_oynaticilarini_esitle():
+    """MP3'u bulunmayan rapor sayfalarindan ses oynaticisini kaldirir.
+
+    _eski_sesleri_temizle() MP3'u silerken oynatici sayfada kaliyordu; sayfa
+    var olmayan sese baglanip 404 veriyordu (2026-11-27: 225 kirik baglanti,
+    AI Search 4xx). Fail-open: hata rapor uretimini etkilemez.
+    """
+    kaldirilan = 0
+    for dizin in _SES_SAYFA_DIZINLERI:
+        if not os.path.isdir(dizin):
+            continue
+        for ad in os.listdir(dizin):
+            if not ad.endswith(".html"):
+                continue
+            if os.path.exists(os.path.join("raporlar", ad[:-5] + ".mp3")):
+                continue
+            yol = os.path.join(dizin, ad)
+            try:
+                with open(yol, encoding="utf-8", newline="") as fh:
+                    icerik = fh.read()
+                yeni = _SES_BLOGU.sub("", icerik, count=1)
+                if yeni == icerik:
+                    continue
+                with open(yol, "w", encoding="utf-8", newline="") as fh:
+                    fh.write(yeni)
+                kaldirilan += 1
+            except OSError as e:
+                logger.warning("[TTS] oynatici kaldirilamadi (%s): %s", yol, e)
+    if kaldirilan:
+        logger.info("[TTS] ses oynaticisi kaldirildi: %d sayfa", kaldirilan)
+
+
 def _eski_sesleri_temizle(kal=14):
-    """Repo sismesin: son N gunun MP3'u kalir, eskiler silinir."""
+    """Repo sismesin: son N gunun MP3'u kalir, eskiler silinir.
+
+    Silinen sesin oynaticisi da sayfalardan kaldirilir (404 onleme).
+    """
     try:
         dosyalar = sorted(f for f in os.listdir("raporlar") if f.endswith(".mp3"))
         for f in dosyalar[:-kal]:
@@ -4647,6 +4694,7 @@ def _eski_sesleri_temizle(kal=14):
             logger.info("[TTS] eski ses silindi: %s", f)
     except OSError as e:
         logger.warning("[TTS] ses temizligi basarisiz: %s", e)
+    _ses_oynaticilarini_esitle()
 
 
 # CSS tek kaynak: BASE_CSS ve surum damgasi site_css.py'de (asagidaki

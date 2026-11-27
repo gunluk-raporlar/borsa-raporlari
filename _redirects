@@ -110,6 +110,14 @@
 /zh/baogao/yinsi*  /zh/yinsi.html  301
 /en/reports/privacy*  /en/privacy.html  301
 
+# 2026-11-27: sinyal karnesi JSON'u dil agacina kopyalanmiyor; sayfadaki
+# goreli baglanti yerellesmis ada cevrilince (signal-bilanz.json vb.) 404
+# veriyordu. Veri dili notr — kok dosyaya yonlendirilir.
+/de/signal-bilanz.json  /sinyal-karnesi.json  301
+/en/signal-scorecard.json  /sinyal-karnesi.json  301
+/ru/svodka-signalov.json  /sinyal-karnesi.json  301
+/zh/xinhao-jifenka.json  /sinyal-karnesi.json  301
+
 # 10 Ekim 2026 (Cumartesi) derin analizi hatala yayinlandi ve kaldirildi (2026-10-11);
 # icerik Cuma kapanis verisinin tekrariydi — ayni veriyi iceren 9 Ekim raporuna yonlendirilir.
 # .html ve güzel-URL varyantları tek glob'da birleştirildi (2026-11-07; kural
