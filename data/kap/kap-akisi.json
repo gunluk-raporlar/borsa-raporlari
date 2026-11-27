@@ -3034,6 +3034,13 @@
   "YKBNK": [
    {
     "kaynak": "KAP",
+    "tarih": "27 Kasım 10:47",
+    "baslik": "Pay Bazında Devre Kesici Bildirimi",
+    "url": "https://www.kap.org.tr/tr/Bildirim/1703192",
+    "genis": false
+   },
+   {
+    "kaynak": "KAP",
     "tarih": "26 Kasım 08:30",
     "baslik": "Özel Durum Açıklaması (Genel)",
     "url": "https://www.kap.org.tr/tr/Bildirim/1702823",
@@ -3128,13 +3135,6 @@
     "tarih": "18 Kasım 18:30",
     "baslik": "Şirket Genel Bilgi Formu",
     "url": "https://www.kap.org.tr/tr/Bildirim/1699991",
-    "genis": false
-   },
-   {
-    "kaynak": "KAP",
-    "tarih": "18 Kasım 18:30",
-    "baslik": "Pay Dışında Sermaye Piyasası Aracı İşlemlerine İlişkin Bildirim (Faiz İçeren)",
-    "url": "https://www.kap.org.tr/tr/Bildirim/1699990",
     "genis": false
    }
   ]
