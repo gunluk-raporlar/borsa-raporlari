@@ -85,10 +85,15 @@
 # silindi (2026-10-22 kullanici karari). Eski arsiv sayfalarindaki DSTKF
 # baglantilari, hisse sayfasi yerine agacin liste sayfasina tasinir.
 # Dikkat: /en/hisse/* glob'u ALTTA oldugu icin bu kurallar ONUN USTUNDE kalmali.
-/hisse/DSTKF  /hisse  301
-/de/hisse/DSTKF  /de/aktien  301
-/ru/hisse/DSTKF  /ru/aktsii  301
-/zh/hisse/DSTKF  /zh/gupiao  301
+/hisse/DSTKF*  /hisse  301
+# 2026-11-27: kaynak yollari YERELLESMIS yazilir. /de|/ru|/zh onekli isteklerde
+# functions/<dil>/_middleware.js once calisip Turkce slug'i ceviriyor
+# (/de/hisse/DSTKF -> /de/aktien/DSTKF); eski kaynak hic eslesmiyordu ve
+# middleware'in urettigi yol 404 veriyordu (AI Search 4xx bulgusu).
+# Glob: ".html" varyanti da kapsanir (canli test: /hisse/DSTKF.html 404 idi).
+/de/aktien/DSTKF*  /de/aktien  301
+/ru/aktsii/DSTKF*  /ru/aktsii  301
+/zh/gupiao/DSTKF*  /zh/gupiao  301
 /en/hisse/DSTKF  /en/stocks  301
 /en/hisse/DSTKF.html  /en/stocks  301
 /en/hisse/*  /en/stocks/:splat  301
@@ -99,11 +104,11 @@
 
 # Rapor sayfalarinin altbilgisindeki goreceli gizlilik.html baglantisi, sayfa
 # .html'siz guzel URL'den sunulunca /raporlar/gizlilik.html diye taraniyor (GSC 404).
-/raporlar/gizlilik.html  /gizlilik.html  301
-/de/berichte/gizlilik.html  /de/datenschutz.html  301
-/ru/otchety/gizlilik.html  /ru/konfidencialnost.html  301
-/zh/baogao/gizlilik.html  /zh/yinsi.html  301
-/en/reports/privacy.html  /en/privacy.html  301
+/raporlar/gizlilik*  /gizlilik.html  301
+/de/berichte/datenschutz*  /de/datenschutz.html  301
+/ru/otchety/konfidencialnost*  /ru/konfidencialnost.html  301
+/zh/baogao/yinsi*  /zh/yinsi.html  301
+/en/reports/privacy*  /en/privacy.html  301
 
 # 10 Ekim 2026 (Cumartesi) derin analizi hatala yayinlandi ve kaldirildi (2026-10-11);
 # icerik Cuma kapanis verisinin tekrariydi — ayni veriyi iceren 9 Ekim raporuna yonlendirilir.
@@ -111,14 +116,14 @@
 # sayısı ~100 sınırında kalması için — :splat hem "" hem ".html" değerini alır).
 /derin-analiz/2026-10-10* /derin-analiz/2026-10-09:splat 301
 /en/deep-analysis/2026-10-10* /en/deep-analysis/2026-10-09:splat 301
-/de/derin-analiz/2026-10-10* /de/derin-analiz/2026-10-09:splat 301
-/ru/derin-analiz/2026-10-10* /ru/derin-analiz/2026-10-09:splat 301
-/zh/derin-analiz/2026-10-10* /zh/derin-analiz/2026-10-09:splat 301
+/de/tiefenanalyse/2026-10-10* /de/tiefenanalyse/2026-10-09:splat 301
+/ru/glubokiy-analiz/2026-10-10* /ru/glubokiy-analiz/2026-10-09:splat 301
+/zh/shendu-fenxi/2026-10-10* /zh/shendu-fenxi/2026-10-09:splat 301
 
 # 11 Ekim 2026 (Pazar) gunluk raporu hatala yayinlandi ve kaldirildi (2026-10-11);
 # pazar gunu borsa kapali — ayni kapanis verisini tasiyan 9 Ekim Cuma raporuna yonlendirilir.
 /raporlar/2026-10-11* /raporlar/2026-10-09:splat 301
 /en/reports/2026-10-11* /en/reports/2026-10-09:splat 301
-/de/raporlar/2026-10-11* /de/raporlar/2026-10-09:splat 301
-/ru/raporlar/2026-10-11* /ru/raporlar/2026-10-09:splat 301
-/zh/raporlar/2026-10-11* /zh/raporlar/2026-10-09:splat 301
+/de/berichte/2026-10-11* /de/berichte/2026-10-09:splat 301
+/ru/otchety/2026-10-11* /ru/otchety/2026-10-09:splat 301
+/zh/baogao/2026-10-11* /zh/baogao/2026-10-09:splat 301
