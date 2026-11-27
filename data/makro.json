@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-11-27 02:46",
+ "guncelleme": "2026-11-28 02:25",
  "kaynak": "TradingView ekonomik takvimi + TÜİK SDMX teyitli + EVDS(5) + Resmi AB/ABD(25)",
  "gostergeler": [
   {
@@ -177,13 +177,13 @@
   {
    "ulke": "Türkiye",
    "ad": "Ekonomik Beklenti Endeksi",
-   "deger": 97.3,
+   "deger": 98.4,
    "birim": "puan",
-   "donem": "2026-10-30",
+   "donem": "2026-11-27",
    "tahmin": null,
-   "onceki": 101.3,
+   "onceki": 97.3,
    "kaynak_baslik": "Economic Confidence Index",
-   "kaynak_periyot": "Oct. 2026",
+   "kaynak_periyot": "Nov. 2026",
    "frekans": "aylık"
   },
   {
@@ -521,25 +521,25 @@
   {
    "ulke": "ABD",
    "ad": "Sanayi Üretimi (yıllık)",
-   "deger": 0.92,
+   "deger": 1.14,
    "birim": "%",
-   "donem": "2026-08-18",
+   "donem": "2026-09-18",
    "tahmin": null,
-   "onceki": 0.94,
+   "onceki": 0.92,
    "kaynak_baslik": "Industrial Production YoY",
-   "kaynak_periyot": "Jul. 2026",
+   "kaynak_periyot": "Aug. 2026",
    "frekans": "aylık"
   },
   {
    "ulke": "ABD",
    "ad": "Sanayi Üretimi (aylık)",
-   "deger": 0.2,
+   "deger": -0.1,
    "birim": "%",
-   "donem": "2026-08-18",
+   "donem": "2026-09-18",
    "tahmin": 0.3,
-   "onceki": 0.3,
+   "onceki": 0.2,
    "kaynak_baslik": "Industrial Production MoM",
-   "kaynak_periyot": "Jul. 2026",
+   "kaynak_periyot": "Aug. 2026",
    "frekans": "aylık"
   },
   {
@@ -719,13 +719,13 @@
   {
    "ulke": "ABD",
    "ad": "Kapasite Kullanım Oranı",
-   "deger": 77.1,
+   "deger": 76.8,
    "birim": "%",
-   "donem": "2026-08-18",
-   "tahmin": 76.3,
-   "onceki": 77.0,
+   "donem": "2026-09-18",
+   "tahmin": 76.4,
+   "onceki": 77.1,
    "kaynak_baslik": "Capacity Utilization",
-   "kaynak_periyot": "Jul. 2026",
+   "kaynak_periyot": "Aug. 2026",
    "frekans": "aylık"
   },
   {
@@ -907,23 +907,23 @@
    "ad": "Tüketici Güveni",
    "deger": -16.9,
    "birim": "puan",
-   "donem": "2026-11-20",
-   "tahmin": -18.0,
+   "donem": "2026-11-27",
+   "tahmin": -16.9,
    "onceki": -17.9,
-   "kaynak_baslik": "Consumer Confidence Flash",
+   "kaynak_baslik": "Consumer Confidence Final",
    "kaynak_periyot": "Nov. 2026",
    "frekans": "aylık"
   },
   {
    "ulke": "Euro Bölgesi",
    "ad": "Ekonomik Beklenti Endeksi",
-   "deger": 96.9,
+   "deger": 95.8,
    "birim": "puan",
-   "donem": "2026-10-29",
-   "tahmin": 97.5,
-   "onceki": 97.5,
+   "donem": "2026-11-27",
+   "tahmin": 97.2,
+   "onceki": 96.5,
    "kaynak_baslik": "Economic Sentiment",
-   "kaynak_periyot": "Oct. 2026",
+   "kaynak_periyot": "Nov. 2026",
    "frekans": "aylık"
   },
   {
@@ -1018,34 +1018,6 @@
   },
   {
    "ulke": "ABD",
-   "ad": "Politika faizi",
-   "deger": 4.0,
-   "birim": "%",
-   "donem": "2026-11-26",
-   "tahmin": 4.0,
-   "onceki": 4.0,
-   "kaynak_baslik": "FRED Fed fon ust siniri",
-   "kaynak_periyot": "2026-11-26",
-   "frekans": "olay",
-   "teyit": "FRED",
-   "kaynak_durumu": "FRED resmi verisi"
-  },
-  {
-   "ulke": "ABD",
-   "ad": "Cari denge",
-   "deger": -246.0,
-   "birim": "milyar $",
-   "donem": "2026-06-30",
-   "tahmin": -255.0,
-   "onceki": -212.6,
-   "kaynak_baslik": "BEA ITA cari denge",
-   "kaynak_periyot": "2026-06-30",
-   "frekans": "üç aylık",
-   "teyit": "BEA",
-   "kaynak_durumu": "BEA resmi verisi"
-  },
-  {
-   "ulke": "ABD",
    "ad": "Büyüme (yıllık)",
    "deger": 2.3,
    "birim": "%",
@@ -1060,6 +1032,20 @@
   },
   {
    "ulke": "ABD",
+   "ad": "Politika faizi",
+   "deger": 4.0,
+   "birim": "%",
+   "donem": "2026-11-27",
+   "tahmin": 4.0,
+   "onceki": 4.0,
+   "kaynak_baslik": "FRED Fed fon ust siniri",
+   "kaynak_periyot": "2026-11-27",
+   "frekans": "olay",
+   "teyit": "FRED",
+   "kaynak_durumu": "FRED resmi verisi"
+  },
+  {
+   "ulke": "ABD",
    "ad": "İşsizlik oranı",
    "deger": 4.1,
    "birim": "%",
@@ -1071,6 +1057,20 @@
    "frekans": "aylık",
    "teyit": "BLS",
    "kaynak_durumu": "BLS resmi verisi"
+  },
+  {
+   "ulke": "ABD",
+   "ad": "Cari denge",
+   "deger": -246.0,
+   "birim": "milyar $",
+   "donem": "2026-06-30",
+   "tahmin": -255.0,
+   "onceki": -212.6,
+   "kaynak_baslik": "BEA ITA cari denge",
+   "kaynak_periyot": "2026-06-30",
+   "frekans": "üç aylık",
+   "teyit": "BEA",
+   "kaynak_durumu": "BEA resmi verisi"
   },
   {
    "ulke": "ABD",
@@ -1091,11 +1091,11 @@
    "ad": "Politika faizi",
    "deger": 2.65,
    "birim": "%",
-   "donem": "2026-11-26",
+   "donem": "2026-11-27",
    "tahmin": 2.65,
    "onceki": 2.65,
    "kaynak_baslik": "ECB MRO ana refinansman faizi",
-   "kaynak_periyot": "2026-11-26",
+   "kaynak_periyot": "2026-11-27",
    "frekans": "olay",
    "teyit": "ECB",
    "kaynak_durumu": "ECB resmi verisi"
