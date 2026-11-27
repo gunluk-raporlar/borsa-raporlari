@@ -229,3 +229,4 @@
 2026-11-27,02:41,ceviri,MISTRAL,deepseek-v4-1-flash-1017,501,139477,31037,-,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x501(139477+31037),139477,31037
 2026-11-27,10:49,gunluk,MISTRAL,deepseek-v4-1-flash-1017,1,2668,945,3.8,1,toplam_metin=1,hayir,MISTRAL/deepseek-v4-1-flash-1017x8,87736,8318
 2026-11-27,12:50,derin,MISTRAL,deepseek-v4-1-flash-1017,3,18368,7079,569.6,5,isim=3;toplam_metin=1;makro=1,hayir,MISTRAL/deepseek-v4-1-flash-1017x1,18368,7079
+2026-11-27,17:31,ceviri,MISTRAL,deepseek-v4-1-flash-1017,651,271982,105489,-,0,,hayir,MISTRAL/deepseek-v4-1-flash-1017x651(271982+105489),271982,105489
