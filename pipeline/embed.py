@@ -75,6 +75,14 @@ KOK_KLASORLER = [
 SITE_BASE = os.environ.get("SITE_URL", "https://borsa-raporlari.pages.dev").rstrip("/")
 PARCA_BOYUTU = 1400
 
+# 2026-11-27: hafta sonu derslerinde konu ("Bugünün Dersi: X") belge düzeyinde
+# durur; sonraki h2'ler ("1. Nedir?", "2. Neden Önemli?") her derste aynı
+# olduğundan parça etiketleri birbirine benziyordu — "bollinger bandı nedir"
+# sorgusunda 8 sonucun 6'sı başka derslerden geliyordu. Konu artık sonraki tüm
+# parçaların etiketine taşınır; etiket yalnız gömme girdisine girer, saklanan
+# 'icerik' temiz kalır.
+KONU_DESENI = re.compile(r"^Bugünün Dersi:\s*(.+)$", re.I)
+
 # Akıllı birleştirme kümleri — pipeline/md_ayna.py (SON_EK/DASH_BAS/ONEK,
 # 61-63. satırlar) ile AYNI kümeler. İki dosya bilinçli bağımsızdır (import
 # yok); kural sırası md_ayna._zengin_metin ile aynıdır — bir tarafı
@@ -295,6 +303,8 @@ def bolumle(olaylar, sayfa_basligi="", boyut=PARCA_BOYUTU):
         p = []
         if sayfa_basligi:
             p.append(f"Sayfa: {sayfa_basligi}")
+        if konu:
+            p.append(f"Konu: {konu}")
         if h2:
             p.append(f"Bölüm: {h2}")
         if h3:
@@ -302,7 +312,7 @@ def bolumle(olaylar, sayfa_basligi="", boyut=PARCA_BOYUTU):
         return " > ".join(p)
 
     parcalar = []
-    h2 = h3 = ""
+    h2 = h3 = konu = ""
     suanki = []       # satırlar (str): başlıklar, yapısal işaretçiler, bitmiş satırlar
     yakin_run = []    # AYNI satır-blokundaki ardışık (metin, once, sonu) üçlüleri
 
@@ -336,9 +346,13 @@ def bolumle(olaylar, sayfa_basligi="", boyut=PARCA_BOYUTU):
 
     for sev, metin, once, sonu in olaylar:
         if sev in (2, 3):
+            konu_basligi = KONU_DESENI.match(metin) if sev == 2 else None
+            if konu_basligi and not konu:
+                konu = konu_basligi.group(1).strip()
             _kapat()
             if sev == 2:
-                h2, h3 = metin, ""
+                # konu başlığı bölüm sayılmaz: etikette "Konu:" olarak taşınır
+                h2, h3 = ("" if konu_basligi else metin), ""
             else:
                 h3 = metin
             suanki.append(metin)
