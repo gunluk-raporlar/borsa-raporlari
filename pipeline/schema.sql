@@ -94,7 +94,7 @@ language sql stable as $$
   where a.sira = 1
   order by
     case
-      when a.kaynak in ('gunluk-rapor','derin-analiz','makro-analiz','haftasonu','egitim')
+      when a.kaynak in ('gunluk-rapor','derin-analiz','makro-analiz','haftasonu','egitim','hisse-detay')
            and a.tarih is not null
       then a.skor * (1 + taze_boost * greatest(0, 1 - (current_date - a.tarih)::float / greatest(taze_gun, 1)))
       else a.skor
@@ -165,8 +165,11 @@ alter table belgeler add column if not exists bolum text;
 -- imzalar icin once drop sart; yoksa bu blok SQL Editor'de hata verir.
 -- Route.js eski RPC'ye de dustugu icin drop aninda arama kisaca eski yola
 -- duserek calismaya devam eder (fail-open vekil).
+-- 2026-11-27: v2 donusu `siralama` kolonu kazandi (tazelik artirimli skor).
+-- Gosterim yuzdesi artik bu skordan hesaplanir; ham cosine `benzerlik`te kalir.
+-- Ayni nedenle drop zorunlu — asagidaki tanim yeni imzayi kurar.
 drop function if exists match_belgeler(vector(1024), integer, double precision);
-drop function if exists match_belgeler_v2(vector(1024), integer, double precision, double precision, double precision);
+drop function if exists match_belgeler_v2(vector(1024), integer, double precision, double precision, integer);
 
 -- Her iki RPC de bolum dönsün (route.js alanı yoksa sessizce atlar).
 create or replace function match_belgeler(
@@ -208,7 +211,8 @@ returns table (
   url text,
   tarih date,
   icerik text,
-  benzerlik float
+  benzerlik float,
+  siralama float
 )
 language sql stable as $$
   with aday as (
@@ -219,16 +223,21 @@ language sql stable as $$
     where 1 - (b.embedding <=> sorgu_embedding) > min_skor
     order by b.embedding <=> sorgu_embedding
     limit 48
+  ), puanli as (
+    select a.*,
+           case
+             when a.kaynak in ('gunluk-rapor','derin-analiz','makro-analiz','haftasonu','egitim','hisse-detay')
+                  and a.tarih is not null
+             then a.skor * (1 + taze_boost * greatest(0, 1 - (current_date - a.tarih)::float / greatest(taze_gun, 1)))
+             else a.skor
+           end as siralama
+    from aday a
+    where a.sira = 1
   )
-  select a.id, a.kaynak, a.baslik, a.bolum, a.url, a.tarih, a.icerik, a.skor::float as benzerlik
-  from aday a
-  where a.sira = 1
-  order by
-    case
-      when a.kaynak in ('gunluk-rapor','derin-analiz','makro-analiz','haftasonu','egitim')
-           and a.tarih is not null
-      then a.skor * (1 + taze_boost * greatest(0, 1 - (current_date - a.tarih)::float / greatest(taze_gun, 1)))
-      else a.skor
-    end desc
+  select p.id, p.kaynak, p.baslik, p.bolum, p.url, p.tarih, p.icerik,
+         p.skor::float as benzerlik,
+         p.siralama::float as siralama
+  from puanli p
+  order by p.siralama desc, p.skor desc
   limit eslesme_sayisi;
 $$;

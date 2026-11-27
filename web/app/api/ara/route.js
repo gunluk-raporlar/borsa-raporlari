@@ -241,8 +241,13 @@ async function aramaYap(soru, secenek = {}) {
     }
     adaylar = adaylar.slice(0, 8);
 
-    // Gösterim kalibrasyonu: ham cosine'u taban+0.30 bandında 0-100'e ölçekle
+    // Gösterim kalibrasyonu: sıralama tazelik artırımlı skorla yapıldığı için
+    // gösterim de o skordan hesaplanır; aksi hâlde üstteki sonuç alttakinden
+    // düşük yüzde gösteriyordu (2026-11-27). Bant, ham cosine bandının
+    // (taban → taban+0.30) en yüksek artırım uygulanmış hâline kadar genişler,
+    // böylece artırılmış skorlar 100'de doyuma uğramaz.
     const taban = Math.min(Math.max(ayar.min_skor, 0), 0.6);
+    const bant = Math.max(0.05, (taban + 0.3) * (1 + (ayar.taze_boost || 0)) - taban);
     const temiz = adaylar.map((s) => ({
       id: s.id,
       kaynak: s.kaynak,
@@ -254,7 +259,7 @@ async function aramaYap(soru, secenek = {}) {
       benzerlik: s.benzerlik,
       gosterim: s.rerank_skor
         ? Math.round(100 * Math.min(1, Math.max(0, s.rerank_skor)))
-        : Math.round(100 * Math.min(1, Math.max(0, ((s.benzerlik || 0) - taban) / 0.3))),
+        : Math.round(100 * Math.min(1, Math.max(0, ((s.siralama ?? s.benzerlik ?? 0) - taban) / bant))),
     }));
     // (Anonim arama kaydı vekilde yapılır: functions/api/ara.js her aramaya
     // kayit kimliği üretip sonucu arka plana loglar; IP/kimlik/oturum YOK —
