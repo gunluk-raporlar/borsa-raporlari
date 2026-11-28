@@ -2,16 +2,13 @@
   "baslangic": "2026-09-25",
   "braket_versiyonu": 2,
   "bugun_alinan": [],
-  "bugun_satilan": [
-    "TAVHL",
-    "THYAO"
-  ],
-  "bugun_tarih": "2026-11-27",
+  "bugun_satilan": [],
+  "bugun_tarih": "2026-11-28",
   "gerceklesen_kz": -10824.642891079984,
   "kapital0": 100000.0,
-  "kontrol_sayisi": 17,
-  "nakit": 67355.14917691672,
-  "onceki_kapanis_ozkaynak": 91716.58,
+  "kontrol_sayisi": 1,
+  "nakit": 67419.60221971001,
+  "onceki_kapanis_ozkaynak": 90618.74,
   "ozkayit": [
     [
       "2026-09-25",
@@ -584,7 +581,7 @@
     }
   },
   "rejim": "ayi",
-  "son_bar_tarihi": "2026-11-26",
+  "son_bar_tarihi": "2026-11-27",
   "son_fiyatlar": {
     "AEFES": 15.43,
     "AKBNK": 59.95,
@@ -617,8 +614,8 @@
     "VAKBN": 30.3,
     "YKBNK": 32.92
   },
-  "son_repo_tarihi": "2026-11-27",
+  "son_repo_tarihi": "2026-11-28",
   "toplam_kesinti": 833.03,
-  "toplam_repo_kazanci": 1979.83,
+  "toplam_repo_kazanci": 2044.28,
   "versiyon": 1
 }
